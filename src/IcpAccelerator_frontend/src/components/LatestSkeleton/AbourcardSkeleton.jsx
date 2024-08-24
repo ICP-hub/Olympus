@@ -34,9 +34,9 @@ export const AboutcardSkeleton = (getAllData) => {
         "whatsapp.com": <FaWhatsapp className={`text-green-600 ${size}`} />,
         "medium.com": <FaMedium className={`text-black ${size}`} />,
       };
-      return icons[domain] || null;
+      return icons[domain] || <LanguageIcon/>;
     } catch (error) {
-      return null;
+      return <LanguageIcon/>;
     }
   };
 
@@ -44,8 +44,9 @@ export const AboutcardSkeleton = (getAllData) => {
   console.log("getvalues", getAllData);
 
   return (
-    <SkeletonTheme baseColor="#e3e3e3" highlightColor="#c8c8c873">
-      <div className="w-1/2 bg-gradient-to-r from-[#ECE9FE] to-[#FFFFFF] items-center justify-center rounded-r-2xl">
+   
+          <SkeletonTheme baseColor="#e3e3e3" highlightColor="#c8c8c873"> 
+          <div className="w-1/2 bg-gradient-to-r from-[#ECE9FE] to-[#FFFFFF] items-center justify-center rounded-r-2xl">
         <div className="bg-white mx-auto my-10 rounded-lg shadow-md w-3/4">
           <div className="w-full bg-gray-200 rounded-full h-1.5 mb-4 dark:bg-gray-700">
             <div
@@ -84,7 +85,7 @@ export const AboutcardSkeleton = (getAllData) => {
               )}
             </div>
             <div className="mt-6">
-              <div my-2>
+              <div className="my-2">
                 <label className="block font-medium text-gray-600 pb-2">
                   Roles
                 </label>
@@ -204,8 +205,7 @@ export const AboutcardSkeleton = (getAllData) => {
                     </div>
                     <div className="rounded-full flex items-center justify-center">
                       <Skeleton height={30} width={30} circle="true" />
-                    </div>
-                    <div className="rounded-full flex items-center justify-center">
+
                       <Skeleton height={30} width={30} circle="true" />
                     </div>
                   </div>
@@ -213,9 +213,9 @@ export const AboutcardSkeleton = (getAllData) => {
                 </div>
               </div>
             </div>
+            </div>
           </div>
-        </div>
-      </div>
+  </div>
     </SkeletonTheme>
   );
 };

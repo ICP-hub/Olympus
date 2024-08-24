@@ -1,36 +1,62 @@
-import React, { useState } from 'react'
-import ProfileDetail from './ProfileDetail';
-import { profile } from '../jsondata/data/profileData';
-
-
-import Role from './Role';
+import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
+import { profile } from '../Utils/jsondata/data/profileData';
 import { shareSvgIcon } from '../Utils/Data/SvgData';
 import ProjectCard from '../Dashboard/Project/ProjectCard';
-import EventSection from '../Dashboard/Project/EventSection';
-import EventMain from '../Dashboard/DashboardEvents/EventMain';
 import NewEvent from '../Dashboard/DashboardEvents/NewEvent';
-import Announcement from './Announcement';
-import ProjectDetailsForOwnerProject from '../../component/Project/ProjectDetailsPages/ProjectDetailsForInvestorProject';
 import JobSection from '../Dashboard/Project/JobSection';
 import FAQ from '../Dashboard/Project/Faq';
 import AssociationRequestCard from '../Dashboard/Associations/AssociationRequestCard';
-import RequestEventCard from '../Dashboard/DashboardEvents/RequestEventCard';
 import EventRequestCard from '../Dashboard/DashboardEvents/EventRequestCard';
-
-
+import ProfileDetail from './ProfileDetail';
+import Role from './Role';
+import Announcement from './Announcement';
+import EventRequestStatus from '../Dashboard/DashboardEvents/EventRequestStatus';
 
 const ProfilePage = () => {
   const [activeTab, setActiveTab] = useState("roles");
-  const [eventCreated, setEventCreated] = useState(false);
-  const { profilepage } = profile
+  const { profilepage } = profile;
+
+  const userCurrentRoleStatus = useSelector(
+    (currState) => currState.currentRoleStatus.rolesStatusArray
+  );
+  const userRole = useSelector(
+    (currState) => currState.currentRoleStatus.activeRole
+  );
+  console.log("Define the tabs visibility based on user roles", userCurrentRoleStatus);
+
+  // Function to get approved roles
+  const getApprovedRoles = (rolesStatusArray) => {
+    return rolesStatusArray
+      .filter(role => role.approval_status === 'active')
+      .map(role => role.name);
+  };
+
+  const approvedRoles = getApprovedRoles(userCurrentRoleStatus);
+
+  // Define the tabs visibility based on approved roles
+  const tabs = {
+    user: ["roles", "rating"],
+    project: ["roles", "project", "rating", "association-req", "job", "announcement"],
+    mentor: ["roles", "rating", "cohort", "event-req", "association-req"],
+    vc: ["roles", "rating", "job", "announcement", "association-req"],
+  };
+
+  // Combine all the tabs for the approved roles
+  // const activeTabs = approvedRoles.reduce((acc, role) => {
+  //   return acc.concat(tabs[role] || []);
+  // }, ["roles", "rating"]);
+  const activeTabs = tabs[userRole] || ["roles", "rating"];
+  // Remove duplicate tabs
+  const uniqueActiveTabs = [...new Set(activeTabs)];
 
   const handleChange = (tab) => {
-    setActiveTab(tab)
-  }
-  const userRole = "mentor";
+    setActiveTab(tab);
+  };
+
   return (
     <div className="container mx-auto mb-5 bg-white">
-      <div className="flex justify-between items-center mx-[3%] h-11   bg-opacity-95 -top-[.60rem] p-10 px-0 sticky bg-white  z-20">
+      <div className="flex justify-between items-center mx-[3%] h-11 bg-opacity-95 -top-[.60rem] p-10 px-0 sticky bg-white z-20">
         <div className="">
           <h2 className="text-2xl font-bold">{profilepage.profileText}</h2>
         </div>
@@ -48,113 +74,108 @@ const ProfilePage = () => {
           <ProfileDetail />
         </div>
         <div className="w-[60%] ">
-          <div className="overflow-x-auto text-nowrap  flex justify-start border-b">
-            <button
-              className={`px-4 py-2 focus:outline-none font-medium  ${activeTab === "roles"
-                ? "border-b-2 border-blue-500 text-blue-500 font-medium"
-                : "text-gray-400"
-                }`}
-              onClick={() => handleChange("roles")}
-            >
-              {profilepage.roleText}
-            </button>
-            {(userRole === "project" || userRole === "founder") && (
+          <div className="overflow-x-auto text-nowrap flex justify-start border-b">
+            {uniqueActiveTabs.includes("roles") && (
               <button
-                className={`px-4 py-2 focus:outline-none font-medium  ${activeTab === "project"
-                  ? "border-b-2 border-blue-500 text-blue-500 font-medium"
-                  : "text-gray-400"
+                className={`px-4 py-2 focus:outline-none font-medium ${activeTab === "roles"
+                    ? "border-b-2 border-blue-500 text-blue-500 font-medium"
+                    : "text-gray-400"
+                  }`}
+                onClick={() => handleChange("roles")}
+              >
+                {profilepage.roleText}
+              </button>
+            )}
+            {uniqueActiveTabs.includes("project") && (
+              <button
+                className={`px-4 py-2 focus:outline-none font-medium ${activeTab === "project"
+                    ? "border-b-2 border-blue-500 text-blue-500 font-medium"
+                    : "text-gray-400"
                   }`}
                 onClick={() => handleChange("project")}
               >
                 Project
               </button>
             )}
-            {(userRole === "mentor" || userRole === "founder") && (
+            {uniqueActiveTabs.includes("event-req") && (
               <button
-                className={`px-4 py-2 focus:outline-none font-medium  ${activeTab === "event"
-                  ? "border-b-2 border-blue-500 text-blue-500 font-medium"
-                  : "text-gray-400"
+                className={`px-4 py-2 focus:outline-none font-medium ${activeTab === "event-req"
+                    ? "border-b-2 border-blue-500 text-blue-500 font-medium"
+                    : "text-gray-400"
                   }`}
-                onClick={() => handleChange("event")}
+                onClick={() => handleChange("event-req")}
               >
-                Event
+                Cohort Request
               </button>
             )}
-            {(userRole === "mentor" || userRole === "founder") && (
+            {uniqueActiveTabs.includes("cohort") && (
               <button
-                className={`px-4 py-2 focus:outline-none font-medium  ${activeTab === "job"
-                  ? "border-b-2 border-blue-500 text-blue-500 font-medium"
-                  : "text-gray-400"
+                className={`px-4 py-2 focus:outline-none font-medium ${activeTab === "cohort"
+                    ? "border-b-2 border-blue-500 text-blue-500 font-medium"
+                    : "text-gray-400"
+                  }`}
+                onClick={() => handleChange("cohort")}
+              >
+                Cohort
+              </button>
+            )}
+            {uniqueActiveTabs.includes("job") && (
+              <button
+                className={`px-4 py-2 focus:outline-none font-medium ${activeTab === "job"
+                    ? "border-b-2 border-blue-500 text-blue-500 font-medium"
+                    : "text-gray-400"
                   }`}
                 onClick={() => handleChange("job")}
               >
                 Job
               </button>
             )}
-            {(userRole === "mentor" || userRole === "founder") && (
+            {uniqueActiveTabs.includes("announcement") && (
               <button
-                className={`px-4 py-2 focus:outline-none font-medium  ${activeTab === "announcement"
-                  ? "border-b-2 border-blue-500 text-blue-500 font-medium"
-                  : "text-gray-400"
+                className={`px-4 py-2 focus:outline-none font-medium ${activeTab === "announcement"
+                    ? "border-b-2 border-blue-500 text-blue-500 font-medium"
+                    : "text-gray-400"
                   }`}
                 onClick={() => handleChange("announcement")}
               >
                 Announcement
               </button>
             )}
-             {(userRole === "mentor" || userRole === "founder") && (
+            {uniqueActiveTabs.includes("association-req") && (
               <button
-                className={`px-4 py-2 focus:outline-none font-medium  ${activeTab === "association-req"
-                  ? "border-b-2 border-blue-500 text-blue-500 font-medium"
-                  : "text-gray-400"
+                className={`px-4 py-2 focus:outline-none font-medium ${activeTab === "association-req"
+                    ? "border-b-2 border-blue-500 text-blue-500 font-medium"
+                    : "text-gray-400"
                   }`}
                 onClick={() => handleChange("association-req")}
               >
                 Association Request
               </button>
             )}
-             {(userRole === "mentor" || userRole === "founder") && (
+            {uniqueActiveTabs.includes("rating") && (
               <button
-                className={`px-4 py-2 focus:outline-none font-medium  ${activeTab === "event-req"
-                  ? "border-b-2 border-blue-500 text-blue-500 font-medium"
-                  : "text-gray-400"
+                className={`px-4 py-2 focus:outline-none font-medium ${activeTab === "rating"
+                    ? "border-b-2 border-blue-500 text-blue-500 font-medium"
+                    : "text-gray-400"
                   }`}
-                onClick={() => handleChange("event-req")}
+                onClick={() => handleChange("rating")}
               >
-                Event Request
+                {profilepage.ratingText}
               </button>
             )}
-            {(userRole === "mentor" || userRole === "founder") && (
-              <button
-                className={`px-4 py-2 focus:outline-none font-medium  ${activeTab === "project"
-                  ? "border-b-2 border-blue-500 text-blue-500 font-medium"
-                  : "text-gray-400"
-                  }`}
-                onClick={() => handleChange("project")}
-              >
-                Project
-              </button>
-            )}
-            <button
-              className={`px-4 py-2 focus:outline-none font-medium ${activeTab === "rating"
-                ? "border-b-2 border-blue-500 text-blue-500 font-medium"
-                : "text-gray-400"
-                }`}
-              onClick={() => handleChange("rating")}>
-              {profilepage.ratingText}
-            </button>
+          </div>
+
+          <div className="w-full">
+            {activeTab === "roles" && <Role />}
           </div>
           <div className="w-full">
-            {activeTab === "roles" ? <Role /> : ""}
+            {activeTab === "project" && <ProjectCard />}
           </div>
           <div className="w-full">
-            {activeTab === "project" ? <ProjectCard /> : ""}
+            {activeTab === "association-req" && <AssociationRequestCard />}
           </div>
           <div className="w-full">
-            {activeTab === "association-req" ? <AssociationRequestCard /> : ""}
-          </div>
-          <div className="w-full">
-            {activeTab === "event" && (
+          {activeTab === "cohort" && (
               <>
                 {/* {!eventCreated ? (
                   <EventSection />  // Render EventSection when no event is created
@@ -166,30 +187,26 @@ const ProfilePage = () => {
             )}
           </div>
           <div className="w-full">
-            {activeTab === "job" ? <>
+            {activeTab === "job" && (
+              <>
                 <JobSection />
                 <FAQ />
-                {/* <ProjectDetailsForOwnerProject/> */}
-              </> : ""}
+              </>
+            )}
           </div>
           <div className="w-full">
-            {activeTab === "announcement" ? <Announcement /> : ""}
+            {activeTab === "announcement" && <Announcement />}
           </div>
           <div className="w-full">
-            {activeTab === "rating" ? <>
-              <h1>Rating</h1>
-            </> : ""}
+            {activeTab === "rating" && <h1>Rating</h1>}
           </div>
           <div className="w-full">
-            {activeTab === "event-req" ? <>
-              <EventRequestCard/>
-            </> : ""}
+            {activeTab === "event-req" && <EventRequestStatus/>}
           </div>
-
         </div>
       </div>
     </div>
   );
-}
+};
 
-export default ProfilePage
+export default ProfilePage;

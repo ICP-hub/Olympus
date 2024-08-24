@@ -20,6 +20,9 @@ import { ThreeDots } from "react-loader-spinner";
 import toast, { Toaster } from "react-hot-toast";
 import NoDataFound from './NoDataFound';
 import EventRequestCard from './EventRequestCard';
+import EventRequestStatus from './EventRequestStatus';
+import Tabs from '../../Common/Tabs/Tabs';
+import Attendees from './Attendees';
 
 
 const FAQItem = ({ question, answer }) => {
@@ -71,7 +74,12 @@ const FAQ = () => {
 };
 
 const EventDetails = () => {
-  const [activeTab, setActiveTab] = useState('summary');
+
+  const [currentTab, setCurrentTab] = useState('Summary');
+  const tabs = ['Summary', 'Request', 'Announcements', 'Attendees', 'Reviews'];
+  const handleTabChange = (tab) => {
+    setCurrentTab(tab);
+  };
   const location = useLocation();
   const { cohort_id } = location.state || {};
   const [cohortData, setCohortData] = useState(null);
@@ -80,7 +88,7 @@ const EventDetails = () => {
   const [difference, setDifference] = useState(null); // Add this state
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+// console.log("............./.........../cohortData",cohortData)
   // const userCurrentRoleStatusActiveRole = useSelector(
   //   (currState) => currState.currentRoleStatus.activeRole
   // );
@@ -88,7 +96,9 @@ const EventDetails = () => {
   useEffect(() => {
     const fetchCohortData = async () => {
       console.log("Actor:", actor);
-console.log("Cohort ID:", cohort_id);
+      console.log("Cohort ID:", cohort_id);
+      
+  
       if (actor && cohort_id) {
         try {
           const result = await actor.get_cohort(cohort_id);
@@ -162,9 +172,9 @@ console.log("Cohort ID:", cohort_id);
   } = cohortData.cohort;
 
   const Seats = Number(no_of_seats);
-  const bannerImage = cohort_banner && cohort_banner.length > 0 
-    ? uint8ArrayToBase64(cohort_banner[0]) 
-    : [ ];
+  const bannerImage = cohort_banner && cohort_banner.length > 0
+    ? uint8ArrayToBase64(cohort_banner[0])
+    : [];
 
   const TabButton = ({ name, label }) => (
     <button
@@ -178,66 +188,66 @@ console.log("Cohort ID:", cohort_id);
     </button>
   );
 
-  const TabContent = () => {
-    switch (activeTab) {
-      case 'summary':
-        return (
-          <div>
-            {/* <h2 className="text-2xl font-semibold mb-2">About</h2>
-            <ul className="list-disc pl-5 text-gray-700">
-              <li>
-                A tortor laoreet at magna nibh. Bibendum augue neque
-                malesuada aliquam venenatis.
-              </li>
-              <li>Feugiat nulla pellentesque eu augue dignissim.</li>
-              <li>
-                Diam gravida turpis fermentum ut est. Vulputate platea non
-                ac elit massa.
-              </li>
-            </ul>
-            <div className="mt-6">
-              <h2 className="text-2xl font-semibold mb-2">Topics covered</h2>
-              <p className="text-gray-700">
-                Est quis ornare proin quisque lacinia ac tincidunt massa
-              </p>
-              <p className="text-gray-700 mt-2">
-                Est malesuada ac elit gravida vel aliquam nec. Arcu velit
-                netusque convallis quam feugiat non viverra massa fringilla.
-              </p>
-            </div>
-            <hr className="border-gray-300 mt-4 mb-4" /> */}
-           
-            <div className="mt-4">
-      <h2 className="text-2xl font-semibold mb-2">Description</h2>
-      {/* <div className="text-gray-700">{parse(description)}</div> */}
-      <div className="relative text-gray-700 overflow-hidden max-h-[10rem] hover:max-h-none transition-all duration-300 ease-in-out group">
-  <div 
-    className="overflow-hidden text-ellipsis line-clamp-10"
-  >
-    { parse(description) }
-    
-  </div>
-  <div 
-    className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-white to-transparent pointer-events-none"
-  ></div>
-</div>
-      <h2 className="text-2xl font-semibold mt-2">FAQ</h2>
-      <FAQ />
-    </div>
-          </div>
-        );
-      case 'announcements':
-        return <NoDataFound message="No active announcements found" />;
-      case 'attendees':
-        return <NoDataFound message="No active attendes found" />;
-      case 'reviews':
-        return <NoDataFound message="No active reviews found" />;
-        case 'request':
-          return <EventRequestCard/>;
-      default:
-        return null;
-    }
-  };
+  //   const TabContent = () => {
+  //     switch (activeTab) {
+  //       case 'summary':
+  //         return (
+  //           <div>
+  //             {/* <h2 className="text-2xl font-semibold mb-2">About</h2>
+  //             <ul className="list-disc pl-5 text-gray-700">
+  //               <li>
+  //                 A tortor laoreet at magna nibh. Bibendum augue neque
+  //                 malesuada aliquam venenatis.
+  //               </li>
+  //               <li>Feugiat nulla pellentesque eu augue dignissim.</li>
+  //               <li>
+  //                 Diam gravida turpis fermentum ut est. Vulputate platea non
+  //                 ac elit massa.
+  //               </li>
+  //             </ul>
+  //             <div className="mt-6">
+  //               <h2 className="text-2xl font-semibold mb-2">Topics covered</h2>
+  //               <p className="text-gray-700">
+  //                 Est quis ornare proin quisque lacinia ac tincidunt massa
+  //               </p>
+  //               <p className="text-gray-700 mt-2">
+  //                 Est malesuada ac elit gravida vel aliquam nec. Arcu velit
+  //                 netusque convallis quam feugiat non viverra massa fringilla.
+  //               </p>
+  //             </div>
+  //             <hr className="border-gray-300 mt-4 mb-4" /> */}
+
+  //             <div className="mt-4">
+  //       <h2 className="text-2xl font-semibold mb-2">Description</h2>
+  //       {/* <div className="text-gray-700">{parse(description)}</div> */}
+  //       <div className="relative text-gray-700 overflow-hidden max-h-[10rem] hover:max-h-none transition-all duration-300 ease-in-out group">
+  //   <div 
+  //     className="overflow-hidden text-ellipsis line-clamp-10"
+  //   >
+  //     { parse(description) }
+
+  //   </div>
+  //   <div 
+  //     className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-white to-transparent pointer-events-none"
+  //   ></div>
+  // </div>
+  //       <h2 className="text-2xl font-semibold mt-2">FAQ</h2>
+  //       <FAQ />
+  //     </div>
+  //           </div>
+  //         );
+  //       case 'announcements':
+  //         return <NoDataFound message="No active announcements found" />;
+  //       case 'attendees':
+  //         return <NoDataFound message="No active attendes found" />;
+  //       case 'reviews':
+  //         return <NoDataFound message="No active reviews found" />;
+  //         case 'request':
+  //           return <EventRequestStatus/>;
+  //       default:
+  //         return null;
+  //     }
+  //   };
   //Register Modal
   const registerHandler = async () => {
     setIsSubmitting(true);
@@ -257,16 +267,16 @@ console.log("Cohort ID:", cohort_id);
           await actor
             .apply_for_a_cohort_as_a_project(cohort_id)
             .then((result) => {
-             
+
               setIsSubmitting(false);
               if (
                 result &&
                 result.includes(`Request Has Been Sent To Cohort Creator`)
-               
+
               ) {
                 toast.success(result);
                 // window.location.href = "/";
-              
+
               } else {
                 toast.error(result);
               }
@@ -275,7 +285,7 @@ console.log("Cohort ID:", cohort_id);
           await actor
             .apply_for_a_cohort_as_a_investor(cohort_id)
             .then((result) => {
-              console.log("result in investor",result);
+              console.log("result in investor", result);
 
               setIsSubmitting(false);
               if (result) {
@@ -289,7 +299,7 @@ console.log("Cohort ID:", cohort_id);
           await actor
             .apply_for_a_cohort_as_a_mentor(cohort_id)
             .then((result) => {
-              console.log("result in mentor",result);
+              console.log("result in mentor", result);
 
               setIsSubmitting(false);
               if (result) {
@@ -331,7 +341,9 @@ console.log("Cohort ID:", cohort_id);
   // console.log("current role",userCurrentRoleStatusActiveRole);
 
   return (
+    
     <div className="flex flex-col">
+     
       <div className="flex flex-col gap-10 md:flex-row">
         <div className="w-[30%] bg-white rounded-lg shadow-md pt-4">
           <div className="bg-gray-100 p-4">
@@ -399,25 +411,25 @@ console.log("Cohort ID:", cohort_id);
                           getButtonText(userCurrentRoleStatusActiveRole)
                         )}
             </button> */}
-          <button
-  className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-300 mb-2 text-sm"
-  onClick={registerHandler}
->
-  {isSubmitting ? (
-    <ThreeDots
-      visible={true}
-      height="24"
-      width="24"
-      color="#FFFFFF"
-      radius="9"
-      ariaLabel="three-dots-loading"
-      wrapperStyle={{}}
-      wrapperClassName=""
-    />
-  ) : (
-    getButtonText(userCurrentRoleStatusActiveRole)
-  )}
-</button>
+            <button
+              className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-300 mb-2 text-sm"
+              onClick={registerHandler}
+            >
+              {isSubmitting ? (
+                <ThreeDots
+                  visible={true}
+                  height="24"
+                  width="24"
+                  color="#FFFFFF"
+                  radius="9"
+                  ariaLabel="three-dots-loading"
+                  wrapperStyle={{}}
+                  wrapperClassName=""
+                />
+              ) : (
+                getButtonText(userCurrentRoleStatusActiveRole)
+              )}
+            </button>
 
             <button className="w-full border border-[#CDD5DF] bg-white text-gray-700 py-2 px-4 rounded-md hover:bg-gray-200 transition duration-300 mb-2 text-sm">
               Contact organiser
@@ -497,15 +509,15 @@ console.log("Cohort ID:", cohort_id);
                 <span className="text-[#697586] text-[12px] block mb-1">
                   COUNTRY
                 </span>
-              <div className='flex items-center'>
-                <PlaceOutlinedIcon
-                                                        className="text-gray-500 h-4 w-4 mr-2"
-                                                        fontSize="small"
-                                                    />
-                
-               
+                <div className='flex items-center'>
+                  <PlaceOutlinedIcon
+                    className="text-gray-500 h-4 w-4 mr-2"
+                    fontSize="small"
+                  />
+
+
                   <span className="text-gray-700">{country}</span>
-                  </div>
+                </div>
               </div>
               <div>
                 <span className="text-[#697586] text-[12px] block mb-1">
@@ -525,7 +537,7 @@ console.log("Cohort ID:", cohort_id);
                   FUNDING TYPE
                 </span>
                 <div className="flex items-center">
-                  
+
                   <span className="bg-white font-medium border borer-[#CDD5DF] text-[#364152] px-2 py-1 rounded-full text-sm">{funding_type}</span>
                 </div>
                 {/* <div>
@@ -547,7 +559,7 @@ console.log("Cohort ID:", cohort_id);
                   DEADLINE
                 </span>
                 <div className="flex items-center">
-                <img
+                  <img
                     src={StartDateCalender}
                     alt="deadline"
                     className="w-4 h-4 text-gray-400 mr-2"
@@ -568,17 +580,17 @@ console.log("Cohort ID:", cohort_id);
             />
             <h1 className="text-3xl font-bold mt-4">{title}</h1>
             <div className="flex items-center mt-2 text-gray-600">
-            <span className="mr-2">
+              <span className="mr-2">
                 <img src={StartDateCalender} className="w-5 h-5 font-bold" alt="Price icon" />
               </span>
-              <span className="mr-2">   { timeLeft.days} days</span>
+              <span className="mr-2">   {timeLeft.days} days</span>
               <span className="mr-2">
                 <img src={PriceIcon} className="w-5 h-5 font-bold" alt="Price icon" />
               </span>
               <span>{funding_amount}</span>
             </div>
-            
-            <div className="mt-4">
+
+            {/* <div className="mt-4">
               <div className="border-b border-gray-300 mb-4">
                 <TabButton name="summary" label="Summary" />
                 <TabButton name="announcements" label="Announcements" />
@@ -587,14 +599,45 @@ console.log("Cohort ID:", cohort_id);
                 <TabButton name="request" label="Request" />
               </div>
               <TabContent />
-              {/* <div className="mt-4">
-                <h2 className="text-2xl font-semibold mb-2">Description</h2>
-                <div dangerouslySetInnerHTML={{ __html: description }} className="text-gray-700" />
-              </div> */}
+              
+            </div> */}
+            <Tabs tabs={tabs} currentTab={currentTab} onTabChange={handleTabChange} />
+            <div className=" pr-6">
+
+              {currentTab === 'Summary' &&
+                <>
+                  <div>
+
+
+                    <div className="mt-4">
+                      <h2 className="text-2xl font-semibold mb-2">Description</h2>
+                      {/* <div className="text-gray-700">{parse(description)}</div> */}
+                      <div className="relative text-gray-700 overflow-hidden max-h-[10rem] hover:max-h-none transition-all duration-300 ease-in-out group">
+                        <div
+                          className="overflow-hidden text-ellipsis line-clamp-10"
+                        >
+                          {parse(description)}
+
+                        </div>
+                        <div
+                          className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-white to-transparent pointer-events-none"
+                        ></div>
+                      </div>
+                      <h2 className="text-2xl font-semibold mt-2">FAQ</h2>
+                      <FAQ />
+                    </div>
+                  </div>
+                </>
+              }
+              {currentTab === 'Announcements' && <NoDataFound message="No active announcements found" />}
+              {currentTab === 'Attendees' && <Attendees  cohortData={cohortData}/>}
+              {currentTab === 'Request' && <EventRequestCard />
+              }
+              {currentTab === 'Reviews' && <NoDataFound message="No active reviews found" />}
             </div>
           </div>
         </div>
-      </div><Toaster/>
+      </div><Toaster />
 
     </div>
   );

@@ -1,4 +1,4 @@
-use crate::state_handler::*;
+use crate::{state_handler::*, UserInfoInternal};
 use crate::cohort_module::cohort_types::*;
 use crate::project_module::project_types::*;
 use crate::mentor_module::mentor_types::*;
@@ -158,44 +158,77 @@ pub fn get_no_of_individuals_applied_for_cohort_using_id(cohort_id: String) -> R
 #[query(guard = "is_user_anonymous")]
 pub fn get_projects_applied_for_cohort(
     cohort_id: String,
-) -> Result<Vec<ProjectInfoInternal>, String> {
-    // Retrieve projects applied for the given cohort using read_state
-    let projects_in_cohort: Vec<ProjectInfoInternal> = read_state(|state| {
-        state
-            .project_applied_for_cohort
-            .get(&cohort_id)
-            .map(|candid_projects| candid_projects.0.clone())
-            .unwrap_or_default()
+) -> Result<Vec<(ProjectInfoInternal, UserInfoInternal)>, String> {
+    let projects_in_cohort_with_users: Vec<(ProjectInfoInternal, UserInfoInternal)> = read_state(|state| {
+        let mut results : Vec<(ProjectInfoInternal, UserInfoInternal)> = Vec::new();
+
+        if let Some(candid_projects) = state.project_applied_for_cohort.get(&cohort_id) {
+            for project in &candid_projects.0 {
+                if let Some((principal, _)) = state.project_storage.iter().find(|(_, stored_project)| {
+                    stored_project.0.iter().any(|stored| stored.uid == project.0.uid) 
+                }) {
+                    if let Some(user_info) = state.user_storage.get(&principal) {
+                        results.push((project.0.clone(), user_info.0.clone()));
+                    }
+                }
+            }
+        }
+
+        results
     });
 
-    Ok(projects_in_cohort)
+    Ok(projects_in_cohort_with_users)
 }
 
+
 #[query(guard = "is_user_anonymous")]
-pub fn get_mentors_applied_for_cohort(cohort_id: String) -> Result<Vec<MentorInternal>, String> {
-    let mentors_in_cohort: Vec<MentorInternal> = read_state(|state| {
-        state
-            .mentor_applied_for_cohort
-            .get(&cohort_id)
-            .map_or_else(Vec::new, |candid_mentors| candid_mentors.0.clone())
+pub fn get_mentors_applied_for_cohort(cohort_id: String) -> Result<Vec<(MentorInternal, UserInfoInternal)>, String> {
+    let mentors_in_cohort_with_users: Vec<(MentorInternal, UserInfoInternal)> = read_state(|state| {
+        let mut results : Vec<(MentorInternal, UserInfoInternal)> = Vec::new();
+
+        if let Some(candid_mentors) = state.mentor_applied_for_cohort.get(&cohort_id) {
+            for mentor in &candid_mentors.0 {
+                if let Some((principal, _stored_mentor)) = state.mentor_storage.iter().find(|(_, stored_mentor)| {
+                    stored_mentor.0.uid == mentor.0.uid 
+                }) {
+                    if let Some(user_info) = state.user_storage.get(&principal) {
+                        results.push((mentor.0.clone(), user_info.0.clone()));
+                    }
+                }
+            }
+        }
+
+        results
     });
 
-    Ok(mentors_in_cohort)
+    Ok(mentors_in_cohort_with_users)
 }
 
 #[query(guard = "is_user_anonymous")]
 pub fn get_vcs_applied_for_cohort(
     cohort_id: String,
-) -> Result<Vec<VentureCapitalistInternal>, String> {
-    let vcs_in_cohort: Vec<VentureCapitalistInternal> = read_state(|state| {
-        state
-            .vc_applied_for_cohort
-            .get(&cohort_id)
-            .map_or_else(Vec::new, |candid_mentors| candid_mentors.0.clone())
+) -> Result<Vec<(VentureCapitalistInternal, UserInfoInternal)>, String> {
+    let vcs_in_cohort_with_users: Vec<(VentureCapitalistInternal, UserInfoInternal)> = read_state(|state| {
+        let mut results : Vec<(VentureCapitalistInternal, UserInfoInternal)> = Vec::new();
+
+        if let Some(candid_vcs) = state.vc_applied_for_cohort.get(&cohort_id) {
+            for vc in &candid_vcs.0 {
+                if let Some((principal, _stored_vc)) = state.vc_storage.iter().find(|(_, stored_vc)| {
+                    stored_vc.0.uid == vc.0.uid 
+                }) {
+                    if let Some(user_info) = state.user_storage.get(&principal) {
+                        results.push((vc.0.clone(), user_info.0.clone()));
+                    }
+                }
+            }
+        }
+
+        results
     });
 
-    Ok(vcs_in_cohort)
+    Ok(vcs_in_cohort_with_users)
 }
+
 
 #[query(guard = "is_user_anonymous")]
 pub fn filter_cohorts(criteria: CohortFilterCriteria) -> Vec<CohortDetails> {

@@ -1,4 +1,5 @@
-use crate::state_handler::*;
+use crate::project_module::post_project::find_project_owner_principal;
+use crate::{state_handler::*, UserInformation};
 use candid::{CandidType, Principal};
 use ic_cdk::api::management_canister::main::raw_rand;
 use ic_cdk::{api::time, caller};
@@ -27,6 +28,7 @@ pub struct ProjectInf {
     project_name: String,
     project_description: Option<String>,
     project_logo: Option<Vec<u8>>,
+    user_data: UserInformation
 }
 
 #[derive(Clone, CandidType, Deserialize, Serialize)]
@@ -82,7 +84,7 @@ pub fn notify_investor_with_offer(mentor_id: Principal, offer: OfferToSendToInve
 // }
 
 #[update]
-pub async fn send_offer_to_investor(
+pub async fn send_offer_to_investor_by_project(
     investor_id: Principal,
     msg: String,
     project_id: String,
@@ -111,7 +113,8 @@ pub async fn send_offer_to_investor(
     let uid = format!("{:x}", Sha256::digest(&uids));
     let offer_id = uid.clone().to_string();
 
-    let user_data = crate::user_modules::get_user::get_user_information_internal(investor_id);
+    let mut cached_user_data = None;
+    let user_data = crate::user_modules::get_user::get_user_info_with_cache(investor_id, &mut cached_user_data);
 
     let offer_to_investor = OfferToInvestor {
         offer_id: offer_id.clone(),
@@ -133,11 +136,18 @@ pub async fn send_offer_to_investor(
         .expect("project does not exist")
         .clone();
 
+    let project_principal = find_project_owner_principal(&project_id.clone())
+    .expect("Project principal not found");
+    let mut cached_user_data = None;
+    let user_data_project = crate::user_modules::get_user::get_user_info_with_cache(project_principal, &mut cached_user_data);
+
+
     let project_info = ProjectInf {
         project_id,
         project_name: project_info.params.project_name,
         project_description: project_info.params.project_description,
         project_logo: project_info.params.project_logo,
+        user_data: user_data_project
     };
 
     let offer_to_send_to_investor = OfferToSendToInvestor {
@@ -158,7 +168,7 @@ pub async fn send_offer_to_investor(
 }
 
 #[update]
-pub fn accept_offer_of_project_by_investor(offer_id: String, response_message: String) -> String {
+pub fn accept_offer_from_project_to_investor(offer_id: String, response_message: String) -> String {
     let investor_id = ic_cdk::api::caller();
     let mut already_accepted = false;
 
@@ -225,7 +235,7 @@ pub fn accept_offer_of_project_by_investor(offer_id: String, response_message: S
 
 
 #[update]
-pub fn decline_offer_of_project_by_investor(offer_id: String, response_message: String) -> String {
+pub fn decline_offer_from_project_to_investor(offer_id: String, response_message: String) -> String {
     let investor_id = caller();
 
     mutate_state(|state| {
@@ -260,8 +270,7 @@ pub fn decline_offer_of_project_by_investor(offer_id: String, response_message: 
 
 
 #[query]
-pub fn get_pending_request_for_investor_sent_by_investor() -> Vec<OfferToSendToInvestor> {
-    let investor_id = caller();
+pub fn get_pending_request_for_investor_sent_by_project(investor_id: Principal) -> Vec<OfferToSendToInvestor> {
     read_state(|pending_alerts| {
         pending_alerts
             .investor_alerts
@@ -279,7 +288,7 @@ pub fn get_pending_request_for_investor_sent_by_investor() -> Vec<OfferToSendToI
 
 //for project to see what request are sent to investor
 #[query]
-pub fn get_pending_offers_received_from_investor(project_id: String) -> Vec<OfferToInvestor> {
+pub fn get_pending_offers_for_project_received_from_investor(project_id: String) -> Vec<OfferToInvestor> {
     read_state(|pending_alerts| {
         pending_alerts
             .offers_offered_by_me
@@ -367,7 +376,7 @@ pub fn get_declined_request_of_project_by_investor(project_id: String) -> Vec<Of
 }
 
 #[update]
-pub fn self_decline_request_for_project(offer_id: String, project_id: String) -> String {
+pub fn self_decline_request_from_project_to_investor(offer_id: String, project_id: String) -> String {
     let mut response: String = String::new();
 
     mutate_state(|sent_ones| {

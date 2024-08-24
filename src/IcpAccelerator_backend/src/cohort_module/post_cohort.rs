@@ -2,9 +2,6 @@ use crate::state_handler::*;
 use crate::cohort_module::cohort_types::*;
 use crate::types::individual_types::*;
 use crate::user_modules::get_user::*;
-use crate::vc_module::vc_types::*;
-use crate::mentor_module::mentor_types::*;
-use crate::project_module::project_types::*;
 use crate::guard::*;
 use ic_cdk_macros::*;
 use ic_cdk::api::call::call;
@@ -27,7 +24,7 @@ pub async fn create_cohort(mut params: Cohort) -> Result<String, String> {
     });
 
     if !is_mentor_or_investor {
-        return Err("You are not privileged to create a cohort.".to_string());
+        return Err("You are not privileged to create a cohort ,Please Register as Mentor ...".to_string());
     }
 
     let u_ids = raw_rand().await.unwrap().0;
@@ -45,9 +42,9 @@ pub async fn create_cohort(mut params: Cohort) -> Result<String, String> {
         let full_url = canister_id.to_string() + "/uploads/default_cohort_logo.jpeg";
         params.cohort_banner = Some((full_url).as_bytes().to_vec());
     } else if params.cohort_banner.clone().unwrap().len() < 300 {
-        ic_cdk::println!("Project logo is already uploaded");
+        ic_cdk::println!("Cohort Banner is already uploaded");
     } else {
-        let cohort_logo_key = "/uploads/".to_owned() + &caller_principal.to_string() + "_project_logo.jpeg";
+        let cohort_logo_key = "/uploads/".to_owned() + &cohort_id.to_string() + "_cohort_logo.jpeg";
 
         let cohort_logo_arg = StoreArg {
             key: cohort_logo_key.clone(),
@@ -73,30 +70,9 @@ pub async fn create_cohort(mut params: Cohort) -> Result<String, String> {
                 .to_vec(),
         );
     }
+
+    let user_data = crate::user_modules::get_user::get_user_information_internal(caller_principal);
     
-    let vcs_in_cohort: Vec<VentureCapitalistInternal> = read_state(|state| {
-        state
-            .vc_applied_for_cohort
-            .get(&cohort_id)
-            .map_or_else(Vec::new, |candid_mentors| candid_mentors.0.clone())
-    });
-
-    let mentors_in_cohort: Vec<MentorInternal> = read_state(|state| {
-        state
-            .mentor_applied_for_cohort
-            .get(&cohort_id)
-            .map_or_else(Vec::new, |candid_mentors| candid_mentors.0.clone())
-    });
-
-    let projects_in_cohort: Vec<ProjectInfoInternal> = read_state(|state| {
-        state
-            .project_applied_for_cohort
-            .get(&cohort_id)
-            .map(|candid_projects| candid_projects.0.clone())
-            .unwrap_or_default()
-    });
-
-
     let cohort_details = CohortDetails {
         cohort_id: cohort_id.clone(),
         cohort: params,
@@ -104,9 +80,7 @@ pub async fn create_cohort(mut params: Cohort) -> Result<String, String> {
         cohort_creator: caller_principal,
         cohort_creator_role: roles_assigned,
         cohort_creator_principal: caller_principal,
-        projects_applied: Some(projects_in_cohort),
-        mentors_applied: Some(mentors_in_cohort),
-        vcs_applied: Some(vcs_in_cohort)
+        cohort_creator_data: user_data
     };
 
     mutate_state(|state| {

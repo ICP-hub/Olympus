@@ -441,3 +441,19 @@ pub fn get_frequent_reviewers() -> Vec<UserInfoInternal> {
 
     frequent_reviewers
 }
+
+
+#[query(guard = "is_user_anonymous")]
+pub fn filter_projects_by_live_status(is_live: bool) -> Vec<ProjectInfo> {
+    read_state(|projects| {
+        projects
+            .project_storage
+            .iter()
+            .flat_map(|(_, project_list)| project_list.0.clone().into_iter())
+            .filter(|project_internal| {
+                project_internal.params.live_on_icp_mainnet == Some(is_live)
+            })
+            .map(|project_internal| project_internal.params.clone())
+            .collect()
+    })
+}

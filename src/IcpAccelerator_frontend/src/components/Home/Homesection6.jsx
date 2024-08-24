@@ -1,7 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import RemoveCircleOutlineOutlinedIcon from "@mui/icons-material/RemoveCircleOutlineOutlined";
 import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
-import {homepagedata} from "../../../src/components/jsondata/data/homepageData";
+import { homepagedata } from "../Utils/jsondata/data/homepageData";
+
+
 
 
 const AccordionItem = ({ title, content, isOpen, onClick }) => {

@@ -18,9 +18,9 @@ const EventCard = () => {
   const itemsPerPage = 10;
   const [cohortids, setCohortIds] = useState([]);
 
-console.log("cohort Id...........", allLiveEventsData)
+  console.log("cohort Id...........", allLiveEventsData)
 
-const cohortId=allLiveEventsData[0]?.cohort_id
+  const cohortId = allLiveEventsData[0]?.cohort_id
 
   useEffect(() => {
     let isMounted = true;
@@ -72,19 +72,19 @@ const cohortId=allLiveEventsData[0]?.cohort_id
 
   useEffect(() => {
     if (allLiveEventsData && allLiveEventsData.length > 0) {
-        const cohortIdsArray = allLiveEventsData.map(eventData => eventData.cohort_id);
-        setCohortIds(cohortIdsArray);
+      const cohortIdsArray = allLiveEventsData.map(eventData => eventData.cohort_id);
+      setCohortIds(cohortIdsArray);
     }
-}, [allLiveEventsData]);
+  }, [allLiveEventsData]);
 
-
+console.log("allliveevents",allLiveEventsData);
   const navigate = useNavigate();
 
-    const handleClick = (cohort_id) => {
-        navigate('/dashboard/single-event', { state: { cohort_id } });
-    };
-    //registerHandler
-   
+  const handleClick = (cohort_id) => {
+    navigate('/dashboard/single-event', { state: { cohort_id } });
+  };
+  //registerHandler
+
   return (
     <div>
       {isLoading ? (
@@ -92,12 +92,12 @@ const cohortId=allLiveEventsData[0]?.cohort_id
       ) : allLiveEventsData.length > 0 ? (
         <div>
           {allLiveEventsData.map((data, index) => {
-            console.log("banner before" ,data.cohort.cohort_banner[0])
+            console.log("banner before", data.cohort.cohort_banner[0])
             const image = data?.cohort?.cohort_banner[0]
               ? uint8ArrayToBase64(data?.cohort?.cohort_banner[0])
               : [];
             const name = data?.cohort?.title ?? "No Title...";
-            console.log("banner after" ,image)
+            console.log("banner after", image)
 
             // const launch_date = data?.cohort?.cohort_launch_date
             //   ? new Date(data?.cohort?.cohort_launch_date).toLocaleDateString()
@@ -127,8 +127,10 @@ const cohortId=allLiveEventsData[0]?.cohort_id
             const start_date = data?.cohort?.start_date ?? "";
             const funding = data?.cohort?.funding_amount ?? "";
             const country = data?.cohort?.country ?? "";
- 
+
             console.log("cohort Id...........///////////", cohortids);
+            console.log("country",country);
+            console.log("funding",funding);
 
             return (
               <div key={index} className="bg-white rounded-lg shadow p-4 mb-6" onClick={() => handleClick(data.cohort_id)} >
@@ -140,23 +142,23 @@ const cohortId=allLiveEventsData[0]?.cohort_id
                       </p>
                       <p className="text-sm font-normal">Start at: {start_date}</p>
                     </div>
-                    {/* <div className="w-[240px] h-[172px]"> */}
-                    <img
-                      src={image}
-                      alt={name}
-                      className="w-[240px] h-[172px] rounded-lg mr-4 object-cover object-center"
-                     
-                    />
-                    {/* </div> */}
-                    <div className='w-3/4'>
+                    <div className="w-[240px] h-[172px]">
+                      <img
+                        src={image}
+                        alt={name}
+                        className="w-[240px] h-[172px] rounded-lg mr-4 object-cover object-center"
+
+                      />
+                    </div>
+                    <div className='w-2/3'>
                       <div>
                         <p className="bg-white font-medium border-2 borer-[#CDD5DF] text-[#364152] w-[86px] px-2 py-1 rounded-full text-sm">
                           Workshop
                         </p>
-                        <h3 className="text-lg font-semibold">{name}</h3>
-                        <p className="text-sm text-gray-500 mb-4 overflow-hidden text-ellipsis max-h-12 line-clamp-2 ">{parse(desc)}</p>
+                        <h3 className="text-lg font-bold mt-2">{name}</h3>
+                        <p className="text-sm text-gray-500 mb-4 overflow-hidden text-ellipsis max-h-12 line-clamp-2 mt-2">{parse(desc)}</p>
                       </div>
-                      <div className="flex gap-3 items-center mt-4">
+                      <div className="flex gap-3 items-center -bottom-4 relative">
                         <span className="text-sm text-[#121926]">
                           <PlaceOutlinedIcon
                             className="text-[#364152]"

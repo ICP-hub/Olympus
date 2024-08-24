@@ -4,7 +4,7 @@ use ic_cdk::{api::time, caller};
 use ic_cdk::{query, update};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
-use crate::state_handler::*;
+use crate::{state_handler::*, UserInformation};
 #[derive(Clone, CandidType, Deserialize, Serialize)]
 pub struct OfferToProject {
     offer_id: String, // Added field
@@ -26,6 +26,7 @@ pub struct MentorInfo {
     mentor_name: String,
     mentor_description: String,
     mentor_image: Vec<u8>,
+    user_data: UserInformation,
 }
 
 #[derive(Clone, CandidType, Deserialize, Serialize)]
@@ -87,7 +88,7 @@ pub fn get_all_project_notification(id: String) -> Vec<OfferToSendToProject> {
 }
 
 #[update]
-pub async fn send_offer_to_project(
+pub async fn send_offer_to_project_by_mentor(
     project_id: String,
     msg: String,
     mentor_id: Principal,
@@ -132,14 +133,20 @@ pub async fn send_offer_to_project(
     store_request_sent_by_mentor(offer_to_project);
 
     //let project_info = find_project_by_id(&project_id).expect("project does not exist");
+    let mut cached_user_data = None;
+    let user_data = crate::user_modules::get_user::get_user_info_with_cache(mentor_id, &mut cached_user_data);
 
-    let user_data = crate::user_modules::get_user::get_user_information_internal(mentor_id);
+    let mentor_image = user_data
+        .profile_picture
+        .clone()
+        .unwrap_or_else(|| Vec::new());
 
     let mentor_info = MentorInfo {
         mentor_id: mentor_id,
-        mentor_name: user_data.full_name,
+        mentor_name: user_data.full_name.clone(),
         mentor_description: mentor.0.profile.area_of_expertise,
-        mentor_image: user_data.profile_picture.unwrap_or_else(Vec::new),
+        mentor_image,
+        user_data,
     };
 
     let offer_to_send_to_project = OfferToSendToProject {
@@ -224,7 +231,7 @@ pub async fn send_offer_to_project(
 // }
 
 #[update]
-pub fn accept_offer_of_mentor(offer_id: String, response_message: String, project_id: String) -> String {
+pub fn accept_offer_from_mentor_to_project(offer_id: String, response_message: String, project_id: String) -> String {
     let caller_principal = ic_cdk::api::caller();
     ic_cdk::println!("Caller Principal: {:?}", caller_principal);
 
@@ -305,7 +312,7 @@ pub fn accept_offer_of_mentor(offer_id: String, response_message: String, projec
 
 
 #[update]
-pub fn decline_offer_of_mentor(
+pub fn decline_offer_from_mentor_to_project(
     offer_id: String,
     response_message: String,
     project_id: String,
@@ -460,7 +467,7 @@ pub fn get_all_requests_which_got_declined_for_mentor_via_mentor() -> Vec<OfferT
 //for project
 
 #[update]
-pub fn self_decline_request_for_mentor_via_mentor(offer_id: String) -> String {
+pub fn self_decline_request_from_mentor_project(offer_id: String) -> String {
     let mut response = String::new();
 
     mutate_state(|sent_ones| {

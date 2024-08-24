@@ -6,7 +6,7 @@ import CompressedImage from "../../../component/ImageCompressed/CompressedImage"
 
 import { useCountries } from "react-countries";
 
-const ProjectRegister2 = ({ formData }) => {
+const ProjectRegister2 = ({ formData,setFormData, coverData,setCoverData}) => {
     // INITIALIZING REACT HOOK FORM FUNCTIONS AND VARIABLES
     const {
         register,
@@ -28,7 +28,6 @@ const ProjectRegister2 = ({ formData }) => {
 
     // STATES FOR MANAGING COVER IMAGE PREVIEW AND DATA
     const [coverPreview, setCoverPreview] = useState(null);
-    const [coverData, setCoverData] = useState(null);
 
     // USEEFFECT TO SET FORM FIELDS WITH PREVIOUSLY SAVED FORM DATA ON COMPONENT MOUNT
     useEffect(() => {

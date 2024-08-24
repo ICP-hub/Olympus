@@ -1,15 +1,15 @@
 import { AccountCircle, Star, Menu , Close, Group,SearchOutlined, InfoOutlined, StarBorderOutlined} from '@mui/icons-material';
 import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
-import nodata from "../../../../assets/images/nodata.png"
-import ProfileImage from "../../../../assets/Logo/ProfileImage.png";
+import nodata from "../../../../../assets/images/nodata.png"
+import ProfileImage from "../../../../../assets/Logo/ProfileImage.png";
 import VerifiedIcon from "@mui/icons-material/Verified";
-import df_small_logo from "../../../../assets/Logo/NavbarSmallLogo.png";
-import Bellicon from "../../../../assets/Logo/Bellicon.png";
-import olympuslogo from "../../../../assets/Logo/topLogo.png";
-import df_bigLogo from "../../../../assets/Logo/bigLogo.png";
-import { afterCopySvg } from "../../../component/Utils/Data/SvgData";
-import { beforeCopySvg } from "../../../component/Utils/Data/SvgData";
+import df_small_logo from "../../../../../assets/Logo/NavbarSmallLogo.png";
+import Bellicon from "../../../../../assets/Logo/Bellicon.png";
+import olympuslogo from "../../../../../assets/Logo/topLogo.png";
+import df_bigLogo from "../../../../../assets/Logo/bigLogo.png";
+import { afterCopySvg } from "../../../../component/Utils/Data/SvgData";
+import { beforeCopySvg } from "../../../../component/Utils/Data/SvgData";
 import {
   briefcaseSvgIcon,
   calenderSvgIcon,
@@ -18,7 +18,7 @@ import {
   staroutlineSvgIcon,
   userCircleSvgIcon,
   userSvgIcon,
-} from "../../Utils/Data/SvgData";
+} from "../../../Utils/Data/SvgData";
 
 export const dashboard={
     "dashboardHomeProfileCards":{
@@ -164,6 +164,26 @@ export const dashboard={
         {
           "label1": "Cyperhunk Labs",
           "label2": "Create new Project",
+          "icon": "gridSvgIcon",
+         
+        },
+    },
+    "mentors": {
+      "label": "MENTOR",
+      "items": 
+        {
+          "label1": "Cyperhunk Labs",
+          "label2": "Create new Mentor",
+          "icon": "gridSvgIcon",
+         
+        },
+    },
+    "investors": {
+      "label": "INVESTOR",
+      "items": 
+        {
+          "label1": "Cyperhunk Labs",
+          "label2": "Create new Investor",
           "icon": "gridSvgIcon",
          
         },

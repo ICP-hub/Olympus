@@ -4,7 +4,7 @@ import CompanyMenu from '../../Modals/CompanyMenu';
 import MobileMenuDrawer from './MobileMenuDrawer';
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
-import {homepagedata} from "../../jsondata/data/homepageData";
+import {homepagedata} from "../../Utils/jsondata/data/homepageData";
 
 
 const Navbar = ({ setModalOpen }) => {

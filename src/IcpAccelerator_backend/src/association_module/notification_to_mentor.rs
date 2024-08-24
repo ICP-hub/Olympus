@@ -1,4 +1,5 @@
-use crate::state_handler::*;
+use crate::project_module::post_project::find_project_owner_principal;
+use crate::{state_handler::*, UserInformation};
 use candid::{CandidType, Principal};
 use ic_cdk::api::management_canister::main::raw_rand;
 use ic_cdk::{api::time, caller};
@@ -27,6 +28,7 @@ pub struct ProjectInfoo {
     project_name: String,
     project_description: Option<String>,
     project_logo: Option<Vec<u8>>,
+    user_data: UserInformation
 }
 
 #[derive(Clone, CandidType, Deserialize, Serialize)]
@@ -87,7 +89,7 @@ pub fn get_all_mentor_notification(id: Principal) -> Vec<OfferToSendToMentor> {
 }
 
 #[update]
-pub async fn send_offer_to_mentor(mentor_id: Principal, msg: String, project_id: String) -> String {
+pub async fn send_offer_to_mentor_from_project(mentor_id: Principal, msg: String, project_id: String) -> String {
     //let _mentor = get_mentor_using_principal(mentor_id).expect("mentor doesn't exist");
 
     let mut offer_exists = false;  // Flag to check if an offer exists
@@ -108,7 +110,9 @@ pub async fn send_offer_to_mentor(mentor_id: Principal, msg: String, project_id:
     let uid = format!("{:x}", Sha256::digest(&uids));
     let offer_id = uid.clone().to_string();
 
-    let user_data = crate::user_modules::get_user::get_user_information_internal(mentor_id);
+    let mut cached_user_data = None;
+
+    let user_data = crate::user_modules::get_user::get_user_info_with_cache(mentor_id, &mut cached_user_data);
 
     let offer_to_mentor = OfferToMentor {
         offer_id: offer_id.clone(),
@@ -128,11 +132,18 @@ pub async fn send_offer_to_mentor(mentor_id: Principal, msg: String, project_id:
 
     let project_info = crate::project_module::get_project::get_project_using_id(project_id.clone()).expect("project does not exist");
 
+    let project_principal = find_project_owner_principal(&project_id.clone())
+    .expect("Project principal not found");
+
+    let mut cached_user_data = None;
+    let user_data_project = crate::user_modules::get_user::get_user_info_with_cache(project_principal, &mut cached_user_data);
+
     let project_info = ProjectInfoo {
-        project_id: project_id,
+        project_id,
         project_name: project_info.params.project_name,
         project_description: project_info.params.project_description,
         project_logo: project_info.params.project_logo,
+        user_data: user_data_project
     };
 
     let offer_to_send_to_mentor = OfferToSendToMentor {
@@ -212,7 +223,7 @@ pub async fn send_offer_to_mentor(mentor_id: Principal, msg: String, project_id:
 // }
 
 #[update]
-pub fn accept_offer_of_project(offer_id: String, response_message: String) -> String {
+pub fn accept_offer_from_project_to_mentor(offer_id: String, response_message: String) -> String {
     let mentor_id = ic_cdk::api::caller();
 
     let mut already_accepted = false;
@@ -261,6 +272,7 @@ pub fn accept_offer_of_project(offer_id: String, response_message: String) -> St
                                 if !mentors_assigned.contains(&mentor_profile.0.profile) {
                                     mentors_assigned.push(mentor_profile.0.profile.clone());
                                 }
+                                ic_cdk::println!("Menrtor Assigned now is {:?}", mentors_assigned);
                             }
 
                             // Associated projects update
@@ -299,7 +311,7 @@ pub fn accept_offer_of_project(offer_id: String, response_message: String) -> St
 
 
 #[update]
-pub fn decline_offer_of_project(offer_id: String, response_message: String) -> String {
+pub fn decline_offer_from_project_to_mentor(offer_id: String, response_message: String) -> String {
     let mentor_id = caller();
 
     mutate_state(|state| {
@@ -442,7 +454,7 @@ pub fn get_declined_request_from_project_to_mentor_via_project() -> Vec<OfferToM
 //for project
 
 #[update]
-pub fn self_decline_request(offer_id: String) -> String {
+pub fn self_decline_request_from_project_to_mentor(offer_id: String) -> String {
     let mut response: String = String::new();
 
     mutate_state(|sent_ones| {

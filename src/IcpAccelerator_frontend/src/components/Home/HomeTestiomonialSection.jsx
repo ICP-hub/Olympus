@@ -5,7 +5,8 @@ import { Navigation, Pagination, Scrollbar, A11y, Autoplay } from 'swiper/module
 import "swiper/css";
 import "swiper/css/pagination";
 import { useState } from 'react';
-import {homepagedata} from "../../../src/components/jsondata/data/homepageData";
+import { homepagedata } from "../Utils/jsondata/data/homepageData";
+
 
 
 const ArrowButton = ({ direction, onClick, visible }) => {

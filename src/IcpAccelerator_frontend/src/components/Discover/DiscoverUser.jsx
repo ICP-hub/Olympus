@@ -6,6 +6,7 @@ import { FavoriteBorder, LocationOn, Star } from "@mui/icons-material";
 import CypherpunkLabLogo from "../../../assets/Logo/CypherpunkLabLogo.png";
 import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
 import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
+import DiscoverUserModal from "../Dashboard/DashboardHomePage/discoverMentorPage/DiscoverUserModal";
 const DiscoverUser = () => {
   const actor = useSelector((currState) => currState.actors.actor);
   const [allUserData, setAllUserData] = useState([]);
@@ -82,6 +83,7 @@ const DiscoverUser = () => {
     const shuffledTags = skills.sort(() => 0.5 - Math.random());
     return shuffledTags.slice(0, 2);
   };
+  const [openDetail,setOpenDetail]=useState(false)
 
   return (
     <div>
@@ -108,7 +110,7 @@ const DiscoverUser = () => {
               <>
                 {/* Render more fields as needed */}
                 <div className=" p-6 w-[750px] rounded-lg shadow-sm mb-4 flex" key={index}>
-                  <div className="w-[272px]  ">
+                  <div onClick={()=>setOpenDetail(true)} className="w-[272px]  ">
                     <div className="max-w-[250px] w-[250px] h-[254px] bg-gray-100 rounded-lg flex flex-col justify-between  relative overflow-hidden">
                       <div className="absolute inset-0 flex items-center justify-center">
                         <img
@@ -126,6 +128,7 @@ const DiscoverUser = () => {
                       </div>
                     </div>
                   </div>
+                  {openDetail && <DiscoverUserModal openDetail={openDetail} setOpenDetail={setOpenDetail} userData={allUserData} />}
 
                   <div className="flex-grow ml-[25px] w-[544px]">
                     <div className="flex justify-between items-start mb-2">

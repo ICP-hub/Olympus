@@ -105,11 +105,18 @@ const MentorSignupMain = ({ }) => {
       try {
         await actor.register_mentor(mentorData).then((result) => {
           console.log('result', result) // LOG BACKEND RESPONSE
-          if (result) {
-            toast.success("Created successfully"); // SHOW SUCCESS TOAST
-            // window.location.href = "/";
+          if (
+            result.startsWith("You are not allowed to get this role because you already have the Project role.") ||
+            result.startsWith("You are not eligible for this role because you have 2 or more roles") ||
+            result.startsWith("You had got your request declined earlier")||
+            result.startsWith("You are a Mentor Already") ||
+            result.startsWith("Profile image is already uploaded")
+          ) {
+            toast.error(result); // Show error toast with the returned message
+            setModalOpen(false);
           } else {
-            toast.error(result); // SHOW ERROR TOAST
+            toast.success("Mentor registered successfully!"); // Show success message
+            setModalOpen(false)
           }
         });
       } catch (error) {
