@@ -6,7 +6,7 @@ import LeonProfileImage from "../../../../assets/Logo/LeonProfileImage.png";
 import BlancheProfileImage from "../../../../assets/Logo/BlancheProfileImage.png";
 import CypherpunkLabLogo from "../../../../assets/Logo/CypherpunkLabLogo.png";
 import { FaFilter } from "react-icons/fa";
-import AssociationRequestFilter from './AssociationRequestFilter';
+import ProjectAssociationFilter from './ProjectAssociationFilter';
 
 const users = [
   {
@@ -174,7 +174,7 @@ const AssociationRequestCard = () => {
       ))}
 
       {filterOpen && (
-        <AssociationRequestFilter open={filterOpen} close={toggleFilter} />
+        <ProjectAssociationFilter open={filterOpen} close={toggleFilter} />
       )}
     </div>
   );
