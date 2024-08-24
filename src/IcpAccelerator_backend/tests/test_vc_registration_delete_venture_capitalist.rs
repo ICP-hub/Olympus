@@ -1,6 +1,6 @@
 use candid::{decode_one, encode_one, Principal};
 use pocket_ic::{PocketIc, WasmResult};
-use IcpAccelerator_backend::vc_registration::VentureCapitalist;
+use IcpAccelerator_backend::{user_modules::user_types::{UserInfoInternal, UserInformation}, vc_module::vc_types::*};
 use std::fs;
 
 // Define the path to your compiled Wasm file
@@ -23,6 +23,28 @@ fn test_delete_venture_capitalist() {
 
     // Define a test principal
     let test_principal = Principal::anonymous(); // Replace with a specific principal if needed
+
+    // Define the UserInformation with some fields set to None
+    let user_info = UserInformation {
+        full_name: "Test User".to_string(),
+        profile_picture: None, // No initial picture provided
+        email: None, // Email not provided
+        country: "United States".to_string(),
+        social_links: None, // No social links provided
+        bio: Some("An enthusiastic tech investor focused on blockchain technologies.".to_string()),
+        area_of_interest: "Blockchain".to_string(),
+        openchat_username: None, // OpenChat username not provided
+        type_of_profile: Some("investor".to_string()),
+        reason_to_join: None,
+    };
+
+    // Simulate registering the user
+    pic.update_call(
+        backend_canister,
+        test_principal,
+        "register_user",
+        encode_one(user_info).unwrap(),
+    ).expect("User registration failed");
 
     // Define the expected VentureCapitalist parameters
     let vc_info = VentureCapitalist {
@@ -84,7 +106,7 @@ fn test_delete_venture_capitalist() {
         panic!("Expected reply");
     };
 
-    let updated_vc_info: Option<VentureCapitalist> = decode_one(&vc_info_response).unwrap();
+    let updated_vc_info: Option<(VentureCapitalist, UserInfoInternal)> = decode_one(&vc_info_response).unwrap();
 
     // Ensure the VC is now inactive
     assert!(updated_vc_info.is_none(), "VC account should be deactivated and inaccessible.");

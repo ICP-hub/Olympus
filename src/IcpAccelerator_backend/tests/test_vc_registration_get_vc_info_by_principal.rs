@@ -1,11 +1,11 @@
 
 use candid::{decode_one, encode_one, Principal};
 use pocket_ic::{PocketIc, WasmResult};
-use IcpAccelerator_backend::user_module::UserInformation;
 use std::fs;
 use std::collections::HashMap;
 
-use IcpAccelerator_backend::vc_registration::*;
+use IcpAccelerator_backend::user_modules::user_types::*;
+use IcpAccelerator_backend::vc_module::vc_types::*;
 
 // Define the path to your compiled Wasm file
 const BACKEND_WASM: &str = "/home/harman/accelerator/ICPAccelerator/target/wasm32-unknown-unknown/release/IcpAccelerator_backend.wasm";

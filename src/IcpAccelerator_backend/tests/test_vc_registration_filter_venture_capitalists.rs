@@ -3,7 +3,7 @@ use pocket_ic::{PocketIc, WasmResult};
 use std::fs;
 
 
-use IcpAccelerator_backend::vc_registration::*;
+use IcpAccelerator_backend::{user_modules::user_types::UserInformation, vc_module::vc_types::*};
 
 // Define the path to your compiled Wasm file
 const BACKEND_WASM: &str = "/home/harman/accelerator/ICPAccelerator/target/wasm32-unknown-unknown/release/IcpAccelerator_backend.wasm";
@@ -24,7 +24,53 @@ fn test_filter_venture_capitalists() {
     let (pic, backend_canister) = setup();
 
     // Define a test principal
-    let test_principal = Principal::anonymous(); // Replace with a specific principal if needed
+    let test_principal1 = Principal::anonymous(); // Replace with a specific principal if needed
+    let test_principal2 = Principal::from_text("jwyik-wtp73-7aqic-gggmg-rb3mh-6vsg4-wzfw6-awdvm-sq4nc-o3lmr-cqe")
+    .expect("Failed to parse principal");
+
+    // Define the UserInformation with some fields set to None
+    let user_info1 = UserInformation {
+        full_name: "Test User".to_string(),
+        profile_picture: None, // No initial picture provided
+        email: None, // Email not provided
+        country: "United States".to_string(),
+        social_links: None, // No social links provided
+        bio: Some("An enthusiastic tech investor focused on blockchain technologies.".to_string()),
+        area_of_interest: "Blockchain".to_string(),
+        openchat_username: None, // OpenChat username not provided
+        type_of_profile: Some("investor".to_string()),
+        reason_to_join: None,
+    };
+
+    // Simulate registering the user
+    pic.update_call(
+        backend_canister,
+        test_principal1,
+        "register_user",
+        encode_one(user_info1).unwrap(),
+    ).expect("User registration failed");
+
+    // Define the UserInformation with some fields set to None
+    let user_info2 = UserInformation {
+        full_name: "Test User".to_string(),
+        profile_picture: None, // No initial picture provided
+        email: None, // Email not provided
+        country: "United States".to_string(),
+        social_links: None, // No social links provided
+        bio: Some("An enthusiastic tech investor focused on blockchain technologies.".to_string()),
+        area_of_interest: "Blockchain".to_string(),
+        openchat_username: None, // OpenChat username not provided
+        type_of_profile: Some("investor".to_string()),
+        reason_to_join: None,
+    };
+
+    // Simulate registering the user
+    pic.update_call(
+        backend_canister,
+        test_principal2,
+        "register_user",
+        encode_one(user_info2).unwrap(),
+    ).expect("User registration failed");
 
     // Simulate the registration of a VC to ensure the profile exists
     let vc_info_1 = VentureCapitalist {
@@ -66,7 +112,7 @@ fn test_filter_venture_capitalists() {
         existing_icp_portfolio: Some("Health Projects".to_string()),
         type_of_investment: "Equity".to_string(),
         project_on_multichain: Some("Ethereum".to_string()),
-        category_of_investment: "Healthcare".to_string(),
+        category_of_investment: "Technology".to_string(),
         reason_for_joining: Some("Healthcare advancements".to_string()),
         preferred_icp_hub: "ICP Hub".to_string(),
         investor_type: Some("Venture Capital".to_string()),
@@ -84,14 +130,14 @@ fn test_filter_venture_capitalists() {
     // Register both VCs
     pic.update_call(
         backend_canister,
-        test_principal,
+        test_principal1,
         "register_venture_capitalist",
         encode_one(vc_info_1).unwrap(),
     ).expect("Expected reply");
 
     pic.update_call(
         backend_canister,
-        test_principal,
+        test_principal2,
         "register_venture_capitalist",
         encode_one(vc_info_2).unwrap(),
     ).expect("Expected reply");
@@ -106,7 +152,7 @@ fn test_filter_venture_capitalists() {
     // Call the filter_venture_capitalists function
     let Ok(WasmResult::Reply(filtered_response)) = pic.query_call(
         backend_canister,
-        test_principal,
+        test_principal1,
         "filter_venture_capitalists",
         encode_one(criteria).unwrap(),
     ) else {
@@ -115,6 +161,7 @@ fn test_filter_venture_capitalists() {
 
     // Decode the response and verify the filtering was successful
     let filtered_vcs: Vec<VentureCapitalist> = decode_one(&filtered_response).unwrap();
+    ic_cdk::println!("FILTERED VC {:?}",filtered_vcs);
 
     // There should only be one result that matches the criteria
     assert_eq!(filtered_vcs.len(), 1, "Should only match one VC");

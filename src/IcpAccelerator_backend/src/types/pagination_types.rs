@@ -27,7 +27,7 @@ pub struct PaginationReturnProjectData {
     pub count: u64,
 }
 
-#[derive(CandidType, Clone)]
+#[derive(CandidType, Clone,Deserialize)]
 pub struct PaginationReturnVcData {
     pub data: HashMap<Principal, VcWithRoles>,
     pub user_data: HashMap<Principal, UserInformation>,

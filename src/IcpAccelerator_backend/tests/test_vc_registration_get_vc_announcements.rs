@@ -1,9 +1,10 @@
 use candid::{decode_one, encode_one, Principal};
 use pocket_ic::{PocketIc, WasmResult};
+use IcpAccelerator_backend::announcements::ann_types::Announcements;
 use std::fs;
 use std::collections::HashMap;
 
-use IcpAccelerator_backend::vc_registration::*;
+
 
 
 // Define the path to your compiled Wasm file

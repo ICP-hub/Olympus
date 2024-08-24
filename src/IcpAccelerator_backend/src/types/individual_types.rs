@@ -46,7 +46,7 @@ pub struct MentorWithRoles {
     pub mentor_profile: MentorInternal,
     pub roles: Vec<Role>,
 }
-#[derive(Debug, Serialize, Deserialize, Clone, CandidType)]
+#[derive(Debug, Serialize, Deserialize, Clone, CandidType,PartialEq)]
 pub struct VcWithRoles {
     pub vc_profile: VentureCapitalistInternal,
     pub roles: Vec<Role>,
