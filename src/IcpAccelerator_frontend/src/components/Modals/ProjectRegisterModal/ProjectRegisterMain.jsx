@@ -75,7 +75,7 @@ const ProjectRegisterMain = ({ isopen }) => {
       "target_amount",
     ],
     4: ["promotional_video", "token_economics", "links"],
-    5: ["project_description"],
+    5: ["reason_to_join_incubator","project_area_of_focus", "project_description"],
   };
 
   // HANDLE FORM VALIDATION ERROR
@@ -197,13 +197,8 @@ const ProjectRegisterMain = ({ isopen }) => {
         upload_private_documents: [
           data?.upload_private_documents === "true" ? true : false,
         ],
-  
-        project_area_of_focus: "",
-        reason_to_join_incubator:
-          data?.reasons_to_join_platform &&
-          data?.reasons_to_join_platform.length > 0
-            ? data?.reasons_to_join_platform.join(", ")
-            : "",
+        project_area_of_focus: data?.project_area_of_focus,
+        reason_to_join_incubator: data?.reason_to_join_incubator ?? "",
         vc_assigned: [],
         mentors_assigned: [],
         project_team: [],

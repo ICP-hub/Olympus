@@ -143,7 +143,7 @@ const InvestorForm = ({ isOpen }) => {
         registered_under_any_hub: [false],
         logo: [[]],
         money_invested: [0],
-        existing_icp_portfolio: [""],
+         existing_icp_portfolio: [""],
         reason_for_joining: [""],
         type_of_investment: "",
         number_of_portfolio_companies: 0,
@@ -154,10 +154,14 @@ const InvestorForm = ({ isOpen }) => {
         await actor.register_venture_capitalist(investorData).then((result) => {
           console.log("result", result);
           if (
-            result.startsWith("You are not allowed to get this role because you already have the Project role.") ||
-            result.startsWith("You are not eligible for this role because you have 2 or more roles") ||
-            result.startsWith("You had got your request declined earlier")||
-            result.startsWith("This Principal is already registered")||
+            result.startsWith(
+              "You are not allowed to get this role because you already have the Project role."
+            ) ||
+            result.startsWith(
+              "You are not eligible for this role because you have 2 or more roles"
+            ) ||
+            result.startsWith("You had got your request declined earlier") ||
+            result.startsWith("This Principal is already registered") ||
             result.startsWith("Profile image is already uploaded")
           ) {
             toast.error(result); // SHOW ERROR TOAST WITH RETURNED MESSAGE
@@ -168,8 +172,9 @@ const InvestorForm = ({ isOpen }) => {
           }
         });
       } catch (error) {
-        toast.error(error);
-        console.error("Error sending data to the backend:", error); // LOG AND DISPLAY ERROR MESSAGE
+        const errorMessage = error.message || "An unknown error occurred";
+        toast.error(errorMessage);
+        console.error("Error sending data to the backend:", error);
       }
     } else {
       toast.error("Please signup with internet identity first"); // PROMPT USER TO SIGN UP WITH INTERNET IDENTITY
@@ -190,120 +195,125 @@ const InvestorForm = ({ isOpen }) => {
 
   return (
     <>
-    <div
-      className={`fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 ${
-        modalOpen ? "block" : "hidden"
-      }`}
-    >
-      <div className="container mx-auto">
-        <div className="pb-12 flex items-center justify-center rounded-xl">
-          <div className="bg-white shadow-xl rounded-2xl flex w-full max-w-[30rem] relative">
-            <div className="absolute top-2 right-4">
-              <button
-                className="text-2xl text-gray-300"
-                onClick={() => setModalOpen(false)} // CLOSE MODAL
-              >
-                &times;
-              </button>
-            </div>
-            <div className="w-full p-6">
-              <h2 className="text-[#364152] text-sm font-normal mb-2 text-start">
-                Step {index + 1} of 3
-              </h2>
-              <FormProvider
-                {...{
-                  register,
-                  handleSubmit,
-                  reset,
-                  clearErrors,
-                  setValue,
-                  countries,
-                  getValues,
-                  setError,
-                  watch,
-                  control,
-                  trigger,
-                  formState: { errors, isSubmitting },
-                }}
-              >
-                <form onSubmit={handleSubmit(onSubmitHandler, onErrorHandler)}>
-                  {index === 0 && (
-                    <InvestorModal1
-                      formData={formData}
-                      setFormData={setFormData} // PASS FORM DATA TO INVESTOR MODAL 1
-                    />
-                  )}
-                  {index === 1 && (
-                    <InvestorModal2
-                      formData={formData}
-                      setFormData={setFormData} // PASS FORM DATA TO INVESTOR MODAL 2
-                    />
-                  )}
-                  {index === 2 && (
-                    <InvestorModal3
-                      formData={formData}
-                      setFormData={setFormData} // PASS FORM DATA TO INVESTOR MODAL 3
-                    />
-                  )}
-
-                  <div
-                    className={`flex mt-4 ${
-                      index === 0 ? "justify-end" : "justify-between"
-                    }`}
+      <div
+        className={`fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 ${
+          modalOpen ? "block" : "hidden"
+        }`}
+      >
+        <div className="container mx-auto">
+          <div className="pb-12 flex items-center justify-center rounded-xl">
+            <div className="bg-white shadow-xl rounded-2xl flex w-full max-w-[30rem] relative">
+              <div className="absolute top-2 right-4">
+                <button
+                  className="text-2xl text-gray-300"
+                  onClick={() => setModalOpen(false)} // CLOSE MODAL
+                >
+                  &times;
+                </button>
+              </div>
+              <div className="w-full p-6">
+                <h2 className="text-[#364152] text-sm font-normal mb-2 text-start">
+                  Step {index + 1} of 3
+                </h2>
+                <FormProvider
+                  {...{
+                    register,
+                    handleSubmit,
+                    reset,
+                    clearErrors,
+                    setValue,
+                    countries,
+                    getValues,
+                    setError,
+                    watch,
+                    control,
+                    trigger,
+                    formState: { errors, isSubmitting },
+                  }}
+                >
+                  <form
+                    onSubmit={handleSubmit(onSubmitHandler, onErrorHandler)}
                   >
-                    {index > 0 && (
-                      <button
-                        type="button"
-                        className="py-2 border-2 px-4 text-gray-600 rounded hover:text-black"
-                        onClick={handleBack} // BACK BUTTON FUNCTIONALITY
-                        disabled={index === 0}
-                      >
-                        <span className="">
-                          <ArrowBackIcon sx={{ marginTop: "-3px " }} />{" "}
-                        </span>
-                        Back
-                      </button>
+                    {index === 0 && (
+                      <InvestorModal1
+                        formData={formData}
+                        setFormData={setFormData} // PASS FORM DATA TO INVESTOR MODAL 1
+                      />
                     )}
-                    {index === 2 ? (
-                      <button
-                        type="button"
-                        className="py-2 px-4 bg-[#D1E0FF] text-white rounded hover:bg-blue-600 border-2 border-[#B2CCFF]"
-                        onClick={onSubmitHandler} // SUBMIT BUTTON FUNCTIONALITY
-                        disabled={isSubmitting}
-                      >
-                        {isSubmitting ? (
-                          <ThreeDots
-                            visible={true}
-                            height="35"
-                            width="35"
-                            color="#FFFEFF"
-                            radius="9"
-                            ariaLabel="three-dots-loading"
-                            wrapperStyle={{}}
+                    {index === 1 && (
+                      <InvestorModal2
+                        formData={formData}
+                        setFormData={setFormData} // PASS FORM DATA TO INVESTOR MODAL 2
+                      />
+                    )}
+                    {index === 2 && (
+                      <InvestorModal3
+                        formData={formData}
+                        setFormData={setFormData} // PASS FORM DATA TO INVESTOR MODAL 3
+                      />
+                    )}
+
+                    <div
+                      className={`flex mt-4 ${
+                        index === 0 ? "justify-end" : "justify-between"
+                      }`}
+                    >
+                      {index > 0 && (
+                        <button
+                          type="button"
+                          className="py-2 border-2 px-4 text-gray-600 rounded hover:text-black"
+                          onClick={handleBack} // BACK BUTTON FUNCTIONALITY
+                          disabled={index === 0}
+                        >
+                          <span className="">
+                            <ArrowBackIcon sx={{ marginTop: "-3px " }} />{" "}
+                          </span>
+                          Back
+                        </button>
+                      )}
+                      {index === 2 ? (
+                        <button
+                          type="button"
+                          className="py-2 px-4 bg-[#D1E0FF] text-white rounded hover:bg-blue-600 border-2 border-[#B2CCFF]"
+                          onClick={onSubmitHandler} // SUBMIT BUTTON FUNCTIONALITY
+                          disabled={isSubmitting}
+                        >
+                          {isSubmitting ? (
+                            <ThreeDots
+                              visible={true}
+                              height="35"
+                              width="35"
+                              color="#FFFEFF"
+                              radius="9"
+                              ariaLabel="three-dots-loading"
+                              wrapperStyle={{}}
+                            />
+                          ) : (
+                            "Submit"
+                          )}
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          className="py-2 px-4 text-white rounded bg-blue-600 border-2 border-[#B2CCFF] flex items-center"
+                          onClick={handleNext} // CONTINUE BUTTON FUNCTIONALITY
+                        >
+                          Continue
+                          <ArrowForwardIcon
+                            fontSize="medium"
+                            className="ml-2"
                           />
-                        ) : (
-                          "Submit"
-                        )}
-                      </button>
-                    ) : (
-                      <button
-                        type="button"
-                        className="py-2 px-4 text-white rounded bg-blue-600 border-2 border-[#B2CCFF] flex items-center"
-                        onClick={handleNext} // CONTINUE BUTTON FUNCTIONALITY
-                      >
-                        Continue
-                        <ArrowForwardIcon fontSize="medium" className="ml-2" />
-                      </button>
-                    )}
-                  </div>
-                </form>
-              </FormProvider>
+                        </button>
+                      )}
+                    </div>
+                  </form>
+                </FormProvider>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-    <Toaster/> {/* TOAST NOTIFICATIONS */}
+      <Toaster /> {/* TOAST NOTIFICATIONS */}
     </>
   );
 };

@@ -18,14 +18,14 @@ function* fetchInvestorHandler() {
     console.log("actor in investor => => => ", actor);
 
     const investorData = yield call([actor, actor.get_vc_info_using_principal],covertedPrincipal);
-
+ console.log('investorData in saga',investorData)
      // Convert any BigInt values to strings
      const serializedInvestorData = JSON.parse(JSON.stringify(investorData, (key, value) =>
       typeof value === 'bigint' ? value.toString() : value
     ));
     console.log("investorData in investorsaga  => ", serializedInvestorData);
 
-    yield put(investorRegisteredHandlerSuccess(serializedInvestorData));
+    yield put(investorData(serializedInvestorData));
   } catch (error) {
     yield put(investorRegisteredHandlerFailure(error.toString()));
   }
