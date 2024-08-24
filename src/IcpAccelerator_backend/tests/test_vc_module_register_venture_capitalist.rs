@@ -1,8 +1,6 @@
-
 use candid::{decode_one, encode_one, Principal};
 use pocket_ic::{PocketIc, WasmResult};
 use std::fs;
-use std::collections::HashMap;
 
 use IcpAccelerator_backend::user_modules::user_types::*;
 use IcpAccelerator_backend::vc_module::vc_types::*;
@@ -22,14 +20,14 @@ fn setup() -> (PocketIc, Principal) {
 }
 
 #[test]
-fn test_get_vc_info_by_principal() {
+fn test_register_venture_capitalist() {
     let (pic, backend_canister) = setup();
 
     // Define a test principal
     let test_principal = Principal::anonymous(); // Replace with a specific principal if needed
 
-     // Define the UserInformation with some fields set to None
-     let user_info = UserInformation {
+    // Define the UserInformation with some fields set to None
+    let user_info = UserInformation {
         full_name: "Test User".to_string(),
         profile_picture: None, // No initial picture provided
         email: None, // Email not provided
@@ -51,11 +49,10 @@ fn test_get_vc_info_by_principal() {
     ).expect("User registration failed");
 
     // Define the expected VentureCapitalist parameters
-    let expected_vc_info = VentureCapitalist {
+    let vc_params = VentureCapitalist {
         name_of_fund: "Tech Fund".to_string(),
         fund_size: Some(100000000.0),
         assets_under_management: Some("1B USD".to_string()),
-        logo: None, // Example binary data
         registered_under_any_hub: Some(true),
         average_check_size: 5000000.0,
         existing_icp_investor: true,
@@ -69,7 +66,6 @@ fn test_get_vc_info_by_principal() {
         investor_type: Some("Venture Capital".to_string()),
         number_of_portfolio_companies: 10,
         portfolio_link: "https://portfolio.example.com".to_string(),
-        announcement_details: Some("Exciting investment".to_string()),
         website_link: Some("https://vcfund.example.com".to_string()),
         links: None, // Replace with actual data if needed
         registered: true,
@@ -77,44 +73,43 @@ fn test_get_vc_info_by_principal() {
         stage: Some("Growth".to_string()),
         range_of_check_size: Some("$2-5M".to_string()),
     };
-
-    // Simulate storing this VC info in the state
-    pic.update_call(
+    // Call the register_venture_capitalist function
+    let Ok(WasmResult::Reply(response)) = pic.update_call(
         backend_canister,
         test_principal,
         "register_venture_capitalist",
-        encode_one(expected_vc_info.clone()).unwrap(),
-    ).expect("Expected reply");
-
-    // Call the get_vc_info_by_principal function
-    let Ok(WasmResult::Reply(response)) = pic.query_call(
-        backend_canister,
-        test_principal,
-        "get_vc_info_by_principal",
-        encode_one(test_principal).unwrap(),
+        encode_one(vc_params.clone()).unwrap(),
     ) else {
         panic!("Expected reply");
     };
 
-    // Decode the response into a HashMap<Principal, VentureCapitalistAll>
-    let result: HashMap<Principal, VentureCapitalistAll> = decode_one(&response).unwrap();
+    // Decode the response to ensure the VC was registered
+    let result: String = decode_one(&response).unwrap();
+    ic_cdk::println!("RESULT FROM POST VC API {}", result);
 
-    // Define the expected VentureCapitalistAll structure
-    let expected_vc_all_info = VentureCapitalistAll {
-        principal: test_principal,
-        profile: VentureCapitalistInternal {
-            params: expected_vc_info,
-            uid: String::from("d81adf9d1581b22dec9fed5248f13228c07c69d00337e92f42caf8536e62cc07"), // UID will be generated during registration
-            is_active: true,
-            approve: false,
-            decline: false,
-        },
+    // The result should contain the UID of the new VC, so we check for the expected output pattern
+    assert!(result.starts_with("Venture Capitalist Created With UID"));
+
+    // Verify the VC is stored in the state by querying the VC info
+    let Ok(WasmResult::Reply(vc_info_response)) = pic.query_call(
+        backend_canister,
+        test_principal,
+        "get_vc_info_using_principal",
+        encode_one(test_principal).unwrap(), 
+    ) else {
+        panic!("Expected reply");
     };
 
-    ic_cdk::println!("JDZGYFXBUCYSJDBKCFVUHJDSBNFUVHJKSNDZFICKJASX {:?}", result.get(&test_principal));
+    // Decode the response into VentureCapitalistAll
+    let vc_info_all: Option<(VentureCapitalistAll, UserInfoInternal)> = decode_one(&vc_info_response).unwrap();
+    ic_cdk::println!("VC_INFO RESULT: {:?}", vc_info_all);
 
-    // Assert that the returned HashMap contains the correct VC information
-    assert_eq!(result.get(&test_principal), Some(&expected_vc_all_info));
+    let result=vc_info_all.unwrap();
+    let binding=result.0;
+
+    // Now perform the assertion to check if the stored VentureCapitalist matches the input parameters
+    assert_eq!(
+        binding.profile.params, vc_params,
+        "The stored VentureCapitalist does not match the input parameters."
+    );
 }
-
-

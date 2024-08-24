@@ -371,7 +371,7 @@ where
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, CandidType)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, CandidType,Deserialize)]
 pub struct StoredPrincipal(pub Principal);
 
 impl Storable for StoredPrincipal {

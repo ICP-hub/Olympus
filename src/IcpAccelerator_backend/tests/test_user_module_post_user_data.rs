@@ -1,10 +1,9 @@
 use candid::{decode_one, encode_one, Principal};
 use pocket_ic::{PocketIc, WasmResult};
+use IcpAccelerator_backend::user_modules::user_types::{Role, UserInfoInternal, UserInformation};
 use std::fs;
 
 
-
-use IcpAccelerator_backend::user_module::{Role, UserInfoInternal, UserInformation};
 
 
 // Define the path to your compiled Wasm file

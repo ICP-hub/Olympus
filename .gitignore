@@ -25,3 +25,6 @@ package-lock.json
 .env
 
 canister_ids.json
+
+#pocket ic
+.pocket-ic

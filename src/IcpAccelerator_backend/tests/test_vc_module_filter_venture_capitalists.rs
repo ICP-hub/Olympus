@@ -77,7 +77,6 @@ fn test_filter_venture_capitalists() {
         name_of_fund: "Tech Fund".to_string(),
         fund_size: Some(100_000_000.0),
         assets_under_management: Some("1B USD".to_string()),
-        logo: None,
         registered_under_any_hub: Some(true),
         average_check_size: 5_000_000.0,
         existing_icp_investor: true,
@@ -91,7 +90,6 @@ fn test_filter_venture_capitalists() {
         investor_type: Some("Venture Capital".to_string()),
         number_of_portfolio_companies: 10,
         portfolio_link: "https://portfolio.example.com".to_string(),
-        announcement_details: None,
         website_link: None,
         links: None,
         registered: true,
@@ -104,21 +102,19 @@ fn test_filter_venture_capitalists() {
         name_of_fund: "Health Fund".to_string(),
         fund_size: Some(200_000_000.0),
         assets_under_management: Some("2B USD".to_string()),
-        logo: None,
         registered_under_any_hub: Some(true),
         average_check_size: 15_000_000.0,
         existing_icp_investor: true,
-        money_invested: Some(100_000_000.0),
+        money_invested: Some(100_000_00.0),
         existing_icp_portfolio: Some("Health Projects".to_string()),
         type_of_investment: "Equity".to_string(),
         project_on_multichain: Some("Ethereum".to_string()),
-        category_of_investment: "Technology".to_string(),
+        category_of_investment: "Marketing".to_string(),
         reason_for_joining: Some("Healthcare advancements".to_string()),
         preferred_icp_hub: "ICP Hub".to_string(),
         investor_type: Some("Venture Capital".to_string()),
         number_of_portfolio_companies: 20,
         portfolio_link: "https://portfolio.example.com".to_string(),
-        announcement_details: None,
         website_link: None,
         links: None,
         registered: true,
@@ -144,9 +140,9 @@ fn test_filter_venture_capitalists() {
 
     // Define filter criteria to match only Technology VCs with check sizes between $10m and $50m
     let criteria = VcFilterCriteria {
-        country: None,
+        country: Some("United States".to_string()),
         category_of_investment: Some("Technology".to_string()),
-        money_invested_range: Some((10_000_000.0, 50_000_000.0)),
+        money_invested_range: Some((5000000.0, 10000000.0)),
     };
 
     // Call the filter_venture_capitalists function

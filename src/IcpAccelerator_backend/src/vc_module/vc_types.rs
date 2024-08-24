@@ -57,7 +57,7 @@ pub struct VcFilterCriteria {
     pub money_invested_range: Option<(f64, f64)>, // Minimum and maximum investment range
 }
 
-#[derive(CandidType, Clone)]
+#[derive(CandidType, Clone,Deserialize,Debug,PartialEq)]
 pub struct VentureCapitalistAll {
     pub principal: Principal,
     pub profile: VentureCapitalistInternal,

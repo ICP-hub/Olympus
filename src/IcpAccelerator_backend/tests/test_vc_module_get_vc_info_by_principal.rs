@@ -1,7 +1,8 @@
+
 use candid::{decode_one, encode_one, Principal};
 use pocket_ic::{PocketIc, WasmResult};
 use std::fs;
-
+use std::collections::HashMap;
 
 use IcpAccelerator_backend::user_modules::user_types::*;
 use IcpAccelerator_backend::vc_module::vc_types::*;
@@ -21,14 +22,14 @@ fn setup() -> (PocketIc, Principal) {
 }
 
 #[test]
-fn test_get_vc_info() {
+fn test_get_vc_info_by_principal() {
     let (pic, backend_canister) = setup();
 
     // Define a test principal
     let test_principal = Principal::anonymous(); // Replace with a specific principal if needed
 
-    // Define the UserInformation with some fields set to None
-    let user_info = UserInformation {
+     // Define the UserInformation with some fields set to None
+     let user_info = UserInformation {
         full_name: "Test User".to_string(),
         profile_picture: None, // No initial picture provided
         email: None, // Email not provided
@@ -54,7 +55,6 @@ fn test_get_vc_info() {
         name_of_fund: "Tech Fund".to_string(),
         fund_size: Some(100000000.0),
         assets_under_management: Some("1B USD".to_string()),
-        logo: None, // Example binary data
         registered_under_any_hub: Some(true),
         average_check_size: 5000000.0,
         existing_icp_investor: true,
@@ -68,7 +68,6 @@ fn test_get_vc_info() {
         investor_type: Some("Venture Capital".to_string()),
         number_of_portfolio_companies: 10,
         portfolio_link: "https://portfolio.example.com".to_string(),
-        announcement_details: Some("Exciting investment".to_string()),
         website_link: Some("https://vcfund.example.com".to_string()),
         links: None, // Replace with actual data if needed
         registered: true,
@@ -76,6 +75,7 @@ fn test_get_vc_info() {
         stage: Some("Growth".to_string()),
         range_of_check_size: Some("$2-5M".to_string()),
     };
+
     // Simulate storing this VC info in the state
     pic.update_call(
         backend_canister,
@@ -84,23 +84,35 @@ fn test_get_vc_info() {
         encode_one(expected_vc_info.clone()).unwrap(),
     ).expect("Expected reply");
 
-    // Call the get_vc_info function
+    // Call the get_vc_info_by_principal function
     let Ok(WasmResult::Reply(response)) = pic.query_call(
         backend_canister,
         test_principal,
-        "get_vc_info",
-        encode_one(test_principal).unwrap(), // No arguments needed
-        
+        "get_vc_info_by_principal",
+        encode_one(test_principal).unwrap(),
     ) else {
-        ic_cdk::println!("Error occured");
         panic!("Expected reply");
     };
 
-    ic_cdk::println!("response {:?}",response);
+    // Decode the response into a HashMap<Principal, VentureCapitalistAll>
+    let result: HashMap<Principal, VentureCapitalistAll> = decode_one(&response).unwrap();
 
-    // Decode the response into an Option<VentureCapitalist>
-    let result: Option<VentureCapitalist> = decode_one(&response).unwrap();
+    // Define the expected VentureCapitalistAll structure
+    let expected_vc_all_info = VentureCapitalistAll {
+        principal: test_principal,
+        profile: VentureCapitalistInternal {
+            params: expected_vc_info,
+            uid: String::from("d81adf9d1581b22dec9fed5248f13228c07c69d00337e92f42caf8536e62cc07"), // UID will be generated during registration
+            is_active: true,
+            approve: false,
+            decline: false,
+        },
+    };
 
-    // Assert that the returned VC information matches the expected VC information
-    assert_eq!(result, Some(expected_vc_info));
+    ic_cdk::println!("JDZGYFXBUCYSJDBKCFVUHJDSBNFUVHJKSNDZFICKJASX {:?}", result.get(&test_principal));
+
+    // Assert that the returned HashMap contains the correct VC information
+    assert_eq!(result.get(&test_principal), Some(&expected_vc_all_info));
 }
+
+

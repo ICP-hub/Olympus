@@ -13,14 +13,14 @@ pub struct PaginationParams {
     pub page_size: usize,
 }
 
-#[derive(CandidType, Clone)]
+#[derive(CandidType, Clone,Deserialize)]
 pub struct ListAllProjects {
     pub principal: StoredPrincipal,
     pub params: ProjectInfoInternal,
     pub overall_average: Option<f64>,
 }
 
-#[derive(CandidType, Clone)]
+#[derive(CandidType, Clone,Deserialize)]
 pub struct PaginationReturnProjectData {
     pub data: Vec<ListAllProjects>,
     pub user_data: HashMap<Principal, UserInformation>,

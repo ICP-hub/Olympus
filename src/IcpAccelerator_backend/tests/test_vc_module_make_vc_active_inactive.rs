@@ -6,7 +6,6 @@ use IcpAccelerator_backend::user_modules::user_types::*;
 use IcpAccelerator_backend::vc_module::vc_types::*;
 
 
-
 // Define the path to your compiled Wasm file
 const BACKEND_WASM: &str = "/home/harman/accelerator/ICPAccelerator/target/wasm32-unknown-unknown/release/IcpAccelerator_backend.wasm";
 
@@ -21,16 +20,15 @@ fn setup() -> (PocketIc, Principal) {
     (pic, backend_canister)
 }
 
-
 #[test]
-fn test_get_vc_info_using_principal() {
+fn test_make_vc_active_inactive() {
     let (pic, backend_canister) = setup();
 
     // Define a test principal
     let test_principal = Principal::anonymous(); // Replace with a specific principal if needed
 
-     // Define the UserInformation with some fields set to None
-     let user_info = UserInformation {
+    // Define the UserInformation with some fields set to None
+    let user_info = UserInformation {
         full_name: "Test User".to_string(),
         profile_picture: None, // No initial picture provided
         email: None, // Email not provided
@@ -51,44 +49,55 @@ fn test_get_vc_info_using_principal() {
         encode_one(user_info).unwrap(),
     ).expect("User registration failed");
 
-    // Define the expected VentureCapitalist parameters
-    let expected_vc_info = VentureCapitalist {
-        name_of_fund: "Tech Fund".to_string(),
-        fund_size: Some(100000000.0),
+    // Simulate the registration of a VC to ensure the profile exists
+    let vc_info_initial = VentureCapitalist {
+        name_of_fund: "Test Fund".to_string(),
+        fund_size: Some(100_000_000.0),
         assets_under_management: Some("1B USD".to_string()),
-        logo: None, // Example binary data
         registered_under_any_hub: Some(true),
-        average_check_size: 5000000.0,
+        average_check_size: 5_000_000.0,
         existing_icp_investor: true,
-        money_invested: Some(50000000.0),
+        money_invested: Some(50_000_000.0),
         existing_icp_portfolio: Some("ICP Projects".to_string()),
         type_of_investment: "Equity".to_string(),
-        project_on_multichain: None,
+        project_on_multichain: Some("Ethereum, Solana".to_string()),
         category_of_investment: "Technology".to_string(),
         reason_for_joining: Some("Growth opportunities".to_string()),
         preferred_icp_hub: "ICP Hub".to_string(),
         investor_type: Some("Venture Capital".to_string()),
         number_of_portfolio_companies: 10,
         portfolio_link: "https://portfolio.example.com".to_string(),
-        announcement_details: Some("Exciting investment".to_string()),
-        website_link: Some("https://vcfund.example.com".to_string()),
-        links: None, // Replace with actual data if needed
+        website_link: None,
+        links: None,
         registered: true,
         registered_country: Some("United States".to_string()),
-        stage: Some("Growth".to_string()),
-        range_of_check_size: Some("$2-5M".to_string()),
+        stage: None,
+        range_of_check_size: None,
     };
 
-    // Simulate storing this VC info in the state
     pic.update_call(
         backend_canister,
         test_principal,
         "register_venture_capitalist",
-        encode_one(expected_vc_info.clone()).unwrap(),
+        encode_one(vc_info_initial).unwrap(),
     ).expect("Expected reply");
 
-    // Call the get_vc_info_using_principal function
-    let Ok(WasmResult::Reply(response)) = pic.query_call(
+    // Call make_vc_active_inactive to deactivate the VC profile
+    let Ok(WasmResult::Reply(response_deactivate)) = pic.update_call(
+        backend_canister,
+        test_principal,
+        "make_vc_active_inactive",
+        encode_one(test_principal).unwrap(),
+    ) else {
+        panic!("Expected reply");
+    };
+
+    // Verify the response indicates the VC profile was made inactive
+    let result_deactivate: String = decode_one(&response_deactivate).unwrap();
+    assert_eq!(result_deactivate, "made inactive");
+
+    // Verify the VC profile is now inactive
+    let Ok(WasmResult::Reply(vc_info_response)) = pic.query_call(
         backend_canister,
         test_principal,
         "get_vc_info_using_principal",
@@ -97,18 +106,42 @@ fn test_get_vc_info_using_principal() {
         panic!("Expected reply");
     };
 
-    // Decode the response into an Option<VentureCapitalistInternal>
-    let result: Option<VentureCapitalistInternal> = decode_one(&response).unwrap();
+    let vc_info: Option<(VentureCapitalistAll, UserInfoInternal)> = decode_one(&vc_info_response).unwrap();
+    ic_cdk::println!("DATA FROM API IN 112 {:?}", vc_info.clone());
 
-    // Define the expected VentureCapitalistInternal structure
-    // let expected_vc_internal = VentureCapitalistInternal {
-    //     params: expected_vc_info,
-    //     uid: String::from(""), // UID will be generated during registration
-    //     is_active: true,
-    //     approve: false,
-    //     decline: false,
-    // };
 
-    // Assert that the returned VC information matches the expected VC information
-    assert_eq!(result.unwrap().params, expected_vc_info);
+    if let Some((vc, _user_info)) = vc_info {
+        // Now you can access the `registered` field from `vc`
+        assert!(!vc.profile.is_active, "{}", false);
+    } else {
+        panic!("VC profile should exist");
+    }
+
+    // Call make_vc_active_inactive to activate the VC profile again
+    let Ok(WasmResult::Reply(response_activate)) = pic.update_call(
+        backend_canister,
+        test_principal,
+        "make_vc_active_inactive",
+        encode_one(test_principal).unwrap(),
+    ) else {
+        panic!("Expected reply");
+    };
+
+    // Verify the response indicates the VC profile was made active
+    let result_activate: String = decode_one(&response_activate).unwrap();
+    assert_eq!(result_activate, "made active");
+
+    // Verify the VC profile is now active again
+    let Ok(WasmResult::Reply(vc_info_response)) = pic.query_call(
+        backend_canister,
+        test_principal,
+        "get_vc_info",
+        encode_one(()).unwrap(),
+    ) else {
+        panic!("Expected reply");
+    };
+
+    let vc_info: Option<VentureCapitalist> = decode_one(&vc_info_response).unwrap();
+    assert!(vc_info.is_some(), "VC profile should exist");
+    assert!(vc_info.unwrap().registered, "VC profile should be active");
 }

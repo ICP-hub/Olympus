@@ -1,8 +1,7 @@
 use candid::{decode_one, encode_one, Principal};
 use pocket_ic::{PocketIc, WasmResult};
+use IcpAccelerator_backend::{user_modules::user_types::{UserInfoInternal, UserInformation}, vc_module::vc_types::*};
 use std::fs;
-
-use IcpAccelerator_backend::vc_module::vc_types::*;
 
 // Define the path to your compiled Wasm file
 const BACKEND_WASM: &str = "/home/harman/accelerator/ICPAccelerator/target/wasm32-unknown-unknown/release/IcpAccelerator_backend.wasm";
@@ -19,18 +18,39 @@ fn setup() -> (PocketIc, Principal) {
 }
 
 #[test]
-fn test_get_vc_declined_info_using_principal() {
+fn test_delete_venture_capitalist() {
     let (pic, backend_canister) = setup();
 
     // Define a test principal
     let test_principal = Principal::anonymous(); // Replace with a specific principal if needed
 
+    // Define the UserInformation with some fields set to None
+    let user_info = UserInformation {
+        full_name: "Test User".to_string(),
+        profile_picture: None, // No initial picture provided
+        email: None, // Email not provided
+        country: "United States".to_string(),
+        social_links: None, // No social links provided
+        bio: Some("An enthusiastic tech investor focused on blockchain technologies.".to_string()),
+        area_of_interest: "Blockchain".to_string(),
+        openchat_username: None, // OpenChat username not provided
+        type_of_profile: Some("investor".to_string()),
+        reason_to_join: None,
+    };
+
+    // Simulate registering the user
+    pic.update_call(
+        backend_canister,
+        test_principal,
+        "register_user",
+        encode_one(user_info).unwrap(),
+    ).expect("User registration failed");
+
     // Define the expected VentureCapitalist parameters
-    let expected_vc_info = VentureCapitalist {
+    let vc_info = VentureCapitalist {
         name_of_fund: "Tech Fund".to_string(),
         fund_size: Some(100_000_000.0),
         assets_under_management: Some("1B USD".to_string()),
-        logo: Some(vec![1, 2, 3]), // Example binary data
         registered_under_any_hub: Some(true),
         average_check_size: 5_000_000.0,
         existing_icp_investor: true,
@@ -44,7 +64,6 @@ fn test_get_vc_declined_info_using_principal() {
         investor_type: Some("Venture Capital".to_string()),
         number_of_portfolio_companies: 10,
         portfolio_link: "https://portfolio.example.com".to_string(),
-        announcement_details: Some("Exciting investment".to_string()),
         website_link: Some("https://vcfund.example.com".to_string()),
         links: None, // Replace with actual data if needed
         registered: true,
@@ -53,44 +72,39 @@ fn test_get_vc_declined_info_using_principal() {
         range_of_check_size: Some("$2-5M".to_string()),
     };
 
-    // Simulate storing this VC info in the vc_declined_request state
+    // Simulate storing this VC info in the state
     pic.update_call(
         backend_canister,
         test_principal,
         "register_venture_capitalist",
-        encode_one(expected_vc_info.clone()).unwrap(),
+        encode_one(vc_info.clone()).unwrap(),
     ).expect("Expected reply");
 
-    // Manually move the VC info to vc_declined_request to simulate a declined request
-    pic.update_call(
+    // Call the delete_venture_capitalist function
+    let Ok(WasmResult::Reply(response)) = pic.update_call(
         backend_canister,
         test_principal,
-        "move_vc_to_declined_request",
-        encode_one(test_principal).unwrap(),
-    ).expect("Expected reply");
-
-    // Call the get_vc_declined_info_using_principal function
-    let Ok(WasmResult::Reply(response)) = pic.query_call(
-        backend_canister,
-        test_principal,
-        "get_vc_declined_info_using_principal",
-        encode_one(test_principal).unwrap(),
+        "delete_venture_capitalist",
+        encode_one(()).unwrap(),
     ) else {
         panic!("Expected reply");
     };
 
-    // Decode the response into an Option<VentureCapitalistInternal>
-    let result: Option<VentureCapitalistInternal> = decode_one(&response).unwrap();
+    // Decode the response and verify the account was deactivated
+    let result: String = decode_one(&response).unwrap();
+    assert_eq!(result, "Venture Capitalist Account Has Been DeActivated");
 
-    // Define the expected VentureCapitalistInternal structure
-    let expected_vc_internal = VentureCapitalistInternal {
-        params: expected_vc_info,
-        uid: String::from(""), // UID will be generated during registration
-        is_active: true,
-        approve: false,
-        decline: true, // Indicate that this request was declined
+    // Verify that the VC's account is now deactivated
+    let Ok(WasmResult::Reply(vc_info_response)) = pic.query_call(
+        backend_canister,
+        test_principal,
+        "get_vc_info",
+        encode_one(()).unwrap(),
+    ) else {
+        panic!("Expected reply");
     };
 
-    // Assert that the returned VC information matches the expected VC information
-    assert_eq!(result, Some(expected_vc_internal));
+    let updated_vc_info: Option<(VentureCapitalist, UserInfoInternal)> = decode_one(&vc_info_response).unwrap();
+    // Ensure the VC is now inactive
+    assert!(updated_vc_info.is_none(), "VC account should be deactivated and inaccessible.");
 }
