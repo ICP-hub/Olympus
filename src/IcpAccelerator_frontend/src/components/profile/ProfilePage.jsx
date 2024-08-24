@@ -11,6 +11,7 @@ import EventRequestCard from '../Dashboard/DashboardEvents/EventRequestCard';
 import ProfileDetail from './ProfileDetail';
 import Role from './Role';
 import Announcement from './Announcement';
+import EventRequestStatus from '../Dashboard/DashboardEvents/EventRequestStatus';
 
 const ProfilePage = () => {
   const [activeTab, setActiveTab] = useState("roles");
@@ -200,7 +201,7 @@ const ProfilePage = () => {
             {activeTab === "rating" && <h1>Rating</h1>}
           </div>
           <div className="w-full">
-            {activeTab === "event-req" && <EventRequestCard />}
+            {activeTab === "event-req" && <EventRequestStatus/>}
           </div>
         </div>
       </div>
