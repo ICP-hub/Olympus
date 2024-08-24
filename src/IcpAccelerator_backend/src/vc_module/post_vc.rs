@@ -1,16 +1,13 @@
 use crate::state_handler::*;
 use crate::vc_module::vc_types::*;
 use candid::Principal;
-use ic_cdk::api::call::call;
 use ic_cdk::api::caller;
 use ic_cdk::api::management_canister::main::raw_rand;
 use ic_cdk::api::time;
 use ic_cdk_macros::update;
-use serde_bytes::ByteBuf;
 use sha2::{Digest, Sha256};
 use crate::guard::*;
 use crate::user_modules::get_user::*;
-use crate::types::individual_types::*;
 
 #[update(guard = "is_user_anonymous")]
 pub async fn register_venture_capitalist(params: VentureCapitalist) -> std::string::String {
@@ -52,40 +49,6 @@ pub async fn register_venture_capitalist(params: VentureCapitalist) -> std::stri
         ic_cdk::println!("This Principal is already registered");
         return "This Principal is already registered.".to_string();
     }
-
-    let mut user_data = get_user_information_internal(caller);
-
-    let temp_image = user_data.profile_picture.clone();
-    let canister_id = crate::asset_manager::get_asset_canister();
-
-    if temp_image.is_none() {
-        let full_url = canister_id.to_string() + "/uploads/default_user.jpeg";
-        user_data.profile_picture = Some((full_url).as_bytes().to_vec());
-    } else if temp_image.clone().unwrap().len() < 300 {
-        ic_cdk::println!("Profile image is already uploaded");
-    } else {
-        let key = "/uploads/".to_owned() + &caller.to_string() + "_user.jpeg";
-
-        let arg = StoreArg {
-            key: key.clone(),
-            content_type: "image/*".to_string(),
-            content_encoding: "identity".to_string(),
-            content: ByteBuf::from(temp_image.unwrap()),
-            sha256: None,
-        };
-
-        let delete_asset = DeleteAsset { key: key.clone() };
-
-        let (_deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset,))
-            .await
-            .unwrap();
-
-        let (_result,): ((),) = call(canister_id, "store", (arg,)).await.unwrap();
-
-        user_data.profile_picture =
-            Some((canister_id.to_string() + &key).as_bytes().to_vec());
-    }
-
     match params.validate() {
         Ok(_) => {
             println!("Validation passed!");
@@ -133,46 +96,6 @@ pub async fn register_venture_capitalist(params: VentureCapitalist) -> std::stri
 pub async fn update_venture_capitalist(params: VentureCapitalist) -> String {
     let caller = ic_cdk::caller();
 
-    let already_registered =
-        read_state(|state| state.vc_storage.contains_key(&StoredPrincipal(caller)));
-    if !already_registered {
-        ic_cdk::println!("This Principal is not registered");
-        return "This Principal is not registered.".to_string();
-    }
-
-    let mut user_data = get_user_information_internal(caller);
-
-    let temp_image = user_data.profile_picture.clone();
-    let canister_id = crate::asset_manager::get_asset_canister();
-
-    if temp_image.is_none() {
-        let full_url = canister_id.to_string() + "/uploads/default_user.jpeg";
-        user_data.profile_picture = Some((full_url).as_bytes().to_vec());
-    } else if temp_image.clone().unwrap().len() < 300 {
-        ic_cdk::println!("Profile image is already uploaded");
-    } else {
-        let key = "/uploads/".to_owned() + &caller.to_string() + "_user.jpeg";
-
-        let arg = StoreArg {
-            key: key.clone(),
-            content_type: "image/*".to_string(),
-            content_encoding: "identity".to_string(),
-            content: ByteBuf::from(temp_image.unwrap()),
-            sha256: None,
-        };
-
-        let delete_asset = DeleteAsset { key: key.clone() };
-
-        let (_deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset,))
-            .await
-            .unwrap();
-
-        let (_result,): ((),) = call(canister_id, "store", (arg,)).await.unwrap();
-
-        user_data.profile_picture =
-            Some((canister_id.to_string() + &key).as_bytes().to_vec());
-    }
-
     let update_result = mutate_state(|state| {
                 if let Some(mut existing_vc_internal) = state.vc_storage.get(&StoredPrincipal(caller)) {
                         existing_vc_internal.0.params.registered_under_any_hub = params.registered_under_any_hub.clone()
@@ -183,14 +106,11 @@ pub async fn update_venture_capitalist(params: VentureCapitalist) -> String {
                             .or(existing_vc_internal.0.params.money_invested.clone());
                         existing_vc_internal.0.params.existing_icp_portfolio = params.existing_icp_portfolio.clone()
                             .or(existing_vc_internal.0.params.existing_icp_portfolio.clone());
-                        existing_vc_internal.0.params.announcement_details = params.announcement_details.clone()
-                            .or(existing_vc_internal.0.params.announcement_details.clone());
                         existing_vc_internal.0.params.registered_country = params.registered_country.clone()
                             .or(existing_vc_internal.0.params.registered_country.clone());
                         existing_vc_internal.0.params.fund_size = Some(params.fund_size.unwrap_or(0.0));
                         existing_vc_internal.0.params.assets_under_management = params.assets_under_management.clone();
                         existing_vc_internal.0.params.category_of_investment = params.category_of_investment.clone();
-                        existing_vc_internal.0.params.logo = params.logo.clone();
                         existing_vc_internal.0.params.average_check_size = params.average_check_size;
                         existing_vc_internal.0.params.existing_icp_investor = params.existing_icp_investor;
                         existing_vc_internal.0.params.investor_type = params.investor_type.clone();
