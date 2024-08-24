@@ -89,7 +89,7 @@ async fn generate_captcha_with_id() -> (String, String) {
     (captcha_id, captcha_text)
 }
 
-pub fn verify_captcha(captcha_id: String, user_input: String) -> bool {
+pub fn _verify_captcha(captcha_id: String, user_input: String) -> bool {
     let stored_text = read_state(|state| {
         state.captcha_storage.get(&captcha_id).map(|candid| candid.0.clone())
     });

@@ -1,15 +1,12 @@
 use crate::state_handler::*;
 use crate::mentor_module::mentor_types::*;
 use candid::Principal;
-use ic_cdk::api::call::call;
 use ic_cdk::api::caller;
 use ic_cdk::api::time;
 use ic_cdk_macros::update;
-use serde_bytes::ByteBuf;
 use sha2::{Digest, Sha256};
 use crate::guard::*;
 use crate::user_modules::get_user::*;
-use crate::types::individual_types::*;
 
 #[update(guard = "is_user_anonymous")]
 pub async fn register_mentor(profile: MentorProfile) -> String {
@@ -30,54 +27,11 @@ pub async fn register_mentor(profile: MentorProfile) -> String {
         return "You are not eligible for this role because you have 2 or more roles".to_string();
     }
 
-    let request_declined = read_state(|state| {
-        state
-            .mentor_declined_request
-            .contains_key(&StoredPrincipal(caller))
-    });
-    if request_declined {
-        return "You had got your request declined earlier".to_string();
-    }
-
     let already_registered =
         read_state(|state| state.mentor_storage.contains_key(&StoredPrincipal(caller)));
     if already_registered {
         ic_cdk::println!("This Principal is already registered");
         return "You are a Mentor Already".to_string();
-    }
-
-    let mut user_data = get_user_information_internal(caller);
-
-    let temp_image = user_data.profile_picture.clone();
-    let canister_id = crate::asset_manager::get_asset_canister();
-    
-    if temp_image.is_none() {
-        let full_url = canister_id.to_string() + "/uploads/default_user.jpeg";
-        user_data.profile_picture = Some((full_url).as_bytes().to_vec());
-    }
-    else if temp_image.clone().unwrap().len() < 300 {
-        ic_cdk::println!("Profile image is already uploaded");
-    }else{
-        
-        let key = "/uploads/".to_owned()+&caller.to_string()+"_user.jpeg";
-        
-        let arg = StoreArg{
-            key: key.clone(),
-            content_type: "image/*".to_string(),
-            content_encoding: "identity".to_string(),
-            content: ByteBuf::from(temp_image.unwrap()),
-            sha256: None,
-        };
-
-        let delete_asset = DeleteAsset {
-            key: key.clone()
-        };
-
-        let (_deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset, )).await.unwrap();
-
-        let (_result,): ((),) = call(canister_id, "store", (arg, )).await.unwrap();
-
-        user_data.profile_picture = Some((canister_id.to_string()+&key).as_bytes().to_vec());
     }
 
     match profile.validate() {
@@ -138,40 +92,6 @@ pub async fn update_mentor(updated_profile: MentorProfile) -> String {
     if !already_registered {
         ic_cdk::println!("This Principal is not registered");
         return "This Principal is not registered.".to_string();
-    }
-
-    let mut user_data = get_user_information_internal(caller);
-
-    let temp_image = user_data.profile_picture.clone();
-    let canister_id = crate::asset_manager::get_asset_canister();
-    
-    if temp_image.is_none() {
-        let full_url = canister_id.to_string() + "/uploads/default_user.jpeg";
-        user_data.profile_picture = Some((full_url).as_bytes().to_vec());
-    }
-    else if temp_image.clone().unwrap().len() < 300 {
-        ic_cdk::println!("Profile image is already uploaded");
-    }else{
-        
-        let key = "/uploads/".to_owned()+&caller.to_string()+"_user.jpeg";
-        
-        let arg = StoreArg{
-            key: key.clone(),
-            content_type: "image/*".to_string(),
-            content_encoding: "identity".to_string(),
-            content: ByteBuf::from(temp_image.unwrap()),
-            sha256: None,
-        };
-
-        let delete_asset = DeleteAsset {
-            key: key.clone()
-        };
-
-        let (_deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset, )).await.unwrap();
-
-        let (_result,): ((),) = call(canister_id, "store", (arg, )).await.unwrap();
-
-        user_data.profile_picture = Some((canister_id.to_string()+&key).as_bytes().to_vec());
     }
 
     let update_result = mutate_state(|state| {

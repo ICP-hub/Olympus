@@ -54,23 +54,24 @@ pub struct ProjectInfo {
 
 impl ProjectInfo {
     pub fn validate(&self) -> Result<(), String> {
-        if let Some(ref preferred_icp_hub) = self.preferred_icp_hub {
-            if preferred_icp_hub.trim().is_empty() {
-                return Err("Field cannot be empty".into());
-            }
+        if self.project_name.is_empty() {
+            return Err("Project name is a required field.".to_string());
         }
-
-        // if let Some(ref exisitng_icp_project_porfolio) = self.existing_icp_project_porfolio {
-        //     if exisitng_icp_project_porfolio.trim().is_empty() {
-        //         return Err("Field cannot be empty".into());
-        //     }
-        // }
-
-        // if let Some(ref multichain) = self.multichain {
-        //     if multichain.trim().is_empty() {
-        //         return Err("Field cannot be empty".into());
-        //     }
-        // }
+        if self.project_area_of_focus.is_empty() {
+            return Err("Project area of focus is a required field.".to_string());
+        }
+        if self.reason_to_join_incubator.is_empty() {
+            return Err("Reason to join incubator is a required field.".to_string());
+        }
+        if self.self_rating_of_project <= 0.0 {
+            return Err("Self-rating of project must be greater than zero.".to_string());
+        }
+        if self.project_description.as_ref().map_or(true, |desc| desc.is_empty()) {
+            return Err("Project description is a required field.".to_string());
+        }
+        if self.target_market.as_ref().map_or(true, |market| market.is_empty()) {
+            return Err("Target market is a required field.".to_string());
+        }
 
         Ok(())
     }
