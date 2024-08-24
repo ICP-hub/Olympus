@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useFormContext, useFieldArray, Controller } from "react-hook-form";
 import { useSelector } from "react-redux";
+import Select from "react-select";
+import ReactSelect from "react-select";
 import { Toaster } from "react-hot-toast";
 import { LanguageIcon } from "../../UserRegistration/DefaultLink";
 import {
@@ -20,10 +22,22 @@ import {
   FaTrash,
 } from "react-icons/fa";
 
-const MentorSignup2 = () => {
+const MentorSignup2 = ({formData}) => {
   // EXTRACT NECESSARY FUNCTIONS FROM useFormContext HOOK
-  const { register, formState: { errors }, watch, control } = useFormContext();
-
+  const { register, formState: { errors }, watch, control,   setValue, 
+  clearErrors,   } = useFormContext();
+//Reason to join
+const [reasonOfJoiningOptions, setReasonOfJoiningOptions] = useState([
+  { value: "listing_and_promotion", label: "Project listing and promotion" },
+  { value: "Funding", label: "Funding" },
+  { value: "Mentoring", label: "Mentoring" },
+  { value: "Incubation", label: "Incubation" },
+  {
+    value: "Engaging_and_building_community",
+    label: "Engaging and building community",
+  },
+  { value: "Jobs", label: "Jobs" },
+]);
   // RETRIEVE ALL ICP HUBS FROM REDUX STATE
   const getAllIcpHubs = useSelector((currState) => currState.hubs.allHubs);
 
@@ -58,8 +72,250 @@ const MentorSignup2 = () => {
     }
   };
 
+  useEffect(() => {
+    if (formData) {
+      setProjectValuesHandler(formData);
+    }
+  }, [formData]);
+
+  const [reasonOfJoiningSelectedOptions, setReasonOfJoiningSelectedOptions] =
+  useState([]);
+    // SELECTOR TO ACCESS AREA OF EXPERTISE DATA FROM REDUX STORE
+    const areaOfExpertise = useSelector(
+      (currState) => currState.expertiseIn.expertise
+    );
+   // USE EFFECT TO SET INVESTMENT CATEGORIES OPTIONS BASED ON AREA OF EXPERTISE DATA
+   useEffect(() => {
+    if (areaOfExpertise) {
+      setprojectOptions(
+        areaOfExpertise.map((expert) => ({
+          value: expert.name,
+          label: expert.name,
+        }))
+      );
+    } else {
+      setprojectOptions([]);
+    }
+  }, [areaOfExpertise]);
+
+  // STATES FOR VARIOUS FORM FIELDS
+  const [projectOptions, setprojectOptions] =
+    useState([]);
+  const [
+    areaof_focus_SelectedOptions,
+    setproject_area_of_focusSelectedOptions,
+  ] = useState([]);
+
+  const setproject_area_of_focusSelectedOptionsHandler = (val) => {
+    setproject_area_of_focusSelectedOptions(
+      val
+        ? val
+            .split(", ")
+            .map((investment) => ({ value: investment, label: investment }))
+        : []
+    );
+  };
+  // FUNCTION TO SET INITIAL FORM VALUES BASED ON PROVIDED FORM DATA
+  const setProjectValuesHandler = (val) => {
+    console.log("val", val);
+    if (val) {
+      setValue(
+        "area_of_expertise",
+        val.area_of_expertise ? val?.area_of_expertise : ""
+      );
+      setproject_area_of_focusSelectedOptionsHandler(
+        val?.area_of_expertise ?? null
+      );
+    }
+  };
   return (
     <>
+     <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Why do you want to join this platform ?{" "}
+          <span className="text-[#155EEF]">*</span>
+        </label>
+        <ReactSelect
+          isMulti
+          menuPortalTarget={document.body}
+          menuPosition={"fixed"}
+          styles={{
+            menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+            control: (provided, state) => ({
+              ...provided,
+              paddingBlock: "2px",
+              borderRadius: "8px",
+              border: errors.reason_for_joining
+                ? "2px solid #737373"
+                : "2px solid #737373",
+              backgroundColor: "rgb(249 250 251)",
+              "&::placeholder": {
+                color: errors.reason_for_joining
+                  ? "#ef4444"
+                  : "currentColor",
+              },
+              display: "flex",
+              overflowX: "auto",
+              maxHeight: "43px",
+              "&::-webkit-scrollbar": {
+                display: "none",
+              },
+            }),
+            valueContainer: (provided, state) => ({
+              ...provided,
+              overflow: "scroll",
+              maxHeight: "40px",
+              scrollbarWidth: "none",
+            }),
+            placeholder: (provided, state) => ({
+              ...provided,
+              color: errors.reason_for_joining
+                ? "#ef4444"
+                : "rgb(107 114 128)",
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }),
+            multiValue: (provided) => ({
+              ...provided,
+              display: "inline-flex",
+              alignItems: "center",
+
+              backgroundColor: "white",
+              border: "2px solid #E3E3E3",
+            }),
+            multiValueRemove: (provided) => ({
+              ...provided,
+              display: "inline-flex",
+              alignItems: "center",
+            }),
+          }}
+          value={reasonOfJoiningSelectedOptions}
+          options={reasonOfJoiningOptions}
+          classNamePrefix="select"
+          className="basic-multi-select w-full text-start"
+          placeholder="Select your reasons to join this platform"
+          name="reason_for_joining"
+          onChange={(selectedOptions) => {
+            if (selectedOptions && selectedOptions.length > 0) {
+              setReasonOfJoiningSelectedOptions(selectedOptions);
+              clearErrors("reason_for_joining");
+              setValue(
+                "reason_for_joining",
+                selectedOptions.map((option) => option.value).join(", "),
+                { shouldValidate: true }
+              );
+            } else {
+              setReasonOfJoiningSelectedOptions([]);
+              setValue("reason_for_joining", "", {
+                shouldValidate: true,
+              });
+              setError("reason_for_joining", {
+                type: "required",
+                message: "Selecting a reason is required",
+              });
+            }
+          }}
+        />
+        {errors.reason_for_joining && (
+          <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+            {errors.reason_for_joining.message}
+          </span>
+        )}
+      </div>
+    <div className="mb-2">
+        <label className="block text-sm font-medium mb-1">
+          Area of focus <span className="text-[red] ml-1">*</span>
+        </label>
+        <Select
+          isMulti
+          menuPortalTarget={document.body}
+          menuPosition={"fixed"}
+          styles={{
+            menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+            control: (provided, state) => ({
+              ...provided,
+              paddingBlock: "2px",
+              borderRadius: "8px",
+              border: errors.area_of_expertise
+                ? "2px solid #ef4444"
+                : "2px solid #737373",
+              backgroundColor: "rgb(249 250 251)",
+              "&::placeholder": {
+                color: errors.area_of_expertise
+                  ? "#ef4444"
+                  : "currentColor",
+              },
+              display: "flex",
+              overflowX: "auto",
+              maxHeight: "43px",
+              "&::-webkit-scrollbar": {
+                display: "none",
+              },
+            }),
+            valueContainer: (provided, state) => ({
+              ...provided,
+              overflow: "scroll",
+              maxHeight: "40px",
+              scrollbarWidth: "none",
+            }),
+            placeholder: (provided, state) => ({
+              ...provided,
+              color: errors.area_of_expertise
+                ? "#ef4444"
+                : "rgb(107 114 128)",
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }),
+            multiValue: (provided) => ({
+              ...provided,
+              display: "inline-flex",
+              alignItems: "center",
+              backgroundColor: "white",
+              border: "1px solid gray",
+              borderRadius: "5px",
+            }),
+            multiValueRemove: (provided) => ({
+              ...provided,
+              display: "inline-flex",
+              alignItems: "center",
+            }),
+          }}
+          value={areaof_focus_SelectedOptions}
+          options={projectOptions}
+          classNamePrefix="select"
+          className="basic-multi-select w-full text-start"
+          placeholder="Select categories of investment"
+          name="area_of_expertise"
+          onChange={(selectedOptions) => {
+            if (selectedOptions && selectedOptions.length > 0) {
+              setproject_area_of_focusSelectedOptions(selectedOptions);
+              clearErrors("area_of_expertise");
+              setValue(
+                "area_of_expertise",
+                selectedOptions.map((option) => option.value).join(", "),
+                { shouldValidate: true }
+              );
+            } else {
+              setproject_area_of_focusSelectedOptions([]);
+              setValue("area_of_expertise", "", {
+                shouldValidate: true,
+              });
+              setError("area_of_expertise", {
+                type: "required",
+                message: "Selecting a category is required",
+              });
+            }
+          }}
+        />
+        {/* ERROR MESSAGE FOR INVESTMENT CATEGORIES */}
+        {errors.area_of_expertise && (
+          <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+            {errors.area_of_expertise.message}
+          </span>
+        )}
+      </div>
       {/* ICP HUB/SPOKE SELECTION FIELD */}
       <div className="mb-2">
         <label className="block mb-1">

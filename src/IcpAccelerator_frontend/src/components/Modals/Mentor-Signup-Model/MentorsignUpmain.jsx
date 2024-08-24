@@ -33,7 +33,7 @@ const MentorSignupMain = ({ }) => {
   // OBJECT TO STORE FIELDS BASED ON CURRENT FORM STEP
   const formFields = {
     0: ["preferred_icp_hub", "category_of_mentoring_service", "multi_chain", "multi_chain_names"], // FIELDS FOR STEP 1
-    1: ["icp_hub_or_spoke", "hub_owner", "mentor_website_url", "years_of_mentoring", "links"], // FIELDS FOR STEP 2
+    1: ["icp_hub_or_spoke", "hub_owner", "mentor_website_url", "years_of_mentoring", "links","area_of_expertise","reason_for_joining"], // FIELDS FOR STEP 2
   };
 
   // FUNCTION TO HANDLE NAVIGATING TO NEXT STEP
@@ -97,9 +97,12 @@ const MentorSignupMain = ({ }) => {
         website: [data.mentor_website_url || ""], // PREPARE WEBSITE URL
         existing_icp_mentor: false, // SET EXISTING MENTOR FLAG
         existing_icp_project_porfolio: [data.existing_icp_project_porfolio || ""], // PREPARE PROJECT PORTFOLIO
-        area_of_expertise: "", // PLACEHOLDER FOR AREA OF EXPERTISE
-        reason_for_joining: [""], // PLACEHOLDER FOR REASON FOR JOINING
-      };
+        // area_of_expertise: "", // PLACEHOLDER FOR AREA OF EXPERTISE
+        // reason_for_joining: [""], 
+        area_of_expertise: data?.area_of_expertise ?? "",
+        // area_of_expertise: [data.area_of_expertise], 
+        reason_for_joining: data.reason_for_joining ? [data.reason_for_joining] : [], /// PLACEHOLDER FOR REASON FOR JOINING
+      };//commit for main
 
       // TRY TO SUBMIT MENTOR DATA TO BACKEND
       try {
