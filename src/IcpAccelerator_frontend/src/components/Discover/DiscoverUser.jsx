@@ -84,6 +84,13 @@ const DiscoverUser = () => {
     return shuffledTags.slice(0, 2);
   };
   const [openDetail,setOpenDetail]=useState(false)
+  const [cardDetail,setCadDetail]=useState(null)
+  const handleClick=(user)=>{
+    setOpenDetail(true)
+    setCadDetail(user)
+    console.log("cardDetail => ",cardDetail)
+    
+  }
 
   return (
     <div>
@@ -106,11 +113,14 @@ const DiscoverUser = () => {
             const area_of_interest = user.area_of_interest || "N/A";
             const location = user.country || "Unknown Location";
             const openchat_username =user.openchat_username ?? "ICP"
+
+            
+       
             return (
               <>
                 {/* Render more fields as needed */}
                 <div className=" p-6 w-[750px] rounded-lg shadow-sm mb-4 flex" key={index}>
-                  <div onClick={()=>setOpenDetail(true)} className="w-[272px]  ">
+                  <div onClick={()=>handleClick(user)} className="w-[272px]  ">
                     <div className="max-w-[250px] w-[250px] h-[254px] bg-gray-100 rounded-lg flex flex-col justify-between  relative overflow-hidden">
                       <div className="absolute inset-0 flex items-center justify-center">
                         <img
@@ -128,7 +138,8 @@ const DiscoverUser = () => {
                       </div>
                     </div>
                   </div>
-                  {openDetail && <DiscoverUserModal openDetail={openDetail} setOpenDetail={setOpenDetail} userData={allUserData} />}
+                  
+                  {openDetail && <DiscoverUserModal openDetail={openDetail} setOpenDetail={setOpenDetail} userData={cardDetail} />}
 
                   <div className="flex-grow ml-[25px] w-[544px]">
                     <div className="flex justify-between items-start mb-2">

@@ -1,232 +1,173 @@
-import React, {useState} from 'react';
-import edit from "../../../../../assets/Logo/edit.png";
-import { FaLinkedin, FaGithub, FaTelegram } from 'react-icons/fa';
-import org from "../../../../../assets/images/Org.png"
-import {
-    LinkedIn,
-    GitHub,
-    Telegram,
-  } from "@mui/icons-material";
+import React, { useState } from "react";
+import org from "../../../../../assets/images/Org.png";
+import uint8ArrayToBase64 from "../../../Utils/uint8ArrayToBase64";
+import { LanguageIcon } from "../../../UserRegistration/DefaultLink";
+import { FaLinkedin, FaTwitter, FaGithub, FaTelegram, FaFacebook, FaInstagram, FaYoutube, FaReddit, FaTiktok, FaSnapchat, FaWhatsapp, FaMedium } from 'react-icons/fa';
+import { LinkedIn, GitHub, Telegram } from "@mui/icons-material";
 
-const DiscoverMentorDetail = () => {
-    const [socialLinks, setSocialLinks] = useState({
-        LinkedIn: "https://www.linkedin.com/in/mattbowers",
-        GitHub: "https://github.com/mattbowers",
-        Telegram: "https://t.me/mattbowers",
-      });
-    
-      const [isEditingLink, setIsEditingLink] = useState({
-        LinkedIn: false,
-        GitHub: false,
-        Telegram: false,
-      });
-    
-      const handleLinkEditToggle = (link) => {
-        setIsEditingLink((prev) => {
-          const newState = {
-            LinkedIn: false,
-            GitHub: false,
-            Telegram: false
-          };
-          newState[link] = !prev[link];
-          return newState;
-        });
+const DiscoverMentorDetail = (projectDetails) => {
+
+  const projectDetail = projectDetails?.projectDetails;
+  console.log("projectdetails ", projectDetail);
+
+  let full_name = projectDetail?.full_name;
+  let bio = projectDetail?.project_description;
+  let icphub = projectDetail?.preferred_icp_hub?.[0];
+  let projectFocus = projectDetail?.project_area_of_focus;
+  let regestrationType=projectDetail?.type_of_registration
+  let links=projectDetail?.links?.[0]?.[0]
+  console.log('Links ', links)
+
+
+  const projectlogo =
+    projectDetail?.project_logo && projectDetail?.project_logo[0]
+      ? uint8ArrayToBase64(projectDetail?.project_logo[0])
+      : "default-profile.png";
+
+  const [socialLinks, setSocialLinks] = useState({
+    LinkedIn: "https://www.linkedin.com/in/mattbowers",
+    GitHub: "https://github.com/mattbowers",
+    Telegram: "https://t.me/mattbowers",
+  });
+
+  const [isEditingLink, setIsEditingLink] = useState({
+    LinkedIn: false,
+    GitHub: false,
+    Telegram: false,
+  });
+
+  const getLogo = (url) => {
+    try {
+      const domain = new URL(url).hostname.split(".").slice(-2).join(".");
+      const size = "text-2xl"; // Adjust size as needed
+      const icons = {
+        "linkedin.com": <FaLinkedin className={`text-blue-600 ${size}`} />,
+        "twitter.com": <FaTwitter className={`text-blue-400 ${size}`} />,
+        "github.com": <FaGithub className={`text-gray-700 ${size}`} />,
+        "telegram.com": <FaTelegram className={`text-blue-400 ${size}`} />,
+        "facebook.com": <FaFacebook className={`text-blue-400 ${size}`} />,
+        "instagram.com": <FaInstagram className={`text-pink-950 ${size}`} />,
+        "youtube.com": <FaYoutube className={`text-red-600 ${size}`} />,
+        "reddit.com": <FaReddit className={`text-orange-500 ${size}`} />,
+        "tiktok.com": <FaTiktok className={`text-black ${size}`} />,
+        "snapchat.com": <FaSnapchat className={`text-yellow-400 ${size}`} />,
+        "whatsapp.com": <FaWhatsapp className={`text-green-600 ${size}`} />,
+        "medium.com": <FaMedium className={`text-black ${size}`} />,
       };
-    
-      const handleLinkChange = (e, link) => {
-        setSocialLinks((prev) => ({
-          ...prev,
-          [link]: e.target.value
-        }));
-      };
-    
-      const handleSaveLinks = () => {
-        console.log('Links saved:', socialLinks);
-        setIsEditingLink({
-          LinkedIn: false,
-          GitHub: false,
-          Telegram: false
-        });
-      };
-    return (
-        <div className="bg-white shadow-lg rounded-lg w-full max-w-sm">
+      return icons[domain] || <LanguageIcon/>;
+    } catch (error) {
+      return <LanguageIcon/>;
+    }
+  };
 
-            <div className="bg-slate-200 p-6">
-                <div className="flex justify-center">
-                    <img
-                        src={org}
-                        alt="Profile"
-                        className="rounded-lg w-24 h-24"
-                    />
-                </div>
-
-                <div className="text-center mt-2">
-                    <span className="text-xs font-medium text-[#3538CD] border bg-blue-50 rounded-lg px-3 py-1">
-                        Looking for funding
-                    </span>
-                </div>
-
-                <div className="text-center mt-4">
-                    <h2 className="text-xl font-semibold text-gray-800">Cypherpunk Labs</h2>
-                    <p className="text-gray-500">@cypherpunklabs</p>
-                </div>
-
-                <div className="text-center w-full mt-6">
-                    <button className="bg-blue-600 text-white font-normal text-sm py-2 px-12 rounded hover:bg-blue-700">
-                        Get in touch <span className='ml-3' aria-hidden="true">↗️</span>
-                    </button>
-                </div>
-            </div>
-
-            <div className="p-6 ">
-            <div className="">
-                <h3 className="text-gray-600 text-sm font-medium">ASSOCIATIONS</h3>
-                <div className="flex gap-4 mt-2 ml-2">
-                    <img
-                        src="https://via.placeholder.com/40"
-                        alt="Association 1"
-                        className="rounded-full w-10 h-10 border-2 border-white shadow-lg -ml-3"
-                    />
-                    <img
-                        src="https://via.placeholder.com/40"
-                        alt="Association 2"
-                        className="rounded-full w-10 h-10 border-2 border-white shadow-lg -ml-3"
-                    />
-                    <img
-                        src="https://via.placeholder.com/40"
-                        alt="Association 3"
-                        className="rounded-full w-10 h-10 border-2 border-white shadow-lg -ml-3"
-                    />
-                </div>
-            </div>
-
-
-            <div className="mt-6">
-                <h3 className="text-gray-400 text-sm font-medium">TAGLINE</h3>
-                <p className="text-sm mt-2">Bringing privacy back to users</p>
-            </div>
-
-
-            <div className="mt-4">
-                <h3 className="text-gray-400 text-sm font-medium">ABOUT</h3>
-                <p className="text-sm mt-2">
-                    Est malesuada ac elit gravida vel aliquam nec. Arcu pelle ntesque convallis quam feugiat non viverra massa fringilla.
-                </p>
-            </div>
-
-
-            <div className="mt-4">
-                <h3 className="text-gray-400 text-sm mb-2 font-medium">CATEGORY</h3>
-                <span className="  border  px-3 py-1 rounded-full text-sm">Infrastructure</span>
-            </div>
-
-
-            <div className="mt-4">
-                <h3 className="text-gray-400 mb-2 text-sm font-medium">STAGE</h3>
-                <span className=" border   px-3 py-1 rounded-full text-sm">MVP</span>
-            </div>
-
-
-            <div className="mt-6">
-            <div>
-            <h3 className="mb-2 text-xs font-medium text-gray-400 px-3">LINKS</h3>
-            <div className="flex items-center px-3">
-              {/* LinkedIn */}
-              <div className="group relative flex items-center">
-                <a
-                  href={socialLinks.LinkedIn}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center"
-                >
-                  <LinkedIn className="text-gray-400 hover:text-gray-600 cursor-pointer transform transition-all duration-300 hover:scale-110" />
-                </a>
-                <button
-                  className="absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 ease-in-out transform opacity-0 group-hover:opacity-100 group-hover:translate-x-8  h-10 w-7"
-                  onClick={() => handleLinkEditToggle("LinkedIn")}
-                >
-                  <img src={edit} />
-                </button>
-                {isEditingLink.LinkedIn && (
-                  <input
-                    type="text"
-                    value={socialLinks.LinkedIn}
-                    onChange={(e) => handleLinkChange(e, "LinkedIn")}
-                    className="border p-1 rounded w-full ml-2 transition-all duration-300 ease-in-out transform"
-                  />
-                )}
-              </div>
-
-              {/* GitHub */}
-              <div className="group relative flex items-center ml-8 group-hover:ml-8">
-                <a
-                  href={socialLinks.GitHub}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center"
-                >
-                  <GitHub className="text-gray-400 hover:text-gray-600 cursor-pointer transform transition-all duration-300 hover:scale-110" />
-                </a>
-                <button
-                  className="absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 ease-in-out transform opacity-0 group-hover:opacity-100 group-hover:translate-x-8  h-10 w-7"
-                  onClick={() => handleLinkEditToggle("GitHub")}
-                >
-                  <img src={edit} />
-                </button>
-                {isEditingLink.GitHub && (
-                  <input
-                    type="text"
-                    value={socialLinks.GitHub}
-                    onChange={(e) => handleLinkChange(e, "GitHub")}
-                    className="border p-1 rounded w-full ml-2 transition-all duration-300 ease-in-out transform"
-                  />
-                )}
-              </div>
-
-              {/* Telegram */}
-              <div className="group relative flex items-center ml-8 group-hover:ml-8">
-                <a
-                  href={socialLinks.Telegram}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center"
-                >
-                  <Telegram className="text-gray-400 hover:text-gray-600 cursor-pointer transform transition-all duration-300 hover:scale-110" />
-                </a>
-                <button
-                  className="absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 ease-in-out transform opacity-0 group-hover:opacity-100 group-hover:translate-x-8  h-10 w-7"
-                  onClick={() => handleLinkEditToggle("Telegram")}
-                >
-                  <img src={edit} />
-                </button>
-                {isEditingLink.Telegram && (
-                  <input
-                    type="text"
-                    value={socialLinks.Telegram}
-                    onChange={(e) => handleLinkChange(e, "Telegram")}
-                    className="border p-1 rounded w-full ml-2 transition-all duration-300 ease-in-out transform"
-                  />
-                )}
-              </div>
-            </div>
-
-            {/* Save Section */}
-            {Object.values(isEditingLink).some((value) => value) && (
-              <div className="flex justify-end gap-4 mt-4">
-                <button
-                  type="button"
-                  onClick={handleSaveLinks}
-                  className="bg-blue-600 text-white py-2 px-4 rounded transition-all duration-300 ease-in-out transform hover:bg-blue-700 hover:scale-105"
-                >
-                  Save
-                </button>
-              </div>
-            )}
-          </div>
-            </div>
-            </div>
+  
+  return (
+    <div className="bg-white shadow-lg rounded-lg w-full max-w-sm">
+      <div className="bg-slate-200 p-6">
+        <div className="flex justify-center">
+          <img
+            src={projectlogo}
+            alt="Profile"
+            className="rounded-lg w-24 h-24"
+          />
         </div>
-    );
+
+        <div className="text-center mt-2">
+          <span className="text-xs font-medium text-[#3538CD] border bg-blue-50 rounded-lg px-3 py-1">
+            Looking for funding
+          </span>
+        </div>
+
+        <div className="text-center mt-4">
+          <h2 className="text-xl font-semibold text-gray-800">{full_name}</h2>
+          {/* <p className="text-gray-500">@cypherpunklabs</p> */}
+        </div>
+
+        <div className="text-center w-full mt-6">
+          <button className="bg-blue-600 text-white font-normal text-sm py-2 px-12 rounded hover:bg-blue-700">
+            Get in touch{" "}
+            <span className="ml-3" aria-hidden="true">
+              ↗️
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <div className="p-6 ">
+        <div className="">
+          <h3 className="text-gray-600 text-sm font-medium">ASSOCIATIONS</h3>
+          <div className="flex gap-4 mt-2 ml-2">
+            <img
+              src="https://via.placeholder.com/40"
+              alt="Association 1"
+              className="rounded-full w-10 h-10 border-2 border-white shadow-lg -ml-3"
+            />
+            <img
+              src="https://via.placeholder.com/40"
+              alt="Association 2"
+              className="rounded-full w-10 h-10 border-2 border-white shadow-lg -ml-3"
+            />
+            <img
+              src="https://via.placeholder.com/40"
+              alt="Association 3"
+              className="rounded-full w-10 h-10 border-2 border-white shadow-lg -ml-3"
+            />
+          </div>
+        </div>
+
+        <div className="mt-6">
+          <h3 className="text-gray-400 text-sm font-medium">
+            Prefered Icp Hub
+          </h3>
+          <p className="text-sm mt-2">{icphub}</p>
+        </div>
+
+        <div className="mt-4">
+          <h3 className="text-gray-400 text-sm font-medium">ABOUT</h3>
+          <p className="text-sm mt-2">{bio} </p>
+        </div>
+
+        <div className="mt-4">
+          <h3 className="text-gray-400 text-sm mb-2 font-medium">PROJECT FOCUS AREA</h3>
+          {/* {projectFocus?.map((project) => (
+            <span className="  border  px-3 py-1 rounded-full text-sm">
+              {project}
+            </span>
+          ))} */}
+           <span className="  border  px-3 py-1 rounded-full text-sm">
+              {projectFocus}
+            </span>
+        </div>
+
+        <div className="mt-4">
+          <h3 className="text-gray-400 mb-2 text-sm font-medium">TYPE OF REGISTRATION</h3>
+          <span className=" border   px-3 py-1 rounded-full text-sm">{regestrationType} </span>
+        </div>
+
+        <div className="mt-6">
+          <div>
+            <h3 className="text-gray-400 mb-2 text-sm font-medium ">
+              LINKS
+            </h3>
+            {links?.link.map((alllink,i)=>{
+               const icon = getLogo(alllink);
+               return (
+                <div key={i} className="flex items-center space-x-2">
+                  {icon ? (
+                    <a href={`${alllink}`}>
+                      {icon}
+                    </a>
+                  ) : (
+                    ""
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default DiscoverMentorDetail;
