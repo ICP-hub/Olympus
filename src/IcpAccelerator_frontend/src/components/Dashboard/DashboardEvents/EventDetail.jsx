@@ -88,15 +88,17 @@ const EventDetails = () => {
   const [difference, setDifference] = useState(null); // Add this state
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+// console.log("............./.........../cohortData",cohortData)
   // const userCurrentRoleStatusActiveRole = useSelector(
   //   (currState) => currState.currentRoleStatus.activeRole
   // );
-  const userCurrentRoleStatusActiveRole = "mentor"
+  const userCurrentRoleStatusActiveRole = "vc"
   useEffect(() => {
     const fetchCohortData = async () => {
       console.log("Actor:", actor);
       console.log("Cohort ID:", cohort_id);
+      
+  
       if (actor && cohort_id) {
         try {
           const result = await actor.get_cohort(cohort_id);
@@ -339,7 +341,9 @@ const EventDetails = () => {
   // console.log("current role",userCurrentRoleStatusActiveRole);
 
   return (
+    
     <div className="flex flex-col">
+     
       <div className="flex flex-col gap-10 md:flex-row">
         <div className="w-[30%] bg-white rounded-lg shadow-md pt-4">
           <div className="bg-gray-100 p-4">
@@ -626,8 +630,7 @@ const EventDetails = () => {
                 </>
               }
               {currentTab === 'Announcements' && <NoDataFound message="No active announcements found" />}
-
-              {currentTab === 'Attendees' && <Attendees />}
+              {currentTab === 'Attendees' && <Attendees  cohortData={cohortData}/>}
               {currentTab === 'Request' && <EventRequestCard />
               }
               {currentTab === 'Reviews' && <NoDataFound message="No active reviews found" />}

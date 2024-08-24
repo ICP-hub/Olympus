@@ -77,7 +77,7 @@ const EventCard = () => {
     }
   }, [allLiveEventsData]);
 
-
+console.log("allliveevents",allLiveEventsData);
   const navigate = useNavigate();
 
   const handleClick = (cohort_id) => {
@@ -129,6 +129,8 @@ const EventCard = () => {
             const country = data?.cohort?.country ?? "";
 
             console.log("cohort Id...........///////////", cohortids);
+            console.log("country",country);
+            console.log("funding",funding);
 
             return (
               <div key={index} className="bg-white rounded-lg shadow p-4 mb-6" onClick={() => handleClick(data.cohort_id)} >
@@ -148,7 +150,7 @@ const EventCard = () => {
 
                       />
                     </div>
-                    <div className='w-3/4'>
+                    <div className='w-2/3'>
                       <div>
                         <p className="bg-white font-medium border-2 borer-[#CDD5DF] text-[#364152] w-[86px] px-2 py-1 rounded-full text-sm">
                           Workshop
