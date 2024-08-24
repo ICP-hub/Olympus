@@ -29,6 +29,12 @@ impl MentorProfile {
                 return Err("Field cannot be empty".into());
             }
         }
+        if self.years_of_mentoring.is_empty() {
+            return Err("Years Of Mentoring is a required field.".to_string());
+        }
+        if self.area_of_expertise.is_empty() {
+            return Err("Area of expertise is a required field.".to_string());
+        }
         Ok(())
     }
 }

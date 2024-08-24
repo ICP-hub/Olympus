@@ -579,7 +579,6 @@ type VentureCapitalist = record {
   registered_under_any_hub : opt bool;
   name_of_fund : text;
   reason_for_joining : opt text;
-  logo : opt blob;
   average_check_size : float64;
   money_invested : opt float64;
   existing_icp_investor : bool;
@@ -588,7 +587,6 @@ type VentureCapitalist = record {
   project_on_multichain : opt text;
   investor_type : opt text;
   website_link : opt text;
-  announcement_details : opt text;
   links : opt vec SocialLinks_2;
   stage : opt text;
   number_of_portfolio_companies : nat16;
@@ -651,6 +649,7 @@ service : {
   filter_cohorts : (CohortFilterCriteria) -> (vec CohortDetails) query;
   filter_mentors : (MentorFilterCriteria) -> (vec MentorProfile) query;
   filter_projects : (FilterCriteria) -> (vec ProjectInfo) query;
+  filter_projects_by_live_status : (bool) -> (vec ProjectInfo) query;
   filter_venture_capitalists : (VcFilterCriteria) -> (
       vec VentureCapitalist,
     ) query;
