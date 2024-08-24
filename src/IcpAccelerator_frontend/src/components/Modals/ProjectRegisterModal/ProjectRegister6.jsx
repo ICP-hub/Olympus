@@ -36,9 +36,16 @@ const ProjectRegister6 = ({formData}) => {
       [{ align: [] }],                                 // Text alignment options
       ["link"],                                        // Link option
       ["clean"],                                       // Clear formatting option
+      [{ header: "1" }, { header: "2" }, { font: [] }], // Heading and font options
+      [{ list: "ordered" }, { list: "bullet" }],       // List options
+      ["bold", "italic", "underline"],                 // Text formatting options
+      [{ align: [] }],                                 // Text alignment options
+      ["link"],                                        // Link option
+      ["clean"],                                       // Clear formatting option
     ],
   }), []);
 
+  // Define the formats that the editor will support
   // Define the formats that the editor will support
   const formats = [
     "header", "font", "list", "bullet", "bold", "italic", "underline", "align", "link"
