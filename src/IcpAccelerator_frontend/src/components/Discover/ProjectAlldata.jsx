@@ -8,6 +8,7 @@ import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
 import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
 import { BsFillSendPlusFill } from "react-icons/bs";
 import { IoSendSharp } from "react-icons/io5";
+import UserDetailPage from "../Dashboard/DashboardHomePage/UserDetailPage";
 const DiscoverProject = () => {
   const actor = useSelector((currState) => currState.actors.actor);
   const [allProjectData, setAllProjectData] = useState([]);
@@ -15,6 +16,8 @@ const DiscoverProject = () => {
   const itemsPerPage = 1;
   const [currentPage, setCurrentPage] = useState(1);
   const [userData, setUserData] = useState([]);
+  const [cardDetail,setCadDetail]=useState(null)
+  const [principal,setprincipal]=useState(null)
   const getAllProject = async (caller, isMounted) => {
     await caller
       .list_all_projects_with_pagination({
@@ -24,6 +27,7 @@ const DiscoverProject = () => {
       .then((result) => {
         if (isMounted) {
           console.log("result-in-get-all-projects", result);
+          setprincipal(result.data[0].principal)
           if (result && result.data) {
             const ProjectData = result.data ? Object.values(result.data) : [];
             const userData = result.user_data
@@ -89,6 +93,14 @@ const DiscoverProject = () => {
     const shuffledTags = skills.sort(() => 0.5 - Math.random());
     return shuffledTags.slice(0, 2);
   };
+  const [openDetail,setOpenDetail]=useState(false)
+
+console.log("cardDetail => ",cardDetail)
+  const handleClick=(user)=>{
+    setOpenDetail(true)
+    setCadDetail(user)
+    // console.log("cardDetail => ",cardDetail)
+  }
 
   return (
     <div>
@@ -117,7 +129,7 @@ const DiscoverProject = () => {
             className="p-6 w-[750px] rounded-lg shadow-sm mb-4 flex"
             key={index}
           >
-            <div className="w-[272px]">
+            <div onClick={()=>handleClick(user)} className="w-[272px]">
               <div className="max-w-[250px] w-[250px] h-[254px] bg-gray-100 rounded-lg flex flex-col justify-between relative overflow-hidden">
                 <div className="absolute inset-0 flex items-center justify-center">
                   <img
@@ -133,6 +145,7 @@ const DiscoverProject = () => {
                 </div>
               </div>
             </div>
+            {openDetail && <UserDetailPage openDetail={openDetail} setOpenDetail={setOpenDetail} userData={cardDetail} principal={principal} />}
 
             <div className="flex-grow ml-[25px] w-[544px]">
               <div className="flex justify-between items-start mb-2">
