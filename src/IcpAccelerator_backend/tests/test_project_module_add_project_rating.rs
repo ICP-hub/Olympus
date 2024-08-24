@@ -114,7 +114,8 @@ fn test_add_project_rating_successful() {
 
     // Decode and verify the success message
     let result: Result<String, String> = decode_one(&response).unwrap();
-    assert_eq!(result, "Rating added", "Expected successful rating addition");
+
+    assert_eq!(result, Ok("Rating added".to_string()), "Expected successful rating addition");
 }
 
 #[test]
@@ -123,6 +124,29 @@ fn test_add_project_rating_already_rated() {
 
     // Define a test principal
     let test_principal = Principal::anonymous(); // Replace with a specific principal if needed
+
+    // Define the UserInformation with some fields set to None
+    let user_info = UserInformation {
+        full_name: "Test User".to_string(),
+        profile_picture: None, // No initial picture provided
+        email: None, // Email not provided
+        country: "United States".to_string(),
+        social_links: None, // No social links provided
+        bio: Some("An enthusiastic tech investor focused on blockchain technologies.".to_string()),
+        area_of_interest: "Blockchain".to_string(),
+        openchat_username: None, // OpenChat username not provided
+        type_of_profile: Some("investor".to_string()),
+        reason_to_join: None,
+    };
+
+    // Simulate registering the user
+    pic.update_call(
+        backend_canister,
+        test_principal,
+        "register_user",
+        encode_one(user_info).unwrap(),
+    ).expect("User registration failed");
+
 
     // Register a project to be rated
     let initial_project_info = ProjectInfo {
@@ -169,8 +193,18 @@ fn test_add_project_rating_already_rated() {
         panic!("Expected reply");
     };
 
-    // Decode the response to retrieve the project ID
-    let project_id = "generated-project-id"; // Replace with the actual project ID
+    // Call the get_project_id function
+    let Ok(WasmResult::Reply(response)) = pic.query_call(
+        backend_canister,
+        test_principal,
+        "get_project_id",
+        encode_one(()).unwrap(),
+    ) else {
+        panic!("Expected reply");
+    };
+
+    // Decode and verify the response
+    let project_id: String = decode_one(&response).expect("Decoding failed");
 
     // Simulate user information retrieval
     let user_info = UserInformation {
