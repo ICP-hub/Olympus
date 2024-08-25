@@ -25,6 +25,7 @@ const Jobs = () => {
     const itemsPerPage = 1;
     const [currentPage, setCurrentPage] = useState(1);
     const [openJobUid, setOpenJobUid] = useState(null);
+    console.log("latestJobs",latestJobs)
     useEffect(() => {
         let isMounted = true;
 
@@ -33,7 +34,7 @@ const Jobs = () => {
 
             try {
                 const result = await caller.get_all_jobs(currentPage , itemsPerPage);
-
+                console.log("latestJobs",result)
                 if (isMounted) {
                     if (result.length === 0) {
                         setNoData(true);
@@ -88,11 +89,12 @@ const Jobs = () => {
     }
 
     const openJobDetails = (uid) => {
-        setOpenJobUid(uid); // Set the uid of the job to open its details
+        console.log("Opening job details for UID:", uid); 
+        setOpenJobUid(uid); 
     };
 
     const closeJobDetails = () => {
-        setOpenJobUid(null); // Close the job details
+        setOpenJobUid(null); 
     };
     return (<>
 
