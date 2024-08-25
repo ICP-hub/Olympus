@@ -62,10 +62,13 @@ const NewEvent = ({ event }) => {
                         no_of_seats: cohort.cohort.no_of_seats,
                         tags: cohort.cohort.tags,
                         country: cohort.cohort.country,
+                        
                         description: cohort.cohort.description,
                         funding_amount: cohort.cohort.funding_amount,
                         cohort_id: cohort.cohort_id, // Include cohort_id here
                     };
+                   
+
                 }).filter(event => event !== null);
 
                 setCohortEvents(formattedEvents);
@@ -120,7 +123,7 @@ const NewEvent = ({ event }) => {
                                         </div>
                                         <div className='w-2/3'>
 
-                                            <p className="bg-white font-medium border-2 border-[#CDD5DF] text-[#364152] w-[86px] px-2 py-1 rounded-full text-sm">
+                                            <p className="bg-white font-medium border-2 border-[#CDD5DF] text-[#364152] w-[86px] px-2 py-1 rounded-full text-sm -mt-3">
                                                 Workshop
                                             </p>
                                             <h3 className="text-lg font-bold mt-1">{event.title}</h3>

@@ -4,7 +4,7 @@ import { ThreeDots } from "react-loader-spinner";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useSelector } from "react-redux";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 
 const schema = yup.object({
   documentTitle: yup
@@ -28,17 +28,12 @@ const schema = yup.object({
     .url("Invalid url"),
 }).required();
 
-const DocumentModal = ({
-  setIsOpen,
-  isOpen,
-  isUpdate,
-  ProjectId,
-}) => {
-  const actor = useSelector((state) => state.actors.actor); 
+const DocumentModal = ({ setIsOpen, isOpen, isUpdate, ProjectId }) => {
+  const actor = useSelector((state) => state.actors.actor);
 
   const [selectedOption, setSelectedOption] = useState("file");
-  const [privacy, setPrivacy] = useState(true); 
-  const [isSubmitting, setIsSubmitting] = useState(false); 
+  const [privacy, setPrivacy] = useState(true); // Default is private (true)
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
     register,
@@ -51,46 +46,44 @@ const DocumentModal = ({
   });
 
   const onSubmit = async (data) => {
-    setIsSubmitting(true); 
+    setIsSubmitting(true);
     try {
-     
       const newDocs = [
         {
           title: data.documentTitle,
           link: selectedOption === "link" ? data.link : null,
-          privacy, 
+          privacy: privacy, // This is now a boolean
         },
       ];
 
-      // Call the update_project_private_docs API
+      // Call the API with the correct privacy boolean value
       const result = await actor.update_project_private_docs(
         ProjectId,
         newDocs,
-        false
+        privacy
       );
 
       console.log("Update result:", result);
-      toast.success("Document uploaded successfully!"); 
+      toast.success("Document uploaded successfully!");
       setTimeout(() => {
-        setIsOpen(false); 
+        setIsOpen(false);
         reset();
-      }, 1000); 
+      }, 1000);
     } catch (error) {
       console.error("Error updating project docs:", error);
-      toast.error("Failed to upload document!"); 
+      toast.error("Failed to upload document!");
     } finally {
-      setIsSubmitting(false); 
+      setIsSubmitting(false);
     }
   };
 
   const handlePrivacyChange = (event) => {
     const selectedPrivacy = event.target.value;
-    setPrivacy(selectedPrivacy === "private");
+    setPrivacy(selectedPrivacy === "private"); // true for private, false for public
   };
 
   return (
     <div>
-   
       {isOpen && (
         <div
           className={`fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 ${
@@ -146,7 +139,7 @@ const DocumentModal = ({
                     </label>
                     <select
                       {...register("documentPrivacy")}
-                      onChange={handlePrivacyChange} // Add the change handler
+                      onChange={handlePrivacyChange}
                       className="border my-1 w-full py-1 px-2"
                     >
                       <option value="">Select Privacy</option>

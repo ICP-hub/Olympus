@@ -9,8 +9,9 @@ import { shareSvgIcon, backSvg } from '../../Utils/Data/SvgData'; // Ensure this
 import NotificationBanner from './Notification';
 import { useLocation } from 'react-router-dom';
 import { DocumentItem } from './DocumentUpload';
-import UploadComponent from './DocumentItems';
+
 import NoMoneyRaising from './NoMoneyRaisingCard';
+import NewDocument from './NewDocument';
 
 
 function DocumentSection() {
@@ -108,9 +109,11 @@ function DocumentSection() {
                     selectedOption={selectedOption}
                     setSelectedOption={setSelectedOption}
                   />
-                  <UploadComponent visibility="Visible to public"
+                  <NewDocument visibility="Visible to public"
                     selectedOption={selectedOption}
-                    setSelectedOption={setSelectedOption}/>
+                    setSelectedOption={setSelectedOption}
+                    cardData={cardData}
+                    />
                 </div>
                 <FAQ />
               </>
