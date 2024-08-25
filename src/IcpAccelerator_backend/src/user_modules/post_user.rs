@@ -66,11 +66,16 @@ pub fn initialize_roles() {
     });
 }
 
+fn record_measurement(measurement: u64) {
+    ic_cdk::println!("Instructions used: {}", measurement);
+}
+
 #[update(guard = "rate_limiter_guard")]
 pub async fn register_user(info: UserInformation) -> Result<std::string::String, std::string::String> {
     // if !verify_captcha(captcha_id, captcha_input) {
     //     return Err::<std::string::String, std::string::String>("CAPTCHA verification failed.".to_string());
     // }
+    let initial_cycles = ic_cdk::api::canister_balance();
     initialize_roles();
 
     let caller = caller();
@@ -184,6 +189,11 @@ pub async fn register_user(info: UserInformation) -> Result<std::string::String,
             role_status.insert(StoredPrincipal(caller), Candid(initial_roles));
         }
     });
+    let final_cycles = ic_cdk::api::canister_balance();
+    
+    let cycles_consumed = initial_cycles - final_cycles;
+    
+    record_measurement(cycles_consumed);
     Ok(format!("User registered successfully with ID: {}", new_id))
 }
 

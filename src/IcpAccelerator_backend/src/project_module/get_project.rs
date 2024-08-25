@@ -234,12 +234,15 @@ pub fn list_all_projects_with_pagination(
     });
 
     let mut list_all_projects: Vec<ListAllProjects> = Vec::new();
-    let mut user_principals: Vec<Principal> = Vec::new();
+    let mut user_data_map: HashMap<Principal, UserInformation> = HashMap::new();
 
     for (stored_principal, project_infos) in projects_snapshot {
-        user_principals.push(stored_principal.0.clone());
+        let mut has_live_project = false;
+
         for project_info in project_infos {
-            if project_info.is_active {
+            if project_info.is_active && project_info.params.live_on_icp_mainnet.unwrap_or(false) {
+                has_live_project = true;
+
                 let get_rating = crate::ratings_module::rubric_ratings::calculate_average(project_info.uid.clone());
                 let project_info_struct = ListAllProjects {
                     principal: stored_principal.clone(),
@@ -249,22 +252,20 @@ pub fn list_all_projects_with_pagination(
                 list_all_projects.push(project_info_struct);
             }
         }
-    }
 
-    let user_data: HashMap<Principal, UserInformation> = user_principals.iter()
-        .map(|principal| {
-            let user_info = get_user_information_internal(*principal);
-            (*principal, user_info)
-        })
-        .collect();
+        if has_live_project {
+            let user_info = get_user_information_internal(stored_principal.0);
+            user_data_map.insert(stored_principal.0.clone(), user_info);
+        }
+    }
 
     PaginationReturnProjectData {
         data: list_all_projects,
-        user_data,
+        user_data: user_data_map,
         count: project_count as u64,
     }
-
 }
+
 
 #[query(guard = "is_user_anonymous")]
 pub fn filter_projects(criteria: FilterCriteria) -> Vec<ProjectInfo> {
