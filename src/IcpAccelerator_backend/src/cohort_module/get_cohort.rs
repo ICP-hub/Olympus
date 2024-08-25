@@ -43,22 +43,50 @@ pub fn get_cohorts_by_principal() -> Vec<CohortDetails> {
 #[query(guard = "is_user_anonymous")]
 pub fn get_all_cohorts(pagination_params: Pagination) -> PaginationReturnCohort {
     let start = (pagination_params.page - 1) * pagination_params.page_size;
+    let current_time = ic_cdk::api::time(); // Current time for comparison
 
-    let cohorts_snapshot = read_state(|state| {
-        state.cohort_info.iter()
-            .skip(start)
-            .take(pagination_params.page_size)
+    let (upcoming, present, past): (Vec<CohortDetails>, Vec<CohortDetails>, Vec<CohortDetails>) = read_state(|state| {
+        let cohorts = state.cohort_info.iter()
             .map(|(_key, candid_cohort_details)| candid_cohort_details.0.clone())
-            .collect::<Vec<_>>()
+            .collect::<Vec<_>>();
+
+        let upcoming = cohorts.iter()
+            .filter(|cohort| cohort.cohort.start_date > current_time.to_string())
+            .cloned()
+            .collect::<Vec<_>>();
+
+        let present = cohorts.iter()
+            .filter(|cohort| cohort.cohort.start_date <= current_time.to_string() && cohort.cohort.cohort_end_date >= current_time.to_string())
+            .cloned()
+            .collect::<Vec<_>>();
+
+        let past = cohorts.iter()
+            .filter(|cohort| cohort.cohort.cohort_end_date < current_time.to_string())
+            .cloned()
+            .collect::<Vec<_>>();
+
+        (upcoming, present, past)
     });
 
-    let total_count = read_state(|state| state.cohort_info.len());
+    let cohorts_snapshot = upcoming.iter()
+        .chain(present.iter())
+        .chain(past.iter())
+        .skip(start)
+        .take(pagination_params.page_size)
+        .cloned()
+        .collect::<Vec<_>>();
+
+    let total_count = upcoming.len() + present.len() + past.len();
 
     PaginationReturnCohort {
         data: cohorts_snapshot,
         total_count: total_count.try_into().unwrap(),
+        upoming_cohorts: upcoming,
+        present_cohorts: present,
+        past_cohorts: past,
     }
 }
+
 
 #[query(guard = "is_user_anonymous")]
 pub fn get_pending_cohort_enrollment_requests(

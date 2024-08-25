@@ -63,9 +63,6 @@ impl ProjectInfo {
         if self.reason_to_join_incubator.is_empty() {
             return Err("Reason to join incubator is a required field.".to_string());
         }
-        if self.project_description.as_ref().map_or(true, |desc| desc.is_empty()) {
-            return Err("Project description is a required field.".to_string());
-        }
 
         Ok(())
     }

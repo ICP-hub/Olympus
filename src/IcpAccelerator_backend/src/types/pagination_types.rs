@@ -63,5 +63,8 @@ pub struct Pagination {
 #[derive(CandidType, Debug, Clone, Serialize, Deserialize)]
 pub struct PaginationReturnCohort {
     pub data: Vec<CohortDetails>,
+    pub upoming_cohorts: Vec<CohortDetails>,
+    pub present_cohorts: Vec<CohortDetails>,
+    pub past_cohorts: Vec<CohortDetails>,
     pub total_count: usize,
 }

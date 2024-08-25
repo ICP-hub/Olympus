@@ -302,6 +302,9 @@ type OfferToSendToProjectByInvestor = record {
 type Pagination = record { page_size : nat64; page : nat64 };
 type PaginationReturnCohort = record {
   data : vec CohortDetails;
+  past_cohorts : vec CohortDetails;
+  upoming_cohorts : vec CohortDetails;
+  present_cohorts : vec CohortDetails;
   total_count : nat64;
 };
 type PaginationReturnMentor = record {
