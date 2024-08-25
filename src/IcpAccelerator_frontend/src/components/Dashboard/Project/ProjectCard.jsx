@@ -40,10 +40,9 @@ const ProjectCard = () => {
 
   const navigate = useNavigate();
 
-  const handleNavigation = () => {
-    const projectId =
-      cardData.length > 0 ? cardData[0].uid : "No UID available";
-    navigate("/dashboard/document", { state: { projectId, cardData } });
+  const handleNavigation = (projectId) => {
+    console.log('projectId',projectId)
+    navigate("/dashboard/document", { state: { projectId } });
   };
   return (
     <div className="pt-12">
@@ -55,8 +54,7 @@ const ProjectCard = () => {
           + Add new project
         </button>
       </div>
-      <div className="mb-3">
-        {/* Progress bar */}
+      {/* <div className="mb-3">
         <div className="bg-[#EEF2F6] rounded-t-2xl h-1.5 w-[200px] ml-[10px] -mb-[8px] dark:bg-[#EEF2F6] overflow-hidden">
           <div className="relative h-1 bg-gray-200">
             <div className="absolute left-0 top-0 h-full bg-green-500 w-1/3"></div>
@@ -74,7 +72,6 @@ const ProjectCard = () => {
             </div>
 
             <div className="ml-4 w-2/3 relative">
-              {/* Three-dot menu button */}
               <button className="absolute right-0 text-gray-400 hover:text-gray-600">
                 <MoreVert fontSize="small" />
               </button>
@@ -96,7 +93,7 @@ const ProjectCard = () => {
             </div>
           </div>
         </Link>
-      </div>
+      </div> */}
       {cardData && cardData.length > 0 ? (
         <div className="mb-3">
           <div className="bg-[#EEF2F6] rounded-t-2xl h-1.5 w-[200px] ml-[10px] -mb-[8px] dark:bg-[#EEF2F6] overflow-hidden ">
@@ -105,7 +102,8 @@ const ProjectCard = () => {
             </div>
           </div>
           {cardData.map((data, index) => (
-            <div className="flex items-center" onClick={handleNavigation}>
+            console.log('data',data),
+            <div className="flex items-center" key={index} onClick={()=>handleNavigation(data[0].uid)}>
               <div className="w-[240px] h-[195px] bg-[#EEF2F6] flex justify-center items-center rounded-2xl">
                 <img
                   src={
