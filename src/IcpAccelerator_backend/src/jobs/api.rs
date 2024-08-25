@@ -24,29 +24,27 @@ pub async fn post_job(params: Jobs) -> String {
     let uid = format!("{:x}", Sha256::digest(&random_bytes));
 
     let new_job = JobsInternal {
-        job_id: uid,
+        job_id: uid.clone(), // Clone uid to return it later
         job_data: params.clone(),
         timestamp: current_time,
         job_poster: Some(user_data),
     };
 
     let result = mutate_state(|state| {
-        let announcement_storage = &mut state.post_job;
-        if let Some(caller_announcements) = announcement_storage.get(&StoredPrincipal(principal_id))
-        {
-            let mut caller_announcements = caller_announcements.clone(); // Clone to mutate
-            caller_announcements.0.push(new_job);
-            announcement_storage.insert(StoredPrincipal(principal_id), caller_announcements);
-            format!("Job post added successfully at {}", current_time)
+        let job_storage = &mut state.post_job;
+        if let Some(caller_jobs) = job_storage.get(&StoredPrincipal(principal_id)) {
+            let mut caller_jobs = caller_jobs.clone(); // Clone to mutate
+            caller_jobs.0.push(new_job);
+            job_storage.insert(StoredPrincipal(principal_id), caller_jobs);
         } else {
-            announcement_storage.insert(StoredPrincipal(principal_id), Candid(vec![new_job]));
-
-            format!("Job Post added successfully at {}", current_time)
+            job_storage.insert(StoredPrincipal(principal_id), Candid(vec![new_job]));
         }
+        format!("Job post added successfully with ID: {}", uid) // Return job_id
     });
 
     result
 }
+
 
 #[update(guard = "is_user_anonymous")]
 pub async fn update_job_post_by_id(timestamp: u64, new_details: Jobs) -> String {
@@ -110,32 +108,38 @@ pub fn get_all_jobs(page_number: usize, page_size: usize) -> Vec<JobsInternal> {
     read_state(|state| {
         let mut all_jobs: Vec<JobsInternal> = Vec::new();
 
-        let start_index = page_number * page_size;
-        let mut current_index = 0;
-
         for (_, job_list) in state.post_job.iter() {
             for job_internal in job_list.0.iter() {
-                if current_index >= start_index && all_jobs.len() < page_size {
-                    all_jobs.push(job_internal.clone());
-                }
-
-                current_index += 1;
-
-                if all_jobs.len() == page_size {
-                    break;
-                }
+                all_jobs.push(job_internal.clone());
             }
+        }
 
-            if all_jobs.len() == page_size {
-                break;
-            }
+        ic_cdk::println!("Total jobs found: {}", all_jobs.len());
+
+        if all_jobs.is_empty() {
+            return vec![];
         }
 
         all_jobs.sort_by(|a, b| b.timestamp.cmp(&a.timestamp));
 
-        all_jobs
+        let max_page_number = (all_jobs.len() + page_size - 1) / page_size - 1;
+
+        if page_number > max_page_number {
+            ic_cdk::println!("Page number {} is out of range, max page number is {}. Returning empty vector.", page_number, max_page_number);
+            return vec![];
+        }
+
+        let start_index = page_number * page_size;
+
+        all_jobs.into_iter()
+            .skip(start_index)
+            .take(page_size)
+            .collect()
     })
 }
+
+
+
 
 #[query(guard = "is_user_anonymous")]
 pub fn get_jobs_posted_by_principal(caller: Principal) -> Vec<JobsInternal> {
@@ -165,4 +169,5 @@ pub fn get_job_details_using_uid(params: String) -> Option<JobsInternal> {
         None
     })
 }
+
 

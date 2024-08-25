@@ -4,8 +4,6 @@ use crate::types::individual_types::*;
 use crate::cohort_module::cohort_types::*;
 use candid::{CandidType, Principal};
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
-use crate::state_handler::*;
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
 pub struct PaginationParams {
@@ -13,26 +11,24 @@ pub struct PaginationParams {
     pub page_size: usize,
 }
 
-#[derive(CandidType, Clone)]
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
 pub struct ListAllProjects {
-    pub principal: StoredPrincipal,
     pub params: ProjectInfoInternal,
     pub overall_average: Option<f64>,
 }
 
-#[derive(CandidType, Clone)]
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
 pub struct PaginationReturnProjectData {
-    pub data: Vec<ListAllProjects>,
-    pub user_data: HashMap<Principal, UserInformation>,
+    pub data: Vec<(Principal, ListAllProjects, UserInformation)>,
     pub count: u64,
 }
 
-#[derive(CandidType, Clone)]
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
 pub struct PaginationReturnVcData {
-    pub data: HashMap<Principal, VcWithRoles>,
-    pub user_data: HashMap<Principal, UserInformation>,
+    pub data: Vec<(Principal, VcWithRoles, UserInformation)>,
     pub count: u64,
 }
+
 
 
 #[derive(CandidType, Deserialize)]
@@ -49,8 +45,7 @@ pub struct PaginationParamMentor {
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
 pub struct PaginationReturnMentor {
-    pub data: HashMap<Principal, MentorWithRoles>,
-    pub user_data: HashMap<Principal, UserInformation>,
+    pub data: Vec<(Principal, MentorWithRoles, UserInformation)>,
     pub count: u64,
 }
 

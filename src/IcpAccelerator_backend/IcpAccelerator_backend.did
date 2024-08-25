@@ -123,7 +123,6 @@ type Jobs = record {
   link : text;
   description : text;
   category : text;
-  project_id : text;
   location : text;
   job_type : text;
 };
@@ -147,7 +146,6 @@ type ListAllIcpHubs = record {
   params : IcpHubDetails;
 };
 type ListAllProjects = record {
-  "principal" : principal;
   overall_average : opt float64;
   params : ProjectInfoInternal;
 };
@@ -308,18 +306,15 @@ type PaginationReturnCohort = record {
   total_count : nat64;
 };
 type PaginationReturnMentor = record {
-  user_data : vec record { principal; UserInformation };
-  data : vec record { principal; MentorWithRoles };
+  data : vec record { principal; MentorWithRoles; UserInformation };
   count : nat64;
 };
 type PaginationReturnProjectData = record {
-  user_data : vec record { principal; UserInformation };
-  data : vec ListAllProjects;
+  data : vec record { principal; ListAllProjects; UserInformation };
   count : nat64;
 };
 type PaginationReturnVcData = record {
-  user_data : vec record { principal; UserInformation };
-  data : vec record { principal; VcWithRoles };
+  data : vec record { principal; VcWithRoles; UserInformation };
   count : nat64;
 };
 type PeerRatingUpdate = record {
@@ -788,16 +783,16 @@ service : {
     ) query;
   get_mentors_applied_for_cohort : (text) -> (Result_5) query;
   get_multichain_list : () -> (vec text) query;
-  get_my_approved_enrollment_requests : () -> (
+  get_my_approved_enrollment_requests : (principal) -> (
       vec CohortEnrollmentRequest,
     ) query;
   get_my_id : () -> (principal) query;
   get_my_invitation_request : (text) -> (Result_6) query;
-  get_my_pending_enrollment_requests : () -> (
+  get_my_pending_enrollment_requests : (principal) -> (
       vec CohortEnrollmentRequest,
     ) query;
   get_my_project : () -> (ProjectInfoInternal, UserInfoInternal) query;
-  get_my_rejected_enrollment_requests : () -> (
+  get_my_rejected_enrollment_requests : (principal) -> (
       vec CohortEnrollmentRequest,
     ) query;
   get_no_of_individuals_applied_for_cohort_using_id : (text) -> (

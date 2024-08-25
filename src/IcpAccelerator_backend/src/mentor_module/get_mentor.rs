@@ -85,7 +85,7 @@ pub fn get_all_mentors() -> HashMap<Principal, (MentorInternal, UserInfoInternal
 pub fn get_all_mentors_with_pagination(
     pagination_params: PaginationParamMentor,
 ) -> PaginationReturnMentor {
-    let (mentor_keys, paginated_mentor_map, total_count) = read_state(|state| {
+    let (data, total_count) = read_state(|state| {
         let start = (pagination_params.page - 1) * pagination_params.page_size;
 
         let mentors_snapshot: Vec<Principal> = state.mentor_storage.iter()
@@ -95,35 +95,30 @@ pub fn get_all_mentors_with_pagination(
             .map(|(stored_principal, _)| stored_principal.0.clone())
             .collect();
 
-        let paginated_mentor_map: HashMap<Principal, MentorWithRoles> = mentors_snapshot.iter()
+        let data: Vec<(Principal, MentorWithRoles, UserInformation)> = mentors_snapshot.iter()
             .map(|principal| {
                 let roles = get_roles_for_principal(*principal);
                 let mentor_info = state.mentor_storage.get(&StoredPrincipal(*principal)).unwrap().0.clone();
-                (*principal, MentorWithRoles {
+                let mentor_with_roles = MentorWithRoles {
                     mentor_profile: mentor_info,
                     roles,
-                })
+                };
+                let user_info = get_user_information_internal(*principal);
+                (*principal, mentor_with_roles, user_info)
             })
             .collect();
 
         let total_count = state.mentor_storage.len() as u64;
 
-        (mentors_snapshot, paginated_mentor_map, total_count)
+        (data, total_count)
     });
 
-    let user_data: HashMap<Principal, UserInformation> = mentor_keys.iter()
-        .map(|principal| {
-            let user_info = get_user_information_internal(*principal);
-            (*principal, user_info)
-        })
-        .collect();
-
     PaginationReturnMentor {
-        data: paginated_mentor_map,
-        user_data,
+        data,
         count: total_count,
     }
 }
+
 
 #[query(guard = "is_user_anonymous")]
 pub fn filter_mentors(criteria: MentorFilterCriteria) -> Vec<MentorProfile> {
