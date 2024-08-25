@@ -10,6 +10,7 @@ import NotificationBanner from './Notification';
 import { useLocation } from 'react-router-dom';
 import { DocumentItem } from './DocumentUpload';
 import UploadComponent from './DocumentItems';
+import NoMoneyRaising from './NoMoneyRaisingCard';
 
 
 function DocumentSection() {
@@ -83,6 +84,16 @@ function DocumentSection() {
             >
               Rating
             </button>
+            <button
+              className={`px-4 py-2 focus:outline-none font-medium ${
+                activeTab === "rating"
+                  ? "border-b-2 border-blue-500 text-blue-500 font-medium"
+                  : "text-gray-400"
+              }`}
+              onClick={() => handleChange("raising")}
+            >
+              Money Rasing
+            </button>
           </div>
 
           <div className="w-full">
@@ -119,6 +130,12 @@ function DocumentSection() {
               <>
                 <JobSection />
                 <FAQ />
+              </>
+            )}
+            {activeTab === "raising" && (
+              <>
+               <NoMoneyRaising />
+                
               </>
             )}
 

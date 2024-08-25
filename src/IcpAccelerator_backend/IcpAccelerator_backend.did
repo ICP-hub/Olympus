@@ -920,7 +920,7 @@ service : {
   update_peer_rating_api : (PeerRatingUpdate) -> (text);
   update_project : (text, ProjectInfo) -> (text);
   update_project_announcement_by_id : (nat64, Announcements) -> (text);
-  update_project_private_docs : (text, vec Docs) -> (Result);
+  update_project_private_docs : (text, vec Docs, bool) -> (Result);
   update_rating : (RatingUpdate) -> (text);
   update_team_member : (text, principal) -> (text);
   update_user_data : (principal, UserInformation) -> (Result_15);
