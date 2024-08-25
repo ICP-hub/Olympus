@@ -1,4 +1,0 @@
-[ZoneTransfer]
-ZoneId=3
-ReferrerUrl=https://github.com/dfinity/pocketic/releases
-HostUrl=https://objects.githubusercontent.com/github-production-release-asset-2e65be/717058616/679fe37e-a988-4697-bce2-e7b00ca37058?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20240820%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240820T165239Z&X-Amz-Expires=300&X-Amz-Signature=497177025464b15db0786416a3fc7b656e0b6ff4d503f2ae5c5a5be704e39f31&X-Amz-SignedHeaders=host&actor_id=174305596&key_id=0&repo_id=717058616&response-content-disposition=attachment%3B%20filename%3Dpocket-ic-x86_64-linux.gz&response-content-type=application%2Foctet-stream

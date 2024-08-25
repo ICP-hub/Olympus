@@ -1,10 +1,10 @@
-use candid::{decode_one, encode_one, Principal};
+use candid::{decode_one, encode_args, encode_one, Principal};
 use pocket_ic::{PocketIc, WasmResult};
 use IcpAccelerator_backend::{project_module::project_types::*, user_modules::user_types::UserInformation};
 use std::fs;
 
 // Define the path to your compiled Wasm file
-const BACKEND_WASM: &str = "/home/harman/accelerator/ICPAccelerator/target/wasm32-unknown-unknown/release/IcpAccelerator_backend.wasm";
+const BACKEND_WASM: &str = "/Users/mridulyadav/Desktop/ICPAccelerator/target/wasm32-unknown-unknown/release/IcpAccelerator_backend.wasm";
 
 // Setup function to initialize PocketIC and install the Wasm module
 fn setup() -> (PocketIc, Principal) {
@@ -125,6 +125,16 @@ fn test_update_project() {
         vc_assigned: None,
         project_website: None,
         links: None,
+        money_raised: None,
+        upload_private_documents: None,
+        private_docs: None,
+        public_docs: None,
+        dapp_link: None,
+        weekly_active_users: None,
+        revenue: None,
+        is_your_project_registered: None,
+        type_of_registration: None,
+        country_of_registration: None,
 
     };
 
@@ -133,7 +143,7 @@ fn test_update_project() {
         backend_canister,
         test_principal,
         "update_project",
-        encode_one((project_id.clone(), updated_project_info.clone())).unwrap(),
+        encode_args((project_id.clone(), updated_project_info.clone())).unwrap(),
     ) else {
         panic!("Expected reply");
     };
