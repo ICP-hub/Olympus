@@ -730,8 +730,7 @@ pub fn remove_mentor_from_cohort(
 
 
 #[query(guard = "is_user_anonymous")]
-pub fn get_my_pending_enrollment_requests() -> Vec<CohortEnrollmentRequest> {
-    let caller = ic_cdk::api::caller();
+pub fn get_my_pending_enrollment_requests(caller: Principal) -> Vec<CohortEnrollmentRequest> {
 
     read_state(|state| {
         let mut pending_requests = Vec::new();
@@ -747,8 +746,7 @@ pub fn get_my_pending_enrollment_requests() -> Vec<CohortEnrollmentRequest> {
 }
 
 #[query(guard = "is_user_anonymous")]
-pub fn get_my_approved_enrollment_requests() -> Vec<CohortEnrollmentRequest> {
-    let caller = ic_cdk::api::caller();
+pub fn get_my_approved_enrollment_requests(caller: Principal) -> Vec<CohortEnrollmentRequest> {
 
     read_state(|state| {
         let mut pending_requests = Vec::new();
@@ -764,9 +762,7 @@ pub fn get_my_approved_enrollment_requests() -> Vec<CohortEnrollmentRequest> {
 }
 
 #[query(guard = "is_user_anonymous")]
-pub fn get_my_rejected_enrollment_requests() -> Vec<CohortEnrollmentRequest> {
-    let caller = ic_cdk::api::caller();
-
+pub fn get_my_rejected_enrollment_requests(caller: Principal) -> Vec<CohortEnrollmentRequest> {
     read_state(|state| {
         let mut pending_requests = Vec::new();
         for (_key, reqs) in state.cohort_enrollment_request.iter() {

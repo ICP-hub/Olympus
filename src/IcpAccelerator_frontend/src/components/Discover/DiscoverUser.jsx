@@ -93,6 +93,7 @@ const DiscoverUser = () => {
   }
 
   return (
+    <>
     <div>
       {isLoading ? (
         <div>Loading...</div>
@@ -139,7 +140,6 @@ const DiscoverUser = () => {
                     </div>
                   </div>
                   
-                  {openDetail && <DiscoverUserModal openDetail={openDetail} setOpenDetail={setOpenDetail} userData={cardDetail} />}
 
                   <div className="flex-grow ml-[25px] w-[544px]">
                     <div className="flex justify-between items-start mb-2">
@@ -196,6 +196,8 @@ const DiscoverUser = () => {
         <div>No Data Available</div>
       )}
     </div>
+                  {openDetail && <DiscoverUserModal openDetail={openDetail} setOpenDetail={setOpenDetail} userData={cardDetail} />}
+</>
   );
 };
 

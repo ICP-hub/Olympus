@@ -7,7 +7,7 @@ import fetchRequestDocument from '../../Utils/apiNames/getDocumentApiName';
 import fetchRequestMoneyRaised from '../../Utils/apiNames/getMoneyRaisedApiName';
 import fetchRequestCohort from '../../Utils/apiNames/getCohortApiName';
 
-export default function ProjectAssociationFilter({ open, close, userRole }) {
+export default function ProjectAssociationFilter({ open, close, projectId ,userPrincipal}) {
   const [show, setShow] = useState(open);
   const [rendered, setRendered] = useState(false);
   const [selectedType, setSelectedType] = useState(null);
@@ -43,7 +43,7 @@ export default function ProjectAssociationFilter({ open, close, userRole }) {
     } else if (userCurrentRoleStatusActiveRole === 'mentor') {
       return [
         { value: 'Associates', label: 'Associates' },
-        { value: 'Cohort Request', label: 'Cohort Request' },
+        { value: 'CohortRequest', label: 'Cohort Request' },
       ];
     } else if (userCurrentRoleStatusActiveRole === 'vc') {
       return [
@@ -85,6 +85,11 @@ export default function ProjectAssociationFilter({ open, close, userRole }) {
     if (selectedTypeValue === 'FundRaised' || selectedTypeValue === 'Document') {
       // Exclude 'Self Declined' for FundRaised and Document
       return baseStatusOptions.filter(option => option.value !== 'self-reject');
+    }else if (selectedTypeValue === 'CohortRequest') {
+      // Include all statuses for Cohort Request
+      return baseStatusOptions.filter(option => 
+        ['pending', 'approved', 'declined'].includes(option.value)
+      );
     }
     return baseStatusOptions;
   };
@@ -99,7 +104,8 @@ export default function ProjectAssociationFilter({ open, close, userRole }) {
       associationValue === 'to-project' ||
       associationValue === 'from-project' ||
       selectedTypeValue === 'FundRaised' ||
-      selectedTypeValue === 'Document'
+      selectedTypeValue === 'Document' ||
+      selectedTypeValue === 'CohortRequest' 
     ) {
       return (
         <div className="mb-4">
@@ -119,38 +125,39 @@ export default function ProjectAssociationFilter({ open, close, userRole }) {
   };
 
   const handleApply = async() => {
-    let data;
-  
-    if (userCurrentRoleStatusActiveRole === 'project') {
-      if (selectedType.value === 'Associates') {
-        data = fetchRequestAssociation(status?.value, association?.value, userCurrentRoleStatusActiveRole);
-      } else if (selectedType.value === 'FundRaised') {
-        data = fetchRequestMoneyRaised(status?.value);
-      } else if (selectedType.value === 'Document') {
-        data = fetchRequestDocument(status?.value);
-      }
-    } else if (userCurrentRoleStatusActiveRole === 'mentor') {
-      if (selectedType.value === 'Associates') {
-        data = fetchRequestAssociation(status?.value, association?.value, userCurrentRoleStatusActiveRole);
-      } else if (selectedType.value === 'Cohort Request') {
-        data = fetchRequestCohort(status?.value);
-      }
-    } else if (userCurrentRoleStatusActiveRole === 'vc') {
-      if (selectedType.value === 'Associates') {
-        data = fetchRequestAssociation(status?.value, association?.value, userCurrentRoleStatusActiveRole);
-      }
-    }
     try {
-      const result = await actor.data;
-      console.log(`result-in-${data}`, result);
-    
-    } catch (error) {
-      console.log(`error-in-${data}`, error);
+      let data = null;  // Initialize data to null or another default value
+  
+      if (userCurrentRoleStatusActiveRole === 'project') {
+        if (selectedType.value === 'Associates') {
+          data = await fetchRequestAssociation(status?.value, association?.value, userCurrentRoleStatusActiveRole ,projectId, userPrincipal,actor);
+        } else if (selectedType.value === 'FundRaised') {
+          data = await fetchRequestMoneyRaised(status?.value,userCurrentRoleStatusActiveRole,actor,projectId);
+        } else if (selectedType.value === 'Document') {
+          data = await fetchRequestDocument(status?.value,userCurrentRoleStatusActiveRole,actor);
+        }
+      } else if (userCurrentRoleStatusActiveRole === 'mentor') {
+        if (selectedType.value === 'Associates') {
+          data = await fetchRequestAssociation(status?.value, association?.value, userCurrentRoleStatusActiveRole ,projectId, userPrincipal,actor);
+        } else if (selectedType.value === 'CohortRequest') {
+          data = await fetchRequestCohort(status?.value,userCurrentRoleStatusActiveRole,actor,userPrincipal);
+        }
+      } else if (userCurrentRoleStatusActiveRole === 'vc') {
+        if (selectedType.value === 'Associates') {
+          data = await fetchRequestAssociation(status?.value, association?.value, userCurrentRoleStatusActiveRole ,projectId, userPrincipal,actor);
+        }
+      }
       
+      console.log('api result', data);
+      const result = await data; // Corrected to await the data if it's a promise
+      console.log(`result-in-${selectedType.value}`, result);
+  
+    } catch (error) {
+      console.log(`error-in-${selectedType.value}`, error);
     }
-    console.log(data);
     // handleClose();
   };
+  
   
 
   if (!rendered) return null;
@@ -200,7 +207,7 @@ export default function ProjectAssociationFilter({ open, close, userRole }) {
             </>
           )}
 
-          {(selectedType && (selectedType.value === 'FundRaised' || selectedType.value === 'Document')) && 
+          {(selectedType && (selectedType.value === 'FundRaised' || selectedType.value === 'Document' || selectedType.value==='CohortRequest')) && 
             renderStatusSelect(null, selectedType.value)
           }
         </div>

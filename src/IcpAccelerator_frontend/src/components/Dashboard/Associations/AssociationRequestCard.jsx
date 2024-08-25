@@ -7,6 +7,8 @@ import BlancheProfileImage from "../../../../assets/Logo/BlancheProfileImage.png
 import CypherpunkLabLogo from "../../../../assets/Logo/CypherpunkLabLogo.png";
 import { FaFilter } from "react-icons/fa";
 import ProjectAssociationFilter from './ProjectAssociationFilter';
+import { useSelector } from 'react-redux';
+import { Principal } from "@dfinity/principal";
 
 const users = [
   {
@@ -69,6 +71,14 @@ const AssociationRequestCard = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [selectedType, setSelectedType] = useState("");
   const [filterOpen, setFilterOpen] = useState(false);
+  const projectFullData = useSelector(
+    (currState) => currState.projectData.data
+  );
+  const userPrincipal = useSelector((currState) => currState.internet.principal);
+  const convertedPrincipal =  Principal.fromText(userPrincipal);
+
+  const projectId = projectFullData?.[0]?.[0]?.uid;
+
 
   const tagColors = useMemo(() => ({
     OLYMPIAN: 'bg-[#F0F9FF] border-[#B9E6FE] border text-[#026AA2] rounded-md',
@@ -174,7 +184,7 @@ const AssociationRequestCard = () => {
       ))}
 
       {filterOpen && (
-        <ProjectAssociationFilter open={filterOpen} close={toggleFilter} />
+        <ProjectAssociationFilter open={filterOpen} close={toggleFilter} projectId={projectId} userPrincipal={convertedPrincipal}/>
       )}
     </div>
   );
