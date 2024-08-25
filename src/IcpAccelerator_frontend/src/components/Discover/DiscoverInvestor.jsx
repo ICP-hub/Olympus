@@ -6,6 +6,8 @@ import { FavoriteBorder, LocationOn, Star } from "@mui/icons-material";
 import CypherpunkLabLogo from "../../../assets/Logo/CypherpunkLabLogo.png";
 import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
 import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
+import DiscoverInvestorPage from "../Dashboard/DashboardHomePage/DiscoverInvestor/DiscoverInvestorPage";
+
 const DiscoverInvestor = () => {
   const actor = useSelector((currState) => currState.actors.actor);
   const [allInvestorData, setAllInvestorData] = useState([]);
@@ -13,6 +15,9 @@ const DiscoverInvestor = () => {
   const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
   const [userData, setUserData] = useState([]);
+  const [sendprincipal,setSendprincipal]=useState(null)
+  const [openDetail,setOpenDetail]=useState(false)
+
   console.log(".............Investor", allInvestorData);
   const getAllInvestor = async (caller, isMounted) => {
     await caller
@@ -22,7 +27,12 @@ const DiscoverInvestor = () => {
       })
       .then((result) => {
         if (isMounted) {
+
           console.log("result-in-get-all-investor" , result);
+          {result?.data.map(val=>{
+            setSendprincipal(val[0])
+          })}
+
           if (result && result.data) {
             const InvestorData = result.data ? Object.values(result.data) : [];
             const userData = result.user_data
@@ -47,6 +57,7 @@ const DiscoverInvestor = () => {
         }
       });
   };
+  console.log("sendPrincipal", sendprincipal)
 
   useEffect(() => {
     let isMounted = true;
@@ -90,6 +101,11 @@ const DiscoverInvestor = () => {
     return shuffledTags.slice(0, 2);
   };
 
+  const handleClick=()=>{
+    setOpenDetail(true)
+    
+  }
+
   return (
     <div>
     {isLoading ? (
@@ -117,7 +133,7 @@ const DiscoverInvestor = () => {
             className="p-6 w-[750px] rounded-lg shadow-sm mb-4 flex"
             key={index}
           >
-            <div className="w-[272px]">
+            <div onClick={handleClick} className="w-[272px]">
               <div className="max-w-[250px] w-[250px] h-[254px] bg-gray-100 rounded-lg flex flex-col justify-between relative overflow-hidden">
                 <div className="absolute inset-0 flex items-center justify-center">
                   <img
@@ -126,7 +142,7 @@ const DiscoverInvestor = () => {
                     className="w-24 h-24 rounded-full object-cover"
                   />
                 </div>
-
+                {openDetail && <DiscoverInvestorPage openDetail={openDetail} setOpenDetail={setOpenDetail}  principal={sendprincipal} />}
                 <div className="absolute bottom-0 right-[6px] flex items-center bg-gray-100 p-1">
                   <Star className="text-yellow-400 w-4 h-4" />
                   <span className="text-sm font-medium">5.0</span>

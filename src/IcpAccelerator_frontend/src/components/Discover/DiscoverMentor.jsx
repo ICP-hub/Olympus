@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import { FavoriteBorder, Star } from "@mui/icons-material";
 import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
 import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
+import DiscoverMentorMain from "../Dashboard/DashboardHomePage/discoverMentor/DiscoverMentorMain";
 
 const DiscoverMentor = () => {
   const actor = useSelector((currState) => currState.actors.actor);
@@ -14,6 +15,9 @@ const DiscoverMentor = () => {
   const itemsPerPage = 50;
   const [currentPage, setCurrentPage] = useState(1);
   const [isFetching, setIsFetching] = useState(false);
+  const [sendprincipal,setSendprincipal]=useState(null)
+  const [openDetail,setOpenDetail]=useState(false)
+
 
   const getAllMentor = async (caller, page) => {
     setIsFetching(true);
@@ -22,10 +26,17 @@ const DiscoverMentor = () => {
         page_size: itemsPerPage,
         page: page,
       });
+      
+      {result?.data.map(val=>{
+        setSendprincipal(val[0])
+      })}
+      console.log("result =>",result)
 
       if (result && result.data) {
         const mentorData = Object.values(result.data);
         const userData = Object.values(result.user_data || {});
+
+        
 
         if (mentorData.length === 0) {
           setHasMore(false); // No more data to load
@@ -49,6 +60,8 @@ const DiscoverMentor = () => {
     }
   };
 
+  console.log('send',sendprincipal)
+  
   useEffect(() => {
     if (!isFetching && hasMore) {
       if (actor) {
@@ -73,10 +86,17 @@ const DiscoverMentor = () => {
   };
 
   const tags = ["OLYMPIAN", "FOUNDER", "TALENT", "INVESTER", "PROJECT"];
+
+  
   const getRandomTags = () => {
     const shuffledTags = tags.sort(() => 0.5 - Math.random());
     return shuffledTags.slice(0, 2);
   };
+
+  const handleClick=()=>{
+    setOpenDetail(true)
+    
+  }
 
   return (
     <div>
@@ -113,7 +133,7 @@ const DiscoverMentor = () => {
                 className="p-6 w-[750px] rounded-lg shadow-sm mb-4 flex"
                 key={index}
               >
-                <div className="w-[272px]">
+                <div onClick={()=>handleClick()} className="w-[272px]">
                   <div className="max-w-[250px] w-[250px] h-[254px] bg-gray-100 rounded-lg flex flex-col justify-between relative overflow-hidden">
                     <div className="absolute inset-0 flex items-center justify-center">
                       <img
@@ -129,6 +149,7 @@ const DiscoverMentor = () => {
                     </div>
                   </div>
                 </div>
+                {openDetail && <DiscoverMentorMain openDetail={openDetail} setOpenDetail={setOpenDetail}  principal={sendprincipal} />}
 
                 <div className="flex-grow ml-[25px] w-[544px]">
                   <div className="flex justify-between items-start mb-2">
@@ -178,6 +199,7 @@ const DiscoverMentor = () => {
       ) : (
         <div>No Data Available</div>
       )}
+
     </div>
   );
 };
