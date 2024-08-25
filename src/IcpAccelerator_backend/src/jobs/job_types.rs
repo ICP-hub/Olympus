@@ -8,7 +8,6 @@ pub struct Jobs {
     pub description: String,
     pub category: String,
     pub link: String,
-    pub project_id: String,
     pub location: String,
     pub job_type: String,
 }

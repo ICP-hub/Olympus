@@ -219,10 +219,16 @@ pub fn list_all_projects_with_pagination(
     pagination_params: PaginationParams,
 ) -> PaginationReturnProjectData {
     let (projects_snapshot, project_count) = read_state(|state| {
-        let project_count = state.project_storage.len();
+        let filtered_projects: Vec<_> = state.project_storage.iter()
+            .filter(|(_, project_infos)| {
+                project_infos.0.iter().any(|project_info| project_info.is_active && project_info.params.live_on_icp_mainnet.unwrap_or(false))
+            })
+            .collect();
+
+        let project_count = filtered_projects.len();
         let start = (pagination_params.page - 1) * pagination_params.page_size;
 
-        let projects_snapshot = state.project_storage.iter()
+        let projects_snapshot = filtered_projects.iter()
             .skip(start)
             .take(pagination_params.page_size)
             .map(|(principal, project_infos)| {
@@ -233,38 +239,30 @@ pub fn list_all_projects_with_pagination(
         (projects_snapshot, project_count)
     });
 
-    let mut list_all_projects: Vec<ListAllProjects> = Vec::new();
-    let mut user_data_map: HashMap<Principal, UserInformation> = HashMap::new();
+    let mut data: Vec<(Principal, ListAllProjects, UserInformation)> = Vec::new();
 
     for (stored_principal, project_infos) in projects_snapshot {
-        let mut has_live_project = false;
-
         for project_info in project_infos {
             if project_info.is_active && project_info.params.live_on_icp_mainnet.unwrap_or(false) {
-                has_live_project = true;
-
                 let get_rating = crate::ratings_module::rubric_ratings::calculate_average(project_info.uid.clone());
                 let project_info_struct = ListAllProjects {
-                    principal: stored_principal.clone(),
-                    params: project_info,
+                    params: project_info.clone(),
                     overall_average: get_rating.overall_average.get(0).cloned(),
                 };
-                list_all_projects.push(project_info_struct);
-            }
-        }
+                
+                let user_info = get_user_information_internal(stored_principal.0);
 
-        if has_live_project {
-            let user_info = get_user_information_internal(stored_principal.0);
-            user_data_map.insert(stored_principal.0.clone(), user_info);
+                data.push((stored_principal.0.clone(), project_info_struct, user_info));
+            }
         }
     }
 
     PaginationReturnProjectData {
-        data: list_all_projects,
-        user_data: user_data_map,
+        data,
         count: project_count as u64,
     }
 }
+
 
 
 #[query(guard = "is_user_anonymous")]
