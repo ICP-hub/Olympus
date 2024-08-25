@@ -27,4 +27,4 @@ package-lock.json
 canister_ids.json
 
 #pocket ic
-.pocket-ic
+src/IcpAccelerator_backend/src/pocket-ic
