@@ -3,7 +3,6 @@ import org from "../../../../../assets/images/Org.png";
 import uint8ArrayToBase64 from "../../../Utils/uint8ArrayToBase64";
 import { LanguageIcon } from "../../../UserRegistration/DefaultLink";
 import { FaLinkedin, FaTwitter, FaGithub, FaTelegram, FaFacebook, FaInstagram, FaYoutube, FaReddit, FaTiktok, FaSnapchat, FaWhatsapp, FaMedium } from 'react-icons/fa';
-import { LinkedIn, GitHub, Telegram } from "@mui/icons-material";
 
 const DiscoverMentorDetail = (projectDetails) => {
 

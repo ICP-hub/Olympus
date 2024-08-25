@@ -7,26 +7,26 @@ import uint8ArrayToBase64 from "../../../Utils/uint8ArrayToBase64";
 import { LanguageIcon } from "../../../UserRegistration/DefaultLink";
 import { FaLinkedin, FaTwitter, FaGithub, FaTelegram, FaFacebook, FaInstagram, FaYoutube, FaReddit, FaTiktok, FaSnapchat, FaWhatsapp, FaMedium } from 'react-icons/fa';
 
-const DiscoverInvestorAbout = ({investorData}) => {
+const DiscoverMentorProfile = ({mentorData}) => {
 
-  const investorProfile =investorData?.[0]?.profile
-  const investorDetail=investorData?.[1]?.params
-  console.log("investorProfile",investorProfile)
-  console.log('investorDetails',investorDetail)
+  const mentorProfile =mentorData?.[0]
+  const mentorEvent=mentorData?.[1]
+  console.log("mentorProfile",mentorProfile)
+  console.log('mentorEvent',mentorEvent)
 
     
     const profilepic =
-    investorDetail?.profile_picture && investorDetail?.profile_picture[0]
-      ? uint8ArrayToBase64(investorDetail?.profile_picture[0])
+    mentorEvent?.params?.profile_picture && mentorEvent?.params?.profile_picture[0]
+      ? uint8ArrayToBase64(mentorEvent?.params?.profile_picture[0])
       : "default-profile.png";
 
-  const full_name = investorDetail?.full_name || "Unknown User";
-  const email = investorDetail?.email || "N/A";
-  const bio = investorDetail?.bio[0] || "No bio available.";
-  const area_of_interest = investorDetail?.area_of_interest || "N/A";
-  const location = investorDetail?.country || "Unknown Location";
-  const openchat_username = investorDetail?.openchat_username ?? "username";
-  let links=investorDetail?.social_links?.links?.[0]?.[0]
+  const full_name = mentorEvent?.params?.full_name || "Unknown User";
+  const email = mentorEvent?.params?.email || "N/A";
+  const bio = mentorEvent?.params?.bio[0] || "No bio available.";
+  const area_of_interest = mentorEvent?.params?.area_of_interest || "N/A";
+  const location = mentorEvent?.params?.country || "Unknown Location";
+  const openchat_username = mentorEvent?.params?.openchat_username ?? "username";
+  let links=mentorEvent?.params?.social_links?.links?.[0]?.[0]
   console.log('Links ', links)
 
   const getLogo = (url) => {
@@ -58,7 +58,7 @@ const DiscoverInvestorAbout = ({investorData}) => {
   const handleChange=(tab)=>{
     setActiveTab(tab)
   }
-
+  
   return (
     <div className="">
     <div className="container bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden w-full max-w-[400px]">
@@ -75,7 +75,7 @@ const DiscoverInvestorAbout = ({investorData}) => {
           <VerifiedIcon className="text-blue-500 mr-1" fontSize="small" />
           <h2 className="text-xl font-semibold">{full_name}</h2>
         </div>
-        <p className="text-gray-600 text-center mb-4">{"openchat_username"}</p>
+        <p className="text-gray-600 text-center mb-4">{openchat_username}</p>
         <a
           href={`mailto:${email}`}
           className="w-full h-[#155EEF] bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 mb-6 flex items-center justify-center"
@@ -107,7 +107,7 @@ const DiscoverInvestorAbout = ({investorData}) => {
             Associations
           </h3>
           <div className="mb-2">
-            <img src={awtar} alt="icon" />
+            <img src={"awtar"} alt="icon" />
           </div>
         </div>
         <div className="flex justify-start border-b">
@@ -197,7 +197,7 @@ const DiscoverInvestorAbout = ({investorData}) => {
                 </h3>
               </div>
               <div className="flex flex-wrap gap-2">
-                {investorDetail?.reason_to_join?.map((reason) => (
+                {mentorEvent?.params?.reason_to_join?.map((reason) => (
                   <span
                     key={reason}
                     className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 "
@@ -216,13 +216,13 @@ const DiscoverInvestorAbout = ({investorData}) => {
                 </h3>
               </div>
               <div className="flex flex-wrap text-sm gap-2">
-                {investorDetail?.area_of_interest}
+                {mentorEvent?.params?.area_of_interest}
               </div>
             </div>
 
             <div>
               <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase ">LINKS</h3>
-              {/* {links?.link.map((alllink,i)=>{
+              {links?.link.map((alllink,i)=>{
                const icon = getLogo(alllink);
                return (
                 <div key={i} className="flex items-center space-x-2">
@@ -235,7 +235,7 @@ const DiscoverInvestorAbout = ({investorData}) => {
                   )}
                 </div>
               );
-            })} */}
+            })}
             </div>
           </div>
         ) : (
@@ -247,4 +247,4 @@ const DiscoverInvestorAbout = ({investorData}) => {
   )
 }
 
-export default DiscoverInvestorAbout
+export default DiscoverMentorProfile

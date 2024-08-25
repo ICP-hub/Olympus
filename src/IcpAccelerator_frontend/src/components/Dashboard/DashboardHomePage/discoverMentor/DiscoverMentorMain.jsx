@@ -1,36 +1,36 @@
+// import UserDetail from "./UserDetail";
 import CloseIcon from "@mui/icons-material/Close";
+// import UserProjectCard from "./UserProjectCard";
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import DiscoverInvestorAbout from "./DiscoverInvestorAbout";
-import DiscoverInvestorDetail from "./DiscoverInvestorDetail";
-import { IcpAccelerator_backend } from "../../../../../../declarations/IcpAccelerator_backend/index";
+import DiscoverMentorProfile from "./DiscoverMentorProfile";
+import DiscoverMentorEvent from "./DiscoverMentorEvent";
 
-const DiscoverInvestorPage = ({ openDetail, setOpenDetail, principal }) => {
-  const actor = useSelector((currState) => currState.actors.actor);
-  console.log("principal in DiscoverInvestor", principal);
-  const [allInvestorData, setAllInvestorData] = useState(null);
-  const [loading, setIsLoading] = useState(true); 
-  console.log("openDetail", openDetail);
-  
+const DiscoverMentorMain = ({ openDetail, setOpenDetail, principal }) => {
+    const actor = useSelector((currState) => currState.actors.actor);
+  console.log("principal in DiscoverMentorMain", principal);
+  const [allMentorData, setAllMentorData] = useState(null);
+  const [loaing, setIsLoading] = useState(true);
+
   const getAllUser = async (caller, isMounted) => {
     await caller
-      .get_vc_info_using_principal(principal)
+      .get_mentor_info_using_principal(principal)
       .then((result) => {
         if (isMounted) {
-          console.log("data from api", result);
+          // console.log("data from api", result);
           if (result) {
             // Log the exact structure of result.data to verify it
             console.log("Data received:", result?.[0]);
-            setAllInvestorData(result?.[0]);
+            setAllMentorData(result?.[0]);
           } else {
-            setAllInvestorData([]); 
+            setAllMentorData([]); // Set to an empty array if no data
           }
           setIsLoading(false);
         }
       })
       .catch((error) => {
         if (isMounted) {
-          setAllInvestorData([]);
+          setAllMentorData([]);
           setIsLoading(false);
           console.log("error-in-get-all-user", error);
         }
@@ -53,23 +53,22 @@ const DiscoverInvestorPage = ({ openDetail, setOpenDetail, principal }) => {
 
   return (
     <div className="w-full bg-fixed h-screen fixed inset-0 bg-black bg-opacity-30 backdrop-blur-xs z-50">
-      <div className="mx-auto w-[70%] absolute right-0 top-0 z-10 bg-white h-screen">
-        <button onClick={() => setOpenDetail(false)}  className="p-2 mb-2">
+      <div className=" mx-auto w-[70%] absolute right-0 top-0 z-10 bg-white h-screen">
+        <div className=" p-2 mb-2">
           <CloseIcon
             sx={{ cursor: "pointer" }}
-            
+            onClick={() => setOpenDetail(false)}
           />
-        </button>
-        
+        </div>
         <div className="container h-[calc(100%-50px)] ml-2 pb-8 overflow-y-auto">
           <div className="container">
             <div className="flex justify-evenly px-[1%] ">
               <div className="border h-fit rounded-lg w-[32%]">
-                <DiscoverInvestorAbout investorData={allInvestorData} />
+                <DiscoverMentorProfile mentorData={allMentorData} />
               </div>
-              <div className="px-3 w-[63%] overflow-y-auto h-[84vh]">
-                <div>
-                  <DiscoverInvestorDetail investorData={allInvestorData} />
+              <div className=" px-3 w-[63%] overflow-y-auto h-[84vh] ">
+                <div className="">
+                  <DiscoverMentorEvent mentorData={allMentorData}/>
                 </div>
               </div>
             </div>
@@ -77,7 +76,7 @@ const DiscoverInvestorPage = ({ openDetail, setOpenDetail, principal }) => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default DiscoverInvestorPage;
+export default DiscoverMentorMain
