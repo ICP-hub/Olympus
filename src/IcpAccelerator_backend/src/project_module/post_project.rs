@@ -13,8 +13,13 @@ use ic_cdk_macros::update;
 use serde_bytes::ByteBuf;
 use sha2::{Digest, Sha256};
 
+fn record_measurement(measurement: u64) {
+    ic_cdk::println!("Instructions used: {}", measurement);
+}
+
 #[update(guard = "is_user_anonymous")]
 pub async fn register_project(info: ProjectInfo) -> String {
+    let initial_cycles = ic_cdk::api::canister_balance();
     if info.private_docs.is_some() && info.upload_private_documents != Some(true) {
         return "Cannot set private documents unless upload private docs has been set to true"
             .to_string();
@@ -97,11 +102,17 @@ pub async fn register_project(info: ProjectInfo) -> String {
                     role_status.insert(StoredPrincipal(caller), Candid(role_status_vec));
                 }
             });
+            let final_cycles = ic_cdk::api::canister_balance();
+    
+            let cycles_consumed = initial_cycles - final_cycles;
+            
+            record_measurement(cycles_consumed);
 
             format!("Project created Succesfully with UID {}", new_project.uid)
         }
         Err(e) => format!("Validation error: {}", e),
     }
+    
 }
 
 pub async fn change_project_images(
