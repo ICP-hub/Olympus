@@ -15,7 +15,7 @@ console.log("uid of job.............",uid)
         const fetchJobDetails = async () => {
             setIsLoading(true);
             try {
-                const result = await actor.get_single_job(uid);
+                const result = await actor.get_job_details_using_uid(uid);
                 console.log("Fetched job details:", result);
                 setJobDetails(result);
             } catch (error) {

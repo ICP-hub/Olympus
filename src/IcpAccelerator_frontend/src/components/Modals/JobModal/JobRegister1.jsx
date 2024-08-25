@@ -137,6 +137,9 @@ const JobRegister1 = ({ modalOpen, setModalOpen }) => {
 //       setIsSubmitting(false);
 //     }
 //   };
+const projectFullData = useSelector((currState) => currState.projectData.data);
+const projectuid=projectFullData[0][0]?.uid
+console.log("projectFullData", projectuid)
 const onSubmit = async (data) => {
 
   setIsSubmitting(true);
@@ -151,6 +154,7 @@ const onSubmit = async (data) => {
       location: data.jobLocation.value,
       link: data.jobLink,
       job_type: data.job_type.value,
+      // project_id: projectuid,
     };
     console.log('YE ARGUMENT FUNCTION KO DE RHA HU', argument)
 

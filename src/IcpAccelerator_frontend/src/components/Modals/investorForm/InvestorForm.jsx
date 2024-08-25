@@ -25,7 +25,7 @@ const InvestorForm = ({ isOpen }) => {
   const actor = useSelector((state) => state.actors.actor);
   // STATE TO STORE ACCUMULATED FORM DATA ACROSS MULTIPLE STEPS
   const [formData, setFormData] = useState({});
-
+  console.log("STATE SE AAYA HUA DATA",formData); 
   // INITIALIZE REACT HOOK FORM WITH VALIDATION SCHEMA
   const {
     register,
@@ -73,9 +73,10 @@ const InvestorForm = ({ isOpen }) => {
   const [index, setIndex] = useState(0);
 
   // FUNCTION TO HANDLE NEXT BUTTON CLICK
-  const handleNext = async () => {
+  const handleNext = async (data) => {
     const isValid = await trigger(formFields[index]); // VALIDATE CURRENT STEP
     if (isValid) {
+      console.log("PREV DATA FORM DATA ME JAANE SE PHLE", data)
       setFormData((prevData) => ({
         ...prevData,
         ...getValues(), // MERGE CURRENT STEP DATA WITH PREVIOUS DATA
@@ -94,14 +95,15 @@ const InvestorForm = ({ isOpen }) => {
   // FUNCTION TO HANDLE FORM SUBMISSION
   const onSubmitHandler = async () => {
     const data = { ...formData, ...getValues() }; // MERGE FINAL FORM DATA
-  console.log('data',data)
+    console.log("SPREAD OPERATOR SE DATA AAYA", data)
+    console.log(data.investor_portfolio_link);
     if (actor) {
       const investorData = {
         name_of_fund: data?.investor_fund_name,
         fund_size: [
-          data?.investor_fund_size &&
-          typeof data?.investor_fund_size === "number"
-            ? data?.investor_fund_size
+          data?.fund_size &&
+          typeof data?.fund_size === "number"
+            ? data?.fund_size
             : 0,
         ],
         existing_icp_investor:

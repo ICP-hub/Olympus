@@ -1,94 +1,63 @@
 import React from "react";
-import { LinkedIn, GitHub, Telegram } from "@mui/icons-material";
+import { LinkedIn, GitHub, Telegram, Facebook, Twitter, Instagram } from "@mui/icons-material";
 import edit from "../../../assets/Logo/edit.png";
 
-const SocialLinks = ({
-  socialLinks,
-  isEditingLink,
-  handleLinkEditToggle,
-  handleLinkChange,
-}) => {
+const getSocialIcon = (url) => {
+  if (typeof url === 'string') {
+    if (url.includes("linkedin.com")) return <LinkedIn className="text-blue-700" />;
+    if (url.includes("github.com")) return <GitHub className="text-gray-800" />;
+    if (url.includes("telegram.me") || url.includes("t.me")) return <Telegram className="text-blue-500" />;
+    if (url.includes("facebook.com")) return <Facebook className="text-blue-600" />;
+    if (url.includes("twitter.com")) return <Twitter className="text-blue-500" />;
+    if (url.includes("instagram.com")) return <Instagram className="text-pink-500" />;
+  }
+  return null; // Return null if no matching icon is found or if url is not a string
+};
+
+const SocialLinks = ({ socialLinks, isEditingLink, handleLinkEditToggle, handleLinkChange }) => {
+  // Ensure socialLinks is an array
+  if (!Array.isArray(socialLinks)) {
+    console.error("Expected socialLinks to be an array, but got:", socialLinks);
+    return null; // Exit early if socialLinks is not an array
+  }
+
+  console.log("Rendering SocialLinks with data:", socialLinks);
+
   return (
     <div>
-      <h3 className="mb-2 text-xs text-gray-500 px-3">LINKS</h3>
-      <div className="flex items-center px-3">
-        {/* LinkedIn */}
-        <div className="group relative flex items-center">
-          <a
-            href={socialLinks.LinkedIn}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center"
-          >
-            <LinkedIn className="text-gray-400 hover:text-gray-600 cursor-pointer transform transition-all duration-300 hover:scale-110" />
-          </a>
-          <button
-            className="absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 ease-in-out transform opacity-0 group-hover:opacity-100 group-hover:translate-x-8  h-10 w-7"
-            onClick={() => handleLinkEditToggle("LinkedIn")}
-          >
-            <img src={edit} />
-          </button>
-          {isEditingLink.LinkedIn && (
-            <input
-              type="text"
-              value={socialLinks.LinkedIn}
-              onChange={(e) => handleLinkChange(e, "LinkedIn")}
-              className="border p-1 rounded w-full ml-2 transition-all duration-300 ease-in-out transform"
-            />
-          )}
-        </div>
-
-        {/* GitHub */}
-        <div className="group relative flex items-center ml-8 group-hover:ml-8">
-          <a
-            href={socialLinks.GitHub}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center"
-          >
-            <GitHub className="text-gray-400 hover:text-gray-600 cursor-pointer transform transition-all duration-300 hover:scale-110" />
-          </a>
-          <button
-            className="absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 ease-in-out transform opacity-0 group-hover:opacity-100 group-hover:translate-x-8  h-10 w-7"
-            onClick={() => handleLinkEditToggle("GitHub")}
-          >
-            <img src={edit} />
-          </button>
-          {isEditingLink.GitHub && (
-            <input
-              type="text"
-              value={socialLinks.GitHub}
-              onChange={(e) => handleLinkChange(e, "GitHub")}
-              className="border p-1 rounded w-full ml-2 transition-all duration-300 ease-in-out transform"
-            />
-          )}
-        </div>
-
-        {/* Telegram */}
-        <div className="group relative flex items-center ml-8 group-hover:ml-8">
-          <a
-            href={socialLinks.Telegram}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center"
-          >
-            <Telegram className="text-gray-400 hover:text-gray-600 cursor-pointer transform transition-all duration-300 hover:scale-110" />
-          </a>
-          <button
-            className="absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 ease-in-out transform opacity-0 group-hover:opacity-100 group-hover:translate-x-8  h-10 w-7"
-            onClick={() => handleLinkEditToggle("Telegram")}
-          >
-            <img src={edit} />
-          </button>
-          {isEditingLink.Telegram && (
-            <input
-              type="text"
-              value={socialLinks.Telegram}
-              onChange={(e) => handleLinkChange(e, "Telegram")}
-              className="border p-1 rounded w-full ml-2 transition-all duration-300 ease-in-out transform"
-            />
-          )}
-        </div>
+      <h3 className="mb-2 text-xs text-gray-500 px-3">Social Links</h3>
+      <div className="flex flex-wrap items-center px-3">
+        {socialLinks.map((linkObj, index) => {
+          const url = linkObj?.platform;
+          return (
+            typeof url === 'string' && url && (
+              <div key={index} className="group relative flex items-center ml-4 mb-2">
+                <a
+                  href={url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center"
+                >
+                  {getSocialIcon(url)}
+                </a>
+                <button
+                  className="absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 ease-in-out transform opacity-0 group-hover:opacity-100 group-hover:translate-x-8  h-10 w-7"
+                  onClick={() => handleLinkEditToggle(url)}
+                >
+                  <img src={edit} alt="Edit" />
+                </button>
+                {isEditingLink[url] && (
+                  <input
+                    type="text"
+                    value={url}
+                    onChange={(e) => handleLinkChange(e, url)}
+                    className="border p-1 rounded w-full ml-2 transition-all duration-300 ease-in-out transform"
+                  />
+                )}
+              </div>
+            )
+          );
+        })}
       </div>
     </div>
   );
