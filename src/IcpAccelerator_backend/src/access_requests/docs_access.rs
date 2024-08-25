@@ -10,7 +10,7 @@ use ic_cdk_macros::*;
 use ic_cdk::api::caller;
 
 #[update(guard = "is_user_anonymous")]
-pub async fn update_project_private_docs(project_id: String, new_docs: Vec<Docs>) -> Result<String, String> {
+pub async fn update_project_private_docs(project_id: String, new_docs: Vec<Docs>, status: bool) -> Result<String, String> {
     let caller = ic_cdk::caller();
 
     // Check if the caller is the owner of the project
@@ -30,8 +30,12 @@ pub async fn update_project_private_docs(project_id: String, new_docs: Vec<Docs>
     let update_result = mutate_state(|state| {
         if let Some(mut project_list) = state.project_storage.get(&StoredPrincipal(caller)) {
             if let Some(project) = project_list.0.iter_mut().find(|p| p.uid == project_id) {
-                project.params.upload_private_documents = Some(true);
-                project.params.private_docs = Some(new_docs.clone());
+                if status == true {
+                    project.params.upload_private_documents = Some(true);
+                    project.params.private_docs = Some(new_docs.clone());
+                }else{
+                    project.params.public_docs = Some(new_docs.clone());
+                }
 
                 state.project_storage.insert(StoredPrincipal(caller), project_list.clone());
                 return Ok("Project docs updated successfully".to_string());

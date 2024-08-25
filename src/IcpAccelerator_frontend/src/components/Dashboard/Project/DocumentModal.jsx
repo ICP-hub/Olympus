@@ -1,69 +1,96 @@
-import React, { useState, useEffect } from "react";
-import { useForm, useFieldArray, Controller } from "react-hook-form";
+import React, { useState } from "react";
+import { useForm } from "react-hook-form";
 import { ThreeDots } from "react-loader-spinner";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import { useSelector } from "react-redux";
+import toast, { Toaster } from "react-hot-toast";
 
-
-const schema = yup
-  .object({
-    documentTitle: yup
-      .string()
-      .required("Document title is required")
-      .min(5, "Title must be at least 5 characters")
-      .test(
-        "no-leading-spaces",
-        "Document title should not have leading spaces",
-        (value) => !value || value.trimStart() === value
-      ),
-      documentPrivacy: yup
-      .string()
-      .required("Please select a privacy option")
-      .oneOf(["public", "private"], "Invalid privacy option selected"),
-      link: yup
-        .string()
-        .required("This field is required")
-        .nullable(true)
-        .optional()
-        .url("Invalid url"),
-  })
-  .required();
+const schema = yup.object({
+  documentTitle: yup
+    .string()
+    .required("Document title is required")
+    .min(5, "Title must be at least 5 characters")
+    .test(
+      "no-leading-spaces",
+      "Document title should not have leading spaces",
+      (value) => !value || value.trimStart() === value
+    ),
+  documentPrivacy: yup
+    .string()
+    .required("Please select a privacy option")
+    .oneOf(["public", "private"], "Invalid privacy option selected"),
+  link: yup
+    .string()
+    .required("This field is required")
+    .nullable(true)
+    .optional()
+    .url("Invalid url"),
+}).required();
 
 const DocumentModal = ({
   setIsOpen,
   isOpen,
-  onSubmitHandler,
-  isSubmitting,
   isUpdate,
-  data,
+  ProjectId,
 }) => {
-//   const [formData, setFormData] = useState(null);
+  const actor = useSelector((state) => state.actors.actor); 
+
   const [selectedOption, setSelectedOption] = useState("file");
+  const [privacy, setPrivacy] = useState(true); 
+  const [isSubmitting, setIsSubmitting] = useState(false); 
 
   const {
     register,
-    control,
     handleSubmit,
-    reset,
     formState: { errors },
-    setValue,
+    reset,
   } = useForm({
     resolver: yupResolver(schema),
     mode: "all",
   });
 
-    const onSubmit = (data) => {
-    //   setFormData(data);
-      console.log("data",data);
-      setIsOpen(false);
-      reset()
-    //   console.log("formdata" , formData)
-    };
+  const onSubmit = async (data) => {
+    setIsSubmitting(true); 
+    try {
+     
+      const newDocs = [
+        {
+          title: data.documentTitle,
+          link: selectedOption === "link" ? data.link : null,
+          privacy, 
+        },
+      ];
 
+      // Call the update_project_private_docs API
+      const result = await actor.update_project_private_docs(
+        ProjectId,
+        newDocs,
+        false
+      );
 
+      console.log("Update result:", result);
+      toast.success("Document uploaded successfully!"); 
+      setTimeout(() => {
+        setIsOpen(false); 
+        reset();
+      }, 1000); 
+    } catch (error) {
+      console.error("Error updating project docs:", error);
+      toast.error("Failed to upload document!"); 
+    } finally {
+      setIsSubmitting(false); 
+    }
+  };
+
+  const handlePrivacyChange = (event) => {
+    const selectedPrivacy = event.target.value;
+    setPrivacy(selectedPrivacy === "private");
+  };
 
   return (
     <div>
+   
       {isOpen && (
         <div
           className={`fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 ${
@@ -81,11 +108,11 @@ const DocumentModal = ({
             </div>
             <div className="p-3">
               <h2 className="text-xl font-bold ml-4 mb-2">
-                {isUpdate === true ? "Update Document" : "Add Document"}
+                {isUpdate ? "Update Document" : "Add Document"}
               </h2>
 
               <form onSubmit={handleSubmit(onSubmit)} className="p-3 md:p-5">
-                <div className=" gap-4 mb-4 ">
+                <div className="gap-4 mb-4">
                   <div className="col-span-2">
                     <label
                       htmlFor="DocumentTitle"
@@ -97,7 +124,7 @@ const DocumentModal = ({
                       type="text"
                       {...register("documentTitle")}
                       className={`bg-gray-50 border ${
-                        errors.announcementTitle
+                        errors.documentTitle
                           ? "border-red-500 placeholder:text-red-500"
                           : "border-[#737373]"
                       } text-gray-700 placeholder-gray-500 placeholder:font-semibold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1.5`}
@@ -119,6 +146,7 @@ const DocumentModal = ({
                     </label>
                     <select
                       {...register("documentPrivacy")}
+                      onChange={handlePrivacyChange} // Add the change handler
                       className="border my-1 w-full py-1 px-2"
                     >
                       <option value="">Select Privacy</option>
@@ -194,28 +222,25 @@ const DocumentModal = ({
                     </div>
                     {selectedOption === "link" && (
                       <div className="col-span-2">
-                      <label
-                        className="block text-base font-medium mb-2"
-                      >
-                         Add Link
-                      </label>
-                      <input
-                        type="url"
-                        placeholder="Enter your link "
-                        {...register("link")}
-                        className={`bg-gray-50 border ${
-                          errors.link
-                            ? "border-red-500 placeholder:text-red-500"
-                            : "border-[#737373]"
-                        } text-gray-700 placeholder-gray-500 placeholder:font-semibold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1.5`}
-                        
-                      />
-                      {errors.link && (
-                        <span className="mt-1 text-sm text-red-500 font-semibold">
-                          {errors.link.message}
-                        </span>
-                      )}
-                    </div>
+                        <label className="block text-base font-medium mb-2">
+                          Add Link
+                        </label>
+                        <input
+                          type="url"
+                          placeholder="Enter your link "
+                          {...register("link")}
+                          className={`bg-gray-50 border ${
+                            errors.link
+                              ? "border-red-500 placeholder:text-red-500"
+                              : "border-[#737373]"
+                          } text-gray-700 placeholder-gray-500 placeholder:font-semibold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1.5`}
+                        />
+                        {errors.link && (
+                          <span className="mt-1 text-sm text-red-500 font-semibold">
+                            {errors.link.message}
+                          </span>
+                        )}
+                      </div>
                     )}
                   </div>
                 </div>
@@ -225,18 +250,7 @@ const DocumentModal = ({
                   className="py-2 px-4 text-white rounded-xl bg-blue-600 border border-[#B2CCFF] w-full justify-center flex items-center"
                 >
                   {isSubmitting ? (
-                    <ThreeDots
-                      visible={true}
-                      height="35"
-                      width="35"
-                      color="#FFFEFF"
-                      radius="9"
-                      ariaLabel="three-dots-loading"
-                      wrapperStyle={{}}
-                      wrapperclassName=""
-                    />
-                  ) : isUpdate ? (
-                    "Update Document"
+                    <ThreeDots color="#FFF" height={13} width={51} />
                   ) : (
                     "Add new Document"
                   )}

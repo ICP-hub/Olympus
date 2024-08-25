@@ -1,7 +1,8 @@
 import React from 'react'
 import DocumentModal from './DocumentModal'
 
-const Nodata = ({message,isOpen,setIsOpen}) => {
+const Nodata = ({message,isOpen,setIsOpen,ProjectId}) => {console.log("nodata principal",ProjectId);
+
   return (
     <div>
         <div className="text-center py-12">
@@ -94,7 +95,7 @@ const Nodata = ({message,isOpen,setIsOpen}) => {
            {message.button}
         </button>
       </div>
-      {open && <DocumentModal setIsOpen={setIsOpen} isOpen={isOpen}  />}
+      {open && <DocumentModal setIsOpen={setIsOpen} isOpen={isOpen} ProjectId = {ProjectId} />}
     </div>
   )
 }
