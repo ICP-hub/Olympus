@@ -8,7 +8,7 @@ import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 import CloseIcon from '@mui/icons-material/Close';
 const AttendeesCard = ({ member }) => {
   return (
-    <div className="flex items-center p-6 bg-white shadow-md rounded-lg mb-6 transition-all hover:shadow-lg">
+    <div className="flex items-center p-6  rounded-lg mb-6 ">
       <div className="w-[70px] h-[70px]">
         <img
           src={member.profile_picture}
