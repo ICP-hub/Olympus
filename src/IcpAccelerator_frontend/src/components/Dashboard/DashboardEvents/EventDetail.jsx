@@ -89,10 +89,10 @@ const EventDetails = () => {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 // console.log("............./.........../cohortData",cohortData)
-  // const userCurrentRoleStatusActiveRole = useSelector(
-  //   (currState) => currState.currentRoleStatus.activeRole
-  // );
-  const userCurrentRoleStatusActiveRole = "vc"
+  const userCurrentRoleStatusActiveRole = useSelector(
+    (currState) => currState.currentRoleStatus.activeRole
+  );
+  
   useEffect(() => {
     const fetchCohortData = async () => {
       console.log("Actor:", actor);

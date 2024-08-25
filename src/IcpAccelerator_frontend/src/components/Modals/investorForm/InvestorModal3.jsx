@@ -16,9 +16,7 @@ const InvestorModal3 = () => {
   // ACCESSING ALL ICP HUBS FROM REDUX STATE
   const getAllIcpHubs = useSelector((currState) => currState.hubs.allHubs);
 
-  // WATCHING FOR CHANGES IN THE PORTFOLIO LINK INPUT
-  const watchedPortfolioLink = watch("investor_portfolio_link");
-  console.log(watchedPortfolioLink);
+
 
   return (
     <>

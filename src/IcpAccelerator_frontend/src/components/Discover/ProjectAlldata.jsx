@@ -1,14 +1,21 @@
 import React, { useState, useEffect } from "react";
 // import { IcpAccelerator_backend } from "../../../../declarations/IcpAccelerator_backend/index";
 import { IcpAccelerator_backend } from "../../../../declarations/IcpAccelerator_backend/index";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { FavoriteBorder, LocationOn, Star } from "@mui/icons-material";
 import CypherpunkLabLogo from "../../../assets/Logo/CypherpunkLabLogo.png";
 import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
 import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
 import { BsFillSendPlusFill } from "react-icons/bs";
 import { IoSendSharp } from "react-icons/io5";
+import { RiSendPlaneLine } from "react-icons/ri";
+import { Tooltip } from "react-tooltip";
+import { Principal } from "@dfinity/principal";
+import toast, { Toaster } from "react-hot-toast";
+
 import UserDetailPage from "../Dashboard/DashboardHomePage/UserDetailPage";
+import AddAMentorRequestModal from "../../models/AddAMentorRequestModal";
+import { mentorRegisteredHandlerRequest } from "../StateManagement/Redux/Reducers/mentorRegisteredData";
 const DiscoverProject = () => {
   const actor = useSelector((currState) => currState.actors.actor);
   const [allProjectData, setAllProjectData] = useState([]);
@@ -18,6 +25,113 @@ const DiscoverProject = () => {
   const [userData, setUserData] = useState([]);
   const [cardDetail,setCadDetail]=useState(null)
   const [principal,setprincipal]=useState(null)
+  const [listProjectId, setListProjectId] = useState(null);
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const mentorPrincipal = useSelector((currState) => currState.internet.principal);
+
+  const userCurrentRoleStatusActiveRole = useSelector(
+    (currState) => currState.currentRoleStatus.activeRole
+  );
+  const isAuthenticated = useSelector(
+    (currState) => currState.internet.isAuthenticated
+  );
+  const dispatch = useDispatch();
+
+  const mentorFullData = useSelector(
+    (currState) => currState.mentorData.data[0]
+  );
+  const mentorId = mentorFullData
+console.log('mentorId',mentorId)
+  useEffect(() => {
+    if (isAuthenticated) {
+      dispatch(mentorRegisteredHandlerRequest());
+    }
+  }, [isAuthenticated, dispatch]);
+  const [isAddProjectModalOpen, setIsAddProjectModalOpen] = useState(false);
+
+  const handleProjectCloseModal = () => setIsAddProjectModalOpen(false);
+  const handleProjectOpenModal = (val) =>{ 
+    setListProjectId(val);
+    setIsAddProjectModalOpen(true);
+  }
+
+  console.log('listProjectId',listProjectId)
+  // ASSOCIATE IN A PROJECT HANDLER AS A MENTOR
+  const handleAddProject = async ({ message }) => {
+    setIsSubmitting(true);
+    console.log("add into a project");
+    if (actor && mentorPrincipal) {
+      let project_id = listProjectId;
+      let msg = message;
+      let mentor_id = Principal.fromText(mentorPrincipal);
+
+      await actor
+        .send_offer_to_project_by_mentor(project_id, msg, mentor_id)
+        .then((result) => {
+          console.log("result-in-send_offer_to_project", result);
+          if (result) {
+            handleProjectCloseModal();
+            setIsSubmitting(false);
+            toast.success("offer sent to project successfully");
+          } else {
+            handleProjectCloseModal();
+            setIsSubmitting(false);
+            toast.error("something got wrong");
+          }
+        })
+        .catch((error) => {
+          console.log("error-in-send_offer_to_project", error);
+          setIsSubmitting(false);
+          handleProjectCloseModal();
+          toast.error("something got wrong");
+        });
+    }
+  };
+
+  const [isAddProjectModalOpenAsInvestor, setIsAddProjectModalOpenAsInvestor] =
+  useState(false);
+
+const handleProjectCloseModalAsInvestor = () =>
+  setIsAddProjectModalOpenAsInvestor(false);
+const handleProjectOpenModalAsInvestor = (val) => {
+  setListProjectId(val);
+  setIsAddProjectModalOpenAsInvestor(true);
+}
+
+  // ASSOCIATE IN A PROJECT HANDLER AS A MENTOR
+  const handleAddProjectAsInvestor = async ({ message }) => {
+    setIsSubmitting(true);
+    console.log("add into a project AS INVESTOR");
+    if (actor && principal) {
+      let project_id = listProjectId;
+      let msg = message;
+
+      await actor
+        .send_offer_to_project_by_investor(project_id, msg)
+        .then((result) => {
+          console.log("result-in-send_offer_to_project_by_investor", result);
+          if (result) {
+            handleProjectCloseModalAsInvestor();
+            setIsSubmitting(false);
+            fetchProjectData();
+            toast.success("offer sent to project successfully");
+          } else {
+            handleProjectCloseModalAsInvestor();
+            setIsSubmitting(false);
+            toast.error("something got wrong");
+          }
+        })
+        .catch((error) => {
+          console.log("error-in-send_offer_to_project_by_investor", error);
+          handleProjectCloseModalAsInvestor();
+          setIsSubmitting(false);
+          toast.error("something got wrong");
+        });
+    }
+  };
+
+
   const getAllProject = async (caller, isMounted) => {
     await caller
       .list_all_projects_with_pagination({
@@ -108,6 +222,8 @@ console.log("cardDetail => ",cardDetail)
       <div>Loading...</div>
     ) : allProjectData.length > 0 && userData.length > 0 ? (
       allProjectData.map((projectArray, index) => {
+        console.log('projectArray',projectArray)
+        const project_id =projectArray?.principal?.toText();
         const project = projectArray[1];
         const user = userData[index][1];
         console.log("000000000000000000000", project);
@@ -153,7 +269,26 @@ console.log("cardDetail => ",cardDetail)
                   <h3 className="text-xl font-bold">{full_name}</h3>
                   <p className="text-gray-500">@{openchat_name}</p>
                 </div>
-                <FavoriteBorder className="text-gray-400 cursor-pointer" />
+                {userCurrentRoleStatusActiveRole === 'mentor' || userCurrentRoleStatusActiveRole ==='vc'  ?
+                        <button
+                          data-tooltip-id="registerTip"
+                          onClick={()=>
+                            userCurrentRoleStatusActiveRole === 'mentor'?
+                            handleProjectOpenModal(project_id)?
+                            userCurrentRoleStatusActiveRole ==='vc' :
+                          handleProjectOpenModalAsInvestor(project_id):''}
+                        >
+                          <RiSendPlaneLine />
+                          <Tooltip
+                            id="registerTip"
+                            place="top"
+                            effect="solid"
+                            className="rounded-full z-10"
+                          >
+                            Send Association Request
+                          </Tooltip>
+                        </button>
+                        : ''}
               </div>
               <div className="mb-2">
               {activeRole && (
@@ -192,6 +327,23 @@ console.log("cardDetail => ",cardDetail)
     ) : (
       <div>No Data Available</div>
     )}
+        {userCurrentRoleStatusActiveRole === 'mentor' && isAddProjectModalOpen && (
+        <AddAMentorRequestModal
+          title={"Associate Project"}
+          onClose={handleProjectCloseModal}
+          onSubmitHandler={handleAddProject}
+          isSubmitting={isSubmitting}
+        />
+      )}
+       {userCurrentRoleStatusActiveRole === 'vc' && isAddProjectModalOpenAsInvestor && (
+        <AddAMentorRequestModal
+          title={"Associate Project I"}
+          onClose={handleProjectCloseModalAsInvestor}
+          onSubmitHandler={handleAddProjectAsInvestor}
+          isSubmitting={isSubmitting}
+        />
+      )}
+      <Toaster />
   </div>
   );
 };

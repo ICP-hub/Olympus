@@ -94,6 +94,7 @@ const InvestorForm = ({ isOpen }) => {
   // FUNCTION TO HANDLE FORM SUBMISSION
   const onSubmitHandler = async () => {
     const data = { ...formData, ...getValues() }; // MERGE FINAL FORM DATA
+  console.log('data',data)
     if (actor) {
       const investorData = {
         name_of_fund: data?.investor_fund_name,
@@ -118,7 +119,7 @@ const InvestorForm = ({ isOpen }) => {
         ],
         category_of_investment: data?.investment_categories,
         preferred_icp_hub: data?.preferred_icp_hub,
-        portfolio_link: data?.investor_portfolio_link,
+        portfolio_link: data?.investor_portfolio_link ?? "asdas",
         website_link: [data?.investor_website_url || ""],
         registered: data?.investor_registered === "true" ? true : false,
         registered_country: [
@@ -138,15 +139,15 @@ const InvestorForm = ({ isOpen }) => {
             : "",
         ],
         // ADDITIONAL INVESTOR DATA (NOT FROM FORM)
-        average_check_size: 0,
+        average_check_size: 1,
         assets_under_management: [""],
         registered_under_any_hub: [false],
         logo: [[]],
         money_invested: [0],
          existing_icp_portfolio: [""],
         reason_for_joining: [""],
-        type_of_investment: "",
-        number_of_portfolio_companies: 0,
+        type_of_investment: "dwe",
+        number_of_portfolio_companies: 1,
         announcement_details: [""],
       };
       console.log(investorData);
