@@ -41,7 +41,7 @@ function DocumentSection() {
           />
       <div className='flex justify-evenly'>
         <div className="w-[30%] ">
-          <ProfileCard />
+          <ProfileCard cardData={cardData}/>
         </div>
         <div className='w-[60%]'>
           <div className="flex justify-start border-b">
@@ -87,7 +87,7 @@ function DocumentSection() {
             </button>
             <button
               className={`px-4 py-2 focus:outline-none font-medium ${
-                activeTab === "rating"
+                activeTab === "raising"
                   ? "border-b-2 border-blue-500 text-blue-500 font-medium"
                   : "text-gray-400"
               }`}
@@ -144,7 +144,7 @@ function DocumentSection() {
 
             {activeTab === "rating" && (
               <>
-                <ProjectCard />
+               <><h1>Rating </h1></>
                 <FAQ />
               </>
             )}

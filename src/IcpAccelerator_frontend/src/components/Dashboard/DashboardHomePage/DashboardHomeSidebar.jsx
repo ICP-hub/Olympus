@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   Home as DashboardIcon,
@@ -24,21 +24,36 @@ import {
 import { dashboard } from "../../Utils/jsondata/data/dashboardData";
 import { useDispatch, useSelector } from "react-redux";
 import { switchRoleRequestHandler } from "../../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
+import { founderRegisteredHandlerRequest } from "../../StateManagement/Redux/Reducers/founderRegisteredData";
 
 function DashboardSidebar({ isOpen, onClose }) {
   const { dashboardhomesidebar } = dashboard;
+  const [hasNavigated, setHasNavigated] = useState(false);
+
   const userCurrentRoleStatus = useSelector(
     (currState) => currState.currentRoleStatus.rolesStatusArray
   );
+  const isAuthenticated = useSelector(
+    (currState) => currState.internet.isAuthenticated
+  );
+  const actor = useSelector((currState) => currState.actors.actor);
+  const projectFullData = useSelector((currState) => currState.projectData.data);
+  const cardData = projectFullData;
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
   const [activeLink, setActiveLink] = useState(location.pathname);
 
+  useEffect(() => {
+    if (actor && isAuthenticated){
+    
+          dispatch(founderRegisteredHandlerRequest());
+    }
+    }, [dispatch,isAuthenticated, actor]);
   const handleLinkClick = (path) => {
     setActiveLink(path);
     navigate(path);
+    setHasNavigated(false);
   };
 
   const clickEventHandler = async (roleName, value) => {
@@ -50,6 +65,22 @@ function DashboardSidebar({ isOpen, onClose }) {
     );
   };
 
+
+  const handleNavigation = () => {
+    if (hasNavigated) return;
+  
+    if (cardData && cardData.length > 0) {
+      const projectId = cardData[0]?.[0]?.uid || "No UID available";
+      setHasNavigated(true);
+      navigate("/dashboard/document", { state: { projectId, cardData } });
+    } else {
+      console.log("No project data available");
+    }
+  };
+  
+  
+
+  
   const SidebarLink = ({ path, icon, label }) => (
     <div
       onClick={() => handleLinkClick(path)}
@@ -138,7 +169,7 @@ function DashboardSidebar({ isOpen, onClose }) {
       title: dashboardhomesidebar.sidebarSections.projects.label,
       items: [
         {
-          path: "/dashboard/project",
+          path:handleNavigation,
           icon: gridSvgIcon,
           label: dashboardhomesidebar.sidebarSections.projects.items.label1,
         },

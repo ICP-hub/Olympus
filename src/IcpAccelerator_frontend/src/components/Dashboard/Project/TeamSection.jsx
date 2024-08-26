@@ -10,18 +10,17 @@ import { Principal } from "@dfinity/principal";
 import toast, { Toaster } from "react-hot-toast";
 import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 const TeamMember = ({ cardData }) => {
-
   const projectTeam = cardData?.[0]?.[0]?.params?.project_team;
- 
+  console.log("result CARD DATA", cardData?.[0]?.[0]);
 
   return (
     <>
       {projectTeam?.map((teamMember, index) => {
-         const member = teamMember?.[0];  // Adjust the index if necessary
-         const result = member?.member_data;
-       
-         console.log("teamMember:", teamMember);
-         console.log("result CARD DATA", result);
+        const member = teamMember?.[0]; // Adjust the index if necessary
+        const result = member?.member_data;
+
+        console.log("teamMember:", teamMember);
+        console.log("result CARD DATA", result);
         if (!result) return null;
 
         const name = result?.full_name ?? "Unnamed Member";
@@ -31,69 +30,72 @@ const TeamMember = ({ cardData }) => {
 
         return (
           <>
-        
-
-
-<div class="relative overflow-x-auto shadow-md sm:rounded-lg">
- 
-    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-        <thead class="text-xs text-gray-700 uppercase bg-gray-50  dark:text-gray-400">
-            <tr>
-               
-                <th scope="col" class="px-6 py-3">
-                    Name
-                </th>
-                <th scope="col" class="px-6 py-3">
-                    Status
-                </th>
-                <th scope="col" class="px-6 py-3">
-                    Action
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr class="bg-white border-b   hover:bg-gray-50 ">
-                
-                <th scope="row" class="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
-                <img
-                src={avatar}
-                alt={name}
-                className="w-10 h-10 rounded-full mr-4"
-              />
-                    <div class="ps-3">
-                    <p className="font-medium text-[#121926]">{name}</p>
-              <p className="text-sm text-gray-500">
-                {result?.openchat_username?.[0] ?? "No Username"}
-              </p>
-                    </div>  
-                </th>
-                <td class="px-6 py-4">
-                    <div class="flex items-center">
-                        <div class="h-2.5 w-2.5 rounded-full bg-green-500 me-2"></div>  <span
+            <div
+              key={index}
+              class="relative overflow-x-auto shadow-md sm:rounded-lg"
+            >
+              <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50  dark:text-gray-400">
+                  <tr>
+                    <th scope="col" class="px-6 py-3">
+                      Name
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                      Status
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                      Action
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="bg-white border-b   hover:bg-gray-50 ">
+                    <th
+                      scope="row"
+                      class="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white"
+                    >
+                      <img
+                        src={avatar}
+                        alt={name}
+                        className="w-10 h-10 rounded-full mr-4"
+                      />
+                      <div class="ps-3">
+                        <p className="font-medium text-[#121926]">{name}</p>
+                        <p className="text-sm text-gray-500">
+                          {result?.openchat_username?.[0] ?? "No Username"}
+                        </p>
+                      </div>
+                    </th>
+                    <td class="px-6 py-4">
+                      <div class="flex items-center">
+                        <div class="h-2.5 w-2.5 rounded-full bg-green-500 me-2"></div>
+                        {/* <span
               className={`px-2 py-1 rounded text-sm font-medium ${
                 result?.status === "Active"
                   ? "bg-[#ecfdf3da] rounded-md border-2 border-[#6ceda0] text-green-800"
                   : "bg-[#FFFAEB] border-2 border-[#FEDF89] text-[#B54708]"
               }`}
             >
-              {result?.status === "Active" && "• "}
+              {result?.status === "Active " && "• "}
               {result?.status ?? "Unknown Status"}
-            </span>
-                    </div>
-                </td>
-                <td class="px-6 py-4">
-                <button className="text-gray-400 hover:text-gray-600">
-              <Delete fontSize="small" />
-            </button>
-                </td>
-            </tr>
-            
-        </tbody>
-    </table>
-</div>
-
-        </>
-        
+            </span> */}
+                        <span
+                          className={`px-2 py-1 rounded text-sm font-medium bg-[#ecfdf3da]  border-2 border-[#6ceda0] text-green-800`}
+                        >
+                        Active
+                        </span>
+                      </div>
+                    </td>
+                    <td class="px-6 py-4">
+                      <button className="text-gray-400 hover:text-gray-600">
+                        <Delete fontSize="small" />
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </>
         );
       }) || (
         <div>
@@ -159,8 +161,6 @@ function TeamSection({ data, cardData }) {
           </div>
 
           <div className="rounded-lg overflow-hidden border-2 border-gray-100">
-           
-
             <div>
               <TeamMember cardData={cardData} />
             </div>
