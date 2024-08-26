@@ -19,8 +19,8 @@ const DiscoverInvestor = () => {
   const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
   const [userData, setUserData] = useState([]);
-  const [sendprincipal,setSendprincipal]=useState(null)
-  const [openDetail,setOpenDetail]=useState(false)
+  const [sendprincipal, setSendprincipal] = useState(null);
+  const [openDetail, setOpenDetail] = useState(false);
   const [isAddInvestorModalOpen, setIsAddInvestorModalOpen] = useState(false);
   const [investorId, setInvestorId] = useState(null);
   const isAuthenticated = useSelector(
@@ -87,9 +87,11 @@ const DiscoverInvestor = () => {
       .then((result) => {
         if (isMounted) {
           console.log("result-in-get-all-investor", result);
-          {result?.data.map(val=>{
-            setSendprincipal(val[0])
-          })}
+          {
+            result?.data.map((val) => {
+              setSendprincipal(val[0]);
+            });
+          }
           if (result && result.data) {
             const InvestorData = result.data ? Object.values(result.data) : [];
             const userData = result.user_data
@@ -114,7 +116,7 @@ const DiscoverInvestor = () => {
         }
       });
   };
-  console.log("sendPrincipal", sendprincipal)
+  console.log("sendPrincipal", sendprincipal);
 
   useEffect(() => {
     let isMounted = true;
@@ -158,21 +160,23 @@ const DiscoverInvestor = () => {
     return shuffledTags.slice(0, 2);
   };
 
-  const handleClick=()=>{
-    setOpenDetail(true)
-    
-  }
+  const handleClick = (principal) => {
+    setSendprincipal(principal);
+    setOpenDetail(true);
+    console.log("passed principle", principal);
+  };
 
   return (
     <div>
       {isLoading ? (
         <div>Loading...</div>
-      ) : allInvestorData.length > 0 && userData.length > 0 ? (
+      ) : allInvestorData.length > 0  ? (
         allInvestorData.map((investorArray, index) => {
-          console.log('investorArray',investorArray)
-          const investor_id = investorArray[0]?.toText();
+          console.log("investorArray", investorArray);
+          // const investor_id = investorArray[0]?.toText();
           const investor = investorArray[1];
-          const user = userData[index][1];
+          const user = investorArray[2];
+      
           console.log("000000000000000000000", investor);
           console.log("111111111111111111111", user);
           const randomTags = getRandomTags();
@@ -191,14 +195,24 @@ const DiscoverInvestor = () => {
           const activeRole = investor?.roles.find(
             (role) => role.status === "approved"
           );
+
+          const principle_id = investorArray[0];
+          console.log("principle", principle_id);
+
           return (
             <div
               className="p-6 w-[750px] rounded-lg shadow-sm mb-4 flex"
               key={index}
             >
-              <div  className="w-[272px]">
+              <div
+                onClick={() => handleClick(principle_id)}
+                className="w-[272px]"
+              >
                 <div className="max-w-[250px] w-[250px] h-[254px] bg-gray-100 rounded-lg flex flex-col justify-between relative overflow-hidden">
-                  <div className="absolute inset-0 flex items-center justify-center" onClick={handleClick}>
+                  <div
+                    className="absolute inset-0 flex items-center justify-center"
+                    onClick={handleClick}
+                  >
                     <img
                       src={profile} // Placeholder logo image
                       alt={full_name ?? "investor"}
@@ -218,21 +232,24 @@ const DiscoverInvestor = () => {
                     <h3 className="text-xl font-bold">{full_name}</h3>
                     <p className="text-gray-500">@{openchat_name}</p>
                   </div>
-                  {userCurrentRoleStatusActiveRole === 'project'?
-                  <button
-                    data-tooltip-id="registerTip"
-                    onClick={() => handleInvestorOpenModal(investor_id)}
-                  >
-                    <RiSendPlaneLine />
-                    <Tooltip
-                      id="registerTip"
-                      place="top"
-                      effect="solid"
-                      className="rounded-full z-10"
+                  {userCurrentRoleStatusActiveRole === "project" ? (
+                    <button
+                      data-tooltip-id="registerTip"
+                      onClick={() => handleInvestorOpenModal(investor_id)}
                     >
-                      Send Association Request
-                    </Tooltip>
-                  </button>:''}
+                      <RiSendPlaneLine />
+                      <Tooltip
+                        id="registerTip"
+                        place="top"
+                        effect="solid"
+                        className="rounded-full z-10"
+                      >
+                        Send Association Request
+                      </Tooltip>
+                    </button>
+                  ) : (
+                    ""
+                  )}
                 </div>
                 <div className="mb-2">
                   {activeRole && (
@@ -279,11 +296,16 @@ const DiscoverInvestor = () => {
           onSubmitHandler={handleAddInvestor}
         />
       )}
-                  {openDetail && <DiscoverInvestorPage openDetail={openDetail} setOpenDetail={setOpenDetail}  principal={sendprincipal} />}
+      {openDetail && (
+        <DiscoverInvestorPage
+          openDetail={openDetail}
+          setOpenDetail={setOpenDetail}
+          principal={sendprincipal}
+        />
+      )}
       <Toaster />
     </div>
   );
 };
 
 export default DiscoverInvestor;
-

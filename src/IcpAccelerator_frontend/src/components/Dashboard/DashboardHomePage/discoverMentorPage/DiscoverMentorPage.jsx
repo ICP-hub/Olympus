@@ -39,10 +39,10 @@ const DiscoverMentorPage = ({ openDetail, setOpenDetail, projectDetails }) => {
                         </div>
                         <div className="p-3 w-[65%]">
                             <div>
-                                <DiscoverDocument />
+                                <DiscoverDocument projectDetails={projectDetails} />
                             </div>
                             <div className='my-6'>
-                                <DiscoverTeam/>
+                                <DiscoverTeam projectDetails={projectDetails}/>
                             </div>
                         </div>
                     </div>

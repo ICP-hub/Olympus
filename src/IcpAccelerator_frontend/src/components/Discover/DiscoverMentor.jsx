@@ -24,8 +24,8 @@ const DiscoverMentor = () => {
   const itemsPerPage = 10; // Updated to fetch 10 items per page
   const [currentPage, setCurrentPage] = useState(1);
   const [isFetching, setIsFetching] = useState(false);
-  const [sendprincipal,setSendprincipal]=useState(null)
-  const [openDetail,setOpenDetail]=useState(false)
+  const [sendprincipal, setSendprincipal] = useState(null);
+  const [openDetail, setOpenDetail] = useState(false);
   const [isAddMentorModalOpen, setIsAddMentorModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [mentorId, setMentorId] = useState(null);
@@ -33,6 +33,8 @@ const DiscoverMentor = () => {
   const userCurrentRoleStatusActiveRole = useSelector(
     (currState) => currState.currentRoleStatus.activeRole
   );
+
+  console.log("my mentor data ", allMentorData);
   const projectFullData = useSelector(
     (currState) => currState.projectData.data
   );
@@ -51,11 +53,11 @@ const DiscoverMentor = () => {
         page_size: itemsPerPage,
         page: page,
       });
-      
-      {result?.data.map(val=>{
-        setSendprincipal(val[0])
-      })}
-      console.log("result =>",result)
+
+      // {result?.data.map(val=>{
+      //   setSendprincipal(val[0])
+      // })}
+      console.log("result =>", result?.data);
 
       if (result && result.data) {
         const mentorData = Object.values(result.data);
@@ -83,8 +85,8 @@ const DiscoverMentor = () => {
     }
   };
 
-  console.log('send',sendprincipal)
-  
+  console.log("send", sendprincipal);
+
   useEffect(() => {
     if (!isFetching && hasMore) {
       if (actor) {
@@ -105,7 +107,6 @@ const DiscoverMentor = () => {
     }
   };
   const refresh = () => {
-  
     if (actor) {
       getAllMentor(actor, 1); // Fetch the data starting from the first page
     }
@@ -122,10 +123,7 @@ const DiscoverMentor = () => {
     const shuffledTags = tags.sort(() => 0.5 - Math.random());
     return shuffledTags.slice(0, 2);
   };
-  const handleClick=()=>{
-    setOpenDetail(true)
-    
-  }
+
   const handleMentorCloseModal = () => {
     setMentorId(null);
     setIsAddMentorModalOpen(false);
@@ -145,7 +143,7 @@ const DiscoverMentor = () => {
       await actor
         .send_offer_to_mentor_from_project(mentor_id, msg, project_id)
         .then((result) => {
-          console.log('result',result)
+          console.log("result", result);
           if (result) {
             setIsSubmitting(false);
             handleMentorCloseModal();
@@ -165,10 +163,15 @@ const DiscoverMentor = () => {
     }
   };
 
+  const handleClick = (principal) => {
+    setSendprincipal(principal);
+    setOpenDetail(true);
+    console.log("passed principle", principal);
+  };
   return (
     <>
       <div>
-        {allMentorData.length > 0 && userData.length > 0 ? (
+        {allMentorData.length > 0 ? (
           <InfiniteScroll
             dataLength={allMentorData.length}
             next={loadMore}
@@ -179,21 +182,26 @@ const DiscoverMentor = () => {
             pullDownToRefresh
             pullDownToRefreshThreshold={50}
             pullDownToRefreshContent={
-              <h3 style={{ textAlign: 'center' }}>&#8595; Pull down to refresh</h3>
+              <h3 style={{ textAlign: "center" }}>
+                &#8595; Pull down to refresh
+              </h3>
             }
             releaseToRefreshContent={
-              <h3 style={{ textAlign: 'center' }}>&#8593; Release to refresh</h3>
+              <h3 style={{ textAlign: "center" }}>
+                &#8593; Release to refresh
+              </h3>
             }
           >
             {allMentorData.map((mentorArray, index) => {
-              const mentor_id = mentorArray[0]?.toText();
+              // const mentor_id = mentorArray[0]?.toText();
               const mentor = mentorArray[1];
-              const user = userData[index][1];
+              const user = mentorArray[2];
 
-              if (!mentor || !user) {
-                return null;
-              }
-
+              // if (!mentor || !user) {
+              //   return null;
+              // }
+              console.log("//data1//", mentor);
+              console.log("//data2//", user);
               const randomTags = getRandomTags();
               let profile = user?.profile_picture[0]
                 ? uint8ArrayToBase64(user?.profile_picture[0])
@@ -210,14 +218,19 @@ const DiscoverMentor = () => {
                 (role) => role.status === "approved"
               );
 
+              const principle_id = mentorArray[0];
+              console.log("principle", principle_id);
               return (
                 <div
                   className="p-6 w-[750px] rounded-lg shadow-sm mb-4 flex"
                   key={index}
                 >
-                  <div   className="w-[272px]">
+                  <div className="w-[272px]">
                     <div className="max-w-[250px] w-[250px] h-[254px] bg-gray-100 rounded-lg flex flex-col justify-between relative overflow-hidden">
-                      <div className="absolute inset-0 flex items-center justify-center" onClick={handleClick}>
+                      <div
+                        className="absolute inset-0 flex items-center justify-center"
+                        onClick={() => handleClick(principle_id)}
+                      >
                         <img
                           src={profile}
                           alt={full_name ?? "Mentor"}
@@ -237,7 +250,7 @@ const DiscoverMentor = () => {
                         <h3 className="text-xl font-bold">{full_name}</h3>
                         <p className="text-gray-500">@{openchat_name}</p>
                       </div>
-                      {userCurrentRoleStatusActiveRole === 'project' ?
+                      {userCurrentRoleStatusActiveRole === "project" ? (
                         <button
                           data-tooltip-id="registerTip"
                           onClick={() => handleMentorOpenModal(mentor_id)}
@@ -252,7 +265,9 @@ const DiscoverMentor = () => {
                             Send Association Request
                           </Tooltip>
                         </button>
-                        : ''}
+                      ) : (
+                        ""
+                      )}
                     </div>
                     <div className="mb-2">
                       {activeRole && (
@@ -301,9 +316,16 @@ const DiscoverMentor = () => {
             isSubmitting={isSubmitting}
           />
         )}
-                  {openDetail && <DiscoverMentorMain openDetail={openDetail} setOpenDetail={setOpenDetail}  principal={sendprincipal} />}
+        {/* {openDetail && <DiscoverMentorMain openDetail={openDetail} setOpenDetail={setOpenDetail}  principal={sendprincipal} />} */}
       </div>
       <Toaster />
+      {openDetail && sendprincipal && (
+        <DiscoverMentorMain
+          openDetail={openDetail}
+          setOpenDetail={setOpenDetail}
+          principal={sendprincipal}
+        />
+      )}
     </>
   );
 };

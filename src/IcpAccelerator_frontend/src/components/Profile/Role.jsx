@@ -304,10 +304,10 @@ const mergedData = mergeData(userCurrentRoleStatus, roledata);
           <div className="border-2 rounded-lg text-center min-w-[220px] max-w-[350px]" key="no-data-card">
             <div className="p-3 flex justify-center mt-5">
               <AvatarGroup max={4}>
-                <Avatar alt="Mentor" src={mentor} />
-                <Avatar alt="user" src={user} />
-                <Avatar alt="vc" src={vc} />
-                <Avatar alt="project" src={project} />
+                <Avatar sx={{height:"32px",width:"32px"}} alt="Mentor" src={mentor} />
+                <Avatar sx={{height:"32px",width:"32px"}} alt="user" src={user} />
+                <Avatar sx={{height:"32px",width:"32px"}} alt="vc" src={vc} />
+                <Avatar sx={{height:"32px",width:"32px"}} alt="project" src={project} />
               </AvatarGroup>
             </div>
             <div className="mt-5 px-5">
