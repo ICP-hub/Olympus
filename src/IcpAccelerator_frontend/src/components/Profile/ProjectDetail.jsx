@@ -4,12 +4,12 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useCountries } from "react-countries";
 import { useSelector } from "react-redux";
-import ProfileHeader from "./ProjectHeader";
 import ProfileSection from "./ProfileSection";
 import SocialLinks from "./SocialLinks";
 import InvestorDetail from "./InvestorDetail";
 import MentorEdit from "../../component/Mentors/MentorEdit";
 import ProjectDetail from "./ProjectDetail";
+import ProfileHeader from "./ProjectHeader";
 
 const ProfileDetail = () => {
   const { countries } = useCountries();
