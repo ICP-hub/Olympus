@@ -191,11 +191,11 @@ type MentorWithRoles = record {
   roles : vec Role;
 };
 type MoneyRaised = record {
-  sns : opt text;
-  investors : opt text;
-  raised_from_other_ecosystem : opt text;
-  target_amount : opt float64;
-  icp_grants : opt text;
+  sns : text;
+  investors : text;
+  raised_from_other_ecosystem : text;
+  target_amount : float64;
+  icp_grants : text;
 };
 type OfferToInvestor = record {
   request_status : text;
@@ -638,7 +638,7 @@ service : {
   decline_offer_from_project_to_investor : (text, text) -> (text);
   decline_offer_from_project_to_mentor : (text, text) -> (text);
   decline_private_docs_access_request : (text, principal) -> (text);
-  delete_job_post_by_id : (nat64) -> (text);
+  delete_job_post_by_id : (text) -> (text);
   delete_mentor : () -> (text);
   delete_project : (text) -> (text);
   delete_project_announcement_by_id : (nat64) -> (text) query;
@@ -911,7 +911,7 @@ service : {
   type_of_job : () -> (vec JobType) query;
   type_of_user_profile : () -> (vec UserType) query;
   update_cohort : (text, Cohort) -> (Result);
-  update_job_post_by_id : (nat64, Jobs) -> (text);
+  update_job_post_by_id : (text, Jobs) -> (text);
   update_mentor : (MentorProfile) -> (text);
   update_mentor_ratings : (text, RatingMentorInvestor) -> ();
   update_money_raised_data : (text, MoneyRaised) -> (Result);
