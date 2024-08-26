@@ -67,11 +67,12 @@ const DiscoverProject = () => {
       let project_id = listProjectId;
       let msg = message;
       let mentor_id = Principal.fromText(mentorPrincipal);
+      console.log("Data before sending", project_id, msg, mentor_id)
 
       await actor
         .send_offer_to_project_by_mentor(project_id, msg, mentor_id)
         .then((result) => {
-          console.log("result-in-send_offer_to_project", result);
+          console.log("result-in-send_offer_to_project_by_mentor", result);
           if (result) {
             handleProjectCloseModal();
             setIsSubmitting(false);
@@ -83,7 +84,7 @@ const DiscoverProject = () => {
           }
         })
         .catch((error) => {
-          console.log("error-in-send_offer_to_project", error);
+          console.log("error-in-send_offer_to_project_by_mentor", error);
           setIsSubmitting(false);
           handleProjectCloseModal();
           toast.error("something got wrong");
@@ -225,7 +226,7 @@ const DiscoverProject = () => {
         allProjectData.map((projectArray, index) => {
           console.log("projectArray", projectArray);
           // const project_id = projectArray?.principal?.toText();
-          const project_id = projectArray[0]
+          const project_id = projectArray[1]?.params?.uid
           const project = projectArray[1];
           const user = projectArray[2];
           console.log("000000000000000000000", project);

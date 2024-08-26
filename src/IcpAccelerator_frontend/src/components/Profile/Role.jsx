@@ -26,6 +26,7 @@ import {
   setCurrentRoleStatus,
 } from "../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
 import RoleProfileCard from "./RoleProfileCard";
+import ProfileRoleNoDataCard from "../Common/ProfileRoleNoDataCard";
 
 
 const FAQItem = ({ question, answer }) => {
@@ -301,22 +302,7 @@ const mergedData = mergeData(userCurrentRoleStatus, roledata);
         );
         cardsShown++;
         elements.push(
-          <div className="border-2 rounded-lg text-center min-w-[220px] max-w-[350px]" key="no-data-card">
-            <div className="p-3 flex justify-center mt-5">
-              <AvatarGroup max={4}>
-                <Avatar sx={{height:"32px",width:"32px"}} alt="Mentor" src={mentor} />
-                <Avatar sx={{height:"32px",width:"32px"}} alt="user" src={user} />
-                <Avatar sx={{height:"32px",width:"32px"}} alt="vc" src={vc} />
-                <Avatar sx={{height:"32px",width:"32px"}} alt="project" src={project} />
-              </AvatarGroup>
-            </div>
-            <div className="mt-5 px-5">
-              <p className="max-w-[250px]">{roles.description1}</p>
-            </div>
-            <div className="my-5 px-5 flex items-center">
-              No Data
-            </div>
-          </div>
+          <ProfileRoleNoDataCard/>
         );
         cardsShown++;
       }

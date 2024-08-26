@@ -147,7 +147,7 @@ const DiscoverMentor = () => {
           if (result) {
             setIsSubmitting(false);
             handleMentorCloseModal();
-            toast.success("offer sent to mentor successfully");
+            toast.success(result);
           } else {
             setIsSubmitting(false);
             handleMentorCloseModal();
@@ -155,7 +155,7 @@ const DiscoverMentor = () => {
           }
         })
         .catch((error) => {
-          console.error("error-in-send_offer_to_mentor", error);
+          console.error("error-in-send_offer_to_mentor_from_project", error);
           handleMentorCloseModal();
           setIsSubmitting(false);
           toast.error("something went wrong");
@@ -193,7 +193,7 @@ const DiscoverMentor = () => {
             }
           >
             {allMentorData.map((mentorArray, index) => {
-              // const mentor_id = mentorArray[0]?.toText();
+               const mentor_id = mentorArray[0]?.toText();
               const mentor = mentorArray[1];
               const user = mentorArray[2];
 
