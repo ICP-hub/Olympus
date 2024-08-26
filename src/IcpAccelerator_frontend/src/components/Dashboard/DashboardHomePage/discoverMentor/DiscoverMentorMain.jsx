@@ -11,6 +11,7 @@ const DiscoverMentorMain = ({ openDetail, setOpenDetail, principal }) => {
   console.log("principal in DiscoverMentorMain", principal);
   const [allMentorData, setAllMentorData] = useState(null);
   const [loaing, setIsLoading] = useState(true);
+  
 
   const getAllUser = async (caller, isMounted) => {
     await caller
@@ -68,7 +69,7 @@ const DiscoverMentorMain = ({ openDetail, setOpenDetail, principal }) => {
               </div>
               <div className=" px-3 w-[63%] overflow-y-auto h-[84vh] ">
                 <div className="">
-                  <DiscoverMentorEvent mentorData={allMentorData}/>
+                  <DiscoverMentorEvent mentorData={allMentorData} principal={principal}/>
                 </div>
               </div>
             </div>
