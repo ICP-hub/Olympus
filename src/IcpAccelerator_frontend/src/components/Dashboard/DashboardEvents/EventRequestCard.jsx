@@ -98,13 +98,27 @@ const EventRequestCard = () => {
     console.log(`Action: ${action} for Enroller: ${enroller_principal}, Cohort ID: ${cohortId}`); // Log who applied for which event
     try {
       let result;
-	
+      if (action === "Approve") {
+        result = await actor.approve_enrollment_request(
+          cohortId,
+          enroller_principal
+        );
+        event.status = "approved";  // Update status to approved
+      } else if (action === "Reject") {
+        result = await actor.reject_enrollment_request(
+          cohort_creator_principal,
+          enroller_principal
+        );
+        event.status = "rejected";  // Update status to rejected
+      }
+
       // Update the event in the state with the new status
       setEvents(prevEvents =>
         prevEvents.map((ev, i) =>
           i === index ? { ...ev, status: event.status } : ev
         )
       );
+
       toast.success(result);
     } catch (error) {
       console.error("Failed to process the decision: ", error);
@@ -112,6 +126,7 @@ const EventRequestCard = () => {
       setIsSubmitting(false);
     }
   };
+
   useEffect(() => {
     if (actor && principal) {
       fetchRequests(selectedCategory, selectedType);
@@ -233,11 +248,11 @@ const EventRequestCard = () => {
           };
 
           return (
-            <div key={index} className="bg-white rounded-lg shadow p-4 mb-6" onClick={() => handleCardClick(userData)}>
+            <div key={index} className="bg-white rounded-lg shadow p-4 mb-6" >
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-3 relative">
                   <div className="w-[272px] h-[230px]">
-                    <div className="max-w-[230px] w-[230px] bg-gray-100 rounded-lg flex flex-col justify-between h-full relative overflow-hidden">
+                    <div className="max-w-[230px] w-[230px] bg-gray-100 rounded-lg flex flex-col justify-between h-full relative overflow-hidden" onClick={() => handleCardClick(userData)}>
                       <div className="group">
                         <div
                           className="absolute inset-0 blur-sm"

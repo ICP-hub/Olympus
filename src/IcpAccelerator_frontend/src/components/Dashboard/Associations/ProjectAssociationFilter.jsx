@@ -7,7 +7,7 @@ import fetchRequestDocument from '../../Utils/apiNames/getDocumentApiName';
 import fetchRequestMoneyRaised from '../../Utils/apiNames/getMoneyRaisedApiName';
 import fetchRequestCohort from '../../Utils/apiNames/getCohortApiName';
 
-export default function ProjectAssociationFilter({ open, close, projectId ,userPrincipal}) {
+export default function ProjectAssociationFilter({ open, close, projectId ,userPrincipal,associateData,setAssociateData}) {
   const [show, setShow] = useState(open);
   const [rendered, setRendered] = useState(false);
   const [selectedType, setSelectedType] = useState(null);
@@ -147,11 +147,11 @@ export default function ProjectAssociationFilter({ open, close, projectId ,userP
           data = await fetchRequestAssociation(status?.value, association?.value, userCurrentRoleStatusActiveRole ,projectId, userPrincipal,actor);
         }
       }
-      
-      console.log('api result', data);
       const result = await data; // Corrected to await the data if it's a promise
+      if(result){
       console.log(`result-in-${selectedType.value}`, result);
-  
+        setAssociateData(result);
+      }
     } catch (error) {
       console.log(`error-in-${selectedType.value}`, error);
     }
