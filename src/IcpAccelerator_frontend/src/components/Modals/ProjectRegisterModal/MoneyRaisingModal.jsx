@@ -36,7 +36,7 @@ const validationSchema = yup.object({
     .required("Target Amount is required"),
 });
 
-const MoneyRaisingModal = ({ setIsOpen, isOpen }) => {
+const MoneyRaisingModal = ({ modalOpen, setModalOpen }) => {
   const dispatch = useDispatch();
   const actor = useSelector((state) => state.actors.actor);
   const isAuthenticated = useSelector((currState) => currState.internet.isAuthenticated);
@@ -85,7 +85,7 @@ const onSubmit = async (data) => {
         console.error("API call error:", error);
       }
   
-      setIsOpen(false);
+      setModalOpen(false);
     } catch (error) {
       toast.error("There was an error submitting the form");
       console.error("Form submission error:", error);
@@ -94,12 +94,12 @@ const onSubmit = async (data) => {
 
   return (
     <>
-      {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+   
+      <div className={`fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 ${modalOpen ? "block" : "hidden"}`}>
           <div className="bg-white rounded-lg shadow-lg w-[500px] p-5 relative">
             <button
               className="absolute top-2 right-2 text-gray-600 text-xl"
-              onClick={() => setIsOpen(false)}
+              onClick={() => setModalOpen(!modalOpen)}
             >
               &times;
             </button>
@@ -237,7 +237,7 @@ const onSubmit = async (data) => {
             </form>
           </div>
         </div>
-      )}
+
     </>
   );
 };

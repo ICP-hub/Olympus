@@ -117,35 +117,14 @@ pub struct Docs {
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
 pub struct MoneyRaised {
-    pub target_amount: Option<f64>,
-    pub icp_grants: Option<String>,
-    pub investors: Option<String>,
-    pub sns: Option<String>,
-    pub raised_from_other_ecosystem: Option<String>,
+    pub target_amount: f64,
+    pub icp_grants: String,
+    pub investors: String,
+    pub sns: String,
+    pub raised_from_other_ecosystem: String,
 }
 
-impl MoneyRaised {
-    // Calculates the total amount raised from various sources.
-    // Assumes all Option<String> fields represent valid f64 values or None.
-    pub fn _total_amount(&self) -> f64 {
-        let mut total: f64 = 0.0;
 
-        if let Some(icp_grants) = &self.icp_grants {
-            total += icp_grants.parse::<f64>().unwrap_or(0.0);
-        }
-        if let Some(investors) = &self.investors {
-            total += investors.parse::<f64>().unwrap_or(0.0);
-        }
-        if let Some(sns) = &self.sns {
-            total += sns.parse::<f64>().unwrap_or(0.0);
-        }
-        if let Some(raised_from_other_ecosystem) = &self.raised_from_other_ecosystem {
-            total += raised_from_other_ecosystem.parse::<f64>().unwrap_or(0.0);
-        }
-
-        total
-    }
-}
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
 pub struct ProjectInfoForUser {

@@ -4,7 +4,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useCountries } from "react-countries";
 import { useDispatch, useSelector } from "react-redux";
-import ProfileHeader from "./ProfileHeader";
+import ProfileHeader from "./ProjectHeader";
 import ProfileSection from "./ProfileSection";
 import SocialLinks from "./SocialLinks";
 import InvestorDetail from "./InvestorDetail";

@@ -137,7 +137,7 @@ function DocumentSection() {
             )}
             {activeTab === "raising" && (
               <>
-               <NoMoneyRaising />
+               <NoMoneyRaising cardData={cardData} data={projectId}/>
                 
               </>
             )}

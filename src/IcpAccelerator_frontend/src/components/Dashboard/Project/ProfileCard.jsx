@@ -1,3 +1,4 @@
+
 import React from "react";
 import CypherpunkLabLogo from "../../../../assets/Logo/CypherpunkLabLogo.png";
 import ProfileImage from "../../../../assets/Logo/ProfileImage.png";
@@ -15,55 +16,48 @@ import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 
 function ProfileCard({ cardData }) {
   const projectDescription =
-    cardData[0][0]?.params?.project_description[0] ??
+    cardData?.[0]?.[0]?.params?.project_description?.[0] ??
     "No description available";
   const preferred_icp =
-    cardData[0][0]?.params?.preferred_icp_hub[0] ?? "No data available";
+    cardData?.[0]?.[0]?.params?.preferred_icp_hub?.[0] ?? "No data available";
   const country_of_registration =
-    cardData[0][0]?.params?.country_of_registration[0] ?? "No data available";
-  const isActive = cardData[0][0]?.is_active ?? false;
+    cardData?.[0]?.[0]?.params?.country_of_registration?.[0] ?? "No data available";
+  const isActive = cardData?.[0]?.[0]?.is_active ?? false;
   const statusText = isActive ? "Active" : "Inactive";
-  const project_area_of_focus = cardData[0][0]?.params?.project_area_of_focus
-    ? cardData[0][0]?.params?.project_area_of_focus
+  const project_area_of_focus = cardData?.[0]?.[0]?.params?.project_area_of_focus
+    ? cardData[0][0].params.project_area_of_focus
         .split(",")
         .map((interest) => interest.trim())
     : ["No interest provided"];
-  const projectLogo = cardData[0][0]?.params?.project_logo?.[0]
-    ? uint8ArrayToBase64(cardData[0][0]?.params?.project_logo?.[0])
+  const projectLogo = cardData?.[0]?.[0]?.params?.project_logo?.[0]
+    ? uint8ArrayToBase64(cardData[0][0].params.project_logo[0])
     : "";
-  // const userimage = cardData[0][1]?.params?.profile_picture?.[0] ?
-  // uint8ArrayToBase64(cardData[0][1]?.params?.profile_picture?.[0] ):"";
-  const projectName = cardData[0][0]?.params?.project_name || "Unknown Project";
+  const projectName = cardData?.[0]?.[0]?.params?.project_name || "Unknown Project";
   const fullName =
-    cardData[0][1]?.params.openchat_username ?? "No name provided";
-  // const areaOfInterest = cardData[0][1]?.params?.area_of_interest
-  // ? cardData[1].params.area_of_interest.split(',').map(interest => interest.trim())
-  // : ["No interest provided"];
-  // const country = cardData[0][1]?.params?.country || "No country provided";
-  console.log("my single Project data ", cardData);
-  console.log(
-    "my single Project data name ",
-    cardData[0][0]?.params?.project_name
-  );
-  console.log(
-    "my single Project data fullName ",
-    cardData[0][1]?.params.full_name
-  );
+    cardData?.[0]?.[1]?.params?.openchat_username ?? "No name provided";
+  const links = cardData?.[0]?.[0]?.params?.links?.[0] ?? [];
+  const email = cardData?.[0]?.[1]?.params?.email?.[0] ?? null;
 
-  const links = cardData[0][0]?.params?.links?.[0] ?? [];
-  console.log("link", links);
+  const handleGetInTouchClick = () => {
+    if (email) {
+      window.location.href = `mailto:${email}`;
+    } else {
+      alert("Contact information is not available.");
+    }
+  };
+
   const renderIconForLink = (linkObj) => {
-    const url = linkObj?.link?.[0]; // Access the first element of the array
+    const url = linkObj?.link?.[0];
 
-    if (url.includes("linkedin.com")) {
+    if (url?.includes("linkedin.com")) {
       return (
         <LinkedIn className="text-blue-400 hover:text-blue-600 cursor-pointer" />
       );
-    } else if (url.includes("github.com")) {
+    } else if (url?.includes("github.com")) {
       return (
         <GitHub className="text-gray-400 hover:text-gray-600 cursor-pointer" />
       );
-    } else if (url.includes("t.me")) {
+    } else if (url?.includes("t.me")) {
       return (
         <Telegram className="text-gray-400 hover:text-gray-600 cursor-pointer" />
       );
@@ -71,17 +65,6 @@ function ProfileCard({ cardData }) {
     return null;
   };
 
-  const email = cardData[0][1]?.params?.email?.[0] ?? null;
-
-  const handleGetInTouchClick = () => {
-    if (email) {
-      // Navigate to the email client with the email address
-      window.location.href = `mailto:${email}`;
-    } else {
-      // Show an alert if the email is not present
-      alert("Contact information is not available.");
-    }
-  };
   return (
     <div className="container bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden w-full max-w-[400px]">
       <div className="flex flex-col md:flex-row gap-8">
@@ -102,10 +85,6 @@ function ProfileCard({ cardData }) {
                 alt="Cypherpunk Labs"
                 className="w-full aspect-square object-cover rounded-lg"
               />
-              {/* <button className="absolute -bottom-3 left-1/2 transform -translate-x-1/2 bg-white text-center px-3 py-1.5 text-xs font-medium rounded-md shadow-md flex items-center justify-center w-5/6">
-                <span className="whitespace-nowrap">Set status</span>
-                <span className="ml-1">▼</span>
-              </button> */}
             </div>
 
             <h2 className="text-2xl font-semibold text-center mb-1">
@@ -146,20 +125,11 @@ function ProfileCard({ cardData }) {
               </div>
             </div>
 
-            {/* <div className="mb-4">
-              <h3 className="font-normal mb-2 text-xs text-gray-500 uppercase">
-                Tagline
-              </h3>
-              <p className="text-sm">Bringing privacy back to users</p>
-            </div> */}
-
             <div className="mb-4">
               <h3 className="font-normal mb-2 text-xs text-gray-500 uppercase">
                 About
               </h3>
               <p className="text-sm">
-                {/* Est malesuada ac elit gravida vel aliquam nec. Arcu pelle
-                ntesque convallis quam feugiat non viverra massa fringilla. */}
                 {parse(projectDescription)}
               </p>
             </div>
@@ -185,11 +155,9 @@ function ProfileCard({ cardData }) {
                 Preferred ICP Hub
               </h3>
               <div className="flex space-x-2">
-                {/* {preferred_icp.map((predata, index) => { */}
                 <span className="bg-white border border-[#CDD5DF] text-[#364152] px-2 py-1 rounded-full text-sm">
                   {preferred_icp}
                 </span>
-                ;{/* })} */}
               </div>
             </div>
 
@@ -198,7 +166,6 @@ function ProfileCard({ cardData }) {
                 Country Of Registration
               </a>
               <a className="bg-gray-100 hover:bg-gray-200 text-sm w-full px-3 py-2 rounded border border-gray-200 text-left flex items-center">
-                {/* <Add fontSize="small" className="mr-2" /> */}
                 <span className="">{country_of_registration}</span>
               </a>
             </div>
@@ -206,9 +173,6 @@ function ProfileCard({ cardData }) {
             <div>
               <h3 className="font-normal mb-2 text-sm text-gray-500">LINKS</h3>
               <div className="flex space-x-2">
-                {/* <LinkedIn className="text-gray-400 hover:text-gray-600 cursor-pointer" />
-                <GitHub className="text-gray-400 hover:text-gray-600 cursor-pointer" />
-                <Telegram className="text-gray-400 hover:text-gray-600 cursor-pointer" /> */}
                 {links.map((linkObj, index) => (
                   <a
                     key={index}
@@ -229,3 +193,4 @@ function ProfileCard({ cardData }) {
 }
 
 export default ProfileCard;
+

@@ -187,6 +187,7 @@ const ProjectRegisterMain = ({ isopen }) => {
             raised_from_other_ecosystem: data.raised_from_other_ecosystem ? data.raised_from_other_ecosystem.toString() : null, // Convert to string or null
             target_amount: data.target_amount ? parseFloat(data.target_amount) : null, // Convert to float or null
             sns: data.valuation ? data.valuation.toString() : null,
+
           },
         ],
         promotional_video: [data?.promotional_video ?? ""],

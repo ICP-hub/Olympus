@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { FaFilter } from "react-icons/fa";
 import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
@@ -87,6 +87,36 @@ const EventRequestCard = () => {
       setIsSubmitting(false);
     }
   };
+  const handleAction = async (action, index) => {
+    setIsSubmitting(true);
+    let event = events[index];
+    console.log("event me kya aa rha h", event);
+    let enroller_principal = event?.enroller_principal;
+    let cohortId = event?.cohort_details?.cohort_id;
+    let cohort_creator_principal = event?.cohort_details?.cohort_creator_principal;
+
+    console.log(`Action: ${action} for Enroller: ${enroller_principal}, Cohort ID: ${cohortId}`); // Log who applied for which event
+    try {
+      let result;
+	
+      // Update the event in the state with the new status
+      setEvents(prevEvents =>
+        prevEvents.map((ev, i) =>
+          i === index ? { ...ev, status: event.status } : ev
+        )
+      );
+      toast.success(result);
+    } catch (error) {
+      console.error("Failed to process the decision: ", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+  useEffect(() => {
+    if (actor && principal) {
+      fetchRequests(selectedCategory, selectedType);
+    }
+  }, [actor, principal, selectedCategory, selectedType]);
 
   return (
     <>
