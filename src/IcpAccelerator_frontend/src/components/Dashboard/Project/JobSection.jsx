@@ -8,6 +8,7 @@ import useFormatDateFromBigInt from "../../../component/hooks/useFormatDateFromB
 import { formatFullDateFromBigInt } from "../../Utils/formatter/formatDateFromBigInt";
 import NewEvent from '../DashboardEvents/NewEvent';
 import NewJob from './LatestJob';
+
 const JobSection = () => {
   const [modalOpen, setModalOpen] = useState(false); 
 

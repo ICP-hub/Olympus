@@ -5,7 +5,7 @@ import DocumentModal from "./DocumentModal";
 import Nodata from "./Nodata";
 import { useLocation } from "react-router-dom";
 
-export function DocumentItem () {
+export function DocumentItem ({data}) {
   const [isOpen, setIsOpen] = useState(false);
   const [documentdata, setDocumentdata] = useState([]);
   const message = {
@@ -15,7 +15,8 @@ export function DocumentItem () {
     button: "Create a new Document",
   };
   const location = useLocation();
-   const ProjectId = location.state.projectId;
+  //  const ProjectId = location.state.projectId;
+  const ProjectId = data
    console.log("console vala principal",ProjectId)
   return (
     <div className="flex justify-center flex-col items-stretch space-x-4 mb-6 pb-6">
