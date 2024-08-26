@@ -1,4 +1,3 @@
-
 import React from "react";
 import CypherpunkLabLogo from "../../../../assets/Logo/CypherpunkLabLogo.png";
 import ProfileImage from "../../../../assets/Logo/ProfileImage.png";
@@ -21,10 +20,12 @@ function ProfileCard({ cardData }) {
   const preferred_icp =
     cardData?.[0]?.[0]?.params?.preferred_icp_hub?.[0] ?? "No data available";
   const country_of_registration =
-    cardData?.[0]?.[0]?.params?.country_of_registration?.[0] ?? "No data available";
+    cardData?.[0]?.[0]?.params?.country_of_registration?.[0] ??
+    "No data available";
   const isActive = cardData?.[0]?.[0]?.is_active ?? false;
   const statusText = isActive ? "Active" : "Inactive";
-  const project_area_of_focus = cardData?.[0]?.[0]?.params?.project_area_of_focus
+  const project_area_of_focus = cardData?.[0]?.[0]?.params
+    ?.project_area_of_focus
     ? cardData[0][0].params.project_area_of_focus
         .split(",")
         .map((interest) => interest.trim())
@@ -32,7 +33,8 @@ function ProfileCard({ cardData }) {
   const projectLogo = cardData?.[0]?.[0]?.params?.project_logo?.[0]
     ? uint8ArrayToBase64(cardData[0][0].params.project_logo[0])
     : "";
-  const projectName = cardData?.[0]?.[0]?.params?.project_name || "Unknown Project";
+  const projectName =
+    cardData?.[0]?.[0]?.params?.project_name || "Unknown Project";
   const fullName =
     cardData?.[0]?.[1]?.params?.openchat_username ?? "No name provided";
   const links = cardData?.[0]?.[0]?.params?.links?.[0] ?? [];
@@ -129,9 +131,7 @@ function ProfileCard({ cardData }) {
               <h3 className="font-normal mb-2 text-xs text-gray-500 uppercase">
                 About
               </h3>
-              <p className="text-sm">
-                {parse(projectDescription)}
-              </p>
+              <p className="text-sm">{parse(projectDescription)}</p>
             </div>
 
             <div className="mb-4">
@@ -162,14 +162,23 @@ function ProfileCard({ cardData }) {
             </div>
 
             <div className="mb-4 max-w-sm">
-              <a className="font-normal mb-2 text-sm text-gray-500">
+              <h3 className="font-normal mb-2 text-sm text-gray-500">
                 Country Of Registration
-              </a>
-              <a className="bg-gray-100 hover:bg-gray-200 text-sm w-full px-3 py-2 rounded border border-gray-200 text-left flex items-center">
-                <span className="">{country_of_registration}</span>
-              </a>
-            </div>
+              </h3>
+              {/* <a className="font-normal mb-2 text-sm text-gray-500">
+                Country Of Registration
+              </a> */}
 
+              {/* <a className="bg-gray-100 hover:bg-gray-200 text-sm w-full px-3 py-2 rounded border border-gray-200 text-left flex items-center">
+                <Add fontSize="small" className="mr-2" />
+                <span className="">{country_of_registration}</span>
+              </a> */}
+              <div className="flex space-x-2">
+                <span className="bg-white border border-[#CDD5DF] text-[#364152] px-2 py-1 rounded-full text-sm">
+                  {country_of_registration}
+                </span>
+              </div>
+            </div>
             <div>
               <h3 className="font-normal mb-2 text-sm text-gray-500">LINKS</h3>
               <div className="flex space-x-2">
@@ -193,4 +202,3 @@ function ProfileCard({ cardData }) {
 }
 
 export default ProfileCard;
-

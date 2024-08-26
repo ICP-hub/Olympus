@@ -22,13 +22,13 @@ const NewDocument = ({ cardData }) => {
             className="w-[50px] h-[50px] rounded-lg object-cover mx-auto"
           />
           <a
-            href={doc.link}
+            href={doc?.link}
             target="_blank"
             rel="noopener noreferrer"
             className="hover:text-blue-800 mt-2 block overflow-hidden text-ellipsis whitespace-nowrap text-sm"
             style={{ maxWidth: '100px' }}
           >
-            {doc.link || "No link provided"}
+            {doc?.link || "No link provided"}
           </a>
         </div>
         </div>
@@ -39,7 +39,7 @@ const NewDocument = ({ cardData }) => {
         >
           <div className="flex justify-between">
             <p className="text-lg font-semibold text-gray-900">
-              {doc.title || `Document ${index + 1}`}
+              {doc?.title || `Document ${index + 1}`}
             </p>
             <button
               className={`rounded-lg px-2 text-sm ${
@@ -72,8 +72,8 @@ const NewDocument = ({ cardData }) => {
     <div className="space-y-6">
       {/* Private Documents Section */}
       <div className="max-w-4xl bg-white">
-        {cardData[0][0].params.private_docs && cardData[0][0].params.private_docs.length > 0 ? (
-          <div>{renderDocuments(cardData[0][0].params.private_docs[0], "private")}</div>
+        {cardData[0][0]?.params?.private_docs && cardData[0][0]?.params?.private_docs.length > 0 ? (
+          <div>{renderDocuments(cardData[0][0]?.params?.private_docs[0], "private")}</div>
         ) : (
           <p className="text-gray-500 mt-2">No private documents uploaded.</p>
         )}
@@ -81,8 +81,8 @@ const NewDocument = ({ cardData }) => {
 
       {/* Public Documents Section */}
       <div className="max-w-4xl bg-white">
-        {cardData[0][0].params.public_docs && cardData[0][0].params.public_docs.length > 0 ? (
-          <div>{renderDocuments(cardData[0][0].params.public_docs[0], "public")}</div>
+        {cardData[0][0]?.params?.public_docs && cardData[0][0]?.params?.public_docs.length > 0 ? (
+          <div>{renderDocuments(cardData[0][0]?.params?.public_docs[0], "public")}</div>
         ) : (
           <p className="text-gray-500 mt-2">No public documents uploaded.</p>
         )}
