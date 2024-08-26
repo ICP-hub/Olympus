@@ -47,26 +47,26 @@ pub async fn post_job(params: Jobs) -> String {
 
 
 #[update(guard = "is_user_anonymous")]
-pub async fn update_job_post_by_id(timestamp: u64, new_details: Jobs) -> String {
+pub async fn update_job_post_by_id(job_id: String, new_details: Jobs) -> String {
     mutate_state(|state| {
         let announcement_storage = &mut state.post_job;
-        if let Some(caller_announcements) = announcement_storage.get(&StoredPrincipal(caller()))
-        {
+        if let Some(caller_announcements) = announcement_storage.get(&StoredPrincipal(caller())) {
             let mut caller_announcements = caller_announcements.clone();
-            ic_cdk::println!("state before update {:?}", caller_announcements.0);
+            ic_cdk::println!("State before update: {:?}", caller_announcements.0);
+
             for announcement in caller_announcements.0.iter_mut() {
-                if announcement.timestamp == timestamp {
-                    ic_cdk::println!("job post before update: {:?}", announcement);
-                    // Update announcement details
+                if announcement.job_id == job_id {
+                    ic_cdk::println!("Job post before update: {:?}", announcement);
+                    // Update job details
                     announcement.job_data = new_details;
                     ic_cdk::println!("State after update: {:?}", announcement);
                     announcement_storage.insert(StoredPrincipal(caller()), caller_announcements);
 
-                    return format!("job post updated successfully for {}", timestamp);
+                    return format!("Job post updated successfully for job_id {}", job_id);
                 }
             }
 
-            format!("No job post found with timestamp {}", timestamp)
+            format!("No job post found with job_id {}", job_id)
         } else {
             ic_cdk::println!("No job post entry found for this caller.");
             format!("No job post entry found for this caller.")
@@ -74,27 +74,27 @@ pub async fn update_job_post_by_id(timestamp: u64, new_details: Jobs) -> String 
     })
 }
 
+
 #[update(guard = "is_user_anonymous")]
-pub async fn delete_job_post_by_id(timestamp: u64) -> String {
+pub async fn delete_job_post_by_id(job_id: String) -> String {
     mutate_state(|state| {
         let announcement_storage = &mut state.post_job;
-        if let Some(caller_announcements) = announcement_storage.get(&StoredPrincipal(caller()))
-        {
+        if let Some(caller_announcements) = announcement_storage.get(&StoredPrincipal(caller())) {
             let mut caller_announcements = caller_announcements.clone();
-            ic_cdk::println!("state before update {:?}", caller_announcements.0);
+            ic_cdk::println!("State before deletion: {:?}", caller_announcements.0);
 
             let original_len = caller_announcements.0.len();
             caller_announcements
                 .0
-                .retain(|announcement| announcement.timestamp != timestamp);
+                .retain(|announcement| announcement.job_id != job_id);
 
             if caller_announcements.0.len() < original_len {
                 announcement_storage.insert(StoredPrincipal(caller()), caller_announcements);
-                ic_cdk::println!("job post deleted successfully for {}", timestamp);
-                format!("job post deleted successfully for {}", timestamp)
+                ic_cdk::println!("Job post deleted successfully for job_id {}", job_id);
+                format!("Job post deleted successfully for job_id {}", job_id)
             } else {
-                ic_cdk::println!("No job post found with timestamp {}", timestamp);
-                format!("No job post found with timestamp {}", timestamp)
+                ic_cdk::println!("No job post found with job_id {}", job_id);
+                format!("No job post found with job_id {}", job_id)
             }
         } else {
             ic_cdk::println!("No job post entry found for this caller.");
@@ -102,6 +102,7 @@ pub async fn delete_job_post_by_id(timestamp: u64) -> String {
         }
     })
 }
+
 
 #[query(guard = "is_user_anonymous")]
 pub fn get_all_jobs(page_number: usize, page_size: usize) -> Vec<JobsInternal> {
