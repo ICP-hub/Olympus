@@ -1,20 +1,12 @@
-; import React, { useEffect, useState } from 'react';
-import EventCard from './EventCard';
-import Filters from './EventFilter';
-import eventbg from "../../../../assets/images/bg.png"
-import { Link } from "react-router-dom"
-import EventRegMain from '../../Modals/EventRegister/EventRegMain';
-import { useSelector } from 'react-redux';
-import { title } from 'process';
-import parse from 'html-react-parser';
-import { useNavigate } from 'react-router-dom';
-
-
-
-import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
+import React, { useEffect, useState } from 'react';
 import EventSection from '../Project/EventSection';
 import uint8ArrayToBase64 from '../../Utils/uint8ArrayToBase64';
-
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import EventRegMain from '../../Modals/EventRegister/EventRegMain';
+import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
+import parse from 'html-react-parser';
+import { Principal } from "@dfinity/principal";
 
 const descriptionStyle = {
     display: '-webkit-box',
@@ -24,12 +16,12 @@ const descriptionStyle = {
     textOverflow: 'ellipsis', // Add ellipsis (...) if the text overflows
 };
 
-
 const NewEvent = ({ event }) => {
-
     const [modalOpen, setModalOpen] = useState(false);
     const [cohortEvents, setCohortEvents] = useState([]);
     const actor = useSelector((currState) => currState.actors.actor);
+    const principal = useSelector((currState) => currState.internet.principal);
+    const navigate = useNavigate();
 
     const handleModalOpen = () => {
         setModalOpen(true);
@@ -38,50 +30,44 @@ const NewEvent = ({ event }) => {
     useEffect(() => {
         const fetchCohorts = async () => {
             try {
-                const data = await actor.get_cohorts_by_principal();
+                const covertedPrincipal = Principal.fromText(principal);
+                const data = await actor.get_cohorts_by_principal(covertedPrincipal);
 
                 if (data && Array.isArray(data) && data.length > 0) {
-                    const cohortId = data[0].cohort_id;
-                    console.log("Cohort ID:", cohortId);
+                    const formattedEvents = data.map(cohort => {
+                        if (!cohort || !cohort.cohort || !cohort.cohort.cohort_banner) {
+                            return null;
+                        }
+
+                        return {
+                            title: cohort.cohort.title,
+                            cohort_banner: cohort.cohort.cohort_banner[0]
+                                ? uint8ArrayToBase64(cohort.cohort.cohort_banner[0])
+                                : [],
+                            cohort_launch_date: cohort.cohort.cohort_launch_date,
+                            cohort_end_date: cohort.cohort.cohort_end_date,
+                            start_date: cohort.cohort.start_date,
+                            no_of_seats: cohort.cohort.no_of_seats,
+                            tags: cohort.cohort.tags,
+                            country: cohort.cohort.country,
+                            description: cohort.cohort.description,
+                            funding_amount: cohort.cohort.funding_amount,
+                            cohort_id: cohort.cohort_id, // Include cohort_id here
+                        };
+                    }).filter(event => event !== null);
+
+                    setCohortEvents(formattedEvents);
+                    console.log("formattedEvents", formattedEvents);
                 } else {
                     console.log("No data found or the structure is not as expected.");
                 }
-                const formattedEvents = data.map(cohort => {
-                    if (!cohort || !cohort.cohort || !cohort.cohort.cohort_banner) {
-                        return null;
-                    }
-
-                    return {
-                        title: cohort.cohort.title,
-                        cohort_banner: cohort.cohort.cohort_banner[0]
-                            ? uint8ArrayToBase64(cohort.cohort.cohort_banner[0])
-                            : [],
-                        cohort_launch_date: cohort.cohort.cohort_launch_date,
-                        cohort_end_date: cohort.cohort.cohort_end_date,
-                        start_date: cohort.cohort.start_date,
-                        no_of_seats: cohort.cohort.no_of_seats,
-                        tags: cohort.cohort.tags,
-                        country: cohort.cohort.country,
-                        
-                        description: cohort.cohort.description,
-                        funding_amount: cohort.cohort.funding_amount,
-                        cohort_id: cohort.cohort_id, // Include cohort_id here
-                    };
-                   
-
-                }).filter(event => event !== null);
-
-                setCohortEvents(formattedEvents);
-                console.log("formattedEvents", formattedEvents)
             } catch (error) {
                 console.error('Error fetching cohort data:', error);
             }
         };
 
         fetchCohorts();
-    }, [actor]);
-
-    const navigate = useNavigate();
+    }, [actor, principal]);
 
     const handleClick = (cohort_id) => {
         navigate('/dashboard/single-event', { state: { cohort_id } });
@@ -127,7 +113,6 @@ const NewEvent = ({ event }) => {
                                                 Workshop
                                             </p>
                                             <h3 className="text-lg font-bold mt-1">{event.title}</h3>
-                                            {/* <h3 className="text-lg font-semibold">{event.no_of_seats}</h3> */}
                                             <p
                                                 className="text-sm text-gray-500 overflow-hidden text-ellipsis line-clamp-3 mt-2"
                                                 style={{ maxHeight: '3em', lineHeight: '1em' }}
