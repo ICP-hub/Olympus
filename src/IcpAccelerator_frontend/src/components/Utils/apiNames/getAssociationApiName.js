@@ -31,7 +31,7 @@ export default function fetchRequestAssociation(activeTab, selectedStatus, role,
                     case 'mentor':
                         switch (selectedStatus) {
                             case 'to-project':
-                                api_data = actor.get_all_offers_which_are_pending_for_mentor_via_mentor();
+                                api_data = actor.get_all_offers_which_are_pending_for_mentor_via_mentor(principal);
                                 break;
                             case 'from-project':
                                 api_data = actor.get_pending_request_from_project_to_mentor_via_project(principal);
@@ -71,7 +71,7 @@ export default function fetchRequestAssociation(activeTab, selectedStatus, role,
                     case 'mentor':
                         switch (selectedStatus) {
                             case 'to-project':
-                                api_data = actor.get_all_requests_which_got_accepted_for_mentor_via_mentor();
+                                api_data = actor.get_all_requests_which_got_accepted_for_mentor_via_mentor(principal);
                                 break;
                             case 'from-project':
                                 api_data = actor.get_approved_request_from_mentor_to_project_via_project(principal);
@@ -111,7 +111,7 @@ export default function fetchRequestAssociation(activeTab, selectedStatus, role,
                     case 'mentor':
                         switch (selectedStatus) {
                             case 'to-project':
-                                api_data = actor.get_all_requests_which_got_declined_for_mentor_via_mentor();
+                                api_data = actor.get_all_requests_which_got_declined_for_mentor_via_mentor(principal);
                                 break;
                             case 'from-project':
                                 api_data = actor.get_declined_request_from_mentor_to_project_via_project(principal);

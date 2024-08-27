@@ -20,6 +20,7 @@ import {
   staroutlineSvgIcon,
   userCircleSvgIcon,
   userSvgIcon,
+  plusSvgIcon
 } from "../../Utils/Data/SvgData";
 import { dashboard } from "../../Utils/jsondata/data/dashboardData";
 import { useDispatch, useSelector } from "react-redux";
@@ -38,13 +39,14 @@ function DashboardSidebar({ isOpen, onClose }) {
   );
   const actor = useSelector((currState) => currState.actors.actor);
   const projectFullData = useSelector((currState) => currState.projectData.data);
+   const projectName = projectFullData?.[0]?.[0]?.params?.project_name
   const cardData = projectFullData;
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [activeLink, setActiveLink] = useState(location.pathname);
 
-  console.log('userCurrentRoleStatus',userCurrentRoleStatus)
+  console.log('projectName',projectName)
   useEffect(() => {
     if (actor && isAuthenticated){
           dispatch(founderRegisteredHandlerRequest());
@@ -200,7 +202,7 @@ console.log('filteredData',filteredData)
         },
         {
           path: "/dashboard/mentor/new",
-          icon: gridSvgIcon,
+          icon: plusSvgIcon,
           label: "Create new Mentor",
         },
       ],
@@ -213,11 +215,11 @@ console.log('filteredData',filteredData)
         {
           path: handleNavigation,
           icon: gridSvgIcon,
-          label: dashboardhomesidebar.sidebarSections.projects.items.label1,
+          label: projectName,
         },
         {
           path: "/dashboard/project/new",
-          icon: gridSvgIcon,
+          icon: plusSvgIcon,
           label: "Create new Project",
         },
       ],
@@ -234,7 +236,7 @@ console.log('filteredData',filteredData)
         },
         {
           path: "/dashboard/investor/new",
-          icon: gridSvgIcon,
+          icon: plusSvgIcon,
           label: "Create new Investors",
         },
       ],

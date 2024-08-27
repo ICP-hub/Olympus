@@ -18,6 +18,7 @@ import Loader from "./component/Loader/Loader";
 import Footer from "./components/Footer/Footer";
 import Navbar from "./components/Layout/Header/Navbar";
 import WarningMessage from "./ScreenWarning";
+import { founderRegisteredHandlerRequest } from "./components/StateManagement/Redux/Reducers/founderRegisteredData";
 
 const App = () => {
   const actor = useSelector((currState) => currState.actors.actor);
@@ -107,6 +108,8 @@ const App = () => {
       dispatch(areaOfExpertiseHandlerRequest());
       dispatch(typeOfProfileSliceHandlerRequest());
       dispatch(userRegisteredHandlerRequest());
+      dispatch(founderRegisteredHandlerRequest());
+
     }
   }, [isAuthenticated, identity, dispatch]);
 
