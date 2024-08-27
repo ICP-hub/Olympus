@@ -207,7 +207,7 @@ const InvestorForm = ({ isOpen }) => {
       >
         <div className="container mx-auto">
           <div className="pb-12 flex items-center justify-center rounded-xl">
-            <div className="bg-white shadow-xl rounded-2xl flex w-full max-w-[30rem] relative">
+            <div className=" flex  relative bg-white rounded-lg shadow-lg w-[500px] p-6 pt-4 max-h-[90vh] overflow-y-auto">
               <div className="absolute top-2 right-4">
                 <button
                   className="text-2xl text-gray-300"
