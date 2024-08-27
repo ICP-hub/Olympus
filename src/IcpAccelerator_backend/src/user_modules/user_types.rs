@@ -1,4 +1,4 @@
-use candid::CandidType;
+use candid::{CandidType, Principal};
 use serde::{Deserialize, Serialize};
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug, Default, PartialEq)]
@@ -54,6 +54,7 @@ pub struct Review {
     pub timestamp: u64,
     pub tag: String,
     pub rating: f32,
+    pub reviewer_principal: Principal
 }
 
 impl Review {
@@ -86,6 +87,18 @@ impl Review {
             timestamp: ic_cdk::api::time(),
             tag,
             rating,
+            reviewer_principal: ic_cdk::caller(),
         })
+    }
+}
+
+impl UserInformation {
+    pub fn validate(&self) -> Result<(), String> {
+        if let Some(bio) = &self.bio {
+            if crate::guard::contains_html_tags(bio) {
+                return Err("Bio contains HTML tags, which are not allowed.".into());
+            }
+        }
+        Ok(())
     }
 }

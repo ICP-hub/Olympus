@@ -2,6 +2,13 @@ use crate::state_handler::{mutate_state, read_state, Candid, StoredPrincipal};
 use ic_cdk::update;
 use ic_cdk::api::management_canister::main::raw_rand;
 use sha2::{Sha256, Digest};
+use regex::Regex;
+
+/// Checks if a string contains HTML tags.
+pub fn contains_html_tags(text: &str) -> bool {
+    let re = Regex::new(r"</?[a-z][\s\S]*>").unwrap();
+    re.is_match(text)
+}
 
 pub fn is_admin() -> Result<(), String> {
     Ok(())
