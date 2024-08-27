@@ -4,7 +4,8 @@ import AnnouncementModal from "../Modals/AnnouncementModal";
 import toast, { Toaster } from "react-hot-toast";
 
 import { useSelector } from "react-redux";
-const NoCardData = () => {
+const NoCardData = ({data}) => {
+  console.log("data ",data?.uid)
   const handleOpenModal = () => setAnnouncementModalOpen(true);
   const [isAnnouncementModalOpen, setAnnouncementModalOpen] = useState(false);
   const handleCloseModal = () => setAnnouncementModalOpen(false);
@@ -59,14 +60,14 @@ const NoCardData = () => {
     setIsSubmitting(true);
     if (actor) {
       let argument = {
-        project_id: projectData?.uid,
+        project_id: data[0]?.uid,
         announcement_title: announcementTitle,
         announcement_description: announcementDescription,
         timestamp: Date.now(),
       };
       // console.log("argument", argument);
       await actor
-        .add_announcement(argument)
+        .add_project_announcement(argument)
         .then((result) => {
           // console.log("result-in-add_announcement", result);
           if (result && Object.keys(result).length > 0) {

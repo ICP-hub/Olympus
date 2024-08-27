@@ -176,7 +176,7 @@ const DiscoverDocument = ({ projectDetails }) => {
   };
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-3 mt-3">
         <h2 className="text-xl font-semibold text-gray-900 mb-4"> Documents</h2>
       {/* Private Documents Section */}
       <div className="max-w-4xl bg-white p-3  ">
