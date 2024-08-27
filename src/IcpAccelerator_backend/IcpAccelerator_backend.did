@@ -9,14 +9,14 @@ type AccessRequest = record {
 type Announcements = record {
   announcement_title : text;
   announcement_description : text;
-  project_id : text;
 };
 type AnnouncementsInternal = record {
   announcement_data : Announcements;
   timestamp : nat64;
-  project_desc : opt text;
-  project_logo : opt blob;
-  project_name : text;
+  vc_info : opt VentureCapitalistInternal;
+  project_info : opt ProjectInfoInternal;
+  mentor_info : opt MentorInternal;
+  announcement_id : text;
 };
 type Areas = record { id : int32; name : text };
 type CanisterStatusResponse = record {
@@ -148,11 +148,6 @@ type ListAllIcpHubs = record {
 type ListAllProjects = record {
   overall_average : opt float64;
   params : ProjectInfoInternal;
-};
-type MAnnouncements = record {
-  announcement_message : text;
-  timestamp : nat64;
-  project_name : text;
 };
 type MentorFilterCriteria = record {
   country : opt text;
@@ -557,11 +552,6 @@ type UserInformation = record {
   social_links : opt vec SocialLinks_2;
 };
 type UserType = record { id : int32; role_type : text };
-type VAnnouncements = record {
-  announcement_title : text;
-  announcement_description : text;
-  vc_name : text;
-};
 type VcFilterCriteria = record {
   country : opt text;
   money_invested_range : opt record { float64; float64 };
@@ -614,14 +604,12 @@ service : {
   accept_rejoin_invitation : (text) -> (Result);
   access_money_details : (text) -> (Result_1) query;
   access_private_docs : (text) -> (Result_2) query;
+  add_announcement : (Announcements) -> (text);
   add_data_checking : () -> (text);
   add_icp_hub_details : (IcpHubDetails) -> (text);
-  add_mentor_announcement : (text, text) -> (text);
-  add_project_announcement : (Announcements) -> (text);
   add_project_rating : (ProjectRatingStruct) -> (Result);
   add_review : (float32, text) -> (text);
   add_testimonial : (text) -> (text);
-  add_vc_announcement : (text, text) -> (text);
   apply_for_a_cohort_as_a_investor : (text) -> (text);
   apply_for_a_cohort_as_a_mentor : (text) -> (text);
   apply_for_a_cohort_as_a_project : (text) -> (text);
@@ -639,10 +627,10 @@ service : {
   decline_offer_from_project_to_investor : (text, text) -> (text);
   decline_offer_from_project_to_mentor : (text, text) -> (text);
   decline_private_docs_access_request : (text, principal) -> (text);
+  delete_announcement_by_id : (text) -> (text);
   delete_job_post_by_id : (text) -> (text);
   delete_mentor : () -> (text);
   delete_project : (text) -> (text);
-  delete_project_announcement_by_id : (nat64) -> (text) query;
   delete_team_member : (text, principal) -> (text);
   delete_venture_capitalist : () -> (text);
   filter_cohorts : (CohortFilterCriteria) -> (vec CohortDetails) query;
@@ -657,7 +645,9 @@ service : {
   get_accepted_cohort_enrollment_requests : (principal) -> (
       vec CohortEnrollmentRequest,
     ) query;
-  get_accepted_request_for_investor : () -> (vec OfferToSendToInvestor) query;
+  get_accepted_request_for_investor : (principal) -> (
+      vec OfferToSendToInvestor,
+    ) query;
   get_accepted_request_of_project_by_investor : (text) -> (
       vec OfferToInvestor,
     ) query;
@@ -675,7 +665,7 @@ service : {
   get_all_mentors_with_pagination : (Pagination) -> (
       PaginationReturnMentor,
     ) query;
-  get_all_offers_which_are_pending_for_investor : () -> (
+  get_all_offers_which_are_pending_for_investor : (principal) -> (
       vec OfferToProjectByInvestor,
     ) query;
   get_all_offers_which_are_pending_for_mentor_via_mentor : (principal) -> (
@@ -695,7 +685,7 @@ service : {
   get_all_requests_which_got_accepted_by_project_of_investor : (text) -> (
       vec OfferToSendToProjectByInvestor,
     ) query;
-  get_all_requests_which_got_accepted_for_investor : () -> (
+  get_all_requests_which_got_accepted_for_investor : (principal) -> (
       vec OfferToProject,
     ) query;
   get_all_requests_which_got_accepted_for_mentor_via_mentor : (principal) -> (
@@ -707,7 +697,7 @@ service : {
   get_all_requests_which_got_declined_by_project_of_investor : (text) -> (
       vec OfferToSendToProjectByInvestor,
     ) query;
-  get_all_requests_which_got_declined_for_investor : () -> (
+  get_all_requests_which_got_declined_for_investor : (principal) -> (
       vec OfferToProject,
     ) query;
   get_all_requests_which_got_declined_for_mentor_via_mentor : (principal) -> (
@@ -733,12 +723,20 @@ service : {
   get_all_sent_request_from_investor_to_project : () -> (
       vec OfferToProject,
     ) query;
-  get_announcements_by_project_id : (text) -> (vec AnnouncementsInternal) query;
+  get_announcements : (nat64, nat64) -> (
+      vec record { principal; vec AnnouncementsInternal },
+    ) query;
+  get_announcements_by_announcement_id : (text) -> (
+      vec AnnouncementsInternal,
+    ) query;
+  get_announcements_by_principal : (principal) -> (
+      vec AnnouncementsInternal,
+    ) query;
   get_approved_money_requests : (text) -> (vec ProjectNotification) query;
   get_approved_request_from_mentor_to_project_via_project : (principal) -> (
       vec OfferToSendToMentor,
     ) query;
-  get_approved_request_from_project_to_mentor_via_project : () -> (
+  get_approved_request_from_project_to_mentor_via_project : (principal) -> (
       vec OfferToMentor,
     ) query;
   get_approved_role_count_for_principal : (principal) -> (nat64) query;
@@ -749,11 +747,13 @@ service : {
   get_cohorts_by_principal : (principal) -> (vec CohortDetails) query;
   get_data_checking : () -> (text) query;
   get_declined_money_requests : (text) -> (vec ProjectNotification) query;
-  get_declined_request_for_investor : () -> (vec OfferToSendToMentor) query;
+  get_declined_request_for_investor : (principal) -> (
+      vec OfferToSendToMentor,
+    ) query;
   get_declined_request_from_mentor_to_project_via_project : (principal) -> (
       vec OfferToSendToMentor,
     ) query;
-  get_declined_request_from_project_to_mentor_via_project : () -> (
+  get_declined_request_from_project_to_mentor_via_project : (principal) -> (
       vec OfferToMentor,
     ) query;
   get_declined_request_of_project_by_investor : (text) -> (
@@ -766,7 +766,7 @@ service : {
   get_job_category : () -> (vec Areas) query;
   get_job_details_using_uid : (text) -> (opt JobsInternal) query;
   get_jobs_posted_by_principal : (principal) -> (vec JobsInternal) query;
-  get_latest_project_announcements : () -> (
+  get_latest_announcements : (nat64, nat64) -> (
       vec record { principal; vec AnnouncementsInternal },
     ) query;
   get_latest_testimonials : () -> (vec Testimonial) query;
@@ -776,9 +776,6 @@ service : {
     ) query;
   get_member_id : () -> (text) query;
   get_mentor : () -> (opt record { MentorProfile; UserInfoInternal }) query;
-  get_mentor_announcements : () -> (
-      vec record { principal; vec MAnnouncements },
-    ) query;
   get_mentor_info_using_principal : (principal) -> (
       opt record { MentorInternal; UserInfoInternal },
     ) query;
@@ -809,14 +806,11 @@ service : {
   get_pending_request_for_investor_sent_by_project : (principal) -> (
       vec OfferToSendToMentor,
     ) query;
-  get_pending_request_from_mentor_to_project_via_project : () -> (
+  get_pending_request_from_mentor_to_project_via_project : (principal) -> (
       vec OfferToMentor,
     ) query;
   get_pending_request_from_project_to_mentor_via_project : (principal) -> (
       vec OfferToSendToMentor,
-    ) query;
-  get_project_announcements : () -> (
-      vec record { principal; vec AnnouncementsInternal },
     ) query;
   get_project_details_for_mentor_and_investor : (text) -> (
       ProjectPublicInfoInternal,
@@ -858,9 +852,6 @@ service : {
   get_user_info_using_principal : (principal) -> (opt UserInfoInternal) query;
   get_user_information : () -> (Result_13) query;
   get_user_information_using_uid : (text) -> (Result_13) query;
-  get_vc_announcements : () -> (
-      vec record { principal; vec VAnnouncements },
-    ) query;
   get_vc_info : () -> (
       opt record { VentureCapitalist; UserInfoInternal },
     ) query;
@@ -911,6 +902,7 @@ service : {
   switch_role : (text, text) -> ();
   type_of_job : () -> (vec JobType) query;
   type_of_user_profile : () -> (vec UserType) query;
+  update_announcement_by_id : (text, Announcements) -> (text);
   update_cohort : (text, Cohort) -> (Result);
   update_job_post_by_id : (text, Jobs) -> (text);
   update_mentor : (MentorProfile) -> (text);
@@ -918,7 +910,6 @@ service : {
   update_money_raised_data : (text, MoneyRaised) -> (Result);
   update_peer_rating_api : (PeerRatingUpdate) -> (text);
   update_project : (text, ProjectInfo) -> (text);
-  update_project_announcement_by_id : (nat64, Announcements) -> (text);
   update_project_private_docs : (text, vec Docs, bool) -> (Result);
   update_rating : (RatingUpdate) -> (text);
   update_team_member : (text, principal) -> (text);

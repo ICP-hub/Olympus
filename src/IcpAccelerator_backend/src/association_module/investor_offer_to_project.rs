@@ -306,11 +306,11 @@ pub fn get_all_offers_which_are_pending_for_project_from_investor(
 
 //mentor will call
 #[query]
-pub fn get_all_offers_which_are_pending_for_investor() -> Vec<OfferToProjectByInvestor> {
+pub fn get_all_offers_which_are_pending_for_investor(investor_id: Principal) -> Vec<OfferToProjectByInvestor> {
     read_state(|sent_notifications| {
         sent_notifications
             .offers_sent_by_investor
-            .get(&StoredPrincipal(caller()))
+            .get(&StoredPrincipal(investor_id))
             .map_or_else(Vec::new, |offers| {
                 offers
                     .0
@@ -342,11 +342,11 @@ pub fn get_all_requests_which_got_accepted_by_project_of_investor(
 }
 
 #[query]
-pub fn get_all_requests_which_got_accepted_for_investor() -> Vec<OfferToProjectByInvestor> {
+pub fn get_all_requests_which_got_accepted_for_investor(investor_id: Principal) -> Vec<OfferToProjectByInvestor> {
     read_state(|notifications| {
         notifications
             .offers_sent_by_investor
-            .get(&StoredPrincipal(caller()))
+            .get(&StoredPrincipal(investor_id))
             .map_or_else(Vec::new, |offers| {
                 offers
                     .0
@@ -378,11 +378,11 @@ pub fn get_all_requests_which_got_declined_by_project_of_investor(
 }
 
 #[query]
-pub fn get_all_requests_which_got_declined_for_investor() -> Vec<OfferToProjectByInvestor> {
+pub fn get_all_requests_which_got_declined_for_investor(investor_id: Principal) -> Vec<OfferToProjectByInvestor> {
     read_state(|notifications| {
         notifications
             .offers_sent_by_investor
-            .get(&StoredPrincipal(caller()))
+            .get(&StoredPrincipal(investor_id))
             .map_or_else(Vec::new, |offers| {
                 offers
                     .0

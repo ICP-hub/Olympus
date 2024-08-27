@@ -6,7 +6,6 @@ use crate::vc_module::vc_types::*;
 use crate::guard::*;
 use ic_cdk_macros::*;
 use crate::types::pagination_types::*;
-use ic_cdk::api::caller;
 use candid::Principal;
 
 
