@@ -47,15 +47,15 @@ pub struct OfferToSendToProjectByInvestor {
 
 pub fn store_request_sent_by_capitalist(offer: OfferToProjectByInvestor) {
     mutate_state(|store| {
-        let mut store_request = store
-            .offers_sent_by_investor
-            .get(&StoredPrincipal(caller()))
-            .map(|candid_res| candid_res.0)
-            .unwrap_or_default();
-
-        store_request.push(offer);
+        let caller_principal = StoredPrincipal(caller());
+        if let Some(mut store_request) = store.offers_sent_by_investor.get(&caller_principal) {
+            store_request.0.push(offer);
+        } else {
+            store.offers_sent_by_investor.insert(caller_principal, Candid(vec![offer]));
+        }
     });
 }
+
 
 #[query]
 pub fn get_all_sent_request_from_investor_to_project() -> Vec<OfferToProjectByInvestor> {
