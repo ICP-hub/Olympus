@@ -370,11 +370,11 @@ pub fn get_pending_request_from_project_to_mentor_via_project(mentor_id: Princip
 }
 
 #[query]
-pub fn get_pending_request_from_mentor_to_project_via_project() -> Vec<OfferToMentor> {
+pub fn get_pending_request_from_mentor_to_project_via_project(project_principal: Principal) -> Vec<OfferToMentor> {
     read_state(|pending_alerts| {
         pending_alerts
             .my_sent_notifications
-            .get(&StoredPrincipal(caller()))
+            .get(&StoredPrincipal(project_principal))
             .map_or_else(Vec::new, |offers| {
                 offers
                     .0
@@ -404,11 +404,11 @@ pub fn get_approved_request_from_mentor_to_project_via_project(mentor_id: Princi
 }
 
 #[query]
-pub fn get_approved_request_from_project_to_mentor_via_project() -> Vec<OfferToMentor> {
+pub fn get_approved_request_from_project_to_mentor_via_project(project_principal: Principal) -> Vec<OfferToMentor> {
     read_state(|pending_alerts| {
         pending_alerts
             .my_sent_notifications
-            .get(&StoredPrincipal(caller()))
+            .get(&StoredPrincipal(project_principal))
             .map_or_else(Vec::new, |offers| {
                 offers
                     .0
@@ -438,11 +438,11 @@ pub fn get_declined_request_from_mentor_to_project_via_project(mentor_id: Princi
 }
 
 #[query]
-pub fn get_declined_request_from_project_to_mentor_via_project() -> Vec<OfferToMentor> {
+pub fn get_declined_request_from_project_to_mentor_via_project(project_principal: Principal) -> Vec<OfferToMentor> {
     read_state(|pending_alerts| {
         pending_alerts
             .my_sent_notifications
-            .get(&StoredPrincipal(caller()))
+            .get(&StoredPrincipal(project_principal))
             .map_or_else(Vec::new, |offers| {
                 offers
                     .0

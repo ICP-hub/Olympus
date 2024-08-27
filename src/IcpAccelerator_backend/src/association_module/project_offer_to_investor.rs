@@ -285,9 +285,7 @@ pub fn get_pending_offers_for_project_received_from_investor(project_id: String)
 }
 
 #[query]
-pub fn get_accepted_request_for_investor() -> Vec<OfferToSendToInvestor> {
-    let investor_id = caller();
-
+pub fn get_accepted_request_for_investor(investor_id: Principal) -> Vec<OfferToSendToInvestor> {
     read_state(|pending_alerts| {
         pending_alerts
             .investor_alerts
@@ -321,8 +319,7 @@ pub fn get_accepted_request_of_project_by_investor(project_id: String) -> Vec<Of
 }
 
 #[query]
-pub fn get_declined_request_for_investor() -> Vec<OfferToSendToInvestor> {
-    let investor_id = caller();
+pub fn get_declined_request_for_investor(investor_id: Principal) -> Vec<OfferToSendToInvestor> {
     read_state(|pending_alerts| {
         pending_alerts
             .investor_alerts
