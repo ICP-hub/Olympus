@@ -11,6 +11,8 @@ import toast, { Toaster } from "react-hot-toast";
 import { useLocation } from "react-router-dom";
 import { Controller } from "react-hook-form";
 import parse from 'html-react-parser';
+import ReactQuill from "react-quill"; // IMPORT REACT QUILL FOR RICH TEXT EDITING
+import "react-quill/dist/quill.snow.css";
 const schema = yup
   .object({
     jobTitle: yup
@@ -52,17 +54,6 @@ const schema = yup
     jobDescription: yup
       .string()
       .required("Job Description is required")
-      .test(
-        "maxWords",
-        "Job description must not exceed 50 words",
-        (value) =>
-          !value || value.trim().split(/\s+/).filter(Boolean).length <= 50
-      )
-      .test(
-        "maxChars",
-        "Job description must not exceed 500 characters",
-        (value) => !value || value.length <= 500
-      )
       .test(
         "no-leading-spaces",
         "Job description should not have leading spaces",
@@ -212,46 +203,31 @@ const onSubmit = async (data) => {
   }, []);
 
   // custom jodit Editor func
-  const options = [
-    "bold",
-    "italic",
-    "|",
-    "ul",
-    "ol",
-    "|",
-    "font",
-    "fontsize",
-    "|",
-    "outdent",
-    "indent",
-    "align",
-    "|",
-    "hr",
-    "|",
-    "fullsize",
-    "link",
-  ];
-
-  const config = useMemo(
+  const modules = useMemo(
     () => ({
-      readonly: false,
-      placeholder: "Enter job description...",
-      defaultActionOnPaste: "insert_as_html",
-      defaultLineHeight: 1.5,
-      enter: "div",
-      // options that we defined in above step.
-      buttons: options,
-      buttonsMD: options,
-      buttonsSM: options,
-      buttonsXS: options,
-      statusbar: false,
-      sizeLG: 900,
-      sizeMD: 700,
-      sizeSM: 400,
-      toolbarAdaptive: false,
+      toolbar: [
+        [{ header: "1" }, { header: "2" }, { font: [] }],
+        [{ list: "ordered" }, { list: "bullet" }],
+        ["bold", "italic", "underline"],
+        [{ align: [] }],
+        ["link"],
+        ["clean"],
+      ],
     }),
     []
   );
+
+  const formats = [
+    "header",
+    "font",
+    "list",
+    "bullet",
+    "bold",
+    "italic",
+    "underline",
+    "align",
+    "link",
+  ];
   return (
     <>
       <div
@@ -509,16 +485,19 @@ const onSubmit = async (data) => {
                   } text-gray-900 placeholder-gray-500  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 mb-2`}
                   placeholder="Job Description here"
                 ></textarea> */}
-                <JoditEditor
-                  value={jobDescription}
-                  ref={editor}
-                  config={config}
-                  tabIndex={1}
-                  onBlur={(newContent) => {
-                    setJobDescription(newContent);
-                    setValue("jobDescription", newContent);
-                  }}
-                  onChange={() => {}}
+                <Controller
+                  name="jobDescription"
+                  control={control}
+                  defaultValue=""
+                  render={({ field: { onChange, value } }) => (
+                    <ReactQuill
+                      value={value}
+                      onChange={onChange}
+                      modules={modules}
+                      formats={formats}
+                      placeholder="Enter your description here..."
+                    />
+                  )}
                 />
                 {errors.jobDescription && (
                   <span className="mt-1 text-sm text-red-500 font-bold">

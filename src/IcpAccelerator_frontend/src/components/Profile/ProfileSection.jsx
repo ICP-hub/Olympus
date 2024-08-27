@@ -18,7 +18,6 @@ const ProfileSection = ({
 }) => {
   const isMultiSelect = Array.isArray(options) && options.length > 0;
 
-  // Function to map the string values to objects with value and label
   const mapValueToOptions = (value) => {
     if (Array.isArray(value)) {
       return value.map((val) => {
@@ -47,19 +46,19 @@ const ProfileSection = ({
 
       {isEditing ? (
         <>
-          {/* Handle MultiSelect Fields */}
           {isMultiSelect && type === "select" ? (
             <Select
               isMulti
               options={options}
-              value={mapValueToOptions(value)} // Ensure value is correctly mapped
-              onChange={(selectedOptions) => handleInputChange(selectedOptions, field, true)}
+              value={mapValueToOptions(value)}
+              onChange={(selectedOptions) =>
+                handleInputChange(selectedOptions, field, true)
+              }
               className="basic-single"
               classNamePrefix="select"
             />
           ) : (
             <>
-              {/* Handle Text Area */}
               {type === "textarea" ? (
                 <textarea
                   {...register(field)}
@@ -71,7 +70,6 @@ const ProfileSection = ({
                   placeholder={`Enter your ${label.toLowerCase()}`}
                 />
               ) : type === "select" && countries.length > 0 ? (
-                /* Handle Single Select Dropdown (e.g., Location) */
                 <select
                   {...register(field)}
                   value={value || ""}
@@ -80,7 +78,7 @@ const ProfileSection = ({
                     errors[field] ? "border-red-500" : "border-[#737373]"
                   } text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w/full px-2 py-1`}
                   style={{
-                    maxWidth: "100%", // Ensure it doesn't overflow the container
+                    maxWidth: "100%",
                     whiteSpace: "nowrap",
                     overflow: "hidden",
                     textOverflow: "ellipsis",
@@ -96,7 +94,6 @@ const ProfileSection = ({
                   ))}
                 </select>
               ) : (
-                /* Handle Text Input */
                 <input
                   type={type}
                   {...register(field)}
@@ -112,13 +109,9 @@ const ProfileSection = ({
           )}
         </>
       ) : (
-        // Non-edit mode: Display the value or a placeholder if empty
         <div className="flex items-center">
           {field === "location" && (
-            <PlaceOutlinedIcon
-              className="text-gray-500 mr-1"
-              fontSize="small"
-            />
+            <PlaceOutlinedIcon className="text-gray-500 mr-1" fontSize="small" />
           )}
           <p className="text-sm">
             {Array.isArray(value)
