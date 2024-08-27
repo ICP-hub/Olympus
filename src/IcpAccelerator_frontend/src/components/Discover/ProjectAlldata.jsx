@@ -103,7 +103,7 @@ const DiscoverProject = () => {
     setIsAddProjectModalOpenAsInvestor(true);
   };
 
-  // ASSOCIATE IN A PROJECT HANDLER AS A MENTOR
+  // ASSOCIATE IN A PROJECT HANDLER AS A Investor
   const handleAddProjectAsInvestor = async ({ message }) => {
     setIsSubmitting(true);
     console.log("add into a project AS INVESTOR");

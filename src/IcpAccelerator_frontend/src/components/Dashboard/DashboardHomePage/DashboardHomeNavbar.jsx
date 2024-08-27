@@ -38,8 +38,7 @@ import { beforeCopySvg } from "../../../component/Utils/Data/SvgData";
 import { changeHasSelectedRoleHandler } from "../../../components/StateManagement/Redux/Reducers/userRoleReducer";
 import { useAuth } from "../../../components/StateManagement/useContext/useAuth";
 import toast, { Toaster } from "react-hot-toast";
-import profile1 from "../../../../assets/images/astro1.png";
-import profile2 from "../../../../assets/images/AstroLeft.png";
+
 
 
 function DashboardHomeNavbar() {

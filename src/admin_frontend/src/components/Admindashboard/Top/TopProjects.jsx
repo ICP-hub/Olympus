@@ -1,5 +1,4 @@
 import React from "react";
-import ment from "../../../../../IcpAccelerator_frontend/assets/images/ment.jpg";
 import project from "../../../../../IcpAccelerator_frontend/assets/images/project.png";
 import { useSelector } from "react-redux";
 import { useState, useEffect } from "react";

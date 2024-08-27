@@ -6,22 +6,23 @@ import DiscoverTeam from "./DiscoverTeam";
 import DiscoverRatings from "../../../Discover/DiscoverRatings";
 import MoneyRaising from "../../Project/NoMoneyRaisingCard";
 
-const DiscoverMentorPage = ({ openDetail, setOpenDetail, projectDetails }) => {
-  console.log("projectdetail in discovermentorpage", projectDetails);
+const DiscoverMentorPage = ({ openDetail, setOpenDetail, projectDetails ,projectId}) => {
 
-  useEffect(() => {
-    if (openDetail) {
-      // Prevent background from scrolling when modal is open
-      document.body.style.overflow = "hidden";
-    } else {
-      // Restore background scroll when modal is closed
-      document.body.style.overflow = "auto";
-    }
-    // Cleanup when the component is unmounted
-    return () => {
-      document.body.style.overflow = "auto";
-    };
-  }, [openDetail]);
+    console.log('projectdetail in discovermentorpage',projectDetails)
+
+    useEffect(() => {
+        if (openDetail) {
+            // Prevent background from scrolling when modal is open
+            document.body.style.overflow = 'hidden';
+        } else {
+            // Restore background scroll when modal is closed
+            document.body.style.overflow = 'auto';
+        }
+        // Cleanup when the component is unmounted
+        return () => {
+            document.body.style.overflow = 'auto';
+        };
+    }, [openDetail]);
 
   const [activeTab, setActiveTab] = useState("document");
 
@@ -96,7 +97,7 @@ const DiscoverMentorPage = ({ openDetail, setOpenDetail, projectDetails }) => {
                 </button>
               </div>
               {activeTab === "document" && (
-                <DiscoverDocument projectDetails={projectDetails} />
+                <DiscoverDocument projectDetails={projectDetails} projectId={projectId} />
               )}
               {activeTab === "team" && (
                 <DiscoverTeam projectDetails={projectDetails} />

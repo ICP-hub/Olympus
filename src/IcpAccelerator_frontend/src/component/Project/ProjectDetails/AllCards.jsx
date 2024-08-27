@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from 'react';
-import ment from "../../../../assets/images/ment.jpg";
 import girl from "../../../../assets/images/girl.jpeg";
 import samya from "../../../../assets/images/samya.jpg";
 import Coding2 from "../../../../assets/images/Coding2.jpg";
@@ -69,7 +68,7 @@ const Projectdashboard = () => {
                             <div className="bg-white shadow-md rounded-lg overflow-hidden  border-2  drop-shadow-2xl gap-2">
                                 <div className="p-4">
                                     <div className='flex flex-row justify-between gap-2  text-black  h-12 w-12 '>
-                                        <img className='rounded-lg' src={ment} alt='profile' />
+                                        <img className='rounded-lg' src={''} alt='profile' />
                                         <h1 className='flex items-end font-bold'>builder.fi</h1>
                                         <img className='h-6 w-6 rounded-full items-end flex mt-5' src={girl} alt='not found' />
                                         <p className='items-end flex text-wrap text-[10px] truncate line-clamp-2'>0x2085...6B</p>
@@ -126,7 +125,7 @@ const Projectdashboard = () => {
                             <div className="bg-white shadow-md rounded-lg overflow-hidden  border-2  drop-shadow-2xl gap-2">
                                 <div className="p-4">
                                     <div className='flex flex-row justify-between gap-2  text-black  h-12 w-12 '>
-                                        <img className='rounded-lg' src={ment} alt='profile' />
+                                        <img className='rounded-lg' src={''} alt='profile' />
                                         <h1 className='flex items-end font-bold'>builder.fi</h1>
                                         <img className='h-6 w-6 rounded-full items-end flex mt-5' src={girl} alt='not found' />
                                         <p className='items-end flex text-wrap text-[10px] truncate line-clamp-2'>0x2085...6B</p>
@@ -378,7 +377,7 @@ const Projectdashboard = () => {
                             <img className=' h-24 w-full  mx-auto rounded-lg rounded-b-none' src={coding1} alt='not found' />
 
                             <div className='absolute lg:mt-[-30px] xl:mt-[-25px] md:mt-[-40px] mt-[-29px] flex flex-row flex-wrap  justify-between items-center text-black p-2 space-x-36'>
-                                <img className='h-10 w-12 z-10 rounded-lg' src={ment} alt='Data' />
+                                <img className='h-10 w-12 z-10 rounded-lg' src={''} alt='Data' />
                                 <p className=' lg:mt-[-1rem] md:mt-[0rem]  xl:mt-[8px] mt-[16px] md:mr-5 font-bold text-[#6B7280]'>Project 2</p>
                             </div>
 
@@ -548,7 +547,7 @@ const Projectdashboard = () => {
                                     <img className="w-full h-full rounded-md rounded-r-none" src={coding1} alt="hh" />
                                 </div>
                                 <div className="flex flex-col p-2">
-                                    <img className="w-12 h-12 rounded-lg" src={ment} alt="popup" />
+                                    <img className="w-12 h-12 rounded-lg" src={''} alt="popup" />
                                     <p>Dirac Finance</p>
                                     <p>Dirac Finance is an institutional-grade decentralized Options Vault (DOV) that...</p>
                                     <div className="flex justify-start mb-2 mt-2">
@@ -576,7 +575,7 @@ const Projectdashboard = () => {
                             <div className='ml-2'>
 
                                 <div className='text-2xl text-black flex flex-row space-x-2'>
-                                    <img className=' w-14 h-14 rounded-md' src={ment} alt='No img' />
+                                    <img className=' w-14 h-14 rounded-md' src={''} alt='No img' />
                                     <div className='flex flex-col text-[15px]'>
                                         <h3 className='font-bold'>Dirac Finance</h3>
                                         <p className='mt-[-2px]'>DeFi</p>
@@ -677,7 +676,7 @@ const Projectdashboard = () => {
                         </div>
                         <div className="absolute bg-[#FCFCFD]  w-[295px] rounded-md mt-[-2rem] p-2">
                             <div className="flex flex-row justify-between gap-2 text-black p-2 space-x-4">
-                                <img className="h-10 w-12 z-10 rounded-lg" src={ment} alt="Data" />
+                                <img className="h-10 w-12 z-10 rounded-lg" src={''} alt="Data" />
                                 <p className="font-bold text-[#6B7280]">Project 2</p>
                             </div>
                             <div className="w-full text-2xl text-black mt-4">
@@ -700,7 +699,7 @@ const Projectdashboard = () => {
                     <div className="w-full sm:w-1/2 md:w-1/3 lg:w-1/3 xl:w-1/3 p-4">
                         <div className="relative shadow-md rounded-lg overflow-hidden border-2  p-6 ">
                             <div className='flex flex-row gap-2'>
-                            <img className='border-2 rounded-lg border-blue-400 w-12 h-12 ' src={ment} alt='img' />
+                            <img className='border-2 rounded-lg border-blue-400 w-12 h-12 ' src={''} alt='img' />
 
                                 <div className='flex flex-col'>
                                     <p className='text-[#7283EA] font-bold' >Dirac Finance</p>

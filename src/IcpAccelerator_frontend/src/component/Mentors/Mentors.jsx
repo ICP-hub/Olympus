@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
 import { projectFilterSvg } from "../Utils/Data/SvgData";
-import ment from "../../../assets/images/ment.jpg";
 import { Line } from "rc-progress";
 import Profile from "../../../assets/images/Ellipse 1382.svg";
 import ReactSlider from "react-slider";
@@ -87,7 +86,7 @@ const Mentors = () => {
       <div className="flex w-auto items-center flex-wrap justify-between bg-gray-200 rounded-lg mt-8 text-lg p-4  hover:bg-blue-300">
         <div className="flex items-center">
           <img
-            src={ment}
+            src={''}
             alt="Mentor"
             className="w-6 h-6 lg:w-12 lg:h-12 object-cover rounded-md mb-4 lg:mb-0 hover:border-black hover:border-2 p-1"
           />

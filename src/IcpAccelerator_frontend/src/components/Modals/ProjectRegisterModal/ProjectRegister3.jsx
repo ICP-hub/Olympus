@@ -199,7 +199,10 @@ const ProjectRegister3 = ({ formData }) => {
       {/* ICP MAINNET TOGGLE DROPDOWN */}
       <div className="mb-2">
         <label className="block text-sm font-medium mb-1">
-          Live on ICP<span className="text-red-500">*</span>
+          <div className="flex flex-col">
+          <span>Live on ICP<span className="text-red-500">*</span></span>
+          <span className="text-red-500">If you not fill this field your project will not show live in platform</span> 
+          </div>
         </label>
         <select
           {...register("live_on_icp_mainnet")}

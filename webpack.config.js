@@ -1,5 +1,6 @@
 require("dotenv").config();
 const path = require("path");
+const assert = require('assert');
 const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");

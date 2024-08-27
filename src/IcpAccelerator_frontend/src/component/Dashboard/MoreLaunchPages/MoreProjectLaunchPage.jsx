@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import ment from "../../../../assets/images/ment.jpg";
 import girl from "../../../../assets/images/girl.jpeg";
 import hover from "../../../../assets/images/hover.png";
 import { IcpAccelerator_backend } from "../../../../../declarations/IcpAccelerator_backend/index";
@@ -34,7 +33,7 @@ const MoreProjectLaunchPage = () => {
     {
       projectName: "Awesome Project",
       projectId: "ABC123",
-      projectImage: ment,
+      projectImage: '',
       userImage: girl,
       principalId: "user123",
       projectDescription: "This is an amazing project focused on innovation.",
@@ -43,7 +42,7 @@ const MoreProjectLaunchPage = () => {
     {
       projectName: "Creative Initiative",
       projectId: "DEF456",
-      projectImage: ment,
+      projectImage: '',
       userImage: girl,
       principalId: "user456",
       projectDescription:
@@ -53,7 +52,7 @@ const MoreProjectLaunchPage = () => {
     {
       projectName: "Community Outreach",
       projectId: "GHI789",
-      projectImage: ment,
+      projectImage: '',
       userImage: girl,
       principalId: "user789",
       projectDescription:
@@ -63,7 +62,7 @@ const MoreProjectLaunchPage = () => {
     {
       projectName: "Community Outreach",
       projectId: "GHI789",
-      projectImage: ment,
+      projectImage: '',
       userImage: girl,
       principalId: "user789",
       projectDescription:
@@ -73,7 +72,7 @@ const MoreProjectLaunchPage = () => {
     {
       projectName: "Community Outreach",
       projectId: "GHI789",
-      projectImage: ment,
+      projectImage: '',
       userImage: girl,
       principalId: "user789",
       projectDescription:
@@ -83,7 +82,7 @@ const MoreProjectLaunchPage = () => {
     {
       projectName: "Community Outreach",
       projectId: "GHI789",
-      projectImage: ment,
+      projectImage: '',
       userImage: girl,
       principalId: "user789",
       projectDescription:
@@ -93,7 +92,7 @@ const MoreProjectLaunchPage = () => {
     {
       projectName: "Community Outreach",
       projectId: "GHI789",
-      projectImage: ment,
+      projectImage: '',
       userImage: girl,
       principalId: "user789",
       projectDescription:

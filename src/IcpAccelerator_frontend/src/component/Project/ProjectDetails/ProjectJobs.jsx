@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import ment from "../../../../assets/images/ment.jpg";
 
 const ProjectJobs = () => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -49,7 +48,7 @@ const ProjectJobs = () => {
                 {/* Adjusted alignment */}
                 <img
                   className="h-14 w-14 rounded-md lg:mb-48"
-                  src={ment}
+                  src={''}
                   alt="build.io"
                 />{" "}
                 {/* Adjusted image size */}
