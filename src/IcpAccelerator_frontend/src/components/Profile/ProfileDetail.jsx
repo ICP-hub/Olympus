@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -13,20 +13,27 @@ import ProjectDetail from "./ProjectDetail";
 import { founderRegisteredHandlerRequest } from "../StateManagement/Redux/Reducers/founderRegisteredData";
 import { mentorRegisteredHandlerRequest } from "../StateManagement/Redux/Reducers/mentorRegisteredData";
 import { investorRegisteredHandlerRequest } from "../StateManagement/Redux/Reducers/investorRegisteredData";
+import { validationSchema } from "./UserValidation";
+import { Principal } from "@dfinity/principal";
+import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
+import toast, { Toaster } from "react-hot-toast";
 
 const ProfileDetail = () => {
   const { countries } = useCountries();
+  const [imageData, setImageData] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
   const userFullData = useSelector((currState) => currState.userData.data.Ok);
-  console.log("USER FULL DATA ", userFullData);
   const userRole = useSelector(
     (currState) => currState.currentRoleStatus.activeRole
   );
+  const principal = useSelector((currState) => currState.internet.principal);
   const isAuthenticated = useSelector(
     (currState) => currState.internet.isAuthenticated
   );
   const actor = useSelector((currState) => currState.actors.actor);
   const dispatch = useDispatch();
-  const [reasonOfJoiningOptions, setReasonOfJoiningOptions] = useState([
+  const [reasonOfJoiningSelectedOptions, setReasonOfJoiningSelectedOptions] = useState([]);
+  const [reasonOfJoiningOptions] = useState([
     { value: "listing_and_promotion", label: "Project listing and promotion" },
     { value: "Funding", label: "Funding" },
     { value: "Mentoring", label: "Mentoring" },
@@ -37,17 +44,6 @@ const ProfileDetail = () => {
     },
     { value: "Jobs", label: "Jobs" },
   ]);
-  const [reasonOfJoiningSelectedOptions, setReasonOfJoiningSelectedOptions] =
-    useState([]);
-  const [defaultValues, setDefaultValues] = useState({
-    email: "",
-    tagline: "",
-    about: "",
-    interests: [],
-    location: "",
-    domains_interested_in: [],
-    reasons_to_join_platform: [],
-  });
 
   const [isEditing, setIsEditing] = useState({
     email: false,
@@ -65,80 +61,41 @@ const ProfileDetail = () => {
   });
 
   const [socialLinks, setSocialLinks] = useState({
-    LinkedIn: "https://www.linkedin.com/in/mattbowers",
-    GitHub: "https://github.com/mattbowers",
-    Telegram: "https://t.me/mattbowers",
+    LinkedIn: "",
+    GitHub: "",
+    Telegram: "",
   });
 
-  const [tempData, setTempData] = useState(defaultValues);
-  const [profileData, setProfileData] = useState(defaultValues);
-  console.log("default data ......", tempData);
-  const validationSchema = yup
-    .object()
-    .shape({
-      full_name: yup.string().required("Full name is required"),
-      email: yup.string().email("Invalid email").nullable(true).optional(),
-      bio: yup
-        .string()
-        .optional()
-        .test(
-          "maxWords",
-          "Bio must not exceed 50 words",
-          (value) =>
-            !value || value.trim().split(/\s+/).filter(Boolean).length <= 50
-        )
-        .test(
-          "maxChars",
-          "Bio must not exceed 500 characters",
-          (value) => !value || value.length <= 500
-        ),
-      location: yup.string().required("Location is required"),
-      domains_interested_in: yup
-        .string()
-        .required("Selecting an interest is required"),
-      type_of_profile: yup.string().required("Type of profile is required"),
-      reasons_to_join_platform: yup
-        .string()
-        .required("Selecting a reason is required"),
-    })
-    .required();
-
-    const investorFullData = useSelector(
-      (currState) => currState.investorData
-    );
-    const projectFullData = useSelector((currState) => currState.projectData.data);
-    const mentorFullData = useSelector(
-      (currState) => currState.mentorData
-    );
-  console.log('INVESTOR USER DATA ',investorFullData)
-  console.log('MENTOR USER DATA ',mentorFullData)
-  console.log('PROJECT USER DATA ',projectFullData)
-    useEffect(() => {
-      if (actor && isAuthenticated){
-      
-            dispatch(founderRegisteredHandlerRequest());
-            dispatch(mentorRegisteredHandlerRequest());
-            dispatch(investorRegisteredHandlerRequest());
-      }
-      }, [dispatch,isAuthenticated, actor]);
-  const {
-    register,
-    setValue,
-    formState: { errors },
-  } = useForm({
-    resolver: yupResolver(validationSchema),
-    mode: "all",
-    defaultValues,
+  const [formValues, setFormValues] = useState({
+    email: "",
+    tagline: "",
+    about: "",
+    location: "",
+    domains_interested_in: [],
+    reasons_to_join_platform: [],
   });
+
+  const [activeTab, setActiveTab] = useState("general");
   const [interestedDomainsOptions, setInterestedDomainsOptions] = useState([]);
   const [
     interestedDomainsSelectedOptions,
     setInterestedDomainsSelectedOptions,
   ] = useState([]);
 
+  const {
+    register,
+    setValue,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(validationSchema),
+    mode: "all",
+  });
+
   const areaOfExpertise = useSelector(
     (currState) => currState.expertiseIn.expertise
   );
+
   useEffect(() => {
     if (areaOfExpertise) {
       setInterestedDomainsOptions(
@@ -152,92 +109,119 @@ const ProfileDetail = () => {
     }
   }, [areaOfExpertise]);
 
+  const setUserValuesHandler = (val) => {
+    console.log("val", val);
+    if (val) {
+      setValue("full_name", val?.fullName ?? "");
+      setValue("email", val?.email ?? "");
+      setValue("openchat_user_name", val?.openchatUsername ?? "");
+      setValue("bio", val?.bio ?? "");
+      setValue("country", val?.country ?? "");
+      setValue("domains_interested_in", val?.areaOfInterest ?? "");
+      setInterestedDomainsSelectedOptionsHandler(val?.areaOfInterest ?? null);
+      setImagePreview(val?.profilePicture ?? "");
+      setImageData(
+        val?.profile_picture instanceof Uint8Array
+          ? uint8ArrayToBase64(val?.profile_picture)
+          : ""
+      );
+      setValue("type_of_profile", val?.typeOfProfile);
+      setValue(
+        "reasons_to_join_platform",
+        val?.reasonToJoin ? val?.reasonToJoin.join(", ") : ""
+      );
+      setReasonOfJoiningSelectedOptionsHandler(val?.reasonToJoin);
+
+      // Set social links
+      setSocialLinks({
+        LinkedIn: val?.social_links?.[0]?.link?.[0] || "",
+        GitHub: val?.social_links?.[0]?.link?.[1] || "",
+        Telegram: val?.social_links?.[0]?.link?.[2] || "",
+      });
+    }
+  };
+
+  const setInterestedDomainsSelectedOptionsHandler = (val) => {
+    setInterestedDomainsSelectedOptions(
+      val
+        ? val
+            ?.split(", ")
+            ?.map((interest) => ({ value: interest, label: interest }))
+        : []
+    );
+  };
+
+  const setReasonOfJoiningSelectedOptionsHandler = (val) => {
+    setReasonOfJoiningSelectedOptions(
+      val && val.length > 0
+        ? val?.map((reason) => ({ value: reason, label: reason }))
+        : []
+    );
+  };
+
   useEffect(() => {
     if (userFullData) {
-      const defaultValues = {
-        email: userFullData.email?.[0] ?? "mail@email.com",
-        tagline: userFullData.tagline ?? "Founder & CEO at Cypherpunk Labs",
-        about:
-          userFullData.bio?.[0] ??
-          "Est malesuada ac elit gravida vel aliquam nec. Arcu pelle ntesque convallis quam feugiat non viverra massa fringilla.",
-        interests: userFullData.interests ?? ["Web3", "Cryptography"],
-        location: userFullData.country ?? "Austria",
-        domains_interested_in: userFullData.type_of_profile ?? [
-          "Web3",
-          "Blockchain",
-        ],
-        reasons_to_join_platform: userFullData.reason_to_join?.flat() ?? [
-          "Funding",
-          "Mentoring",
-        ],
-      };
-
-      // Set social links dynamically
-      const socialLinks = Array.isArray(userFullData.social_links?.[0])
-      ? userFullData.social_links[0].map(linkObj => ({
-          platform: linkObj.link[0],
-        }))
-      : [];
-      console.log("Default Values:", defaultValues);
-      console.log("Social Links Processed:", socialLinks);
-      Object.entries(defaultValues).forEach(([key, value]) => {
-        setValue(key, value);
-      });
-      setSocialLinks(socialLinks); // Set social links dynamically
-      setTempData(defaultValues);
-      setProfileData(defaultValues);
+      setUserValuesHandler(userFullData);
     }
-  }, [userFullData, setValue]);
+  }, [userFullData]);
 
   const handleEditToggle = (field) => {
     setIsEditing({ ...isEditing, [field]: !isEditing[field] });
   };
 
   const handleLinkEditToggle = (link) => {
-    setIsEditingLink((prev) => {
-      const newState = {
-        LinkedIn: false,
-        GitHub: false,
-        Telegram: false,
-      };
-      newState[link] = !prev[link];
-      return newState;
-    });
+    setIsEditingLink({ ...isEditingLink, [link]: !isEditingLink[link] });
   };
 
-  const handleInputChange = (e, field, isSelect = false) => {
-    const value = isSelect ? e : e.target.value;
-    setValue(field, value, { shouldValidate: true });
-    setTempData((prev) => ({ ...prev, [field]: value }));
+  const handleInputChange = (e, field) => {
+    setFormValues({ ...formValues, [field]: e.target.value });
   };
 
   const handleLinkChange = (e, link) => {
-    setSocialLinks((prev) => ({
-      ...prev,
-      [link]: e.target.value,
-    }));
+    setSocialLinks({ ...socialLinks, [link]: e.target.value });
   };
 
-  const handleSave = () => {
-    const isFormValid = Object.keys(errors).length === 0;
+  const handleSave = async () => {
+    const convertedPrincipal = await Principal.fromText(principal);
 
-    if (isFormValid) {
-      setProfileData(tempData);
-      setIsEditing({
-        email: false,
-        tagline: false,
-        about: false,
-        interests: false,
-        location: false,
-        reasons_to_join_platform: false,
-      });
-      setIsEditingLink({
-        LinkedIn: false,
-        GitHub: false,
-        Telegram: false,
-      });
+    if (actor) {
+      const user_data = {
+        bio: formValues.about ? [formValues.about] : [""],
+        full_name: formValues.full_name,
+        email: [formValues.email],
+        social_links: Object.entries(socialLinks).map(([platform, link]) => ({
+          platform,
+          link,
+        })),
+        openchat_username: [formValues.openchat_username || ""],
+        country: formValues.location || "Unknown",
+        area_of_interest: formValues.domains_interested_in || "",
+        type_of_profile: [formValues.type_of_profile || ""],
+        reason_to_join: [
+          formValues.reasons_to_join_platform
+            .split(",")
+            .map((val) => val.trim()) || [""],
+        ],
+        profile_picture: imageData ? [imageData] : [],
+      };
+
+      try {
+        await actor.update_user_data(convertedPrincipal, user_data).then((result) => {
+          if ("Ok" in result) {
+            toast.success("User profile updated successfully");
+            setTimeout(() => {
+              window.location.href = "/";
+            }, 500);
+          } else {
+            toast.error("Error updating user profile");
+          }
+        });
+      } catch (error) {
+        toast.error("Error sending data to the backend:", error);
+      }
     } else {
-      console.log("Validation failed:", errors);
+      toast.error("Please signup with internet identity first");
+      window.location.href = "/";
     }
   };
 
@@ -250,16 +234,8 @@ const ProfileDetail = () => {
       location: false,
       reasons_to_join_platform: false,
     });
-    setTempData(profileData);
+    setUserValuesHandler(userFullData); // Reset form to original values
   };
-
-  const [activeTab, setActiveTab] = useState("general");
-
-  const handleChange = (tab) => {
-    setActiveTab(tab);
-  };
-
-
 
   const tabs = [
     { role: "general", label: "General" },
@@ -304,7 +280,7 @@ const ProfileDetail = () => {
                       ? "border-b-2 border-blue-500 text-blue-500 font-medium"
                       : "text-gray-400"
                   }`}
-                  onClick={() => handleChange(tab.role)}
+                  onClick={() => setActiveTab(tab.role)}
                 >
                   {tab.label}
                 </button>
@@ -312,7 +288,6 @@ const ProfileDetail = () => {
           )}
         </div>
 
-        {/* General Tab Content */}
         {activeTab === "general" && (
           <>
             <ProfileSection
@@ -324,7 +299,7 @@ const ProfileDetail = () => {
               handleEditToggle={handleEditToggle}
               handleInputChange={handleInputChange}
               type="text"
-              value={tempData.email}
+              value={formValues.email}
             />
 
             <ProfileSection
@@ -336,7 +311,7 @@ const ProfileDetail = () => {
               handleEditToggle={handleEditToggle}
               handleInputChange={handleInputChange}
               type="textarea"
-              value={tempData.about}
+              value={formValues.about}
             />
 
             <ProfileSection
@@ -348,7 +323,7 @@ const ProfileDetail = () => {
               handleEditToggle={handleEditToggle}
               handleInputChange={handleInputChange}
               type="select"
-              value={tempData.location}
+              value={formValues.location}
               countries={countries}
             />
 
@@ -361,7 +336,7 @@ const ProfileDetail = () => {
               handleEditToggle={handleEditToggle}
               handleInputChange={handleInputChange}
               options={interestedDomainsOptions}
-              value={tempData.interests}
+              value={interestedDomainsSelectedOptions}
               type="select"
             />
 
@@ -374,7 +349,7 @@ const ProfileDetail = () => {
               handleEditToggle={handleEditToggle}
               handleInputChange={handleInputChange}
               options={reasonOfJoiningOptions}
-              value={tempData.reasons_to_join_platform}
+              value={reasonOfJoiningSelectedOptions}
               type="select"
             />
 
@@ -395,7 +370,7 @@ const ProfileDetail = () => {
                 </button>
                 <button
                   type="button"
-                  onClick={handleSave}
+                  onClick={handleSubmit(handleSave)}
                   className="bg-blue-600 text-white py-2 px-4 rounded"
                 >
                   Save
@@ -405,17 +380,15 @@ const ProfileDetail = () => {
           </>
         )}
 
-        {/* Investor Tab Content */}
         {userRole === "investor" && activeTab === "investor" && (
           <InvestorDetail />
         )}
 
-        {/* Mentor Tab Content */}
         {userRole === "mentor" && activeTab === "mentor" && <MentorEdit />}
 
-        {/* Project Tab Content */}
         {userRole === "project" && activeTab === "project" && <ProjectDetail />}
       </div>
+      <Toaster />
     </div>
   );
 };

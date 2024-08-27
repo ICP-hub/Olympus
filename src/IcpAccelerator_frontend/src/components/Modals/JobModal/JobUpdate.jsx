@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import { useForm } from "react-hook-form";
+import React, { useEffect, useMemo, useState } from "react";
+import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { toast, Toaster } from "react-hot-toast";
@@ -7,9 +7,9 @@ import { useSelector, useDispatch } from "react-redux";
 import { ThreeDots } from "react-loader-spinner";
 import Select from "react-select";
 import { jobCategoryHandlerRequest } from "../../../components/StateManagement/Redux/Reducers/getJobCategory";
-import { Controller } from "react-hook-form";
 import ReactQuill from "react-quill"; // IMPORT REACT QUILL FOR RICH TEXT EDITING
 import "react-quill/dist/quill.snow.css";
+
 const schema = yup
   .object({
     jobTitle: yup
@@ -40,28 +40,17 @@ const schema = yup
     jobLink: yup
       .string()
       .url("Invalid website URL")
-      .test("is-non-empty", "website URL is required", (value) =>
+      .test("is-non-empty", "Website URL is required", (value) =>
         /\S/.test(value)
       ),
     jobCategory: yup
       .string()
-      .test("is-non-empty", "Category are required", (value) =>
+      .test("is-non-empty", "Category is required", (value) =>
         /\S/.test(value)
       ),
     jobDescription: yup
       .string()
       .required("Job Description is required")
-      .test(
-        "maxWords",
-        "Job description must not exceed 50 words",
-        (value) =>
-          !value || value.trim().split(/\s+/).filter(Boolean).length <= 50
-      )
-      .test(
-        "maxChars",
-        "Job description must not exceed 500 characters",
-        (value) => !value || value.length <= 500
-      )
       .test(
         "no-leading-spaces",
         "Job description should not have leading spaces",
@@ -69,6 +58,7 @@ const schema = yup
       ),
   })
   .required();
+
 const JobUpdate = ({
   onJobsClose,
   onSubmitHandler,
@@ -83,11 +73,18 @@ const JobUpdate = ({
   const jobCategoryData = useSelector(
     (currState) => currState.jobsCategory.jobCategory
   );
-  console.log("job update krne k lye data aa raha hai", data);
+
+  // State for loading and error handling
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
   useEffect(() => {
     dispatch(jobCategoryHandlerRequest());
   }, [actor, dispatch]);
+
   const [jobTypes, setJobTypes] = useState([]);
+  const [locations, setLocations] = useState([]);
+
   const {
     register,
     handleSubmit,
@@ -102,20 +99,19 @@ const JobUpdate = ({
   useEffect(() => {
     if (data) {
       setValue("jobTitle", data?.job_data?.title ?? "");
-      setValue("jobLocation", data?.job_data?.location ?? "");
-      setValue("job_type", data?.job_data?.job_type ?? ""); // Fixed typo here
+      setValue("jobLocation", {
+        label: data?.job_data?.location,
+        value: data?.job_data?.location,
+      });
+      setValue("job_type", {
+        label: data?.job_data?.job_type,
+        value: data?.job_data?.job_type,
+      });
       setValue("jobLink", data?.job_data?.link ?? "");
       setValue("jobCategory", data?.job_data?.category ?? "");
       setValue("jobDescription", data?.job_data?.description ?? "");
     }
   }, [data, setValue]);
-
-  const onSubmit = (data) => {
-    console.log(data);
-    onSubmitHandler(data);
-  };
-
-  const [locations, setLocations] = useState([]);
 
   useEffect(() => {
     fetchLocations().then((data) => {
@@ -131,39 +127,24 @@ const JobUpdate = ({
     ];
   };
 
-  //fet type of job
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-  //   useEffect(() => {
-  //     const fetchJobTypes = async () => {
-  //       setLoading(true);
-  //       setError(null);
-  //       try {
-  //         const result = await actor.type_of_job();
-  //         setJobTypes(result.map((type) => ({ value: type, label: type })));
-  //       } catch (err) {
-  //         setError(err.message);
-  //       }
-  //       setLoading(false);
-  //     };
-
-  //     fetchJobTypes();
-  //   }, []);
-// Fetch job types
-useEffect(() => {
+  useEffect(() => {
     const fetchJobTypes = async () => {
       setLoading(true);
       setError(null);
       try {
         const result = await actor.type_of_job();
-        setJobTypes(result.map((type) => ({ value: type, label: type })));
+        setJobTypes(
+          result.map((type) => ({
+            value: type.job_type, // Assuming job_type is the correct field
+            label: type.job_type, // Assuming job_type is the correct field
+          }))
+        );
       } catch (err) {
         setError(err.message);
       }
       setLoading(false);
     };
-  
+
     fetchJobTypes();
   }, [actor]);
 
@@ -192,19 +173,31 @@ useEffect(() => {
     "align",
     "link",
   ];
+
+  const onSubmit = (data) => {
+    const formattedData = {
+      ...data,
+      jobLocation: data.jobLocation?.value ?? "", // Extract value from jobLocation
+      job_type: data.job_type?.value ?? "", // Extract value from job_type
+    };
+
+    console.log("Formatted data to submit:", formattedData);
+    onSubmitHandler(formattedData);
+  };
+
   return (
     <>
       <div
-        className={`fixed inset-0  z-50 flex items-center justify-center bg-black bg-opacity-50 ${
+        className={`fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 ${
           isJobsModalOpen ? "block" : "hidden"
         }`}
       >
         <div className="bg-white rounded-lg shadow-lg w-[500px] p-6 pt-4 max-h-[100vh] overflow-y-auto">
-          <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t ">
-            <h3 className="text-xl font-semibold text-gray-900 ">{jobtitle}</h3>
+          <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t">
+            <h3 className="text-xl font-semibold text-gray-900">{jobtitle}</h3>
             <button
               type="button"
-              className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center "
+              className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center"
               onClick={onJobsClose}
             >
               <svg
@@ -232,12 +225,7 @@ useEffect(() => {
                   className="block text-sm font-medium mb-1 mt-2"
                 >
                   Job Title
-                  <span
-                    className="text-red-500
-                    "
-                  >
-                    *
-                  </span>
+                  <span className="text-red-500">*</span>
                 </label>
 
                 <input
@@ -245,7 +233,7 @@ useEffect(() => {
                   {...register("jobTitle")}
                   className={`border border-[#CDD5DF] rounded-md shadow-sm ${
                     errors.jobTitle ? "border-red-500 " : "border-[#737373]"
-                  } text-gray-900 placeholder-gray-500  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                  } text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                   placeholder="Job Title"
                 />
                 {errors.jobTitle && (
@@ -254,19 +242,15 @@ useEffect(() => {
                   </span>
                 )}
               </div>
-              {/* job location  */}
+
+              {/* Job Location */}
               <div className="">
                 <label
                   htmlFor="jobLocation"
                   className="block text-sm font-medium mb-1 mt-2"
                 >
                   Job Location
-                  <span
-                    className="text-red-500
-                    "
-                  >
-                    *
-                  </span>
+                  <span className="text-red-500">*</span>
                 </label>
                 <Controller
                   name="jobLocation"
@@ -327,7 +311,8 @@ useEffect(() => {
                   </span>
                 )}
               </div>
-              {/* //job type  */}
+
+              {/* Job Type */}
               <div className="">
                 <label
                   htmlFor="job_type"
@@ -341,10 +326,7 @@ useEffect(() => {
                   control={control}
                   render={({ field }) => (
                     <Select
-                      options={jobTypes.map((type) => ({
-                        label: type.label.job_type, // Extract the job type string
-                        value: type.value.job_type, // Extract the job type string
-                      }))}
+                      options={jobTypes}
                       {...field}
                       className={`${
                         errors.job_type ? "border-red-500" : "border-gray-300"
@@ -352,33 +334,28 @@ useEffect(() => {
                     />
                   )}
                 />
-
                 {errors.job_type && (
                   <span className="mt-1 text-sm text-red-500 font-bold">
                     {errors.job_type.message}
                   </span>
                 )}
               </div>
-              {/* job link  */}
+
+              {/* Job Link */}
               <div className="">
                 <label
                   htmlFor="jobLink"
                   className="block text-sm font-medium mb-1 mt-2"
                 >
                   Job Link
-                  <span
-                    className="text-red-500
-                    "
-                  >
-                    *
-                  </span>
+                  <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
                   {...register("jobLink")}
                   className={`border border-[#CDD5DF] rounded-md shadow-sm ${
                     errors.jobLink ? "border-red-500 " : "border-[#737373]"
-                  } text-gray-900 placeholder-gray-500  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                  } text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                   placeholder="Job Link"
                 />
                 {errors.jobLink && (
@@ -387,33 +364,24 @@ useEffect(() => {
                   </span>
                 )}
               </div>
+
+              {/* Job Category */}
               <div className="">
                 <label
                   htmlFor="jobCategory"
                   className="block text-sm font-medium mb-1 mt-2"
                 >
                   Jobs Category
-                  <span
-                    className="text-red-500
-                    "
-                  >
-                    *
-                  </span>
+                  <span className="text-red-500">*</span>
                 </label>
                 <select
                   {...register("jobCategory")}
                   className={`border border-[#CDD5DF] rounded-md shadow-sm ${
                     errors.jobCategory ? "border-red-500 " : "border-[#737373]"
-                  } text-gray-900 placeholder-gray-500  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                  } text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                 >
                   <option className="text-lg font-bold" value="">
                     Select any one Category
-                    <span
-                      className="text-red-500
-                    "
-                    >
-                      *
-                    </span>
                   </option>
                   {jobCategoryData?.map((job) => (
                     <option
@@ -431,30 +399,27 @@ useEffect(() => {
                   </p>
                 )}
               </div>
+
+              {/* Job Description */}
               <div className="">
                 <label
                   htmlFor="jobDescription"
                   className="block text-sm font-medium mb-1 mt-2"
                 >
                   Job Description
-                  <span
-                    className="text-red-500
-                    "
-                  >
-                    *
-                  </span>
+                  <span className="text-red-500">*</span>
                 </label>
                 <Controller
-                  name="jobDescription" // FORM FIELD NAME
-                  control={control} // CONTROL PROP PASSED FROM REACT HOOK FORM
-                  defaultValue="" // DEFAULT VALUE FOR THE FIELD
+                  name="jobDescription"
+                  control={control}
+                  defaultValue=""
                   render={({ field: { onChange, value } }) => (
                     <ReactQuill
-                      value={value} // CURRENT VALUE FOR THE EDITOR
-                      onChange={onChange} // UPDATE FIELD VALUE ON CHANGE EVENT
-                      modules={modules} // EDITOR MODULES CONFIGURATION
-                      formats={formats} // EDITOR FORMATS CONFIGURATION
-                      placeholder="Enter your description here..." // PLACEHOLDER TEXT
+                      value={value}
+                      onChange={onChange}
+                      modules={modules}
+                      formats={formats}
+                      placeholder="Enter your description here..."
                     />
                   )}
                 />
@@ -487,7 +452,6 @@ useEffect(() => {
         </div>
       </div>
       <Toaster />
-      {/* </div> */}
     </>
   );
 };
