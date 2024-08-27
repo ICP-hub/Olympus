@@ -82,58 +82,62 @@ const MentorSignupMain = ({ }) => {
   // FUNCTION TO HANDLE FORM SUBMISSION SUCCESS
   const onSubmitHandler = async (data) => {
     console.log("Form data on submit:", data); // LOG SUBMITTED FORM DATA
+    const multichainNames = data.multi_chain === "true"
+  ? Array.isArray(data.multi_chain_names) && data.multi_chain_names.length > 0
+    ? data.multi_chain_names.map(name => name.trim())
+    : null
+  : null;
+  const area_of_expertise = Array.isArray(data.area_of_expertise)
+  ? data.area_of_expertise
+  : typeof data.area_of_expertise === "string"
+  ? data.area_of_expertise.split(",").map(item => item.trim())
+  : [];
     if (actor) {
-      // PREPARE MENTOR DATA FOR BACKEND SUBMISSION
       const mentorData = {
-        preferred_icp_hub: [data.preferred_icp_hub || ""], // PREPARE PREFERRED HUB DATA
-        icp_hub_or_spoke: data.icp_hub_or_spoke === "true", // PREPARE HUB OR SPOKE DATA
-        hub_owner: [data.icp_hub_or_spoke === "true" && data.hub_owner ? data.hub_owner : ""], // PREPARE HUB OWNER DATA
-        category_of_mentoring_service: data.category_of_mentoring_service, // PREPARE MENTORING CATEGORY
-        years_of_mentoring: data.years_of_mentoring.toString(), // PREPARE YEARS OF MENTORING
+        preferred_icp_hub: data.preferred_icp_hub ? [data.preferred_icp_hub] : null,
+        icp_hub_or_spoke: data.icp_hub_or_spoke === "true",
+        hub_owner: data.icp_hub_or_spoke === "true" && data.hub_owner ? [data.hub_owner] : null,
+        category_of_mentoring_service: data.category_of_mentoring_service,
+        years_of_mentoring: data.years_of_mentoring.toString(),
         links: data?.links
-          ? [data.links.map((val) => ({ link: val?.link ? [val.link] : [] }))] // PREPARE LINKS DATA
-          : [],
-        multichain: [data.multi_chain === "true" && data.multi_chain_names ? data.multi_chain_names : ""], // PREPARE MULTICHAIN DATA
-        website: [data.mentor_website_url || ""], // PREPARE WEBSITE URL
-        existing_icp_mentor: false, // SET EXISTING MENTOR FLAG
-        existing_icp_project_porfolio: [data.existing_icp_project_porfolio || ""], // PREPARE PROJECT PORTFOLIO
-        // area_of_expertise: "", // PLACEHOLDER FOR AREA OF EXPERTISE
-        // reason_for_joining: [""], 
-        area_of_expertise: data?.area_of_expertise ?? "",
-        // area_of_expertise: [data.area_of_expertise], 
-        reason_for_joining: data.reason_for_joining ? [data.reason_for_joining] : [], /// PLACEHOLDER FOR REASON FOR JOINING
-      };//commit for main
-
-      // TRY TO SUBMIT MENTOR DATA TO BACKEND
+        ? [data.links.map((val) => ({ link: val?.link ? [val.link] : [] }))] 
+        : [],
+        multichain: multichainNames?[multichainNames]:[],
+        website: data.mentor_website_url ? [data.mentor_website_url] : [],
+        existing_icp_mentor: false,
+        existing_icp_project_porfolio: data.existing_icp_project_porfolio ? [data.existing_icp_project_porfolio] : [],
+        area_of_expertise: area_of_expertise ? area_of_expertise : [],
+        reason_for_joining: data.reason_for_joining ? [data.reason_for_joining] : [],
+      };
+   
       try {
-        await actor.register_mentor(mentorData).then((result) => {
-          console.log('result', result) // LOG BACKEND RESPONSE
-          if (
-            result.startsWith("You are not allowed to get this role because you already have the Project role.") ||
-            result.startsWith("You are not eligible for this role because you have 2 or more roles") ||
-            result.startsWith("You had got your request declined earlier")||
-            result.startsWith("You are a Mentor Already") ||
-            result.startsWith("Profile image is already uploaded")
-          ) {
-            toast.error(result); // Show error toast with the returned message
-            setModalOpen(false);
-            window.location.reload();
-          } else {
-            toast.success("Mentor registered successfully!"); // Show success message
-            setModalOpen(false)
-            window.location.reload();
-
-          }
-        });
+        const result = await actor.register_mentor(mentorData);
+        console.log('result', result); // LOG BACKEND RESPONSE
+        if (
+          result.startsWith("You are not allowed to get this role because you already have the Project role.") ||
+          result.startsWith("You are not eligible for this role because you have 2 or more roles") ||
+          result.startsWith("You had got your request declined earlier") ||
+          result.startsWith("You are a Mentor Already") ||
+          result.startsWith("Profile image is already uploaded")
+        ) {
+          toast.error(result);
+          setModalOpen(false);
+          // window.location.reload();
+        } else {
+          toast.success("Mentor registered successfully!");
+          setModalOpen(false);
+          // window.location.reload();
+        }
       } catch (error) {
-        toast.error(error.message); // SHOW ERROR TOAST
-        console.error("Error sending data to the backend:", error); // LOG ERROR
+        toast.error(error.message);
+        console.error("Error sending data to the backend:", error);
       }
     } else {
-      toast.error("Please signup with internet identity first"); // SHOW ERROR IF USER IS NOT SIGNED IN
-      window.location.href = "/"; // REDIRECT TO HOME
+      toast.error("Please signup with internet identity first");
+      window.location.href = "/";
     }
-  };
+  }
+  
 
   // RENDER COMPONENT
   return (

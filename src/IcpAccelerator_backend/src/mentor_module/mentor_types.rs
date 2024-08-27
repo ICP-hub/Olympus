@@ -14,10 +14,10 @@ pub struct MentorProfile {
     pub icp_hub_or_spoke: bool,
     pub category_of_mentoring_service: String,
     pub links: Option<Vec<SocialLinksMentor>>,
-    pub multichain: Option<String>,
+    pub multichain: Option<Vec<String>>,
     pub years_of_mentoring: String,
     pub website: Option<String>,
-    pub area_of_expertise: String,
+    pub area_of_expertise: Vec<String>,
     pub reason_for_joining: Option<String>,
     pub hub_owner: Option<String>,
 }

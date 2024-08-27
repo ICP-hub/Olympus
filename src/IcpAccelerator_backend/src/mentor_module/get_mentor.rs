@@ -132,14 +132,13 @@ pub fn filter_mentors(criteria: MentorFilterCriteria) -> Vec<MentorProfile> {
                 //     None => true,
                 // };
 
-                let expertise_match = criteria.area_of_expertise.as_ref().map_or(true, |exp| {
-                    &mentor_internal.0.profile.area_of_expertise == exp
-                });
+                // let expertise_match = criteria.area_of_expertise.as_ref().map_or(true, |exp| {
+                //     &mentor_internal.0.profile.area_of_expertise == exp
+                // });
 
                 mentor_internal.0.active
                     && mentor_internal.0.approve
                     && !mentor_internal.0.decline
-                    && expertise_match
             })
             .map(|(_, mentor_internal)| mentor_internal.0.profile.clone())
             .collect()

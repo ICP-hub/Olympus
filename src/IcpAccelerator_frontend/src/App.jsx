@@ -109,6 +109,7 @@ const App = () => {
       dispatch(typeOfProfileSliceHandlerRequest());
       dispatch(userRegisteredHandlerRequest());
       dispatch(founderRegisteredHandlerRequest());
+      dispatch(mentorRegisteredHandlerRequest());
 
     }
   }, [isAuthenticated, identity, dispatch]);

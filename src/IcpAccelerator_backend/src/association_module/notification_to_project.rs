@@ -145,7 +145,7 @@ pub async fn send_offer_to_project_by_mentor(
     let mentor_info = MentorInfo {
         mentor_id: mentor_id,
         mentor_name: user_data.full_name.clone(),
-        mentor_description: mentor.0.profile.area_of_expertise,
+        mentor_description: mentor.0.profile.category_of_mentoring_service,
         mentor_image,
         user_data,
     };

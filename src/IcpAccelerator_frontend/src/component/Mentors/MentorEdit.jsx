@@ -1,62 +1,27 @@
-import EditIcon from "@mui/icons-material/Edit";
-import React, {
-  useCallback,
-  useRef,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useForm, Controller } from "react-hook-form";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { useSelector, useDispatch } from "react-redux";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import DetailHeroSection from "../Common/DetailHeroSection";
-import { ThreeDots } from "react-loader-spinner";
-import { useCountries } from "react-countries";
 import ReactSelect from "react-select";
-import CompressedImage from "../ImageCompressed/CompressedImage";
-import { allHubHandlerRequest } from "../../components/StateManagement/Redux/Reducers/All_IcpHubReducer";
-import { uint8ArrayToBase64 } from "../../../../admin_frontend/src/components/Utils/AdminData/saga_function/blobImageToUrl";
 import editp from "../../../assets/Logo/edit.png";
+import { mentorRegisteredHandlerRequest } from "../StateManagement/Redux/Reducers/mentorRegisteredData";
+import { allHubHandlerRequest } from "../../components/StateManagement/Redux/Reducers/All_IcpHubReducer";
 
 const MentorEdit = () => {
-  const { countries } = useCountries();
   const dispatch = useDispatch();
   const actor = useSelector((currState) => currState.actors.actor);
-  const areaOfExpertise = useSelector(
-    (currState) => currState.expertiseIn.expertise
-  );
-  const typeOfProfile = useSelector(
-    (currState) => currState.profileTypes.profiles
-  );
   const getAllIcpHubs = useSelector((currState) => currState.hubs.allHubs);
   const multiChainNames = useSelector((currState) => currState.chains.chains);
-
-  const userFullData = useSelector((currState) => currState.userData.data.Ok);
+  const isAuthenticated = useSelector(
+    (currState) => currState.internet.isAuthenticated
+  );
   const mentorFullData = useSelector(
     (currState) => currState.mentorData.data[0]
   );
-  const userCurrentRoleStatusActiveRole = useSelector(
-    (currState) => currState.currentRoleStatus.activeRole
-  );
-  console.log("mentorFullData =>" , mentorFullData)
-  // STATES
 
-  // user image states
-  const [imagePreview, setImagePreview] = useState(null);
-  const [imageData, setImageData] = useState(null);
-  const [editMode, setEditMode] = useState(null);
-
-  // default & static options states
-  const [interestedDomainsOptions, setInterestedDomainsOptions] = useState([]);
-  const [
-    interestedDomainsSelectedOptions,
-    setInterestedDomainsSelectedOptions,
-  ] = useState([]);
-  const [typeOfProfileOptions, setTypeOfProfileOptions] = useState([]);
-
-  const [reasonOfJoiningOptions, setReasonOfJoiningOptions] = useState([
+  const [reasonOfJoiningOptions] = useState([
     { value: "listing_and_promotion", label: "Project listing and promotion" },
     { value: "Funding", label: "Funding" },
     { value: "Mentoring", label: "Mentoring" },
@@ -69,665 +34,193 @@ const MentorEdit = () => {
   ]);
   const [reasonOfJoiningSelectedOptions, setReasonOfJoiningSelectedOptions] =
     useState([]);
-  // Mentor from states
-  const [multiChainOptions, setMultiChainOptions] = useState([]);
-  const [multiChainSelectedOptions, setMultiChainSelectedOptions] = useState(
-    []
+
+  // SELECTOR TO ACCESS AREA OF EXPERTISE DATA FROM REDUX STORE
+  const areaOfExpertise = useSelector(
+    (currState) => currState.expertiseIn.expertise
   );
 
-  const [
-    categoryOfMentoringServiceOptions,
-    setCategoryOfMentoringServiceOptions,
-  ] = useState([
-    { value: "Incubation", label: "Incubation" },
-    { value: "Tokenomics", label: "Tokenomics" },
-    { value: "Branding", label: "Branding" },
-    { value: "Listing", label: "Listing" },
-    { value: "Raise", label: "Raise" },
-  ]);
-  const [
-    categoryOfMentoringServiceSelectedOptions,
-    setCategoryOfMentoringServiceSelectedOptions,
-  ] = useState([]);
+  useEffect(() => {
+    if (actor && isAuthenticated) {
+      dispatch(mentorRegisteredHandlerRequest());
+    }
+  }, [dispatch, isAuthenticated, actor]);
 
-  // user reg form validation schema
-  const validationSchema = yup
-    .object()
-    .shape({
-      full_name: yup
-        .string()
-        .test("is-non-empty", "Full name is required", (value) =>
-          /\S/.test(value)
-        )
-        .required("Full name is required"),
-      email: yup.string().email("Invalid email").nullable(true).optional(),
-      telegram_id: yup
-        .string()
-        .nullable(true)
-        .optional()
-        // .test("is-valid-telegram", "Invalid Telegram link", (value) => {
-        //   if (!value) return true;
-        //   const hasValidChars = /^[a-zA-Z0-9_]{5,32}$/.test(value);
-        //   return hasValidChars;
-        // })
-        .url("Invalid url"),
-      twitter_url: yup
-        .string()
-        .nullable(true)
-        .optional()
-        // .test("is-valid-twitter", "Invalid Twitter ID", (value) => {
-        //   if (!value) return true;
-        //   const hasValidChars =
-        //   /^(https?:\/\/)?(www\.)?(twitter\.com|x\.com)\/[a-zA-Z0-9_]{1,15}$/.test(
-        //       value
-        //     );
-        //   return hasValidChars;
-        // })
-        .url("Invalid url"),
-      openchat_user_name: yup
-        .string()
-        .nullable(true)
-        .test(
-          "is-valid-username",
-          "Username must be between 5 and 20 characters, and cannot start or contain spaces",
-          (value) => {
-            if (!value) return true;
-            const isValidLength = value.length >= 5 && value.length <= 20;
-            const hasNoSpaces = !/\s/.test(value) && !value.startsWith(" ");
-            return isValidLength && hasNoSpaces;
-          }
-        ),
-      bio: yup
-        .string()
-        .optional()
-        .test(
-          "maxWords",
-          "Bio must not exceed 50 words",
-          (value) =>
-            !value || value.trim().split(/\s+/).filter(Boolean).length <= 50
-        )
-        .test(
-          "no-leading-spaces",
-          "Bio should not have leading spaces",
-          (value) => !value || value.trimStart() === value
-        )
-        .test(
-          "maxChars",
-          "Bio must not exceed 500 characters",
-          (value) => !value || value.length <= 500
-        ),
-      country: yup
-        .string()
-        .test("is-non-empty", "Country is required", (value) =>
-          /\S/.test(value)
-        )
-        .required("Country is required"),
-      domains_interested_in: yup
-        .string()
-        .test("is-non-empty", "Selecting an interest is required", (value) =>
-          /\S/.test(value)
-        )
-        .required("Selecting an interest is required"),
-      type_of_profile: yup
-        .string()
-        .test("is-non-empty", "Type of profile is required", (value) =>
-          /\S/.test(value)
-        )
-        .required("Type of profile is required"),
-      reasons_to_join_platform: yup
-        .string()
-        .test("is-non-empty", "Selecting a reason is required", (value) =>
-          /\S/.test(value)
-        )
-        .required("Selecting a reason is required"),
+  const validationSchema = yup.object().shape({
+    preferred_icp_hub: yup.string().required("ICP Hub selection is required"),
+    multi_chain: yup
+      .string()
+      .required("Required")
+      .oneOf(["Yes", "No"], "Invalid value"),
+    multichain: yup.string().when("multi_chain", (val, schema) =>
+      val && val === "Yes"
+        ? schema.required("At least one chain name required")
+        : schema
+    ),
+    category_of_mentoring_service: yup
+      .string()
+      .required("Selecting a service is required"),
+    icp_hub_or_spoke: yup
+      .string()
+      .required("Required")
+      .oneOf(["Yes", "No"], "Invalid value"),
+    hub_owner: yup.string().when("icp_hub_or_spoke", (val, schema) =>
+      val && val === "Yes"
+        ? schema.required("ICP Hub selection is required")
+        : schema
+    ),
+    website: yup.string().url("Invalid URL"),
+    years_of_mentoring: yup
+      .number()
+      .typeError("You must enter a number")
+      .positive("Must be a positive number")
+      .required("Years of experience mentoring startups is required"),
+    mentor_linkedin_url: yup
+      .string()
+      .url("Invalid URL")
+      .required("LinkedIn URL is required"),
+  });
 
-      image: yup
-        .mixed()
-        .nullable(true)
-        .test("fileSize", "File size max 10MB allowed", (value) => {
-          return !value || (value && value.size <= 10 * 1024 * 1024); // 10 MB limit
-        })
-        .test(
-          "fileType",
-          "Only jpeg, jpg & png file format allowed",
-          (value) => {
-            return (
-              !value ||
-              (value &&
-                ["image/jpeg", "image/jpg", "image/png"].includes(value.type))
-            );
-          }
-        ),
-      preferred_icp_hub: yup
-        .string()
-        .test("is-non-empty", "ICP Hub selection is required", (value) =>
-          /\S/.test(value)
-        )
-        .required("ICP Hub selection is required"),
-      multi_chain: yup
-        .string()
-        .required("Required")
-        .oneOf(["true", "false"], "Invalid value"),
-      multi_chain_names: yup
-        .string()
-        .when("multi_chain", (val, schema) =>
-          val && val[0] === "true"
-            ? schema
-
-                .test(
-                  "is-non-empty",
-                  "Atleast one chain name required",
-                  (value) => /\S/.test(value)
-                )
-                .required("Atleast one chain name required")
-
-            : schema
-        ),
-      category_of_mentoring_service: yup
-        .string()
-        .test("is-non-empty", "Selecting a service is required", (value) =>
-          /\S/.test(value)
-        )
-        .required("Selecting a service is required"),
-      icp_hub_or_spoke: yup
-        .string()
-        .required("Required")
-        .oneOf(["true", "false"], "Invalid value"),
-      hub_owner: yup
-        .string()
-        .when("icp_hub_or_spoke", (val, schema) =>
-          val && val[0] === "true"
-            ? schema
-
-              .test(
-                "is-non-empty",
-                "ICP Hub selection is required",
-                (value) => /\S/.test(value)
-              )
-              .required("ICP Hub selection is required")
-
-            : schema
-        ),
-      mentor_website_url: yup
-        .string()
-        .nullable(true)
-        .optional()
-        .url("Invalid url"),
-      years_of_mentoring: yup
-        .number()
-        .typeError("You must enter a number")
-        .positive("Must be a positive number")
-        .required("Years of experience mentoring startups is required"),
-      mentor_linkedin_url: yup
-        .string()
-       
-        .url("Invalid url")
-        .required("LinkedIn url is required"),
-    })
-    .required();
+  const defaultValues = {
+    preferred_icp_hub: mentorFullData?.profile?.preferred_icp_hub ?? "",
+    multi_chain: mentorFullData?.profile?.multi_chain ?? null,
+    multichain: mentorFullData?.profile?.multichain?.join(", "),
+    category_of_mentoring_service: mentorFullData[0].profile?.category_of_mentoring_service ?? "",
+   
+    icp_hub_or_spoke: mentorFullData[0].profile?.icp_hub_or_spoke ?? null,
+ hub_owner: mentorFullData[0].profile?.hub_owner ?? "",
+ years_of_mentoring: mentorFullData[0].profile?.years_of_mentoring ?? 0,
+ website: mentorFullData[0].profile?.website?.[0] ?? "",
+    reason_for_joining:mentorFullData[0].profile?.reason_for_joining?.[0],
+    preferred_icp_hub: mentorFullData[0].profile?.preferred_icp_hub?.[0] ?? " chiku sangwan",
+    multichain: mentorFullData[0].profile?.multichain?.[0] ??"",
+    area_of_expertise:mentorFullData[0].profile?.area_of_expertise?? "" ,
+    // multichain: mentorFullData[0].profile?.multichain?.join(", ") ?? "",
+   links: mentorFullData[0].profile?.links??"",
+   existing_icp_project_porfolio: mentorFullData[0].profile?.existing_icp_project_porfolio??"",
   
-    const defaultValues = {
-      preferred_icp_hub: mentorFullData?.preferred_icp_hub ?? 'ICP Hub, India',
-      multi_chain: mentorFullData?.multi_chain ?? 'No',
-      multi_chain_names: mentorFullData?.multi_chain_names?.[0] ?? ["Base", "Solana"],
-      category_of_mentoring_service: mentorFullData?.category_of_mentoring_service?.[0] ?? ["Branding ", " Listing"],
-      icp_hub_or_spoke: mentorFullData?.icp_hub_or_spoke ?? 'No',
-      hub_owner: mentorFullData?.hub_owner ?? "ICP Hub, India",
-      years_of_mentoring: mentorFullData?.years_of_mentoring ?? 3,
-      mentor_linkedin_url:mentorFullData?.mentor_linkedin_url ?? " ",
-      mentor_website_url:mentorFullData?.mentor_website_url ?? "",
+  };
+  console.log("defalult values",defaultValues)
 
-    };
-      console.log("281 console",mentorFullData[0].profile.preferred_icp_hub)
-      
   const {
     register,
     handleSubmit,
-    reset,
-    clearErrors,
     setValue,
     getValues,
     setError,
     watch,
+    formState: { errors },
     control,
-    trigger,
-    formState: { errors, isSubmitting },
+    clearErrors,
   } = useForm({
     resolver: yupResolver(validationSchema),
     mode: "all",
     defaultValues,
   });
 
-  const [selectedTypeOfProfile, setSelectedTypeOfProfile] = useState(
-    watch("type_of_profile")
-  );
-
-
-
-  // form submit handler func
-  const onSubmitHandler = async (data) => {
-    if (actor) {
-      const mentorData = {
-        // user data
-        user_data: {
-          full_name: data?.full_name,
-          email: [data?.email],
-          telegram_id: [data?.telegram_id.toString()],
-          twitter_id: [data?.twitter_url.toString()],
-          openchat_username: [data?.openchat_user_name],
-          bio: [data?.bio],
-          country: data?.country,
-          area_of_interest: data?.domains_interested_in,
-          type_of_profile: [data?.type_of_profile || ""],
-          reason_to_join: [
-            data?.reasons_to_join_platform
-              .split(",")
-              .map((val) => val.trim()) || [""],
-          ],
-          profile_picture: imageData ? [imageData] : [],
-        },
-        // mentor data
-        preferred_icp_hub: [data?.preferred_icp_hub || ""],
-        icp_hub_or_spoke: data?.icp_hub_or_spoke === "true" ? true : false,
-        hub_owner: [
-          data?.icp_hub_or_spoke === "true" && data?.hub_owner
-            ? data?.hub_owner
-            : "",
-        ],
-        hub_owner: [data?.hub_owner || ""],
-        category_of_mentoring_service: data?.category_of_mentoring_service,
-        years_of_mentoring: data.years_of_mentoring.toString(),
-        linkedin_link: data?.mentor_linkedin_url,
-        multichain: [
-          data?.multi_chain === "true" && data?.multi_chain_names
-            ? data?.multi_chain_names
-            : "",
-        ],
-        website: [data?.mentor_website_url || ""],
-        // mentor data not exiting on frontend or raw variables
-        existing_icp_mentor: false,
-        existing_icp_project_porfolio: [
-          data?.existing_icp_project_porfolio || "",
-        ],
-        area_of_expertise: "",
-        reason_for_joining: [""],
-      };
-      try {
-        if (userCurrentRoleStatusActiveRole === "mentor") {
-          await actor.update_mentor(mentorData).then((result) => {
-            if (result && result.includes("approval request is sent")) {
-              toast.success("Approval request is sent");
-              window.location.href = "/";
-            } else {
-              toast.error(result);
-            }
-          });
-        } else if (
-          userCurrentRoleStatusActiveRole === null ||
-          userCurrentRoleStatusActiveRole === "user" ||
-          userCurrentRoleStatusActiveRole === "project" ||
-          userCurrentRoleStatusActiveRole === "vc"
-        ) {
-          await actor.register_mentor_candid(mentorData).then((result) => {
-            if (result && result.includes("approval request is sent")) {
-              toast.success("Approval request is sent");
-              window.location.href = "/";
-            } else {
-              toast.error(result);
-            }
-          });
-        }
-      } catch (error) {
-        toast.error(error);
-        console.error("Error sending data to the backend:", error);
-      }
-    } else {
-      toast.error("Please signup with internet identity first");
-      window.location.href = "/";
-    }
-  };
-
-  // form error handler func
-  const onErrorHandler = (val) => {
-    toast.error("Empty fields or invalid values, please recheck the form");
-  };
-
-  // default interests set function
-  const setInterestedDomainsSelectedOptionsHandler = (val) => {
-    setInterestedDomainsSelectedOptions(
-      val
-        ? val
-
-          .split(", ")
-          .map((interest) => ({ value: interest, label: interest }))
-
-        : []
-    );
-  };
-
-  // default reasons set function
-  const setReasonOfJoiningSelectedOptionsHandler = (val) => {
-    setReasonOfJoiningSelectedOptions(
-      val && val.length > 0 && val[0].length > 0
-        ? val[0].map((reason) => ({ value: reason, label: reason }))
-        : []
-    );
-  };
-  const setCategoryOfMentoringServiceSelectedOptionsHandler = (val) => {
-    setCategoryOfMentoringServiceSelectedOptions(
-      val
-        ? val.split(", ").map((reason) => ({ value: reason, label: reason }))
-        : []
-    );
-  };
-  const setMultiChainSelectedOptionsHandler = (val) => {
-    setMultiChainSelectedOptions(
-      val
-        ? val?.[0].split(", ").map((chain) => ({ value: chain, label: chain }))
-        : []
-    );
-  };
-
-  // set users values handler
-  const setValuesHandler = (val) => {
-    if (val) {
-      setValue("full_name", val?.full_name ?? "");
-      setValue("email", val?.email?.[0] ?? "");
-      setValue("telegram_id", val?.telegram_id?.[0] ?? "");
-      setValue("twitter_url", val?.twitter_id?.[0] ?? "");
-      setValue("openchat_user_name", val?.openchat_username?.[0] ?? "");
-      setValue("bio", val?.bio?.[0] ?? "");
-      setValue("country", val?.country ?? "");
-      setValue("domains_interested_in", val?.area_of_interest ?? "");
-      setInterestedDomainsSelectedOptionsHandler(val?.area_of_interest ?? null);
-      setImagePreview(val?.profile_picture?.[0] ?? "");
-      setValue(
-        "type_of_profile",
-        val?.user_data?.type_of_profile?.[0]
-          ? val?.user_data?.type_of_profile?.[0]
-          : ""
-      );
-      setValue(
-        "reasons_to_join_platform",
-        val?.reason_to_join ? val?.reason_to_join.join(", ") : ""
-      );
-      setReasonOfJoiningSelectedOptionsHandler(val?.reason_to_join);
-    }
-  };
-  // set mentor values handler
-  const setMentorValuesHandler = (val) => {
-    if (val) {
-      setValue("full_name", val?.user_data?.full_name ?? "");
-      setValue("email", val?.user_data?.email?.[0] ?? "");
-      // setValue("telegram_id", val?.user_data?.telegram_id?.[0] ?? "");
-      // setValue("twitter_url", val?.user_data?.twitter_id?.[0] ?? "");
-      setValue(
-        "openchat_user_name",
-        val?.user_data?.openchat_username?.[0] ?? ""
-      );
-      setValue("bio", val?.user_data?.bio?.[0] ?? "");
-      setValue("country", val?.user_data?.country ?? "");
-      setValue("domains_interested_in", val?.user_data?.area_of_interest ?? "");
-      setInterestedDomainsSelectedOptionsHandler(
-        val?.user_data?.area_of_interest ?? null
-      );
-      // setImagePreview(val?.user_data?.profile_picture?.[0] ?? "");
-      setImagePreview(
-        val?.user_data?.profile_picture?.[0] instanceof Uint8Array
-          ? uint8ArrayToBase64(val?.user_data?.profile_picture?.[0])
-          : ""
-      );
-      setValue(
-        "type_of_profile",
-        val?.user_data?.type_of_profile?.[0]
-          ? val?.user_data?.type_of_profile?.[0]
-          : ""
-      );
-      setValue(
-        "reasons_to_join_platform",
-        val?.user_data?.reason_to_join
-          ? val?.user_data?.reason_to_join.join(", ")
-          : ""
-      );
-      setReasonOfJoiningSelectedOptionsHandler(val?.user_data?.reason_to_join);
-      setValue("area_of_expertise", val?.area_of_expertise?.[0] ?? "");
-      setValue(
-        "category_of_mentoring_service",
-        val?.category_of_mentoring_service ?? ""
-      );
-      setCategoryOfMentoringServiceSelectedOptionsHandler(
-        val?.category_of_mentoring_service ?? null
-      );
-      setValue("existing_icp_mentor", val?.existing_icp_mentor ?? "");
-      setValue(
-        "existing_icp_project_porfolio",
-        val?.existing_icp_project_porfolio?.[0] ?? ""
-      );
-      setValue("icp_hub_or_spoke", val?.icp_hub_or_spoke ?? "");
-      if (val?.icp_hub_or_spoke === true) {
-        setValue("icp_hub_or_spoke", "true");
-      } else {
-        setValue("icp_hub_or_spoke", "false");
-      }
-      setValue("hub_owner", val?.hub_owner ? val?.hub_owner?.[0] : "");
-      setValue("mentor_linkedin_url", val?.linkedin_link ?? "");
-      if (val?.multichain?.[0]) {
-        setValue("multi_chain", "true");
-      } else {
-        setValue("multi_chain", "false");
-      }
-      setValue(
-        "multi_chain_names",
-        val?.multichain?.[0] ? val?.multichain?.[0] : ""
-      );
-      setMultiChainSelectedOptionsHandler(val?.multichain ?? null);
-      setValue(
-        "preferred_icp_hub",
-        val?.preferred_icp_hub ? val?.preferred_icp_hub?.[0] : ""
-      );
-      setValue("mentor_website_url", val?.website?.[0] ?? "");
-      setValue("years_of_mentoring", val?.years_of_mentoring ?? "");
-    }
-  };
-
-  // Get data from redux useEffect
-  useEffect(() => {
-    if (areaOfExpertise) {
-      setInterestedDomainsOptions(
-        areaOfExpertise.map((expert) => ({
-          value: expert.name,
-          label: expert.name,
-        }))
-      );
-    } else {
-      setInterestedDomainsOptions([]);
-    }
-  }, [areaOfExpertise]);
-
-  useEffect(() => {
-    if (typeOfProfile) {
-      setTypeOfProfileOptions(
-        typeOfProfile.map((type) => ({
-          value: type.role_type.toLowerCase(),
-          label: type.role_type,
-        }))
-      );
-    } else {
-      setTypeOfProfileOptions([]);
-    }
-  }, [typeOfProfile]);
-
-
-  useEffect(() => {
-    if (mentorFullData) {
-      console.log("Mentor full data ==>", mentorFullData);
-      setMentorValuesHandler(mentorFullData);
-      setEditMode(true);
-    } else if (userFullData) {
-      setValuesHandler(userFullData);
-    }
-  }, [userFullData, mentorFullData]);
-
-  // Mentor form states
-  useEffect(() => {
-    if (multiChainNames) {
-      setMultiChainOptions(
-        multiChainNames.map((chain) => ({
-          value: chain,
-          label: chain,
-        }))
-      );
-    } else {
-      setMultiChainOptions([]);
-    }
-  }, [multiChainNames]);
-
-  useEffect(() => {
-    dispatch(allHubHandlerRequest());
-  }, [actor, dispatch]);
-
-  useEffect(() => {
-    if (actor) {
-      (async () => {
-        if (userCurrentRoleStatusActiveRole === "mentor") {
-          const result = await actor.get_mentor();
-          if (result) {
-            console.log("result", result?.[0]);
-            setImageData(result?.[0]?.user_data?.profile_picture?.[0] ?? null);
-            setValue(
-              "type_of_profile",
-              result?.[0]?.user_data?.type_of_profile?.[0]
-                ? result?.[0]?.user_data?.type_of_profile?.[0]
-                : ""
-            );
-            setValue(
-              "hub_owner",
-              result?.[0]?.hub_owner?.[0] ? result?.[0]?.hub_owner?.[0] : ""
-            );
-            setValue(
-              "preferred_icp_hub",
-              result?.[0]?.preferred_icp_hub?.[0]
-                ? result?.[0]?.preferred_icp_hub?.[0]
-                : ""
-            );
-          } else {
-            setImageData(null);
-            setValue("type_of_profile", "");
-            setValue("hub_owner", "");
-            setValue("preferred_icp_hub", "");
-          }
-        } else if (
-          userCurrentRoleStatusActiveRole === null ||
-          userCurrentRoleStatusActiveRole === "user" ||
-          userCurrentRoleStatusActiveRole === "project" ||
-          userCurrentRoleStatusActiveRole === "vc"
-        ) {
-          const result = await actor.get_user_information();
-          if (result) {
-            setImageData(result?.Ok?.profile_picture?.[0] ?? null);
-
-            setValue(
-              "type_of_profile",
-              result?.Ok?.type_of_profile?.[0]
-                ? result?.Ok?.type_of_profile?.[0]
-                : ""
-            );
-          } else {
-            setImageData(null);
-            setValue("type_of_profile", "");
-          }
-        }
-      })();
-    }
-  }, [actor]);
-
-  console.log("Mentor full data ==>", mentorFullData);
-
-  console.log("userFullData", userFullData)
-
-
-  const [mentorData, setMentorData] = useState(defaultValues);
-  const [tempData, setTempData] = useState(mentorData);
-
   const [edit, setEdit] = useState({
-    preferedIcpHub: false,
-    multipleEcosystem: false,
-    mentorCategory: false,
-    icpHubOrSpoke: false,
-    websiteLink: false,
-    mentoringYears: false,
-    linkedinLink: false,
+    preferred_icp_hub: false,
+    multi_chain: false,
+    multichain: false,
+    category_of_mentoring_service: false,
+    icp_hub_or_spoke: false,
+    hub_owner: false,
+    years_of_mentoring: false,
+    mentor_linkedin_url: false,
+    website: false,
+    reason_for_joining: false,
+    area_of_expertise:false,
   });
 
   const handleEditClick = (field) => {
     setEdit({ ...edit, [field]: true });
   };
 
-  const handleSave = () => {
-    // Validate form and update the main state
-    const isFormValid = Object.keys(errors).length === 0;
+  const handleSave = async () => {
+    if (Object.keys(errors).length === 0) {
+      try {
+        const linksValue = getValues("links");
+        const mentorData = {
+          preferred_icp_hub: getValues("preferred_icp_hub")
+            ? [getValues("preferred_icp_hub")]
+            : null,
+          // multi_chain: getValues("multi_chain") === "Yes" ? "Yes" : null,
+          multichain: getValues("multichain")
+            ? getValues("multichain").split(", ")
+            : null,
+          category_of_mentoring_service: getValues("category_of_mentoring_service") || null,
+          icp_hub_or_spoke: getValues("icp_hub_or_spoke") === "Yes",
+          hub_owner: getValues("hub_owner")
+          ? [getValues("hub_owner")]
+          : null,
+          years_of_mentoring: getValues("years_of_mentoring") || null,
+          mentor_linkedin_url: getValues("mentor_linkedin_url") || null,
+          website: getValues("website")
+          ? [getValues("website")]
+          : null,
+          reason_for_joining: getValues("reason_for_joining")
+            ? [getValues("reason_for_joining")]
+            : null,
+            links: linksValue?.links
+          ? [linksValue.links.map((val) => ({ link: val?.link ? [val.link] : [] }))] // PREPARE LINKS DATA
+          : [],
+            existing_icp_mentor: false,
+            area_of_expertise :getValues("area_of_expertise") || null,
+            existing_icp_project_porfolio: getValues("existing_icp_project_porfolio") || null,
+        };
+        
 
-    if (isFormValid) {
-      setMentorData(tempData); // Update the main mentor data state
-      setEdit({
-        preferedIcpHub: false,
-        multipleEcosystem: false,
-        mentorCategory: false,
-        icpHubOrSpoke: false,
-        websiteLink: false,
-        mentoringYears: false,
-        linkedinLink: false,
-      });
-    } else {
-      console.log("Validation failed:", errors);
+        console.log("mentorData:", mentorData);
+
+        const result = await actor.update_mentor(mentorData);
+        if (result && result.includes("approval request is sent")) {
+          toast.success("Approval request is sent");
+          window.location.href = "/";
+        } else {
+          toast.error(result);
+        }
+      } catch (error) {
+        toast.error("Error updating mentor data");
+        console.error("Error:", error);
+      }
     }
   };
+
   const handleCancel = () => {
     setEdit({
-      preferedIcpHub: false,
-      multipleEcosystem: false,
-      mentorCategory: false,
-      icpHubOrSpoke: false,
-      websiteLink: false,
-      mentoringYears: false,
-      linkedinLink: false,
+      preferred_icp_hub: false,
+      multichain: false,
+      category_of_mentoring_service: false,
+      icp_hub_or_spoke: false,
+      hub_owner: false,
+      years_of_mentoring: false,
+      mentor_linkedin_url: false,
+      website: false,
+      reason_for_joining: false,
     });
-    setTempData(mentorData);
   };
 
   const editableRef = useRef(null);
 
   const handleClickOutside = (event) => {
     if (editableRef.current && !editableRef.current.contains(event.target)) {
-      setEdit({
-        preferedIcpHub: false,
-        multipleEcosystem: false,
-        mentorCategory: false,
-        icpHubOrSpoke: false,
-        websiteLink: false,
-        mentoringYears: false,
-        linkedinLink: false,
-      });
+      handleCancel();
     }
-  };
-
-  const handleInputChange = (e, field) => {
-    setValue(field, e.target.value, { shouldValidate: true });
-    setTempData((prev) => ({ ...prev, [field]: e.target.value }));
   };
 
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
-
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
-  // const [mentorData,setMentorValue]=useState(defaultValues);
+  useEffect(() => {
+    dispatch(allHubHandlerRequest());
+  }, [actor, dispatch]);
 
   return (
-    <div ref={editableRef} className=" bg-white">
+    <div ref={editableRef} className="bg-white p-4 rounded shadow">
       <form>
         <div className="my-1 relative group hover:bg-slate-50 rounded p-1 mb-1">
           <div className="absolute right-0 top-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
@@ -735,43 +228,47 @@ const MentorEdit = () => {
               src={editp}
               className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
               alt="edit"
-              onClick={() => handleEditClick("preferedIcpHub")}
+              onClick={() => handleEditClick("preferred_icp_hub")}
             />
           </div>
           <label className="block mb-2 text-xs font-semibold text-gray-500">
-            ICP HUB YOU WILL LIKE TO BE ASSOCIATED{" "}
+            ICP HUB YOU WILL LIKE TO BE ASSOCIATED
           </label>
-          {edit.preferedIcpHub ? (
-            <div className="">
-              <select
-                {...register("preferred_icp_hub")}
-                value={tempData.preferred_icp_hub}
-                onChange={(e) => handleInputChange(e, "preferred_icp_hub")}
-                className="shadow appearance-none border rounded w-full py-1 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              >
-                <option className="text-lg font-medium" value="">
-                  Select your ICP Hub
+          {edit.preferred_icp_hub ? (
+            <select
+              {...register("preferred_icp_hub")}
+              value={getValues("preferred_icp_hub")}
+              onChange={(e) =>
+                setValue("preferred_icp_hub", e.target.value, {
+                  shouldValidate: true,
+                })
+              }
+              className={`shadow appearance-none border rounded w-full py-1 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
+                errors.preferred_icp_hub ? "border-red-500" : ""
+              }`}
+            >
+              <option className="text-lg font-medium" value="">
+                Select your ICP Hub
+              </option>
+              {getAllIcpHubs?.map((hub) => (
+                <option
+                  key={hub.id}
+                  value={`${hub.name}, ${hub.region}`}
+                  className="text-lg font-medium"
+                >
+                  {hub.name}, {hub.region}
                 </option>
-                {getAllIcpHubs?.map((hub) => (
-                  <option
-                    key={hub.id}
-                    value={`${hub.name} ,${hub.region}`}
-                    className="text-lg font-medium"
-                  >
-                    {hub.name}, {hub.region}
-                  </option>
-                ))}
-              </select>
-              {errors.preferred_icp_hub && (
-                <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                  {errors.preferred_icp_hub.message}
-                </p>
-              )}
-            </div>
+              ))}
+            </select>
           ) : (
-            <div className="flex justify-between items-center cursor-pointer p-1">
-              <span>{getValues("preferred_icp_hub")} </span>
+            <div className="flex justify-between items-center cursor-pointer text-sm">
+              <span>{getValues("preferred_icp_hub")}</span>
             </div>
+          )}
+          {errors.preferred_icp_hub && (
+            <p className="mt-1 text-sm text-red-500 font-bold text-left">
+              {errors.preferred_icp_hub.message}
+            </p>
           )}
         </div>
 
@@ -781,37 +278,39 @@ const MentorEdit = () => {
               src={editp}
               className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
               alt="edit"
-              onClick={() => handleEditClick("multipleEcosystem")}
+              onClick={() => handleEditClick("multi_chain")}
             />
           </div>
-          <label className="block mb-2 text-xs font-semibold text-gray-500">
-            {" "}
-            DO YOU MENTOR MULTIPLE ECOSYSTEMS{" "}
+          <label className="block mb-1 text-xs font-semibold text-gray-500">
+            DO YOU MENTOR MULTIPLE ECOSYSTEMS
           </label>
-          {edit.multipleEcosystem ? (
-            <div>
-              <select
-                {...register("multi_chain")}
-                value={tempData.multi_chain}
-                onChange={(e) => handleInputChange(e, "multi_chain")}
-                className="shadow appearance-none border rounded w-full py-1 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              >
-                <option className="text-lg" value="No">
-                  No
-                </option>
-                <option className="text-lg" value="Yes">
-                  Yes
-                </option>
-              </select>
-            </div>
+          {edit.multi_chain ? (
+            <select
+              {...register("multi_chain")}
+              value={getValues("multi_chain")}
+              onChange={(e) =>
+                setValue("multi_chain", e.target.value, {
+                  shouldValidate: true,
+                })
+              }
+              className="shadow appearance-none border rounded w-full py-1 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            >
+              <option className="text-lg" value="No">
+                No
+              </option>
+              <option className="text-lg" value="Yes">
+                Yes
+              </option>
+            </select>
           ) : (
             <div className="flex justify-between items-center cursor-pointer p-1">
               <span>{getValues("multi_chain")}</span>
             </div>
           )}
         </div>
+
         {watch("multi_chain") === "Yes" && (
-          <div className="relative z-0 group mb-4">
+        <div className="relative group hover:bg-slate-50 rounded p-1 mb-2">
             <div className="flex justify-between items-center">
               <label className="font-semibold  text-xs text-gray-500 uppercase mb-1">
                 PLEASE SELECT CHAINS
@@ -820,10 +319,10 @@ const MentorEdit = () => {
                 src={editp}
                 className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
                 alt="edit"
-                onClick={() => handleEditClick("multi_chain_names")}
+                onClick={() => handleEditClick("multichain")}
               />
             </div>
-            {edit.multi_chain_names ? (
+            {edit.multichain ? (
               <ReactSelect
                 isMulti
                 menuPortalTarget={document.body}
@@ -834,12 +333,12 @@ const MentorEdit = () => {
                     ...provided,
                     paddingBlock: "2px",
                     borderRadius: "8px",
-                    border: errors.multi_chain_names
+                    border: errors.multichain
                       ? "2px solid #ef4444"
                       : "2px solid #737373",
                     backgroundColor: "rgb(249 250 251)",
                     "&::placeholder": {
-                      color: errors.multi_chain_names
+                      color: errors.multichain
                         ? "#ef4444"
                         : "currentColor",
                     },
@@ -858,7 +357,7 @@ const MentorEdit = () => {
                   }),
                   placeholder: (provided, state) => ({
                     ...provided,
-                    color: errors.multi_chain_names
+                    color: errors.multichain
                       ? "#ef4444"
                       : "rgb(107 114 128)",
                     whiteSpace: "nowrap",
@@ -876,54 +375,53 @@ const MentorEdit = () => {
                     alignItems: "center",
                   }),
                 }}
-                value={multiChainSelectedOptions}
-                options={multiChainOptions}
+                value={getValues("multichain")
+                  .split(", ")
+                  .map((chain) => ({
+                    value: chain,
+                    label: chain,
+                  }))}
+                options={multiChainNames.map((chain) => ({
+                  value: chain,
+                  label: chain,
+                }))}
                 classNamePrefix="select"
                 className="basic-multi-select w-full text-start"
                 placeholder="Select a chain"
-                name="multi_chain_names"
+                name="multichain"
                 onChange={(selectedOptions) => {
                   if (selectedOptions && selectedOptions.length > 0) {
-                    setMultiChainSelectedOptions(selectedOptions);
-                    clearErrors("multi_chain_names");
                     setValue(
-                      "multi_chain_names",
+                      "multichain",
                       selectedOptions.map((option) => option.value).join(", "),
                       { shouldValidate: true }
                     );
                   } else {
-                    setMultiChainSelectedOptions([]);
-                    setValue("multi_chain_names", "", {
+                    setValue("multichain", "", {
                       shouldValidate: true,
                     });
-                    setError("multi_chain_names", {
+                    setError("multichain", {
                       type: "required",
-                      message: "Atleast one chain name required",
+                      message: "At least one chain name required",
                     });
                   }
                 }}
               />
             ) : (
               <div className="flex flex-wrap gap-2 cursor-pointer py-1">
-                {getValues("multi_chain_names") &&
-
-                  typeof getValues("multi_chain_names") === "string" ? (
-
-                  getValues("multi_chain_names")
-                    .split(", ")
-                    .map((category, index) => (
-                      <span
-                        key={index}
-                        className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1"
-                      >
-                        {category}
-                      </span>
-                    ))
-                ) : (
-                  <span className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1">
-                    Solana
-                  </span>
-                )}
+                {getValues("multichain") &&
+                typeof getValues("multichain") === "string"
+                  ? getValues("multichain")
+                      .split(", ")
+                      .map((category, index) => (
+                        <span
+                          key={index}
+                          className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1"
+                        >
+                          {category}
+                        </span>
+                      ))
+                  : ""}
               </div>
             )}
           </div>
@@ -935,124 +433,229 @@ const MentorEdit = () => {
               src={editp}
               className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
               alt="edit"
-              onClick={() => handleEditClick("mentorCategory")}
+              onClick={() => handleEditClick("category_of_mentoring_service")}
             />
           </div>
-          <label className="block mb-2 text-xs font-semibold text-gray-500">
+          <label className="block mb-1 text-xs font-semibold text-gray-500">
             CATEGORIES OF MENTORING SERVICES
           </label>
-          {edit.mentorCategory ? (
-            <div className="">
-              <ReactSelect
-                isMulti
-                menuPortalTarget={document.body}
-                menuPosition={"fixed"}
-                styles={{
-                  menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-                  control: (provided, state) => ({
-                    ...provided,
-                    paddingBlock: "0px",
-                    borderRadius: "8px",
-                    border: errors.category_of_mentoring_service
-                      ? "2px solid #ef4444"
-                      : "2px solid #737373",
-                    backgroundColor: "rgb(249 250 251)",
-                    "&::placeholder": {
-                      color: errors.category_of_mentoring_service
-                        ? "#ef4444"
-                        : "currentColor",
-                    },
-                    display: "flex",
-                    alignItems: "start",
-                    overflowX: "auto",
-                    maxHeight: "33px",
-                    "&::-webkit-scrollbar": {
-                      display: "none",
-                    },
-                  }),
-                  valueContainer: (provided, state) => ({
-                    ...provided,
-                    overflow: "scroll",
-                    maxHeight: "43px",
-                    scrollbarWidth: "none",
-                  }),
-                  placeholder: (provided, state) => ({
-                    ...provided,
+          {edit.category_of_mentoring_service ? (
+            <ReactSelect
+              isMulti
+              menuPortalTarget={document.body}
+              menuPosition={"fixed"}
+              styles={{
+                menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                control: (provided, state) => ({
+                  ...provided,
+                  paddingBlock: "0px",
+                  borderRadius: "8px",
+                  border: errors.category_of_mentoring_service
+                    ? "2px solid #ef4444"
+                    : "2px solid #737373",
+                  backgroundColor: "rgb(249 250 251)",
+                  "&::placeholder": {
                     color: errors.category_of_mentoring_service
                       ? "#ef4444"
-                      : "rgb(107 114 128)",
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                  }),
-                  multiValue: (provided) => ({
-                    ...provided,
-                    display: "inline-flex",
-                    alignItems: "center",
-                    backgroundColor: "white",
-                  }),
-                  multiValueRemove: (provided) => ({
-                    ...provided,
-                    display: "inline-flex",
-                    alignItems: "center",
-                  }),
-                }}
-                value={categoryOfMentoringServiceSelectedOptions}
-                options={categoryOfMentoringServiceOptions}
-                classNamePrefix="select"
-                className="basic-multi-select w-full text-start"
-                placeholder="Select a service"
-                name="category_of_mentoring_service"
-                onChange={(selectedOptions) => {
-                  if (selectedOptions && selectedOptions.length > 0) {
-                    setCategoryOfMentoringServiceSelectedOptions(
-                      selectedOptions
-                    );
-                    clearErrors("category_of_mentoring_service");
-                    setValue(
-                      "category_of_mentoring_service",
-                      selectedOptions.map((option) => option.value).join(", "),
-                      { shouldValidate: true }
-                    );
-                  } else {
-                    setCategoryOfMentoringServiceSelectedOptions([]);
-                    setValue("category_of_mentoring_service", "", {
-                      shouldValidate: true,
-                    });
-                    setError("category_of_mentoring_service", {
-                      type: "required",
-                      message: "Atleast one service name required",
-                    });
-                  }
-                }}
-              />
-              {errors.category_of_mentoring_service && (
-                <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                  {errors.category_of_mentoring_service.message}
-                </p>
-              )}
-            </div>
+                      : "currentColor",
+                  },
+                  display: "flex",
+                  alignItems: "start",
+                  overflowX: "auto",
+                  maxHeight: "33px",
+                  "&::-webkit-scrollbar": {
+                    display: "none",
+                  },
+                }),
+                valueContainer: (provided, state) => ({
+                  ...provided,
+                  overflow: "scroll",
+                  maxHeight: "43px",
+                  scrollbarWidth: "none",
+                }),
+                placeholder: (provided, state) => ({
+                  ...provided,
+                  color: errors.category_of_mentoring_service
+                    ? "#ef4444"
+                    : "rgb(107 114 128)",
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                }),
+                multiValue: (provided) => ({
+                  ...provided,
+                  display: "inline-flex",
+                  alignItems: "center",
+                  backgroundColor: "white",
+                }),
+                multiValueRemove: (provided) => ({
+                  ...provided,
+                  display: "inline-flex",
+                  alignItems: "center",
+                }),
+              }}
+              value={getValues("category_of_mentoring_service")
+                .split(", ")
+                .map((service) => ({
+                  value: service,
+                  label: service,
+                }))}
+              options={[
+                { value: "Incubation", label: "Incubation" },
+                { value: "Tokenomics", label: "Tokenomics" },
+                { value: "Branding", label: "Branding" },
+                { value: "Listing", label: "Listing" },
+                { value: "Raise", label: "Raise" },
+              ]}
+              classNamePrefix="select"
+              className="basic-multi-select w-full text-start"
+              placeholder="Select a service"
+              name="category_of_mentoring_service"
+              onChange={(selectedOptions) => {
+                if (selectedOptions && selectedOptions.length > 0) {
+                  setValue(
+                    "category_of_mentoring_service",
+                    selectedOptions.map((option) => option.value).join(", "),
+                    { shouldValidate: true }
+                  );
+                } else {
+                  setValue("category_of_mentoring_service", "", {
+                    shouldValidate: true,
+                  });
+                  setError("category_of_mentoring_service", {
+                    type: "required",
+                    message: "At least one service name required",
+                  });
+                }
+              }}
+            />
           ) : (
             <div className="flex flex-wrap gap-2 cursor-pointer py-1">
               {getValues("category_of_mentoring_service") &&
-
-                typeof getValues("category_of_mentoring_service") === "string" ? (
-
-                getValues("category_of_mentoring_service")
-                  .split(", ")
-                  .map((category, index) => (
-                    <span
-                      key={index}
-                      className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1"
-                    >
-                      {category}
-                    </span>
-                  ))
-              ) : (
-                <span className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1">
-                  Branding
-                </span>
-              )}
+              typeof getValues("category_of_mentoring_service") === "string"
+                ? getValues("category_of_mentoring_service")
+                    .split(", ")
+                    .map((service, index) => (
+                      <span
+                        key={index}
+                        className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1"
+                      >
+                        {service}
+                      </span>
+                    ))
+                : ""}
+            </div>
+          )}
+        </div>
+        <div className="relative group hover:bg-slate-50 rounded p-1 mb-2">
+          <div class="absolute right-2 top-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+            <img
+              src={editp}
+              class="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
+              alt="edit"
+              onClick={() => handleEditClick("reason_for_joining")}
+            />
+          </div>
+          <label className="block mb-1 text-xs font-semibold text-gray-500">
+            REASON FOR JOINING THIS PLATFORM
+          </label>
+          {edit.reason_for_joining ? (
+            <ReactSelect
+              isMulti
+              menuPortalTarget={document.body}
+              menuPosition={"fixed"}
+              styles={{
+                menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                control: (provided, state) => ({
+                  ...provided,
+                  paddingBlock: "0px",
+                  borderRadius: "8px",
+                  border: errors.reason_for_joining
+                    ? "2px solid #ef4444"
+                    : "2px solid #737373",
+                  backgroundColor: "rgb(249 250 251)",
+                  "&::placeholder": {
+                    color: errors.reason_for_joining
+                      ? "#ef4444"
+                      : "currentColor",
+                  },
+                  display: "flex",
+                  alignItems: "start",
+                  overflowX: "auto",
+                  maxHeight: "33px",
+                  "&::-webkit-scrollbar": {
+                    display: "none",
+                  },
+                }),
+                valueContainer: (provided, state) => ({
+                  ...provided,
+                  overflow: "scroll",
+                  maxHeight: "43px",
+                  scrollbarWidth: "none",
+                }),
+                placeholder: (provided, state) => ({
+                  ...provided,
+                  color: errors.reason_for_joining
+                    ? "#ef4444"
+                    : "rgb(107 114 128)",
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                }),
+                multiValue: (provided) => ({
+                  ...provided,
+                  display: "inline-flex",
+                  alignItems: "center",
+                  backgroundColor: "white",
+                }),
+                multiValueRemove: (provided) => ({
+                  ...provided,
+                  display: "inline-flex",
+                  alignItems: "center",
+                }),
+              }}
+              value={reasonOfJoiningSelectedOptions}
+              options={reasonOfJoiningOptions}
+              classNamePrefix="select"
+              className="basic-multi-select w-full text-start"
+              placeholder="Select your reasons to join this platform"
+              name="reason_for_joining"
+              onChange={(selectedOptions) => {
+                if (selectedOptions && selectedOptions.length > 0) {
+                  setReasonOfJoiningSelectedOptions(selectedOptions);
+                  clearErrors("reason_for_joining");
+                  setValue(
+                    "reason_for_joining",
+                    selectedOptions.map((option) => option.value).join(", "),
+                    { shouldValidate: true }
+                  );
+                } else {
+                  setReasonOfJoiningSelectedOptions([]);
+                  setValue("reason_for_joining", "", {
+                    shouldValidate: true,
+                  });
+                  setError("reason_for_joining", {
+                    type: "required",
+                    message: "Selecting a reason is required",
+                  });
+                }
+              }}
+            />
+          ) : (
+            <div className="flex flex-wrap gap-2 cursor-pointer py-1">
+              {getValues("reason_for_joining") &&
+              typeof getValues("reason_for_joining") === "string"
+                ? getValues("reason_for_joining")
+                    .split(", ")
+                    .map((reason, index) => (
+                      <span
+                        key={index}
+                        className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1"
+                      >
+                        {reason}
+                      </span>
+                    ))
+                : ""}
             </div>
           )}
         </div>
@@ -1063,39 +666,49 @@ const MentorEdit = () => {
               src={editp}
               className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
               alt="edit"
-              onClick={() => handleEditClick("icpHubOrSpoke")}
+              onClick={() => handleEditClick("icp_hub_or_spoke")}
             />
           </div>
-          <label className="block mb-2 text-xs font-semibold text-gray-500">
-            ARE YOU ICP HUB/SPOKE{" "}
+          <label className="block mb-1 text-xs font-semibold text-gray-500">
+            ARE YOU ICP HUB/SPOKE
           </label>
-          {edit.icpHubOrSpoke ? (
-            <div>
-              <select
-                {...register("icp_hub_or_spoke")}
-                value={tempData.icp_hub_or_spoke}
-                onChange={(e) => handleInputChange(e, "icp_hub_or_spoke")}
-                className="shadow appearance-none border rounded w-full py-1 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              >
-                <option className="text-lg" value="No">
-                  No
-                </option>
-                <option className="text-lg" value="Yes">
-                  Yes
-                </option>
-              </select>
-            </div>
+          {edit.icp_hub_or_spoke ? (
+            <Controller
+              name="icp_hub_or_spoke"
+              control={control}
+              render={({ field }) => (
+                <select
+                  {...field}
+                  id="icp_hub_or_spoke"
+                  value={getValues("icp_hub_or_spoke")}
+                  onChange={(e) =>
+                    setValue("icp_hub_or_spoke", e.target.value, {
+                      shouldValidate: true,
+                    })
+                  }
+                  className="shadow appearance-none border rounded w-full py-1 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                >
+                  <option className="text-lg" value="No">
+                    No
+                  </option>
+                  <option className="text-lg" value="Yes">
+                    Yes
+                  </option>
+                </select>
+              )}
+            />
           ) : (
             <div className="flex justify-between items-center cursor-pointer p-1">
-              <span>{getValues("icp_hub_or_spoke")} </span>
+              <span>{getValues("icp_hub_or_spoke")}</span>
             </div>
           )}
         </div>
+
         {watch("icp_hub_or_spoke") === "Yes" && (
-          <div className="relative z-0 group mb-6">
+        <div className="relative group hover:bg-slate-50 rounded p-1 mb-2">
             <div className="flex justify-between items-center">
               <label className="font-semibold text-xs text-gray-500 uppercase mb-1">
-                HUB OWNER{" "}
+                HUB OWNER
               </label>
               <img
                 src={editp}
@@ -1105,41 +718,42 @@ const MentorEdit = () => {
               />
             </div>
             {edit.hub_owner ? (
-              <div>
-                <select
-                  {...register("hub_owner")}
-                  value={tempData.hub_owner}
-                  onChange={(e) => handleInputChange(e, "hub_owner")}
-
-                  className={`bg-gray-50 border ${errors.hub_owner
-                      ? "border-red-500 placeholder:text-red-500"
-                      : "border-[#737373]"
-                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1.5`}
-
-                >
-                  <option className="text-lg font-medium" value="">
-                    Select your ICP Hub
+              <select
+                {...register("hub_owner")}
+                value={getValues("hub_owner")}
+                onChange={(e) =>
+                  setValue("hub_owner", e.target.value, {
+                    shouldValidate: true,
+                  })
+                }
+                className={`bg-gray-50 border ${
+                  errors.hub_owner
+                    ? "border-red-500 placeholder:text-red-500"
+                    : "border-[#737373]"
+                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1.5`}
+              >
+                <option className="text-lg font-medium" value="">
+                  Select your ICP Hub
+                </option>
+                {getAllIcpHubs?.map((hub) => (
+                  <option
+                    key={hub.id}
+                    value={`${hub.name}, ${hub.region}`}
+                    className="text-lg font-medium"
+                  >
+                    {hub.name}, {hub.region}
                   </option>
-                  {getAllIcpHubs?.map((hub) => (
-                    <option
-                      key={hub.id}
-                      value={`${hub.name} ,${hub.region}`}
-                      className="text-lg font-medium"
-                    >
-                      {hub.name}, {hub.region}
-                    </option>
-                  ))}
-                </select>
-                {errors.hub_owner && (
-                  <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                    {errors.hub_owner.message}
-                  </p>
-                )}
-              </div>
+                ))}
+              </select>
             ) : (
               <div className="flex justify-between items-center cursor-pointer py-1">
-                <span className="mr-2 text-sm">{getValues("hub_owner")} </span>
+                <span className="mr-2 text-sm">{getValues("hub_owner")}</span>
               </div>
+            )}
+            {errors.hub_owner && (
+              <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                {errors.hub_owner.message}
+              </p>
             )}
           </div>
         )}
@@ -1150,34 +764,34 @@ const MentorEdit = () => {
               src={editp}
               className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
               alt="edit"
-              onClick={() => handleEditClick("websiteLink")}
+              onClick={() => handleEditClick("website")}
             />
           </div>
-
-          <label className="block mb-2 text-xs font-semibold text-gray-500">
+          <label className="block mb-1 text-xs font-semibold text-gray-500">
             WEBSITE LINK
           </label>
-          {edit.websiteLink ? (
-            <div>
-              <input
-                {...register("mentor_website_url")}
-                type="url"
-                value={tempData.mentor_website_url}
-                onChange={(e) => handleInputChange(e, "mentor_website_url")}
-                name="mentor_website_url"
-                placeholder="Enter your website url"
-                className="block w-full border border-gray-300 rounded-md p-[2px]"
-              />
-              {errors?.mentor_website_url && (
-                <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-                  {errors?.mentor_website_url?.message}
-                </span>
-              )}
-            </div>
+          {edit.website ? (
+            <input
+              {...register("website")}
+              type="url"
+              value={getValues("website")}
+              onChange={(e) =>
+                setValue("website", e.target.value, {
+                  shouldValidate: true,
+                })
+              }
+              placeholder="Enter your website URL"
+              className="block w-full border border-gray-300 rounded-md p-[2px]"
+            />
           ) : (
-            <div className="flex justify-between items-center cursor-pointer p-1">
-              <span>{getValues("mentor_website_url")} </span>
+            <div className="flex justify-between items-center cursor-pointer p-1 text-sm">
+              <span>{getValues("website")}</span>
             </div>
+          )}
+          {errors.website && (
+            <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+              {errors.website.message}
+            </span>
           )}
         </div>
 
@@ -1187,35 +801,35 @@ const MentorEdit = () => {
               src={editp}
               className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
               alt="edit"
-              onClick={() => handleEditClick("mentoringYears")}
+              onClick={() => handleEditClick("years_of_mentoring")}
             />
           </div>
-
-          <label className="block mb-2 text-xs font-semibold text-gray-500">
-            YEARS OF MENTORING <span className="text-red-500 ml-2">*</span>{" "}
+          <label className="block mb-1 text-xs font-semibold text-gray-500">
+            YEARS OF MENTORING <span className="text-red-500 ml-2">*</span>
           </label>
-          {edit.mentoringYears ? (
-            <div>
-              <input
-                {...register("years_of_mentoring")}
-                type="number"
-                name="years_of_mentoring"
-                placeholder="Enter your linkedin url"
-                value={tempData.years_of_mentoring}
-                onChange={(e) => handleInputChange(e, "years_of_mentoring")}
-                className="block w-full border border-gray-300 rounded-md p-[2px]"
-                required
-              />
-              {errors?.years_of_mentoring && (
-                <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-                  {errors?.years_of_mentoring?.message}
-                </span>
-              )}
-            </div>
+          {edit.years_of_mentoring ? (
+            <input
+              {...register("years_of_mentoring")}
+              type="number"
+              value={getValues("years_of_mentoring")}
+              onChange={(e) =>
+                setValue("years_of_mentoring", e.target.value, {
+                  shouldValidate: true,
+                })
+              }
+              placeholder="Enter your years of mentoring"
+              className="block w-full border border-gray-300 rounded-md p-[2px]"
+              required
+            />
           ) : (
             <div className="flex justify-between items-center cursor-pointer p-1">
-              <span>{getValues("years_of_mentoring")} </span>
+              <span>{getValues("years_of_mentoring")}</span>
             </div>
+          )}
+          {errors.years_of_mentoring && (
+            <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+              {errors.years_of_mentoring.message}
+            </span>
           )}
         </div>
 
@@ -1225,37 +839,38 @@ const MentorEdit = () => {
               src={editp}
               className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
               alt="edit"
-              onClick={() => handleEditClick("linkedinLink")}
+              onClick={() => handleEditClick("mentor_linkedin_url")}
             />
           </div>
-
-          <label className="block mb-2 text-xs font-semibold text-gray-500">
-            LINKEDIN LINK <span className="text-red-500 ml-2">*</span>
+          <label className="block mb-1 text-xs font-semibold text-gray-500">
+           LINKS <span className="text-red-500 ml-2">*</span>
           </label>
-          {edit.linkedinLink ? (
-            <div>
-              <input
-                {...register("mentor_linkedin_url")}
-                type="url"
-                value={tempData.mentor_linkedin_url}
-                onChange={(e) => handleInputChange(e, "mentor_linkedin_url")}
-                name="mentor_linkedin_url"
-                placeholder="Enter your linkedin url"
-                className="block w-full border border-gray-300 rounded-md p-[2px]"
-                required
-              />
-              {errors?.mentor_linkedin_url && (
-                <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-                  {errors?.mentor_linkedin_url?.message}
-                </span>
-              )}
-            </div>
+          {edit.mentor_linkedin_url ? (
+            <input
+              {...register("mentor_linkedin_url")}
+              type="url"
+              value={getValues("mentor_linkedin_url")}
+              onChange={(e) =>
+                setValue("mentor_linkedin_url", e.target.value, {
+                  shouldValidate: true,
+                })
+              }
+              placeholder="Enter your LinkedIn URL"
+              className="block w-full border border-gray-300 rounded-md p-[2px]"
+              required
+            />
           ) : (
             <div className="flex justify-between items-center cursor-pointer p-1">
-              <span>{getValues("mentor_linkedin_url")} </span>
+              <span>{getValues("mentor_linkedin_url")}</span>
             </div>
           )}
+          {errors.mentor_linkedin_url && (
+            <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+              {errors.mentor_linkedin_url.message}
+            </span>
+          )}
         </div>
+
         {Object.values(edit).some((value) => value) && (
           <div className="flex justify-end gap-4 mt-4">
             <button
