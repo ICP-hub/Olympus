@@ -9,7 +9,6 @@ import {
 import SpotLight from "./SpotLight";
 import ImpactTool from "./ImpactTool";
 import ProjectJobCard from "../Project/ProjectDetails/ProjectJobCard";
-import ment from "../../../assets/images/ment.jpg";
 import InvestorCard from "./InvestorCard";
 import MentorCard from "./MentorCard";
 import RegisterCard from "./RegisterCard";

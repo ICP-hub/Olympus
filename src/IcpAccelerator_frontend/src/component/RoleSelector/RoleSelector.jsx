@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from "react";
-import astro1 from "../../../assets/images/astro1.png";
 import Footer from "../Footer/Footer";
 import { useDispatch, useSelector,shallowEqual} from "react-redux";
 import { rolesHandlerRequest } from "../StateManagement/Redux/Reducers/RoleReducer";
@@ -110,7 +109,7 @@ const RoleSelector = React.memo(() => {
             </div>
             <div className="relative hidden md:flex justify-center items-center lg:-top-20 md:-top-16 sm:-top-12 -top-10 left-0">
               <img
-                src={astro1}
+                src=''
                 alt="Astronaut"
                 className={`z-20 lg:w-[500px] md:w-[450px] sm:w-[350px] xxs:w-[300px] xxs:-top-[170px] w-[250px] relative top-4 lg:top-16 md:-top-16  sm:-top-36 sm:left-12 left-8 md:h-[300px] transition-transform duration-1000 ease-in-out transform ${translate}`}
               />

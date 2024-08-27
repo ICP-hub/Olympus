@@ -1,5 +1,4 @@
 import React from 'react';
-import ment from "../../../assets/images/ment.jpg";
 import inv from "../../../assets/images/inv.jpeg";
 import uint8ArrayToBase64 from '../Utils/uint8ArrayToBase64';
 import { useNavigate } from 'react-router-dom';

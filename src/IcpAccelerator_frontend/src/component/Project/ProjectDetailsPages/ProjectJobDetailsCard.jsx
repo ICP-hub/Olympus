@@ -9,7 +9,6 @@ import toast from "react-hot-toast";
 import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 import { formatFullDateFromBigInt } from "../../Utils/formatter/formatDateFromBigInt";
 import NoDataCard from "../../Mentors/Event/NoDataCard";
-import ment from "../../../../assets/images/ment.jpg";
 import NoData from "../../../../assets/images/file_not_found.png";
 import AddJobsModal from "../../../models/AddJobsModal";
 import DeleteModel from "../../../models/DeleteModel";
@@ -181,7 +180,7 @@ const ProjectJobDetailsCard = ({ data, image, website, tags, country }) => {
             let job_link = card?.job_data?.link ?? "";
             let job_project_logo = card?.project_logo
               ? uint8ArrayToBase64(card?.project_logo[0])
-              : ment;
+              : '';
             let job_project_name = card?.project_name ?? "";
             let job_project_desc = card?.project_desc ?? "";
             let job_uid = card?.uid ?? "";

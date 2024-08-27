@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom'
 import { linkedInSvg, twitterSvg } from "../Utils/Data/SvgData";
-import ment from "../../../assets/images/ment.jpg";
 import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
 import { formatFullDateFromBigInt } from "../Utils/formatter/formatDateFromBigInt";
 
@@ -16,7 +15,7 @@ function ProjectCard({ data }) {
   const navigate = useNavigate();
 
   console.log("data", data)
-  let image = data?.image ? uint8ArrayToBase64(data?.image) : ment;
+  let image = data?.image ? uint8ArrayToBase64(data?.image) : '';
   let title = data?.name ?? 'builder.io';
   let tags = data?.area_of_focus.length > 0 ? data?.area_of_focus[0].split(',') : null;
   let country = data?.country_of_project.length > 0 ? data?.country_of_project[0].split(',')[1] : null;

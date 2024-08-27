@@ -1,8 +1,6 @@
 import React from "react";
 // import MeWallet from "../../../../assets/WalletLogo/MeWallet.png";
-import BitfinityWallet from "../../../../assets/WalletLogo/BitfinityWallet.png";
-import IcpWallet from "../../../../assets/WalletLogo/IcpWallet.png";
-import PlugWallet from "../../../../assets/WalletLogo/PlugWallet.png";
+
 
 export const shareSvgIcon = (
   <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">

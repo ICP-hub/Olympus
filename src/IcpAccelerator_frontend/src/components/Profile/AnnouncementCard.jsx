@@ -5,7 +5,6 @@
 // import { Swiper, SwiperSlide } from "swiper/react";
 // import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
 // import { formatFullDateFromBigInt } from "../Utils/formatter/formatDateFromBigInt";
-// import ment from "../../../assets/images/ment.jpg";
 // import AnnouncementModal from "../Modals/AnnouncementModal";
 // import NoCardData from "./NoCardData";
 // import DeleteModel from "../../models/DeleteModel";
@@ -280,7 +279,7 @@
 //             card?.announcement_data?.announcement_description ?? "ghi";
 //           let ann_project_logo = card?.project_logo
 //             ? uint8ArrayToBase64(card?.project_logo[0])
-//             : ment;
+//             : '';
 //           let ann_project_name = card?.project_name ?? "jkl";
 //           let ann_project_desc = card?.project_desc ?? "mno";
 //           let announcement_id = card?.announcement_id ?? "pqr";
@@ -366,7 +365,6 @@ import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
 import { formatFullDateFromBigInt } from "../Utils/formatter/formatDateFromBigInt";
-import ment from "../../../assets/images/ment.jpg";
 import AnnouncementModal from "../Modals/AnnouncementModal";
 import NoCardData from "./NoCardData";
 import DeleteModel from "../../models/DeleteModel";
@@ -552,7 +550,7 @@ const AnnouncementCard = ({ data }) => {
             card?.announcement_data?.announcement_description ?? "ghi";
           let ann_project_logo = card?.project_logo
             ? uint8ArrayToBase64(card?.project_logo[0])
-            : ment;
+            : '';
           let ann_project_name = card?.project_name ?? "jkl";
           let ann_project_desc = card?.project_desc ?? "mno";
           let announcement_id = card?.announcement_id ?? "pqr";

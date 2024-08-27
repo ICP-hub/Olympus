@@ -211,9 +211,9 @@ export default function ProjectAssociationFilter({
 
         }
       }
+      console.log("data", result);
 
       if (result) {
-        console.log("data", result);
         console.log(`result-in-${selectedType.value}`, result);
         setAssociateData(result);
      handleClose();

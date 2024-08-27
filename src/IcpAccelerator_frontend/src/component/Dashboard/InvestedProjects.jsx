@@ -1,5 +1,4 @@
 import React from 'react'
-import ment from "../../../assets/images/ment.jpg"
 import inv from "../../../assets/images/inv.jpeg"
 
 

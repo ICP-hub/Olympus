@@ -21,7 +21,7 @@ export default function fetchRequestAssociation(activeTab, selectedStatus, role,
                                 api_data = actor.get_all_offers_which_are_pending_for_project_from_mentor(project_id);
                                 break;
                             case 'to-investor':
-                                api_data = actor.get_pending_request_for_investor_sent_by_project(principal);
+                                api_data = actor.get_pending_offers_for_project_received_from_investor(project_id);
                                 break;
                             case 'from-investor':
                                 api_data = actor.get_all_offers_which_are_pending_for_project_from_investor(project_id);

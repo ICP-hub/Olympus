@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import ment from "../../../../../IcpAccelerator_frontend/assets/images/ment.jpg";
 import project from "../../../../../IcpAccelerator_frontend/assets/images/project.png";
 import p2 from "../../../../../IcpAccelerator_frontend/assets/Founders/p2.png";
 import { useEffect } from "react";

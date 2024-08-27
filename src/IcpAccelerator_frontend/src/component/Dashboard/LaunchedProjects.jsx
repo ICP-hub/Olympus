@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import ment from "../../../assets/images/ment.jpg";
 import girl from "../../../assets/images/girl.jpeg";
 import hover from "../../../assets/images/1.png";
 import RegisterCard from "./RegisterCard";
@@ -76,7 +75,7 @@ const LaunchedProjects = () => {
     {
       projectName: "Awesome Project",
       projectId: null,
-      projectImage: ment,
+      projectImage: '',
       userImage: girl,
       principalId: "user123",
       projectDescription: "This is an amazing project focused on innovation.",
@@ -85,7 +84,7 @@ const LaunchedProjects = () => {
     {
       projectName: "Creative Initiative",
       projectId: null,
-      projectImage: ment,
+      projectImage: '',
       userImage: girl,
       principalId: "user456",
       projectDescription:
@@ -95,7 +94,7 @@ const LaunchedProjects = () => {
     {
       projectName: "Community Outreach",
       projectId: null,
-      projectImage: ment,
+      projectImage: '',
       userImage: girl,
       principalId: "user789",
       projectDescription:

@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import ment from "../../../assets/images/ment.jpg";
 import girl from "../../../assets/images/girl.jpeg";
 import hover from "../../../assets/images/projects.png";
 import RegisterCard from "./RegisterCard";
