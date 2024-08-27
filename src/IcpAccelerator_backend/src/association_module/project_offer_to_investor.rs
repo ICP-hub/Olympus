@@ -47,24 +47,14 @@ pub struct OfferToSendToInvestor {
 
 pub fn store_request_sent_by_project_to_investor(project_id: String, offer: OfferToInvestor) {
     mutate_state(|store| {
-        store
-            .offers_offered_by_me
-            .get(&project_id)
-            .map_or_else(Vec::new, |candid_res| candid_res.0)
-            .push(offer);
+        let project_id = project_id.clone(); 
+        if let Some(mut store_request) = store.offers_offered_by_me.get(&project_id) {
+            store_request.0.push(offer);
+        } else {
+            store.offers_offered_by_me.insert(project_id, Candid(vec![offer]));
+        }
     });
 }
-
-// #[query]
-// pub fn get_all_sent_request() -> Vec<OfferToInvestor> {
-//     OFFERS_OFFERED_BY_ME.with(|state| {
-//         state
-//             .borrow()
-//             .get(&caller())
-//             .cloned()
-//             .unwrap_or_else(Vec::new)
-//     })
-// }
 
 pub fn notify_investor_with_offer(mentor_id: Principal, offer: OfferToSendToInvestor) {
     mutate_state(|state| {
@@ -78,10 +68,6 @@ pub fn notify_investor_with_offer(mentor_id: Principal, offer: OfferToSendToInve
     });
 }
 
-// #[query]
-// pub fn get_all_investor_notification(id: Principal) -> Vec<OfferToSendToInvestor> {
-//     INVESTOR_ALERTS.with(|state| state.borrow().get(&id).cloned().unwrap_or_else(Vec::new))
-// }
 
 #[update]
 pub async fn send_offer_to_investor_by_project(
@@ -89,12 +75,6 @@ pub async fn send_offer_to_investor_by_project(
     msg: String,
     project_id: String,
 ) -> String {
-    // //let mentor = get_mentor_by_principal(mentor_id).expect("mentor doesn't exist");
-    // let (investor_profile, user_info) = crate::get_vc_info_by_principal(investor_id)
-    // .expect("Investor does not exist")
-    // .clone();
-
-
     let mut offer_exists = false;  // Flag to check if an offer exists
 
     let _ = read_state(|state| {

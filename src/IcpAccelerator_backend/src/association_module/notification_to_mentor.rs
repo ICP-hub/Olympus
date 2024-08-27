@@ -47,13 +47,16 @@ pub struct OfferToSendToMentor {
 
 pub fn store_request_sent_by_project(offer: OfferToMentor) {
     mutate_state(|store| {
-        store
-            .my_sent_notifications
-            .get(&StoredPrincipal(caller()))
-            .map_or_else(Vec::new, |offer_res| offer_res.0)
-            .push(offer);
+        let caller_principal = StoredPrincipal(caller());
+
+        if let Some(mut offers) = store.my_sent_notifications.get(&caller_principal) {
+            offers.0.push(offer);
+        } else {
+            store.my_sent_notifications.insert(caller_principal, Candid(vec![offer]));
+        }
     });
 }
+
 
 #[query]
 pub fn get_all_sent_request() -> Vec<OfferToMentor> {
