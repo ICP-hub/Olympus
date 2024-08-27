@@ -173,8 +173,8 @@ type MentorProfile = record {
   preferred_icp_hub : opt text;
   website : opt text;
   links : opt vec SocialLinks_2;
-  multichain : opt text;
-  area_of_expertise : text;
+  multichain : opt vec text;
+  area_of_expertise : vec text;
   category_of_mentoring_service : text;
   years_of_mentoring : text;
   existing_icp_project_porfolio : opt text;
