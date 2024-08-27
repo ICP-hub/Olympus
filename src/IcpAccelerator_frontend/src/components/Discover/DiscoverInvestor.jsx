@@ -23,6 +23,8 @@ const DiscoverInvestor = () => {
   const [openDetail, setOpenDetail] = useState(false);
   const [isAddInvestorModalOpen, setIsAddInvestorModalOpen] = useState(false);
   const [investorId, setInvestorId] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const isAuthenticated = useSelector(
     (currState) => currState.internet.isAuthenticated
   );
@@ -51,6 +53,7 @@ const DiscoverInvestor = () => {
   };
 
   const handleAddInvestor = async ({ message }) => {
+    setIsSubmitting(true);
     console.log("add a investor");
     if (actor && investorId) {
       let investor_id = Principal.fromText(investorId);
@@ -63,15 +66,18 @@ const DiscoverInvestor = () => {
           console.log("result-in-send_offer_to_investor", result);
           if (result) {
             handleInvestorCloseModal();
-            toast.success("offer sent to mentor successfully");
+            setIsSubmitting(false);
+            toast.success(result);
           } else {
             handleInvestorCloseModal();
+            setIsSubmitting(false);
             toast.error("something got wrong");
           }
         })
         .catch((error) => {
           console.log("error-in-send_offer_to_investor", error);
           handleInvestorCloseModal();
+          setIsSubmitting(false);
           toast.error("something got wrong");
         });
     }
@@ -79,6 +85,7 @@ const DiscoverInvestor = () => {
 
   console.log(".............Investor", allInvestorData);
   const getAllInvestor = async (caller, isMounted) => {
+    setIsSubmitting(true);
     await caller
       .list_all_vcs_with_pagination({
         page_size: itemsPerPage,
@@ -98,9 +105,11 @@ const DiscoverInvestor = () => {
               ? Object.values(result.user_data)
               : [];
             setAllInvestorData(InvestorData);
+            setIsSubmitting(false);
             setUserData(userData);
           } else {
             setAllInvestorData([]);
+            setIsSubmitting(false);
             setUserData([]);
             // Set to an empty array if no data
           }
@@ -111,6 +120,7 @@ const DiscoverInvestor = () => {
         if (isMounted) {
           setAllInvestorData([]);
           setUserData([]);
+          setIsSubmitting(false);
           setIsLoading(false);
           console.log("error-in-get-all-investor", error);
         }
@@ -173,7 +183,7 @@ const DiscoverInvestor = () => {
       ) : allInvestorData.length > 0  ? (
         allInvestorData.map((investorArray, index) => {
           console.log("investorArray", investorArray);
-          // const investor_id = investorArray[0]?.toText();
+          const investor_id = investorArray[0]?.toText();
           const investor = investorArray[1];
           const user = investorArray[2];
       
@@ -294,6 +304,8 @@ const DiscoverInvestor = () => {
           title={"Associate Investor"}
           onClose={handleInvestorCloseModal}
           onSubmitHandler={handleAddInvestor}
+          isSubmitting={isSubmitting}
+
         />
       )}
       {openDetail && (

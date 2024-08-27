@@ -677,7 +677,7 @@ service : {
   get_all_offers_which_are_pending_for_investor : () -> (
       vec OfferToProjectByInvestor,
     ) query;
-  get_all_offers_which_are_pending_for_mentor_via_mentor : () -> (
+  get_all_offers_which_are_pending_for_mentor_via_mentor : (principal) -> (
       vec OfferToProject,
     ) query;
   get_all_offers_which_are_pending_for_project_from_investor : (text) -> (
@@ -728,7 +728,7 @@ service : {
       vec OfferToSendToProject,
     ) query;
   get_all_sent_request : () -> (vec OfferToMentor) query;
-  get_all_sent_request_for_mentor : () -> (vec OfferToProject) query;
+  get_all_sent_request_for_mentor : (principal) -> (vec OfferToProject) query;
   get_all_sent_request_from_investor_to_project : () -> (
       vec OfferToProject,
     ) query;
@@ -745,7 +745,7 @@ service : {
   get_asset_canister : () -> (principal) query;
   get_canister_status : () -> (Result_4);
   get_cohort : (text) -> (CohortDetails) query;
-  get_cohorts_by_principal : () -> (vec CohortDetails) query;
+  get_cohorts_by_principal : (principal) -> (vec CohortDetails) query;
   get_data_checking : () -> (text) query;
   get_declined_money_requests : (text) -> (vec ProjectNotification) query;
   get_declined_request_for_investor : () -> (vec OfferToSendToMentor) query;

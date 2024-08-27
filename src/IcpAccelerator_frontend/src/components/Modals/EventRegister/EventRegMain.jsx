@@ -89,17 +89,16 @@ const EventRegMain = ({ modalOpen, setModalOpen }) => {
       
       // HANDLE SUCCESS OR ERROR RESPONSE
       if (result && result.Ok) {
-        if (
-          result.startsWith("You are not privileged to create a cohort ,Please Register as Mentor ...") ||
-          result.startsWith("Cohort Banner is already uploaded")
-        ) {
-          toast.error(result); // SHOW ERROR TOAST WITH RETURNED MESSAGE
-          setModalOpen(false);
-        } else {
-          toast.success("Cohort registered successfully!"); // SHOW SUCCESS MESSAGE
-          setModalOpen(false);
-        }
-      }
+        toast.success(result); 
+        setModalOpen(false);
+        window.location.reload();
+     } else {
+        toast.error(result.Err || "Error creating cohort");
+        setModalOpen(false)
+        window.location.reload();
+
+     }
+     
     } catch (error) {
       // HANDLE EXCEPTION
       toast.error("Error creating cohort");

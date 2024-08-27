@@ -95,8 +95,9 @@ const DiscoverProject = () => {
   const [isAddProjectModalOpenAsInvestor, setIsAddProjectModalOpenAsInvestor] =
     useState(false);
 
-  const handleProjectCloseModalAsInvestor = () =>
+  const handleProjectCloseModalAsInvestor = () =>{
     setIsAddProjectModalOpenAsInvestor(false);
+  }
   const handleProjectOpenModalAsInvestor = (val) => {
     setListProjectId(val);
     setIsAddProjectModalOpenAsInvestor(true);
@@ -286,13 +287,13 @@ const DiscoverProject = () => {
                   userCurrentRoleStatusActiveRole === "vc" ? (
                     <button
                       data-tooltip-id="registerTip"
-                      onClick={() =>
-                        userCurrentRoleStatusActiveRole === "mentor"
-                          ? handleProjectOpenModal(project_id)
-                            ? userCurrentRoleStatusActiveRole === "vc"
-                            : handleProjectOpenModalAsInvestor(project_id)
-                          : ""
-                      }
+                      onClick={() => {
+                        if (userCurrentRoleStatusActiveRole === "mentor") {
+                          handleProjectOpenModal(project_id);
+                        } else if (userCurrentRoleStatusActiveRole === "vc") {
+                          handleProjectOpenModalAsInvestor(project_id);
+                        }
+                      }}
                     >
                       <RiSendPlaneLine />
                       <Tooltip
@@ -346,7 +347,7 @@ const DiscoverProject = () => {
       ) : (
         <div>No Data Available</div>
       )}
-      {userCurrentRoleStatusActiveRole === "mentor" &&
+      {
         isAddProjectModalOpen && (
           <AddAMentorRequestModal
             title={"Associate Project"}
@@ -355,10 +356,10 @@ const DiscoverProject = () => {
             isSubmitting={isSubmitting}
           />
         )}
-      {userCurrentRoleStatusActiveRole === "vc" &&
+      {
         isAddProjectModalOpenAsInvestor && (
           <AddAMentorRequestModal
-            title={"Associate Project I"}
+            title={"Associate Project"}
             onClose={handleProjectCloseModalAsInvestor}
             onSubmitHandler={handleAddProjectAsInvestor}
             isSubmitting={isSubmitting}

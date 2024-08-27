@@ -317,7 +317,7 @@ const mergedData = mergeData(userCurrentRoleStatus, roledata);
         );
         cardsShown++;
         elements.push(
-          <div className="border-2 rounded-lg text-center min-w-[220px] max-w-[350px]" key="mentor-vc-default-card">
+          <div className="border-2 rounded-lg text-center w-3/4 h-60" key="mentor-vc-default-card">
             <div className="p-3 flex justify-center mt-5">
               <AvatarGroup max={4}>
                 <Avatar alt="Mentor" src={mentor} />
@@ -353,7 +353,7 @@ const mergedData = mergeData(userCurrentRoleStatus, roledata);
         );
         cardsShown++;
         elements.push(
-          <div className="border-2 rounded-lg text-center min-w-[220px] max-w-[350px]" key="vc-approved-card">
+          <div className="border-2 rounded-lg text-center w3/4 h-60" key="vc-approved-card">
             <div className="p-3 flex justify-center mt-5">
               <AvatarGroup max={4}>
                 <Avatar alt="Mentor" src={mentor} />
