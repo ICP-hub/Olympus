@@ -32,6 +32,9 @@ const AssociationDetailsProjectCard = ({
   const [isDeclineInvestorOfferModal, setIsDeclineInvestorOfferModal] =
     useState(null);
   const [isSubmitting, setIsSubmitting] = useState(null);
+  const projectFullData = useSelector(
+    (currState) => currState.projectData.data
+  );
   const projectId = projectFullData?.[0]?.[0]?.uid;
   console.log("user", user);
   let mentorImage = user?.mentor_info?.mentor_image
@@ -46,28 +49,28 @@ const AssociationDetailsProjectCard = ({
   let mentorId = user?.mentor_info?.mentor_id ?? "Mentor ID not available";
 
   let userAreaOfInterest =
-    user?.user_data?.area_of_interest ?? "Area of Interest not available";
+    user?.mentor_info?.user_data?.area_of_interest ?? "Area of Interest not available";
 
-  let userBio = user?.user_data?.bio[0] ?? "Bio not available";
+  let userBio = user?.mentor_info?.user_data?.bio[0] ?? "Bio not available";
 
-  let userCountry = user?.user_data?.country ?? "Country not available";
+  let userCountry = user?.mentor_info?.user_data?.country ?? "Country not available";
 
-  let userEmail = user?.user_data?.email[0] ?? "email@example.com";
+  let userEmail = user?.mentor_info?.user_data?.email[0] ?? "email@example.com";
 
   let openchatUsername =
-    user?.user_data?.openchat_username[0] ?? "OpenChat Username not available";
+    user?.mentor_info?.user_data?.openchat_username[0] ?? "OpenChat Username not available";
 
-  let profilePicture = user?.user_data?.profile_picture[0]
-    ? uint8ArrayToBase64(user?.user_data?.profile_picture[0])
+  let profilePicture = user?.mentor_info?.user_data?.profile_picture[0]
+    ? uint8ArrayToBase64(user?.mentor_info?.user_data?.profile_picture[0])
     : "../../../assets/Logo/DefaultProfilePicture.png";
 
   let reasonToJoin =
-    user?.user_data?.reason_to_join[0] ?? "Reason to join not available";
+    user?.mentor_info?.user_data?.reason_to_join[0] ?? "Reason to join not available";
 
-  let userTypeOfProfile = user?.user_data?.type_of_profile[0] ?? "individual";
+  let userTypeOfProfile = user?.mentor_info?.user_data?.type_of_profile[0] ?? "individual";
 
   let socialLinks =
-    user?.user_data?.social_links[0]?.link ?? "No social links available";
+    user?.mentor_info?.user_data?.social_links[0]?.link ?? "No social links available";
 
   let offer = user?.offer ?? "Offer not available";
 

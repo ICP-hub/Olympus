@@ -117,9 +117,12 @@ const MentorSignupMain = ({ }) => {
           ) {
             toast.error(result); // Show error toast with the returned message
             setModalOpen(false);
+            window.location.reload();
           } else {
             toast.success("Mentor registered successfully!"); // Show success message
             setModalOpen(false)
+            window.location.reload();
+
           }
         });
       } catch (error) {

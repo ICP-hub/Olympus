@@ -16,10 +16,12 @@ import { useSelector } from "react-redux";
 import { Principal } from "@dfinity/principal";
 import AssociationDetailsProjectCard from "./AssociationDetailsProjectCard";
 import AssociationDetailsCard from "./AssociationDetailsCard";
+import AssociationDetailsInvestorCard from "./AssociationDetailsInvestorCard";
 
 // Memoize AssociationDetailsCard and AssociationDetailsProjectCard
 const MemoizedAssociationDetailsCard = React.memo(AssociationDetailsCard);
 const MemoizedAssociationDetailsProjectCard = React.memo(AssociationDetailsProjectCard);
+const MemoizedAssociationDetailsInvestorCard = React.memo(AssociationDetailsInvestorCard);
 
 
 
@@ -123,7 +125,11 @@ const AssociationRequestCard = () => {
               activeTabData={activeTabData}
             />
           ) : userCurrentRoleStatusActiveRole === "vc" ? (
-            ""
+            <MemoizedAssociationDetailsInvestorCard
+            user={user}
+            index={index}
+            selectedTypeData={selectedTypeData}
+            activeTabData={activeTabData}/>
           ) : (
             ""
           )}

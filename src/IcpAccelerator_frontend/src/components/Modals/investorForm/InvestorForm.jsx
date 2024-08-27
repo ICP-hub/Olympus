@@ -169,9 +169,11 @@ const InvestorForm = ({ isOpen }) => {
           ) {
             toast.error(result); // SHOW ERROR TOAST WITH RETURNED MESSAGE
             setModalOpen(false);
+            window.location.reload();
           } else {
             toast.success("Investor registered successfully!"); // SHOW SUCCESS MESSAGE
             setModalOpen(false);
+            window.location.reload();
           }
         });
       } catch (error) {

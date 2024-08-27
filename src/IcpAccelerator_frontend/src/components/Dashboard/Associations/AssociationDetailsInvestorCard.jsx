@@ -13,7 +13,7 @@ import DeclineOfferModal from "../../../models/DeclineOfferModal";
 import { useSelector } from "react-redux";
 import timestampAgo from "../../Utils/navigationHelper/timeStampAgo";
 
-const AssociationDetailsCard = ({
+const AssociationDetailsInvestorCard = ({
   user,
   index,
   selectedTypeData,
@@ -87,16 +87,15 @@ const AssociationDetailsCard = ({
   let senderPrincipal = user?.sender_principal ?? "Principal not available";
 
   let sentAt = user?.sent_at ?? 0n;
-  // POST API HANDLER TO SELF-REJECT A REQUEST WHERE MENTOR APPROCHES PROJECT
-  const handleSelfReject = async (offer_id) => {
+
+ // POST API HANDLER TO SELF-REJECT A REQUEST WHERE INVESTOR APPROCHES PROJECT
+ const handleSelfReject = async (offerDataId) => {
     try {
-      const result = await actor.self_decline_request_from_mentor_project(
-        offer_id
-      );
-      console.log(`result-in-self_decline_request_for_mentor`, result);
-      // fetchPendingRequestFromMentorToProject();
+      const result = await actor.self_decline_request_from_investor_to_project(offerDataId);
+      console.log(`result-in-self_decline_request_from_investor_to_project`, result);
+    //   fetchPendingRequestFromInvestorToProject();
     } catch (error) {
-      console.log(`error-in-self_decline_request_for_mentor`, error);
+      console.log(`error-in-self_decline_request_from_investor_to_project`, error);
     }
   };
   const handleAcceptModalOpenHandler = (val) => {
@@ -115,44 +114,44 @@ const AssociationDetailsCard = ({
     setOfferDataId(val);
     setIsDeclineOfferModal(true);
   };
-  // POST API HANDLER TO APPROVE THE PENDING REQUEST BY MENTOR WHERE PROJECT APPROCHES MENTOR
+
+   // POST API HANDLER TO APPROVE THE PENDING REQUEST BY INVESTOR WHERE PROJECT APPROCHES INVESTOR
   const handleAcceptOffer = async ({ message }) => {
     setIsSubmitting(true);
     try {
-      const result = await actor.accept_offer_from_project_to_mentor(
+      const result = await actor.accept_offer_from_project_to_investor(
         offerDataId,
         message
       );
-      console.log(`result-in-accept_offer_of_project`, result);
+      console.log(`result-in-accept_offer_from_project_to_investor`, result);
       handleAcceptModalCloseHandler();
-      // fetchPendingRequestFromProjectToMentor();
+    //   fetchPendingRequestFromProjectToInvestor();
       setIsSubmitting(false);
     } catch (error) {
-      console.log(`error-in-accept_offer_of_project`, error);
+      console.log(`error-in-accept_offer_from_project_to_investor`, error);
       handleAcceptModalCloseHandler();
       setIsSubmitting(false);
     }
   };
 
-  // POST API HANDLER TO DECLINE THE PENDING REQUEST BY MENTOR WHERE PROJECT APPROCHES MENTOR
+  // POST API HANDLER TO DECLINE THE PENDING REQUEST BY INVESTOR WHERE PROJECT APPROCHES INVESTOR
   const handleDeclineOffer = async ({ message }) => {
-    setIsSubmitting(true);
+    setIsSubmitting(true);   
     try {
-      const result = await actor.decline_offer_from_project_to_mentor(
+      const result = await actor.decline_offer_from_project_to_investor(
         offerDataId,
         message
       );
-      console.log(`result-in-decline_offer_of_project`, result);
+      console.log(`result-in-decline_offer_from_project_to_investor`, result);
       handleDeclineModalCloseHandler();
-      // fetchPendingRequestFromProjectToMentor();
-      setIsSubmitting(false);
+    //   fetchPendingRequestFromProjectToInvestor();
+    setIsSubmitting(false);
     } catch (error) {
-      console.log(`error-in-decline_offer_of_project`, error);
+      console.log(`error-in-decline_offer_from_project_to_investor`, error);
       handleDeclineModalCloseHandler();
-      setIsSubmitting(false);
+    setIsSubmitting(false);
     }
   };
-
   return (
     <>
       <div key={index} className="p-6 w-[650px] rounded-lg shadow-sm flex">
@@ -304,4 +303,4 @@ const AssociationDetailsCard = ({
   );
 };
 
-export default AssociationDetailsCard;
+export default AssociationDetailsInvestorCard;

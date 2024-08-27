@@ -227,9 +227,12 @@ const ProjectRegisterMain = ({ isopen }) => {
         ) {
           toast.error(result); // Show error toast with the returned message
           setModalOpen(false);
+          window.location.reload();
         } else {
           toast.success("Project registered successfully!"); // Show success message
           setModalOpen(false)
+          window.location.reload();
+
         }
       } catch (error) {
         console.log(error.message);

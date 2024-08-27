@@ -74,5 +74,4 @@ for i in $(seq $START $NUM_MENTORS); do
 
     # Optionally approve the mentor
     echo "Approving the request"
-    dfx canister call --identity default $CANISTER approve_vc_creation_request "(principal \"$CURRENT_PRINCIPAL\", true)"
 done
