@@ -8,58 +8,65 @@ import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 import CloseIcon from '@mui/icons-material/Close';
 const AttendeesCard = ({ member }) => {
   return (
-    <div className="flex items-center p-6  rounded-lg mb-6 ">
-      <div className="w-[70px] h-[70px]">
-        <img
-          src={member.profile_picture}
-          alt={member.full_name}
-          className="w-full h-full rounded-full object-cover"
-        />
-        <div className="flex items-center mt-2 space-x-2 justify-center">
-          {/* Social links logic can be added here if available */}
-        </div>
-      </div>
+    <div className="flex items-center  bg-white shadow-md rounded-lg mb-6 hover:shadow-lg transition-shadow duration-300 ease-in-out">
+  <div className="flex-shrink-0 w-[100px] h-[100px] rounded-full overflow-hidden border-2 border-gray-200 bg-gray-200 p-1 mx-2">
+    <img
+      src={member.profile_picture}
+      alt={member.full_name}
+      className="w-full h-full rounded-full object-cover"
+    />
+  </div>
+  <div className="ml-6 flex-1">
+    <h4 className="text-lg font-bold text-gray-800">{member.full_name}</h4>
+    <p className="text-sm text-gray-500">{member.username}</p>
+    <p className="text-sm text-gray-600 mt-2">{member.bio}</p>
 
-      <div className="ml-6 flex-1">
-        <h4 className="text-lg font-bold text-[#2C3E50]">{member.full_name}</h4>
-        <p className="text-sm text-gray-500">{member.username}</p>
-        <p className="text-sm text-gray-500 mt-2">{member.bio}</p>
-        <div className="flex gap-2 mt-2">
-          <p className="bg-[#F4F7FC] font-medium border border-[#CDD5DF] text-[#364152] px-3 py-1 rounded-full text-sm mt-3 inline-block">
-            {member.reason_to_join}
-          </p>
-          <p className="bg-[#F4F7FC] font-medium border border-[#CDD5DF] text-[#364152] px-3 py-1 rounded-full text-sm mt-3 inline-block">
-            {member.area_of_interest}
-          </p>
-        </div>
-        <div className="flex items-center mt-2">
-          <PlaceOutlinedIcon
-            className="text-gray-500 h-5 w-5 mr-2"
-            fontSize="small"
-          />
-          <span className="text-[#2C3E50] text-sm">{member.country}</span>
-        </div>
+    {/* Container for Reason to Join and Area of Interest */}
+    <div className="flex flex-wrap gap-2 mt-4">
+      {/* Reason to Join */}
+      {member.reason_to_join.map((reason, idx) => (
+        <p
+          key={idx}
+          className="bg-gray-100 font-medium border border-gray-300 text-gray-700 px-3 py-1 rounded-full text-sm"
+        >
+          {reason}
+        </p>
+      ))}
 
-        <div className="mt-3 space-x-2">
-          {member.badges && member.badges.length > 0
-            ? member.badges.map((badge, idx) => (
-                <span
-                  key={idx}
-                  className={`px-3 py-1 rounded-lg text-xs font-medium transition-all ${
-                    badge === "FOUNDER"
-                      ? "bg-[#EAE6F8] text-[#5B4ACD]"
-                      : badge === "MENTOR"
-                      ? "bg-[#FDE8F2] text-[#D63384]"
-                      : "bg-[#DCEEFF] text-[#007BFF]"
-                  }`}
-                >
-                  {badge}
-                </span>
-              ))
-            : ""}
-        </div>
-      </div>
+      {/* Area of Interest */}
+      <p className="bg-gray-100 font-medium border border-gray-300 text-gray-700 px-3 py-1 rounded-full text-sm">
+        {member.area_of_interest}
+      </p>
     </div>
+
+    <div className="flex items-center mt-2">
+      <PlaceOutlinedIcon
+        className="text-gray-500 h-5 w-5 mr-2"
+        fontSize="small"
+      />
+      <span className="text-gray-700 text-sm">{member.country}</span>
+    </div>
+
+    <div className="mt-3 space-x-2">
+      {member.badges && member.badges.length > 0
+        ? member.badges.map((badge, idx) => (
+            <span
+              key={idx}
+              className={`px-3 py-1 rounded-lg text-xs font-medium transition-all ${
+                badge === "FOUNDER"
+                  ? "bg-purple-100 text-purple-700"
+                  : badge === "MENTOR"
+                  ? "bg-pink-100 text-pink-700"
+                  : "bg-blue-100 text-blue-700"
+              }`}
+            >
+              {badge}
+            </span>
+          ))
+        : ""}
+    </div>
+  </div>
+</div>
   );
 };
 
@@ -138,14 +145,11 @@ const Attendees = () => {
     }
   };
 
-  const handleCancel = () => {
-    setSelectedRole("");
-    setShowMenu(false);
-  };
+ 
 
   return (
-    <div className="p-6 border border-gray-200 shadow-lg rounded-xl bg-white">
-      <div className="mx-auto">
+    <div >
+      <div className="">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl font-semibold text-gray-900">Attendees</h2>
           <MoreVertIcon onClick={toggleMenu} className="cursor-pointer" />
@@ -191,16 +195,7 @@ const Attendees = () => {
             Apply
           </button>
         </div>
-                {/* <div className=" mt-1">
-              <button
-                    type="button"
-                    className="bg-blue-500 text-white px-4 py-1 rounded-md hover:bg-blue-600"
-                    onClick={handleApply}
-                  >
-                    Apply
-                  </button>
-                  
-            </div> */}
+              
               </div>
              
           </div>

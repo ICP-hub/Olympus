@@ -13,7 +13,9 @@ import { format } from "date-fns";
 import { useSelector } from "react-redux";
 import { validationSchema } from "./cohortValidation";
 
-const EventRegMain = ({ modalOpen, setModalOpen }) => {
+const EventRegMain = ({ modalOpen, setModalOpen, editMode, singleEventData, cohortId }) => {
+  console.log("cohort id reg main me ", cohortId);
+
   // GETTING ACTOR FROM REDUX STORE
   const actor = useSelector((currState) => currState.actors.actor);
 
@@ -24,18 +26,18 @@ const EventRegMain = ({ modalOpen, setModalOpen }) => {
   const methods = useForm({
     resolver: yupResolver(validationSchema),
     mode: "all",
+    defaultValues: singleEventData || {},
   });
 
   // STATE TO STORE THE IMAGE DATA
   const [imageData, setImageData] = useState(null);
-  console.log('imageData',imageData)
 
   // DESTRUCTURING METHODS FROM useForm HOOK
   const {
     handleSubmit,
     trigger,
     formState: { isSubmitting },
-    getValues
+    getValues,
   } = methods;
 
   // FORM FIELD NAMES FOR EACH STEP OF THE FORM
@@ -46,76 +48,21 @@ const EventRegMain = ({ modalOpen, setModalOpen }) => {
     3: ["description"],
   };
 
-  // STATE TO STORE THE FORM DATA ACROSS STEPS
+  // STATE TO STORE THE FORM DATA
   const [formData, setFormData] = useState({});
-
-  // FUNCTION TO HANDLE FORM SUBMISSION
-  const onSubmitHandler = async (data) => {
-    console.log("Form data:", data);
-
-    // FORMATTING THE SUBMITTED DATA
-    const eventData = {
-      title: data.title,
-      country: data.area, // COUNTRY VALUE FROM FORM DATA
-      funding_amount: data.funding_amount,
-      funding_type: data.funding_type,
-      description: data.description,
-      cohort_launch_date: format(
-        new Date(data.cohort_launch_date),
-        "yyyy-MM-dd"
-      ),
-      start_date: format(new Date(data.cohort_launch_date), "yyyy-MM-dd"),
-      cohort_end_date: format(new Date(data.cohort_end_date), "yyyy-MM-dd"),
-      deadline: format(new Date(data.deadline), "yyyy-MM-dd"),
-      tags: data.tags,
-      criteria: {
-        eligibility: [data.eligibility],
-        level_on_rubric: parseFloat(data.rubric_eligibility),
-      },
-      contact_links: data?.contact_links
-        ? [data.contact_links.map((val) => ({ link: val?.link ? [val.link] : [] }))] // PREPARE LINKS DATA
-        : [],
-      no_of_seats: parseInt(data.no_of_seats),
-      cohort_banner: imageData ? [imageData] : [], // SETTING COHORT BANNER IMAGE
-      host_name: ['Mridul'], // EXAMPLE PLACEHOLDER FOR HOST NAME
-    };
-
-    try {
-      // SENDING DATA TO BACKEND
-      console.log("Cohort Data Before Submit", eventData);
-      const result = await actor.create_cohort(eventData);
-      console.log("eventdata", eventData);
-      console.log('result', result);
-      
-      // HANDLE SUCCESS OR ERROR RESPONSE
-      if (result && result.Ok) {
-        toast.success(result); 
-        setModalOpen(false);
-        window.location.reload();
-     } else {
-        toast.error(result.Err || "Error creating cohort");
-        setModalOpen(false)
-        window.location.reload();
-
-     }
-     
-    } catch (error) {
-      // HANDLE EXCEPTION
-      toast.error("Error creating cohort");
-      console.error("Error sending data to the backend:", error);
-    }
-  };
 
   // FUNCTION TO HANDLE NAVIGATING TO NEXT STEP
   const handleNext = async () => {
-    const isValid = await trigger(formFields[index]); // TRIGGER VALIDATION FOR CURRENT STEP
+    const isValid = await trigger(formFields[index]);
 
     if (isValid) {
       setFormData((prevData) => ({
         ...prevData,
-        ...getValues(), // MERGE CURRENT FORM DATA WITH PREVIOUS DATA
+        ...getValues(),
       }));
-      setIndex((prevIndex) => prevIndex + 1); // MOVE TO NEXT STEP
+      if (index < 3) {
+        setIndex((prevIndex) => prevIndex + 1);
+      }
     }
   };
 
@@ -123,6 +70,71 @@ const EventRegMain = ({ modalOpen, setModalOpen }) => {
   const handleBack = () => {
     if (index > 0) {
       setIndex((prevIndex) => prevIndex - 1);
+    }
+  };
+
+  // SUBMIT HANDLER
+  const onSubmitHandler = async (data) => {
+    if (index === 3) {  // Ensure submission only on the last step
+      console.log("Form data:", data);
+
+      // FORMATTING THE SUBMITTED DATA
+      const eventData = {
+        title: data.title,
+        country: data.area,
+        funding_amount: data.funding_amount,
+        funding_type: data.funding_type,
+        description: data.description,
+        cohort_launch_date: format(
+          new Date(data.cohort_launch_date),
+          "yyyy-MM-dd"
+        ),
+        start_date: format(new Date(data.cohort_launch_date), "yyyy-MM-dd"),
+        cohort_end_date: format(new Date(data.cohort_end_date), "yyyy-MM-dd"),
+        deadline: format(new Date(data.deadline), "yyyy-MM-dd"),
+        tags: data.tags,
+        criteria: {
+          eligibility: [data.eligibility],
+          level_on_rubric: parseFloat(data.rubric_eligibility),
+        },
+        contact_links: data?.contact_links
+          ? [data.contact_links.map((val) => ({ link: val?.link ? [val.link] : [] }))]
+          : [],
+        no_of_seats: parseInt(data.no_of_seats),
+        cohort_banner: imageData ? [imageData] : [],
+        host_name: ['Mridul'], // Example placeholder for host name
+      };
+
+      try {
+        let result;
+        if (editMode && singleEventData) {
+          console.log("Updating cohort with data:", eventData);
+          result = await actor.update_cohort(cohortId, eventData);
+        } else {
+          // Call create_cohort API when in create mode
+          console.log("Creating new cohort with data:", eventData);
+          result = await actor.create_cohort(eventData);
+        }
+
+        console.log('API result', result);
+
+        // Handle success or error response
+        if (result && result.Ok) {
+          if (
+            result.startsWith("You are not privileged to create a cohort ,Please Register as Mentor ...") ||
+            result.startsWith("Cohort Banner is already uploaded")
+          ) {
+            toast.error(result);
+            setModalOpen(false);
+          } else {
+            toast.success(editMode ? "Cohort updated successfully!" : "Cohort registered successfully!");
+            setModalOpen(false);
+          }
+        }
+      } catch (error) {
+        toast.error("Error submitting cohort");
+        console.error("Error sending data to the backend:", error);
+      }
     }
   };
 
@@ -152,9 +164,9 @@ const EventRegMain = ({ modalOpen, setModalOpen }) => {
           <FormProvider {...methods}>
             <form onSubmit={handleSubmit(onSubmitHandler, onErrorHandler)}>
               {/* CONDITIONAL RENDERING OF FORMS BASED ON CURRENT STEP */}
-              {index === 0 && <EventReg1 formData={formData} setFormData={setFormData} imageData={imageData} setImageData={setImageData}/>}
-              {index === 1 && <EventReg2 formData={formData} setFormData={setFormData}  />}
-              {index === 2 && <EventReg3 formData={formData} setFormData={setFormData}  />}
+              {index === 0 && <EventReg1 formData={formData} setFormData={setFormData} imageData={imageData} setImageData={setImageData} editMode={editMode} />}
+              {index === 1 && <EventReg2 formData={formData} setFormData={setFormData} />}
+              {index === 2 && <EventReg3 formData={formData} setFormData={setFormData} />}
               {index === 3 && <EventReg4 formData={formData} setFormData={setFormData} />}
               
               {/* NAVIGATION BUTTONS */}
@@ -208,3 +220,4 @@ const EventRegMain = ({ modalOpen, setModalOpen }) => {
 };
 
 export default EventRegMain;
+

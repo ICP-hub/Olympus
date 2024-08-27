@@ -14,7 +14,7 @@ const NewDocument = ({ cardData }) => {
         {/* Image Section with Background */}
         <div className="bg-gray-100 w-[180px] px-10 py-4 rounded-lg flex-shrink-0 text-center">
         <div
-          className={`ml-4 flex-grow ${type === "private" ? "blur-sm" : ""} transition-all duration-300`}
+          className={`ml-4 flex-grow  transition-all duration-300`}
         >
           <img
             src={Filetype}
@@ -35,7 +35,7 @@ const NewDocument = ({ cardData }) => {
 
         {/* Details Section */}
         <div
-          className={`ml-4 flex-grow ${type === "private" ? "blur-sm" : ""} transition-all duration-300`}
+          className={`ml-4 flex-grow  transition-all duration-300`}
         >
           <div className="flex justify-between">
             <p className="text-lg font-semibold text-gray-900">
@@ -57,13 +57,13 @@ const NewDocument = ({ cardData }) => {
         </div>
 
         {/* Request Access Button for Private Documents */}
-        {type === "private" && (
+        {/* {type === "private" && (
           <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity duration-300 rounded-lg">
             <button className="bg-blue-600 text-white px-4 py-2 rounded-lg">
               Request Access
             </button>
           </div>
-        )}
+        )} */}
       </div>
     ));
   };

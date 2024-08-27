@@ -260,13 +260,7 @@ const MentorEdit = () => {
         .required("Years of experience mentoring startups is required"),
       mentor_linkedin_url: yup
         .string()
-        // .test("is-non-empty", "LinkedIn url is required", (value) =>
-        //   /\S/.test(value)
-        // )
-        // .matches(
-        //   /^(https?:\/\/)?(www\.)?linkedin\.com\/in\/[a-zA-Z0-9_-]+\/?$/,
-        //   "Invalid LinkedIn URL"
-        // )
+       
         .url("Invalid url")
         .required("LinkedIn url is required"),
     })
@@ -284,7 +278,8 @@ const MentorEdit = () => {
       mentor_website_url:mentorFullData?.mentor_website_url ?? "",
 
     };
-
+      console.log("281 console",mentorFullData[0].profile.preferred_icp_hub)
+      
   const {
     register,
     handleSubmit,
@@ -307,38 +302,7 @@ const MentorEdit = () => {
     watch("type_of_profile")
   );
 
-  // image creation function compression and uintarray creator
-  const imageCreationFunc = async (file) => {
-    const result = await trigger("image");
-    if (result) {
-      try {
-        const compressedFile = await CompressedImage(file);
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setImagePreview(reader.result);
-        };
-        reader.readAsDataURL(compressedFile);
-        const byteArray = await compressedFile.arrayBuffer();
-        setImageData(Array.from(new Uint8Array(byteArray)));
-      } catch (error) {
-        setError("image", {
-          type: "manual",
-          message: "Could not process image, please try another.",
-        });
-      }
-    } else {
-      console.log("ERROR--imageCreationFunc-file", file);
-    }
-  };
 
-  // clear image func
-  const clearImageFunc = (val) => {
-    let field_id = val;
-    setValue(field_id, null);
-    clearErrors(field_id);
-    setImageData(null);
-    setImagePreview(null);
-  };
 
   // form submit handler func
   const onSubmitHandler = async (data) => {
@@ -495,8 +459,8 @@ const MentorEdit = () => {
     if (val) {
       setValue("full_name", val?.user_data?.full_name ?? "");
       setValue("email", val?.user_data?.email?.[0] ?? "");
-      setValue("telegram_id", val?.user_data?.telegram_id?.[0] ?? "");
-      setValue("twitter_url", val?.user_data?.twitter_id?.[0] ?? "");
+      // setValue("telegram_id", val?.user_data?.telegram_id?.[0] ?? "");
+      // setValue("twitter_url", val?.user_data?.twitter_id?.[0] ?? "");
       setValue(
         "openchat_user_name",
         val?.user_data?.openchat_username?.[0] ?? ""
