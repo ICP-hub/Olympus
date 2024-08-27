@@ -7,24 +7,21 @@ import EventRegMain from '../../Modals/EventRegister/EventRegMain';
 import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
 import parse from 'html-react-parser';
 import { Principal } from "@dfinity/principal";
-
-const descriptionStyle = {
-    display: '-webkit-box',
-    WebkitLineClamp: 2, // Limits the text to 2 lines
-    WebkitBoxOrient: 'vertical',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis', // Add ellipsis (...) if the text overflows
-};
+import Edit from "../../../../assets/Logo/edit.png";
 
 const NewEvent = ({ event }) => {
     const [modalOpen, setModalOpen] = useState(false);
+    const [editMode, setEditMode] = useState(false); // State to track if we are in edit mode
     const [cohortEvents, setCohortEvents] = useState([]);
+    const [selectedEvent, setSelectedEvent] = useState(null); // State to track the selected event
     const actor = useSelector((currState) => currState.actors.actor);
     const principal = useSelector((currState) => currState.internet.principal);
     const navigate = useNavigate();
 
     const handleModalOpen = () => {
         setModalOpen(true);
+        setEditMode(false); // When creating a new cohort, edit mode is false
+        setSelectedEvent(null);
     };
 
     useEffect(() => {
@@ -52,7 +49,13 @@ const NewEvent = ({ event }) => {
                             country: cohort.cohort.country,
                             description: cohort.cohort.description,
                             funding_amount: cohort.cohort.funding_amount,
-                            cohort_id: cohort.cohort_id, // Include cohort_id here
+                            contact_links: cohort.cohort.contact_links,
+                            deadline: cohort.cohort.deadline,
+                            eligibility: cohort.cohort.criteria.eligibility,
+                            funding_type: cohort.cohort.funding_type,
+                            host_name: cohort.cohort.host_name,
+                            level_on_rubric: cohort.cohort.criteria.level_on_rubric,
+                            cohort_id: cohort.cohort_id,
                         };
                     }).filter(event => event !== null);
 
@@ -73,6 +76,12 @@ const NewEvent = ({ event }) => {
         navigate('/dashboard/single-event', { state: { cohort_id } });
     };
 
+    const handleEditClick = (event) => {
+        setModalOpen(true);
+        setEditMode(true); // Set edit mode to true when editing a cohort
+        setSelectedEvent(event);
+    };
+
     return (
         <>
             {cohortEvents.length === 0 ? (
@@ -91,12 +100,28 @@ const NewEvent = ({ event }) => {
                         {cohortEvents.map((event, index) => (
                             <div
                                 key={index}
-                                className="bg-white rounded-lg shadow p-4 mb-6"
-                                onClick={() => handleClick(event.cohort_id)} // Pass cohort_id from the current event
+                                className="bg-white rounded-lg shadow p-4 mb-6 relative group" 
+                                onClick={() => handleClick(event.cohort_id)}
                             >
+                                <div 
+                                    className="absolute top-4 right-4 flex justify-end" 
+                                    onClick={(e) => { 
+                                        e.stopPropagation(); 
+                                        handleEditClick(event);
+                                    }}>
+                                    <img
+                                        src={Edit}
+                                        onClick={(e) => { 
+                                            e.stopPropagation(); 
+                                            handleEditClick(event);
+                                        }}
+                                        className="h-6 w-6 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity z-50"
+                                        alt="edit"
+                                    />
+                                </div>
+
                                 <div className="flex justify-between items-center">
                                     <div className="flex items-center gap-2 w-full relative">
-
                                         <div className="max-w-[160px] absolute top-1 left-1 bg-white p-2 rounded-[8px]">
                                             <p className="text-sm font-normal">{event.start_date}</p>
                                         </div>
@@ -108,7 +133,6 @@ const NewEvent = ({ event }) => {
                                             />
                                         </div>
                                         <div className='w-2/3'>
-
                                             <p className="bg-white font-medium border-2 border-[#CDD5DF] text-[#364152] w-[86px] px-2 py-1 rounded-full text-sm -mt-3">
                                                 Workshop
                                             </p>
@@ -129,7 +153,6 @@ const NewEvent = ({ event }) => {
                                                 </span>
                                                 <span className="text-sm text-gray-500">${event.funding_amount}</span>
                                             </div>
-
                                         </div>
                                     </div>
                                 </div>
@@ -139,10 +162,17 @@ const NewEvent = ({ event }) => {
                 </>
             )}
             {modalOpen && (
-                <EventRegMain modalOpen={modalOpen} setModalOpen={setModalOpen} />
+                <EventRegMain 
+                    modalOpen={modalOpen} 
+                    setModalOpen={setModalOpen} 
+                    editMode={editMode} 
+                    singleEventData={selectedEvent} 
+                    cohortId={selectedEvent?.cohort_id} // Pass the cohort_id here
+                />
             )}
         </>
     );
 };
 
 export default NewEvent;
+

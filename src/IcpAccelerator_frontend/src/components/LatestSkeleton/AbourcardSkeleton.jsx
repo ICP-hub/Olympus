@@ -147,9 +147,9 @@ export const AboutcardSkeleton = (getAllData) => {
               <label className="block mt-3 font-medium text-gray-600">
                 Interests
               </label>
-              {getAllData?.getAllData?.area_of_interest ? (
+              {getAllData?.getAllData?.domains_interested_in ? (
                 <p className="text-base font-normal">
-                  {getAllData?.getAllData?.area_of_interest}
+                  {getAllData?.getAllData?.domains_interested_in}
                 </p>
               ) : (
                 <div className="flex space-x-2">
