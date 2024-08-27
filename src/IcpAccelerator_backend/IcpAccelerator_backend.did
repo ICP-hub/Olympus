@@ -517,6 +517,7 @@ type Review = record {
   message : text;
   timestamp : nat64;
   rating : float32;
+  reviewer_principal : principal;
   profile_pic : blob;
 };
 type Role = record {
@@ -697,7 +698,7 @@ service : {
   get_all_requests_which_got_accepted_for_investor : () -> (
       vec OfferToProject,
     ) query;
-  get_all_requests_which_got_accepted_for_mentor_via_mentor : () -> (
+  get_all_requests_which_got_accepted_for_mentor_via_mentor : (principal) -> (
       vec OfferToProject,
     ) query;
   get_all_requests_which_got_accepted_for_project_from_mentor : (text) -> (
@@ -709,7 +710,7 @@ service : {
   get_all_requests_which_got_declined_for_investor : () -> (
       vec OfferToProject,
     ) query;
-  get_all_requests_which_got_declined_for_mentor_via_mentor : () -> (
+  get_all_requests_which_got_declined_for_mentor_via_mentor : (principal) -> (
       vec OfferToProject,
     ) query;
   get_all_requests_which_got_declined_for_project_from_mentor : (text) -> (
@@ -728,7 +729,7 @@ service : {
       vec OfferToSendToProject,
     ) query;
   get_all_sent_request : () -> (vec OfferToMentor) query;
-  get_all_sent_request_for_mentor : (principal) -> (vec OfferToProject) query;
+  get_all_sent_request_for_mentor : () -> (vec OfferToProject) query;
   get_all_sent_request_from_investor_to_project : () -> (
       vec OfferToProject,
     ) query;

@@ -63,7 +63,11 @@ impl ProjectInfo {
         if self.reason_to_join_incubator.is_empty() {
             return Err("Reason to join incubator is a required field.".to_string());
         }
-
+        // if let Some(project_description) = &self.project_description {
+        //     if crate::guard::contains_html_tags(project_description) {
+        //         return Err("Bio contains HTML tags, which are not allowed.".into());
+        //     }
+        // }
         Ok(())
     }
 }
