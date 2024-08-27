@@ -14,10 +14,7 @@ export function DocumentItem ({data}) {
     message3: "Start creating by uploading your files.",
     button: "Create a new Document",
   };
-  const location = useLocation();
-  //  const ProjectId = location.state.projectId;
-  const ProjectId = data
-   console.log("console vala principal",ProjectId)
+
   return (
     <div className="flex justify-center flex-col items-stretch space-x-4 mb-6 pb-6">
      
@@ -31,11 +28,11 @@ export function DocumentItem ({data}) {
             >
               + Add new Document
             </button>
-            {isOpen && <DocumentModal setIsOpen={setIsOpen} isOpen={isOpen} ProjectId = {ProjectId}  />}
+            {isOpen && <DocumentModal setIsOpen={setIsOpen} isOpen={isOpen} />}
           </div>
         )}
         {documentdata.length === 0 ? (
-          <Nodata message={message} setIsOpen={setIsOpen} isOpen={isOpen} ProjectId = {ProjectId}/>
+          <Nodata message={message} setIsOpen={setIsOpen} isOpen={isOpen}/>
         ) : (
           " Document data will render here"
         )}

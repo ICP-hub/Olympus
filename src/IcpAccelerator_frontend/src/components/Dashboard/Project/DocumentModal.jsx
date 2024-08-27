@@ -6,35 +6,40 @@ import * as yup from "yup";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 
-const schema = yup.object({
-  documentTitle: yup
-    .string()
-    .required("Document title is required")
-    .min(5, "Title must be at least 5 characters")
-    .test(
-      "no-leading-spaces",
-      "Document title should not have leading spaces",
-      (value) => !value || value.trimStart() === value
-    ),
-  documentPrivacy: yup
-    .string()
-    .required("Please select a privacy option")
-    .oneOf(["public", "private"], "Invalid privacy option selected"),
-  link: yup
-    .string()
-    .required("This field is required")
-    .nullable(true)
-    .optional()
-    .url("Invalid url"),
-}).required();
+const schema = yup
+  .object({
+    documentTitle: yup
+      .string()
+      .required("Document title is required")
+      .min(5, "Title must be at least 5 characters")
+      .test(
+        "no-leading-spaces",
+        "Document title should not have leading spaces",
+        (value) => !value || value.trimStart() === value
+      ),
+    documentPrivacy: yup
+      .string()
+      .required("Please select a privacy option")
+      .oneOf(["public", "private"], "Invalid privacy option selected"),
+    link: yup
+      .string()
+      .required("This field is required")
+      .nullable(true)
+      .optional()
+      .url("Invalid url"),
+  })
+  .required();
 
-const DocumentModal = ({ setIsOpen, isOpen, isUpdate, ProjectId }) => {
+const DocumentModal = ({ setIsOpen, isOpen, isUpdate }) => {
   const actor = useSelector((state) => state.actors.actor);
 
   const [selectedOption, setSelectedOption] = useState("file");
   const [privacy, setPrivacy] = useState(true); // Default is private (true)
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  const projectFullData = useSelector(
+    (currState) => currState.projectData.data
+  );
+  const projectId = projectFullData?.[0]?.[0]?.uid;
   const {
     register,
     handleSubmit,
@@ -47,39 +52,41 @@ const DocumentModal = ({ setIsOpen, isOpen, isUpdate, ProjectId }) => {
 
   const onSubmit = async (data) => {
     setIsSubmitting(true);
+
     try {
       const newDocs = [
         {
-          title: data.documentTitle,
-          link: selectedOption === "link" ? data.link : null,
-          privacy: privacy, // This is now a boolean
+          title: data.documentTitle ?? "",
+          link: data?.link ?? "",
         },
       ];
+      let privateDocs = data?.documentPrivacy === "private" ? true : false;
 
       // Call the API with the correct privacy boolean value
       const result = await actor.update_project_private_docs(
-        ProjectId,
+        projectId,
         newDocs,
-        privacy
+        privateDocs
       );
-
-      console.log("Update result:", result);
-      toast.success("Document uploaded successfully!");
-      setTimeout(() => {
+      if (result) {
+        console.log("Update result:", result);
+        toast.success("Document uploaded successfully!");
+        setIsSubmitting(false);
         setIsOpen(false);
-        reset();
-      }, 1000);
+        window.location.reload();
+      } else {
+        toast.error("Document uploaded successfully!");
+        toast.success("Document uploaded successfully!");
+        setIsSubmitting(false);
+        setIsOpen(false);
+        window.location.reload();
+      }
     } catch (error) {
       console.error("Error updating project docs:", error);
       toast.error("Failed to upload document!");
     } finally {
       setIsSubmitting(false);
     }
-  };
-
-  const handlePrivacyChange = (event) => {
-    const selectedPrivacy = event.target.value;
-    setPrivacy(selectedPrivacy === "private"); // true for private, false for public
   };
 
   return (
@@ -139,7 +146,6 @@ const DocumentModal = ({ setIsOpen, isOpen, isUpdate, ProjectId }) => {
                     </label>
                     <select
                       {...register("documentPrivacy")}
-                      onChange={handlePrivacyChange}
                       className="border my-1 w-full py-1 px-2"
                     >
                       <option value="">Select Privacy</option>
