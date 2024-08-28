@@ -10,7 +10,7 @@ pub struct UserType {
     pub role_type: String,
 }
 
-#[query(guard = "combined_guard")]
+#[query(guard = "is_user_anonymous")]
 pub fn type_of_user_profile() -> Vec<UserType> {
     vec![
         UserType {
@@ -28,7 +28,7 @@ pub fn type_of_user_profile() -> Vec<UserType> {
     ]
 }
 
-#[query(guard = "combined_guard")]
+#[query(guard = "is_user_anonymous")]
 pub fn get_multichain_list() -> Vec<String> {
     let chains = vec![
         "Ethereum".to_string(),
@@ -71,7 +71,7 @@ pub fn get_multichain_list() -> Vec<String> {
     chains
 }
 
-#[query(guard = "combined_guard")]
+#[query(guard = "is_user_anonymous")]
 pub fn get_investment_stage() -> Vec<String> {
     vec![
         "Pre-MVP".to_string(),
@@ -81,7 +81,7 @@ pub fn get_investment_stage() -> Vec<String> {
     ]
 }
 
-#[query(guard = "combined_guard")]
+#[query(guard = "is_user_anonymous")]
 pub fn get_range_of_check_size() -> Vec<String> {
     vec![
         "<$500k".to_string(),
@@ -98,7 +98,7 @@ pub struct JobCategory {
     name: String,
 }
 
-#[query(guard = "combined_guard")]
+#[query(guard = "is_user_anonymous")]
 pub fn get_job_category() -> Vec<JobCategory> {
     vec![
         JobCategory {
@@ -122,7 +122,7 @@ pub struct JobType {
     pub job_type: String,
 }
 
-#[query(guard = "combined_guard")]
+#[query(guard = "is_user_anonymous")]
 pub fn type_of_job() -> Vec<JobType> {
     vec![
         JobType {
@@ -150,7 +150,7 @@ pub struct Areas {
     name: String,
 }
 
-#[query(guard = "combined_guard")]
+#[query(guard = "is_user_anonymous")]
 pub fn get_area_focus_expertise() -> Vec<Areas> {
     vec![
         Areas {
@@ -196,7 +196,7 @@ pub fn get_area_focus_expertise() -> Vec<Areas> {
     ]
 }
 
-#[query(guard = "combined_guard")]
+#[query(guard = "is_user_anonymous")]
 pub fn get_icp_hubs_candid() -> Vec<IcpHub> {
     vec![
         IcpHub {
