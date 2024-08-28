@@ -18,6 +18,7 @@ const ProfileSection = ({
 }) => {
   const isMultiSelect = Array.isArray(options) && options.length > 0;
 
+  // Function to map the string values to objects with value and label
   const mapValueToOptions = (value) => {
     if (Array.isArray(value)) {
       return value.map((val) => {
@@ -52,7 +53,11 @@ const ProfileSection = ({
               options={options}
               value={mapValueToOptions(value)}
               onChange={(selectedOptions) =>
-                handleInputChange(selectedOptions, field, true)
+                handleInputChange(
+                  selectedOptions.map((option) => option.value),
+                  field,
+                  true
+                )
               }
               className="basic-single"
               classNamePrefix="select"
@@ -63,7 +68,7 @@ const ProfileSection = ({
                 <textarea
                   {...register(field)}
                   value={value || ""}
-                  onChange={(e) => handleInputChange(e, field)}
+                  onChange={(e) => handleInputChange(e.target.value, field)}
                   className={`bg-gray-50 border-2 ${
                     errors[field] ? "border-red-500" : "border-[#737373]"
                   } text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
@@ -73,12 +78,12 @@ const ProfileSection = ({
                 <select
                   {...register(field)}
                   value={value || ""}
-                  onChange={(e) => handleInputChange(e, field)}
+                  onChange={(e) => handleInputChange(e.target.value, field)}
                   className={`bg-gray-50 border-2 ${
                     errors[field] ? "border-red-500" : "border-[#737373]"
                   } text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w/full px-2 py-1`}
                   style={{
-                    maxWidth: "100%",
+                    maxWidth: "100%", // Ensure it doesn't overflow the container
                     whiteSpace: "nowrap",
                     overflow: "hidden",
                     textOverflow: "ellipsis",
@@ -98,7 +103,7 @@ const ProfileSection = ({
                   type={type}
                   {...register(field)}
                   value={value || ""}
-                  onChange={(e) => handleInputChange(e, field)}
+                  onChange={(e) => handleInputChange(e.target.value, field)}
                   className={`bg-gray-50 border-1 ${
                     errors[field] ? "border-red-500" : "border-gray-500"
                   } text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w/full px-2 py-1`}
