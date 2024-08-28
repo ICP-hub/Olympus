@@ -1,14 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
 import ProfileImages from "../../../assets/Logo/ProfileImage.png";
 import edit from "../../../assets/Logo/edit.png";
+import { useForm, Controller, useFieldArray } from "react-hook-form";
 import VerifiedIcon from "@mui/icons-material/Verified";
 import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
 import ArrowOutwardOutlinedIcon from "@mui/icons-material/ArrowOutwardOutlined";
-import Select from "react-select";
 import toast, { Toaster } from "react-hot-toast";
-import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
 import { useCountries } from "react-countries";
 import { useSelector } from "react-redux";
 import { LinkedIn, GitHub, Telegram, Language } from "@mui/icons-material";
@@ -19,7 +17,25 @@ import ProjectDetail from "./ProjectDetail";
 import { Principal } from "@dfinity/principal";
 import { ThreeDots } from "react-loader-spinner";
 import ReactSelect from "react-select";
+import {
+  FaLinkedin,
+  FaTwitter,
+  FaGithub,
+  FaTelegram,
+  FaFacebook,
+  FaInstagram,
+  FaYoutube,
+  FaReddit,
+  FaTiktok,
+  FaSnapchat,
+  FaWhatsapp,
+  FaMedium,
+  FaTrash,
+} from "react-icons/fa";
 import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
+import CompressedImage from "../ImageCompressed/CompressedImage";
+import { validationSchema } from "./UserValidation";
+import { LanguageIcon } from "../UserRegistration/DefaultLink";
 const ProfileDetail = () => {
   const principal = useSelector((currState) => currState.internet.principal);
   const { countries } = useCountries();
@@ -28,18 +44,6 @@ const ProfileDetail = () => {
   const actor = useSelector((currState) => currState.actors.actor);
   const [imagePreview, setImagePreview] = useState(null);
   const [imageData, setImageData] = useState(null);
-  const [defaultValues, setDefaultValues] = useState({
-    email: "",
-    bio: "",
-    area_of_interest: [],
-    country: "Select your country",
-    area_of_interest: [],
-    reason_to_join: [],
-    country: [],
-    full_name: "",
-    type_of_profile: "",
-    profile_picture: null,
-  });
   const [interestedDomainsOptions, setInterestedDomainsOptions] = useState([]);
   const [
     interestedDomainsSelectedOptions,
@@ -74,164 +78,17 @@ const ProfileDetail = () => {
       setTypeOfProfileOptions([]);
     }
   }, [typeOfProfile]);
-  const validationSchema = yup
-    .object()
-    .shape({
-      full_name: yup
-        .string()
-        .test("is-non-empty", "Full name is required", (value) =>
-          /\S/.test(value)
-        )
-        .required("Full name is required"),
-      email: yup
-        .string()
-        .email("Invalid email")
-        .nullable(true)
-        .optional()
-        .test(
-          "no-leading-trailing-spaces",
-          "Email should not have leading or trailing spaces",
-          function (value) {
-            if (value !== undefined && value !== null) {
-              return value.trim() === value;
-            }
-            return true;
-          }
-        ),
-      telegram_id: yup
-        .string()
-        .nullable(true)
-        .optional()
-        // .test("is-valid-telegram", "Invalid Telegram link", (value) => {
-        //   if (!value) return true;
-        //   const hasValidChars = /^[a-zA-Z0-9_]{5,32}$/.test(value);
-        //   return hasValidChars;
-        // })
-        .url("Invalid url"),
-      twitter_url: yup
-        .string()
-        .nullable(true)
-        .optional()
-        // .test("is-valid-twitter", "Invalid Twitter ID", (value) => {
-        //   if (!value) return true;
-        //   const hasValidChars =
-        //   /^(https?:\/\/)?(www\.)?(twitter\.com|x\.com)\/[a-zA-Z0-9_]{1,15}$/.test(
-        //       value
-        //     );
-        //   return hasValidChars;
-        // })
-        .url("Invalid url"),
-      openchat_user_name: yup
-        .string()
-        .nullable(true)
-        .test(
-          "is-valid-username",
-          "Username must be between 5 and 20 characters, and cannot start or contain spaces",
-          (value) => {
-            if (!value) return true;
-            const isValidLength = value.length >= 5 && value.length <= 20;
-            const hasNoSpaces = !/\s/.test(value) && !value.startsWith(" ");
-            return isValidLength && hasNoSpaces;
-          }
-        ),
-      bio: yup
-        .string()
-        .optional()
-        .test(
-          "maxWords",
-          "Bio must not exceed 50 words",
-          (value) =>
-            !value || value.trim().split(/\s+/).filter(Boolean).length <= 50
-        )
-        .test(
-          "no-leading-spaces",
-          "Bio should not have leading spaces",
-          (value) => !value || value.trimStart() === value
-        )
-        .test(
-          "maxChars",
-          "Bio must not exceed 500 characters",
-          (value) => !value || value.length <= 500
-        ),
-      country: yup
-        .string()
-        .test("is-non-empty", "Country is required", (value) =>
-          /\S/.test(value)
-        )
-        .required("Country is required"),
-      area_of_interest: yup
-        .string()
-        .test("is-non-empty", "Selecting an interest is required", (value) =>
-          /\S/.test(value)
-        )
-        .required("Selecting an interest is required"),
-      type_of_profile: yup
-        .string()
-        .test("is-non-empty", "Type of profile is required", (value) =>
-          /\S/.test(value)
-        )
-        .required("Type of profile is required"),
-      reason_to_join: yup
-        .array()
-        .of(yup.string().required("Selecting a reason is required")),
-      // .min(1, "Selecting at least one reason is required"),
-      // .required("Selecting a reason is required"),
-
-      image: yup
-        .mixed()
-        .nullable(true)
-        .test("fileSize", "File size max 10MB allowed", (value) => {
-          return !value || (value && value.size <= 10 * 1024 * 1024); // 10 MB limit
-        })
-        .test(
-          "fileType",
-          "Only jpeg, jpg & png file format allowed",
-          (value) => {
-            return (
-              !value ||
-              (value &&
-                ["image/jpeg", "image/jpg", "image/png"].includes(value.type))
-            );
-          }
-        ),
-    })
-    .required();
 
   const [socialLinks, setSocialLinks] = useState({});
-
-  useEffect(() => {
-    console.log("userFullData:", userFullData); // Ensure data is correct
-    if (userFullData?.social_links?.length) {
-      const links = {};
-      userFullData.social_links.forEach((linkData, index) => {
-        console.log(`Processing link #${index + 1}:`, linkData); // Debugging each link
-
-        // Since linkData is an array with a 'link' key, we extract the URL like this:
-        const url = linkData[0].link[0];
-
-        // Determine the type of link (e.g., LinkedIn, GitHub) based on the URL
-        if (url.includes("linkedin.com")) {
-          links["LinkedIn"] = url;
-        } else if (url.includes("github.com")) {
-          links["GitHub"] = url;
-        } else if (url.includes("t.me") || url.includes("telegram")) {
-          links["Telegram"] = url;
-        } else {
-          links[`Link${index + 1}`] = url; // Default case, just to handle other links
-        }
-      });
-      setSocialLinks(links);
-      console.log("Final socialLinks object:", links); // Verify final state
-    }
-  }, [userFullData]);
-
+  console.log("mere link aa rahe hai ", socialLinks);
   const [isEditingLink, setIsEditingLink] = useState({});
-
+  const [isLinkBeingEdited, setIsLinkBeingEdited] = useState(false);
   const handleLinkEditToggle = (link) => {
     setIsEditingLink((prev) => ({
       ...prev,
       [link]: !prev[link],
     }));
+    setIsLinkBeingEdited(!isLinkBeingEdited);
   };
 
   const handleLinkChange = (e, link) => {
@@ -239,11 +96,6 @@ const ProfileDetail = () => {
       ...prev,
       [link]: e.target.value,
     }));
-  };
-
-  const handleSaveLinks = () => {
-    console.log("Links saved:", socialLinks);
-    setIsEditingLink({});
   };
 
   const getIconForLink = (url) => {
@@ -268,39 +120,20 @@ const ProfileDetail = () => {
     handleSubmit,
     clearErrors,
     setValue,
+    control,
+    trigger,
     formState: { errors, isSubmitting, isValid },
   } = useForm({
     resolver: yupResolver(validationSchema),
     mode: "all",
-    defaultValues,
   });
 
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "links",
+  });
   console.log("Form Errors:", errors); // Log form errors
   console.log("Is Form Valid:", isValid); // Check if form is valid
-
-  useEffect(() => {
-    if (userFullData) {
-      const defaultValues = {
-        email: userFullData.email?.[0] ?? "",
-        bio: userFullData.bio?.[0] ?? "",
-        area_of_interest: userFullData.area_of_interest ?? [],
-        country: userFullData.country ?? "Select your country", // Ensure a default value is set
-        type_of_profile: userFullData.type_of_profile ?? [],
-        reasonToJoin: userFullData?.reason_to_join?.[0],
-        full_name: userFullData?.full_name,
-        openchat_username: userFullData.openchat_username?.[0],
-        profilePicture:
-          userFullData?.profile_picture?.[0].length > 0
-            ? uint8ArrayToBase64(userFullData?.profile_picture[0])
-            : null,
-      };
-
-      Object.entries(defaultValues).forEach(([key, value]) => {
-        setValue(key, value); // Set the form values
-      });
-      setDefaultValues(defaultValues); // Update the state
-    }
-  }, [userFullData, setValue]);
 
   const [isEditing, setIsEditing] = useState({
     email: false,
@@ -311,37 +144,12 @@ const ProfileDetail = () => {
     reason_to_join: false,
   });
 
-  const [profileData, setProfileData] = useState(defaultValues);
-  const [tempData, setTempData] = useState(profileData);
   const containerRef = useRef(null);
 
   const handleEditToggle = (field) => {
     setIsEditing({ ...isEditing, [field]: !isEditing[field] });
   };
 
-  // Function to handle image upload and conversion
-  const handleImageUpload = async (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      try {
-        const compressedFile = await CompressedImage(file);
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setImagePreview(reader.result); // Display the image preview
-        };
-        reader.readAsDataURL(compressedFile);
-
-        // Convert the file to Uint8Array
-        const byteArray = await compressedFile.arrayBuffer();
-        setImageData(Array.from(new Uint8Array(byteArray))); // Store Uint8Array in state
-      } catch (error) {
-        setError("image", {
-          type: "manual",
-          message: "Could not process image, please try another.",
-        });
-      }
-    }
-  };
   const areaOfExpertise = useSelector(
     (currState) => currState.expertiseIn.expertise
   );
@@ -359,28 +167,29 @@ const ProfileDetail = () => {
     }
   }, [areaOfExpertise]);
 
-  const handleInputChange = (e, field) => {
-    setValue(field, e.target.value, { shouldValidate: true });
-    setTempData((prev) => ({ ...prev, [field]: e.target.value }));
+  const imageCreationFunc = async (file) => {
+    const result = await trigger("image");
+    if (result) {
+      try {
+        const compressedFile = await CompressedImage(file);
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setImagePreview(reader.result);
+        };
+        reader.readAsDataURL(compressedFile);
+        const byteArray = await compressedFile.arrayBuffer();
+        setImageData(Array.from(new Uint8Array(byteArray)));
+      } catch (error) {
+        setError("image", {
+          type: "manual",
+          message: "Could not process image, please try another.",
+        });
+      }
+    } else {
+      console.log("ERROR--imageCreationFunc-file", file);
+    }
   };
 
-  // const handleSave = () => {
-  //   const isFormValid = Object.keys(errors).length === 0;
-
-  //   if (isFormValid) {
-  //     setProfileData(tempData);
-  //     setIsEditing({
-  //       email: false,
-  //       tagline: false,
-  //       bio: false,
-  //       area_of_interest: false,
-  //       location: false,
-  //       reason_to_join: false,
-  //     });
-  //   } else {
-  //     console.log("Validation failed:", errors);
-  //   }
-  // };
   const handleSave = async (data) => {
     console.log("data", data); // Debugging line
 
@@ -388,21 +197,25 @@ const ProfileDetail = () => {
       const convertedPrincipal = await Principal.fromText(principal);
 
       const user_data = {
-        bio: data?.bio ? [data.bio] : [""],
+        bio: [data?.bio],
         full_name: data?.full_name,
         email: [data?.email],
         openchat_username: [data?.openchat_user_name],
         country: data?.country,
-        area_of_interest: data?.area_of_interest,
+        area_of_interest: data?.domains_interested_in,
         type_of_profile: [data?.type_of_profile || ""],
-        reason_to_join: data.reason_to_join || [],
-        profile_picture: userFullData.profile_picture
-          ? [userFullData.profile_picture]
-          : null,
-        social_links: Object.entries(socialLinks).map(([key, value]) => ({
-          platform: key,
-          link: [value],
-        })),
+        reason_to_join: [
+          data?.reasons_to_join_platform
+            .split(",")
+            .map((val) => val.trim()) || [""],
+        ],
+        profile_picture: imageData ? [imageData] : [],
+        //   social_links: Object.entries(socialLinks).map(([key, value]) => ({
+        //     link: value ? [value] : [],
+        // })),
+        social_links: data?.links
+          ? [data.links.map((val) => ({ link: val?.link ? [val.link] : [] }))]
+          : [],
       };
 
       console.log("Sending user_data to backend:", user_data); // Debugging line
@@ -411,11 +224,11 @@ const ProfileDetail = () => {
         convertedPrincipal,
         user_data
       );
-
+      console.log("Sending user_data to backend using api:", result);
       if ("Ok" in result) {
         toast.success("User profile updated successfully");
         setTimeout(() => {
-          window.country.href = "/";
+          window.location.reload();
         }, 500);
       } else {
         console.log("Error:", result);
@@ -425,6 +238,7 @@ const ProfileDetail = () => {
       console.error("Error sending data to the backend:", error);
       toast.error("Failed to update profile");
     }
+    setIsLinkBeingEdited(false);
   };
 
   const handleCancel = () => {
@@ -436,7 +250,7 @@ const ProfileDetail = () => {
       country: false,
       reason_to_join: false,
     });
-    setTempData(profileData);
+    // setTempData(profileData);
   };
 
   useEffect(() => {
@@ -487,6 +301,24 @@ const ProfileDetail = () => {
   };
 
   // set values handler
+  // const setValuesHandler = (val) => {
+  //   if (val) {
+  //     setValue("full_name", val?.full_name ?? "");
+  //     setValue("email", val?.email?.[0] ?? "");
+  //     setValue("openchat_user_name", val?.openchat_username?.[0] ?? "");
+  //     setValue("bio", val?.bio?.[0] ?? "");
+  //     setValue("country", val?.country ?? "");
+  //     setValue("domains_interested_in", val?.area_of_interest ?? "");
+  //     setInterestedDomainsSelectedOptionsHandler(val?.area_of_interest ?? null);
+  //     setImagePreview(val?.profile_picture?.[0] ?? "");
+  //     setValue("type_of_profile", val?.type_of_profile?.[0]);
+  //     setValue(
+  //       "reasons_to_join_platform",
+  //       val?.reason_to_join ? val?.reason_to_join.join(", ") : ""
+  //     );
+  //     setReasonOfJoiningSelectedOptionsHandler(val?.reason_to_join);
+  //   }
+  // };
   const setValuesHandler = (val) => {
     if (val) {
       setValue("full_name", val?.full_name ?? "");
@@ -496,15 +328,56 @@ const ProfileDetail = () => {
       setValue("country", val?.country ?? "");
       setValue("domains_interested_in", val?.area_of_interest ?? "");
       setInterestedDomainsSelectedOptionsHandler(val?.area_of_interest ?? null);
-      setImagePreview(val?.profile_picture?.[0] ?? null);
+      setImagePreview(val?.profile_picture?.[0] ?? "");
       setValue("type_of_profile", val?.type_of_profile?.[0]);
       setValue(
         "reasons_to_join_platform",
         val?.reason_to_join ? val?.reason_to_join.join(", ") : ""
       );
       setReasonOfJoiningSelectedOptionsHandler(val?.reason_to_join);
+      console.log("mere link aa gye ", val?.social_links);
+      // Set social links
+      if (val?.social_links?.length) {
+        const links = {};
+        val.social_links.forEach((linkArray, index) => {
+          // Assuming linkArray is an array with a single object inside
+          if (Array.isArray(linkArray) && linkArray.length > 0) {
+            const linkData = linkArray[0];
+            console.log(`Processing social link #${index + 1}:`, linkData);
+
+            if (linkData?.link?.length > 0) {
+              const url = linkData.link[0];
+              console.log("Found URL: ", url);
+
+              if (url && typeof url === "string") {
+                if (url.includes("linkedin.com")) {
+                  links["LinkedIn"] = url;
+                } else if (url.includes("github.com")) {
+                  links["GitHub"] = url;
+                } else if (url.includes("t.me") || url.includes("telegram")) {
+                  links["Telegram"] = url;
+                } else {
+                  links[`OtherLink${index + 1}`] = url; // Differentiate other links
+                }
+              } else {
+                console.log("Invalid URL or not a string:", url);
+              }
+            } else {
+              console.log("No valid link found in linkData:", linkData);
+            }
+          } else {
+            console.log("Link array is empty or not an array:", linkArray);
+          }
+        });
+        console.log("Final links object:", links);
+        setSocialLinks(links);
+      } else {
+        console.log("No social_links array or it's empty");
+        setSocialLinks({});
+      }
     }
   };
+
   const onErrorHandler = (val) => {
     console.log("Validation errors:", val); // Add this to log validation errors
     toast.error("Empty fields or invalid values, please recheck the form");
@@ -557,6 +430,30 @@ const ProfileDetail = () => {
       setIsEditing(true);
     }
   }, [userFullData]);
+
+  const getLogo = (url) => {
+    try {
+      const domain = new URL(url).hostname.split(".").slice(-2).join(".");
+      const size = "size-8";
+      const icons = {
+        "linkedin.com": <FaLinkedin className={`text-blue-600 ${size}`} />,
+        "twitter.com": <FaTwitter className={`text-blue-400 ${size}`} />,
+        "github.com": <FaGithub className={`text-gray-700 ${size}`} />,
+        "telegram.com": <FaTelegram className={`text-blue-400 ${size}`} />,
+        "facebook.com": <FaFacebook className={`text-blue-400 ${size}`} />,
+        "instagram.com": <FaInstagram className={`text-pink-950 ${size}`} />,
+        "youtube.com": <FaYoutube className={`text-red-600 ${size}`} />,
+        "reddit.com": <FaReddit className={`text-orange-500 ${size}`} />,
+        "tiktok.com": <FaTiktok className={`text-black ${size}`} />,
+        "snapchat.com": <FaSnapchat className={`text-yellow-400 ${size}`} />,
+        "whatsapp.com": <FaWhatsapp className={`text-green-600 ${size}`} />,
+        "medium.com": <FaMedium className={`text-black ${size}`} />,
+      };
+      return icons[domain] || <LanguageIcon />;
+    } catch (error) {
+      return <LanguageIcon />;
+    }
+  };
   return (
     <div
       ref={containerRef}
@@ -568,19 +465,49 @@ const ProfileDetail = () => {
       {activeTab === "general" && (
         <div className="p-6 bg-gray-50">
           <div className="relative w-24 h-24 mx-auto rounded-full mb-4 group">
-            <img
+            {/* <img
               src={ProfileImage}
               alt={full_name}
               className="w-full h-full rounded-full object-cover"
-            />
+            /> */}
+            {imagePreview && !errors.image ? (
+              <img
+                src={imagePreview}
+                alt="Profile"
+                className="h-full w-full rounded-full object-cover"
+              />
+            ) : (
+              <img
+                src={ProfileImage}
+                alt={full_name}
+                className="w-full h-full rounded-full object-cover"
+              />
+            )}
             <div className="absolute inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <FaPlus className="text-white text-xl" />
-              <input
-                id="file-upload"
-                type="file"
-                onChange={handleImageUpload}
-                className="absolute inset-0 opacity-0 cursor-pointer"
-                accept="image/*"
+              <Controller
+                name="image"
+                control={control}
+                render={({ field }) => (
+                  <>
+                    <input
+                      type="file"
+                      className="hidden"
+                      id="image"
+                      name="image"
+                      onChange={(e) => {
+                        field.onChange(e.target.files[0]);
+                        imageCreationFunc(e.target.files[0]);
+                      }}
+                      accept=".jpg, .jpeg, .png"
+                    />
+                    <label
+                      htmlFor="image"
+                      className="p-2  items-center rounded-md text-md bg-transparent cursor-pointer font-semibold"
+                    >
+                      <FaPlus className="text-white text-xl" />
+                    </label>
+                  </>
+                )}
               />
             </div>
           </div>
@@ -781,7 +708,7 @@ const ProfileDetail = () => {
         {activeTab === "general" && (
           <form onSubmit={handleSubmit(handleSave, onErrorHandler)}>
             <div className="px-1">
-              {/* email  */}
+              {/* full name  */}
               <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-2 px-3">
                 <div className="flex justify-between">
                   <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
@@ -802,8 +729,13 @@ const ProfileDetail = () => {
                     <input
                       type="text"
                       {...register("full_name")}
-                      value={tempData.full_name || ""}
-                      onChange={(e) => handleInputChange(e, "full_name")}
+                      className={`bg-gray-50 border-2 
+                                                ${
+                                                  errors?.full_name
+                                                    ? "border-red-500"
+                                                    : "border-[#737373]"
+                                                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                      placeholder="Enter your full name"
                     />
 
                     {errors?.full_name && (
@@ -819,6 +751,47 @@ const ProfileDetail = () => {
                       className="text-blue-500 mr-2 w-2 h-2"
                       fontSize="small"
                     />
+                  </div>
+                )}
+              </div>
+              {/* full name  */}
+              <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-2 px-3">
+                <div className="flex justify-between">
+                  <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
+                    openchat_username
+                  </h3>
+                  <div>
+                    <button
+                      type="button"
+                      className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
+                      onClick={() => handleEditToggle("openchat_user_name")}
+                    >
+                      {isEditing.openchat_user_name ? "" : <img src={edit} />}
+                    </button>
+                  </div>
+                </div>
+                {isEditing.openchat_user_name ? (
+                  <>
+                    <input
+                      type="text"
+                      {...register("openchat_user_name")}
+                      className={`bg-gray-50 border-2 
+                                                ${
+                                                  errors?.openchat_user_name
+                                                    ? "border-red-500 "
+                                                    : "border-[#737373]"
+                                                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                      placeholder="Enter your openchat username"
+                    />
+                    {errors?.openchat_user_name && (
+                      <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                        {errors?.openchat_user_name?.message}
+                      </span>
+                    )}
+                  </>
+                ) : (
+                  <div className="flex items-center">
+                    <p className="mr-2 text-sm">{openchat_username}</p>
                   </div>
                 )}
               </div>
@@ -841,12 +814,16 @@ const ProfileDetail = () => {
                 {isEditing.email ? (
                   <>
                     <input
-                      type="text"
+                      type="email"
                       {...register("email")}
-                      value={tempData.email}
-                      onChange={(e) => handleInputChange(e, "email")}
+                      className={`bg-gray-50 border-2 
+                                                ${
+                                                  errors?.email
+                                                    ? "border-red-500"
+                                                    : "border-[#737373]"
+                                                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                      placeholder="Enter your email"
                     />
-
                     {errors?.email && (
                       <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
                         {errors?.email?.message}
@@ -885,13 +862,12 @@ const ProfileDetail = () => {
                 {isEditing.bio ? (
                   <textarea
                     {...register("bio")}
-                    value={tempData.bio}
-                    onChange={(e) => handleInputChange(e, "bio")}
                     className={`bg-gray-50 border-2 ${
-                      errors?.bio ? "border-red-500" : "border-[#737373]"
-                    } text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                    placeholder="Tell us bio yourself"
-                  />
+                      errors?.bio ? "border-red-500 " : "border-[#737373]"
+                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                    placeholder="Enter your bio"
+                    rows={1}
+                  ></textarea>
                 ) : (
                   <p className="text-sm">{bio}</p>
                 )}
@@ -916,13 +892,20 @@ const ProfileDetail = () => {
                 {isEditing.country ? (
                   <select
                     {...register("country")}
-                    value={tempData.country}
-                    onChange={(e) => handleInputChange(e, "country")}
+                    className={`bg-gray-50 border-2 ${
+                      errors.country ? "border-red-500 " : "border-[#737373]"
+                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                   >
-                    <option value="">Select your country</option>
-                    {countries.map((country) => (
-                      <option key={country.name} value={country.name}>
-                        {country.name}
+                    <option className="text-lg font-bold" value="">
+                      Select your country
+                    </option>
+                    {countries?.map((expert) => (
+                      <option
+                        key={expert.name}
+                        value={expert.name}
+                        className="text-lg font-normal"
+                      >
+                        {expert.name}
                       </option>
                     ))}
                   </select>
@@ -961,7 +944,7 @@ const ProfileDetail = () => {
                         : "border-[#737373]"
                     } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                   >
-                    <option className="text-lg font-bold" value="">
+                    <option className="text-lg font-normal" value="">
                       Select profile type
                     </option>
                     {typeOfProfileOptions &&
@@ -1006,9 +989,9 @@ const ProfileDetail = () => {
                     menuPosition={"fixed"}
                     styles={{
                       menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-                      control: (provided) => ({
+                      control: (provided, state) => ({
                         ...provided,
-                        paddingBlock: "0px",
+                        paddingBlock: "2px",
                         borderRadius: "8px",
                         border: errors.reasons_to_join_platform
                           ? "2px solid #ef4444"
@@ -1055,8 +1038,9 @@ const ProfileDetail = () => {
                     value={reasonOfJoiningSelectedOptions}
                     options={reasonOfJoiningOptions}
                     classNamePrefix="select"
-                    className="basic-multi-select mt-2"
+                    className="basic-multi-select w-full text-start"
                     placeholder="Select your reasons to join this platform"
+                    name="reasons_to_join_platform"
                     onChange={(selectedOptions) => {
                       if (selectedOptions && selectedOptions.length > 0) {
                         setReasonOfJoiningSelectedOptions(selectedOptions);
@@ -1113,22 +1097,94 @@ const ProfileDetail = () => {
                   </div>
                 </div>
                 {isEditing.area_of_interest ? (
-                  <Select
-                    isMulti
-                    options={interestedDomainsOptions}
-                    value={interestedDomainsSelectedOptions}
-                    onChange={(selectedOptions) => {
-                      setInterestedDomainsSelectedOptions(selectedOptions);
-                      setTempData((prev) => ({
-                        ...prev,
-                        area_of_interest: selectedOptions.map(
-                          (option) => option.value
-                        ),
-                      }));
-                    }}
-                    className="basic-single"
-                    classNamePrefix="select"
-                  />
+                  <>
+                    <ReactSelect
+                      isMulti
+                      menuPortalTarget={document.body}
+                      menuPosition={"fixed"}
+                      styles={{
+                        menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                        control: (provided, state) => ({
+                          ...provided,
+                          paddingBlock: "2px",
+                          borderRadius: "8px",
+                          border: errors.domains_interested_in
+                            ? "2px solid #ef4444"
+                            : "2px solid #737373",
+                          backgroundColor: "rgb(249 250 251)",
+                          "&::placeholder": {
+                            color: errors.domains_interested_in
+                              ? "#ef4444"
+                              : "currentColor",
+                          },
+                          display: "flex",
+                          overflowX: "auto",
+                          maxHeight: "43px",
+                          "&::-webkit-scrollbar": {
+                            display: "none",
+                          },
+                        }),
+                        valueContainer: (provided, state) => ({
+                          ...provided,
+                          overflow: "scroll",
+                          maxHeight: "40px",
+                          scrollbarWidth: "none",
+                        }),
+                        placeholder: (provided, state) => ({
+                          ...provided,
+                          color: errors.domains_interested_in
+                            ? "#ef4444"
+                            : "rgb(107 114 128)",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                        }),
+                        multiValue: (provided) => ({
+                          ...provided,
+                          display: "inline-flex",
+                          alignItems: "center",
+                        }),
+                        multiValueRemove: (provided) => ({
+                          ...provided,
+                          display: "inline-flex",
+                          alignItems: "center",
+                        }),
+                      }}
+                      value={interestedDomainsSelectedOptions}
+                      options={interestedDomainsOptions}
+                      classNamePrefix="select"
+                      className="basic-multi-select w-full text-start"
+                      placeholder="Select domains you are interested in"
+                      name="domains_interested_in"
+                      onChange={(selectedOptions) => {
+                        if (selectedOptions && selectedOptions.length > 0) {
+                          setInterestedDomainsSelectedOptions(selectedOptions);
+                          clearErrors("domains_interested_in");
+                          setValue(
+                            "domains_interested_in",
+                            selectedOptions
+                              .map((option) => option.value)
+                              .join(", "),
+                            { shouldValidate: true }
+                          );
+                        } else {
+                          setInterestedDomainsSelectedOptions([]);
+                          setValue("domains_interested_in", "", {
+                            shouldValidate: true,
+                          });
+                          setError("domains_interested_in", {
+                            type: "required",
+                            message: "Selecting an interest is required",
+                          });
+                        }
+                      }}
+                    />
+                    {errors.domains_interested_in && (
+                      <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                        {errors.domains_interested_in.message}
+                      </span>
+                    )}
+                  </>
                 ) : (
                   <div className="flex flex-wrap gap-2">
                     <span className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1">
@@ -1138,46 +1194,52 @@ const ProfileDetail = () => {
                 )}
               </div>
               <div>
-                <h3 className="mb-2 text-xs text-gray-500 px-3">LINKS</h3>
-                <div className="flex items-center px-3">
-                  {Object.keys(socialLinks).map((key) => {
-                    const url = socialLinks[key];
-                    const Icon = getIconForLink(url);
-                    return (
-                      <div
-                        className="group relative flex items-center"
-                        key={key}
-                      >
-                        <a
-                          href={url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center"
-                        >
-                          <Icon className="text-gray-400 hover:text-gray-600 cursor-pointer transform transition-all duration-300 hover:scale-110" />
-                        </a>
-                        <button
-                          type="button"
-                          className="absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 ease-in-out transform opacity-0 group-hover:opacity-100 group-hover:translate-x-8  h-10 w-7"
-                          onClick={() => handleLinkEditToggle(key)}
-                        >
-                          <img src={edit} alt="edit" />
-                        </button>
-                        {isEditingLink[key] && (
-                          <input
-                            type="text"
-                            value={url}
-                            onChange={(e) => handleLinkChange(e, key)}
-                            className="border p-1 rounded w-full ml-2 transition-all duration-300 ease-in-out transform"
-                          />
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
+              <h3 className="mb-2 text-xs text-gray-500 px-3">LINKS</h3>
+          <div className="flex items-center px-3">
+            {/* Display existing links */}
+            {console.log("Display existing links ", socialLinks)}
+            {socialLinks &&
+              Object.keys(socialLinks).map((key, index) => {
+                const url = socialLinks[key];
+                if (!url) {
+                  return null;
+                }
+
+                const Icon = getIconForLink(url);
+                return (
+                  <div className="group relative flex items-center" key={index}>
+                    <a
+                      href={url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center"
+                    >
+                      <Icon className="text-gray-400 hover:text-gray-600 cursor-pointer transform transition-all duration-300 hover:scale-110" />
+                    </a>
+                    <button
+                      type="button"
+                      className="absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 ease-in-out transform opacity-0 group-hover:opacity-100 group-hover:translate-x-8 h-10 w-7"
+                      onClick={() => handleLinkEditToggle(key)}
+                    >
+                      <img src={edit} alt="edit" />
+                    </button>
+                    {isEditingLink[key] && (
+                      <input
+                        type="text"
+                        {...register(`social_links[${key}]`)}
+                        value={url}
+                        onChange={(e) => handleLinkChange(e, key)}
+                        className="border p-1 rounded w-full ml-2 transition-all duration-300 ease-in-out transform"
+                      />
+                    )}
+                  </div>
+                );
+              })}
+          </div>
 
                 {/* Save/Cancel Section */}
-                {Object.values(isEditing).some((value) => value) && (
+                {/* {Object.values(isEditing).some((value) => value) && ( */}
+                {(Object.values(isEditing).some((value) => value) || isLinkBeingEdited) && (
                   <div className="flex justify-end gap-4 mt-4">
                     <button
                       type="button"
