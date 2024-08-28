@@ -9,7 +9,7 @@ use sha2::{Digest, Sha256};
 use crate::guard::*;
 use crate::user_modules::get_user::*;
 
-#[update(guard = "is_user_anonymous")]
+#[update(guard = "combined_guard")]
 pub async fn register_venture_capitalist(params: VentureCapitalist) -> std::string::String {
     let caller = caller();
 
@@ -92,7 +92,7 @@ pub async fn register_venture_capitalist(params: VentureCapitalist) -> std::stri
     }
 }
 
-#[update(guard="is_user_anonymous")]
+#[update(guard="combined_guard")]
 pub async fn update_venture_capitalist(params: VentureCapitalist) -> String {
     let caller = ic_cdk::caller();
 
@@ -138,7 +138,7 @@ pub async fn update_venture_capitalist(params: VentureCapitalist) -> String {
     }
 }
 
-#[update(guard = "is_user_anonymous")]
+#[update(guard = "combined_guard")]
 pub fn delete_venture_capitalist() -> std::string::String {
     let caller = ic_cdk::caller();
     println!("Attempting to deactivate founder for caller: {:?}", caller);
@@ -155,7 +155,7 @@ pub fn delete_venture_capitalist() -> std::string::String {
     format!("Venture Capitalist Account Has Been DeActivated")
 }
 
-#[update(guard = "is_user_anonymous")]
+#[update(guard = "combined_guard")]
 pub fn make_vc_active_inactive(p_id: Principal) -> String {
     let principal_id = caller();
     if p_id == principal_id || ic_cdk::api::is_controller(&principal_id) {

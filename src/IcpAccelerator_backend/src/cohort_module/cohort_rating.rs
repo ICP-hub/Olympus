@@ -1,4 +1,4 @@
-use crate::is_user_anonymous;
+use crate::guard::*;
 use crate::state_handler::*;
 use crate::types::ratings_types::*;
 use crate::project_module::project_types::*;
@@ -8,7 +8,7 @@ use ic_cdk::api::time;
 use ic_cdk_macros::{query, update};
 use serde::{Deserialize, Serialize};
 
-#[update(guard = "is_user_anonymous")]
+#[update(guard = "combined_guard")]
 pub fn update_peer_rating_api(rating_data: PeerRatingUpdate) -> String {
     let caller = caller();
     if rating_data.ratings.is_empty() {
@@ -85,7 +85,7 @@ pub fn update_peer_rating_api(rating_data: PeerRatingUpdate) -> String {
     })
 }
 
-#[update(guard = "is_user_anonymous")]
+#[update(guard = "combined_guard")]
 pub fn calculate_and_store_average_rating(
     cohort_id: String,
     project_id: String,
@@ -132,7 +132,7 @@ pub fn calculate_and_store_average_rating(
     })
 }
 
-#[query(guard="is_user_anonymous")]
+#[query(guard="combined_guard")]
 pub fn get_stored_average_rating(cohort_id: String, project_id: String) -> Result<f64, String> {
     read_state(|avg_ratings| {
         let avg_ratings = &avg_ratings.cohort_average_ratings;
@@ -155,7 +155,7 @@ pub struct LeaderboardEntryForCohorts {
     average_rating: f64,
 }
 
-#[query(guard="is_user_anonymous")]
+#[query(guard="combined_guard")]
 pub fn generate_cohort_leaderboard() -> Vec<LeaderboardEntryForCohorts> {
     let mut leaderboard_entries: Vec<LeaderboardEntryForCohorts> = Vec::new();
 

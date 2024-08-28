@@ -9,7 +9,7 @@ use candid::Principal;
 use ic_cdk_macros::query;
 use std::collections::HashMap;
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 pub fn get_mentor_info_using_principal(id: Principal) -> Option<(MentorInternal, UserInfoInternal)> {
     let mentor_profile = read_state(|state| {
         state
@@ -31,7 +31,7 @@ pub fn get_mentor_info_using_principal(id: Principal) -> Option<(MentorInternal,
     }
 }
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 pub fn get_mentor() -> Option<(MentorProfile, UserInfoInternal)> {
     let caller = ic_cdk::caller();
 
@@ -55,7 +55,7 @@ pub fn get_mentor() -> Option<(MentorProfile, UserInfoInternal)> {
     }
 }
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 pub fn get_all_mentors() -> HashMap<Principal, (MentorInternal, UserInfoInternal, Vec<Role>)> {
     let mentor_registry = read_state(|state| {
         state.mentor_storage.iter().collect::<Vec<_>>()
@@ -81,7 +81,7 @@ pub fn get_all_mentors() -> HashMap<Principal, (MentorInternal, UserInfoInternal
     mentor_with_info_map
 }
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 pub fn get_all_mentors_with_pagination(
     pagination_params: PaginationParamMentor,
 ) -> PaginationReturnMentor {
@@ -120,8 +120,8 @@ pub fn get_all_mentors_with_pagination(
 }
 
 
-#[query(guard = "is_user_anonymous")]
-pub fn filter_mentors(criteria: MentorFilterCriteria) -> Vec<MentorProfile> {
+#[query(guard = "combined_guard")]
+pub fn filter_mentors(_criteria: MentorFilterCriteria) -> Vec<MentorProfile> {
     read_state(|state| {
         state
             .mentor_storage

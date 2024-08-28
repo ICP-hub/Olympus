@@ -12,7 +12,7 @@ use sha2::{Digest, Sha256};
 use crate::guard::*;
 
 
-#[update(guard = "is_user_anonymous")]
+#[update(guard = "combined_guard")]
 pub async fn add_announcement(announcement_details: Announcements) -> String {
     let caller_id = caller();
     let current_time = time();
@@ -34,7 +34,7 @@ pub async fn add_announcement(announcement_details: Announcements) -> String {
         mentor_info: mentor_info_get.map(|(mentor, _)| mentor),
         vc_info: vc_info_get.map(|(vc, _)| vc.profile),
         timestamp: current_time,
-        announcement_id: announcement_id,
+        announcement_id: announcement_id.clone(),
     };
 
     ic_cdk::println!("New Announcement Details: {:?}", new_announcement);
@@ -42,6 +42,7 @@ pub async fn add_announcement(announcement_details: Announcements) -> String {
     mutate_state(|state| {
         if let Some(mut candid_announcements) = state.announcement.get(&StoredPrincipal(caller_id)) {
             candid_announcements.0.push(new_announcement);
+            state.announcement.insert(StoredPrincipal(caller_id), candid_announcements); 
         } else {
             state.announcement.insert(
                 StoredPrincipal(caller_id),
@@ -49,10 +50,10 @@ pub async fn add_announcement(announcement_details: Announcements) -> String {
             );
         }
     });
-    format!("Announcement added successfully at {}", current_time)
+    format!("Announcement added successfully with UID {}", announcement_id)
 }
 
-#[update(guard = "is_user_anonymous")]
+#[update(guard = "combined_guard")]
 pub async fn update_announcement_by_id(announcement_id: String, new_details: Announcements) -> String {
     mutate_state(|state| {
         if let Some(mut caller_announcements) = state.announcement.get(&StoredPrincipal(caller())) {
@@ -77,15 +78,18 @@ pub async fn update_announcement_by_id(announcement_id: String, new_details: Ann
     })
 }
 
-
-#[update(guard = "is_user_anonymous")]
+#[update(guard = "combined_guard")]
 pub fn delete_announcement_by_id(announcement_id: String) -> String {
     mutate_state(|state| {
         if let Some(mut caller_announcements) = state.announcement.get(&StoredPrincipal(caller())) {
             let initial_len = caller_announcements.0.len();
             caller_announcements.0.retain(|announcement| announcement.announcement_id != announcement_id);
 
-            if caller_announcements.0.len() < initial_len {
+            if caller_announcements.0.is_empty() {
+                state.announcement.remove(&StoredPrincipal(caller()));
+                "Announcement deleted and no announcements left for this caller, entry removed.".to_string()
+            } else if caller_announcements.0.len() < initial_len {
+                state.announcement.insert(StoredPrincipal(caller()), caller_announcements.clone());
                 "Announcement deleted successfully.".to_string()
             } else {
                 "No announcement found with the given ID.".to_string()
@@ -96,7 +100,8 @@ pub fn delete_announcement_by_id(announcement_id: String) -> String {
     })
 }
 
-#[query(guard = "is_user_anonymous")]
+
+#[query(guard = "combined_guard")]
 pub fn get_announcements(page: usize, page_size: usize) -> HashMap<Principal, Vec<AnnouncementsInternal>> {
     read_state(|state| {
         let mut hashmap = HashMap::new();
@@ -105,10 +110,10 @@ pub fn get_announcements(page: usize, page_size: usize) -> HashMap<Principal, Ve
             let start_index = (page - 1) * page_size;
 
             let paginated_announcements = announcements.0
-                .clone()
-                .into_iter()
+                .iter()
                 .skip(start_index)
                 .take(page_size)
+                .cloned()
                 .collect::<Vec<_>>();
 
             hashmap.insert(principal, paginated_announcements);
@@ -118,7 +123,7 @@ pub fn get_announcements(page: usize, page_size: usize) -> HashMap<Principal, Ve
 }
 
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 pub fn get_latest_announcements(page: usize, page_size: usize) -> HashMap<Principal, Vec<AnnouncementsInternal>> {
     read_state(|state| {
         let mut hashmap = HashMap::new();
@@ -142,7 +147,7 @@ pub fn get_latest_announcements(page: usize, page_size: usize) -> HashMap<Princi
     })
 }
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 pub fn get_announcements_by_announcement_id(announcement_id: String) -> Vec<AnnouncementsInternal> {
     read_state(|state| {
         state

@@ -1,7 +1,7 @@
 use crate::state_handler::*;
 use ic_cdk_macros::*;
 use candid::{CandidType, Nat};
-use crate::is_user_anonymous;
+use crate::guard::*;
 
 #[derive(Debug, Clone, PartialEq, CandidType)]
 pub struct LeaderboardEntryForUpvote {
@@ -21,7 +21,7 @@ pub struct LeaderboardEntryForRatings {
     pub average_rating: Option<f64>,
 }
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 pub fn get_leaderboard_using_ratings() -> Vec<LeaderboardEntryForRatings> {
     let mut leaderboard: Vec<LeaderboardEntryForRatings> = Vec::new();
 

@@ -7,7 +7,7 @@ use sha2::{Digest, Sha256};
 use crate::guard::*;
 use crate::user_modules::get_user::*;
 
-#[update(guard = "is_user_anonymous")]
+#[update(guard = "combined_guard")]
 pub async fn post_job(params: Jobs) -> String {
     let principal_id = ic_cdk::api::caller();
 
@@ -46,7 +46,7 @@ pub async fn post_job(params: Jobs) -> String {
 }
 
 
-#[update(guard = "is_user_anonymous")]
+#[update(guard = "combined_guard")]
 pub async fn update_job_post_by_id(job_id: String, new_details: Jobs) -> String {
     mutate_state(|state| {
         let announcement_storage = &mut state.post_job;
@@ -75,7 +75,7 @@ pub async fn update_job_post_by_id(job_id: String, new_details: Jobs) -> String 
 }
 
 
-#[update(guard = "is_user_anonymous")]
+#[update(guard = "combined_guard")]
 pub async fn delete_job_post_by_id(job_id: String) -> String {
     mutate_state(|state| {
         let announcement_storage = &mut state.post_job;
@@ -104,7 +104,7 @@ pub async fn delete_job_post_by_id(job_id: String) -> String {
 }
 
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 pub fn get_all_jobs(page_number: usize, page_size: usize) -> Vec<JobsInternal> {
     read_state(|state| {
         let mut all_jobs: Vec<JobsInternal> = Vec::new();
@@ -142,7 +142,7 @@ pub fn get_all_jobs(page_number: usize, page_size: usize) -> Vec<JobsInternal> {
 
 
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 pub fn get_jobs_posted_by_principal(caller: Principal) -> Vec<JobsInternal> {
     read_state(|state| {
         let mut jobs_for_principal = Vec::new();
@@ -157,7 +157,7 @@ pub fn get_jobs_posted_by_principal(caller: Principal) -> Vec<JobsInternal> {
     })
 }
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 pub fn get_job_details_using_uid(params: String) -> Option<JobsInternal> {
     read_state(|state| {
         for (_poster_principal, job_list) in state.post_job.iter() {

@@ -46,12 +46,12 @@ use crate::types::ratings_types::*;
 use crate::ratings_module::rubric_ratings::*;
 use crate::guard::*;
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 fn greet(name: String) -> String {
     format!("Hello! {}", name)
 }
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 fn get_my_id() -> Principal {
     caller()
 }

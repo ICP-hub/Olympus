@@ -9,7 +9,7 @@ use candid::Principal;
 use std::collections::HashMap;
 use crate::guard::*;
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 pub fn get_vc_info() -> Option<(VentureCapitalist, UserInfoInternal)> {
     let caller = ic_cdk::caller();
     println!("Fetching venture capitalist info for caller: {:?}", caller);
@@ -32,7 +32,7 @@ pub fn get_vc_info() -> Option<(VentureCapitalist, UserInfoInternal)> {
     })
 }
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 pub fn get_vc_info_using_principal(caller: Principal) -> Option<(VentureCapitalistAll, UserInfoInternal)> {
     read_state(|state| {
         let profile = state
@@ -58,7 +58,7 @@ pub fn get_vc_info_using_principal(caller: Principal) -> Option<(VentureCapitali
     })
 }
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 pub fn list_all_vcs() -> HashMap<Principal, (VentureCapitalistInternal, UserInfoInternal, Vec<Role>)> {
     let projects_snapshot = read_state(|state| {
         state
@@ -85,7 +85,7 @@ pub fn list_all_vcs() -> HashMap<Principal, (VentureCapitalistInternal, UserInfo
     vc_with_info_map
 }
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 pub fn filter_venture_capitalists(criteria: VcFilterCriteria) -> Vec<VentureCapitalist> {
     read_state(|state| {
         state
@@ -138,7 +138,7 @@ pub fn filter_venture_capitalists(criteria: VcFilterCriteria) -> Vec<VentureCapi
 }
 
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 pub fn list_all_vcs_with_pagination(pagination_params: PaginationParams) -> PaginationReturnVcData {
     let (data, total_count) = read_state(|state| {
         let start = (pagination_params.page - 1) * pagination_params.page_size;

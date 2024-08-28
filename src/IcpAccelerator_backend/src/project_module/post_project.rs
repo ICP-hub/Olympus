@@ -17,7 +17,7 @@ fn record_measurement(measurement: u64) {
     ic_cdk::println!("Instructions used: {}", measurement);
 }
 
-#[update(guard = "is_user_anonymous")]
+#[update(guard = "combined_guard")]
 pub async fn register_project(info: ProjectInfo) -> String {
     let initial_cycles = ic_cdk::api::canister_balance();
     if info.private_docs.is_some() && info.upload_private_documents != Some(true) {
@@ -227,7 +227,7 @@ pub async fn change_project_images(
     updated_project
 }
 
-#[update(guard = "is_user_anonymous")]
+#[update(guard = "combined_guard")]
 pub async fn update_project(project_id: String, mut updated_project: ProjectInfo) -> String {
     let caller = ic_cdk::caller();
 
@@ -287,7 +287,7 @@ pub async fn update_project(project_id: String, mut updated_project: ProjectInfo
     }
 }
 
-#[update(guard = "is_user_anonymous")]
+#[update(guard = "combined_guard")]
 pub fn delete_project(id: String) -> std::string::String {
     let caller = ic_cdk::caller();
 
@@ -323,7 +323,7 @@ pub fn find_project_owner_principal(project_id: &str) -> Option<Principal> {
     })
 }
 
-#[update(guard = "is_user_anonymous")]
+#[update(guard = "combined_guard")]
 pub async fn update_team_member(project_id: String, member_principal_id: Principal) -> String {
     let member_uid = read_state(|state| {
         match state
@@ -397,7 +397,7 @@ pub async fn update_team_member(project_id: String, member_principal_id: Princip
     }
 }
 
-#[update(guard="is_user_anonymous")]
+#[update(guard="combined_guard")]
 pub async fn delete_team_member(project_id: String, member_principal_id: Principal) -> String {
     let member_uid = read_state(|state| {
         match state
@@ -464,7 +464,7 @@ pub async fn delete_team_member(project_id: String, member_principal_id: Princip
     }
 }
 
-#[update(guard = "is_user_anonymous")]
+#[update(guard = "combined_guard")]
 pub fn add_project_rating(ratings: ProjectRatingStruct) -> Result<String, String> {
     let principal = caller(); // Assuming `caller()` correctly retrieves the principal of the caller
 
