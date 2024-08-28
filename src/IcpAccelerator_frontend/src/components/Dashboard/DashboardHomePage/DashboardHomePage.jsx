@@ -4,9 +4,9 @@ import DashboardHomeSidebar from './DashboardHomeSidebar'
 import DashboardHomeWelcomeSection from './DashboardHomeWelcomeSection'
 import { Routes, Route } from 'react-router-dom';
 import ProjectProfile from './ProjectProfile'
-import UserSection from './UserSection'
+import UserSection from '../../Discover/UserSection'
 import Jobs from '../../jobs/Jobs'
-import ProfilePage from '../../profile/ProfilePage'
+import ProfilePage from "../../Profile/ProfilePage"
 import EventMain from '../DashboardEvents/EventMain'
 import ServiceDetailPage from './ServiceDetailPage'
 import AddNewWork from './AddNewWork'
@@ -14,7 +14,8 @@ import WorksSection from './WorksSection'
 import WorkSectionDetailPage from './WorkSectionDetailPage'
 import EventDetails from '../DashboardEvents/EventDetail'
 import DocumentSection from '../Project/DocumentSection'
-import DiscoverRegionalHubs from '../RegionalHubs/RegionalHubs'
+import DiscoverRegionalHubs from '../../RegionalHubs/RegionalHubs'
+
 
 function DashboardHomePage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -27,7 +28,7 @@ function DashboardHomePage() {
         <DashboardHomeNavbar onMenuClick={toggleSidebar} />
         <main className="flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-6 md:pt-0 bg-white mr-[4%] rounded-3xl">
           <Routes >
-            <Route path="/" element={<DashboardHomeWelcomeSection  profileCompletion={"35"} />} />
+            <Route path="/" element={<DashboardHomeWelcomeSection profileCompletion={"35"} />} />
             <Route path="/jobs" element={<Jobs />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/user" element={<UserSection />} />

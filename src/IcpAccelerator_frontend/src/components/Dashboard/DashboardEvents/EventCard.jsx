@@ -1,119 +1,182 @@
-// EventCard.js
-import React from 'react';
-import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
 
-const EventCard = ({ event }) => {
+import React, { useEffect, useState } from 'react';
+import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
+import { useSelector } from 'react-redux';
+import { IcpAccelerator_backend } from '../../../../../declarations/IcpAccelerator_backend/index';
+import uint8ArrayToBase64 from '../../Utils/uint8ArrayToBase64';
+import { useNavigate } from 'react-router-dom';
+import parse from 'html-react-parser';
+import NoDataFound from './NoDataFound';
+
+const EventCard = ({ eventType }) => { // Accept eventType as a prop
+  const actor = useSelector((currState) => currState.actors.actor);
+  const [noData, setNoData] = useState(null);
+  const [allLiveEventsData, setAllLiveEventsData] = useState([]);
+
+  const [isLoading, setIsLoading] = useState(true);
+  const [countData, setCountData] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const getAllLiveEvents = async (caller, page) => {
+      setIsLoading(true);
+      try {
+        const result = await caller.get_all_cohorts({
+          page_size: itemsPerPage,
+          page,
+        });
+        console.log("DATA FROM API IS ", result);
+
+        if (isMounted) {
+          if (!result || result.length === 0) {
+            setNoData(true);
+            setIsLoading(false);
+            setAllLiveEventsData([]);
+            setCountData(0);
+          } else {
+            setNoData(false);
+            setIsLoading(false);
+            setAllLiveEventsData(result.data);
+            setCountData(result.total_count);
+          }
+        }
+      } catch (error) {
+        if (isMounted) {
+          setNoData(true);
+          setIsLoading(false);
+          setCountData(0);
+          setAllLiveEventsData([]);
+          console.error("Error in get_all_cohort", error);
+        }
+      }
+    };
+
+    if (actor) {
+      getAllLiveEvents(actor, currentPage);
+    } else {
+      getAllLiveEvents(IcpAccelerator_backend, currentPage);
+    }
+
+    return () => {
+      isMounted = false;
+    };
+  }, [actor, currentPage, itemsPerPage]);
+
+  const navigate = useNavigate();
+
+  const handleClick = (cohort_id) => {
+    navigate('/dashboard/single-event', { state: { cohort_id } });
+  };
+
+  // Filter events based on the selected event type
+  const filteredEvents = allLiveEventsData.filter((eventData) => {
+    if (eventType === 'All') return true;
+    if (eventType === 'Ongoing') {
+      // Assuming there's a way to determine if the event is ongoing
+      const now = new Date();
+      return now >= new Date(eventData.cohort.cohort_launch_date) && now <= new Date(eventData.cohort.cohort_end_date);
+    }
+    if (eventType === 'Upcoming') {
+      return new Date(eventData.cohort.cohort_launch_date) > new Date();
+    }
+    if (eventType === 'Dead') {
+      return new Date(eventData.cohort.cohort_end_date) < new Date();
+    }
+    return false;
+  });
+
   return (
-    <div className="bg-white rounded-lg shadow p-4 mb-6">
-      <div className="flex justify-between items-center">
-        <div className="flex items-center gap-1 relative">
-          <div className="max-w-[160px] absolute top-1 left-1 bg-white p-2 rounded-[8px]">
-            <p className="text-base font-bold">20 Jun – 22 Jun</p>
-            <p className="text-sm font-normal">Start at 15:00 GMT+4</p>
-          </div>
-          <img
-            src={event.image}
-            alt={event.title}
-            className="w-[240px] !important h-[172px] !important rounded-lg mr-4 object-cover" />
-          <div>
-            <div>
-              <p className="bg-white font-medium border-2 borer-[#CDD5DF] text-[#364152] w-[86px] px-2 py-1 rounded-full text-sm">
-                Workshop
-              </p>
-              <h3 className="text-lg font-semibold">{event.title}</h3>
-              <p className="text-sm text-gray-500">{event.description}</p>
-              {/* <div className="flex items-center mt-2"> */}
-              {/* <span className="text-sm text-gray-500">{event.date}</span> */}
-              {/* <span className="text-sm text-gray-500 ml-4">{event.time}</span> */}
-              {/* <span className="text-sm text-gray-500 ml-4">{event.type}</span> */}
-              {/* </div> */}
-            </div>
-            {/* <span
-              className={`px-2 py-1 text-xs font-medium text-white rounded ${event.labelColor}`}
-            >
-              {event.label}
-            </span> */}
-            <div className="flex gap-3 items-center mt-4">
-              <span className="text-sm text-[#121926]">
-                {" "}
-                <PlaceOutlinedIcon
-                  className="text-[#364152]"
-                  fontSize="small"
-                />
-                {event.mode}
-              </span>
-              <span className="text-sm text-gray-500">{event.price}</span>
-              <div className="flex -space-x-1">
-                {event.attendees.map((attendee, index) => (
-                  <img
-                    key={index}
-                    src={attendee}
-                    alt="attendee"
-                    className="w-6 h-6 rounded-full border-2 border-white"
-                  />
-                ))}
+    <div>
+      {isLoading ? (
+        <div>Loading...</div>
+      ) : filteredEvents.length > 0 ? ( // Use filteredEvents instead of allLiveEventsData
+        <div>
+          {filteredEvents.map((data, index) => {
+            console.log("banner before", data.cohort.cohort_banner[0]);
+            const image = data?.cohort?.cohort_banner[0]
+              ? uint8ArrayToBase64(data?.cohort?.cohort_banner[0])
+              : [];
+            const name = data?.cohort?.title ?? "No Title...";
+            console.log("banner after", image);
+
+            const launch_date = data?.cohort?.cohort_launch_date
+              ? new Date(data.cohort.cohort_launch_date).toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+              })
+              : "";
+
+            const end_date = data?.cohort?.cohort_end_date
+              ? new Date(data.cohort.cohort_end_date).toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+              })
+              : "";
+            const desc = data?.cohort?.description ?? "";
+            const funding = data?.cohort?.funding_amount ?? "";
+            const country = data?.cohort?.country ?? "";
+
+            return (
+              <div key={index} className="bg-white rounded-lg shadow p-4 mb-6" onClick={() => handleClick(data.cohort_id)}>
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center gap-3 relative w-full">
+                    <div className="max-w-[160px] absolute top-1 left-1 bg-white p-2 rounded-[8px]">
+                      <p className="text-base font-bold">
+                        {launch_date} – {end_date}
+                      </p>
+                    </div>
+                    <div className="w-[240px] h-[172px]">
+                      <img
+                        src={image}
+                        alt={name}
+                        className="w-[240px] h-[172px] rounded-lg mr-4 object-cover object-center"
+                      />
+                    </div>
+                    <div className='w-2/3'>
+                      <div>
+                        <p className="bg-white font-medium border-2 borer-[#CDD5DF] text-[#364152] w-[86px] px-2 py-1 rounded-full text-sm">
+                          Workshop
+                        </p>
+                        <h3 className="text-lg font-bold mt-2">{name}</h3>
+                        <p className="text-sm text-gray-500 mb-4 overflow-hidden text-ellipsis max-h-12 line-clamp-2 mt-2">
+                          {parse(desc)}
+                        </p>
+                      </div>
+                      <div className="flex gap-3 items-center -bottom-4 relative">
+                        <span className="text-sm text-[#121926]">
+                          <PlaceOutlinedIcon className="text-[#364152]" fontSize="small" />
+                          {country}
+                        </span>
+                        <span className="text-sm text-[#121926]">
+                          ${funding}
+                        </span>
+                        <div className="flex -space-x-1">
+                          {data?.cohort?.attendees?.map((attendee, index) => (
+                            <img
+                              key={index}
+                              src={attendee}
+                              alt="attendee"
+                              className="w-6 h-6 rounded-full border-2 border-white"
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
+            );
+          })}
         </div>
-      </div>
+      ) : (
+        <NoDataFound message="No events found" />
+      )}
     </div>
   );
 };
 
 export default EventCard;
 
-
-// // EventCard.js
-// import React from 'react';
-// import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
-
-// const EventCard = ({ event }) => {
-//   return (
-//     <div className="bg-white mb-6 rounded-lg shadow-md overflow-hidden">
-//       <div className="flex">
-//         <div className="relative w-60 h-[172px] flex-shrink-0">
-//           <img
-//             src={event.image}
-//             alt={event.title}
-//             className="w-full h-full object-cover"
-//           />
-//           <div className="absolute top-2 left-2 bg-white p-2 rounded-lg shadow">
-//             <p className="text-sm font-bold">20 Jun – 22 Jun</p>
-//             <p className="text-xs">Start at 15:00 GMT+4</p>
-//           </div>
-//         </div>
-//         <div className="p-4 flex flex-col justify-between flex-grow">
-//           <div>
-//             <span className="bg-white font-medium border-2 borer-[#CDD5DF] text-[#364152] w-[86px] px-2 py-1 rounded-full text-sm">
-//               Workshop
-//             </span>
-//             <h3 className="text-lg font-semibold mb-2">{event.title}</h3>
-//             <p className="text-sm text-gray-600 mb-4">{event.description}</p>
-//           </div>
-//           <div className="flex items-center justify-between">
-//             <div className="flex items-center space-x-4">
-//               <span className="flex items-center text-sm text-gray-700">
-//                 <PlaceOutlinedIcon className="text-gray-400 mr-1" fontSize="small" />
-//                 {event.mode}
-//               </span>
-//               <span className="text-sm font-medium">{event.price}</span>
-//             </div>
-//             <div className="flex -space-x-2">
-//               {event.attendees.slice(0, 4).map((attendee, index) => (
-//                 <img
-//                   key={index}
-//                   src={attendee}
-//                   alt={`attendee ${index + 1}`}
-//                   className="w-8 h-8 rounded-full border-2 border-white object-cover"
-//                 />
-//               ))}
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default EventCard;

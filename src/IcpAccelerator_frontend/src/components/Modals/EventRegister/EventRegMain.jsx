@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
 import { ThreeDots } from "react-loader-spinner";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -10,174 +9,136 @@ import EventReg1 from "./EventReg1";
 import EventReg2 from "./EventReg2";
 import EventReg3 from "./EventReg3";
 import EventReg4 from "./EventReg4";
-import { format, startOfToday } from "date-fns";
+import { format } from "date-fns";
 import { useSelector } from "react-redux";
+import { validationSchema } from "./cohortValidation";
 
-const validationSchema = yup.object({
-  title: yup
-    .string()
-    .required("Required")
-    .test(
-      "is-non-empty",
-      "Title cannot be empty",
-      (value) => value && value.trim().length > 0
-    ),
-  description: yup
-    .string()
-    .trim()
-    .required("Description is required")
-    .matches(/^[^\s].*$/, "Cannot start with a space")
-    .test(
-      "no-leading-spaces",
-      "Description should not have leading spaces",
-      (value) => !value || value.trimStart() === value
-    ),
-  cohort_launch_date: yup
-    .date()
-    .required()
-    .typeError("Must be a date")
-    .min(startOfToday(), "Cohort Launch date cannot be before today"),
-  cohort_end_date: yup
-    .date()
-    .required()
-    .typeError("Must be a date")
-    .min(
-      yup.ref("cohort_launch_date"),
-      "Cohort End date cannot be before Cohort launch date"
-    ),
-  tags: yup
-    .string()
-    .test("is-non-empty", "Selecting an interest is required", (value) =>
-      /\S/.test(value)
-    )
-    .required("Selecting an interest is required"),
-  deadline: yup
-    .date()
-    .required("Must be a date")
-    .typeError("Must be a valid date")
-    .max(
-      yup.ref("cohort_launch_date"),
-      "Application Deadline must be before the Cohort Launch date"
-    ),
-  eligibility: yup
-    .string()
-    .typeError("You must enter eligibility")
-    .required(),
-  rubric_eligibility: yup.string().required("Required"),
-  no_of_seats: yup
-    .number()
-    .typeError("You must enter a number")
-    .required("Number of seats is required")
-    .min(0, "The number of seats cannot be negative"),
+const EventRegMain = ({ modalOpen, setModalOpen, editMode, singleEventData, cohortId }) => {
+  console.log("cohort id reg main me ", cohortId);
 
-  funding_type: yup
-    .string()
-    .typeError("You must enter a funding type")
-    .required("Required"),
-  funding_amount: yup
-    .string()
-    .typeError("You must enter a funding amount")
-    .required("Required"),
-});
-
-const EventRegMain = ({ modalOpen, setModalOpen }) => {
+  // GETTING ACTOR FROM REDUX STORE
   const actor = useSelector((currState) => currState.actors.actor);
-  const [selectedArea, setSelectedArea] = useState("");
+
+  // INDEX STATE TO TRACK THE CURRENT STEP OF THE FORM
   const [index, setIndex] = useState(0);
+
+  // INITIALIZING THE FORM WITH VALIDATION SCHEMA
   const methods = useForm({
     resolver: yupResolver(validationSchema),
     mode: "all",
+    defaultValues: singleEventData || {},
   });
-  const [imagePreview, setImagePreview] = useState(null);
+
+  // STATE TO STORE THE IMAGE DATA
   const [imageData, setImageData] = useState(null);
+
+  // DESTRUCTURING METHODS FROM useForm HOOK
   const {
     handleSubmit,
     trigger,
     formState: { isSubmitting },
+    getValues,
   } = methods;
 
+  // FORM FIELD NAMES FOR EACH STEP OF THE FORM
   const formFields = {
     0: ["cohort_banner", "title", "cohort_launch_date", "cohort_end_date"],
     1: ["deadline", "eligibility", "no_of_seats", "start_date"],
-    2: ["funding_type", "funding_amount", "tags", "country", "host_name"],
+    2: ["funding_type", "funding_amount", "tags", "country", "host_name", "contact_links"],
     3: ["description"],
   };
 
-  const [selectedCountry, setSelectedCountry] = useState("");
+  // STATE TO STORE THE FORM DATA
+  const [formData, setFormData] = useState({});
 
-  const onSubmitHandler = async (data) => {
-    const areaValue = selectedArea === "global" ? "global" : selectedCountry;
-    console.log("Form data:", data);
-
-    const eventData = {
-      title: data.title,
-      country: areaValue,
-      funding_amount: data.funding_amount,
-      funding_type: data.funding_type,
-      description: data.description,
-      cohort_launch_date: format(
-        new Date(data.cohort_launch_date),
-        "yyyy-MM-dd"
-      ),
-      start_date: format(new Date(data.cohort_launch_date), "yyyy-MM-dd"),
-      cohort_end_date: format(new Date(data.cohort_end_date), "yyyy-MM-dd"),
-      deadline: format(new Date(data.deadline), "yyyy-MM-dd"),
-      tags: data.tags,
-      criteria: {
-        eligibility: [data.eligibility],
-        level_on_rubric: parseFloat(data.rubric_eligibility),
-      },
-      no_of_seats: parseInt(data.no_of_seats),
-      // Ensure imageData and userFullData are correctly defined and used.
-      cohort_banner: imageData ? [imageData] : [], // Example placeholder
-      host_name: ['Mridul'], // Example placeholder
-    };
-
-    try {
-      console.log("Cohort Data Before Submit", eventData)
-      const result = await actor.create_cohort(eventData);
-      console.log("eventdata", eventData);
-      console.log('result',result)
-      if (result && result.Ok) {
-        toast.success("Cohort creation request has been sent to admin");
-        setModalOpen(false);
-      } else {
-        toast.error("Something went wrong");
-      }
-    } catch (error) {
-      toast.error("Error creating cohort");
-      console.error("Error sending data to the backend:", error);
-    }
-  };
-
+  // FUNCTION TO HANDLE NAVIGATING TO NEXT STEP
   const handleNext = async () => {
     const isValid = await trigger(formFields[index]);
+
     if (isValid) {
-      setIndex((prevIndex) => prevIndex + 1);
+      setFormData((prevData) => ({
+        ...prevData,
+        ...getValues(),
+      }));
+      if (index < 3) {
+        setIndex((prevIndex) => prevIndex + 1);
+      }
     }
   };
 
+  // FUNCTION TO HANDLE NAVIGATING TO PREVIOUS STEP
   const handleBack = () => {
     if (index > 0) {
       setIndex((prevIndex) => prevIndex - 1);
     }
   };
 
-  const renderComponent = () => {
-    switch (index) {
-      case 0:
-        return <EventReg1 setImageData={setImageData} setImagePreview={setImagePreview} imagePreview={imagePreview} />;
-      case 1:
-        return <EventReg2 setSelectedCountry={setSelectedCountry} />;
-      case 2:
-        return <EventReg3 />;
-      case 3:
-        return <EventReg4 />;
-      default:
-        return <EventReg1 />;
+  // SUBMIT HANDLER
+  const onSubmitHandler = async (data) => {
+    if (index === 3) {  // Ensure submission only on the last step
+      console.log("Form data:", data);
+
+      // FORMATTING THE SUBMITTED DATA
+      const eventData = {
+        title: data.title,
+        country: data.area,
+        funding_amount: data.funding_amount,
+        funding_type: data.funding_type,
+        description: data.description,
+        cohort_launch_date: format(
+          new Date(data.cohort_launch_date),
+          "yyyy-MM-dd"
+        ),
+        start_date: format(new Date(data.cohort_launch_date), "yyyy-MM-dd"),
+        cohort_end_date: format(new Date(data.cohort_end_date), "yyyy-MM-dd"),
+        deadline: format(new Date(data.deadline), "yyyy-MM-dd"),
+        tags: data.tags,
+        criteria: {
+          eligibility: [data.eligibility],
+          level_on_rubric: parseFloat(data.rubric_eligibility),
+        },
+        contact_links: data?.contact_links
+          ? [data.contact_links.map((val) => ({ link: val?.link ? [val.link] : [] }))]
+          : [],
+        no_of_seats: parseInt(data.no_of_seats),
+        cohort_banner: imageData ? [imageData] : [],
+        host_name: ['Mridul'], // Example placeholder for host name
+      };
+
+      try {
+        let result;
+        if (editMode && singleEventData) {
+          console.log("Updating cohort with data:", eventData);
+          result = await actor.update_cohort(cohortId, eventData);
+        } else {
+          // Call create_cohort API when in create mode
+          console.log("Creating new cohort with data:", eventData);
+          result = await actor.create_cohort(eventData);
+        }
+
+        console.log('API result', result);
+
+        // Handle success or error response
+        if (result && result.Ok) {
+          if (
+            result.startsWith("You are not privileged to create a cohort ,Please Register as Mentor ...") ||
+            result.startsWith("Cohort Banner is already uploaded")
+          ) {
+            toast.error(result);
+            setModalOpen(false);
+          } else {
+            toast.success(editMode ? "Cohort updated successfully!" : "Cohort registered successfully!");
+            setModalOpen(false);
+          }
+        }
+      } catch (error) {
+        toast.error("Error submitting cohort");
+        console.error("Error sending data to the backend:", error);
+      }
     }
   };
 
+  // FUNCTION TO HANDLE FORM ERRORS
   const onErrorHandler = (errors) => {
     toast.error("Please check the form for errors.");
     console.log("Form errors:", errors);
@@ -185,10 +146,10 @@ const EventRegMain = ({ modalOpen, setModalOpen }) => {
 
   return (
     <>
+      {/* MODAL OVERLAY */}
       <div className={`fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 ${modalOpen ? "block" : "hidden"}`}>
-
-        <div className="bg-white rounded-lg shadow-lg w-[500px] p-6 pt-4 max-h-[90vh] overflow-y-auto"
-        >
+        <div className="bg-white rounded-lg shadow-lg w-[500px] p-6 pt-4 max-h-[90vh] overflow-y-auto">
+          {/* CLOSE BUTTON */}
           <div className="flex justify-end mr-4">
             <button
               className="text-2xl text-[#121926]"
@@ -198,13 +159,18 @@ const EventRegMain = ({ modalOpen, setModalOpen }) => {
             </button>
           </div>
           <h2 className="text-xs text-[#364152] mb-3">Step {index + 1} of 4</h2>
+
+          {/* FORM PROVIDER TO PASS DOWN FORM METHODS */}
           <FormProvider {...methods}>
             <form onSubmit={handleSubmit(onSubmitHandler, onErrorHandler)}>
-              {renderComponent()}
-              <div
-                className={`flex mt-4 ${index === 0 ? "justify-end" : "justify-between"
-                  }`}
-              >
+              {/* CONDITIONAL RENDERING OF FORMS BASED ON CURRENT STEP */}
+              {index === 0 && <EventReg1 formData={formData} setFormData={setFormData} imageData={imageData} setImageData={setImageData} editMode={editMode} />}
+              {index === 1 && <EventReg2 formData={formData} setFormData={setFormData} />}
+              {index === 2 && <EventReg3 formData={formData} setFormData={setFormData} />}
+              {index === 3 && <EventReg4 formData={formData} setFormData={setFormData} />}
+              
+              {/* NAVIGATION BUTTONS */}
+              <div className={`flex mt-4 ${index === 0 ? "justify-end" : "justify-between"}`}>
                 {index > 0 && (
                   <button
                     type="button"
@@ -214,7 +180,7 @@ const EventRegMain = ({ modalOpen, setModalOpen }) => {
                     <ArrowBackIcon fontSize="medium" /> Back
                   </button>
                 )}
-                {index === 4 ? (
+                {index === 3 ? (
                   <button
                     type="submit"
                     className="py-2 px-4 bg-blue-600 text-white rounded  border-2 border-[#B2CCFF]"
@@ -247,9 +213,11 @@ const EventRegMain = ({ modalOpen, setModalOpen }) => {
           </FormProvider>
         </div>
       </div>
+      {/* TOAST NOTIFICATIONS */}
       <Toaster />
     </>
   );
 };
 
 export default EventRegMain;
+

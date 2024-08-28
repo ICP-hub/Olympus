@@ -5,7 +5,6 @@ import { Star, colorStar } from '../../Utils/Data/SvgData';
 import { coloralert, library } from '../../../../../admin_frontend/src/components/Utils/AdminData/SvgData';
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import 'react-circular-progressbar/dist/styles.css';
-import ment from "../../../../assets/images/ment.jpg";
 import { Line } from "rc-progress";
 import ReactSlider from "react-slider";
 
@@ -217,7 +216,7 @@ const Newscards2 = () => {
 
 
                         <div className=' absolute flex  flex-row gap 2 p-4  gap-4 justify-center'>
-                            <img className='h-12 w-12 rounded-md   flex  ' src={ment} alt='No Img' />
+                            <img className='h-12 w-12 rounded-md   flex  ' src={''} alt='No Img' />
                             <div className='flex-row flex-wrap flex '>
                                 <p className='text-black font-bold text-2xl'>DeFi</p>
                                 <p>q&a market place built on...</p>

@@ -10,70 +10,103 @@ import { Principal } from "@dfinity/principal";
 import toast, { Toaster } from "react-hot-toast";
 import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 const TeamMember = ({ cardData }) => {
-  // const [isChecked, setIsChecked] = useState(false);
-  // console.log("check---------------", isChecked);
-  // const handleCheckboxChange = () => {
-  //   setIsChecked(!isChecked);
-  // };
-  console.log("CARD DATA", cardData)
-  console.log("PARAMS DATA", cardData[0].params)
-console.log("TEAM ALL DATA", cardData[0]?.params?.project_team)
-console.log("TEAM 0TH DATA", cardData[0]?.params?.project_team[0].member_data)
+  const projectTeam = cardData?.[0]?.[0]?.params?.project_team;
+  console.log("result CARD DATA", cardData?.[0]?.[0]);
+
   return (
     <>
-  {cardData[0]?.params?.project_team?.[0]?.map((val, index) => {
-        const result = val?.member_data;
+      {projectTeam?.map((teamMember, index) => {
+        const member = teamMember?.[0]; // Adjust the index if necessary
+        const result = member?.member_data;
 
+        console.log("teamMember:", teamMember);
+        console.log("result CARD DATA", result);
         if (!result) return null;
 
         const name = result?.full_name ?? "Unnamed Member";
         const avatar = result?.profile_picture?.[0]
-          ? `data:image/jpeg;base64,${uint8ArrayToBase64(result.profile_picture[0])}`
-          : "../../../../assets/Logo/ProfileImage.png"; 
+          ? uint8ArrayToBase64(result.profile_picture[0])
+          : "../../../../assets/Logo/ProfileImage.png";
 
         return (
-          <div className="flex items-center py-4 px-6 border-b border-gray-200 last:border-b-0" key={index}>
-            <div className="w-1/2 flex items-center">
-              <img src={avatar} alt={name} className="w-10 h-10 rounded-full mr-4" />
-              <div>
-                <p className="font-medium text-[#121926]">{name}</p>
-                <p className="text-sm text-gray-500">
-                  {result?.openchat_username?.[0] ?? "No Username"}
-                </p>
-              </div>
+          <>
+            <div
+              key={index}
+              class="relative overflow-x-auto shadow-md sm:rounded-lg"
+            >
+              <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50  dark:text-gray-400">
+                  <tr>
+                    <th scope="col" class="px-6 py-3">
+                      Name
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                      Status
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                      Action
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="bg-white border-b   hover:bg-gray-50 ">
+                    <th
+                      scope="row"
+                      class="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white"
+                    >
+                      <img
+                        src={avatar}
+                        alt={name}
+                        className="w-10 h-10 rounded-full mr-4"
+                      />
+                      <div class="ps-3">
+                        <p className="font-medium text-[#121926]">{name}</p>
+                        <p className="text-sm text-gray-500">
+                          {result?.openchat_username?.[0] ?? "No Username"}
+                        </p>
+                      </div>
+                    </th>
+                    <td class="px-6 py-4">
+                      <div class="flex items-center">
+                        <div class="h-2.5 w-2.5 rounded-full bg-green-500 me-2"></div>
+                        {/* <span
+              className={`px-2 py-1 rounded text-sm font-medium ${
+                result?.status === "Active"
+                  ? "bg-[#ecfdf3da] rounded-md border-2 border-[#6ceda0] text-green-800"
+                  : "bg-[#FFFAEB] border-2 border-[#FEDF89] text-[#B54708]"
+              }`}
+            >
+              {result?.status === "Active " && "• "}
+              {result?.status ?? "Unknown Status"}
+            </span> */}
+                        <span
+                          className={`px-2 py-1 rounded text-sm font-medium bg-[#ecfdf3da]  border-2 border-[#6ceda0] text-green-800`}
+                        >
+                        Active
+                        </span>
+                      </div>
+                    </td>
+                    <td class="px-6 py-4">
+                      <button className="text-gray-400 hover:text-gray-600">
+                        <Delete fontSize="small" />
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
-            <div className="w-1/4 flex items-center justify-between">
-              <span
-                className={`px-2 py-1 rounded text-sm font-medium ${
-                  result?.status === "Active"
-                    ? "bg-[#ecfdf3da] rounded-md border-2 border-[#6ceda0] text-green-800"
-                    : "bg-[#FFFAEB] border-2 border-[#FEDF89] text-[#B54708]"
-                }`}
-              >
-                {result?.status === "Active" && "• "}
-                {result?.status ?? "Unknown Status"}
-              </span>
-              <div className="flex items-center space-x-2">
-                <button className="text-gray-400 hover:text-gray-600">
-                  <Delete fontSize="small" />
-                </button>
-              </div>
-            </div>
-          </div>
+          </>
         );
       }) || (
-        <div><h1>No result</h1></div>
+        <div>
+          <h1>No result</h1>
+        </div>
       )}
-  </>
+    </>
   );
 };
 
 function TeamSection({ data, cardData }) {
-  if (!data) {
-    return null;
-  }
-  console.log("getget id", data);
-  console.log("getget.................. id.........", cardData);
   const [isAddTeamModalOpen, setIsAddTeamModalOpen] = useState(false);
   const actor = useSelector((currState) => currState.actors.actor);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -82,7 +115,6 @@ function TeamSection({ data, cardData }) {
   const handleTeamMemberOpenModal = () => setIsAddTeamModalOpen(true);
 
   const handleAddTeamMember = async ({ user_id }) => {
-    console.log("add team member");
     setIsSubmitting(true);
     if (actor) {
       let project_id = data;
@@ -90,7 +122,6 @@ function TeamSection({ data, cardData }) {
       await actor
         .update_team_member(project_id, member_principal_id)
         .then((result) => {
-          console.log("result-in-update_team_member", result);
           if (result) {
             handleTeamMemberCloseModal();
             setIsSubmitting(false);
@@ -130,46 +161,8 @@ function TeamSection({ data, cardData }) {
           </div>
 
           <div className="rounded-lg overflow-hidden border-2 border-gray-100">
-            <div className="flex items-center py-3 px-6 bg-gray-100 border-b border-gray-200 text-sm font-medium text-gray-700">
-              <div className="w-1/2 flex items-center">
-                <span className="ml-10">Name</span>
-              </div>
-              <div className="w-1/4 flex items-center">
-                Role
-                <HelpOutline fontSize="small" className="ml-1 text-gray-400" />
-              </div>
-              <div className="w-1/4 flex items-center justify-between pr-8">
-                Status
-              </div>
-            </div>
-
             <div>
-              
-                        <TeamMember
-                        cardData={cardData}
-                        />
-                   
-              {/* <TeamMember
-              name="Tricia Renner"
-              username="@triciarenner"
-              role="Co-founder, CTO"
-              status="Active"
-              avatar={TriciaProfile}
-            />
-            <TeamMember
-              name="Billy Aufderhar"
-              username="@billyaufderhar"
-              role="Marketing Lead"
-              status="Active"
-              avatar={BillyProfile}
-            />
-            <TeamMember
-              name="David Wilkinson"
-              username="@davidw"
-              role="Backend Developer"
-              status="Pending"
-              avatar={DavidProfile}
-            /> */}
+              <TeamMember cardData={cardData} />
             </div>
           </div>
         </div>

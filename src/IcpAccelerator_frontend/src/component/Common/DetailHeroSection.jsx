@@ -1,9 +1,5 @@
 import React from "react";
-import Project from "../../../assets/images/founderRegistration.png";
-import Mentor from "../../../assets/images/mentorRegistration.png";
-import User from "../../../assets/images/userRegistration.png";
-import Event from "../../../assets/images/Event.png";
-import Investor from "../../../assets/images/investorRegistration.png";
+
 import { useNavigate } from "react-router-dom";
 import { closeSwitchBlackModalSvg } from "../Utils/Data/SvgData";
 import { useAuth } from "../../components/StateManagement/useContext/useAuth";
@@ -15,28 +11,28 @@ const DetailHeroSection = () => {
   const dispatch = useDispatch();
   const routeSettings = {
     "/create-project": {
-      src: Project,
+      src: '',
       alt: "Astronaut",
       className:
         "z-10 w-[500px] md:w-[275px] sm:w-[200px] sxs:w-[200px] sxs:h-[180px] md:h-64 relative  sxs:-right-3 right-16 md:right-8 sm:right-4 top-10 object-contain",
       text: "Signup as a project",
     },
     "/create-mentor": {
-      src: Mentor,
+      src: '',
       alt: "Astronaut",
       className:
         "z-10 w-[500px] md:w-[270px] sm:w-[250px] sxs:w-[160px] md:h-56 relative  sxs:-right-3 right-16 md:right-0 sm:right-0 top-10 object-contain",
       text: "Sign Up As Mentor",
     },
     "/create-investor": {
-      src: Investor,
+      src: '',
       alt: "Astronaut",
       className:
         "z-10 w-[500px] md:w-[250px] sm:w-[250px] sxs:w-[160px] md:h-56 relative  sxs:-right-3 right-16 md:right-0 sm:right-0 top-10 object-contain",
       text: "Sign Up As INVESTOR",
     },
     "/create-user": {
-      src: User,
+      src: '',
       alt: "Astronaut",
       className:
         "z-10 w-[500px] md:w-[250px] md:h-[210px] sm:w-[250px] sxs:w-[170px] md:h-56 relative sxs:-right-3 right-16 md:right-0 sm:right-0 top-10",

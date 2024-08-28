@@ -1,6 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import ment from "../../../assets/images/ment.jpg";
-import girl from "../../../assets/images/girl.jpeg";
 import { IcpAccelerator_backend } from "../../../../declarations/IcpAccelerator_backend/index";
 import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
 import { useNavigate } from "react-router-dom";
@@ -17,27 +15,27 @@ const CurrentlyRaising = ({ progress, numSkeleton, onNoDataChange }) => {
   const userCurrentRoleStatusActiveRole = useSelector(
     (currState) => currState.currentRoleStatus.activeRole
   );
-  const [numSkeletons, setNumSkeletons] = useState(numSkeleton);
+  // const [numSkeletons, setNumSkeletons] = useState(numSkeleton);
 
-  const updateNumSkeletons = () => {
-    if (window.innerWidth >= 1240) {
-      setNumSkeletons(4);
-    } else if (window.innerWidth >= 976) {
-      setNumSkeletons(3);
-    } else if (window.innerWidth >= 640) {
-      setNumSkeletons(2);
-    } else {
-      setNumSkeletons(1);
-    }
-  };
+  // const updateNumSkeletons = () => {
+  //   if (window.innerWidth >= 1240) {
+  //     setNumSkeletons(4);
+  //   } else if (window.innerWidth >= 976) {
+  //     setNumSkeletons(3);
+  //   } else if (window.innerWidth >= 640) {
+  //     setNumSkeletons(2);
+  //   } else {
+  //     setNumSkeletons(1);
+  //   }
+  // };
 
-  useEffect(() => {
-    updateNumSkeletons();
-    window.addEventListener("resize", updateNumSkeletons);
-    return () => {
-      window.removeEventListener("resize", updateNumSkeletons);
-    };
-  }, []);
+  // useEffect(() => {
+  //   updateNumSkeletons();
+  //   window.addEventListener("resize", updateNumSkeletons);
+  //   return () => {
+  //     window.removeEventListener("resize", updateNumSkeletons);
+  //   };
+  // }, []);
   // Gradient color stops, changes when hovered
   // const gradientStops = isHovered
   //   ? { stop1: "#4087BF", stop2: "#3C04BA" }
@@ -69,8 +67,9 @@ const CurrentlyRaising = ({ progress, numSkeleton, onNoDataChange }) => {
 
   const [noData, setNoData] = useState(null);
   const [allProjectData, setAllProjectData] = useState([]);
+  console.log("allProjectData............................",allProjectData)
   const [isLoading, setIsLoading] = useState(true);
-  const itemsPerPage = 4;
+  const itemsPerPage = 1;
   const [currentPage, setCurrentPage] = useState(1);
 
   const getAllProject = async (caller, isMounted) => {
@@ -79,6 +78,7 @@ const CurrentlyRaising = ({ progress, numSkeleton, onNoDataChange }) => {
       .list_all_projects_with_pagination({
         page_size: itemsPerPage,
         page: currentPage,
+       
       })
       .then((result) => {
         if (isMounted) {
@@ -86,12 +86,12 @@ const CurrentlyRaising = ({ progress, numSkeleton, onNoDataChange }) => {
           if (!result || result.length === 0) {
             setNoData(true);
             setAllProjectData([]);
-            onNoDataChange(false);
+            // onNoDataChange(false);
           } else {
             setAllProjectData(result.data);
             // setCountData(result.count);
             setNoData(false);
-            onNoDataChange(true);
+            // onNoDataChange(true);
           }
           setIsLoading(false);
         }
@@ -101,7 +101,7 @@ const CurrentlyRaising = ({ progress, numSkeleton, onNoDataChange }) => {
           setNoData(true);
           setAllProjectData([]);
           setIsLoading(false);
-          onNoDataChange(false);
+          // onNoDataChange(false);
           // setCountData();
           console.log("error-in-get-all-projects", error);
         }
@@ -157,7 +157,7 @@ const CurrentlyRaising = ({ progress, numSkeleton, onNoDataChange }) => {
     <div className="flex flex-wrap -mx-4 mb-4 items-start">
       {isLoading ? (
         <div className="flex md:flex-row w-full">
-          {Array(numSkeletons)
+          {Array()
             .fill(0)
             .map((_, index) => (
               <CurrentlyRaisingSkeleton key={index} />
@@ -237,7 +237,7 @@ const CurrentlyRaising = ({ progress, numSkeleton, onNoDataChange }) => {
                             </p>
                           </div>
                         </div>
-                        {progress && (
+                        {/* {progress && (
                           <div className="mb-4 flex items-baseline">
                             <svg
                               width="100%"
@@ -278,7 +278,7 @@ const CurrentlyRaising = ({ progress, numSkeleton, onNoDataChange }) => {
                             </svg>
                             <div className="ml-2 text-nowrap text-sm">{`${projectRubricStatus}/9`}</div>
                           </div>
-                        )}
+                        )} */}
                         <p className="text-gray-700 text-sm p-2 h-36 overflow-hidden line-clamp-8 mb-4">
                           {projectDescription}
                         </p>

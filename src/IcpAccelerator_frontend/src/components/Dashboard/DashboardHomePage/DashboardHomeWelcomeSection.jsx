@@ -5,10 +5,11 @@ import mentor from "../../../../assets/Logo/mentor.png";
 import talent from "../../../../assets/Logo/talent.png";
 import founder from "../../../../assets/Logo/founder.png";
 import Avatar3 from "../../../../assets/Logo/Avatar3.png";
-import { dashboard } from "../../jsondata/data/dashboardData";
+import { dashboard } from "../../Utils/jsondata/data/dashboardData";
 import { useSelector,useDispatch } from 'react-redux';
 import Modal1 from '../../Modals/ProjectModal/Modal1';
-import { getCurrentRoleStatusFailureHandler } from '../../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer';
+import { useNavigate } from 'react-router-dom';
+import { getCurrentRoleStatusFailureHandler, setCurrentActiveRole, setCurrentRoleStatus } from '../../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer';
 
 const styles = {
   circularChart: {
@@ -87,11 +88,20 @@ function DashboardHomeWelcomeSection({ userName, profileCompletion }) {
       imageGroup: true, // Adding a flag to indicate that this card should have the image group
     },
   ];
-  const handleButtonClick = (action) => {
-    if (action === 'Create role') {
-      setRoleModalOpen(!roleModalOpen);
-    }
-  };
+  const navigate = useNavigate();
+
+const handleButtonClick = (action) => {
+  if (action === 'Create role') {
+    setRoleModalOpen(prevState => !prevState);
+  }
+  else if (action === 'Discover') {
+    navigate("/dashboard/user");
+  }
+  else if (action === 'Complete profile') {
+    navigate("/dashboard/profile");
+  }
+};
+
   function formatFullDateFromBigInt(bigIntDate) {
     const date = new Date(Number(bigIntDate / 1000000n));
     const dateString = date.toLocaleDateString("en-US", {

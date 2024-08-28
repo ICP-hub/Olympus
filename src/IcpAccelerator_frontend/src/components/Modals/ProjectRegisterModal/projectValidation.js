@@ -122,6 +122,7 @@ export const validationSchema = yup
 
     icp_grants: yup
       .mixed()
+      .required("Required")
       .test(
         "is-required-or-nullable",
         "You must enter a number",
@@ -138,6 +139,7 @@ export const validationSchema = yup
       ),
     investors: yup
       .mixed()
+      .required("Required")
       .test(
         "is-required-or-nullable",
         "You must enter a number",
@@ -155,6 +157,7 @@ export const validationSchema = yup
 
     raised_from_other_ecosystem: yup
       .mixed()
+      .required("Required")
       .test(
         "is-required-or-nullable",
         "You must enter a number",
@@ -171,6 +174,7 @@ export const validationSchema = yup
       ),
     target_amount: yup
       .number()
+      .required("Required")
       .when("money_raising", (val, schema) =>
         val && val[0] === "true"
           ? schema
@@ -181,7 +185,7 @@ export const validationSchema = yup
       ),
     valuation: yup
       .number()
-      .optional()
+      .required("Required")
       .transform((value, originalValue) =>
         originalValue === "" || originalValue == null ? null : value
       )

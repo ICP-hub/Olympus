@@ -6,6 +6,7 @@ module.exports = {
     extend: {
       fontFamily: {
         fontUse: ["Poppins"],
+        figtree: ["Figtree", "sans-serif"],
       },
       height: {
         vh: "200vh",

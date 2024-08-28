@@ -18,19 +18,22 @@ const ConnectWallet = ({ isModalOpen, onClose }) => {
   const modalRef = useRef(null);
 
   // useEffect(() => {
-  //   if (isAuthenticated) {
+  //   // if (isAuthenticated) {
   //     onClose();
   //     navigate("/");
-  //   }
-  // }, [isAuthenticated]);
+  //   // }
+  // }, []);
   useEffect(() => {
     if (isAuthenticated) {
       if (userFullData) {
-        navigate("dashboard"); 
+        navigate("/dashboard"); 
       } else {
         navigate("register-user");
       }
       onClose();
+    }
+    else{
+       navigate("/");
     }
   }, [isAuthenticated, userFullData]);
   const loginHandler = async (val) => {

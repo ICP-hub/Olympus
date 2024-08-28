@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { IcpAccelerator_backend } from "../../../../../declarations/IcpAccelerator_backend/index";
-import ment from "../../../../assets/images/ment.jpg";
 import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 import useFormatDateFromBigInt from "../../hooks/useFormatDateFromBigInt";
 import NoDataCard from "../../Mentors/Event/NoDataCard";
@@ -37,6 +36,7 @@ const ProjectJobCard = ({ image, website, tags, country }) => {
       window.removeEventListener("resize", updateNumSkeletons);
     };
   }, []);
+  
   useEffect(() => {
     let isMounted = true; // Flag to check if the component is still mounted
 
@@ -131,7 +131,7 @@ const ProjectJobCard = ({ image, website, tags, country }) => {
                 let job_link = card?.job_data?.link ?? "";
                 let job_project_logo = card?.project_logo
                   ? uint8ArrayToBase64(card?.project_logo[0])
-                  : ment;
+                  : '';
                 let job_project_name = card?.project_name ?? "";
                 let job_project_desc = card?.project_desc ?? "";
                 let job_post_time = card?.timestamp

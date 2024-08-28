@@ -10,7 +10,9 @@ import JoditEditor from "jodit-react";
 import toast, { Toaster } from "react-hot-toast";
 import { useLocation } from "react-router-dom";
 import { Controller } from "react-hook-form";
-
+import parse from 'html-react-parser';
+import ReactQuill from "react-quill"; // IMPORT REACT QUILL FOR RICH TEXT EDITING
+import "react-quill/dist/quill.snow.css";
 const schema = yup
   .object({
     jobTitle: yup
@@ -30,6 +32,14 @@ const schema = yup
       })
       .nullable()
       .required("Job Location is required"),
+    job_type: yup
+      .object()
+      .shape({
+        value: yup.string().required("Job Type is required"),
+        label: yup.string().required("Job Type is required"),
+      })
+      .nullable()
+      .required("Job Type is required"),
     jobLink: yup
       .string()
       .url("Invalid website URL")
@@ -45,17 +55,6 @@ const schema = yup
       .string()
       .required("Job Description is required")
       .test(
-        "maxWords",
-        "Job description must not exceed 50 words",
-        (value) =>
-          !value || value.trim().split(/\s+/).filter(Boolean).length <= 50
-      )
-      .test(
-        "maxChars",
-        "Job description must not exceed 500 characters",
-        (value) => !value || value.length <= 500
-      )
-      .test(
         "no-leading-spaces",
         "Job description should not have leading spaces",
         (value) => !value || value.trimStart() === value
@@ -70,14 +69,15 @@ const JobRegister1 = ({ modalOpen, setModalOpen }) => {
   const actor = useSelector((currState) => currState.actors.actor);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [jobDescription, setJobDescription] = useState("");
+  const [jobTypes, setJobTypes] = useState([]);
   const jobCategoryData = useSelector(
     (currState) => currState.jobsCategory.jobCategory
   );
   const editor = useRef(null);
+
   useEffect(() => {
     dispatch(jobCategoryHandlerRequest());
   }, [actor, dispatch]);
-  console.log(cardData.uid);
   const {
     register,
     handleSubmit,
@@ -89,98 +89,145 @@ const JobRegister1 = ({ modalOpen, setModalOpen }) => {
     mode: "all",
   });
   // const projectId = cardData.uid;
-  const onSubmit = async (data) => {
-    console.log("DATA ARGUMENTS",data)
-    const projectId = cardData[0]?.uid;
 
-  if (!projectId) {
-    toast.error("Project ID is missing!");
-    return;
-  }
-    setIsSubmitting(true);
-    try {
-      const argument = {
-        title: data.jobTitle,
-        description: data.jobDescription,
-        category: data.jobCategory,
-        location: data.jobLocation.value,
-        link: data.jobLink,
-        project_id: projectId,
-      };
 
-      const result = await actor.post_job(argument);
+//   const onSubmit = async (data) => {
+//     console.log("DATA ARGUMENTS", data);
+//     const projectId = cardData[0]?.uid;
 
-      if (result) {
-        toast.success("Job created successfully!");
-        setModalOpen(false);
-      } else {
-        toast.error("Something went wrong.");
-        console.log("JOB CREATION WRONG  ")
-      }
-    } catch (error) {
-      console.error("Error creating job:", error);
-      toast.error("An error occurred while creating the job.");
-    } finally {
-      setIsSubmitting(false);
+//     if (!projectId) {
+//       toast.error("Project ID is missing!");
+//       return;
+//     }
+//     setIsSubmitting(true);
+//     try {
+//       const parsedDescription = parse(jobDescription); 
+//       const argument = {
+//         title: data.jobTitle,
+//         description: data.parsedDescription,
+//         category: data.jobCategory,
+//         location: data.jobLocation.value,
+//         link: data.jobLink,
+//         job_type: data.job_type.value,
+//         project_id: projectId,
+//       };
+
+//       const result = await actor.post_job(argument);
+// console.log("desc..............",result)
+//       if (result) {
+//         toast.success("Job created successfully!");
+//         setModalOpen(false);
+//       } else {
+//         toast.error("Something went wrong.");
+//         console.log("JOB CREATION WRONG  ");
+//       }
+//     } catch (error) {
+//       console.error("Error creating job:", error);
+//       toast.error("An error occurred while creating the job.");
+//     } finally {
+//       setIsSubmitting(false);
+//     }
+//   };
+const projectFullData = useSelector((currState) => currState.projectData.data);
+const projectuid=projectFullData[0][0]?.uid
+console.log("projectFullData", projectuid)
+const onSubmit = async (data) => {
+
+  setIsSubmitting(true);
+  console.log("On Submit k andr aagya")
+  try {
+    console.log('TRY A ANDR AAGYA')
+    const parsedDescription = parse(jobDescription); 
+    const argument = {
+      title: data.jobTitle,
+      description: data.jobDescription,
+      category: data.jobCategory,
+      location: data.jobLocation.value,
+      link: data.jobLink,
+      job_type: data.job_type.value,
+      // project_id: projectuid,
+    };
+    console.log('YE ARGUMENT FUNCTION KO DE RHA HU', argument)
+
+    const result = await actor.post_job(argument);
+    console.log("Job creation result:", result);
+
+    if (result) {
+      console.log("Job creation result",result)
+      toast.success("Job created successfully!");
+      setModalOpen(false);
+    } else {
+      toast.error("Something went wrong.");
     }
-  };
-
+  } catch (error) {
+    console.error("Error creating job:", error);
+    toast.error("An error occurred while creating the job.");
+  } finally {
+    setIsSubmitting(false);
+  }
+};
   const [locations, setLocations] = useState([]);
 
   useEffect(() => {
     fetchLocations().then((data) => {
-      setLocations(data.map((loc) => ({ value: loc.id, label: loc.name })));
+      setLocations(data.map((loc) => ({ label: loc.name , value: loc.id })));
     });
   }, []);
 
   const fetchLocations = async () => {
     return [
-      { id: "on", name: "On-site" },
-      { id: "hyb", name: "Hybrid" },
-      { id: "rem", name: "Remote" },
+      { id: "On-site", name: "On-site" },
+      { id: "Hybrid", name: "Hybrid" },
+      { id: "Remote", name: "Remote" },
     ];
   };
 
-  const options = [
-    "bold",
-    "italic",
-    "|",
-    "ul",
-    "ol",
-    "|",
-    "font",
-    "fontsize",
-    "|",
-    "outdent",
-    "indent",
-    "align",
-    "|",
-    "hr",
-    "|",
-    "fullsize",
-    "link",
-  ];
+  //fet type of job
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const config = useMemo(
+  useEffect(() => {
+    const fetchJobTypes = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const result = await actor.type_of_job();
+        setJobTypes(result.map((type) => ({ value: type, label: type })));
+      } catch (err) {
+        setError(err.message);
+      }
+      setLoading(false);
+    };
+
+    fetchJobTypes();
+  }, []);
+
+  // custom jodit Editor func
+  const modules = useMemo(
     () => ({
-      readonly: false,
-      placeholder: "",
-      defaultActionOnPaste: "insert_as_html",
-      defaultLineHeight: 1.5,
-      enter: "div",
-      // options that we defined in above step.
-      buttons: options,
-      buttonsMD: options,
-      buttonsSM: options,
-      buttonsXS: options,
-      statusbar: false,
-      sizeLG: 900,
-      sizeMD: 700,
-      sizeSM: 400,
-      toolbarAdaptive: false,
+      toolbar: [
+        [{ header: "1" }, { header: "2" }, { font: [] }],
+        [{ list: "ordered" }, { list: "bullet" }],
+        ["bold", "italic", "underline"],
+        [{ align: [] }],
+        ["link"],
+        ["clean"],
+      ],
     }),
     []
   );
+
+  const formats = [
+    "header",
+    "font",
+    "list",
+    "bullet",
+    "bold",
+    "italic",
+    "underline",
+    "align",
+    "link",
+  ];
   return (
     <>
       <div
@@ -238,6 +285,7 @@ const JobRegister1 = ({ modalOpen, setModalOpen }) => {
                   </span>
                 )}
               </div>
+              {/* job location  */}
               <div className="">
                 <label
                   htmlFor="jobLocation"
@@ -310,6 +358,39 @@ const JobRegister1 = ({ modalOpen, setModalOpen }) => {
                   </span>
                 )}
               </div>
+              {/* //job type  */}
+              <div className="">
+                <label
+                  htmlFor="job_type"
+                  className="block text-sm font-medium mb-1 mt-2"
+                >
+                  Job Type
+                  <span className="text-red-500">*</span>
+                </label>
+                <Controller
+                  name="job_type"
+                  control={control}
+                  render={({ field }) => (
+                    <Select
+                      options={jobTypes.map((type) => ({
+                        label: type.label.job_type, // Extract the job type string
+                        value: type.value.job_type, // Extract the job type string
+                      }))}
+                      {...field}
+                      className={`${
+                        errors.job_type ? "border-red-500" : "border-gray-300"
+                      }`}
+                    />
+                  )}
+                />
+
+                {errors.job_type && (
+                  <span className="mt-1 text-sm text-red-500 font-bold">
+                    {errors.job_type.message}
+                  </span>
+                )}
+              </div>
+              {/* job link  */}
               <div className="">
                 <label
                   htmlFor="jobLink"
@@ -404,16 +485,19 @@ const JobRegister1 = ({ modalOpen, setModalOpen }) => {
                   } text-gray-900 placeholder-gray-500  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 mb-2`}
                   placeholder="Job Description here"
                 ></textarea> */}
-                <JoditEditor
-                  value={jobDescription}
-                  ref={editor}
-                  config={config}
-                  tabIndex={1}
-                  onBlur={(newContent) => {
-                    setJobDescription(newContent);
-                    setValue("jobDescription", newContent);
-                  }}
-                  onChange={() => {}}
+                <Controller
+                  name="jobDescription"
+                  control={control}
+                  defaultValue=""
+                  render={({ field: { onChange, value } }) => (
+                    <ReactQuill
+                      value={value}
+                      onChange={onChange}
+                      modules={modules}
+                      formats={formats}
+                      placeholder="Enter your description here..."
+                    />
+                  )}
                 />
                 {errors.jobDescription && (
                   <span className="mt-1 text-sm text-red-500 font-bold">

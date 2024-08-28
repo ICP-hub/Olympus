@@ -36,7 +36,7 @@ const AddAMentorRequestModal = ({
       <div className=" overflow-y-auto overflow-x-hidden  top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full fixed flex">
         <div className="relative p-4 w-full max-w-md max-h-full">
           <div className="relative bg-white rounded-lg shadow">
-            <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t ">
+            <div className="flex items-center justify-between px-4 pt-4 md:pt-5 md:px-5 rounded-t ">
               <h3 className="text-xl font-semibold text-gray-900 ">{title}</h3>
               <button
                 type="button"
@@ -67,16 +67,16 @@ const AddAMentorRequestModal = ({
                     htmlFor="user_id"
                     className="block mb-2 text-lg font-medium text-gray-500 hover:text-black  hover:whitespace-normal truncate overflow-hidden hover:text-left"
                   >
-                    Your Offer
+                    Add your Proposal here...
                   </label>
                   <textarea
                     {...register("message")}
                     className={`bg-gray-50 border-2 ${
                       errors.message
                         ? "border-red-500 placeholder:text-red-500"
-                        : "border-[#737373]"
+                        : "border-[#dedede]"
                     } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                    placeholder="Write down your offer"
+                    placeholder="Write down your Proposal here..."
                     rows={3}
                   ></textarea>
                   {errors.message && (

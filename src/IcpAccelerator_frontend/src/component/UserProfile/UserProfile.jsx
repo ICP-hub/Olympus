@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { headerData } from "../Utils/Data/AllDetailFormData";
 import "react-circular-progressbar/dist/styles.css";
-import g1 from "../../../assets/ProfIleEdit/g1.png";
 
 import { useSelector } from "react-redux";
 import MentorRegForm from "../RegForms.jsx/MentorRegForm";

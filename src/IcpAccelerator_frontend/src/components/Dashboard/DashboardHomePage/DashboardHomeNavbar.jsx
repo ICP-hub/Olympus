@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { Link } from "react-router-dom";
-import { dashboard } from "../../jsondata/data/dashboardData";
+import { dashboard } from "../../Utils/jsondata/data/dashboardData";
 
 // import bigLogo from "../../../../assets/Logo/bigLogo.png";
 // import topLogo from "../../../../assets/Logo/topLogo.png";
@@ -38,8 +38,7 @@ import { beforeCopySvg } from "../../../component/Utils/Data/SvgData";
 import { changeHasSelectedRoleHandler } from "../../../components/StateManagement/Redux/Reducers/userRoleReducer";
 import { useAuth } from "../../../components/StateManagement/useContext/useAuth";
 import toast, { Toaster } from "react-hot-toast";
-import profile1 from "../../../../assets/images/astro1.png";
-import profile2 from "../../../../assets/images/AstroLeft.png";
+
 
 
 function DashboardHomeNavbar() {

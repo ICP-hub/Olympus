@@ -2,7 +2,9 @@ import React from "react";
 import { useOutletContext } from "react-router-dom";
 import { useSelector } from "react-redux";
 import SplineViewerComponent from "./SplineViewerComponent";
-import {homepagedata} from "../../../src/components/jsondata/data/homepageData";
+import { homepagedata } from "../Utils/jsondata/data/homepageData";
+
+
 
 const HeroSection = () => {
   const { setModalOpen } = useOutletContext();

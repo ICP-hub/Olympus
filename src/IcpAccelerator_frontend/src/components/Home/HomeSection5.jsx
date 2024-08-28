@@ -1,5 +1,7 @@
 import React from 'react';
-import {homepagedata} from "../../../src/components/jsondata/data/homepageData";
+import { homepagedata } from "../Utils/jsondata/data/homepageData";
+
+
 
 export default function HomeSection5() {
   const { homepagesection5 } = homepagedata;

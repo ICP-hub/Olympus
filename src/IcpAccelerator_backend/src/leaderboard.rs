@@ -1,6 +1,7 @@
-use crate::ratings::calculate_average_api;
 use crate::state_handler::*;
+use ic_cdk_macros::*;
 use candid::{CandidType, Nat};
+use crate::guard::*;
 
 #[derive(Debug, Clone, PartialEq, CandidType)]
 pub struct LeaderboardEntryForUpvote {
@@ -20,14 +21,15 @@ pub struct LeaderboardEntryForRatings {
     pub average_rating: Option<f64>,
 }
 
-pub fn get_leaderboard_by_ratings() -> Vec<LeaderboardEntryForRatings> {
+#[query(guard = "combined_guard")]
+pub fn get_leaderboard_using_ratings() -> Vec<LeaderboardEntryForRatings> {
     let mut leaderboard: Vec<LeaderboardEntryForRatings> = Vec::new();
 
     read_state(|system| {
         let system = &system.rating_system;
 
         for (project_id, _) in system.iter() {
-            let averages = calculate_average_api(&project_id);
+            let averages = crate::ratings_module::rubric_ratings::calculate_average(project_id.clone());
             if let Some(overall_average) = averages.overall_average.get(0) {
                 // Assuming you want the first (or most recent) overall average rating
                 leaderboard.push(LeaderboardEntryForRatings {

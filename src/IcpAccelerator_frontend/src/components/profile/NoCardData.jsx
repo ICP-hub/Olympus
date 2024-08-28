@@ -1,85 +1,98 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import CampaignIcon from "@mui/icons-material/Campaign";
 import AnnouncementModal from "../Modals/AnnouncementModal";
 import toast, { Toaster } from "react-hot-toast";
 
 import { useSelector } from "react-redux";
-const NoCardData = () => {
-    const handleOpenModal = () => setAnnouncementModalOpen(true);
-    const [isAnnouncementModalOpen, setAnnouncementModalOpen] = useState(false);
-    const handleCloseModal = () => setAnnouncementModalOpen(false);
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const actor = useSelector((currState) => currState.actors.actor);
-    const [projectData, setProjectData] = useState(null);
+const NoCardData = ({  }) => {
+  // console.log("data ", data?.uid);
+  // const handleOpenModal = () => setAnnouncementModalOpen(true);
+  // const [isAnnouncementModalOpen, setAnnouncementModalOpen] = useState(false);
+  // const handleCloseModal = () => setAnnouncementModalOpen(false);
+  // const [isSubmitting, setIsSubmitting] = useState(false);
+  // const actor = useSelector((currState) => currState.actors.actor);
+  // const [projectData, setProjectData] = useState(null);
+  // const [isProjectLive, setIsProjectLive] = useState(false);
 
-    const fetchProjectData = async (isMounted) => {
-        try {
-          const result = await actor.get_my_project();
-          // console.log("result-in-get_my_project", result);
-          if (isMounted) {
-            if (result && Object.keys(result).length > 0) {
-              setProjectData(result);
-              setIsProjectLive(
-                result?.params?.dapp_link[0] &&
-                  result?.params?.dapp_link[0].trim() !== ""
-                  ? result?.params?.dapp_link[0]
-                  : null
-              );
-            } else {
-              setProjectData(null);
-              setIsProjectLive(null);
-            }
-          }
-        } catch (error) {
-          if (isMounted) {
-            console.log("error-in-get_my_project", error);
-            setError(error);
-            setProjectData(null);
-            setIsProjectLive(null);
-          }
-        }
-      };
-    const handleAddAnnouncement = async ({
-        announcementTitle,
-        announcementDescription,
-      }) => {
-        // console.log("add announcement");
-        setIsSubmitting(true);
-        if (actor) {
-          let argument = {
-            project_id: projectData?.uid,
-            announcement_title: announcementTitle,
-            announcement_description: announcementDescription,
-            timestamp: Date.now(),
-          };
-          // console.log("argument", argument);
-          await actor
-            .add_announcement(argument)
-            .then((result) => {
-              // console.log("result-in-add_announcement", result);
-              if (result && Object.keys(result).length > 0) {
-                handleCloseModal();
-                // setModalOpen(false)
-                fetchProjectData();
-                setIsSubmitting(false);
-                toast.success("announcement added successfully");
-                window.location.reload();
-              } else {
-                handleCloseModal();
-                // setModalOpen(false)
-                setIsSubmitting(false);
-                toast.error("something got wrong");
-              }
-            })
-            .catch((error) => {
-              console.log("error-in-add_announcement", error);
-              toast.error("something got wrong");
-              setIsSubmitting(false);
-              handleCloseModal();
-              // setModalOpen(false)
-            });
-        }
-      };
+  // const fetchProjectData = async (isMounted) => {
+  //   try {
+  //     const result = await actor.get_my_project();
+  //     console.log("result-in-get_my_project", result);
+  //     if (isMounted) {
+  //       if (result && Object.keys(result).length > 0) {
+  //         setProjectData(result);
+  //         setIsProjectLive(
+  //           result?.params?.dapp_link[0] &&
+  //             result?.params?.dapp_link[0].trim() !== ""
+  //             ? result?.params?.dapp_link[0]
+  //             : null
+  //         );
+  //       } else {
+  //         setProjectData(null);
+  //         setIsProjectLive(null);
+  //       }
+  //     }
+  //   } catch (error) {
+  //     if (isMounted) {
+  //       console.log("error-in-get_my_project", error);
+  //       setProjectData(null);
+  //       setIsProjectLive(null);
+  //     }
+  //   }
+  // };
+  // useEffect(() => {
+  //   let isMounted = true;
+  //   if (actor) {
+  //     fetchProjectData(isMounted);
+  //   } else {
+  //     navigate("/");
+  //   }
+
+  //   return () => {
+  //     isMounted = false;
+  //   };
+  // }, [actor]);
+  // const handleAddAnnouncement = async ({
+  //   announcementTitle,
+  //   announcementDescription,
+  // }) => {
+  //   // console.log("add announcement");
+  //   setIsSubmitting(true);
+  //   if (actor) {
+  //     let argument = {
+  //       // project_id: data[0]?.uid,
+  //       announcement_title: announcementTitle,
+  //       announcement_description: announcementDescription,
+  //     };
+  //     // console.log("argument", argument);
+  //     await actor
+  //       .add_announcement(argument)
+  //       .then((result) => {
+  //         // console.log("result-in-add_announcement", result);
+  //         if (result && Object.keys(result).length > 0) {
+  //           handleCloseModal();
+  //           // setModalOpen(false)
+  //           fetchProjectData();
+  //           setIsSubmitting(false);
+  //           toast.success("announcement added successfully");
+  //           console.log("annpuncement created");
+  //           //window.location.reload();
+  //         } else {
+  //           handleCloseModal();
+  //           // setModalOpen(false)
+  //           setIsSubmitting(false);
+  //           toast.error("something got wrong");
+  //         }
+  //       })
+  //       .catch((error) => {
+  //         console.log("error-in-add_announcement", error);
+  //         toast.error("something went wrong");
+  //         setIsSubmitting(false);
+  //         handleCloseModal();
+  //         // setModalOpen(false)
+  //       });
+  //   }
+  // };
   return (
     <div className="p-6">
       {/* Content */}
@@ -95,13 +108,13 @@ const NoCardData = () => {
             <mask id="path-1-inside-1_1002_24444" fill="white">
               <path
                 fill-rule="evenodd"
-                clip-rule="evenodd"
+                clipRule="evenodd"
                 d="M49 4C44.5817 4 41 7.58172 41 12V22.134V27.6206V47.2006C41 51.6811 41 53.9213 41.8719 55.6326C42.6389 57.1379 43.8628 58.3617 45.3681 59.1287C47.0794 60.0007 49.3196 60.0007 53.8 60.0007H90.6C95.6405 60.0007 98.1607 60.0007 100.086 59.0197C101.779 58.1569 103.156 56.78 104.019 55.0866C105 53.1614 105 50.6411 105 45.6006V22.134C105 17.6536 105 15.4134 104.128 13.7021C103.361 12.1968 102.137 10.9729 100.632 10.2059C98.9206 9.33398 96.6804 9.33398 92.2 9.33398H68.4316C68.0091 9.33398 67.6667 8.9915 67.6667 8.56903C67.6667 6.04563 65.621 4 63.0976 4H49Z"
               />
             </mask>
             <path
               fill-rule="evenodd"
-              clip-rule="evenodd"
+              clipRule="evenodd"
               d="M49 4C44.5817 4 41 7.58172 41 12V22.134V27.6206V47.2006C41 51.6811 41 53.9213 41.8719 55.6326C42.6389 57.1379 43.8628 58.3617 45.3681 59.1287C47.0794 60.0007 49.3196 60.0007 53.8 60.0007H90.6C95.6405 60.0007 98.1607 60.0007 100.086 59.0197C101.779 58.1569 103.156 56.78 104.019 55.0866C105 53.1614 105 50.6411 105 45.6006V22.134C105 17.6536 105 15.4134 104.128 13.7021C103.361 12.1968 102.137 10.9729 100.632 10.2059C98.9206 9.33398 96.6804 9.33398 92.2 9.33398H68.4316C68.0091 9.33398 67.6667 8.9915 67.6667 8.56903C67.6667 6.04563 65.621 4 63.0976 4H49Z"
               fill="#9AA4B2"
             />
@@ -129,8 +142,8 @@ const NoCardData = () => {
                 y2="60.0007"
                 gradientUnits="userSpaceOnUse"
               >
-                <stop stop-color="white" stop-opacity="0.12" />
-                <stop offset="1" stop-color="white" stop-opacity="0" />
+                <stop stopColor="white" stopOpacity="0.12" />
+                <stop offset="1" stopColor="white" stopOpacity="0" />
               </linearGradient>
               <linearGradient
                 id="paint1_linear_1002_24444"
@@ -140,8 +153,8 @@ const NoCardData = () => {
                 y2="60.0006"
                 gradientUnits="userSpaceOnUse"
               >
-                <stop stop-color="white" stop-opacity="0.12" />
-                <stop offset="1" stop-color="white" stop-opacity="0" />
+                <stop stopColor="white" stopOpacity="0.12" />
+                <stop offset="1" stopColor="white" stopOpacity="0" />
               </linearGradient>
               <linearGradient
                 id="paint2_linear_1002_24444"
@@ -151,8 +164,8 @@ const NoCardData = () => {
                 y2="59.2906"
                 gradientUnits="userSpaceOnUse"
               >
-                <stop stop-color="white" />
-                <stop offset="1" stop-color="white" stop-opacity="0" />
+                <stop stopColor="white" />
+                <stop offset="1" stopColor="white" stopOpacity="0" />
               </linearGradient>
             </defs>
           </svg>
@@ -166,15 +179,15 @@ const NoCardData = () => {
         <p className="text-gray-600 mb-6">
           Start creating by uploading your files.
         </p>
-        <button
+        {/* <button
           className="bg-[#155EEF] text-white px-4 py-2 rounded-md flex items-center justify-center mx-auto"
           onClick={handleOpenModal}
         >
           <CampaignIcon className="mr-2" />
           Create a new Announcement
-        </button>
+        </button> */}
       </div>
-      {isAnnouncementModalOpen && (
+      {/* {isAnnouncementModalOpen && (
         <AnnouncementModal
           isOpen={handleOpenModal}
           onClose={handleCloseModal}
@@ -182,7 +195,7 @@ const NoCardData = () => {
           isSubmitting={isSubmitting}
           isUpdate={false}
         />
-      )}
+      )} */}
     </div>
   );
 };

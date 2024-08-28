@@ -9,7 +9,6 @@ import { useSelector } from "react-redux";
 import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 import { formatFullDateFromBigInt } from "../../Utils/formatter/formatDateFromBigInt";
 import NoDataCard from "../../Mentors/Event/NoDataCard";
-import ment from "../../../../assets/images/ment.jpg";
 import NoData from "../../../../assets/images/file_not_found.png";
 import AnnouncementModal from "../../../models/AnnouncementModal";
 import DeleteModel from "../../../models/DeleteModel";
@@ -182,7 +181,8 @@ const AnnouncementDetailsCard = ({ data }) => {
           },
         }}
       >
-        {latestAnnouncementData.length == 0 ? (
+        {
+        latestAnnouncementData.length == 0 ? (
           <NoDataCard image={NoData} desc={"No active announcement found"} />
         ) : (
           latestAnnouncementData &&
@@ -197,8 +197,8 @@ const AnnouncementDetailsCard = ({ data }) => {
               card?.announcement_data?.announcement_description ?? "";
             let ann_project_logo = card?.project_logo
               ? uint8ArrayToBase64(card?.project_logo[0])
-              : ment;
-            // let ann_project_logo = ment;
+              : '';
+            // let ann_project_logo = '';
             let ann_project_name = card?.project_name ?? "";
             let ann_project_desc = card?.project_desc ?? "";
             let announcement_id = card?.announcement_id ?? "";

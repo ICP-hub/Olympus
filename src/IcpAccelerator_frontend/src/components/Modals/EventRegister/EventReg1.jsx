@@ -1,16 +1,24 @@
+
 import React, { useState, useEffect } from "react";
-import ReactSelect from "react-select";
 import toast, { Toaster } from "react-hot-toast";
-import { formFields1 } from "./EventFormData1";
-import { useFormContext } from "react-hook-form";
-import { useForm, Controller } from "react-hook-form";
-import CompressedImage from "../../../component/ImageCompressed/CompressedImage"
-import ControlPointIcon from "@mui/icons-material/ControlPoint";
-const EventReg1 = ({ setImageData, setImagePreview, imagePreview }) => {
+import { formFields1 } from "./EventFormData";
+import { useFormContext, Controller } from "react-hook-form";
+import CompressedImage from "../../../component/ImageCompressed/CompressedImage";
+
+const EventReg1 = ({ formData, setFormData, imageData, setImageData, editMode }) => {
+  const [imagePreview, setImagePreview] = useState(null);
+
   const { register, formState: { errors }, control, setValue, clearErrors, setError, trigger } = useFormContext();
 
+  useEffect(() => {
+    if (formData?.image) {
+      setImagePreview(URL.createObjectURL(formData?.image));
+      setImageData(formData?.image);
+    }
+  }, [formData]);
 
   const [inputType, setInputType] = useState("date");
+
   const handleFocus = (field) => {
     if (field.onFocus) {
       setInputType(field.onFocus);
@@ -23,8 +31,6 @@ const EventReg1 = ({ setImageData, setImagePreview, imagePreview }) => {
     }
   };
 
-
-  // image creation function compression and uintarray creator
   const imageCreationFunc = async (file) => {
     const result = await trigger("image");
     if (result) {
@@ -37,7 +43,7 @@ const EventReg1 = ({ setImageData, setImagePreview, imagePreview }) => {
         reader.readAsDataURL(compressedFile);
         const byteArray = await compressedFile.arrayBuffer();
         setImageData(Array.from(new Uint8Array(byteArray)));
-        console.log("Event Image Buffer Array", byteArray)
+        console.log("Event Image Buffer Array", byteArray);
       } catch (error) {
         setError("image", {
           type: "manual",
@@ -48,7 +54,7 @@ const EventReg1 = ({ setImageData, setImagePreview, imagePreview }) => {
       console.log("ERROR--imageCreationFunc-file", file);
     }
   };
-  // clear image func
+
   const clearImageFunc = (val) => {
     let field_id = val;
     setValue(field_id, null);
@@ -56,16 +62,21 @@ const EventReg1 = ({ setImageData, setImagePreview, imagePreview }) => {
     setImageData(null);
     setImagePreview(null);
   };
+
   return (
     <>
-      <h1 className="text-3xl text-[#121926] font-bold mb-3">
-        Create a Event
-      </h1>
+      <div>
+        <h1 className="text-3xl text-[#121926] font-bold mb-3">
+          {editMode ? "Update Cohort" : "Create a New Cohort"}
+        </h1>
+      </div>
+      
       <div className="mb-2">
         <label className="block text-sm font-medium mb-1">
           Upload a logo<span className="text-red-500">*</span>
         </label>
-        <div className="flex gap-2  items-center">
+
+        <div className="flex gap-2 items-center">
           <div className="h-24 w-24 rounded-2xl border-2 border-dashed border-gray-300 items-center justify-center overflow-hidden flex">
             {imagePreview && !errors.image ? (
               <img
@@ -108,7 +119,6 @@ const EventReg1 = ({ setImageData, setImagePreview, imagePreview }) => {
                   }}
                   accept=".jpg, .jpeg, .png"
                 />
-
                 <label
                   htmlFor="image"
                   className="p-2 border-2 border-blue-800 items-center sm:ml-6 rounded-md text-md bg-transparent text-blue-800 cursor-pointer font-semibold"
@@ -127,23 +137,24 @@ const EventReg1 = ({ setImageData, setImagePreview, imagePreview }) => {
                 ) : (
                   ""
                 )}
-
               </>
             )}
           />
         </div>
+
         {errors.image && (
           <span className="mt-1 text-sm text-red-500 font-bold text-start px-4">
             {errors?.image?.message}
           </span>
         )}
       </div>
+
       <div className="mb-2">
         {formFields1?.map((field) => (
           <div key={field.id} className="relative z-0 group mb-2">
             <label
               htmlFor={field.id}
-              className=" text-sm font-medium mb-1 flex"
+              className="text-sm font-medium mb-1 flex"
             >
               {field.label}{" "}
               <span
@@ -153,6 +164,7 @@ const EventReg1 = ({ setImageData, setImagePreview, imagePreview }) => {
                 *
               </span>
             </label>
+
             {field.type === "textarea" ? (
               <textarea
                 name={field.name}
@@ -162,7 +174,7 @@ const EventReg1 = ({ setImageData, setImagePreview, imagePreview }) => {
                   ${errors[field.name]
                     ? "border-red-500 placeholder:text-red-500"
                     : "border-[#737373]"
-                  } text-gray-900 placeholder-gray-500  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                  } text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                 placeholder={field.placeholder}
                 onFocus={() => handleFocus(field)}
                 onBlur={() => handleBlur(field)}
@@ -177,12 +189,13 @@ const EventReg1 = ({ setImageData, setImagePreview, imagePreview }) => {
                   ${errors[field.name]
                     ? "border-red-500 placeholder:text-red-500"
                     : "border-[#737373]"
-                  } text-gray-900 placeholder-gray-500  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                  } text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                 placeholder={field.placeholder}
                 onFocus={() => handleFocus(field)}
                 onBlur={() => handleBlur(field)}
               />
             )}
+
             {errors[field.name] && (
               <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
                 {errors[field.name].message}
@@ -192,11 +205,10 @@ const EventReg1 = ({ setImageData, setImagePreview, imagePreview }) => {
         ))}
       </div>
 
-
-
       <Toaster />
     </>
   );
 };
 
 export default EventReg1;
+

@@ -1,6 +1,6 @@
 import React from "react";
 import coding1 from "../../../assets/images/coding1.jpeg"
-import ment from "../../../assets/images/ment.jpg"
+
 
 const AssociatedProjects = () => {
   return (

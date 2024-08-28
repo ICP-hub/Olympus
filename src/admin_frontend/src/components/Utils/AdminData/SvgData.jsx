@@ -1,8 +1,4 @@
 import React from "react";
-// import MeWallet from "../../../../assets/WalletLogo/MeWallet.png";
-// import BitfinityWallet from "../../../../assets/WalletLogo/BitfinityWallet.png";
-import IcpWallet from "../../../../../IcpAccelerator_frontend/assets/WalletLogo/IcpWallet.png";
-// import PlugWallet from "../../../../assets/WalletLogo/PlugWallet.png";
 
 export const afterCopySvg = (
   <svg

@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import ment from "../../../../assets/images/ment.jpg";
 import girl from "../../../../assets/images/girl.jpeg";
 import { linkedInSvg } from '../../Utils/Data/SvgData';
 import { Star, colorStar } from '../../Utils/Data/SvgData';
@@ -21,7 +20,7 @@ const Newcards = () => {
 
 
             <div className=' absolute flex  flex-row gap 2 p-4  gap-4 justify-center'>
-              <img className='h-12 w-12 rounded-md   flex  ' src={ment} alt='No Img' />
+              <img className='h-12 w-12 rounded-md   flex  ' src={''} alt='No Img' />
               <div className='flex-row flex-wrap flex '>
                 <p className='text-black font-bold text-2xl'>DeFi</p>
                 <p>q&a market place built on...</p>
