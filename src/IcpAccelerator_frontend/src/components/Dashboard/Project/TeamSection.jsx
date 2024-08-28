@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ProfileImage from "../../../../assets/Logo/ProfileImage.png";
 import TriciaProfile from "../../../../assets/Logo/TriciaProfile.png";
 import BillyProfile from "../../../../assets/Logo/BillyProfile.png";
@@ -9,7 +9,8 @@ import { useSelector } from "react-redux";
 import { Principal } from "@dfinity/principal";
 import toast, { Toaster } from "react-hot-toast";
 import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
-const TeamMember = ({ cardData }) => {
+import DeleteModel from "./DeleteModel";
+const TeamMember = ({ cardData, onDelete }) => {
   const projectTeam = cardData?.[0]?.[0]?.params?.project_team;
   console.log("result CARD DATA", cardData?.[0]?.[0]);
 
@@ -87,7 +88,7 @@ const TeamMember = ({ cardData }) => {
                       </div>
                     </td>
                     <td class="px-6 py-4">
-                      <button className="text-gray-400 hover:text-gray-600">
+                      <button className="text-gray-400 hover:text-gray-600" onClick={() => onDelete(teamMember)}>
                         <Delete fontSize="small" />
                       </button>
                     </td>
@@ -110,10 +111,10 @@ function TeamSection({ data, cardData }) {
   const [isAddTeamModalOpen, setIsAddTeamModalOpen] = useState(false);
   const actor = useSelector((currState) => currState.actors.actor);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const handleTeamMemberCloseModal = () => setIsAddTeamModalOpen(false);
   const handleTeamMemberOpenModal = () => setIsAddTeamModalOpen(true);
-
+  const [currentMemberData, setCurrentMemberData] = useState(null);
   const handleAddTeamMember = async ({ user_id }) => {
     setIsSubmitting(true);
     if (actor) {
@@ -143,9 +144,56 @@ function TeamSection({ data, cardData }) {
         });
     }
   };
-
+console.log(" member Delete",currentMemberData)
   // =======================================
+    // <<<<<------- member Delete ----->>>>>
 
+    const handleOpenDeleteModal = (data) => {
+      setCurrentMemberData(data);
+      setDeleteModalOpen(true);
+    };
+  
+    const handleCloseDeleteModal = () => {
+      setDeleteModalOpen(false);
+      setCurrentMemberData(null);
+    };
+    const handleClose = () => {
+      setDeleteModalOpen(false);
+      setCurrentMemberData(null);
+    };
+  
+    const handleDelete = async () => {
+      if (!currentMemberData) return;
+      setIsSubmitting(true);
+      try {
+        const result = await actor.delete_team_member(currentMemberData);
+        if (result) {
+          toast.success("Team member deleted successfully", {
+            style: {
+              backgroundColor: "#d9534f",
+              color: "#fff",
+            },
+            icon: "🗑️",
+          });
+          handleCloseDeleteModal();
+          setTimeout(() => {
+            window.location.reload();
+          }, 2000);
+        } else {
+          toast.error("Failed to delete the team member");
+        }
+      } catch (error) {
+        console.log("error-in-delete_team_member", error);
+        toast.error("Something went wrong");
+      } finally {
+        setIsSubmitting(false);
+      }
+    };
+// useEffect(() => {
+//   if (actor && latestJobs) {
+//     fetchPostedJobs();
+//   }
+// }, [actor, latestJobs]);
   return (
     <>
       <div className="bg-white overflow-hidden">
@@ -162,7 +210,7 @@ function TeamSection({ data, cardData }) {
 
           <div className="rounded-lg overflow-hidden border-2 border-gray-100">
             <div>
-              <TeamMember cardData={cardData} />
+              <TeamMember cardData={cardData}  onDelete={handleOpenDeleteModal}/>
             </div>
           </div>
         </div>
@@ -176,6 +224,16 @@ function TeamSection({ data, cardData }) {
           />
         )}
       </div>
+      {isDeleteModalOpen && (
+        <DeleteModel
+          onClose={handleClose}
+          title={"Delete Member"}
+          heading={"Are you sure to delete this member"}
+          onSubmitHandler={handleDelete}
+          isSubmitting={isSubmitting}
+          data={currentMemberData}
+        />
+      )}
       <Toaster />
     </>
   );
