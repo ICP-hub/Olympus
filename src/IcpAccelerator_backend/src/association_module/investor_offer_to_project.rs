@@ -6,6 +6,7 @@ use ic_cdk::{query, update};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use crate::state_handler::StoredPrincipal;
+use crate::guard::*;
 
 #[derive(Clone, CandidType, Deserialize, Serialize)]
 pub struct OfferToProjectByInvestor {
@@ -57,7 +58,7 @@ pub fn store_request_sent_by_capitalist(offer: OfferToProjectByInvestor) {
 }
 
 
-#[query]
+#[query(guard = "combined_guard")]
 pub fn get_all_sent_request_from_investor_to_project() -> Vec<OfferToProjectByInvestor> {
     read_state(|state| {
         state
@@ -80,7 +81,7 @@ pub fn notify_project_with_offer(project_id: String, offer: OfferToSendToProject
     });
 }
 
-#[query]
+#[query(guard = "combined_guard")]
 pub fn get_all_project_notification_sent_by_investor(
     id: String,
 ) -> Vec<OfferToSendToProjectByInvestor> {
@@ -93,7 +94,7 @@ pub fn get_all_project_notification_sent_by_investor(
     })
 }
 
-#[update]
+#[update(guard = "combined_guard")]
 pub async fn send_offer_to_project_by_investor(project_id: String, msg: String) -> String {
     let investor_id = caller();
 
@@ -172,7 +173,7 @@ pub async fn send_offer_to_project_by_investor(project_id: String, msg: String) 
     format!("offer sent sucessfully to {}", project_id)
 }
 
-#[update]
+#[update(guard = "combined_guard")]
 pub fn accept_offer_from_investor_to_project(
     offer_id: String,
     response_message: String,
@@ -248,7 +249,7 @@ pub fn accept_offer_from_investor_to_project(
 
 
 
-#[update]
+#[update(guard = "combined_guard")]
 pub fn decline_offer_from_investor_to_project(
     offer_id: String,
     response_message: String,
@@ -285,7 +286,7 @@ pub fn decline_offer_from_investor_to_project(
 }
 
 
-#[query]
+#[query(guard = "combined_guard")]
 pub fn get_all_offers_which_are_pending_for_project_from_investor(
     project_id: String,
 ) -> Vec<OfferToSendToProjectByInvestor> {
@@ -305,7 +306,7 @@ pub fn get_all_offers_which_are_pending_for_project_from_investor(
 }
 
 //mentor will call
-#[query]
+#[query(guard = "combined_guard")]
 pub fn get_all_offers_which_are_pending_for_investor(investor_id: Principal) -> Vec<OfferToProjectByInvestor> {
     read_state(|sent_notifications| {
         sent_notifications
@@ -322,7 +323,7 @@ pub fn get_all_offers_which_are_pending_for_investor(investor_id: Principal) -> 
     })
 }
 
-#[query]
+#[query(guard = "combined_guard")]
 pub fn get_all_requests_which_got_accepted_by_project_of_investor(
     project_id: String,
 ) -> Vec<OfferToSendToProjectByInvestor> {
@@ -341,7 +342,7 @@ pub fn get_all_requests_which_got_accepted_by_project_of_investor(
     })
 }
 
-#[query]
+#[query(guard = "combined_guard")]
 pub fn get_all_requests_which_got_accepted_for_investor(investor_id: Principal) -> Vec<OfferToProjectByInvestor> {
     read_state(|notifications| {
         notifications
@@ -358,7 +359,7 @@ pub fn get_all_requests_which_got_accepted_for_investor(investor_id: Principal) 
     })
 }
 
-#[query]
+#[query(guard = "combined_guard")]
 pub fn get_all_requests_which_got_declined_by_project_of_investor(
     project_id: String,
 ) -> Vec<OfferToSendToProjectByInvestor> {
@@ -377,7 +378,7 @@ pub fn get_all_requests_which_got_declined_by_project_of_investor(
     })
 }
 
-#[query]
+#[query(guard = "combined_guard")]
 pub fn get_all_requests_which_got_declined_for_investor(investor_id: Principal) -> Vec<OfferToProjectByInvestor> {
     read_state(|notifications| {
         notifications
@@ -398,7 +399,7 @@ pub fn get_all_requests_which_got_declined_for_investor(investor_id: Principal) 
 
 //for project
 
-#[update]
+#[update(guard = "combined_guard")]
 pub fn self_decline_request_from_investor_to_project(offer_id: String) -> String {
     let mut response = String::new();
 
@@ -436,7 +437,7 @@ pub fn self_decline_request_from_investor_to_project(offer_id: String) -> String
     response
 }
 
-#[query]
+#[query(guard = "combined_guard")]
 pub fn get_all_requests_which_got_self_declined_by_project() -> Vec<OfferToProjectByInvestor> {
     read_state(|offers| {
         let offers = &offers.offers_sent_by_investor;
@@ -452,7 +453,7 @@ pub fn get_all_requests_which_got_self_declined_by_project() -> Vec<OfferToProje
     })
 }
 
-#[query]
+#[query(guard = "combined_guard")]
 pub fn get_all_requests_which_got_self_declined_by_investor(
     project_id: String,
 ) -> Vec<OfferToSendToProjectByInvestor> {

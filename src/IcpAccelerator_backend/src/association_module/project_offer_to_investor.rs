@@ -6,6 +6,7 @@ use ic_cdk::{api::time, caller};
 use ic_cdk::{query, update};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
+use crate::guard::*;
 
 #[derive(Clone, CandidType, Deserialize, Serialize)]
 pub struct OfferToInvestor {
@@ -69,7 +70,7 @@ pub fn notify_investor_with_offer(mentor_id: Principal, offer: OfferToSendToInve
 }
 
 
-#[update]
+#[update(guard = "combined_guard")]
 pub async fn send_offer_to_investor_by_project(
     investor_id: Principal,
     msg: String,
@@ -147,7 +148,7 @@ pub async fn send_offer_to_investor_by_project(
     format!("offer sent sucessfully to {}", investor_id)
 }
 
-#[update]
+#[update(guard = "combined_guard")]
 pub fn accept_offer_from_project_to_investor(offer_id: String, response_message: String) -> String {
     let investor_id = ic_cdk::api::caller();
     let mut already_accepted = false;
@@ -214,7 +215,7 @@ pub fn accept_offer_from_project_to_investor(offer_id: String, response_message:
 
 
 
-#[update]
+#[update(guard = "combined_guard")]
 pub fn decline_offer_from_project_to_investor(offer_id: String, response_message: String) -> String {
     let investor_id = caller();
 
@@ -249,7 +250,7 @@ pub fn decline_offer_from_project_to_investor(offer_id: String, response_message
 }
 
 
-#[query]
+#[query(guard = "combined_guard")]
 pub fn get_pending_request_for_investor_sent_by_project(investor_id: Principal) -> Vec<OfferToSendToInvestor> {
     read_state(|pending_alerts| {
         pending_alerts
@@ -267,7 +268,7 @@ pub fn get_pending_request_for_investor_sent_by_project(investor_id: Principal) 
 }
 
 //for project to see what request are sent to investor
-#[query]
+#[query(guard = "combined_guard")]
 pub fn get_pending_offers_for_project_received_from_investor(project_id: String) -> Vec<OfferToInvestor> {
     read_state(|pending_alerts| {
         pending_alerts
@@ -284,7 +285,7 @@ pub fn get_pending_offers_for_project_received_from_investor(project_id: String)
     })
 }
 
-#[query]
+#[query(guard = "combined_guard")]
 pub fn get_accepted_request_for_investor(investor_id: Principal) -> Vec<OfferToSendToInvestor> {
     read_state(|pending_alerts| {
         pending_alerts
@@ -301,7 +302,7 @@ pub fn get_accepted_request_for_investor(investor_id: Principal) -> Vec<OfferToS
     })
 }
 
-#[query]
+#[query(guard = "combined_guard")]
 pub fn get_accepted_request_of_project_by_investor(project_id: String) -> Vec<OfferToInvestor> {
     read_state(|pending_alerts| {
         pending_alerts
@@ -318,7 +319,7 @@ pub fn get_accepted_request_of_project_by_investor(project_id: String) -> Vec<Of
     })
 }
 
-#[query]
+#[query(guard = "combined_guard")]
 pub fn get_declined_request_for_investor(investor_id: Principal) -> Vec<OfferToSendToInvestor> {
     read_state(|pending_alerts| {
         pending_alerts
@@ -335,7 +336,7 @@ pub fn get_declined_request_for_investor(investor_id: Principal) -> Vec<OfferToS
     })
 }
 
-#[query]
+#[query(guard = "combined_guard")]
 pub fn get_declined_request_of_project_by_investor(project_id: String) -> Vec<OfferToInvestor> {
     read_state(|pending_alerts| {
         pending_alerts
@@ -352,7 +353,7 @@ pub fn get_declined_request_of_project_by_investor(project_id: String) -> Vec<Of
     })
 }
 
-#[update]
+#[update(guard = "combined_guard")]
 pub fn self_decline_request_from_project_to_investor(offer_id: String, project_id: String) -> String {
     let mut response: String = String::new();
 
@@ -390,7 +391,7 @@ pub fn self_decline_request_from_project_to_investor(offer_id: String, project_i
     response
 }
 
-#[query]
+#[query(guard = "combined_guard")]
 pub fn get_self_declined_requests_of_project(project_id: String) -> Vec<OfferToInvestor> {
     read_state(|offers| {
         let offers = &offers.offers_offered_by_me;
@@ -406,7 +407,7 @@ pub fn get_self_declined_requests_of_project(project_id: String) -> Vec<OfferToI
     })
 }
 
-#[query]
+#[query(guard = "combined_guard")]
 pub fn get_self_declined_requests_for_investor() -> Vec<OfferToSendToInvestor> {
     read_state(|offers| {
         let offers = &offers.investor_alerts;
