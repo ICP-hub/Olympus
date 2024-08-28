@@ -1,8 +1,8 @@
-use crate::is_user_anonymous;
+use crate::guard::*;
 use crate::state_handler::*;
 use crate::ProjectInfoInternal;
 use candid::Principal;
-#[ic_cdk::query(guard = "is_user_anonymous")]
+#[ic_cdk::query(guard = "combined_guard")]
 pub fn get_projects_associated_with_mentor(mentor_id: Principal) -> Vec<ProjectInfoInternal> {
     read_state(|state| {
         let storage = &state.projects_associated_with_mentor;
@@ -13,7 +13,7 @@ pub fn get_projects_associated_with_mentor(mentor_id: Principal) -> Vec<ProjectI
     })
 }
 
-#[ic_cdk::query(guard = "is_user_anonymous")]
+#[ic_cdk::query(guard = "combined_guard")]
 pub fn get_projects_associated_with_investor(investor_id: Principal) -> Vec<ProjectInfoInternal> {
     read_state(|state| {
         let storage = &state.projects_associated_with_vc;

@@ -1,4 +1,4 @@
-use crate::is_user_anonymous;
+use crate::guard::*;
 use crate::state_handler::*;
 use crate::types::individual_types::{TimestampedRatingMentorInvestor, RatingMentorInvestor};
 use candid::Principal;
@@ -27,7 +27,7 @@ pub fn find_vc_by_uid(uid: String) -> StoredPrincipal {
     })
 }
 
-#[update(guard = "is_user_anonymous")]
+#[update(guard = "combined_guard")]
 pub fn update_mentor_ratings(uid: String, new_rating: RatingMentorInvestor) {
     let current_timestamp = time();
     let stored_principal = find_mentor_by_uid(uid.clone());
@@ -50,7 +50,7 @@ pub fn update_mentor_ratings(uid: String, new_rating: RatingMentorInvestor) {
     ic_cdk::println!("Updated ratings for mentor with uid: {}", uid);
 }
 
-#[update(guard = "is_user_anonymous")]
+#[update(guard = "combined_guard")]
 pub fn update_vc_ratings(uid: String, new_rating: RatingMentorInvestor) {
     let current_timestamp = time();
     let stored_principal = find_vc_by_uid(uid.clone());
@@ -73,13 +73,13 @@ pub fn update_vc_ratings(uid: String, new_rating: RatingMentorInvestor) {
     ic_cdk::println!("Updated ratings for VC with uid: {}", uid);
 }
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 pub fn calculate_mentor_average_rating(uid: String) -> Result<f64, String> {
     let principal_id = find_mentor_by_uid(uid.clone());
     calculate_and_store_average_rating_mentor(principal_id.0)
 }
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 pub fn calculate_vc_average_rating(uid: String) -> Result<f64, String> {
     let principal_id = find_vc_by_uid(uid.clone());
     calculate_and_store_average_rating_investor(principal_id.0)

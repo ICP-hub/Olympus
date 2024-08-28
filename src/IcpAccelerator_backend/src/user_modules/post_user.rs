@@ -70,12 +70,12 @@ fn record_measurement(measurement: u64) {
     ic_cdk::println!("Instructions used: {}", measurement);
 }
 
-#[update(guard = "rate_limiter_guard")]
+#[update(guard = "is_user_anonymous")]
 pub async fn register_user(info: UserInformation) -> Result<std::string::String, std::string::String> {
     // if !verify_captcha(captcha_id, captcha_input) {
     //     return Err::<std::string::String, std::string::String>("CAPTCHA verification failed.".to_string());
     // }
-    let initial_cycles = ic_cdk::api::canister_balance();
+    let start = ic_cdk::api::instruction_counter();
     initialize_roles();
 
     let caller = caller();
@@ -189,15 +189,12 @@ pub async fn register_user(info: UserInformation) -> Result<std::string::String,
             role_status.insert(StoredPrincipal(caller), Candid(initial_roles));
         }
     });
-    let final_cycles = ic_cdk::api::canister_balance();
-    
-    let cycles_consumed = initial_cycles - final_cycles;
-    
-    record_measurement(cycles_consumed);
+    let end = ic_cdk::api::instruction_counter();  
+    record_measurement(end - start);  
     Ok(format!("User registered successfully with ID: {}", new_id))
 }
 
-#[update(guard = "is_user_anonymous")]
+#[update(guard = "combined_guard")]
 async fn update_user_data(user_id: Principal, mut user_data: UserInformation) -> Result<(), String> {
     let temp_image = user_data.profile_picture.clone();
     let canister_id = crate::asset_manager::get_asset_canister();
@@ -245,7 +242,7 @@ async fn update_user_data(user_id: Principal, mut user_data: UserInformation) ->
     })
 }
 
-#[update(guard = "is_user_anonymous")]
+#[update(guard = "combined_guard")]
 pub fn switch_role(role_to_switch: String, new_status: String){
     let caller_id = StoredPrincipal(caller());
 
@@ -280,7 +277,7 @@ pub fn switch_role(role_to_switch: String, new_status: String){
     });
 }
 
-#[update(guard = "is_user_anonymous")]
+#[update(guard = "combined_guard")]
 pub fn make_user_inactive() -> std::string::String {
     let caller = caller();
 
@@ -298,7 +295,7 @@ pub fn make_user_inactive() -> std::string::String {
     })
 }
 
-#[update(guard = "is_user_anonymous")]
+#[update(guard = "combined_guard")]
 fn add_testimonial(message: String) -> String {
     let principal_id = caller();
 
@@ -332,7 +329,7 @@ fn add_testimonial(message: String) -> String {
     }
 }
 
-#[update(guard = "is_user_anonymous")]
+#[update(guard = "combined_guard")]
 fn add_review(rating: f32, message: String) -> String {
     let principal_id = ic_cdk::caller();
     let principal_id_stored = StoredPrincipal(principal_id);

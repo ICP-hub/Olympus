@@ -1,4 +1,4 @@
-use crate::is_user_anonymous;
+use crate::guard::*;
 use crate::state_handler::*;
 use crate::types::ratings_types::*;
 use candid::{CandidType, Principal};
@@ -97,7 +97,7 @@ pub struct RatingUpdate {
     ratings: Vec<Rating>,
 }
 
-#[update(guard = "is_user_anonymous")]
+#[update(guard = "combined_guard")]
 pub fn update_rating(rating_data: RatingUpdate) -> String {
     if rating_data.ratings.is_empty() {
         ic_cdk::println!("Debug: No ratings provided.");
@@ -263,7 +263,7 @@ pub fn calculate_average_api_storage(project_id: &str) {
 }
 
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 pub fn calculate_average(project_id: String) -> RatingAverages {
     calculate_average_api_storage(&project_id);
     read_state(|storage| {
@@ -276,7 +276,7 @@ pub fn calculate_average(project_id: String) -> RatingAverages {
     })
 }
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 pub fn get_ratings_by_principal(project_id: String) -> Result<Vec<RatingView>, String> {
     let caller_id = caller();
     println!(

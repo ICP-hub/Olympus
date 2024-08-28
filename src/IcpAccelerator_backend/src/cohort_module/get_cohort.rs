@@ -9,7 +9,7 @@ use crate::types::pagination_types::*;
 use candid::Principal;
 
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 pub fn get_cohort(cohort_id: String) -> CohortDetails {
     read_state(|state| {
         state
@@ -21,7 +21,7 @@ pub fn get_cohort(cohort_id: String) -> CohortDetails {
     })
 }
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 pub fn get_cohorts_by_principal(principal_id: Principal) -> Vec<CohortDetails> {
     read_state(|state| {
         state
@@ -38,7 +38,7 @@ pub fn get_cohorts_by_principal(principal_id: Principal) -> Vec<CohortDetails> {
     })
 }
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 pub fn get_all_cohorts(pagination_params: Pagination) -> PaginationReturnCohort {
     let start = (pagination_params.page - 1) * pagination_params.page_size;
     let current_time = ic_cdk::api::time(); // Current time for comparison
@@ -86,7 +86,7 @@ pub fn get_all_cohorts(pagination_params: Pagination) -> PaginationReturnCohort 
 }
 
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 pub fn get_pending_cohort_enrollment_requests(
     mentor_principal: Principal,
 ) -> Vec<CohortEnrollmentRequest> {
@@ -119,7 +119,7 @@ pub fn get_pending_cohort_enrollment_requests(
     pending_requests
 }
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 pub fn get_accepted_cohort_enrollment_requests(
     mentor_principal: Principal,
 ) -> Vec<CohortEnrollmentRequest> {
@@ -141,7 +141,7 @@ pub fn get_accepted_cohort_enrollment_requests(
     })
 }
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 pub fn get_rejected_cohort_enrollment_requests(
     mentor_principal: Principal,
 ) -> Vec<CohortEnrollmentRequest> {
@@ -163,7 +163,7 @@ pub fn get_rejected_cohort_enrollment_requests(
     })
 }
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 pub fn get_no_of_individuals_applied_for_cohort_using_id(cohort_id: String) -> Result<u8, String> {
     let count: Option<u64> = read_state(|state| state.applier_count.get(&cohort_id));
 
@@ -181,7 +181,7 @@ pub fn get_no_of_individuals_applied_for_cohort_using_id(cohort_id: String) -> R
     Ok(project_count_in_cohort.try_into().unwrap())
 }
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 pub fn get_projects_applied_for_cohort(
     cohort_id: String,
 ) -> Result<Vec<(ProjectInfoInternal, UserInfoInternal)>, String> {
@@ -207,7 +207,7 @@ pub fn get_projects_applied_for_cohort(
 }
 
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 pub fn get_mentors_applied_for_cohort(cohort_id: String) -> Result<Vec<(MentorInternal, UserInfoInternal)>, String> {
     let mentors_in_cohort_with_users: Vec<(MentorInternal, UserInfoInternal)> = read_state(|state| {
         let mut results : Vec<(MentorInternal, UserInfoInternal)> = Vec::new();
@@ -230,7 +230,7 @@ pub fn get_mentors_applied_for_cohort(cohort_id: String) -> Result<Vec<(MentorIn
     Ok(mentors_in_cohort_with_users)
 }
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 pub fn get_vcs_applied_for_cohort(
     cohort_id: String,
 ) -> Result<Vec<(VentureCapitalistInternal, UserInfoInternal)>, String> {
@@ -256,7 +256,7 @@ pub fn get_vcs_applied_for_cohort(
 }
 
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 pub fn filter_cohorts(criteria: CohortFilterCriteria) -> Vec<CohortDetails> {
     read_state(|state| {
         state

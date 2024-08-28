@@ -1,9 +1,11 @@
 use ic_cdk_macros::*;
+use crate::state_handler;
 use crate::types::individual_types::*;
 use serde::{Deserialize, Serialize};
 use candid::{CandidType, Principal};
 use serde_bytes::ByteBuf;
-use crate::{is_user_anonymous, state_handler::{self, mutate_state, read_state, StoredPrincipal}};
+use crate::state_handler::*;
+use crate::guard::*;
 use ic_cdk::api::caller;
 use ic_cdk::api::call::call;
 
@@ -68,7 +70,7 @@ pub async fn add_hubs_images(caller: Principal, mut data: IcpHubDetails)->IcpHub
 
 }
 
-#[update(guard="is_user_anonymous")]
+#[update(guard="combined_guard")]
 pub async fn add_icp_hub_details(data: IcpHubDetails)->String{
     let caller = caller();
 

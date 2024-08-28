@@ -1,5 +1,5 @@
-use crate::state_handler::{mutate_state, read_state, Candid, StoredPrincipal};
-use ic_cdk::update;
+use crate::{state_handler::{mutate_state, read_state, Candid, StoredPrincipal}, Role};
+use ic_cdk::{caller, update};
 use ic_cdk::api::management_canister::main::raw_rand;
 use sha2::{Sha256, Digest};
 use regex::Regex;
@@ -20,15 +20,78 @@ pub fn is_admin() -> Result<(), String> {
 }
 
 pub fn is_user_anonymous() -> Result<(), String> {
-    Ok(())
     // let caller = caller();
 
     // if caller.to_string() != "2vxsx-fae" {
     //     Ok(())
     // } else {
-    //     Err("login with your identity to use functions".to_string())
+    //     Err("Your are not Authorized to call This Function, Please Use Your Internet Identity".to_string())
     // }
+    Ok(())
 }
+
+pub fn is_registered_user_guard() -> Result<(), String> {
+    let caller = ic_cdk::api::caller();
+
+    // Fetch the roles for the caller
+    let roles = read_state(|state| {
+        if let Some(roles_candid) = state.role_status.get(&StoredPrincipal(caller)) {
+            roles_candid.0.clone()
+        } else {
+            // Return default roles if none exist
+            vec![
+                Role {
+                    name: "user".to_string(),
+                    status: "default".to_string(),
+                    requested_on: None,
+                    approved_on: None,
+                    rejected_on: None,
+                    approval_status: Some("default".to_string()),
+                },
+                Role {
+                    name: "project".to_string(),
+                    status: "default".to_string(),
+                    requested_on: None,
+                    approved_on: None,
+                    rejected_on: None,
+                    approval_status: Some("default".to_string()),
+                },
+                Role {
+                    name: "mentor".to_string(),
+                    status: "default".to_string(),
+                    requested_on: None,
+                    approved_on: None,
+                    rejected_on: None,
+                    approval_status: Some("default".to_string()),
+                },
+                Role {
+                    name: "vc".to_string(),
+                    status: "default".to_string(),
+                    requested_on: None,
+                    approved_on: None,
+                    rejected_on: None,
+                    approval_status: Some("default".to_string()),
+                },
+            ]
+        }
+    });
+
+    // Check if any role has an approval_status of "approved"
+    let is_approved = roles.iter().any(|role| {
+        if let Some(approval_status) = &role.approval_status {
+            approval_status == "approved"
+        } else {
+            false
+        }
+    });
+
+    if is_approved {
+        Ok(())
+    } else {
+        Err("You Do Not Have Access To Do This, Please Register Yourself On The Platform".to_string())
+    }
+}
+
 
 const REQUEST_LIMIT: u64 = 20; // Max number of requests
 const TIME_WINDOW: u64 = 60 * 1_000_000_000; // 60 seconds in nanoseconds
@@ -55,6 +118,16 @@ pub fn rate_limiter_guard() -> Result<(), String> {
             state.rate_limiting.insert(StoredPrincipal(caller), (last_request_time, request_count + 1));
         });
     }
+
+    Ok(())
+}
+
+pub fn combined_guard() -> Result<(), String> {
+    is_user_anonymous()?;
+
+    is_registered_user_guard()?;
+
+    rate_limiter_guard()?;
 
     Ok(())
 }

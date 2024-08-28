@@ -9,7 +9,7 @@ use ic_cdk::api::time;
 use ic_cdk_macros::*;
 use ic_cdk::api::caller;
 
-#[update(guard = "is_user_anonymous")]
+#[update(guard = "combined_guard")]
 pub async fn update_money_raised_data(project_id: String, new_money_raised: MoneyRaised) -> Result<String, String> {
     let caller = ic_cdk::caller();
 
@@ -45,7 +45,7 @@ pub async fn update_money_raised_data(project_id: String, new_money_raised: Mone
 
 
 
-#[update(guard = "is_user_anonymous")]
+#[update(guard = "combined_guard")]
 pub async fn send_money_access_request(project_id: String) -> String {
     let caller = caller();
     let mut has_pending_request = false;
@@ -121,7 +121,7 @@ fn add_user_to_money_access(project_id: String, user: Principal) {
     });
 }
 
-#[update(guard = "is_user_anonymous")]
+#[update(guard = "combined_guard")]
 pub async fn approve_money_access_request(project_id: String, sender_id: Principal) -> String {
     let mut request_found_and_updated = false;
 
@@ -167,7 +167,7 @@ pub async fn approve_money_access_request(project_id: String, sender_id: Princip
     "Money access request approved successfully.".to_string()
 }
 
-#[update(guard = "is_user_anonymous")]
+#[update(guard = "combined_guard")]
 pub fn decline_money_access_request(project_id: String, sender_id: Principal) -> String {
     let mut request_found_and_updated = false;
 
@@ -210,7 +210,7 @@ pub fn decline_money_access_request(project_id: String, sender_id: Principal) ->
     "Money access request declined successfully.".to_string()
 }
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 pub fn get_pending_money_requests(project_id: String) -> Vec<ProjectNotification> {
     read_state(
         |state| match state.project_access_notifications.get(&project_id) {
@@ -227,7 +227,7 @@ pub fn get_pending_money_requests(project_id: String) -> Vec<ProjectNotification
     )
 }
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 pub fn get_declined_money_requests(project_id: String) -> Vec<ProjectNotification> {
     read_state(
         |state| match state.project_access_notifications.get(&project_id) {
@@ -244,7 +244,7 @@ pub fn get_declined_money_requests(project_id: String) -> Vec<ProjectNotificatio
     )
 }
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 pub fn get_approved_money_requests(project_id: String) -> Vec<ProjectNotification> {
     read_state(
         |state| match state.project_access_notifications.get(&project_id) {
@@ -261,7 +261,7 @@ pub fn get_approved_money_requests(project_id: String) -> Vec<ProjectNotificatio
     )
 }
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 pub fn access_money_details(project_id: String) -> Result<MoneyRaised, CustomError> {
     let caller = ic_cdk::api::caller();
 
