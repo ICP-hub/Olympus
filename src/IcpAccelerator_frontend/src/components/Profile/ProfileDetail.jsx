@@ -1277,8 +1277,9 @@ const ProfileDetail = () => {
           </form>
         )}
 
-        {/* Investor Tab Content */}
-        {userRole === "vc" && activeTab === "vc" && <InvestorDetail />}
+        {userRole === "vc" && activeTab === "vc" && (
+          <InvestorDetail />
+        )}
 
         {/* Mentor Tab Content */}
         {userRole === "mentor" && activeTab === "mentor" && <MentorEdit />}

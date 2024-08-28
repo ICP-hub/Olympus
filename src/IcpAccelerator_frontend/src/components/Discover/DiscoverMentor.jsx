@@ -12,6 +12,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { founderRegisteredHandlerRequest } from "../StateManagement/Redux/Reducers/founderRegisteredData";
 import { Tooltip } from "react-tooltip";
 import DiscoverMentorMain from "../Dashboard/DashboardHomePage/discoverMentor/DiscoverMentorMain";
+import RatingModal from "../Common/RatingModal";
 
 const DiscoverMentor = () => {
   const actor = useSelector((currState) => currState.actors.actor);
@@ -29,6 +30,8 @@ const DiscoverMentor = () => {
   const [isAddMentorModalOpen, setIsAddMentorModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [mentorId, setMentorId] = useState(null);
+  const [showRatingModal, setShowRatingModal] = useState(false);
+
   const dispatch = useDispatch();
   const userCurrentRoleStatusActiveRole = useSelector(
     (currState) => currState.currentRoleStatus.activeRole
@@ -225,11 +228,11 @@ const DiscoverMentor = () => {
                   className="p-6 w-[750px] rounded-lg shadow-sm mb-4 flex"
                   key={index}
                 >
-                  <div className="w-[272px]">
-                    <div className="max-w-[250px] w-[250px] h-[254px] bg-gray-100 rounded-lg flex flex-col justify-between relative overflow-hidden">
+                  <div className="w-[272px] relative">
+                    <div onClick={() => handleClick(principle_id)} className="max-w-[250px] w-[250px] h-[254px] bg-gray-100 rounded-lg flex flex-col justify-between relative overflow-hidden">
                       <div
                         className="absolute inset-0 flex items-center justify-center"
-                        onClick={() => handleClick(principle_id)}
+                        
                       >
                         <img
                           src={profile}
@@ -238,11 +241,12 @@ const DiscoverMentor = () => {
                         />
                       </div>
 
-                      <div className="absolute bottom-0 right-[6px] flex items-center bg-gray-100 p-1">
+                      
+                    </div>
+                    <div className="absolute bottom-0 right-[6px] flex items-center bg-gray-100 p-1">
                         <Star className="text-yellow-400 w-4 h-4" />
                         <span className="text-sm font-medium">5.0</span>
                       </div>
-                    </div>
                   </div>
                   <div className="flex-grow ml-[25px] w-[544px]">
                     <div className="flex justify-between items-start mb-2">
@@ -308,6 +312,12 @@ const DiscoverMentor = () => {
         ) : (
           <div>No Data Available</div>
         )}
+        {showRatingModal && (
+        <RatingModal
+          showRating={showRatingModal}
+          setShowRatingModal={setShowRatingModal}
+        />
+      )}
         {isAddMentorModalOpen && (
           <AddAMentorRequestModal
             title={"Associate Mentor"}
