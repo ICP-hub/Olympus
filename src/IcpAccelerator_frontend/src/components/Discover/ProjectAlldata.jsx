@@ -16,6 +16,7 @@ import toast, { Toaster } from "react-hot-toast";
 import UserDetailPage from "../Dashboard/DashboardHomePage/UserDetailPage";
 import AddAMentorRequestModal from "../../models/AddAMentorRequestModal";
 import { mentorRegisteredHandlerRequest } from "../StateManagement/Redux/Reducers/mentorRegisteredData";
+import RatingModal from "../Common/RatingModal";
 const DiscoverProject = () => {
   const actor = useSelector((currState) => currState.actors.actor);
   const [allProjectData, setAllProjectData] = useState([]);
@@ -26,6 +27,7 @@ const DiscoverProject = () => {
   const [cardDetail, setCadDetail] = useState(null);
   const [principal, setprincipal] = useState(null);
   const [listProjectId, setListProjectId] = useState(null);
+  const [showRatingModal, setShowRatingModal] = useState(false);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const mentorPrincipal = useSelector(
@@ -67,7 +69,7 @@ const DiscoverProject = () => {
       let project_id = listProjectId;
       let msg = message;
       let mentor_id = Principal.fromText(mentorPrincipal);
-      console.log("Data before sending", project_id, msg, mentor_id)
+      console.log("Data before sending", project_id, msg, mentor_id);
 
       await actor
         .send_offer_to_project_by_mentor(project_id, msg, mentor_id)
@@ -95,9 +97,9 @@ const DiscoverProject = () => {
   const [isAddProjectModalOpenAsInvestor, setIsAddProjectModalOpenAsInvestor] =
     useState(false);
 
-  const handleProjectCloseModalAsInvestor = () =>{
+  const handleProjectCloseModalAsInvestor = () => {
     setIsAddProjectModalOpenAsInvestor(false);
-  }
+  };
   const handleProjectOpenModalAsInvestor = (val) => {
     setListProjectId(val);
     setIsAddProjectModalOpenAsInvestor(true);
@@ -223,11 +225,11 @@ const DiscoverProject = () => {
     <div>
       {isLoading ? (
         <div>Loading...</div>
-      ) : allProjectData.length > 0  ? (
+      ) : allProjectData.length > 0 ? (
         allProjectData.map((projectArray, index) => {
           console.log("projectArray", projectArray);
           // const project_id = projectArray?.principal?.toText();
-          const project_id = projectArray[1]?.params?.uid
+          const project_id = projectArray[1]?.params?.uid;
           const project = projectArray[1];
           const user = projectArray[2];
           console.log("000000000000000000000", project);
@@ -257,11 +259,11 @@ const DiscoverProject = () => {
               className="p-6 w-[750px] rounded-lg shadow-sm mb-4 flex"
               key={index}
             >
-              <div
-                onClick={() => handleClick(principle_id)}
-                className="w-[272px]"
-              >
-                <div className="max-w-[250px] w-[250px] h-[254px] bg-gray-100 rounded-lg flex flex-col justify-between relative overflow-hidden">
+              <div className="w-[272px] relative">
+                <div
+                  onClick={() => handleClick(principle_id)}
+                  className="max-w-[250px] w-[250px] h-[254px] bg-gray-100 rounded-lg flex flex-col justify-between relative overflow-hidden"
+                >
                   <div className="absolute inset-0 flex items-center justify-center">
                     <img
                       src={profile} // Placeholder logo image
@@ -269,11 +271,13 @@ const DiscoverProject = () => {
                       className="w-24 h-24 rounded-full object-cover"
                     />
                   </div>
-
-                  <div className="absolute bottom-0 right-[6px] flex items-center bg-gray-100 p-1">
-                    <Star className="text-yellow-400 w-4 h-4" />
-                    <span className="text-sm font-medium">5.0</span>
-                  </div>
+                </div>
+                <div
+                  onClick={() => setShowRatingModal(true)}
+                  className="absolute cursor-pointer bottom-0 right-[6px] flex items-center bg-gray-100 p-1"
+                >
+                  <Star className="text-yellow-400 w-4 h-4" />
+                  <span className="text-sm font-medium">5.0</span>
                 </div>
               </div>
 
@@ -347,24 +351,28 @@ const DiscoverProject = () => {
       ) : (
         <div>No Data Available</div>
       )}
-      {
-        isAddProjectModalOpen && (
-          <AddAMentorRequestModal
-            title={"Associate Project"}
-            onClose={handleProjectCloseModal}
-            onSubmitHandler={handleAddProject}
-            isSubmitting={isSubmitting}
-          />
-        )}
-      {
-        isAddProjectModalOpenAsInvestor && (
-          <AddAMentorRequestModal
-            title={"Associate Project"}
-            onClose={handleProjectCloseModalAsInvestor}
-            onSubmitHandler={handleAddProjectAsInvestor}
-            isSubmitting={isSubmitting}
-          />
-        )}
+      {showRatingModal && (
+        <RatingModal
+          showRating={showRatingModal}
+          setShowRatingModal={setShowRatingModal}
+        />
+      )}
+      {isAddProjectModalOpen && (
+        <AddAMentorRequestModal
+          title={"Associate Project"}
+          onClose={handleProjectCloseModal}
+          onSubmitHandler={handleAddProject}
+          isSubmitting={isSubmitting}
+        />
+      )}
+      {isAddProjectModalOpenAsInvestor && (
+        <AddAMentorRequestModal
+          title={"Associate Project"}
+          onClose={handleProjectCloseModalAsInvestor}
+          onSubmitHandler={handleAddProjectAsInvestor}
+          isSubmitting={isSubmitting}
+        />
+      )}
       <Toaster />
       {openDetail && (
         <UserDetailPage

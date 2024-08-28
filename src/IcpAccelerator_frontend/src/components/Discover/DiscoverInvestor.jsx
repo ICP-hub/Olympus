@@ -11,6 +11,7 @@ import { Tooltip } from "react-tooltip";
 import AddAMentorRequestModal from "../../models/AddAMentorRequestModal";
 import { Principal } from "@dfinity/principal";
 import DiscoverInvestorPage from "../Dashboard/DashboardHomePage/DiscoverInvestor/DiscoverInvestorPage";
+import RatingModal from "../Common/RatingModal";
 
 const DiscoverInvestor = () => {
   const actor = useSelector((currState) => currState.actors.actor);
@@ -24,6 +25,7 @@ const DiscoverInvestor = () => {
   const [isAddInvestorModalOpen, setIsAddInvestorModalOpen] = useState(false);
   const [investorId, setInvestorId] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showRatingModal, setShowRatingModal] = useState(false);
 
   const isAuthenticated = useSelector(
     (currState) => currState.internet.isAuthenticated
@@ -180,13 +182,13 @@ const DiscoverInvestor = () => {
     <div>
       {isLoading ? (
         <div>Loading...</div>
-      ) : allInvestorData.length > 0  ? (
+      ) : allInvestorData.length > 0 ? (
         allInvestorData.map((investorArray, index) => {
           console.log("investorArray", investorArray);
           const investor_id = investorArray[0]?.toText();
           const investor = investorArray[1];
           const user = investorArray[2];
-      
+
           console.log("000000000000000000000", investor);
           console.log("111111111111111111111", user);
           const randomTags = getRandomTags();
@@ -215,10 +217,10 @@ const DiscoverInvestor = () => {
               key={index}
             >
               <div
-                onClick={() => handleClick(principle_id)}
-                className="w-[272px]"
+                
+                className="w-[272px] relative"
               >
-                <div className="max-w-[250px] w-[250px] h-[254px] bg-gray-100 rounded-lg flex flex-col justify-between relative overflow-hidden">
+                <div onClick={() => handleClick(principle_id)} className="max-w-[250px] w-[250px] h-[254px] bg-gray-100 rounded-lg flex flex-col justify-between relative overflow-hidden">
                   <div
                     className="absolute inset-0 flex items-center justify-center"
                     onClick={handleClick}
@@ -229,10 +231,10 @@ const DiscoverInvestor = () => {
                       className="w-24 h-24 rounded-full object-cover"
                     />
                   </div>
-                  <div className="absolute bottom-0 right-[6px] flex items-center bg-gray-100 p-1">
-                    <Star className="text-yellow-400 w-4 h-4" />
-                    <span className="text-sm font-medium">5.0</span>
-                  </div>
+                </div>
+                <div onClick={() => setShowRatingModal(true)} className="absolute cursor-pointer bottom-0 right-[6px] flex items-center bg-gray-100 p-1">
+                  <Star className="text-yellow-400 w-4 h-4" />
+                  <span className="text-sm font-medium">5.0</span>
                 </div>
               </div>
 
@@ -305,7 +307,6 @@ const DiscoverInvestor = () => {
           onClose={handleInvestorCloseModal}
           onSubmitHandler={handleAddInvestor}
           isSubmitting={isSubmitting}
-
         />
       )}
       {openDetail && (
@@ -316,6 +317,12 @@ const DiscoverInvestor = () => {
         />
       )}
       <Toaster />
+      {showRatingModal && (
+        <RatingModal
+          showRating={showRatingModal}
+          setShowRatingModal={setShowRatingModal}
+        />
+      )}
     </div>
   );
 };
