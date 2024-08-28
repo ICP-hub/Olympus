@@ -6,6 +6,7 @@ use ic_cdk::{api::time, caller};
 use ic_cdk::{query, update};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
+use crate::guard::*;
 
 #[derive(Clone, CandidType, Deserialize, Serialize)]
 pub struct OfferToMentor {
@@ -58,7 +59,7 @@ pub fn store_request_sent_by_project(offer: OfferToMentor) {
 }
 
 
-#[query]
+#[query(guard = "combined_guard")]
 pub fn get_all_sent_request() -> Vec<OfferToMentor> {
     read_state(|state| {
         state
@@ -82,7 +83,7 @@ pub fn notify_mentor_with_offer(mentor_id: Principal, offer: OfferToSendToMentor
     });
 }
 
-#[query]
+#[query(guard = "combined_guard")]
 pub fn get_all_mentor_notification(id: Principal) -> Vec<OfferToSendToMentor> {
     read_state(|state| {
         state.mentor_alerts.get(&StoredPrincipal(id))
@@ -91,7 +92,7 @@ pub fn get_all_mentor_notification(id: Principal) -> Vec<OfferToSendToMentor> {
     })
 }
 
-#[update]
+#[update(guard = "combined_guard")]
 pub async fn send_offer_to_mentor_from_project(mentor_id: Principal, msg: String, project_id: String) -> String {
     //let _mentor = get_mentor_using_principal(mentor_id).expect("mentor doesn't exist");
 
@@ -166,7 +167,7 @@ pub async fn send_offer_to_mentor_from_project(mentor_id: Principal, msg: String
     format!("offer sent sucessfully to {}", mentor_id)
 }
 
-// #[update]
+// #[update(guard = "combined_guard")]
 // pub fn accept_offer_of_project(offer_id: String, response_message: String) -> String{
 //     let mentor_id = caller();
 
@@ -225,7 +226,7 @@ pub async fn send_offer_to_mentor_from_project(mentor_id: Principal, msg: String
 //     format!("you have accepted the offer with offer id: {}", offer_id)
 // }
 
-#[update]
+#[update(guard = "combined_guard")]
 pub fn accept_offer_from_project_to_mentor(offer_id: String, response_message: String) -> String {
     let mentor_id = ic_cdk::api::caller();
     let stored_mentor_id = StoredPrincipal(mentor_id.clone());
@@ -315,7 +316,7 @@ pub fn accept_offer_from_project_to_mentor(offer_id: String, response_message: S
 
 
 
-#[update]
+#[update(guard = "combined_guard")]
 pub fn decline_offer_from_project_to_mentor(offer_id: String, response_message: String) -> String {
     let mentor_id = caller();
 
@@ -352,7 +353,7 @@ pub fn decline_offer_from_project_to_mentor(offer_id: String, response_message: 
 }
 
 
-#[query]
+#[query(guard = "combined_guard")]
 pub fn get_pending_request_from_project_to_mentor_via_project(mentor_id: Principal) -> Vec<OfferToSendToMentor> {
     read_state(|pending_alerts| {
         pending_alerts
@@ -369,7 +370,7 @@ pub fn get_pending_request_from_project_to_mentor_via_project(mentor_id: Princip
     })
 }
 
-#[query]
+#[query(guard = "combined_guard")]
 pub fn get_pending_request_from_mentor_to_project_via_project(project_principal: Principal) -> Vec<OfferToMentor> {
     read_state(|pending_alerts| {
         pending_alerts
@@ -386,7 +387,7 @@ pub fn get_pending_request_from_mentor_to_project_via_project(project_principal:
     })
 }
 
-#[query]
+#[query(guard = "combined_guard")]
 pub fn get_approved_request_from_mentor_to_project_via_project(mentor_id: Principal) -> Vec<OfferToSendToMentor> {
     read_state(|pending_alerts| {
         pending_alerts
@@ -403,7 +404,7 @@ pub fn get_approved_request_from_mentor_to_project_via_project(mentor_id: Princi
     })
 }
 
-#[query]
+#[query(guard = "combined_guard")]
 pub fn get_approved_request_from_project_to_mentor_via_project(project_principal: Principal) -> Vec<OfferToMentor> {
     read_state(|pending_alerts| {
         pending_alerts
@@ -420,7 +421,7 @@ pub fn get_approved_request_from_project_to_mentor_via_project(project_principal
     })
 }
 
-#[query]
+#[query(guard = "combined_guard")]
 pub fn get_declined_request_from_mentor_to_project_via_project(mentor_id: Principal) -> Vec<OfferToSendToMentor> {
     read_state(|pending_alerts| {
         pending_alerts
@@ -437,7 +438,7 @@ pub fn get_declined_request_from_mentor_to_project_via_project(mentor_id: Princi
     })
 }
 
-#[query]
+#[query(guard = "combined_guard")]
 pub fn get_declined_request_from_project_to_mentor_via_project(project_principal: Principal) -> Vec<OfferToMentor> {
     read_state(|pending_alerts| {
         pending_alerts
@@ -458,7 +459,7 @@ pub fn get_declined_request_from_project_to_mentor_via_project(project_principal
 
 //for project
 
-#[update]
+#[update(guard = "combined_guard")]
 pub fn self_decline_request_from_project_to_mentor(offer_id: String) -> String {
     let mut response: String = String::new();
 
@@ -496,7 +497,7 @@ pub fn self_decline_request_from_project_to_mentor(offer_id: String) -> String {
     response
 }
 
-#[query]
+#[query(guard = "combined_guard")]
 pub fn get_self_declined_requests_for_project() -> Vec<OfferToMentor> {
     read_state(|offers| {
         let offers = &offers.my_sent_notifications;
@@ -512,7 +513,7 @@ pub fn get_self_declined_requests_for_project() -> Vec<OfferToMentor> {
     })
 }
 
-#[query]
+#[query(guard = "combined_guard")]
 pub fn get_self_declined_requests_for_mentor() -> Vec<OfferToSendToMentor> {
     read_state(|offers| {
         let offers = &offers.mentor_alerts;
