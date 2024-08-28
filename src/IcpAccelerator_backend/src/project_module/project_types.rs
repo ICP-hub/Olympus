@@ -9,6 +9,7 @@ use serde::{Deserialize, Serialize};
 pub struct TeamMember {
     pub member_uid: String,
     pub member_data: UserInformation,
+    pub member_principal: Principal
 }
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug, Default, PartialEq)]
