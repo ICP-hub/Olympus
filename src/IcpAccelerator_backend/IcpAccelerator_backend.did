@@ -526,7 +526,11 @@ type Role = record {
 type SocialLinks = record { link : opt text };
 type SocialLinks_1 = record { link : opt text };
 type SocialLinks_2 = record { link : opt text };
-type TeamMember = record { member_data : UserInformation; member_uid : text };
+type TeamMember = record {
+  member_data : UserInformation;
+  member_uid : text;
+  member_principal : principal;
+};
 type Testimonial = record {
   name : text;
   message : text;
