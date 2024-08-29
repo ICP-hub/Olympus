@@ -9,7 +9,7 @@ const FundingCard = ({ title, value, imageSrc, isPrivate }) => {
     return (
         <div className="relative flex items-center p-4 rounded-lg mb-4 shadow-md bg-white transition-all duration-300">
             {/* Image Section */}
-            <div className={`flex-shrink-0 ${isPrivate ? "blur-sm" : ""}`}>
+            <div className={`flex-shrink-0`}>
                 <img
                     src={imageSrc}
                     alt={`${title} Thumbnail`}
@@ -18,7 +18,7 @@ const FundingCard = ({ title, value, imageSrc, isPrivate }) => {
             </div>
 
             {/* Details Section */}
-            <div className={`ml-6 flex-grow transition-all duration-300 ${isPrivate ? "blur-sm" : ""}`}>
+            <div className={`ml-6 flex-grow transition-all duration-300 `}>
                 <div className="flex justify-between items-center">
                     <p className="text-lg font-semibold text-gray-900">
                         {title}
@@ -30,13 +30,13 @@ const FundingCard = ({ title, value, imageSrc, isPrivate }) => {
             </div>
 
             {/* Request Access Button for Private Documents */}
-            {isPrivate && (
+            {/* {isPrivate && (
                 <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity duration-300 rounded-lg">
                     <button className="bg-blue-600 text-white px-4 py-2 rounded-lg">
                         Request Access
                     </button>
                 </div>
-            )}
+            )} */}
         </div>
     );
 };
@@ -56,19 +56,19 @@ const MoneyRaisedCard = ({ data }) => {
                 title="ICP Grants"
                 value={icp_grants}
                 imageSrc={docu1}
-                isPrivate={false}  
+                // isPrivate={false}  
             />
             <FundingCard
                 title="Investors"
                 value={investors}
                 imageSrc={docu2}
-                isPrivate={false}  
+                // isPrivate={false}  
             />
             <FundingCard
                 title="Launchpad"
                 value={raised_from_other_ecosystem}
                 imageSrc={docu3}
-                isPrivate={false}  
+                // isPrivate={false}  
             />
             <FundingCard
                 title="Valuation"
@@ -80,7 +80,7 @@ const MoneyRaisedCard = ({ data }) => {
                 title="Target Amount"
                 value={target_amount}
                 imageSrc={docu5}
-                isPrivate={false}  
+                // isPrivate={false}  
             />
         </div>
     );

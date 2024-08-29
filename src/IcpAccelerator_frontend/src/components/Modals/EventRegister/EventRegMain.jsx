@@ -148,7 +148,7 @@ const EventRegMain = ({ modalOpen, setModalOpen, editMode, singleEventData, coho
     <>
       {/* MODAL OVERLAY */}
       <div className={`fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 ${modalOpen ? "block" : "hidden"}`}>
-        <div className="bg-white rounded-lg shadow-lg w-[500px] p-6 pt-4 max-h-[90vh] overflow-y-auto">
+        <div className="bg-white rounded-lg shadow-lg w-[500px] p-6 pt-4 ">
           {/* CLOSE BUTTON */}
           <div className="flex justify-end mr-4">
             <button
@@ -159,6 +159,7 @@ const EventRegMain = ({ modalOpen, setModalOpen, editMode, singleEventData, coho
             </button>
           </div>
           <h2 className="text-xs text-[#364152] mb-3">Step {index + 1} of 4</h2>
+          <div className="max-h-[90vh] overflow-y-auto">
 
           {/* FORM PROVIDER TO PASS DOWN FORM METHODS */}
           <FormProvider {...methods}>
@@ -211,6 +212,7 @@ const EventRegMain = ({ modalOpen, setModalOpen, editMode, singleEventData, coho
               </div>
             </form>
           </FormProvider>
+        </div>
         </div>
       </div>
       {/* TOAST NOTIFICATIONS */}

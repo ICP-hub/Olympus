@@ -13,6 +13,7 @@ const ProjectRegister4 = ({ isOpen, onClose, onBack }) => {
   return (
     <>
       {/* FUNDRAISING QUESTION WITH SELECT DROPDOWN */}
+      <div className="max-h-[80vh] overflow-y-auto ">
       <div className="mb-2">
         <label className="block text-sm font-medium mb-1">
           Have you raised any funds in past
@@ -257,7 +258,7 @@ const ProjectRegister4 = ({ isOpen, onClose, onBack }) => {
       ) : (
         <></>
       )}
-    </>
+   </div> </>
   );
 };
 

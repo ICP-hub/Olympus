@@ -7,7 +7,9 @@ import { useSelector, useDispatch } from "react-redux";
 import { useCountries } from "react-countries";
 import editp from "../../../assets/Logo/edit.png";
 import { allHubHandlerRequest } from "../StateManagement/Redux/Reducers/All_IcpHubReducer";
-import { toast } from "react-hot-toast";
+import { ThreeDots } from "react-loader-spinner";
+import parse from 'html-react-parser'
+import { toast,Toaster } from "react-hot-toast";
 import {
   FaLinkedin,
   FaTwitter,
@@ -29,104 +31,32 @@ import { validationSchema } from "../Modals/ProjectRegisterModal/projectValidati
 import { founderRegisteredHandlerRequest } from "../StateManagement/Redux/Reducers/founderRegisteredData";
 
 const ProjectDetail = () => {
-  const { countries } = useCountries();
-  const dispatch = useDispatch();
-  const isAuthenticated = useSelector(
-    (currState) => currState.internet.isAuthenticated
+  const actor = useSelector((currState) => currState.actors.actor);
+  const areaOfExpertise = useSelector(
+    (currState) => currState.expertiseIn.expertise
   );
+  const [imagePreview, setImagePreview] = useState(null);
+  const [imageData, setImageData] = useState(null);
+  const [logoPreview, setLogoPreview] = useState(null);
+  const [logoData, setLogoData] = useState(null);
+  const [coverPreview, setCoverPreview] = useState(null);
+  const [coverData, setCoverData] = useState(null);
+  const typeOfProfile = useSelector(
+    (currState) => currState.profileTypes.profiles
+  );
+  const getAllIcpHubs = useSelector((currState) => currState.hubs.allHubs);
+  const multiChainNames = useSelector((currState) => currState.chains.chains);
+
   const [interestedDomainsOptions, setInterestedDomainsOptions] = useState([]);
   const [
     interestedDomainsSelectedOptions,
     setInterestedDomainsSelectedOptions,
   ] = useState([]);
-  const actor = useSelector((currState) => currState.actors.actor);
-  const multiChainNames = useSelector((currState) => currState.chains.chains);
-  const getAllIcpHubs = useSelector((currState) => currState.hubs.allHubs);
+  const [typeOfProfileOptions, setTypeOfProfileOptions] = useState([]);
   const projectFullData = useSelector(
     (currState) => currState.projectData.data
   );
-  const projectId = projectFullData?.[0]?.[0]?.uid;
-
-
-  const defaultValues = {
-    preferred_icp_hub: projectFullData?.[0][0].params.preferred_icp_hub ?? "ICP Hub, Italia",
-    project_name: projectFullData?.[0][0].params.project_name ?? "Name of the project",
-    project_description: projectFullData?.[0][0].params.project_description?.[0] ?? "This is the description of the project",
-    project_elevator_pitch: projectFullData?.[0][0].params.project_elevator_pitch?.[0] ?? "https://pitch.com",
-    project_website: projectFullData?.[0][0].params.project_website?.[0] ?? "https://project.com",
-    is_your_project_registered: projectFullData?.[0][0].params.is_your_project_registered === "true",
-    supports_multichain: projectFullData?.[0][0].params.supports_multichain?.[0] ?? "Polygon",
-    type_of_registration: projectFullData?.[0][0].params.type_of_registration?.[0] ?? "Company",
-    country_of_registration: projectFullData?.[0][0].params.country_of_registration?.[0] ?? "Pakistan",
-    live_on_icp_mainnet: projectFullData?.[0][0].params.live_on_icp_mainnet === "true",
-    dapp_link: projectFullData?.[0][0].params.dapp_link?.[0] ?? "https://link.com",
-    weekly_active_users: projectFullData?.[0][0].params.weekly_active_users ?? 5,
-    revenue: projectFullData?.[0][0].params.revenue ?? 6,
-    money_raised_till_now: projectFullData?.[0][0].params.money_raised_till_now === "true",
-  money_raising: projectFullData?.[0][0].params.money_raising === "true",
-    icp_grants: parseInt(projectFullData?.[0][0].params.money_raised?.[0]?.icp_grants) || 0,
-    investors: parseInt(projectFullData?.[0][0].params.money_raised?.[0]?.investors) || 0,
-    raised_from_other_ecosystem: parseInt(projectFullData?.[0][0].params.money_raised?.[0]?.raised_from_other_ecosystem) || 0,
-    target_amount: parseInt(projectFullData?.[0][0].params.money_raised?.[0]?.target_amount) ?? 0,
-    sns: parseInt(projectFullData?.[0][0].params.money_raised?.[0]?.sns) ?? 0,
-    promotional_video: projectFullData?.[0][0].params.promotional_video?.[0] ?? "https://chikupromotion",
-    links: projectFullData?.[0][0].params.links ?? [],
-    reason_to_join_incubator: projectFullData?.[0][0].params?.reason_to_join_incubator ?? [],
-    project_area_of_focus: projectFullData?.[0][0].params?.project_area_of_focus ?? [],
-    token_economics: projectFullData?.[0][0].params?.token_economics?.[0] ?? "",
-    long_term_goals: projectFullData?.[0][0].params.long_term_goals ?? "",
-    private_docs: projectFullData?.[0][0].params.private_docs?.[0] ?? "",
-    public_docs: projectFullData?.[0][0].params.public_docs?.[0] ?? "",
-    upload_private_documents: projectFullData?.[0][0].params.upload_private_documents === "true",
-    vc_assigned: projectFullData?.[0][0].params.vc_assigned ?? [],
-    mentors_assigned: projectFullData?.[0][0].params.mentors_assigned ?? [],
-    project_team: projectFullData?.[0][0].params.project_team ?? [],
-    target_market: projectFullData?.[0][0].params.target_market ?? "",
-    technical_docs: projectFullData?.[0][0].params.technical_docs ?? "",
-    self_rating_of_project: projectFullData?.[0][0].params.self_rating_of_project ?? 0,
-    project_cover: projectFullData?.[0][0].params.project_cover ?? [],
-    project_logo: projectFullData?.[0][0].params.project_logo ?? [],
-    multi_chain: projectFullData?.[0][0].params.multi_chain || "",
-    upload_public_documents: projectFullData?.[0][0].params.upload_public_documents || "",
-    valuation: projectFullData?.[0][0].params.valuation || 0,
-    // links: projectFullData?.[0][0].params.links?.map(link => link.link) || [],
-  };
-  console.log("sara data",projectFullData?.[0][0])
-console.log("token economics:", projectFullData?.[0][0].params.project_logo)
-
-
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    getValues,
-    clearErrors,
-    setError,
-    control,
-    watch,
-    formState: { errors },
-  } = useForm({
-    resolver: yupResolver(validationSchema),
-    defaultValues,
-    mode: "all",
-  });
-
-  const onErrorHandler = (val) => {
-    console.log("error", val);
-    toast.error("Empty fields or invalid values, please recheck the form");
-  };
- 
-console.log("default values ",defaultValues)
-
-  const [editMode, setEditMode] = useState({});
-  const [multiChainOptions, setMultiChainOptions] = useState([]);
-  const [multiChainSelectedOptions, setMultiChainSelectedOptions] = useState(
-    []
-  );
-
-
-  const [formData, setFormData] = useState(defaultValues);
-  const [reasonOfJoiningOptions] = useState([
+  const [reasonOfJoiningOptions, setReasonOfJoiningOptions] = useState([
     { value: "listing_and_promotion", label: "Project listing and promotion" },
     { value: "Funding", label: "Funding" },
     { value: "Mentoring", label: "Mentoring" },
@@ -139,40 +69,69 @@ console.log("default values ",defaultValues)
   ]);
   const [reasonOfJoiningSelectedOptions, setReasonOfJoiningSelectedOptions] =
     useState([]);
-
-  const areaOfExpertise = useSelector(
-    (currState) => currState.expertiseIn.expertise
+  // Mentor from states
+  const [multiChainOptions, setMultiChainOptions] = useState([]);
+  const [multiChainSelectedOptions, setMultiChainSelectedOptions] = useState(
+    []
   );
+  const [editMode, setEditMode] = useState({});
 
- 
-  const { fields, append, remove } = useFieldArray({
+  // const [formData, setFormData] = useState(defaultValues);
+
+  const { countries } = useCountries();
+  const dispatch = useDispatch();
+  const isAuthenticated = useSelector(
+    (currState) => currState.internet.isAuthenticated
+  );
+  const projectId = projectFullData?.[0]?.[0]?.uid;
+
+
+  // const defaultValues = {
+  //   multi_chain: "false", 
+  //   weekly_active_users: 0,
+  //   revenue: 0,
+  //   money_raised_till_now: "false",
+  //   icp_grants: 0,
+  //   investors: 0,
+  //   raised_from_other_ecosystem: 0,
+  
+  // };
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    clearErrors,
+    setValue,
+    getValues,
+    setError,
+    watch,
     control,
-    name: "links",
+    trigger,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    resolver: yupResolver(validationSchema),
+    mode: "all",
+    defaultValues: {
+      upload_public_documents: false,
+      publicDocs: [],
+      upload_private_documents: false,
+      privateDocs: [],
+      weekly_active_users: 0,  // Keep as a number
+      revenue: 0,  // Keep as a number
+      money_raised_till_now: false,
+      icp_grants: 0,  // Keep as a number
+      investors: 0,  // Keep as a number
+      raised_from_other_ecosystem: 0
+    },
   });
 
-  const getLogo = (url) => {
-    try {
-      const domain = new URL(url).hostname.split(".").slice(-2).join(".");
-      const size = "size-8";
-      const icons = {
-        "linkedin.com": <FaLinkedin className={`text-blue-600 ${size}`} />,
-        "twitter.com": <FaTwitter className={`text-blue-400 ${size}`} />,
-        "github.com": <FaGithub className={`text-gray-700 ${size}`} />,
-        "telegram.com": <FaTelegram className={`text-blue-400 ${size}`} />,
-        "facebook.com": <FaFacebook className={`text-blue-400 ${size}`} />,
-        "instagram.com": <FaInstagram className={`text-pink-950 ${size}`} />,
-        "youtube.com": <FaYoutube className={`text-red-600 ${size}`} />,
-        "reddit.com": <FaReddit className={`text-orange-500 ${size}`} />,
-        "tiktok.com": <FaTiktok className={`text-black ${size}`} />,
-        "snapchat.com": <FaSnapchat className={`text-yellow-400 ${size}`} />,
-        "whatsapp.com": <FaWhatsapp className={`text-green-600 ${size}`} />,
-        "medium.com": <FaMedium className={`text-black ${size}`} />,
-      };
-      return icons[domain] || <LanguageIcon />;
-    } catch (error) {
-      return <LanguageIcon />;
-    }
-  };
+  const { fields, append, remove } = useFieldArray({
+    name: "links",
+    control
+  });
+ 
+
 
   useEffect(() => {
     dispatch(allHubHandlerRequest());
@@ -184,23 +143,7 @@ console.log("default values ",defaultValues)
     }
   }, [isAuthenticated, dispatch]);
 
-  useEffect(() => {
-    if (multiChainNames) {
-      setMultiChainOptions(
-        multiChainNames.map((chain) => ({
-          value: chain,
-          label: chain,
-        }))
-      );
-    }
-  }, [multiChainNames]);
 
-  useEffect(() => {
-    if (projectFullData) {
-      setFormValues(defaultValues);
-      setEditMode(true);
-    }
-  }, [projectFullData]);
 
   const setFormValues = (data) => {
     if (data) {
@@ -211,33 +154,48 @@ console.log("default values ",defaultValues)
     }
   };
   // default interests set function
-  const setInterestedDomainsSelectedOptionsHandler = (val) => {
-    setInterestedDomainsSelectedOptions(
-      val
-        ? val
-            .split(", ")
-            .map((interest) => ({ value: interest, label: interest }))
-        : []
-    );
+  const [socialLinks, setSocialLinks] = useState({});
+  console.log("mere link aa rahe hai ", socialLinks);
+  const [isEditingLink, setIsEditingLink] = useState({});
+  const [isLinkBeingEdited, setIsLinkBeingEdited] = useState(false);
+  const handleLinkEditToggle = (link) => {
+    setIsEditingLink((prev) => ({
+      ...prev,
+      [link]: !prev[link],
+    }));
+    setIsLinkBeingEdited(!isLinkBeingEdited);
   };
-  
-  useEffect(() => {
-    if (areaOfExpertise) {
-      setInterestedDomainsOptions(
-        areaOfExpertise.map((expert) => ({
-          value: expert.name,
-          label: expert.name,
-        }))
-      );
+
+  const handleLinkChange = (e, link) => {
+    setSocialLinks((prev) => ({
+      ...prev,
+      [link]: e.target.value,
+    }));
+  };
+
+  const getIconForLink = (url) => {
+    console.log("URL being checked:", url); // Add this line for debugging
+    if (url.includes("linkedin.com")) {
+      console.log("LinkedIn detected");
+      return LinkedIn;
+    } else if (url.includes("github.com")) {
+      console.log("GitHub detected");
+      return GitHub;
+    } else if (url.includes("t.me") || url.includes("telegram")) {
+      console.log("Telegram detected");
+      return Telegram;
     } else {
-      setInterestedDomainsOptions([]);
+      console.log("Generic link detected");
+      return Language;
     }
-  }, [areaOfExpertise]);
-  const handleSave = async (data) => {
-   console.log('save data',data)
-    const projectData = {
-        project_cover: [],
-        project_logo:[],
+  };
+  const onSubmitHandler = async (data) => {
+    console.log("mera submit data ja raha hai ",data)
+    if (actor) {
+      const projectData = {
+        // project data
+        project_cover: coverData ? [coverData] : [],
+        project_logo: logoData ? [logoData] : [],
         preferred_icp_hub: [data?.preferred_icp_hub || ""],
         project_name: data?.project_name || "",
         project_description: [data?.project_description || ""],
@@ -248,13 +206,13 @@ console.log("default values ",defaultValues)
         ],
         type_of_registration: [
           data?.is_your_project_registered === "true" &&
-            data?.type_of_registration
+          data?.type_of_registration
             ? data?.type_of_registration
             : "",
         ],
         country_of_registration: [
           data?.is_your_project_registered === "true" &&
-            data?.country_of_registration
+          data?.country_of_registration
             ? data?.country_of_registration
             : "",
         ],
@@ -287,35 +245,21 @@ console.log("default values ",defaultValues)
         money_raising: [data?.money_raising === "true" ? true : false],
         money_raised: [
           {
-            icp_grants: [
-              data?.money_raised_till_now === "true" && data?.icp_grants
-                ? data?.icp_grants.toString()
-                : "",
-            ],
-            investors: [
-              data?.money_raised_till_now === "true" && data?.investors
-                ? data?.investors.toString()
-                : "",
-            ],
-            raised_from_other_ecosystem: [
-              data?.money_raised_till_now === "true" &&
-                data?.raised_from_other_ecosystem
-                ? data?.raised_from_other_ecosystem.toString()
-                : "",
-            ],
-            sns: [
-              data?.money_raising === "true" && data?.valuation
-                ? data?.valuation.toString()
-                : "",
-            ],
-            target_amount:
-              data?.money_raising === "true" && data?.target_amount
-                ? [data?.target_amount]
-                : [],
+            icp_grants: data.icp_grants ? data.icp_grants.toString() : null, // Convert to string or null
+            investors: data?.investors ? data?.investors.toString() : null, // Convert to string or null
+            raised_from_other_ecosystem: data.raised_from_other_ecosystem ? data.raised_from_other_ecosystem.toString() : null, // Convert to string or null
+            target_amount: data.target_amount ? parseFloat(data.target_amount) : null, // Convert to float or null
+            sns: data.valuation ? data.valuation.toString() : null,
+
           },
         ],
         promotional_video: [data?.promotional_video || ""],
-      
+        links: data?.links
+          ? [data.links.map((val) => ({ link: val?.link ? [val.link] : [] }))]
+          : [],
+        // project_discord: [data?.project_discord || ""],
+        // project_linkedin: [data?.project_linkedin || ""],
+        // github_link: [data?.github_link || ""],
         token_economics: [data?.token_economics || ""],
         long_term_goals: [data?.white_paper || ""],
         private_docs:
@@ -327,7 +271,7 @@ console.log("default values ",defaultValues)
         ],
         // Extra field at Project
         project_area_of_focus: "",
-        reason_to_join_incubator: data?.reasons_to_join_platform || [""],
+        reason_to_join_incubator: data?.reason_to_join_incubator ?? "",
         vc_assigned: [],
         mentors_assigned: [],
         project_team: [],
@@ -336,22 +280,245 @@ console.log("default values ",defaultValues)
         technical_docs: [""],
         self_rating_of_project: 0,
       };
-      console.log('projectData  aagya oye',projectData)
-      try {
-        
-        const result = await actor.update_project(projectId, projectData);
-        if (result && result.includes("Profile updated successfully")) {
-          toast.success("Project updated successfully");
-        } else {
-          toast.error(result);
-        }
-      } catch (error) {
-        toast.error("Error updating project data");
-        console.error("Error:", error);
 
+      try {
+       
+          console.log("project id ",projectId)
+        
+          await actor.update_project(projectId, projectData).then((result) => {
+            console.log("result in project to check update call==>", result);
+            if(result){
+              toast.success(result)
+            }
+          });
+      } catch (error) {
+        toast.error(error);
+        console.error("Error sending data to the backend:", error);
       }
+    } else {
+      toast.error("Please signup with internet identity first");
+      window.location.href = "/";
+    }
   };
-  
+
+
+  const onErrorHandler = (val) => {
+    console.log("error", val);
+    toast.error("Empty fields or invalid values, please recheck the form");
+  };
+
+  const setProjectValuesHandler = (val) => {
+    console.log("val", val);
+    // console.log("valdata",  val[0]?.[0]?.params.reason_to_join_incubator);
+
+    if (val) {
+
+     
+      setLogoPreview(
+        val?.project_logo?.[0] instanceof Uint8Array
+          ? uint8ArrayToBase64(val?.project_logo?.[0])
+          : ""
+      );
+      setCoverPreview(
+        val?.project_cover?.[0] instanceof Uint8Array
+          ? uint8ArrayToBase64(val?.project_cover?.[0])
+          : ""
+      );
+      // setValue(
+      //   "reason_to_join_incubator",
+      //   val[0]?.[0]?.params.reason_to_join_incubator ? val[0]?.[0]?.params.reason_to_join_incubator.join(", ") : ""
+      // );
+      
+      setValue("preferred_icp_hub", val[0]?.[0]?.params.preferred_icp_hub?.[0]);
+      setValue("project_name", val[0]?.[0]?.params.project_name ?? "");
+      setValue("project_description", parse(val[0]?.[0]?.params.project_description?.[0]) ?? "");
+      setValue(
+        "project_elevator_pitch",
+        val[0]?.[0]?.params.project_elevator_pitch?.[0] ?? ""
+      );
+      setValue("project_website", val[0]?.[0]?.params.project_website?.[0] ?? "");
+      setValue(
+        "is_your_project_registered",
+        val[0]?.[0]?.params.is_your_project_registered ?? ""
+      );
+      setValue(
+        "is_your_project_registered",
+        val[0]?.[0]?.params.is_your_project_registered?.[0] ?? ""
+      );
+      if (val[0]?.[0]?.params.is_your_project_registered?.[0] === true) {
+        setValue("is_your_project_registered", "true");
+      } else {
+        setValue("is_your_project_registered", "false");
+      }
+      setValue("type_of_registration", val[0]?.[0]?.params.type_of_registration?.[0] ?? "");
+      setValue(
+        "country_of_registration",
+        val[0]?.[0]?.params.country_of_registration?.[0] ?? ""
+      );
+      setValue("live_on_icp_mainnet", val?.live_on_icp_mainnet?.[0] ?? "");
+      if (val[0]?.[0]?.params.live_on_icp_mainnet?.[0] === true) {
+        setValue("live_on_icp_mainnet", "true");
+      } else {
+        setValue("live_on_icp_mainnet", "false");
+      }
+      setValue("dapp_link", val[0]?.[0]?.params.dapp_link?.[0] ?? "");
+      setValue("weekly_active_users", val[0]?.[0]?.params.weekly_active_users?.[0] ?? 0);
+      setValue("revenue", val[0]?.[0]?.params.revenue?.[0] ?? 0);
+      if (val[0]?.[0]?.params.supports_multichain?.[0]) {
+        setValue("multi_chain", "true");
+      } else {
+        setValue("multi_chain", "false");
+      }
+      setValue(
+        "multi_chain_names",
+        val[0]?.[0]?.params.supports_multichain ? val[0]?.[0]?.params.supports_multichain.join(", ") : ""
+      );
+      setMultiChainSelectedOptionsHandler(val[0]?.[0]?.params.supports_multichain ?? null);
+      setValue("multi_chain", val[0]?.[0]?.params.supports_multichain?.[0] ? "true" : "false");
+      
+      setValue(
+        "reason_to_join_incubator",
+        val[0]?.[0]?.params.reason_to_join_incubator ? val[0]?.[0]?.params.reason_to_join_incubator : null
+      );
+      if (val[0]?.[0]?.params.money_raised_till_now?.[0] === true) {
+        setValue("money_raised_till_now", "true");
+      } else {
+        setValue("money_raised_till_now", "false");
+      }
+      if (
+        val[0]?.[0]?.params.money_raised?.[0]?.target_amount?.[0] &&
+        val[0]?.[0]?.params.money_raised?.[0]?.sns?.[0]
+      ) {
+        setValue("money_raising", "true");
+      } else {
+        setValue("money_raising", "false");
+      }
+      setValue("icp_grants", val[0]?.[0]?.params.money_raised?.[0]?.icp_grants || 0);
+      setValue("investors", val[0]?.[0]?.params.money_raised?.[0]?.investors || 0);
+      setValue(
+        "raised_from_other_ecosystem",
+        val[0]?.[0]?.params.money_raised?.[0]?.raised_from_other_ecosystem || 0
+      );
+      setValue("valuation", val[0]?.[0]?.params.money_raised?.[0]?.sns ?? 0);
+      setValue(
+        "target_amount",
+        val[0]?.[0]?.params.money_raised?.[0]?.target_amount?? 0
+      );
+     
+
+      setValue("promotional_video", val[0]?.[0]?.params.promotional_video?.[0] ?? "");
+      setValue("project_discord", val[0]?.[0]?.params.project_discord?.[0] ?? "");
+      setValue("project_linkedin", val[0]?.[0]?.params.project_linkedin?.[0] ?? "");
+      setValue("github_link", val[0]?.[0]?.params.github_link?.[0] ?? "");
+      setValue("token_economics", val[0]?.[0]?.params.token_economics?.[0] ?? "");
+      setValue("white_paper", val[0]?.[0]?.params.long_term_goals?.[0] ?? "");
+      setValue(
+        "upload_private_documents",
+        val[0]?.[0]?.params.upload_private_documents?.[0] ?? ""
+      );
+      if (val[0]?.[0]?.params.upload_private_documents?.[0] === true) {
+        setValue("upload_private_documents", "true");
+      } else {
+        setValue("upload_private_documents", "false");
+      }
+      if (val[0]?.[0]?.params && val[0]?.[0]?.params.public_docs?.[0] && val[0]?.[0]?.params.public_docs?.[0].length) {
+        setValue("upload_public_documents", "true");
+      } else {
+        setValue("upload_public_documents", "false");
+      }
+      setValue("privateDocs", val[0]?.[0]?.params.private_docs?.[0] ?? []);
+      setValue("publicDocs", val[0]?.[0]?.params.public_docs?.[0] ?? []);
+      if (val[0]?.[0]?.params.social_links?.length) {
+        const links = {};
+        val[0]?.[0]?.params.links.forEach((linkArray, index) => {
+          // Assuming linkArray is an array with a single object inside
+          if (Array.isArray(linkArray) && linkArray.length > 0) {
+            const linkData = linkArray[0];
+            console.log(`Processing social link #${index + 1}:`, linkData);
+
+            if (linkData?.link?.length > 0) {
+              const url = linkData.link[0];
+              console.log("Found URL: ", url);
+
+              if (url && typeof url === "string") {
+                if (url.includes("linkedin.com")) {
+                  links["LinkedIn"] = url;
+                } else if (url.includes("github.com")) {
+                  links["GitHub"] = url;
+                } else if (url.includes("t.me") || url.includes("telegram")) {
+                  links["Telegram"] = url;
+                } else {
+                  links[`OtherLink${index + 1}`] = url; // Differentiate other links
+                }
+              } else {
+                console.log("Invalid URL or not a string:", url);
+              }
+            } else {
+              console.log("No valid link found in linkData:", linkData);
+            }
+          } else {
+            console.log("Link array is empty or not an array:", linkArray);
+          }
+        });
+        console.log("Final links object:", links);
+        setSocialLinks(links);
+      } else {
+        console.log("No social_links array or it's empty");
+        setSocialLinks({});
+      }
+
+    }
+  };
+  const setInterestedDomainsSelectedOptionsHandler = (val) => {
+    setInterestedDomainsSelectedOptions(
+      val
+        ? val
+            .split(", ")
+            .map((interest) => ({ value: interest, label: interest }))
+        : []
+    );
+  };
+
+  useEffect(() => {
+    if (areaOfExpertise) {
+      setInterestedDomainsOptions(
+        areaOfExpertise.map((expert) => ({
+          value: expert.name,
+          label: expert.name,
+        }))
+      );
+    } else {
+      setInterestedDomainsOptions([]);
+    }
+  }, [areaOfExpertise]);
+
+  useEffect(() => {
+    if (multiChainNames) {
+      setMultiChainOptions(
+        multiChainNames.map((chain) => ({
+          value: chain,
+          label: chain,
+        }))
+      );
+    } else {
+      setMultiChainOptions([]);
+    }
+  }, [multiChainNames]);
+  // default reasons set function
+  const setReasonOfJoiningSelectedOptionsHandler = (val) => {
+    setReasonOfJoiningSelectedOptions(
+      val && val.length > 0 && val[0].length > 0
+        ? val[0].map((reason) => ({ value: reason, label: reason }))
+        : []
+    );
+  };
+  const setMultiChainSelectedOptionsHandler = (val) => {
+    setMultiChainSelectedOptions(
+      val
+        ? val?.[0].split(", ").map((chain) => ({ value: chain, label: chain }))
+        : []
+    );
+  };
 
   const handleCancel = () => {
     setEditMode(false);
@@ -388,439 +555,1339 @@ console.log("default values ",defaultValues)
     }
   };
 
+  useEffect(() => {
+    if (areaOfExpertise) {
+      setInterestedDomainsOptions(
+        areaOfExpertise.map((expert) => ({
+          value: expert.name,
+          label: expert.name,
+        }))
+      );
+    } else {
+      setInterestedDomainsOptions([]);
+    }
+  }, [areaOfExpertise]);
+
+  useEffect(() => {
+    if (typeOfProfile) {
+      setTypeOfProfileOptions(
+        typeOfProfile.map((type) => ({
+          value: type.role_type.toLowerCase(),
+          label: type.role_type,
+        }))
+      );
+    } else {
+      setTypeOfProfileOptions([]);
+    }
+  }, [typeOfProfile]);
+  // Mentor form states
+  useEffect(() => {
+    if (multiChainNames) {
+      setMultiChainOptions(
+        multiChainNames.map((chain) => ({
+          value: chain,
+          label: chain,
+        }))
+      );
+    } else {
+      setMultiChainOptions([]);
+    }
+  }, [multiChainNames]);
+
+  useEffect(() => {
+    dispatch(allHubHandlerRequest());
+  }, [actor, dispatch]);
+
+  useEffect(() => {
+    if (actor) {
+      (async () => {
+        // Add the necessary condition here, for example: if (actor.get_my_project)
+        if (actor.get_my_project) {
+          const result = await actor.get_my_project();
+          if (result) {
+            console.log("result", result);
+            setImageData(
+              result?.params?.user_data?.profile_picture?.[0] ?? null
+            );
+            setLogoData(result?.params?.project_logo?.[0] ?? []);
+            setCoverData(result?.params?.project_cover?.[0] ?? []);
+            setValue(
+              "type_of_profile",
+              result?.params?.user_data?.type_of_profile?.[0] ?? ""
+            );
+            setValue(
+              "preferred_icp_hub",
+              result?.params?.preferred_icp_hub?.[0] ?? ""
+            );
+          } else {
+            setImageData(null);
+            setLogoData([]);
+            setCoverData([]);
+            setValue("type_of_profile", "");
+            setValue("preferred_icp_hub", "");
+          }
+        }
+      })();
+    }
+  }, [actor]);
+  
+
+
+  useEffect(() => {
+    if (projectFullData ) {
+      console.log("Project full data ..............==>", projectFullData);
+      setProjectValuesHandler(projectFullData);
+      setEditMode(true);
+    }
+  }, [projectFullData]);
+
+  // const preferIcp= projectFullData[0]?.[0]?.params.preferred_icp_hub
+  // console.log(preferIcp)
+ // Extract values from projectFullData
+const preferred_icp_hub = projectFullData[0]?.[0]?.params.preferred_icp_hub?.[0] ?? "";
+const project_name = projectFullData[0]?.[0]?.params.project_name ?? "";
+const project_description = parse(projectFullData[0]?.[0]?.params.project_description?.[0]) ?? "";
+const project_elevator_pitch = projectFullData[0]?.[0]?.params.project_elevator_pitch ?? "";
+const project_website = projectFullData[0]?.[0]?.params.project_website?.[0] ?? "";
+const is_your_project_registered = projectFullData[0]?.[0]?.params.is_your_project_registered?.[0] ? "true" : "false";
+const isyourprojectregistered = is_your_project_registered ? "Yes":"No";
+const type_of_registration = projectFullData[0]?.[0]?.params.type_of_registration?.[0] ?? "";
+const country_of_registration = projectFullData[0]?.[0]?.params.country_of_registration?.[0] ?? "";
+const live_on_icp_mainnet = projectFullData[0]?.[0]?.params.live_on_icp_mainnet?.[0] ? "true" : "false";
+const liveonicpmainnet = live_on_icp_mainnet ? "Yes":"No";
+const dapp_link = projectFullData[0]?.[0]?.params.dapp_link?.[0] ?? "";
+const weekly_active_users = projectFullData[0]?.[0]?.params.weekly_active_users?.[0] ?? "";
+const revenue = projectFullData[0]?.[0]?.params.revenue?.[0] ?? "";
+const multi_chain = projectFullData[0]?.[0]?.params.supports_multichain?.[0] ? "true" : "false";
+ const multichain = multi_chain ? "Yes":"No";
+const project_area_of_focus = projectFullData[0]?.[0]?.params.project_area_of_focus;
+const multi_chain_names = projectFullData[0]?.[0]?.params.supports_multichain?.join(", ") ?? "";
+const money_raised_till_now = projectFullData[0]?.[0]?.params.money_raised_till_now?.[0] ? "true" : "false";
+const moneyraisedtillnow = money_raised_till_now ? "Yes":"No";
+const money_raising = projectFullData[0]?.[0]?.params.money_raised?.[0]?.target_amount?.[0] && val[0]?.[0]?.params.money_raised?.[0]?.sns?.[0] ? "true" : "false";
+const moneyraising = money_raising ? "Yes":"No";
+const icp_grants = projectFullData[0]?.[0]?.params.money_raised?.[0]?.icp_grants ?? "";
+const investors = projectFullData[0]?.[0]?.params.money_raised?.[0]?.investors ?? "";
+const raised_from_other_ecosystem = projectFullData[0]?.[0]?.params.money_raised?.[0]?.raised_from_other_ecosystem ?? "";
+const valuation = projectFullData[0]?.[0]?.params.money_raised?.[0]?.sns ?? "";
+const target_amount = projectFullData[0]?.[0]?.params.money_raised?.[0]?.target_amount ?? 0;
+const promotional_video = projectFullData[0]?.[0]?.params.promotional_video?.[0] ?? "";
+const links = projectFullData[0]?.[0]?.params.links ;
+const token_economics = projectFullData[0]?.[0]?.params.token_economics?.[0] ?? "";
+const white_paper = projectFullData[0]?.[0]?.params.long_term_goals?.[0] ?? "";
+const upload_private_documents = projectFullData[0]?.[0]?.params.upload_private_documents?.[0] ? "true" : "false";
+const upload_public_documents = projectFullData[0]?.[0]?.params.public_docs?.[0]?.length ? "true" : "false";
+const privateDocs = projectFullData[0]?.[0]?.params.private_docs?.[0] ?? [];
+const publicDocs = projectFullData[0]?.[0]?.params.public_docs?.[0] ?? [];
+const reason_to_join_incubator = projectFullData[0]?.[0]?.params.reason_to_join_incubator;
+// You can then use these constants as needed in your application
+
+
   return (
     <div ref={projectDetailRef} className="px-1">
       <div className="px-1">
-      <form onSubmit={handleSubmit(handleSave, onErrorHandler)}>
-        {/* Preferred ICP Hub */}
-        <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
-          <div className="flex justify-between items-center">
-            <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
-              Preferred ICP Hub you would like to be associated with
-            </label>
-            <img
-              src={editp}
-              className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
-              alt="edit"
-              onClick={() => handleEditClick("preferred_icp_hub")}
-            />
-          </div>
-          {editMode.preferred_icp_hub ? (
-            <div>
-              <select
-                {...register("preferred_icp_hub")}
-                defaultValue={getValues("preferred_icp_hub")}
-                className={`bg-gray-50 border-2 ${
-                  errors.preferred_icp_hub
-                    ? "border-red-500 "
-                    : "border-[#737373]"
-                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full py-1 px-1.5`}
-              >              
-                   <option className="text-lg font-bold" value="">
-                                Select your ICP Hub
-                              </option>
-                              {getAllIcpHubs?.map((hub) => (
-                                <option
-                                  key={hub.id}
-                                  value={`${hub.name} ,${hub.region}`}
-                                  className="text-lg font-bold"
-                                >
-                                  {hub.name}, {hub.region}
-                                </option>
-                ))}
-              </select>
-              {errors.preferred_icp_hub && (
-                <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                  {errors.preferred_icp_hub.message}
-                </p>
-              )}
-            </div>
-          ) : (
-            <div className="flex justify-between items-center cursor-pointer py-1">
-              <span className="mr-2 text-sm">
-                {getValues("preferred_icp_hub")}
-              </span>
-            </div>
-          )}
-        </div>
+        <form onSubmit={handleSubmit(onSubmitHandler, onErrorHandler)}>
+          {/* Preferred ICP Hub */}
+          <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
+  <div className="flex justify-between items-center">
+  <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start mb-2">
+          Reason for joining this platform {" "}
+         
+        </label>
+    <img
+      src={editp}
+      className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
+      alt="edit"
+      onClick={() => handleEditClick("reason_to_join_incubator")}
+    />
+  </div>
+  {editMode.reason_to_join_incubator ? (
+    <div>
+        <ReactSelect
+          isMulti
+          menuPortalTarget={document.body}
+          menuPosition={"fixed"}
+          styles={{
+            menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+            control: (provided, state) => ({
+              ...provided,
+              paddingBlock: "2px",
+              borderRadius: "8px",
+              border: errors.reason_to_join_incubator
+                ? "2px solid #737373"
+                : "2px solid #737373",
+              backgroundColor: "rgb(249 250 251)",
+              "&::placeholder": {
+                color: errors.reason_to_join_incubator
+                  ? "#ef4444"
+                  : "currentColor",
+              },
+              display: "flex",
+              overflowX: "auto",
+              maxHeight: "43px",
+              "&::-webkit-scrollbar": {
+                display: "none",
+              },
+            }),
+            valueContainer: (provided, state) => ({
+              ...provided,
+              overflow: "scroll",
+              maxHeight: "40px",
+              scrollbarWidth: "none",
+            }),
+            placeholder: (provided, state) => ({
+              ...provided,
+              color: errors.reason_to_join_incubator
+                ? "#ef4444"
+                : "rgb(107 114 128)",
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }),
+            multiValue: (provided) => ({
+              ...provided,
+              display: "inline-flex",
+              alignItems: "center",
 
-        {/* Project Name */}
-        <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
-          <div className="flex justify-between items-center">
-            <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
-              Project Name
-            </label>
-            <img
-              src={editp}
-              className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
-              alt="edit"
-              onClick={() => handleEditClick("project_name")}
-            />
-          </div>
-          {editMode.project_name ? (
-            <div>
-              <input
-                type="text"
-                {...register("project_name")}
-                className={`bg-gray-50 border-2 ${
-                  errors.project_name ? "border-red-500 " : "border-[#737373]"
-                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full py-1 px-1.5`}
-                placeholder="Enter your Project name"
-              />
-              {errors.project_name && (
-                <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-                  {errors.project_name.message}
-                </span>
-              )}
-            </div>
-          ) : (
-            <div className="flex justify-between items-center cursor-pointer py-1">
-              <span className="mr-2 text-sm">{getValues("project_name")}</span>
-            </div>
-          )}
-        </div>
-
-        {/* Project Description */}
-        <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
-          <div className="flex justify-between items-center">
-            <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
-              Project Description
-            </label>
-            <img
-              src={editp}
-              className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
-              alt="edit"
-              onClick={() => handleEditClick("project_description")}
-            />
-          </div>
-          {editMode.project_description ? (
-            <div>
-              <input
-                type="text"
-                {...register("project_description")}
-                className={`bg-gray-50 border-2 ${
-                  errors.project_description
-                    ? "border-red-500 "
-                    : "border-[#737373]"
-                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full py-1 px-1.5`}
-                placeholder="Enter your Project description"
-              />
-              {errors.project_description && (
-                <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-                  {errors.project_description.message}
-                </span>
-              )}
-            </div>
-          ) : (
-            <div className="flex justify-between items-center cursor-pointer py-1">
-              <span className="mr-2 text-sm">
-                {getValues("project_description")}
-              </span>
-            </div>
-          )}
-        </div>
-
-        {/* Project Elevator Pitch */}
-        <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
-          <div className="flex justify-between items-center">
-            <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
-              Project Elevator Pitch
-            </label>
-            <img
-              src={editp}
-              className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
-              alt="edit"
-              onClick={() => handleEditClick("project_elevator_pitch")}
-            />
-          </div>
-          {editMode.project_elevator_pitch ? (
-            <div>
-              <input
-                type="text"
-                {...register("project_elevator_pitch")}
-                className={`bg-gray-50 border-2 ${
-                  errors.project_elevator_pitch
-                    ? "border-red-500 "
-                    : "border-[#737373]"
-                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full py-1 px-1.5`}
-                placeholder="Enter your Project elevator pitch"
-              />
-              {errors.project_elevator_pitch && (
-                <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-                  {errors.project_elevator_pitch.message}
-                </span>
-              )}
-            </div>
-          ) : (
-            <div className="flex justify-between items-center cursor-pointer py-1">
-              <span className="mr-2 text-sm">
-                {getValues("project_elevator_pitch")}
-              </span>
-            </div>
-          )}
-        </div>
-
-        {/* Project Website */}
-        <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
-          <div className="flex justify-between items-center">
-            <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
-              Project Website
-            </label>
-            <img
-              src={editp}
-              className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
-              alt="edit"
-              onClick={() => handleEditClick("project_website")}
-            />
-          </div>
-          {editMode.project_website ? (
-            <div>
-              <input
-                type="text"
-                {...register("project_website")}
-                className={`bg-gray-50 border-2 ${
-                  errors.project_website
-                    ? "border-red-500 "
-                    : "border-[#737373]"
-                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full py-1 px-1.5`}
-                placeholder="Enter your Project website"
-              />
-              {errors.project_website && (
-                <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-                  {errors.project_website.message}
-                </span>
-              )}
-            </div>
-          ) : (
-            <div className="flex justify-between items-center cursor-pointer py-1">
-              <span className="mr-2 text-sm">
-                {getValues("project_website")}
-              </span>
-            </div>
-          )}
-        </div>
-
-        {/* Is Your Project Registered */}
-        <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
-          <div className="flex justify-between items-center">
-            <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
-              Is Your Project Registered?
-            </label>
-            <img
-              src={editp}
-              className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
-              alt="edit"
-              onClick={() => handleEditClick("is_your_project_registered")}
-            />
-          </div>
-          {editMode.is_your_project_registered ? (
-            <div>
-              <select
-                {...register("is_your_project_registered")}
-                defaultValue={getValues("is_your_project_registered")}
-                className={`bg-gray-50 border-2 ${
-                  errors.is_your_project_registered
-                    ? "border-red-500 "
-                    : "border-[#737373]"
-                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full py-1 px-1.5`}
-              >
-                <option value="false">No</option>
-                <option value="true">Yes</option>
-              </select>
-              {errors.is_your_project_registered && (
-                <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                  {errors.is_your_project_registered.message}
-                </p>
-              )}
-            </div>
-          ) : (
-            <div className="flex justify-between items-center cursor-pointer py-1">
-              <span className="mr-2 text-sm">
-                {getValues("is_your_project_registered") ? "Yes" : "No"}
-              </span>
-            </div>
-          )}
-        </div>
-
-        {watch("is_your_project_registered") === "true" && (
-          <>
-            {/* Type of Registration */}
-            <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
-              <div className="flex justify-between items-center">
-                <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
-                  Type of Registration
-                </label>
-                <img
-                  src={editp}
-                  className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
-                  alt="edit"
-                  onClick={() => handleEditClick("type_of_registration")}
-                />
-              </div>
-              {editMode.type_of_registration ? (
-                <div>
-                  <select
-                    {...register("type_of_registration")}
-                    defaultValue={getValues("type_of_registration")}
-                    className={`bg-gray-50 border-2 ${
-                      errors.type_of_registration
-                        ? "border-red-500 "
-                        : "border-[#737373]"
-                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full py-1 px-1.5`}
-                  >
-                    <option value="Company">Company</option>
-                    <option value="DAO">DAO</option>
-                  </select>
-                  {errors.type_of_registration && (
-                    <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                      {errors.type_of_registration.message}
-                    </p>
-                  )}
-                </div>
-              ) : (
-                <div className="flex justify-between items-center cursor-pointer py-1">
-                  <span className="mr-2 text-sm">
-                    {getValues("type_of_registration")}
-                  </span>
-                </div>
-              )}
-            </div>
-
-            {/* Country of Registration */}
-            <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
-              <div className="flex justify-between items-center">
-                <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
-                  Country of Registration
-                </label>
-                <img
-                  src={editp}
-                  className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
-                  alt="edit"
-                  onClick={() => handleEditClick("country_of_registration")}
-                />
-              </div>
-              {editMode.country_of_registration ? (
-                <div>
-                  <select
-                    {...register("country_of_registration")}
-                    defaultValue={getValues("country_of_registration")}
-                    className={`bg-gray-50 border-2 ${
-                      errors.country_of_registration
-                        ? "border-red-500 "
-                        : "border-[#737373]"
-                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full py-1 px-1.5`}
-                  >
-                    {countries?.map((country) => (
-                      <option key={country.name} value={country.name}>
-                        {country.name}
-                      </option>
-                    ))}
-                  </select>
-                  {errors.country_of_registration && (
-                    <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                      {errors.country_of_registration.message}
-                    </p>
-                  )}
-                </div>
-              ) : (
-                <div className="flex justify-between items-center cursor-pointer py-1">
-                  <span className="mr-2 text-sm">
-                    {getValues("country_of_registration")}
-                  </span>
-                </div>
-              )}
-            </div>
-          </>
+              backgroundColor: "white",
+              border: "2px solid #E3E3E3",
+            }),
+            multiValueRemove: (provided) => ({
+              ...provided,
+              display: "inline-flex",
+              alignItems: "center",
+            }),
+          }}
+          value={reasonOfJoiningSelectedOptions}
+          options={reasonOfJoiningOptions}
+          classNamePrefix="select"
+          className="basic-multi-select w-full text-start"
+          placeholder="Select your reasons to join this platform"
+          name="reason_to_join_incubator"
+          onChange={(selectedOptions) => {
+            if (selectedOptions && selectedOptions.length > 0) {
+              setReasonOfJoiningSelectedOptions(selectedOptions);
+              clearErrors("reason_to_join_incubator");
+              setValue(
+                "reason_to_join_incubator",
+                selectedOptions.map((option) => option.value).join(", "),
+                { shouldValidate: true }
+              );
+            } else {
+              setReasonOfJoiningSelectedOptions([]);
+              setValue("reason_to_join_incubator", "", {
+                shouldValidate: true,
+              });
+              setError("reason_to_join_incubator", {
+                type: "required",
+                message: "Selecting a reason is required",
+              });
+            }
+          }}
+        />
+        {errors.reason_to_join_incubator && (
+          <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+            {errors.reason_to_join_incubator.message}
+          </span>
         )}
+    </div>
+  ) : (
+    // <div className="flex justify-between items-center cursor-pointer py-1">
+    //   <span className="mr-2 text-sm">
+    //     {/* {typeof preferred_icp_hub === 'string' ? preferred_icp_hub : ''} */}
+    //     {reason_to_join_incubator}
+    //   </span>
+    // </div>
+    <div className="flex flex-wrap gap-2">
+    {(reason_to_join_incubator) &&
+      (reason_to_join_incubator)
+        .split(", ")
+        .map((focus, index) => (
+          <span
+            key={index}
+            className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1"
+          >
+            {focus}
+          </span>
+        ))}
+  </div>
+   
+  )}
+</div>
 
-        {/* Are you also multi-chain */}
-        <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
-          <div className="flex justify-between items-center">
-            <label className="font-semibold text-xs text-gray-500 uppercase">
-              Are you also multi-chain
-            </label>
-            <img
-              src={editp}
-              className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
-              alt="edit"
-              onClick={() => {
-                handleEditClick("multi_chain");
-                setValue("multi_chain", getValues("multi_chain"));
-              }}
-            />
-          </div>
-          {editMode.multi_chain ? (
-            <div>
-              <select
-                {...register("multi_chain")}
-                className={`bg-gray-50 border-2 ${
-                  errors.multi_chain ? "border-red-500" : "border-[#737373]"
-                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full py-1 px-1.5`}
-              >
-                <option value="" disabled hidden>
-                  Select..
-                </option>
-                <option className="text-lg font-bold" value="false">
-                  No
-                </option>
-                <option className="text-lg font-bold" value="true">
-                  Yes
-                </option>
-              </select>
-              {errors.multi_chain && (
-                <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                  {errors.multi_chain.message}
-                </p>
-              )}
-            </div>
-          ) : (
-            <div className="flex justify-between items-center cursor-pointer py-1">
-              <span className="mr-2 text-sm">
-                {getValues("multi_chain") === "true" ? "Yes" : "No"}
-              </span>
-            </div>
-          )}
-        </div>
+          
+          <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
+  <div className="flex justify-between items-center">
+    <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
+      Preferred ICP Hub you would like to be associated with
+    </label>
+    <img
+      src={editp}
+      className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
+      alt="edit"
+      onClick={() => handleEditClick("preferred_icp_hub")}
+    />
+  </div>
+  {editMode.preferred_icp_hub ? (
+    <div>
+      <select
+        {...register("preferred_icp_hub")}
+        defaultValue={getValues("preferred_icp_hub")}
+        className={`bg-gray-50 border-2 ${
+          errors.preferred_icp_hub ? "border-red-500 " : "border-[#737373]"
+        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+      >
+        <option className="text-lg font-bold" value="">
+          Select your ICP Hub
+        </option>
+        {getAllIcpHubs?.map((hub) => (
+          <option
+            key={hub.id}
+            value={`${hub.name} ,${hub.region}`}
+            className="text-lg font-bold"
+          >
+            {hub.name}, {hub.region}
+          </option>
+        ))}
+      </select>
+      {errors.preferred_icp_hub && (
+        <p className="mt-1 text-sm text-red-500 font-bold text-left">
+          {errors.preferred_icp_hub.message}
+        </p>
+      )}
+    </div>
+  ) : (
+    <div className="flex justify-between items-center cursor-pointer py-1">
+      <span className="mr-2 text-sm">
+        {typeof preferred_icp_hub === 'string' ? preferred_icp_hub : ''}
+      </span>
+    </div>
+  )}
+</div>
 
-        {watch("multi_chain") === "true" && (
+
+          {/* Project Name */}
           <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
             <div className="flex justify-between items-center">
-              <label className="font-semibold text-xs text-gray-500 uppercase mb-1 ">
-                Please select the chains
+              <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
+                Project Name
               </label>
               <img
                 src={editp}
                 className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
                 alt="edit"
-                onClick={() => handleEditClick("multiChain")}
+                onClick={() => handleEditClick("project_name")}
               />
             </div>
-            {editMode.supports_multichain ? (
+            {editMode.project_name ? (
+              <div>
+                <input
+                  type="text"
+                  {...register("project_name")}
+                  className={`bg-gray-50 border-2 
+                                             ${
+                                               errors?.project_name
+                                                 ? "border-red-500 "
+                                                 : "border-[#737373]"
+                                             } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                  placeholder="Enter your Project name"
+                />
+                {errors?.project_name && (
+                  <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                    {errors?.project_name?.message}
+                  </span>
+                )}
+              </div>
+            ) : (
+              <div className="flex justify-between items-center cursor-pointer py-1">
+                <span className="mr-2 text-sm">
+                  {project_name}
+                </span>
+              </div>
+            )}
+          </div>
+
+          {/* Project Description */}
+          <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
+            <div className="flex justify-between items-center">
+              <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
+                Project Description
+              </label>
+              <img
+                src={editp}
+                className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
+                alt="edit"
+                onClick={() => handleEditClick("project_description")}
+              />
+            </div>
+            {editMode.project_description ? (
+              <div>
+                <input
+                  type="text"
+                  {...register("project_description")}
+                  className={`bg-gray-50 border-2 
+                                             ${
+                                               errors?.project_description
+                                                 ? "border-red-500 "
+                                                 : "border-[#737373]"
+                                             } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                  placeholder="Max 50 words"
+                />
+                {errors?.project_description && (
+                  <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                    {errors?.project_description?.message}
+                  </span>
+                )}
+              </div>
+            ) : (
+              <div className="flex justify-between items-center cursor-pointer py-1">
+                <span className="mr-2 text-sm">
+                  {project_description}
+                </span>
+              </div>
+            )}
+          </div>
+
+          {/* Project Elevator Pitch */}
+          <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
+            <div className="flex justify-between items-center">
+              <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
+                Project Elevator Pitch
+              </label>
+              <img
+                src={editp}
+                className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
+                alt="edit"
+                onClick={() => handleEditClick("project_elevator_pitch")}
+              />
+            </div>
+            {editMode.project_elevator_pitch ? (
+              <div>
+                <input
+                  type="text"
+                  {...register("project_elevator_pitch")}
+                  className={`bg-gray-50 border-2 
+                                             ${
+                                               errors?.project_elevator_pitch
+                                                 ? "border-red-500 "
+                                                 : "border-[#737373]"
+                                             } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                  placeholder="https://"
+                />
+                {errors?.project_elevator_pitch && (
+                  <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                    {errors?.project_elevator_pitch?.message}
+                  </span>
+                )}
+              </div>
+            ) : (
+              <div className="flex justify-between items-center cursor-pointer py-1">
+                <span className="mr-2 text-sm">
+                  {project_elevator_pitch}
+                </span>
+              </div>
+            )}
+          </div>
+
+          {/* Project Website */}
+          <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
+            <div className="flex justify-between items-center">
+              <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
+                Project Website
+              </label>
+              <img
+                src={editp}
+                className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
+                alt="edit"
+                onClick={() => handleEditClick("project_website")}
+              />
+            </div>
+            {editMode.project_website ? (
+              <div>
+                <input
+                  type="text"
+                  {...register("project_website")}
+                  className={`bg-gray-50 border-2 
+                                             ${
+                                               errors?.project_website
+                                                 ? "border-red-500 "
+                                                 : "border-[#737373]"
+                                             } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                  placeholder="https://"
+                />
+                {errors?.project_website && (
+                  <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                    {errors?.project_website?.message}
+                  </span>
+                )}
+              </div>
+            ) : (
+              <div className="flex justify-between items-center cursor-pointer py-1">
+                <span className="mr-2 text-sm">
+                  {project_website}
+                </span>
+              </div>
+            )}
+          </div>
+
+          {/* Is Your Project Registered */}
+          <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
+            <div className="flex justify-between items-center">
+              <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
+                Is Your Project Registered?
+              </label>
+              <img
+                src={editp}
+                className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
+                alt="edit"
+                onClick={() => handleEditClick("is_your_project_registered")}
+              />
+            </div>
+            {editMode.is_your_project_registered ? (
+              <div>
+                <select
+                  {...register("is_your_project_registered")}
+                  className={`bg-gray-50 border-2 ${
+                    errors.is_your_project_registered
+                      ? "border-red-500"
+                      : "border-[#737373]"
+                  } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                >
+                  <option className="text-lg font-bold" value="false">
+                    No
+                  </option>
+                  <option className="text-lg font-bold" value="true">
+                    Yes
+                  </option>
+                </select>
+                {errors.is_your_project_registered && (
+                  <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                    {errors.is_your_project_registered.message}
+                  </p>
+                )}
+              </div>
+            ) : (
+              <div className="flex justify-between items-center cursor-pointer py-1">
+                <span className="mr-2 text-sm">
+                  {/* {getValues("is_your_project_registered") ? "Yes" : "No"} */}
+                  {isyourprojectregistered}
+                  {/* {is_your_project_registered} */}
+                </span>
+              </div>
+            )}
+          </div>
+
+          {watch("is_your_project_registered") === "true" && (
+            <>
+              {/* Type of Registration */}
+              <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
+                <div className="flex justify-between items-center">
+                  <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
+                    Type of Registration
+                  </label>
+                  <img
+                    src={editp}
+                    className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
+                    alt="edit"
+                    onClick={() => handleEditClick("type_of_registration")}
+                  />
+                </div>
+                {editMode.type_of_registration ? (
+                  <div>
+                    <select
+                      {...register("type_of_registration")}
+                      className={`bg-gray-50 border-2 ${
+                        errors.type_of_registration
+                          ? "border-red-500"
+                          : "border-[#737373]"
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                    >
+                      <option className="text-lg font-bold" value="">
+                        Select registration type
+                      </option>
+                      <option className="text-lg font-bold" value="Company">
+                        Company
+                      </option>
+                      <option className="text-lg font-bold" value="DAO">
+                        DAO
+                      </option>
+                    </select>
+                    {errors.type_of_registration && (
+                      <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                        {errors.type_of_registration.message}
+                      </p>
+                    )}
+                  </div>
+                ) : (
+                  <div className="flex justify-between items-center cursor-pointer py-1">
+                    <span className="mr-2 text-sm">
+                      {type_of_registration}
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {/* Country of Registration */}
+              <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
+                <div className="flex justify-between items-center">
+                  <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
+                    Country of Registration
+                  </label>
+                  <img
+                    src={editp}
+                    className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
+                    alt="edit"
+                    onClick={() => handleEditClick("country_of_registration")}
+                  />
+                </div>
+                {editMode.country_of_registration ? (
+                  <div>
+                    <select
+                      {...register("country_of_registration")}
+                      className={`bg-gray-50 border-2 ${
+                        errors.country_of_registration
+                          ? "border-red-500 "
+                          : "border-[#737373]"
+                      } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                    >
+                      <option className="text-lg font-bold" value="">
+                        Select your country
+                      </option>
+                      {countries?.map((expert) => (
+                        <option
+                          key={expert.name}
+                          value={expert.name}
+                          className="text-lg font-bold"
+                        >
+                          {expert.name}
+                        </option>
+                      ))}
+                    </select>
+                    {errors?.country_of_registration && (
+                      <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                        {errors?.country_of_registration?.message}
+                      </span>
+                    )}
+                  </div>
+                ) : (
+                  <div className="flex justify-between items-center cursor-pointer py-1">
+                    <span className="mr-2 text-sm">
+                      {country_of_registration}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </>
+          )}
+
+          {/* Are you also multi-chain */}
+          <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
+            <div className="flex justify-between items-center">
+              <label className="font-semibold text-xs text-gray-500 uppercase">
+                Are you also multi-chain
+              </label>
+              <img
+                src={editp}
+                className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
+                alt="edit"
+                onClick={() => {
+                  handleEditClick("multi_chain");
+                }}
+              />
+            </div>
+            {editMode.multi_chain ? (
+              <div>
+                <select
+        {...register("multi_chain")}
+        className={`bg-gray-50 border-2 ${
+          errors.multi_chain ? "border-red-500" : "border-[#737373]"
+        } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+      >
+        <option className="text-lg font-bold" value="false">
+          No
+        </option>
+        <option className="text-lg font-bold" value="true">
+          Yes
+        </option>
+      </select>
+                  {errors.multi_chain && (
+                    <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                      {errors.multi_chain.message}
+                    </p>
+                  )}
+              </div>
+            ) : (
+              <div className="flex justify-between items-center cursor-pointer py-1">
+                <span className="mr-2 text-sm">
+                  {/* {getValues("multi_chain") === "true" ? "Yes" : "No"} */}
+                  {multichain}
+                  {/* {multi_chain} */}
+                </span>
+              </div>
+            )}
+          </div>
+
+          {watch("multi_chain") === "true" && (
+            <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
+              <div className="flex justify-between items-center">
+                <label className="font-semibold text-xs text-gray-500 uppercase mb-1 ">
+                  Please select the chains
+                </label>
+                <img
+                  src={editp}
+                  className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
+                  alt="edit"
+                  onClick={() => handleEditClick("supports_multichain")}
+                />
+              </div>
+              {editMode.supports_multichain ? (
+                <>
+                 <ReactSelect
+                      isMulti
+                      menuPortalTarget={document.body}
+                      menuPosition={"fixed"}
+                      styles={{
+                        menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                        control: (provided, state) => ({
+                          ...provided,
+                          paddingBlock: "2px",
+                          borderRadius: "8px",
+                          border: errors.multi_chain_names
+                            ? "2px solid #ef4444"
+                            : "2px solid #737373",
+                          backgroundColor: "rgb(249 250 251)",
+                          "&::placeholder": {
+                            color: errors.multi_chain_names
+                              ? "#ef4444"
+                              : "currentColor",
+                          },
+                          display: "flex",
+                          overflowX: "auto",
+                          maxHeight: "43px",
+                          "&::-webkit-scrollbar": {
+                            display: "none",
+                          },
+                        }),
+                        valueContainer: (provided, state) => ({
+                          ...provided,
+                          overflow: "scroll",
+                          maxHeight: "40px",
+                          scrollbarWidth: "none",
+                        }),
+                        placeholder: (provided, state) => ({
+                          ...provided,
+                          color: errors.multi_chain_names
+                            ? "#ef4444"
+                            : "rgb(107 114 128)",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                        }),
+                        multiValue: (provided) => ({
+                          ...provided,
+                          display: "inline-flex",
+                          alignItems: "center",
+                        }),
+                        multiValueRemove: (provided) => ({
+                          ...provided,
+                          display: "inline-flex",
+                          alignItems: "center",
+                        }),
+                      }}
+                      value={multiChainSelectedOptions}
+                      options={multiChainOptions}
+                      classNamePrefix="select"
+                      className="basic-multi-select w-full text-start"
+                      placeholder="Select a chain"
+                      name="multi_chain_names"
+                      onChange={(selectedOptions) => {
+                        if (selectedOptions && selectedOptions.length > 0) {
+                          setMultiChainSelectedOptions(selectedOptions);
+                          clearErrors("multi_chain_names");
+                          setValue(
+                            "multi_chain_names",
+                            selectedOptions
+                              .map((option) => option.value)
+                              .join(", "),
+                            { shouldValidate: true }
+                          );
+                        } else {
+                          setMultiChainSelectedOptions([]);
+                          setValue("multi_chain_names", "", {
+                            shouldValidate: true,
+                          });
+                          setError("multi_chain_names", {
+                            type: "required",
+                            message: "Atleast one chain name required",
+                          });
+                        }
+                      }}
+                    />
+                    {errors.multi_chain_names && (
+                      <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                        {errors.multi_chain_names.message}
+                      </p>
+                    )}
+                </>
+              ) : (
+                <>
+              <div className="flex flex-wrap gap-2">
+                {(multi_chain_names) &&
+                  (multi_chain_names)
+                    .split(", ")
+                    .map((focus, index) => (
+                      <span
+                        key={index}
+                        className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1"
+                      >
+                        {focus}
+                      </span>
+                    ))}
+              </div>
+                </>
+              )}
+            </div>
+          )}
+
+          {/* Live on ICP Mainnet */}
+          <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
+            <div className="flex justify-between items-center">
+              <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
+                Live on ICP Mainnet?
+              </label>
+              <img
+                src={editp}
+                className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
+                alt="edit"
+                onClick={() => handleEditClick("live_on_icp_mainnet")}
+              />
+            </div>
+            {editMode.live_on_icp_mainnet ? (
+              <div>
+                <select
+                  {...register("live_on_icp_mainnet")}
+                  className={`bg-gray-50 border-2 ${
+                    errors.live_on_icp_mainnet
+                      ? "border-red-500"
+                      : "border-[#737373]"
+                  } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                >
+                  <option className="text-lg font-bold" value="false">
+                    No
+                  </option>
+                  <option className="text-lg font-bold" value="true">
+                    Yes
+                  </option>
+                </select>
+                {errors.live_on_icp_mainnet && (
+                  <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                    {errors.live_on_icp_mainnet.message}
+                  </p>
+                )}
+              </div>
+            ) : (
+              <div className="flex justify-between items-center cursor-pointer py-1">
+                <span className="mr-2 text-sm">
+                  {/* {getValues("live_on_icp_mainnet") ? "Yes" : "No"} */}
+                  {liveonicpmainnet}
+                </span>
+              </div>
+            )}
+          </div>
+
+          {watch("live_on_icp_mainnet") === "true" && (
+            <>
+              {/* dApp Link */}
+              <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
+                <div className="flex justify-between items-center">
+                  <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
+                    dApp Link
+                  </label>
+                  <img
+                    src={editp}
+                    className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
+                    alt="edit"
+                    onClick={() => handleEditClick("dapp_link")}
+                  />
+                </div>
+                {editMode.dapp_link ? (
+                  <div>
+                    <input
+                      type="text"
+                      {...register("dapp_link")}
+                      className={`bg-gray-50 border-2 
+                                             ${
+                                               errors?.dapp_link
+                                                 ? "border-red-500 "
+                                                 : "border-[#737373]"
+                                             } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                      placeholder="https://"
+                    />
+                    {errors?.dapp_link && (
+                      <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                        {errors?.dapp_link?.message}
+                      </span>
+                    )}
+                  </div>
+                ) : (
+                  <div className="flex justify-between items-center cursor-pointer py-1">
+                    <span className="mr-2 text-sm">
+                      {dapp_link}
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {/* Weekly Active Users */}
+              <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
+                <div className="flex justify-between items-center">
+                  <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
+                    Weekly Active Users
+                  </label>
+                  <img
+                    src={editp}
+                    className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
+                    alt="edit"
+                    onClick={() => handleEditClick("weekly_active_users")}
+                  />
+                </div>
+                {editMode.weekly_active_users ? (
+                  <div>
+                    <input
+                      type="number"
+                      {...register("weekly_active_users")}
+                      className={`bg-gray-50 border-2 
+                                             ${
+                                               errors?.weekly_active_users
+                                                 ? "border-red-500 "
+                                                 : "border-[#737373]"
+                                             } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                      placeholder="Enter Weekly active users"
+                      onWheel={(e) => e.target.blur()}
+                      min={0}
+                    />
+                    {errors?.weekly_active_users && (
+                      <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                        {errors?.weekly_active_users?.message}
+                      </span>
+                    )}
+                  </div>
+                ) : (
+                  <div className="flex justify-between items-center cursor-pointer py-1">
+                    <span className="mr-2 text-sm">
+                      {weekly_active_users}
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {/* Revenue */}
+              <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
+                <div className="flex justify-between items-center">
+                  <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
+                    Revenue (in Million USD)
+                  </label>
+                  <img
+                    src={editp}
+                    className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
+                    alt="edit"
+                    onClick={() => handleEditClick("revenue")}
+                  />
+                </div>
+                {editMode.revenue ? (
+                  <div>
+                    <input
+                      type="number"
+                      {...register("revenue")}
+                      className={`bg-gray-50 border-2 
+                                             ${
+                                               errors?.revenue
+                                                 ? "border-red-500 "
+                                                 : "border-[#737373]"
+                                             } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                      placeholder="Enter Revenue"
+                      onWheel={(e) => e.target.blur()}
+                      min={0}
+                    />
+                    {errors?.revenue && (
+                      <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                        {errors?.revenue?.message}
+                      </span>
+                    )}
+                  </div>
+                ) : (
+                  <div className="flex justify-between items-center cursor-pointer py-1">
+                    <span className="mr-2 text-sm">{revenue}</span>
+                  </div>
+                )}
+              </div>
+            </>
+          )}
+
+          {/* Money Raised Till Now */}
+          <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
+            <div className="flex justify-between items-center">
+              <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
+                Money Raised Till Now?
+              </label>
+              <img
+                src={editp}
+                className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
+                alt="edit"
+                onClick={() => handleEditClick("money_raised_till_now")}
+              />
+            </div>
+            {editMode.money_raised_till_now ? (
+              <div>
+                <select
+                  {...register("money_raised_till_now")}
+                  className={`bg-gray-50 border-2 ${
+                    errors.money_raised_till_now
+                      ? "border-red-500"
+                      : "border-[#737373]"
+                  } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                >
+                  <option className="text-lg font-bold" value="false">
+                    No
+                  </option>
+                  <option className="text-lg font-bold" value="true">
+                    Yes
+                  </option>
+                </select>
+                {errors.money_raised_till_now && (
+                  <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                    {errors.money_raised_till_now.message}
+                  </p>
+                )}
+              </div>
+            ) : (
+              <div className="flex justify-between items-center cursor-pointer py-1">
+                <span className="mr-2 text-sm">
+                  {/* {getValues("money_raised_till_now") ? "Yes" : "No"} */}
+                  {moneyraisedtillnow}
+                </span>
+              </div>
+            )}
+          </div>
+
+          {watch("money_raised_till_now") === "true" && (
+            <>
+              {/* ICP Grants */}
+              <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
+                <div className="flex justify-between items-center">
+                  <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
+                    ICP Grants
+                  </label>
+                  <img
+                    src={editp}
+                    className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
+                    alt="edit"
+                    onClick={() => handleEditClick("icp_grants")}
+                  />
+                </div>
+                {editMode.icp_grants ? (
+                  <div>
+                    <input
+                      type="number"
+                      {...register("icp_grants")}
+                      className={`bg-gray-50 border-2 
+                                             ${
+                                               errors?.icp_grants
+                                                 ? "border-red-500 "
+                                                 : "border-[#737373]"
+                                             } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                      placeholder="Enter your Grants"
+                      onWheel={(e) => e.target.blur()}
+                      min={0}
+                    />
+                    {errors?.icp_grants && (
+                      <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                        {errors?.icp_grants?.message}
+                      </span>
+                    )}
+                  </div>
+                ) : (
+                  <div className="flex justify-between items-center cursor-pointer py-1">
+                    <span className="mr-2 text-sm">
+                      {icp_grants}
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {/* Investors */}
+              <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
+                <div className="flex justify-between items-center">
+                  <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
+                    Investors
+                  </label>
+                  <img
+                    src={editp}
+                    className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
+                    alt="edit"
+                    onClick={() => handleEditClick("investors")}
+                  />
+                </div>
+                {editMode.investors ? (
+                  <div>
+                    <input
+                      type="number"
+                      {...register("investors")}
+                      className={`bg-gray-50 border-2 
+                                             ${
+                                               errors?.investors
+                                                 ? "border-red-500 "
+                                                 : "border-[#737373]"
+                                             } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                      placeholder="Enter Investors"
+                      onWheel={(e) => e.target.blur()}
+                      min={0}
+                    />
+                    {errors?.investors && (
+                      <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                        {errors?.investors?.message}
+                      </span>
+                    )}
+                  </div>
+                ) : (
+                  <div className="flex justify-between items-center cursor-pointer py-1">
+                    <span className="mr-2 text-sm">
+                      {investors}
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {/* Raised from Other Ecosystem */}
+              <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
+                <div className="flex justify-between items-center">
+                  <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
+                    Raised from Other Ecosystem
+                  </label>
+                  <img
+                    src={editp}
+                    className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
+                    alt="edit"
+                    onClick={() =>
+                      handleEditClick("raised_from_other_ecosystem")
+                    }
+                  />
+                </div>
+                {editMode.raised_from_other_ecosystem ? (
+                  <div>
+                    <input
+                      type="number"
+                      {...register("raised_from_other_ecosystem")}
+                      className={`bg-gray-50 border-2 
+                                             ${
+                                               errors?.raised_from_other_ecosystem
+                                                 ? "border-red-500 "
+                                                 : "border-[#737373]"
+                                             } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                      placeholder="Enter Launchpad"
+                      onWheel={(e) => e.target.blur()}
+                      min={0}
+                    />
+                    {errors?.raised_from_other_ecosystem && (
+                      <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                        {errors?.raised_from_other_ecosystem?.message}
+                      </span>
+                    )}
+                  </div>
+                ) : (
+                  <div className="flex justify-between items-center cursor-pointer py-1">
+                    <span className="mr-2 text-sm">
+                      {raised_from_other_ecosystem}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </>
+          )}
+
+          {/* Money Raising */}
+          <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
+            <div className="flex justify-between items-center">
+              <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
+                Money Raising?
+              </label>
+              <img
+                src={editp}
+                className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
+                alt="edit"
+                onClick={() => handleEditClick("money_raising")}
+              />
+            </div>
+            {editMode.money_raising ? (
+              <div>
+                <select
+                  {...register("money_raising")}
+                  className={`bg-gray-50 border-2 ${
+                    errors.money_raising ? "border-red-500" : "border-[#737373]"
+                  } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                >
+                  <option className="text-lg font-bold" value="false">
+                    No
+                  </option>
+                  <option className="text-lg font-bold" value="true">
+                    Yes
+                  </option>
+                </select>
+                {errors.money_raising && (
+                  <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                    {errors.money_raising.message}
+                  </p>
+                )}
+              </div>
+            ) : (
+              <div className="flex justify-between items-center cursor-pointer py-1">
+                <span className="mr-2 text-sm">
+                  {/* {getValues("money_raising") ? "Yes" : "No"} */}
+                  {moneyraising}
+                </span>
+              </div>
+            )}
+          </div>
+
+          {watch("money_raising") === "true" && (
+            <>
+              {/* Target Amount */}
+              <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
+                <div className="flex justify-between items-center">
+                  <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
+                    Target Amount (in Million USD)
+                  </label>
+                  <img
+                    src={editp}
+                    className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
+                    alt="edit"
+                    onClick={() => handleEditClick("target_amount")}
+                  />
+                </div>
+                {editMode.target_amount ? (
+                  <div>
+                    <input
+                      type="number"
+                      {...register("target_amount")}
+                      className={`bg-gray-50 border-2 
+                                             ${
+                                               errors?.target_amount
+                                                 ? "border-red-500 "
+                                                 : "border-[#737373]"
+                                             } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                      placeholder="Enter your Target Amount"
+                      onWheel={(e) => e.target.blur()}
+                      min={0}
+                    />
+                    {errors?.target_amount && (
+                      <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                        {errors?.target_amount?.message}
+                      </span>
+                    )}
+                  </div>
+                ) : (
+                  <div className="flex justify-between items-center cursor-pointer py-1">
+                    <span className="mr-2 text-sm">
+                      {target_amount}
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {/* SNS */}
+              <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
+                <div className="flex justify-between items-center">
+                  <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
+                    SNS
+                  </label>
+                  <img
+                    src={editp}
+                    className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
+                    alt="edit"
+                    onClick={() => handleEditClick("valuation")}
+                  />
+                </div>
+                {editMode.valuation ? (
+                  <div>
+                    <input
+                      type="number"
+                      {...register("valuation")}
+                      className={`bg-gray-50 border-2 
+                                             ${
+                                               errors?.valuation
+                                                 ? "border-red-500 "
+                                                 : "border-[#737373]"
+                                             } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                      placeholder="Enter valuation (In million)"
+                      onWheel={(e) => e.target.blur()}
+                      min={0}
+                    />
+                    {errors?.valuation && (
+                      <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                        {errors?.valuation?.message}
+                      </span>
+                    )}
+                  </div>
+                ) : (
+                  <div className="flex justify-between items-center cursor-pointer py-1">
+                    <span className="mr-2 text-sm">{valuation}</span>
+                  </div>
+                )}
+              </div>
+            </>
+          )}
+
+          <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-2 px-3">
+            <div className="flex justify-between">
+              <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
+                Interests
+              </h3>
+              <div>
+                <button
+                  type="button"
+                  className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
+                  onClick={() => handleEditClick("project_area_of_focus")}
+                >
+                  <img src={editp} alt="edit" />
+                </button>
+              </div>
+            </div>
+            {editMode.project_area_of_focus ? (
               <ReactSelect
                 isMulti
                 menuPortalTarget={document.body}
                 menuPosition={"fixed"}
                 styles={{
                   menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-                  control: (provided) => ({
+                  control: (provided, state) => ({
                     ...provided,
+                    paddingBlock: "2px",
                     borderRadius: "8px",
-                    border: errors.supports_multichain
+                    border: errors.domains_interested_in
                       ? "2px solid #ef4444"
                       : "2px solid #737373",
                     backgroundColor: "rgb(249 250 251)",
+                    "&::placeholder": {
+                      color: errors.domains_interested_in
+                        ? "#ef4444"
+                        : "currentColor",
+                    },
                     display: "flex",
                     overflowX: "auto",
+                    maxHeight: "43px",
+                    "&::-webkit-scrollbar": {
+                      display: "none",
+                    },
                   }),
-                  valueContainer: (provided) => ({
+                  valueContainer: (provided, state) => ({
                     ...provided,
                     overflow: "scroll",
                     maxHeight: "40px",
                     scrollbarWidth: "none",
                   }),
-                  placeholder: (provided) => ({
+                  placeholder: (provided, state) => ({
                     ...provided,
-                    color: errors.supports_multichain
+                    color: errors.domains_interested_in
                       ? "#ef4444"
                       : "rgb(107 114 128)",
                     whiteSpace: "nowrap",
@@ -838,860 +1905,247 @@ console.log("default values ",defaultValues)
                     alignItems: "center",
                   }),
                 }}
-                value={multiChainSelectedOptions}
-                options={multiChainOptions}
+                value={interestedDomainsSelectedOptions}
+                options={interestedDomainsOptions}
                 classNamePrefix="select"
                 className="basic-multi-select w-full text-start"
-                placeholder="Select a chain"
-                name="supports_multichain"
+                placeholder="Select domains you are interested in"
+                name="project_area_of_focus"
                 onChange={(selectedOptions) => {
                   if (selectedOptions && selectedOptions.length > 0) {
-                    setMultiChainSelectedOptions(selectedOptions);
-                    clearErrors("supports_multichain");
+                    setInterestedDomainsSelectedOptions(selectedOptions);
+                    clearErrors("domains_interested_in");
                     setValue(
-                      "supports_multichain",
+                      "domains_interested_in",
                       selectedOptions.map((option) => option.value).join(", "),
                       { shouldValidate: true }
                     );
                   } else {
-                    setMultiChainSelectedOptions([]);
-                    setValue("supports_multichain", "", {
+                    setInterestedDomainsSelectedOptions([]);
+                    setValue("project_area_of_focus", "", {
                       shouldValidate: true,
                     });
-                    setError("supports_multichain", {
+                    setError("project_area_of_focus", {
                       type: "required",
-                      message: "At least one chain name required",
+                      message: "Selecting an interest is required",
                     });
                   }
                 }}
               />
             ) : (
-              <div className="flex flex-wrap gap-2 cursor-pointer py-1">
-                {getValues("supports_multichain") &&
-                  typeof getValues("supports_multichain") === "string" &&
-                  getValues("supports_multichain")
+              <div className="flex flex-wrap gap-2">
+                {(project_area_of_focus) &&
+                  (project_area_of_focus)
                     .split(", ")
-                    .map((chain, index) => (
+                    .map((focus, index) => (
                       <span
                         key={index}
                         className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1"
                       >
-                        {chain}
+                        {focus}
                       </span>
                     ))}
               </div>
             )}
-            {errors.supports_multichain && (
-              <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                {errors.supports_multichain.message}
-              </p>
+          </div>
+
+          {/* Promotional Video */}
+          <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
+            <div className="flex justify-between items-center">
+              <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
+                Promotional Video
+              </label>
+              <img
+                src={editp}
+                className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
+                alt="edit"
+                onClick={() => handleEditClick("promotional_video")}
+              />
+            </div>
+            {editMode.promotional_video ? (
+              <div>
+                <input
+                  type="text"
+                  {...register("promotional_video")}
+                  className={`bg-gray-50 border-2 
+                                             ${
+                                               errors?.promotional_video
+                                                 ? "border-red-500 "
+                                                 : "border-[#737373]"
+                                             } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                  placeholder="https://"
+                />
+                {errors?.promotional_video && (
+                  <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                    {errors?.promotional_video?.message}
+                  </span>
+                )}
+              </div>
+            ) : (
+              <div className="flex justify-between items-center cursor-pointer py-1">
+                <span className="mr-2 text-sm">
+                  {promotional_video}
+                </span>
+              </div>
             )}
           </div>
-        )}
 
-        {/* Reason for Joining This Platform */}
-        <div className="relative group hover:bg-slate-50 rounded-lg p-2 mb-2">
-          <div class="absolute right-2 top-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-            <img
-              src={editp}
-              class="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
-              alt="edit"
-              onClick={() => handleEditClick("reason_to_join_incubator")}
-            />
-          </div>
-          <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
-            Reason for Joining This Platform
-          </label>
-          {editMode.reason_to_join_incubator ? (
-            <ReactSelect
-              isMulti
-              menuPortalTarget={document.body}
-              menuPosition={"fixed"}
-              styles={{
-                menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-                control: (provided, state) => ({
-                  ...provided,
-                  paddingBlock: "0px",
-                  borderRadius: "8px",
-                  border: errors.reason_to_join_incubator
-                    ? "2px solid #ef4444"
-                    : "2px solid #737373",
-                  backgroundColor: "rgb(249 250 251)",
-                  "&::placeholder": {
-                    color: errors.reason_to_join_incubator
-                      ? "#ef4444"
-                      : "currentColor",
-                  },
-                  display: "flex",
-                  alignItems: "start",
-                  overflowX: "auto",
-                  maxHeight: "33px",
-                  "&::-webkit-scrollbar": {
-                    display: "none",
-                  },
-                }),
-                valueContainer: (provided, state) => ({
-                  ...provided,
-                  overflow: "scroll",
-                  maxHeight: "43px",
-                  scrollbarWidth: "none",
-                }),
-                placeholder: (provided, state) => ({
-                  ...provided,
-                  color: errors.reason_to_join_incubator
-                    ? "#ef4444"
-                    : "rgb(107 114 128)",
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                }),
-                multiValue: (provided) => ({
-                  ...provided,
-                  display: "inline-flex",
-                  alignItems: "center",
-                  backgroundColor: "white",
-                }),
-                multiValueRemove: (provided) => ({
-                  ...provided,
-                  display: "inline-flex",
-                  alignItems: "center",
-                }),
-              }}
-              value={reasonOfJoiningSelectedOptions}
-              options={reasonOfJoiningOptions}
-              classNamePrefix="select"
-              className="basic-multi-select w-full text-start"
-              placeholder="Select your reasons to join this platform"
-              name="reason_to_join_incubator"
-              onChange={(selectedOptions) => {
-                if (selectedOptions && selectedOptions.length > 0) {
-                  setReasonOfJoiningSelectedOptions(selectedOptions);
-                  clearErrors("reason_to_join_incubator");
-                  setValue(
-                    "reason_to_join_incubator",
-                    selectedOptions.map((option) => option.value).join(", "),
-                    { shouldValidate: true }
-                  );
-                } else {
-                  setReasonOfJoiningSelectedOptions([]);
-                  setValue("reason_to_join_incubator", "", {
-                    shouldValidate: true,
-                  });
-                  setError("reason_to_join_incubator", {
-                    type: "required",
-                    message: "Selecting a reason is required",
-                  });
-                }
-              }}
-            />
-          ) : (
-            <div className="flex flex-wrap gap-2 cursor-pointer py-1">
-              {getValues("reason_to_join_incubator") &&
-              typeof getValues("reason_to_join_incubator") === "string"
-                ? getValues("reason_to_join_incubator")
-                    .split(", ")
-                    .map((reason, index) => (
-                      <span
-                        key={index}
-                        className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1"
-                      >
-                        {reason}
-                      </span>
-                    ))
-                : ""}
-            </div>
-          )}
-        </div>
-
-        {/* Live on ICP Mainnet */}
-        <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
-          <div className="flex justify-between items-center">
-            <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
-              Live on ICP Mainnet?
-            </label>
-            <img
-              src={editp}
-              className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
-              alt="edit"
-              onClick={() => handleEditClick("live_on_icp_mainnet")}
-            />
-          </div>
-          {editMode.live_on_icp_mainnet ? (
-            <div>
-              <select
-                {...register("live_on_icp_mainnet")}
-                defaultValue={getValues("live_on_icp_mainnet")}
-                className={`bg-gray-50 border-2 ${
-                  errors.live_on_icp_mainnet
-                    ? "border-red-500 "
-                    : "border-[#737373]"
-                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full py-1 px-1.5`}
-              >
-                <option value="false">No</option>
-                <option value="true">Yes</option>
-              </select>
-              {errors.live_on_icp_mainnet && (
-                <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                  {errors.live_on_icp_mainnet.message}
-                </p>
-              )}
-            </div>
-          ) : (
-            <div className="flex justify-between items-center cursor-pointer py-1">
-              <span className="mr-2 text-sm">
-                {getValues("live_on_icp_mainnet") ? "Yes" : "No"}
-              </span>
-            </div>
-          )}
-        </div>
-
-        {watch("live_on_icp_mainnet") === "true" && (
-          <>
-            {/* dApp Link */}
-            <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
-              <div className="flex justify-between items-center">
-                <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
-                  dApp Link
-                </label>
-                <img
-                  src={editp}
-                  className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
-                  alt="edit"
-                  onClick={() => handleEditClick("dapp_link")}
-                />
-              </div>
-              {editMode.dapp_link ? (
-                <div>
-                  <input
-                    type="text"
-                    {...register("dapp_link")}
-                    className={`bg-gray-50 border-2 ${
-                      errors.dapp_link ? "border-red-500 " : "border-[#737373]"
-                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full py-1 px-1.5`}
-                    placeholder="Enter your dApp link"
-                  />
-                  {errors.dapp_link && (
-                    <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-                      {errors.dapp_link.message}
-                    </span>
-                  )}
-                </div>
-              ) : (
-                <div className="flex justify-between items-center cursor-pointer py-1">
-                  <span className="mr-2 text-sm">{getValues("dapp_link")}</span>
-                </div>
-              )}
-            </div>
-
-            {/* Weekly Active Users */}
-            <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
-              <div className="flex justify-between items-center">
-                <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
-                  Weekly Active Users
-                </label>
-                <img
-                  src={editp}
-                  className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
-                  alt="edit"
-                  onClick={() => handleEditClick("weekly_active_users")}
-                />
-              </div>
-              {editMode.weekly_active_users ? (
-                <div>
-                  <input
-                    type="number"
-                    {...register("weekly_active_users")}
-                    className={`bg-gray-50 border-2 ${
-                      errors.weekly_active_users
-                        ? "border-red-500 "
-                        : "border-[#737373]"
-                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full py-1 px-1.5`}
-                    placeholder="Enter Weekly Active Users"
-                  />
-                  {errors.weekly_active_users && (
-                    <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-                      {errors.weekly_active_users.message}
-                    </span>
-                  )}
-                </div>
-              ) : (
-                <div className="flex justify-between items-center cursor-pointer py-1">
-                  <span className="mr-2 text-sm">
-                    {getValues("weekly_active_users")}
-                  </span>
-                </div>
-              )}
-            </div>
-
-            {/* Revenue */}
-            <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
-              <div className="flex justify-between items-center">
-                <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
-                  Revenue (in Million USD)
-                </label>
-                <img
-                  src={editp}
-                  className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
-                  alt="edit"
-                  onClick={() => handleEditClick("revenue")}
-                />
-              </div>
-              {editMode.revenue ? (
-                <div>
-                  <input
-                    type="number"
-                    {...register("revenue")}
-                    className={`bg-gray-50 border-2 ${
-                      errors.revenue ? "border-red-500 " : "border-[#737373]"
-                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full py-1 px-1.5`}
-                    placeholder="Enter Revenue"
-                  />
-                  {errors.revenue && (
-                    <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-                      {errors.revenue.message}
-                    </span>
-                  )}
-                </div>
-              ) : (
-                <div className="flex justify-between items-center cursor-pointer py-1">
-                  <span className="mr-2 text-sm">{getValues("revenue")}</span>
-                </div>
-              )}
-            </div>
-          </>
-        )}
-
-        {/* Money Raised Till Now */}
-        <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
-          <div className="flex justify-between items-center">
-            <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
-              Money Raised Till Now?
-            </label>
-            <img
-              src={editp}
-              className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
-              alt="edit"
-              onClick={() => handleEditClick("money_raised_till_now")}
-            />
-          </div>
-          {editMode.money_raised_till_now ? (
-            <div>
-              <select
-                {...register("money_raised_till_now")}
-                defaultValue={getValues("money_raised_till_now")}
-                className={`bg-gray-50 border-2 ${
-                  errors.money_raised_till_now
-                    ? "border-red-500 "
-                    : "border-[#737373]"
-                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full py-1 px-1.5`}
-              >
-                <option value="false">No</option>
-                <option value="true">Yes</option>
-              </select>
-              {errors.money_raised_till_now && (
-                <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                  {errors.money_raised_till_now.message}
-                </p>
-              )}
-            </div>
-          ) : (
-            <div className="flex justify-between items-center cursor-pointer py-1">
-              <span className="mr-2 text-sm">
-                {getValues("money_raised_till_now") ? "Yes" : "No"}
-              </span>
-            </div>
-          )}
-        </div>
-
-        {watch("money_raised_till_now") === "true" && (
-          <>
-            {/* ICP Grants */}
-            <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
-              <div className="flex justify-between items-center">
-                <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
-                  ICP Grants
-                </label>
-                <img
-                  src={editp}
-                  className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
-                  alt="edit"
-                  onClick={() => handleEditClick("icp_grants")}
-                />
-              </div>
-              {editMode.icp_grants ? (
-                <div>
-                  <input
-                    type="number"
-                    {...register("icp_grants")}
-                    className={`bg-gray-50 border-2 ${
-                      errors.icp_grants ? "border-red-500 " : "border-[#737373]"
-                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full py-1 px-1.5`}
-                    placeholder="Enter ICP Grants"
-                  />
-                  {errors.icp_grants && (
-                    <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-                      {errors.icp_grants.message}
-                    </span>
-                  )}
-                </div>
-              ) : (
-                <div className="flex justify-between items-center cursor-pointer py-1">
-                  <span className="mr-2 text-sm">
-                    {getValues("icp_grants")}
-                  </span>
-                </div>
-              )}
-            </div>
-
-            {/* Investors */}
-            <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
-              <div className="flex justify-between items-center">
-                <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
-                  Investors
-                </label>
-                <img
-                  src={editp}
-                  className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
-                  alt="edit"
-                  onClick={() => handleEditClick("investors")}
-                />
-              </div>
-              {editMode.investors ? (
-                <div>
-                  <input
-                    type="number"
-                    {...register("investors")}
-                    className={`bg-gray-50 border-2 ${
-                      errors.investors ? "border-red-500 " : "border-[#737373]"
-                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full py-1 px-1.5`}
-                    placeholder="Enter Investors"
-                  />
-                  {errors.investors && (
-                    <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-                      {errors.investors.message}
-                    </span>
-                  )}
-                </div>
-              ) : (
-                <div className="flex justify-between items-center cursor-pointer py-1">
-                  <span className="mr-2 text-sm">{getValues("investors")}</span>
-                </div>
-              )}
-            </div>
-
-            {/* Raised from Other Ecosystem */}
-            <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
-              <div className="flex justify-between items-center">
-                <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
-                  Raised from Other Ecosystem
-                </label>
-                <img
-                  src={editp}
-                  className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
-                  alt="edit"
-                  onClick={() => handleEditClick("raised_from_other_ecosystem")}
-                />
-              </div>
-              {editMode.raised_from_other_ecosystem ? (
-                <div>
-                  <input
-                    type="number"
-                    {...register("raised_from_other_ecosystem")}
-                    className={`bg-gray-50 border-2 ${
-                      errors.raised_from_other_ecosystem
-                        ? "border-red-500 "
-                        : "border-[#737373]"
-                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full py-1 px-1.5`}
-                    placeholder="Enter Raised from Other Ecosystem"
-                  />
-                  {errors.raised_from_other_ecosystem && (
-                    <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-                      {errors.raised_from_other_ecosystem.message}
-                    </span>
-                  )}
-                </div>
-              ) : (
-                <div className="flex justify-between items-center cursor-pointer py-1">
-                  <span className="mr-2 text-sm">
-                    {getValues("raised_from_other_ecosystem")}
-                  </span>
-                </div>
-              )}
-            </div>
-          </>
-        )}
-
-        {/* Money Raising */}
-        <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
-          <div className="flex justify-between items-center">
-            <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
-              Money Raising?
-            </label>
-            <img
-              src={editp}
-              className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
-              alt="edit"
-              onClick={() => handleEditClick("money_raising")}
-            />
-          </div>
-          {editMode.money_raising ? (
-            <div>
-              <select
-                {...register("money_raising")}
-                defaultValue={getValues("money_raising")}
-                className={`bg-gray-50 border-2 ${
-                  errors.money_raising ? "border-red-500 " : "border-[#737373]"
-                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full py-1 px-1.5`}
-              >
-                <option value="false">No</option>
-                <option value="true">Yes</option>
-              </select>
-              {errors.money_raising && (
-                <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                  {errors.money_raising.message}
-                </p>
-              )}
-            </div>
-          ) : (
-            <div className="flex justify-between items-center cursor-pointer py-1">
-              <span className="mr-2 text-sm">
-                {getValues("money_raising") ? "Yes" : "No"}
-              </span>
-            </div>
-          )}
-        </div>
-
-        {watch("money_raising") === "true" && (
-          <>
-            {/* Target Amount */}
-            <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
-              <div className="flex justify-between items-center">
-                <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
-                  Target Amount (in Million USD)
-                </label>
-                <img
-                  src={editp}
-                  className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
-                  alt="edit"
-                  onClick={() => handleEditClick("target_amount")}
-                />
-              </div>
-              {editMode.target_amount ? (
-                <div>
-                  <input
-                    type="number"
-                    {...register("target_amount")}
-                    className={`bg-gray-50 border-2 ${
-                      errors.target_amount
-                        ? "border-red-500 "
-                        : "border-[#737373]"
-                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full py-1 px-1.5`}
-                    placeholder="Enter Target Amount"
-                  />
-                  {errors.target_amount && (
-                    <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-                      {errors.target_amount.message}
-                    </span>
-                  )}
-                </div>
-              ) : (
-                <div className="flex justify-between items-center cursor-pointer py-1">
-                  <span className="mr-2 text-sm">
-                    {getValues("target_amount")}
-                  </span>
-                </div>
-              )}
-            </div>
-
-            {/* SNS */}
-            <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
-              <div className="flex justify-between items-center">
-                <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
-                  SNS
-                </label>
-                <img
-                  src={editp}
-                  className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
-                  alt="edit"
-                  onClick={() => handleEditClick("sns")}
-                />
-              </div>
-              {editMode.sns ? (
-                <div>
-                  <input
-                    type="number"
-                    {...register("sns")}
-                    className={`bg-gray-50 border-2 ${
-                      errors.sns ? "border-red-500 " : "border-[#737373]"
-                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full py-1 px-1.5`}
-                    placeholder="Enter SNS"
-                  />
-                  {errors.sns && (
-                    <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-                      {errors.sns.message}
-                    </span>
-                  )}
-                </div>
-              ) : (
-                <div className="flex justify-between items-center cursor-pointer py-1">
-                  <span className="mr-2 text-sm">{getValues("sns")}</span>
-                </div>
-              )}
-            </div>
-          </>
-        )}
-
-        <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-2 px-3">
-          <div className="flex justify-between">
-            <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
-              Interests
-            </h3>
-            <div>
-              <button
-                type="button"
+          {/* Links */}
+          {/* <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
+            <div className="flex justify-between items-center">
+              <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
+                Links
+              </label>
+              <img
+                src={editp}
                 className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
-                onClick={() => handleEditClick("project_area_of_focus")}
-              >
-                <img src={editp} alt="edit" />
-              </button>
-            </div>
-          </div>
-          {editMode.project_area_of_focus ? (
-           <ReactSelect
-           isMulti
-           menuPortalTarget={document.body}
-           menuPosition={"fixed"}
-           styles={{
-             menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-             control: (provided, state) => ({
-               ...provided,
-               paddingBlock: "2px",
-               borderRadius: "8px",
-               border: errors.domains_interested_in
-                 ? "2px solid #ef4444"
-                 : "2px solid #737373",
-               backgroundColor: "rgb(249 250 251)",
-               "&::placeholder": {
-                 color: errors.domains_interested_in
-                   ? "#ef4444"
-                   : "currentColor",
-               },
-               display: "flex",
-               overflowX: "auto",
-               maxHeight: "43px",
-               "&::-webkit-scrollbar": {
-                 display: "none",
-               },
-             }),
-             valueContainer: (provided, state) => ({
-               ...provided,
-               overflow: "scroll",
-               maxHeight: "40px",
-               scrollbarWidth: "none",
-             }),
-             placeholder: (provided, state) => ({
-               ...provided,
-               color: errors.domains_interested_in
-                 ? "#ef4444"
-                 : "rgb(107 114 128)",
-               whiteSpace: "nowrap",
-               overflow: "hidden",
-               textOverflow: "ellipsis",
-             }),
-             multiValue: (provided) => ({
-               ...provided,
-               display: "inline-flex",
-               alignItems: "center",
-             }),
-             multiValueRemove: (provided) => ({
-               ...provided,
-               display: "inline-flex",
-               alignItems: "center",
-             }),
-           }}
-           value={interestedDomainsSelectedOptions}
-           options={interestedDomainsOptions}
-           classNamePrefix="select"
-           className="basic-multi-select w-full text-start"
-           placeholder="Select domains you are interested in"
-           name="project_area_of_focus"
-           onChange={(selectedOptions) => {
-             if (selectedOptions && selectedOptions.length > 0) {
-               setInterestedDomainsSelectedOptions(selectedOptions);
-               clearErrors("domains_interested_in");
-               setValue(
-                 "domains_interested_in",
-                 selectedOptions
-                   .map((option) => option.value)
-                   .join(", "),
-                 { shouldValidate: true }
-               );
-             } else {
-               setInterestedDomainsSelectedOptions([]);
-               setValue("project_area_of_focus", "", {
-                 shouldValidate: true,
-               });
-               setError("project_area_of_focus", {
-                 type: "required",
-                 message: "Selecting an interest is required",
-               });
-             }
-           }}
-         />
-          ) : (
-            <div className="flex flex-wrap gap-2">
-              {getValues("project_area_of_focus") &&
-                getValues("project_area_of_focus")
-                  .split(", ")
-                  .map((focus, index) => (
-                    <span
-                      key={index}
-                      className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1"
-                    >
-                      {focus}
-                    </span>
-                  ))}
-            </div>
-          )}
-        </div>
-
-        {/* Promotional Video */}
-        <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
-          <div className="flex justify-between items-center">
-            <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
-              Promotional Video
-            </label>
-            <img
-              src={editp}
-              className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
-              alt="edit"
-              onClick={() => handleEditClick("promotional_video")}
-            />
-          </div>
-          {editMode.promotional_video ? (
-            <div>
-              <input
-                type="text"
-                {...register("promotional_video")}
-                className={`bg-gray-50 border-2 ${
-                  errors.promotional_video
-                    ? "border-red-500 "
-                    : "border-[#737373]"
-                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full py-1 px-1.5`}
-                placeholder="Enter Promotional Video Link"
+                alt="edit"
+                onClick={() => handleEditClick("links")}
               />
-              {errors.promotional_video && (
-                <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-                  {errors.promotional_video.message}
-                </span>
-              )}
             </div>
-          ) : (
-            <div className="flex justify-between items-center cursor-pointer py-1">
-              <span className="mr-2 text-sm">
-                {getValues("promotional_video")}
-              </span>
-            </div>
-          )}
-        </div>
-
-        {/* Links */}
-        <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
-          <div className="flex justify-between items-center">
-            <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
-              Links
-            </label>
-            <img
-              src={editp}
-              className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
-              alt="edit"
-              onClick={() => handleEditClick("links")}
-            />
-          </div>
-          {editMode.links ? (
-            <div className="relative">
-              {fields.map((item, index) => (
-                <div
-                  key={item.id}
-                  className="flex items-center mb-4 border-b pb-2"
-                >
-                  <Controller
-                    name={`links[${index}].link`}
-                    control={control}
-                    render={({ field, fieldState }) => (
-                      <div className="flex items-center w-full">
-                        <div className="flex items-center space-x-2 w-full">
-                          <div className="flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full">
-                            {field.value && getLogo(field.value)}
-                          </div>
-                          <input
-                            type="text"
-                            placeholder="Enter your social media URL"
-                            className={`px-2 py-1 border ${
-                              fieldState.error
-                                ? "border-red-500"
-                                : "border-gray-300"
-                            } rounded-md w-full`}
-                            {...field}
-                          />
-                        </div>
-                      </div>
-                    )}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => remove(index)}
-                    className="ml-2 text-red-500 hover:text-red-700"
+            {editMode.links ? (
+              <div className="relative">
+                {fields.map((item, index) => (
+                  <div
+                    key={item.id}
+                    className="flex items-center mb-4 border-b pb-2"
                   >
-                    <FaTrash />
-                  </button>
-                </div>
-              ))}
-              <button
-                type="button"
-                onClick={() => append({ link: "" })}
-                className="flex items-center p-1 text-[#155EEF] font-semibold text-xs"
-              >
-                <FaPlus className="mr-1" /> Add Another Link
-              </button>
-            </div>
-          ) : (
-            <div className="flex flex-col gap-2">
-              {getValues("links") &&
-                getValues("links").map((linkObj, index) => (
-                  <div key={index} className="flex items-center space-x-2">
-                    <div className="flex items-center justify-center w-6 h-6 bg-gray-100 rounded-full">
-                      {linkObj.link && getLogo(linkObj.link)}
-                    </div>
-                    <span className="text-sm text-gray-700">
-                      {linkObj.link}
-                    </span>
+                    <Controller
+                      name={`links[${index}].link`}
+                      control={control}
+                      render={({ field, fieldState }) => (
+                        <div className="flex items-center w-full">
+                          <div className="flex items-center space-x-2 w-full">
+                            <div className="flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full">
+                              {field.value && getLogo(field.value)}
+                            </div>
+                            <input
+                              type="text"
+                              placeholder="Enter your social media URL"
+                              className={`px-2 py-1 border ${
+                                fieldState.error
+                                  ? "border-red-500"
+                                  : "border-gray-300"
+                              } rounded-md w-full`}
+                              {...field}
+                            />
+                          </div>
+                        </div>
+                      )}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => remove(index)}
+                      className="ml-2 text-red-500 hover:text-red-700"
+                    >
+                      <FaTrash />
+                    </button>
                   </div>
                 ))}
+                <button
+                  type="button"
+                  onClick={() => append({ link: "" })}
+                  className="flex items-center p-1 text-[#155EEF] font-semibold text-xs"
+                >
+                  <FaPlus className="mr-1" /> Add Another Link
+                </button>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-2">
+                {(links) &&
+                  (links).map((linkObj, index) => (
+                    <div key={index} className="flex items-center space-x-2">
+                      <div className="flex items-center justify-center w-6 h-6 bg-gray-100 rounded-full">
+                        {linkObj.link && getLogo(linkObj.link)}
+                      </div>
+                      <span className="text-sm text-gray-700">
+                        {linkObj.link}
+                      </span>
+                    </div>
+                  ))}
+              </div>
+            )}
+          </div> */}
+          <h3 className="mb-2 text-xs text-gray-500 px-3">LINKS</h3>
+          <div className="flex items-center px-3">
+            {/* Display existing links */}
+            {console.log("Display existing links ", socialLinks)}
+            {socialLinks &&
+              Object.keys(socialLinks).map((key, index) => {
+                const url = socialLinks[key];
+                if (!url) {
+                  return null;
+                }
+
+                const Icon = getIconForLink(url);
+                return (
+                  <div className="group relative flex items-center" key={index}>
+                    <a
+                      href={url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center"
+                    >
+                      <Icon className="text-gray-400 hover:text-gray-600 cursor-pointer transform transition-all duration-300 hover:scale-110" />
+                    </a>
+                    <button
+                      type="button"
+                      className="absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 ease-in-out transform opacity-0 group-hover:opacity-100 group-hover:translate-x-8 h-10 w-7"
+                      onClick={() => handleLinkEditToggle(key)}
+                    >
+                      <img src={edit} alt="edit" />
+                    </button>
+                    {isEditingLink[key] && (
+                      <input
+                        type="text"
+                        {...register(`social_links[${key}]`)}
+                        value={url}
+                        onChange={(e) => handleLinkChange(e, key)}
+                        className="border p-1 rounded w-full ml-2 transition-all duration-300 ease-in-out transform"
+                      />
+                    )}
+                  </div>
+                );
+              })}
+          </div>
+
+          {/* Buttons */}
+            {Object.values(editMode).some((value) => value) && (
+            <div className="flex justify-end gap-4 mt-4">
+              <button
+                type="button"
+                onClick={handleCancel}
+                className="bg-gray-300 text-gray-700 py-2 px-4 rounded"
+              >
+                Cancel
+              </button>
+              <button
+                disabled={isSubmitting}
+                type="submit"
+                className="text-white font-bold bg-blue-800 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-md w-auto sm:w-auto px-5 py-2 text-center mb-4"
+              >
+                {isSubmitting ? (
+                  <ThreeDots
+                    visible={true}
+                    height="35"
+                    width="35"
+                    color="#FFFEFF"
+                    radius="9"
+                    ariaLabel="three-dots-loading"
+                    wrapperStyle={{}}
+                    wrapperclassName=""
+                  />
+                ) : editMode ? (
+                  "Update"
+                ) : (
+                  "Submit"
+                )}
+              </button>
             </div>
           )}
-        </div>
-
-        {/* Buttons */}
-        {Object.values(editMode).some((value) => value) && (
-          <div className="flex justify-end gap-4 mt-4">
-            <button
-              type="button"
-              onClick={handleCancel}
-              className="bg-gray-300 text-gray-700 py-2 px-4 rounded"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="bg-blue-600 text-white py-2 px-4 rounded"
-            >
-              Save
-            </button>
-          </div>
-        )}
         </form>
       </div>
+      <Toaster/>
     </div>
   );
 };
