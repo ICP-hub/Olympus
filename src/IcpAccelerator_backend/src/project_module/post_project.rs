@@ -363,6 +363,7 @@ pub async fn update_team_member(project_id: String, member_principal_id: Princip
                                     let new_team_member = TeamMember {
                                         member_uid: member_uid.clone(),
                                         member_data: user_info.clone(),
+                                        member_principal: member_principal_id
                                     };
                                     team.push(new_team_member);
                                     member_added_or_updated = true;
@@ -371,6 +372,7 @@ pub async fn update_team_member(project_id: String, member_principal_id: Princip
                                 let new_team_member = TeamMember {
                                     member_uid: member_uid.clone(),
                                     member_data: user_info.clone(),
+                                    member_principal: member_principal_id
                                 };
                                 project_internal.params.project_team = Some(vec![new_team_member]);
                                 member_added_or_updated = true;
