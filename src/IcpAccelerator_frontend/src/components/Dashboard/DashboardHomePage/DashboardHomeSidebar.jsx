@@ -96,12 +96,12 @@ function DashboardSidebar({ isOpen, onClose }) {
     {
       name: "mentor",
       Mentor: true,
-      Investor: true,
+      Investor: false,
       Project: false,
     },
     {
       name: "vc",
-      Mentor: true,
+      Mentor: false,
       Investor: true,
       Project: false,
     },
@@ -131,46 +131,43 @@ function DashboardSidebar({ isOpen, onClose }) {
   const mergedData = mergeData(userCurrentRoleStatus, roledata);
   console.log("mergedData", mergedData);
 
-  // Filter the mergedData to exclude 'default' approval_status and 'user' role
   const filteredData = mergedData.filter(
-    (role) =>
-      role.approval_status !== "default" && role.name !== "user"
-  );
-console.log('filteredData',filteredData)
-  // Determine if Project is approved, then hide Mentor and VC
-  const projectApproved = filteredData.some(
-    (role) => role.name === "project" && role.approval_status === "approved"
-  );
-  const projectNotApproved = filteredData.some(
-    (role) => role.name === "project" && role.approval_status === "default"
+    (role) => role.approval_status !== "default" && role.name !== "user"
   );
 
-  // Additional logic for Mentor and VC roles
+  console.log("Filtered Data:", filteredData);
+
   const mentorApproved = filteredData.some(
     (role) => role.name === "mentor" && role.approval_status === "approved"
   );
-  const mentorNotApproved = filteredData.some(
-    (role) => role.name === "mentor" && role.approval_status === "default"
-  );
+
   const vcApproved = filteredData.some(
     (role) => role.name === "vc" && role.approval_status === "approved"
   );
-  const vcNotApproved = filteredData.some(
-    (role) => role.name === "vc" && role.approval_status === "default"
+
+  const projectApproved = filteredData.some(
+    (role) => role.name === "project" && role.approval_status === "approved"
   );
 
-  let finalData;
+  let finalData = [];
 
-  if (mentorApproved && vcNotApproved && projectNotApproved && !vcApproved && !mentorApproved) {
+  if (mentorApproved && vcApproved) {
+    console.log("Rendering both mentor and VC roles");
+    finalData = filteredData.filter(
+      (role) => role.name === "mentor" || role.name === "vc"
+    );
+  } else if (mentorApproved) {
+    console.log("Rendering mentor role only");
     finalData = filteredData.filter((role) => role.name === "mentor");
-  } else if (vcApproved && mentorNotApproved && projectNotApproved &&  !mentorApproved && !projectApproved)  {
+  } else if (vcApproved) {
+    console.log("Rendering VC role only");
     finalData = filteredData.filter((role) => role.name === "vc");
-  } else if (projectApproved &&mentorNotApproved && vcNotApproved && !mentorApproved  && !vcApproved) {
-    finalData = filteredData.filter((role) => role.name !== "project");
+  } else if (projectApproved) {
+    console.log("Rendering project role only");
+    finalData = filteredData.filter((role) => role.name === "project");
   } else {
-    finalData = filteredData;
+    console.log("No roles approved or roles in default state");
   }
-  
 
   const SidebarSection = ({ title, items, currentrole }) => (
     <div className="mb-6">
@@ -248,6 +245,7 @@ console.log('filteredData',filteredData)
     const approvedRoles = finalData.filter(
       (role) => role.approval_status === "approved"
     );
+    console.log('Approved Roles:', approvedRoles);
 
     const sidebarSections = [
       {
