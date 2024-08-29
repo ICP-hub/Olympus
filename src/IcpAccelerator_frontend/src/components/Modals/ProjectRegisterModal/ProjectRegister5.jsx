@@ -67,6 +67,7 @@ const ProjectRegister5 = ({ isOpen, onClose, onBack }) => {
   return (
     <>
       {/* PROMOTION VIDEO LINK INPUT */}
+      <div className="max-h-[80vh] overflow-y-auto ">
       <div className="mb-2">
         <label className="block text-sm font-medium mb-1">
           Promotion video link
@@ -162,7 +163,7 @@ const ProjectRegister5 = ({ isOpen, onClose, onBack }) => {
           </button>
         </div>
       </div>
-    </>
+   </div> </>
   );
 };
 
