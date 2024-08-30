@@ -673,6 +673,7 @@ const AnnouncementCard = () => {
     await actor
       .get_announcements_by_principal(convertedId)
       .then((result) => {
+        console.log("RESULT FROM ANN API", result);
         if (!result || result.length === 0) {
           setNoData(true);
           setLatestAnnouncementData([]);
