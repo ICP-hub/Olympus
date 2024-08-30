@@ -54,12 +54,11 @@ const DocumentModal = ({ setIsOpen, isOpen, isUpdate }) => {
     setIsSubmitting(true);
 
     try {
-      const newDocs = [
+      const newDocs =
         {
           title: data.documentTitle ?? "",
           link: data?.link ?? "",
-        },
-      ];
+        };
       let privateDocs = data?.documentPrivacy === "private" ? true : false;
 
       // Call the API with the correct privacy boolean value

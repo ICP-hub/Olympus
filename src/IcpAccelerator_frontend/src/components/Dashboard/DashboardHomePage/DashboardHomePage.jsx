@@ -15,7 +15,7 @@ import WorkSectionDetailPage from './WorkSectionDetailPage'
 import EventDetails from '../DashboardEvents/EventDetail'
 import DocumentSection from '../Project/DocumentSection'
 import DiscoverRegionalHubs from '../../RegionalHubs/RegionalHubs'
-import ProfilePage from '../../profile/ProfilePage';
+import ProfilePage from '../../Profile/ProfilePage';
 
 
 function DashboardHomePage() {
