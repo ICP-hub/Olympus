@@ -27,7 +27,11 @@ package-lock.json
 canister_ids.json
 
 #pocket ic
+<<<<<<< HEAD
 .pocket-ic
 
 #maindata
 main data
+=======
+src/IcpAccelerator_backend/src/pocket-ic
+>>>>>>> bf3df813a72c3c68c1dd810f988cec6eac6e90d1

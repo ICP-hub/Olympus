@@ -4,7 +4,7 @@ use IcpAccelerator_backend::{project_module::project_types::*, user_modules::use
 use std::fs;
 
 // Define the path to your compiled Wasm file
-const BACKEND_WASM: &str = "/home/harman/accelerator/ICPAccelerator/target/wasm32-unknown-unknown/release/IcpAccelerator_backend.wasm";
+const BACKEND_WASM: &str = "/Users/mridulyadav/Desktop/ICPAccelerator/target/wasm32-unknown-unknown/release/IcpAccelerator_backend.wasm";
 
 // Setup function to initialize PocketIC and install the Wasm module
 fn setup() -> (PocketIc, Principal) {
