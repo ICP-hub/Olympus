@@ -54,13 +54,16 @@ pub async fn register_venture_capitalist(params: VentureCapitalist) -> std::stri
             println!("Validation passed!");
             let profile_for_pushing = params.clone();
 
-            let new_vc = VentureCapitalistInternal {
+            let mut new_vc = VentureCapitalistInternal {
                 params: profile_for_pushing,
                 uid: new_id.clone(),
                 is_active: true,
                 approve: false,
                 decline: false,
+                profile_completion: 0,
             };
+
+            new_vc.update_completion_percentage();
 
             // Add the new VC to the awaiting response list
             mutate_state(|state| {

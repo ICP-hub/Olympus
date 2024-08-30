@@ -74,13 +74,15 @@ pub async fn register_project(info: ProjectInfo) -> String {
             let _canister_id = crate::asset_manager::get_asset_canister();
             let info_with_default = change_project_images(caller, info.clone()).await;
 
-            let new_project = ProjectInfoInternal {
+            let mut new_project = ProjectInfoInternal {
                 params: info_with_default,
                 uid: new_id,
                 is_active: true,
                 is_verified: false,
                 creation_date: time(),
+                profile_completion: 0,
             };
+            new_project.update_completion_percentage();
 
             mutate_state(|state| {
                 state

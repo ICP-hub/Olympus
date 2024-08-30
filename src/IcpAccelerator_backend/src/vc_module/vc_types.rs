@@ -39,6 +39,7 @@ pub struct VentureCapitalistInternal {
     pub is_active: bool,
     pub approve: bool,
     pub decline: bool,
+    pub profile_completion: u8,
 }
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
@@ -88,5 +89,36 @@ impl VentureCapitalist {
         }
 
         Ok(())
+    }
+}
+
+impl VentureCapitalistInternal {
+    // Compute the completion percentage
+    pub fn calculate_completion_percentage(&self) -> u8 {
+        let mut total_fields = 11; // Count mandatory fields
+        let mut filled_fields = 11; // All mandatory fields are assumed filled
+
+        filled_fields += self.params.fund_size.is_some() as usize;
+        filled_fields += self.params.assets_under_management.is_some() as usize;
+        filled_fields += self.params.registered_under_any_hub.is_some() as usize;
+        filled_fields += self.params.money_invested.is_some() as usize;
+        filled_fields += self.params.existing_icp_portfolio.is_some() as usize;
+        filled_fields += self.params.project_on_multichain.is_some() as usize;
+        filled_fields += self.params.reason_for_joining.is_some() as usize;
+        filled_fields += self.params.investor_type.is_some() as usize;
+        filled_fields += self.params.website_link.is_some() as usize;
+        filled_fields += self.params.registered_country.is_some() as usize;
+        filled_fields += self.params.stage.is_some() as usize;
+        filled_fields += self.params.range_of_check_size.is_some() as usize;
+        filled_fields += self.params.links.as_ref().map_or(0, |v| (!v.is_empty()) as usize);
+
+        total_fields += 13; // Count of optional fields
+
+        ((filled_fields as f64 / total_fields as f64) * 100.0).round() as u8
+    }
+
+    // Call this function to update the completion percentage
+    pub fn update_completion_percentage(&mut self) {
+        self.profile_completion = self.calculate_completion_percentage();
     }
 }

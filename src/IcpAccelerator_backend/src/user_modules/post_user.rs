@@ -71,10 +71,10 @@ fn record_measurement(measurement: u64) {
 }
 
 #[update(guard = "is_user_anonymous")]
-pub async fn register_user(info: UserInformation) -> Result<std::string::String, std::string::String> {
-    // if !verify_captcha(captcha_id, captcha_input) {
-    //     return Err::<std::string::String, std::string::String>("CAPTCHA verification failed.".to_string());
-    // }
+pub async fn register_user(captcha_id: String, captcha_input: String, info: UserInformation) -> Result<std::string::String, std::string::String> {
+    if !verify_captcha(captcha_id, captcha_input) {
+        return Err::<std::string::String, std::string::String>("CAPTCHA verification failed.".to_string());
+    }
     let start = ic_cdk::api::instruction_counter();
     initialize_roles();
 
@@ -115,12 +115,14 @@ pub async fn register_user(info: UserInformation) -> Result<std::string::String,
     //convert_to_lowercase
     info_with_default.type_of_profile = info_with_default.type_of_profile.map(|s| s.to_lowercase());
 
-    let user_info_internal = UserInfoInternal {
+    let mut user_info_internal = UserInfoInternal {
         uid: new_id.clone(),
         params: info_with_default,
         is_active: true,
         joining_date: time(),
+        profile_completion: 0, 
     };
+    user_info_internal.update_completion_percentage();
 
     let user_added = mutate_state(|state| {
         let user_storage = &mut state.user_storage;

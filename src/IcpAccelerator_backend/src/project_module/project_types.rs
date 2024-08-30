@@ -165,6 +165,7 @@ pub struct ProjectInfoInternal {
     pub is_active: bool,
     pub is_verified: bool,
     pub creation_date: u64,
+    pub profile_completion: u8,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
@@ -297,5 +298,49 @@ impl ProjectReview {
             tag,
             rating,
         })
+    }
+}
+
+impl ProjectInfoInternal {
+    pub fn calculate_completion_percentage(&self) -> u8 {
+        let mut total_fields = 6;  
+        let mut filled_fields = total_fields; 
+
+        filled_fields += self.params.project_logo.is_some() as usize;
+        filled_fields += self.params.preferred_icp_hub.is_some() as usize;
+        filled_fields += self.params.live_on_icp_mainnet.is_some() as usize;
+        filled_fields += self.params.money_raised_till_now.is_some() as usize;
+        filled_fields += self.params.supports_multichain.is_some() as usize;
+        filled_fields += self.params.project_elevator_pitch.is_some() as usize;
+        filled_fields += self.params.promotional_video.is_some() as usize;
+        filled_fields += self.params.project_description.is_some() as usize;
+        filled_fields += self.params.project_cover.is_some() as usize;
+        filled_fields += self.params.project_team.as_ref().map_or(0, |v| (!v.is_empty()) as usize);
+        filled_fields += self.params.token_economics.is_some() as usize;
+        filled_fields += self.params.technical_docs.is_some() as usize;
+        filled_fields += self.params.long_term_goals.is_some() as usize;
+        filled_fields += self.params.target_market.is_some() as usize;
+        filled_fields += self.params.mentors_assigned.as_ref().map_or(0, |v| (!v.is_empty()) as usize);
+        filled_fields += self.params.vc_assigned.as_ref().map_or(0, |v| (!v.is_empty()) as usize);
+        filled_fields += self.params.project_website.is_some() as usize;
+        filled_fields += self.params.links.as_ref().map_or(0, |v| (!v.is_empty()) as usize);
+        filled_fields += self.params.money_raised.is_some() as usize;
+        filled_fields += self.params.upload_private_documents.is_some() as usize;
+        filled_fields += self.params.private_docs.as_ref().map_or(0, |v| (!v.is_empty()) as usize);
+        filled_fields += self.params.public_docs.as_ref().map_or(0, |v| (!v.is_empty()) as usize);
+        filled_fields += self.params.dapp_link.is_some() as usize;
+        filled_fields += self.params.weekly_active_users.is_some() as usize;
+        filled_fields += self.params.revenue.is_some() as usize;
+        filled_fields += self.params.is_your_project_registered.is_some() as usize;
+        filled_fields += self.params.type_of_registration.is_some() as usize;
+        filled_fields += self.params.country_of_registration.is_some() as usize;
+
+        total_fields += 24; 
+
+        ((filled_fields as f64 / total_fields as f64) * 100.0).round() as u8
+    }
+
+    pub fn update_completion_percentage(&mut self) {
+        self.profile_completion = self.calculate_completion_percentage();
     }
 }
