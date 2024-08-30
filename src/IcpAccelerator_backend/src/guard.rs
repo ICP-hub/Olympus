@@ -151,14 +151,18 @@ async fn store_captcha(text: String) -> String {
 
 async fn generate_captcha_text() -> String {
     let uuids = raw_rand().await.unwrap().0;
-    let mut number = 0u32;
+    let characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    let captcha_length = 6; 
 
-    for (i, byte) in uuids.iter().take(4).enumerate() {
-        number |= (*byte as u32) << (i * 8);
+    let mut captcha = String::new();
+    let char_len = characters.len() as u32;
+
+    for i in 0..captcha_length {
+        let idx = (uuids[i % uuids.len()] as u32) % char_len; 
+        if let Some(char) = characters.chars().nth(idx as usize) {
+            captcha.push(char);
+        }
     }
-
-    // Ensure it's a 6-digit number
-    let captcha = number % 1_000_000;
     format!("{:06}", captcha)
 }
 
