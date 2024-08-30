@@ -37,7 +37,7 @@ pub async fn add_announcement(announcement_details: Announcements) -> String {
         vc_info: vc_info_get.map(|(vc, _)| vc.profile),
         timestamp: current_time,
         announcement_id: announcement_id.clone(),
-        user_data: Some(user_info.unwrap().params),
+        user_data: Some(user_info.unwrap()),
     };
 
     ic_cdk::println!("New Announcement Details: {:?}", new_announcement);
