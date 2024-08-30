@@ -12,6 +12,8 @@ import * as yup from "yup";
 import { useCountries } from "react-countries";
 import { useSelector } from "react-redux";
 import uint8ArrayToBase64 from "../../../Utils/uint8ArrayToBase64";
+import { LanguageIcon } from "../../../UserRegistration/DefaultLink";
+
 
 // import { LanguageIcon } from "../UserRegistration/DefaultLink";
 import {
@@ -53,7 +55,7 @@ const DiscoverUserModal = ({ openDetail, setOpenDetail, userData }) => {
         "whatsapp.com": <FaWhatsapp className={`text-green-600 ${size}`} />,
         "medium.com": <FaMedium className={`text-black ${size}`} />,
       };
-      return icons[domain] || "";
+      return icons[domain] || <LanguageIcon />;
     } catch (error) {
       return <LanguageIcon />;
     }
@@ -77,13 +79,15 @@ const DiscoverUserModal = ({ openDetail, setOpenDetail, userData }) => {
     userData.profile_picture && userData.profile_picture[0]
       ? uint8ArrayToBase64(userData.profile_picture[0])
       : "default-profile.png";
-
+  console.log("userData", userData);
+  console.log(userData?.social_links[0])
   const full_name = userData.full_name || "Unknown User";
-  const email= userData.email || "N/A"
+  const email = userData.email || "N/A";
   const bio = userData.bio[0] || "No bio available.";
   const area_of_interest = userData.area_of_interest || "N/A";
   const location = userData.country || "Unknown Location";
   const openchat_username = userData.openchat_username ?? "username";
+  const type_of_profile = userData.type_of_profile ?? "typeofprofile";
 
   return (
     <div
@@ -110,18 +114,16 @@ const DiscoverUserModal = ({ openDetail, setOpenDetail, userData }) => {
                   <img
                     src={profilepic}
                     alt="Matt Bowers"
-                    className="w-24 h-24 mx-auto rounded-full mb-4"
+                    className="w-24 h-24 mx-auto rounded-full mb-2"
                   />
                   <div className="flex items-center justify-center mb-1">
                     <VerifiedIcon
                       className="text-blue-500 mr-1"
                       fontSize="small"
                     />
-                    <h2 className="text-xl font-semibold">
-                      {full_name}
-                    </h2>
+                    <h2 className="text-xl font-semibold">{full_name}</h2>
                   </div>
-                  <p className="text-gray-600 text-center mb-4">
+                  <p className="text-gray-600 text-center mb-2">
                     {openchat_username}{" "}
                   </p>
                   <a
@@ -137,7 +139,7 @@ const DiscoverUserModal = ({ openDetail, setOpenDetail, userData }) => {
                 </div>
 
                 <div className="p-6 bg-white">
-                  <div className="mb-4">
+                  <div className="mb-2">
                     <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
                       Roles
                     </h3>
@@ -150,7 +152,7 @@ const DiscoverUserModal = ({ openDetail, setOpenDetail, userData }) => {
                   <hr />
 
                   <div className=" ">
-                    <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-2 ">
+                    <div className="mb-2 group relative hover:bg-gray-100 rounded-lg p-2 ">
                       <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
                         Email
                       </h3>
@@ -168,25 +170,33 @@ const DiscoverUserModal = ({ openDetail, setOpenDetail, userData }) => {
                     </div>
 
                     {/* About Section */}
-                    <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-1 ">
-                      <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
+                    <div className="mb-2 group relative hover:bg-gray-100 rounded-lg p-2 ">
+                    <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
                         About
                       </h3>
                       <div>
-                        <p className="text-sm">{bio}</p>
+                        <p className="text-sm line-clamp-3 hover:line-clamp-6">{bio}</p>
                       </div>
                     </div>
+                    <div className="mb-2 group relative hover:bg-gray-100 rounded-lg p-2 ">
+                    <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
+                        Type of Profile
+                      </h3>
 
-                    <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-1 ">
+                      <div className="flex items-center">
+                        <p className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-3 py-1 bg-gray-100">{type_of_profile}</p>
+                      </div>
+                    </div>
+                    <div className="mb-2 group relative hover:bg-gray-100 rounded-lg p-2 ">
                       <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
                         Reason to Join Platform
                       </h3>
                       <div>
                         <div className="flex flex-wrap gap-2">
-                          {userData?.reason_to_join.map((reason) => (
+                          {userData?.reason_to_join[0].map((reason, index) => (
                             <span
-                              key={reason}
-                              className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 "
+                              key={index}
+                              className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-3 py-1 bg-gray-100"
                             >
                               {reason}
                             </span>
@@ -194,13 +204,33 @@ const DiscoverUserModal = ({ openDetail, setOpenDetail, userData }) => {
                         </div>
                       </div>
                     </div>
+                    <div className="mb-2 group relative hover:bg-gray-100 rounded-lg p-2 ">
+                      <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
+                        Area of Interest
+                      </h3>
+                      <div>
+                        <div className="flex flex-wrap gap-2">
+                          {userData?.area_of_interest &&
+                            userData.area_of_interest
+                              .split(", ")
+                              .map((interest, index) => (
+                                <span
+                                  key={index}
+                                  className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-3 py-1 bg-gray-100"
+                                >
+                                  {interest}
+                                </span>
+                              ))}
+                        </div>
+                      </div>
+                    </div>
 
                     {/* Location Section */}
-                    <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-1 ">
-                      <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
+                    <div className="mb-2 group relative hover:bg-gray-100 rounded-lg p-2 ">
+                    <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
                         Location
                       </h3>
-                      <div className="flex gap-4">
+                      <div className="flex gap-2">
                         <PlaceOutlinedIcon
                           sx={{ fontSize: "medium", marginTop: "3px" }}
                         />
@@ -208,17 +238,18 @@ const DiscoverUserModal = ({ openDetail, setOpenDetail, userData }) => {
                       </div>
                     </div>
 
-                    <div>
-                      {userData?.userData?.social_links && (
-                        <h3 className="mb-2 text-xs text-gray-500 font-medium ">
+                    <div className="p-2 group relative hover:bg-gray-100 rounded-lg">
+                      {userData?.social_links[0] && (
+                       
+                           <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase ">
                           LINKS
                         </h3>
                       )}
 
                       <div className="flex items-center ">
                         <div className="flex gap-3">
-                          {userData?.userData?.social_links
-                            ? userData?.userData?.social_links?.map(
+                          {userData?.social_links[0]
+                            ? userData?.social_links[0]?.map(
                                 (link, i) => {
                                   const icon = getLogo(link);
                                   return (

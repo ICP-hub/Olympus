@@ -111,8 +111,8 @@ const InvestorModal1 = ({ formData }) => {
       </h1>
 
       {/* INVESTOR REGISTERED FIELD */}
-      <div className="mb-4">
-        <label className="block text-sm font-medium mb-1">
+      <div className="mb-2">
+        <label className="block mb-1">
           Are you Registered ?<span className="text-[red] ml-1">*</span>
         </label>
         <select
@@ -135,8 +135,8 @@ const InvestorModal1 = ({ formData }) => {
 
       {/* CONDITIONAL RENDERING OF REGISTERED COUNTRY FIELD IF INVESTOR IS REGISTERED */}
       {watch("investor_registered") === "true" && (
-        <div className="mb-4">
-          <label className="block text-sm font-medium mb-1">
+        <div className="mb-2">
+          <label className="block mb-1">
             Registered Country<span className="text-[red]">*</span>
           </label>
           <select
@@ -164,8 +164,8 @@ const InvestorModal1 = ({ formData }) => {
       )}
 
       {/* EXISTING ICP INVESTOR FIELD */}
-      <div className="mb-4">
-        <label className="block text-sm font-medium mb-1">
+      <div className="mb-2">
+        <label className="block mb-1">
           Are you an existing ICP investor?
         </label>
         <select
@@ -188,8 +188,8 @@ const InvestorModal1 = ({ formData }) => {
 
       {/* CONDITIONAL RENDERING OF TYPE OF INVESTMENT FIELD IF INVESTOR IS EXISTING ICP INVESTOR */}
       {watch("existing_icp_investor") === "true" && (
-        <div className="mb-4">
-          <label className="block text-sm font-medium mb-1">
+        <div className="mb-2">
+          <label className="block mb-1">
             Type of investment<span className="text-[red] ml-1">*</span>
           </label>
           <ReactSelect
@@ -276,8 +276,8 @@ const InvestorModal1 = ({ formData }) => {
       )}
 
       {/* MULTI-CHAIN INVESTMENT FIELD */}
-      <div className="mb-4">
-        <label className="block text-sm font-medium mb-1">
+      <div className="mb-2">
+        <label className="block mb-1">
           Do you invest in multiple ecosystems?
           <span className="text-[red] ml-1">*</span>
         </label>
@@ -301,8 +301,8 @@ const InvestorModal1 = ({ formData }) => {
 
       {/* CONDITIONAL RENDERING OF MULTI-CHAIN NAMES FIELD IF INVESTING IN MULTIPLE ECOSYSTEMS */}
       {watch("invested_in_multi_chain") === "true" && (
-        <div className="mb-4">
-          <label className="block text-sm font-medium mb-1">
+        <div className="mb-2">
+          <label className="block mb-1">
             Please select the chains <span className="text-[red] ml-1">*</span>
           </label>
           <Select
@@ -311,32 +311,27 @@ const InvestorModal1 = ({ formData }) => {
             menuPosition={"fixed"}
             styles={{
               menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-              control: (provided, state) => ({
+              control: (provided) => ({
                 ...provided,
                 paddingBlock: "2px",
                 borderRadius: "8px",
-                border: errors.invested_in_multi_chain_names
-                  ? "2px solid #ef4444"
-                  : "2px solid #737373",
+                border: errors.multi_chain_names ? "1px solid #ef4444" : "1px solid #CDD5DF",
                 backgroundColor: "rgb(249 250 251)",
                 display: "flex",
                 overflowX: "auto",
                 maxHeight: "43px",
-                "&::-webkit-scrollbar": {
-                  display: "none",
-                },
+                "&::-webkit-scrollbar": { display: "none" },
               }),
-              valueContainer: (provided, state) => ({
+              valueContainer: (provided) => ({
                 ...provided,
                 overflow: "scroll",
                 maxHeight: "40px",
                 scrollbarWidth: "none",
               }),
-              placeholder: (provided, state) => ({
+              placeholder: (provided) => ({
                 ...provided,
-                color: errors.invested_in_multi_chain_names
-                  ? "#ef4444"
-                  : "rgb(107 114 128)",
+                color: errors.invested_in_multi_chain_names ? "#ef4444" : "rgb(107 114 128)",
+                 
                 whiteSpace: "nowrap",
                 overflow: "hidden",
                 textOverflow: "ellipsis",
@@ -346,8 +341,7 @@ const InvestorModal1 = ({ formData }) => {
                 display: "inline-flex",
                 alignItems: "center",
                 backgroundColor: "white",
-                border: "1px solid gray",
-                borderRadius: "5px",
+                border: "2px solid #CDD5DF",
               }),
               multiValueRemove: (provided) => ({
                 ...provided,
