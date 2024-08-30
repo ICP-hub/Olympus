@@ -10,10 +10,8 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useCountries } from "react-countries";
 import { useSelector } from "react-redux";
 import { LinkedIn, GitHub, Telegram, Language } from "@mui/icons-material";
-import InvestorDetail from "./InvestorDetail";
 import MentorEdit from "../../component/Mentors/MentorEdit";
 import { FaEdit, FaPlus } from "react-icons/fa";
-import ProjectDetail from "./ProjectDetail";
 import { Principal } from "@dfinity/principal";
 import { ThreeDots } from "react-loader-spinner";
 import ReactSelect from "react-select";
@@ -34,8 +32,9 @@ import {
 } from "react-icons/fa";
 import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
 import CompressedImage from "../ImageCompressed/CompressedImage";
-import { validationSchema } from "./UserValidation";
 import { LanguageIcon } from "../UserRegistration/DefaultLink";
+import InvestorDetail from "./InvestorDetail";
+import { validationSchema } from "./UserValidation";
 const ProfileDetail = () => {
   const principal = useSelector((currState) => currState.internet.principal);
   const { countries } = useCountries();

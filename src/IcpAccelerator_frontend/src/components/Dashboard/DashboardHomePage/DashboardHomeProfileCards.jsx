@@ -22,7 +22,7 @@ import RatingCard from "../../Common/RatingCard";
 import EditRating from "../../Common/RatingReview";
 import RatingReview from "../../Common/RatingReview";
 import Avatar3 from "../../../../assets/Logo/Avatar3.png";
-function DashboardHomeProfileCards() {
+function DashboardHomeProfileCards(percentage) {
   const userFullData = useSelector((currState) => currState.userData.data.Ok);
   const [show,setShow]=useState(true)
 
@@ -43,7 +43,7 @@ function DashboardHomeProfileCards() {
           <div className="bg-gray-50 rounded-lg p-4 relative overflow-hidden">
             <div
               className="absolute top-0 left-0 right-0 h-[5px] bg-green-500"
-              style={{ width: "35%" }}
+              style={{ width: percentage }}
             ></div>
             <div className="flex flex-col items-center pt-2">
               <div className="w-20 h-20 bg-gray-300 rounded-full mb-3 overflow-hidden">
@@ -108,8 +108,12 @@ function DashboardHomeProfileCards() {
               rhoncus tristique ullamcorper sit.
             </p>
           </div> */}
-          {show === true ? <RatingCard show={show} setShow={setShow} /> : <RatingReview />}
-          
+          {show === true ? (
+            <RatingCard show={show} setShow={setShow} />
+          ) : (
+            <RatingReview />
+          )}
+
           {/* <RatingReview /> */}
         </div>
 
@@ -170,7 +174,7 @@ function DashboardHomeProfileCards() {
 
               <div className="ml-4 relative">
                 <div className="absolute top3 right-3">
-                  <FavoriteBorderIcon sx={{fontSize:"medium"}} />
+                  <FavoriteBorderIcon sx={{ fontSize: "medium" }} />
                 </div>
                 <h2 className="text-xl font-semibold text-gray-900">
                   Cypherpunk Labs

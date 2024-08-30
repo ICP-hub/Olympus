@@ -11,6 +11,7 @@ type Announcements = record {
   announcement_description : text;
 };
 type AnnouncementsInternal = record {
+  user_data : opt UserInformation;
   announcement_data : Announcements;
   timestamp : nat64;
   vc_info : opt VentureCapitalistInternal;
