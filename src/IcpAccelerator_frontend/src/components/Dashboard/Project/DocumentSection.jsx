@@ -37,8 +37,8 @@ function DocumentSection() {
           </button>
        
       </div>
-     <NotificationBanner message="Lorem ipsum dolor sit amet dolor."
-          />
+     {/* <NotificationBanner message="Lorem ipsum dolor sit amet dolor."
+          /> */}
       <div className='flex justify-evenly'>
         <div className="w-[30%] ">
           <ProfileCard cardData={cardData}/>
@@ -101,14 +101,14 @@ function DocumentSection() {
             {activeTab === "document" && (
               <>
                 <div className="p-6">
-                  <DocumentItem 
+                  {/* <DocumentItem 
                     title="Demo video"
                     description="Est malesuada ac elit gravida vel aliquam nec. Arcu pelle ntesque convallis quam feugiat non viverra massa fringilla."
                     buttonText="Upload a file"
                     visibility="Visible to public"
                     selectedOption={selectedOption}
                     setSelectedOption={setSelectedOption}
-                  />
+                  /> */}
                   <NewDocument visibility="Visible to public"
                     selectedOption={selectedOption}
                     setSelectedOption={setSelectedOption}

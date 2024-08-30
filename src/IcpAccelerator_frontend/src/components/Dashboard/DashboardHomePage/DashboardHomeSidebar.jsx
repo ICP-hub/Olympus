@@ -26,7 +26,7 @@ import { dashboard } from "../../Utils/jsondata/data/dashboardData";
 import { useDispatch, useSelector } from "react-redux";
 import { switchRoleRequestHandler } from "../../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
 import { founderRegisteredHandlerRequest } from "../../StateManagement/Redux/Reducers/founderRegisteredData";
-
+import { Principal } from "@dfinity/principal";
 function DashboardSidebar({ isOpen, onClose }) {
   const { dashboardhomesidebar } = dashboard;
   const [hasNavigated, setHasNavigated] = useState(false);
@@ -40,7 +40,7 @@ function DashboardSidebar({ isOpen, onClose }) {
   const actor = useSelector((currState) => currState.actors.actor);
   const projectFullData = useSelector((currState) => currState.projectData.data);
    const projectName = projectFullData?.[0]?.[0]?.params?.project_name
-  const cardData = projectFullData;
+  // const cardData = projectFullData;
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -68,12 +68,31 @@ function DashboardSidebar({ isOpen, onClose }) {
     );
   };
 
+
+  const [cardData, setCardData] = useState([]);
+
+  const principal = useSelector((currState) => currState.internet.principal);
+  useEffect(() => {
+    const fetchProjectData = async () => {
+      try {
+        const convertedPrincipal = await Principal.fromText(principal);
+        const data = await actor.get_project_info_using_principal(
+          convertedPrincipal
+        );
+        setCardData(data);
+      } catch (error) {
+        console.error("Error fetching project data:", error);
+      }
+    };
+
+    fetchProjectData();
+  }, [actor]);
+
   const handleNavigation = () => {
-    if (hasNavigated) return;
 
     if (cardData && cardData.length > 0) {
+      console.log("data navigation", cardData)
       const projectId = cardData[0]?.[0]?.uid || "No UID available";
-      setHasNavigated(true);
       navigate("/dashboard/document", { state: { projectId, cardData } });
     } else {
       console.log("No project data available");
@@ -210,7 +229,7 @@ function DashboardSidebar({ isOpen, onClose }) {
       title: dashboardhomesidebar.sidebarSections.projects.label,
       items: [
         {
-          path: handleNavigation,
+          path: () => handleNavigation(),
           icon: gridSvgIcon,
           label: projectName,
         },
