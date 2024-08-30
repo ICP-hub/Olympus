@@ -1,5 +1,5 @@
 use crate::{state_handler::{mutate_state, read_state, Candid, StoredPrincipal}, Role};
-use ic_cdk::{caller, update};
+use ic_cdk::update;
 use ic_cdk::api::management_canister::main::raw_rand;
 use sha2::{Sha256, Digest};
 use regex::Regex;
@@ -169,7 +169,7 @@ async fn generate_captcha_with_id() -> (String, String) {
     (captcha_id, captcha_text)
 }
 
-pub fn _verify_captcha(captcha_id: String, user_input: String) -> bool {
+pub fn verify_captcha(captcha_id: String, user_input: String) -> bool {
     let stored_text = read_state(|state| {
         state.captcha_storage.get(&captcha_id).map(|candid| candid.0.clone())
     });

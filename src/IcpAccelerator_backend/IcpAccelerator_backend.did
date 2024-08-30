@@ -163,6 +163,7 @@ type MentorInfo = record {
 type MentorInternal = record {
   uid : text;
   active : bool;
+  profile_completion : nat8;
   approve : bool;
   decline : bool;
   profile : MentorProfile;
@@ -381,6 +382,7 @@ type ProjectInfoForUser = record {
 type ProjectInfoForUserInternal = record { params : ProjectInfoForUser };
 type ProjectInfoInternal = record {
   uid : text;
+  profile_completion : nat8;
   is_verified : bool;
   is_active : bool;
   params : ProjectInfo;
@@ -540,6 +542,7 @@ type Testimonial = record {
 type UserInfoInternal = record {
   uid : text;
   joining_date : nat64;
+  profile_completion : nat8;
   is_active : bool;
   params : UserInformation;
 };
@@ -595,6 +598,7 @@ type VentureCapitalistAll = record {
 };
 type VentureCapitalistInternal = record {
   uid : text;
+  profile_completion : nat8;
   approve : bool;
   is_active : bool;
   decline : bool;
@@ -885,7 +889,7 @@ service : {
   post_job : (Jobs) -> (text);
   register_mentor : (MentorProfile) -> (text);
   register_project : (ProjectInfo) -> (text);
-  register_user : (UserInformation) -> (Result);
+  register_user : (text, text, UserInformation) -> (Result);
   register_venture_capitalist : (VentureCapitalist) -> (text);
   reject_enrollment_request : (principal, principal) -> (text);
   remove_mentor_from_cohort : (text, text, text) -> (Result);

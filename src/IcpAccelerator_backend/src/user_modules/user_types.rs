@@ -26,6 +26,7 @@ pub struct UserInfoInternal {
     pub params: UserInformation,
     pub is_active: bool,
     pub joining_date: u64,
+    pub profile_completion: u8,
 }
 
 #[derive(CandidType, Clone, Serialize, Deserialize, Debug)]
@@ -100,5 +101,28 @@ impl UserInformation {
             }
         }
         Ok(())
+    }
+}
+
+impl UserInfoInternal {
+    pub fn calculate_completion_percentage(&self) -> u8 {
+        let mut total_fields = 4; 
+        let mut filled_fields = 3; 
+
+        filled_fields += self.params.profile_picture.is_some() as usize;
+        filled_fields += self.params.email.is_some() as usize;
+        filled_fields += self.params.social_links.as_ref().map_or(0, |v| (!v.is_empty()) as usize);
+        filled_fields += self.params.bio.is_some() as usize;
+        filled_fields += self.params.openchat_username.is_some() as usize;
+        filled_fields += self.params.type_of_profile.is_some() as usize;
+        filled_fields += self.params.reason_to_join.as_ref().map_or(0, |v| (!v.is_empty()) as usize);
+
+        total_fields += 7; 
+
+        ((filled_fields as f64 / total_fields as f64) * 100.0).round() as u8
+    }
+
+    pub fn update_completion_percentage(&mut self) {
+        self.profile_completion = self.calculate_completion_percentage();
     }
 }

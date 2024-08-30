@@ -43,13 +43,15 @@ pub async fn register_mentor(profile: MentorProfile) -> String {
 
             let uid = format!("{:x}", Sha256::digest(&random_bytes));
 
-            let mentor_internal = MentorInternal {
+            let mut mentor_internal = MentorInternal {
                 profile: profile.clone(),
                 uid,
                 active: true,
                 approve: false,
                 decline: false,
+                profile_completion: 0
             };
+            mentor_internal.update_completion_percentage();
 
             mutate_state(|state| {
                 // Update various parts of the state
