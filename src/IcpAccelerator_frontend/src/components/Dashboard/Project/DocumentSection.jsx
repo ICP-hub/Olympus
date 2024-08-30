@@ -75,7 +75,7 @@ function DocumentSection() {
             >
               Job
             </button>
-            <button
+            {/* <button
               className={`px-4 py-2 focus:outline-none font-medium ${
                 activeTab === "rating"
                   ? "border-b-2 border-blue-500 text-blue-500 font-medium"
@@ -84,7 +84,7 @@ function DocumentSection() {
               onClick={() => handleChange("rating")}
             >
               Rating
-            </button>
+            </button> */}
             <button
               className={`px-4 py-2 focus:outline-none font-medium ${
                 activeTab === "raising"

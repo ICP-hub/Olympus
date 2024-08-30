@@ -1,19 +1,17 @@
 import * as yup from "yup";
 
-export const validationSchema = yup
-.object()
-.shape({
+export const validationSchema = yup.object().shape({
   full_name: yup
     .string()
     .test("is-non-empty", "Full name is required", (value) =>
       /\S/.test(value)
     )
     .required("Full name is required"),
+  
   email: yup
     .string()
     .email("Invalid email")
-    .nullable(true)
-    .optional()
+    .required("Email is required")
     .test(
       "no-leading-trailing-spaces",
       "Email should not have leading or trailing spaces",
@@ -24,27 +22,30 @@ export const validationSchema = yup
         return true;
       }
     ),
-    links: yup.array().of(
-      yup.object().shape({
-        url: yup.string().url("Invalid URL").nullable(true).optional(),
-      })
-    ),
+  
+  links: yup.array().of(
+    yup.object().shape({
+      link: yup.string().url("Invalid URL").nullable(true).optional(), // Corrected key from "url" to "link"
+    })
+  ),
+  
   openchat_user_name: yup
     .string()
-    .nullable(true)
+    .nullable(true)  // Allow null
     .test(
       "is-valid-username",
       "Username must be between 5 and 20 characters, and cannot start or contain spaces",
       (value) => {
-        if (!value) return true;
+        if (!value) return true;  // Allow empty or null
         const isValidLength = value.length >= 5 && value.length <= 20;
         const hasNoSpaces = !/\s/.test(value) && !value.startsWith(" ");
         return isValidLength && hasNoSpaces;
       }
     ),
+  
   bio: yup
     .string()
-    .optional()
+    .optional()  // Make it optional
     .test(
       "maxWords",
       "Bio must not exceed 50 words",
@@ -61,24 +62,18 @@ export const validationSchema = yup
       "Bio must not exceed 500 characters",
       (value) => !value || value.length <= 500
     ),
+  
   country: yup
     .string()
-    .test("is-non-empty", "Country is required", (value) => /\S/.test(value))
-    .required("Country is required"),
+    ,
+  
   domains_interested_in: yup
     .string()
-    // .test("is-non-empty", "Selecting an interest is required", (value) =>
-    //   /\S/.test(value)
-    // )
-    // .required("Selecting an interest is required")
-    ,
+    .required("Selecting an interest is required"),
+  
   type_of_profile: yup
-    .string()
-    // .test("is-non-empty", "Type of profile is required", (value) =>
-    //   /\S/.test(value)
-    // )
-    // .required("Type of profile is required")
-    ,
+    .string(),
+  
   reasons_to_join_platform: yup
     .string()
     .test("is-non-empty", "Selecting a reason is required", (value) =>
@@ -88,7 +83,7 @@ export const validationSchema = yup
 
   image: yup
     .mixed()
-    .nullable(true)
+    .nullable(true)  // Allow null for optional file input
     .test("fileSize", "File size max 10MB allowed", (value) => {
       return !value || (value && value.size <= 10 * 1024 * 1024); // 10 MB limit
     })
@@ -99,5 +94,5 @@ export const validationSchema = yup
           ["image/jpeg", "image/jpg", "image/png"].includes(value.type))
       );
     }),
-})
-.required();
+    
+}).required();

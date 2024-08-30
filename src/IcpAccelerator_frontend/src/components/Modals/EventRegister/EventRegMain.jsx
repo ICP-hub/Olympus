@@ -13,20 +13,49 @@ import { format } from "date-fns";
 import { useSelector } from "react-redux";
 import { validationSchema } from "./cohortValidation";
 
-const EventRegMain = ({ modalOpen, setModalOpen, editMode, singleEventData, cohortId }) => {
-  console.log("cohort id reg main me ", cohortId);
+const EventRegMain = ({
+  modalOpen,
+  setModalOpen,
+  editMode,
+  singleEventData,
+  cohortId,
+}) => {
+  console.log("cohort singleEventData reg main me ", singleEventData);
 
   // GETTING ACTOR FROM REDUX STORE
   const actor = useSelector((currState) => currState.actors.actor);
 
   // INDEX STATE TO TRACK THE CURRENT STEP OF THE FORM
   const [index, setIndex] = useState(0);
+  const mentorFullData = useSelector(
+    (currState) => currState.mentorData.data[0]
+  );
+  const organiserName = mentorFullData[1]?.params?.full_name;
+  const defaultValues = {
+    cohort_banner: singleEventData?.cohort_banner ?? "",
+    cohort_end_date: singleEventData?.cohort_end_date ?? "",
+    cohort_id: singleEventData?.cohort_id ?? "",
+    cohort_launch_date: singleEventData?.cohort_launch_date ?? "",
+    contact_links: singleEventData?.contact_links ?? [], // Assuming this is an array of objects
+    country: singleEventData?.country ?? "",
+    deadline: singleEventData?.deadline ?? "",
+    description: singleEventData?.description ?? "",
+    eligibility: singleEventData?.eligibility?.join(", ") ?? "", // Assuming eligibility is an array of strings
+    funding_amount: singleEventData?.funding_amount ?? "",
+    funding_type: singleEventData?.funding_type ?? "",
+    host_name: singleEventData?.host_name?.join(", ") ?? "", // Assuming host_name is an array of strings
+    level_on_rubric: singleEventData?.level_on_rubric?.toString() ?? "", // Assuming level_on_rubric is a number
+    no_of_seats: singleEventData?.no_of_seats ?? "",
+    start_date: singleEventData?.start_date ?? "",
+    tags: singleEventData?.tags ?? "",
+    title: singleEventData?.title ?? "",
+  };
 
   // INITIALIZING THE FORM WITH VALIDATION SCHEMA
   const methods = useForm({
     resolver: yupResolver(validationSchema),
     mode: "all",
-    defaultValues: singleEventData || {},
+    defaultValues: defaultValues,
   });
 
   // STATE TO STORE THE IMAGE DATA
@@ -44,7 +73,14 @@ const EventRegMain = ({ modalOpen, setModalOpen, editMode, singleEventData, coho
   const formFields = {
     0: ["cohort_banner", "title", "cohort_launch_date", "cohort_end_date"],
     1: ["deadline", "eligibility", "no_of_seats", "start_date"],
-    2: ["funding_type", "funding_amount", "tags", "country", "host_name", "contact_links"],
+    2: [
+      "funding_type",
+      "funding_amount",
+      "tags",
+      "country",
+      "host_name",
+      "contact_links",
+    ],
     3: ["description"],
   };
 
@@ -74,11 +110,12 @@ const EventRegMain = ({ modalOpen, setModalOpen, editMode, singleEventData, coho
   };
 
   // SUBMIT HANDLER
-  const onSubmitHandler = async (data) => {
-    if (index === 3) {  // Ensure submission only on the last step
+  const onSubmitHandler = async () => {
+    if (index === 3) {
+      // Ensure submission only on the last step
+      const data = { ...formData, ...getValues() };
       console.log("Form data:", data);
 
-      // FORMATTING THE SUBMITTED DATA
       const eventData = {
         title: data.title,
         country: data.area,
@@ -97,12 +134,21 @@ const EventRegMain = ({ modalOpen, setModalOpen, editMode, singleEventData, coho
           eligibility: [data.eligibility],
           level_on_rubric: parseFloat(data.rubric_eligibility),
         },
-        contact_links: data?.contact_links
-          ? [data.contact_links.map((val) => ({ link: val?.link ? [val.link] : [] }))]
+        contact_links:editMode===true? data.contact_links
+        .filter((val) => typeof val?.link === "string" && val.link.trim() !== "")
+        .map((val) => ({
+          link: val.link,
+        })): data?.contact_links
+          ? [
+              data.contact_links.map((val) => ({
+                link: val?.link ? [val.link] : [],
+              })),
+            ]
           : [],
+
         no_of_seats: parseInt(data.no_of_seats),
         cohort_banner: imageData ? [imageData] : [],
-        host_name: ['Mridul'], // Example placeholder for host name
+        host_name: organiserName ? [organiserName] : [], // Example placeholder for host name
       };
 
       try {
@@ -111,23 +157,27 @@ const EventRegMain = ({ modalOpen, setModalOpen, editMode, singleEventData, coho
           console.log("Updating cohort with data:", eventData);
           result = await actor.update_cohort(cohortId, eventData);
         } else {
-          // Call create_cohort API when in create mode
           console.log("Creating new cohort with data:", eventData);
           result = await actor.create_cohort(eventData);
         }
 
-        console.log('API result', result);
+        console.log("API result", result);
 
-        // Handle success or error response
         if (result && result.Ok) {
           if (
-            result.startsWith("You are not privileged to create a cohort ,Please Register as Mentor ...") ||
+            result.startsWith(
+              "You are not privileged to create a cohort ,Please Register as Mentor ..."
+            ) ||
             result.startsWith("Cohort Banner is already uploaded")
           ) {
             toast.error(result);
             setModalOpen(false);
           } else {
-            toast.success(editMode ? "Cohort updated successfully!" : "Cohort registered successfully!");
+            toast.success(
+              editMode
+                ? "Cohort updated successfully!"
+                : "Cohort registered successfully!"
+            );
             setModalOpen(false);
           }
         }
@@ -147,7 +197,11 @@ const EventRegMain = ({ modalOpen, setModalOpen, editMode, singleEventData, coho
   return (
     <>
       {/* MODAL OVERLAY */}
-      <div className={`fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 ${modalOpen ? "block" : "hidden"}`}>
+      <div
+        className={`fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 ${
+          modalOpen ? "block" : "hidden"
+        }`}
+      >
         <div className="bg-white rounded-lg shadow-lg w-[500px] p-6 pt-4 ">
           {/* CLOSE BUTTON */}
           <div className="flex justify-end mr-4">
@@ -165,13 +219,44 @@ const EventRegMain = ({ modalOpen, setModalOpen, editMode, singleEventData, coho
           <FormProvider {...methods}>
             <form onSubmit={handleSubmit(onSubmitHandler, onErrorHandler)}>
               {/* CONDITIONAL RENDERING OF FORMS BASED ON CURRENT STEP */}
-              {index === 0 && <EventReg1 formData={formData} setFormData={setFormData} imageData={imageData} setImageData={setImageData} editMode={editMode} />}
-              {index === 1 && <EventReg2 formData={formData} setFormData={setFormData} />}
-              {index === 2 && <EventReg3 formData={formData} setFormData={setFormData} />}
-              {index === 3 && <EventReg4 formData={formData} setFormData={setFormData} />}
-              
+              {index === 0 && (
+                <EventReg1
+                  formData={formData}
+                  setFormData={setFormData}
+                  imageData={imageData}
+                  setImageData={setImageData}
+                  editMode={editMode}
+                  singleEventData={singleEventData}
+                />
+              )}
+              {index === 1 && (
+                <EventReg2
+                  formData={formData}
+                  setFormData={setFormData}
+                  singleEventData={singleEventData}
+                />
+              )}
+              {index === 2 && (
+                <EventReg3
+                  formData={formData}
+                  setFormData={setFormData}
+                  singleEventData={singleEventData}
+                />
+              )}
+              {index === 3 && (
+                <EventReg4
+                  formData={formData}
+                  setFormData={setFormData}
+                  singleEventData={singleEventData}
+                />
+              )}
+
               {/* NAVIGATION BUTTONS */}
-              <div className={`flex mt-4 ${index === 0 ? "justify-end" : "justify-between"}`}>
+              <div
+                className={`flex mt-4 ${
+                  index === 0 ? "justify-end" : "justify-between"
+                }`}
+              >
                 {index > 0 && (
                   <button
                     type="button"
@@ -183,8 +268,9 @@ const EventRegMain = ({ modalOpen, setModalOpen, editMode, singleEventData, coho
                 )}
                 {index === 3 ? (
                   <button
-                    type="submit"
+                    type="button"
                     className="py-2 px-4 bg-blue-600 text-white rounded  border-2 border-[#B2CCFF]"
+                    onClick={onSubmitHandler}
                   >
                     {isSubmitting ? (
                       <ThreeDots
@@ -195,6 +281,8 @@ const EventRegMain = ({ modalOpen, setModalOpen, editMode, singleEventData, coho
                         radius="9"
                         ariaLabel="three-dots-loading"
                       />
+                    ) : editMode === true ? (
+                      "Update"
                     ) : (
                       "Submit"
                     )}
@@ -222,4 +310,3 @@ const EventRegMain = ({ modalOpen, setModalOpen, editMode, singleEventData, coho
 };
 
 export default EventRegMain;
-

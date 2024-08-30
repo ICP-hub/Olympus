@@ -5,11 +5,23 @@ import "react-loading-skeleton/dist/skeleton.css";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import MailOutlinedIcon from "@mui/icons-material/MailOutlined";
 import { LanguageIcon } from "../UserRegistration/DefaultLink";
-import { FaLinkedin, FaTwitter, FaGithub, FaTelegram, FaFacebook, FaInstagram, FaYoutube, FaReddit, FaTiktok, FaSnapchat, FaWhatsapp, FaMedium } from 'react-icons/fa';
+import {
+  FaLinkedin,
+  FaTwitter,
+  FaGithub,
+  FaTelegram,
+  FaFacebook,
+  FaInstagram,
+  FaYoutube,
+  FaReddit,
+  FaTiktok,
+  FaSnapchat,
+  FaWhatsapp,
+  FaMedium,
+} from "react-icons/fa";
 import { useFormContext, useFieldArray } from "react-hook-form";
 
 export const AboutcardSkeleton = (getAllData) => {
-
   const { control } = useFormContext();
   const { fields, append, remove } = useFieldArray({
     control,
@@ -34,9 +46,9 @@ export const AboutcardSkeleton = (getAllData) => {
         "whatsapp.com": <FaWhatsapp className={`text-green-600 ${size}`} />,
         "medium.com": <FaMedium className={`text-black ${size}`} />,
       };
-      return icons[domain] || <LanguageIcon/>;
+      return icons[domain] || <LanguageIcon />;
     } catch (error) {
-      return <LanguageIcon/>;
+      return <LanguageIcon />;
     }
   };
 
@@ -44,9 +56,8 @@ export const AboutcardSkeleton = (getAllData) => {
   console.log("getvalues", getAllData);
 
   return (
-   
-          <SkeletonTheme baseColor="#e3e3e3" highlightColor="#c8c8c873"> 
-          <div className="w-1/2 bg-gradient-to-r from-[#ECE9FE] to-[#FFFFFF] items-center justify-center rounded-r-2xl">
+    <SkeletonTheme baseColor="#e3e3e3" highlightColor="#c8c8c873">
+      <div className="w-1/2 bg-gradient-to-r from-[#ECE9FE] to-[#FFFFFF] items-center justify-center rounded-r-2xl">
         <div className="bg-white mx-auto my-10 rounded-lg shadow-md w-3/4">
           <div className="w-full bg-gray-200 rounded-full h-1.5 mb-4 dark:bg-gray-700">
             <div
@@ -56,17 +67,27 @@ export const AboutcardSkeleton = (getAllData) => {
           </div>
           <div className="p-6">
             <div className="flex flex-col items-center">
+              <div>
+                {getAllData?.getAllData?.image ? (
+                  <img
+                    src={URL.createObjectURL(getAllData?.getAllData?.image)}
+                    alt={`${getAllData?.getAllData?.full_name}`}
+                    className="rounded-full size-28"
+                  />
+                ) : (
               <div className="bg-gray-200 rounded-full p-4 mb-4">
-                <svg
-                  className="w-9 h-9 text-gray-600"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-                </svg>
-              </div>
+                  <svg
+                    className="w-9 h-9 text-gray-600"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                  </svg>
+                  </div>
+                )}
+            </div>
               {getAllData?.getAllData?.full_name ? (
-                <h2 className="text-xl font-medium">
+                <h2 className="text-xl font-medium truncate">
                   {getAllData?.getAllData?.full_name}
                 </h2>
               ) : (
@@ -75,7 +96,7 @@ export const AboutcardSkeleton = (getAllData) => {
                 </h2>
               )}
               {getAllData?.getAllData?.openchat_user_name ? (
-                <h2 className="text-lg font-normal">
+                <h2 className="text-lg font-normal truncate">
                   {getAllData?.getAllData?.openchat_user_name}
                 </h2>
               ) : (
@@ -105,7 +126,7 @@ export const AboutcardSkeleton = (getAllData) => {
                   Email
                 </label>
                 {getAllData?.getAllData?.email ? (
-                  <h2 className="text-base font-normal">
+                  <h2 className="text-base font-normal truncate">
                     {getAllData?.getAllData?.email}
                   </h2>
                 ) : (
@@ -117,7 +138,7 @@ export const AboutcardSkeleton = (getAllData) => {
                   About
                 </label>
                 {getAllData?.getAllData?.bio ? (
-                  <p className="text-base font-normal">
+                  <p className="text-base font-normal break-all line-clamp-3">
                     {getAllData?.getAllData?.bio}
                   </p>
                 ) : (
@@ -132,12 +153,14 @@ export const AboutcardSkeleton = (getAllData) => {
                 )}
               </div>
               <label className="block mt-3 font-medium text-gray-600">
-                Reason to join Platform
+                Reason to join platform
               </label>
               {getAllData?.getAllData?.reasons_to_join_platform ? (
-                <p className="text-base font-normal mb-0">
-                  {getAllData?.getAllData?.reasons_to_join_platform}
-                </p>
+                  getAllData?.getAllData?.reasons_to_join_platform.split(", ").slice(0,3).map((tag,index) => (
+                    <span key={index} className="bg-[#EFF4FF] text-gray-600 border border-gray-300 rounded-lg px-4 pb-1 font-semibold mr-2">
+                      {tag}
+                    </span>
+                  ))
               ) : (
                 <div className="flex space-x-2">
                   <Skeleton height={25} width={80} className="rounded-3xl" />
@@ -148,15 +171,18 @@ export const AboutcardSkeleton = (getAllData) => {
                 Interests
               </label>
               {getAllData?.getAllData?.domains_interested_in ? (
-                <p className="text-base font-normal">
-                  {getAllData?.getAllData?.domains_interested_in}
-                </p>
-              ) : (
-                <div className="flex space-x-2">
-                  <Skeleton height={25} width={80} className="rounded-3xl" />
-                  <Skeleton height={25} width={80} className="rounded-3xl" />
-                </div>
-              )}
+  getAllData?.getAllData?.domains_interested_in.split(", ").slice(0,3).map((tag,index) => (
+    <span key={index} className="bg-[#EFF4FF] text-gray-600 border border-gray-300 rounded-lg px-4 pb-1 font-semibold mr-2">
+      {tag}
+    </span>
+  ))
+) : (
+  <div className="flex space-x-2">
+    <Skeleton height={25} width={80} className="rounded-3xl" />
+    <Skeleton height={25} width={80} className="rounded-3xl" />
+  </div>
+)}
+
               <div className="mt-4">
                 <label className="block font-medium text-gray-600 pb-1">
                   <LocationOnOutlinedIcon
@@ -185,37 +211,37 @@ export const AboutcardSkeleton = (getAllData) => {
                   Links
                 </label>
                 <div className="flex gap-3">
-                {getAllData?.getAllData?.links ? (
-                  getAllData?.getAllData?.links?.map((link, i) => {
-                    const icon = getLogo(link.link);
-                    return (
-                      <div key={i} className="flex items-center space-x-2">
-                        {icon ? (
-                          icon
-                        ) : (
-                          <Skeleton height={30} width={30} circle="true" />
-                        )}
+                  {getAllData?.getAllData?.links ? (
+                    getAllData?.getAllData?.links?.map((link, i) => {
+                      const icon = getLogo(link.link);
+                      return (
+                        <div key={i} className="flex items-center space-x-2">
+                          {icon ? (
+                            icon
+                          ) : (
+                            <Skeleton height={30} width={30} circle="true" />
+                          )}
+                        </div>
+                      );
+                    })
+                  ) : (
+                    <div className="flex space-x-2">
+                      <div className="rounded-full flex items-center justify-center">
+                        <Skeleton height={30} width={30} circle="true" />
                       </div>
-                    );
-                  })
-                ) : (
-                  <div className="flex space-x-2">
-                    <div className="rounded-full flex items-center justify-center">
-                      <Skeleton height={30} width={30} circle="true" />
-                    </div>
-                    <div className="rounded-full flex items-center justify-center">
-                      <Skeleton height={30} width={30} circle="true" />
+                      <div className="rounded-full flex items-center justify-center">
+                        <Skeleton height={30} width={30} circle="true" />
 
-                      <Skeleton height={30} width={30} circle="true" />
+                        <Skeleton height={30} width={30} circle="true" />
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
                 </div>
               </div>
             </div>
-            </div>
           </div>
-  </div>
+        </div>
+      </div>
     </SkeletonTheme>
   );
 };

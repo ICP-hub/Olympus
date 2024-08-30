@@ -116,7 +116,7 @@ function mergeData(backendData, additionalData) {
 }
 
 const mergedData = mergeData(userCurrentRoleStatus, roledata);
-// console.log('mergedData',mergedData)
+ console.log('mergedData',mergedData)
 
   const getRoleSvg = (status, side) => {
     const colors = {
