@@ -19,7 +19,7 @@ import {
   FaPlus,
   FaTrash,
 } from "react-icons/fa";
-const EventReg3 = ({formData}) => {
+const EventReg3 = ({formData,singleEventData}) => {
   console.log('formData',formData)
 
   const { register, formState: { errors }, setValue, clearErrors, setError, control } = useFormContext();
@@ -32,6 +32,7 @@ const EventReg3 = ({formData}) => {
     name: "contact_links",
   });
 
+  
   // FUNCTION TO DETERMINE AND RETURN THE APPROPRIATE LOGO BASED ON THE URL
   const getLogo = (url) => {
     try {
@@ -60,39 +61,39 @@ const EventReg3 = ({formData}) => {
   const [rubricEligibilityOptions, setRubricEligibilityOptions] = useState([
     {
       value: "1",
-      label: "One (1)",
+      label: "1",
     },
     {
       value: "2",
-      label: "Two (2)",
+      label: "2",
     },
     {
       value: "3",
-      label: "Three (3)",
+      label: "3",
     },
     {
       value: "4",
-      label: "Four (4)",
+      label: "4",
     },
     {
       value: "5",
-      label: "Five (5)",
+      label: "5",
     },
     {
       value: "6",
-      label: "Six (6)",
+      label: "6",
     },
     {
       value: "7",
-      label: "Seven (7)",
+      label: "7",
     },
     {
       value: "8",
-      label: "Eight (8)",
+      label: "8",
     },
     {
       value: "9",
-      label: "Nine (9)",
+      label: "9",
     },
   ]);
   const [
@@ -133,25 +134,44 @@ const EventReg3 = ({formData}) => {
     setInterestedDomainsSelectedOptions,
   ] = useState([]);
 
-  useEffect(() => {
-    if (formData) {
-        setCohorttValuesHandler(formData);
-    }
-}, [formData]);
+ 
 
 // FUNCTION TO SET INITIAL FORM VALUES BASED ON PROVIDED formData
-const setCohorttValuesHandler = (val) => {
-    console.log('val', val);
-    if (val) {
-        setValue("rubric_eligibility", val?.rubric_eligibility ? val?.rubric_eligibility : "");
-        setValue("tags", val?.tags ? val?.tags : "");
-        setValue("funding_type", val?.funding_type ? val?.funding_type : "");
-        setInterestedDomainSelectedOptionsHandler(val.tags ?? null);
-        setInterestedFundingTypeSelectedOptionsHandler(val.funding_type ?? null);
-        setRubricEligibilitySelectedOptionsHandler(val.rubric_eligibility ?? null);
-        
-    }
+const setCohortValuesHandler = (val) => {
+  console.log('val', val);
+  if (val) {
+      setValue("level_on_rubric", val?.level_on_rubric ? val?.level_on_rubric : "");
+      setValue("tags", val?.tags ? val?.tags : "");
+      setValue("funding_type", val?.funding_type ? val?.funding_type : "");
+
+      // Map contact_links for both structures
+      setValue("contact_links", val?.contact_links ? 
+          val.contact_links.map((item) => {
+              // Check if item is an array (first structure)
+              if (Array.isArray(item)) {
+                  return { link: item[0]?.link ? item[0].link : "" };
+              } 
+              // Handle if item is an object with link array (second structure)
+              else if (item?.link && Array.isArray(item.link)) {
+                  return { link: item.link[0] ? item.link[0] : "" };
+              } 
+              return { link: "" }; // Default if none of the conditions are met
+          }) 
+      : []);
+      
+      setInterestedDomainSelectedOptionsHandler(val.tags ?? null);
+      setInterestedFundingTypeSelectedOptionsHandler(val.funding_type ?? null);
+      setRubricEligibilitySelectedOptionsHandler(val.level_on_rubric ?? null);
+  }
 };
+
+useEffect(() => {
+  if (formData) {
+    setCohortValuesHandler(formData);
+  } else if (singleEventData) {
+    setCohortValuesHandler(singleEventData); // Also set initial values from singleEventData if provided
+  }
+}, [formData, singleEventData]);
 const setInterestedDomainSelectedOptionsHandler = (val) => {
   setInterestedDomainsSelectedOptions(
       val ? val.split(", ").map((chain) => ({ value: chain, label: chain })) : []
@@ -251,13 +271,13 @@ const setRubricEligibilitySelectedOptionsHandler = (val) => {
           classNamePrefix="select"
           className="basic-multi-select w-full text-start"
           placeholder="Select a tag"
-          name="rubric_eligibility"
+          name="eligibility"
           onChange={(selectedOptions) => {
             if (selectedOptions && selectedOptions.length > 0) {
               setRubricEligibilitySelectedOptions(selectedOptions);
-              clearErrors("rubric_eligibility");
+              clearErrors("rubric_eleligibilityigibility");
               setValue(
-                "rubric_eligibility",
+                "eligibility",
                 selectedOptions
                   .map((option) => option.value)
                   .join(", "),

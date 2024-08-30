@@ -50,7 +50,6 @@ export const validationSchema = yup.object({
       .string()
       .typeError("You must enter eligibility")
       .required(),
-    rubric_eligibility: yup.string().required("Required"),
     no_of_seats: yup
       .number()
       .typeError("You must enter a number")
@@ -65,4 +64,17 @@ export const validationSchema = yup.object({
       .string()
       .typeError("You must enter a funding amount")
       .required("Required"),
+      cohort_banner: yup
+      .mixed()
+      .nullable(true)
+      .test("fileSize", "File size max 10MB allowed", (value) => {
+        return !value || (value && value.size <= 10 * 1024 * 1024); // 10 MB limit
+      })
+      .test("fileType", "Only jpeg, jpg & png file format allowed", (value) => {
+        return (
+          !value ||
+          (value &&
+            ["image/jpeg", "image/jpg", "image/png"].includes(value.type))
+        );
+      }),
   });

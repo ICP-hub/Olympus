@@ -7,7 +7,7 @@ import { generateUsername } from 'unique-username-generator';
 
 const RegisterForm1 = () => {
 
-  const { register, formState: { errors }, watch, setValue } = useFormContext();
+  const { register, formState: { errors }, watch, setValue } = useFormContext({mode:'all'});
   const [suggestions, setSuggestions] = useState([]);
   const username = watch('openchat_user_name', '');
 

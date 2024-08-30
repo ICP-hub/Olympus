@@ -58,10 +58,15 @@ module.exports = {
             transform: 'rotateX(360deg)',
           },
         },
+        'spin-left-right': {
+          '0%, 100%': { transform: 'rotate(-15deg)' },
+          '50%': { transform: 'rotate(15deg)' },
+        },
       },
       animation: {
         wiggle: "wiggle 5s ease-in-out infinite",
         spin: 'spin 2s ease-in-out infinite',
+        'spin-left-right': 'spin-left-right 0.7s ease-in-out infinite',
       },
     },
     screens: {

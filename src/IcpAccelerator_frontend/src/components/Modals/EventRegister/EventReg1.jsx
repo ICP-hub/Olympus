@@ -5,17 +5,25 @@ import { formFields1 } from "./EventFormData";
 import { useFormContext, Controller } from "react-hook-form";
 import CompressedImage from "../../../component/ImageCompressed/CompressedImage";
 
-const EventReg1 = ({ formData, setFormData, imageData, setImageData, editMode }) => {
+const EventReg1 = ({ formData, setFormData, imageData, setImageData, editMode ,singleEventData}) => {
+
   const [imagePreview, setImagePreview] = useState(null);
 
   const { register, formState: { errors }, control, setValue, clearErrors, setError, trigger } = useFormContext();
 
-  useEffect(() => {
-    if (formData?.image) {
+ useEffect(() => {
+  if (formData?.image) {
+    if (editMode === true) {
+      setImagePreview(formData);
+    } else {
       setImagePreview(URL.createObjectURL(formData?.image));
-      setImageData(formData?.image);
     }
-  }, [formData]);
+    setImageData(formData?.image);
+  } else if (singleEventData?.cohort_banner) {
+    setImagePreview(singleEventData?.cohort_banner); // If in edit mode, set the banner image from singleEventData
+  }
+}, [formData, singleEventData, editMode]);
+
 
   const [inputType, setInputType] = useState("date");
 
@@ -32,7 +40,7 @@ const EventReg1 = ({ formData, setFormData, imageData, setImageData, editMode })
   };
 
   const imageCreationFunc = async (file) => {
-    const result = await trigger("image");
+    const result = await trigger("cohort_banner");
     if (result) {
       try {
         const compressedFile = await CompressedImage(file);
@@ -45,7 +53,7 @@ const EventReg1 = ({ formData, setFormData, imageData, setImageData, editMode })
         setImageData(Array.from(new Uint8Array(byteArray)));
         console.log("Event Image Buffer Array", byteArray);
       } catch (error) {
-        setError("image", {
+        setError("cohort_banner", {
           type: "manual",
           message: "Could not process image, please try another.",
         });
@@ -104,15 +112,15 @@ const EventReg1 = ({ formData, setFormData, imageData, setImageData, editMode })
           </div>
 
           <Controller
-            name="image"
+            name="cohort_banner"
             control={control}
             render={({ field }) => (
               <>
                 <input
                   type="file"
                   className="hidden"
-                  id="image"
-                  name="image"
+                  id="cohort_banner"
+                  name="cohort_banner"
                   onChange={(e) => {
                     field.onChange(e.target.files[0]);
                     imageCreationFunc(e.target.files[0]);
@@ -120,17 +128,17 @@ const EventReg1 = ({ formData, setFormData, imageData, setImageData, editMode })
                   accept=".jpg, .jpeg, .png"
                 />
                 <label
-                  htmlFor="image"
+                  htmlFor="cohort_banner"
                   className="p-2 border-2 border-blue-800 items-center sm:ml-6 rounded-md text-md bg-transparent text-blue-800 cursor-pointer font-semibold"
                 >
-                  {imagePreview && !errors.image
+                  {imagePreview && !errors.cohort_banner
                     ? "Change banner picture"
                     : "Upload banner picture"}
                 </label>
-                {imagePreview || errors.image ? (
+                {imagePreview || errors.cohort_banner ? (
                   <button
                     className="p-2 border-2 border-red-500 ml-2 items-center rounded-md text-md bg-transparent text-red-500 cursor-pointer font-semibold capitalize"
-                    onClick={() => clearImageFunc("image")}
+                    onClick={() => clearImageFunc("cohort_banner")}
                   >
                     clear
                   </button>
@@ -142,9 +150,9 @@ const EventReg1 = ({ formData, setFormData, imageData, setImageData, editMode })
           />
         </div>
 
-        {errors.image && (
+        {errors.cohort_banner && (
           <span className="mt-1 text-sm text-red-500 font-bold text-start px-4">
-            {errors?.image?.message}
+            {errors?.cohort_banner?.message}
           </span>
         )}
       </div>

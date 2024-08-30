@@ -98,17 +98,6 @@ const ProfilePage = () => {
                 Project
               </button>
             )}
-            {uniqueActiveTabs.includes("event-req") && (
-              <button
-                className={`px-4 py-2 focus:outline-none font-medium ${activeTab === "event-req"
-                    ? "border-b-2 border-blue-500 text-blue-500 font-medium"
-                    : "text-gray-400"
-                  }`}
-                onClick={() => handleChange("event-req")}
-              >
-                Cohort Request
-              </button>
-            )}
             {uniqueActiveTabs.includes("cohort") && (
               <button
                 className={`px-4 py-2 focus:outline-none font-medium ${activeTab === "cohort"
@@ -150,7 +139,7 @@ const ProfilePage = () => {
                   }`}
                 onClick={() => handleChange("association-req")}
               >
-                Association Request
+                Request
               </button>
             )}
             {uniqueActiveTabs.includes("rating") && (
@@ -200,9 +189,6 @@ const ProfilePage = () => {
           </div>
           <div className="w-full">
             {activeTab === "rating" && <RatingPage />}
-          </div>
-          <div className="w-full">
-            {activeTab === "event-req" && <EventRequestStatus/>}
           </div>
         </div>
       </div>

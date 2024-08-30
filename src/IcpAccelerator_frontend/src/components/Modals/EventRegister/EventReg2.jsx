@@ -4,18 +4,26 @@ import { formFields2 } from "./EventFormData";
 import { useCountries } from "react-countries";
 import { useFormContext } from "react-hook-form";
 
-const EventReg2 = ({ formData }) => {
+const EventReg2 = ({ formData ,singleEventData}) => {
   const { register, formState: { errors }, setValue, watch } = useFormContext();
   const { countries } = useCountries();
   const [inputType, setInputType] = useState("date");
+  const [selectCountry,setSelectCountry]=useState('')
+  const [selectArea,setSelectArea]=useState('')
 
   // Watch the value of the 'area' field
   const selectedArea = watch("area");
 
+  console.log('formData',formData)
   useEffect(() => {
-    // Set the default value for the 'area' field when the component mounts
-    setValue("area", formData.area || "");
-  }, [formData.area, setValue]);
+    if (formData) {
+      setValue("area", singleEventData?.country === "global" ? "global" : "country");
+      setSelectArea(singleEventData?.country === "global" ? "global" : singleEventData?.country)
+  setValue("country", singleEventData?.country ?? "");
+  setSelectCountry(singleEventData?.country )
+    }
+  }, [formData, singleEventData, setValue]);
+  
 
   const handleFocus = (field) => {
     if (field.onFocus) {
@@ -28,6 +36,9 @@ const EventReg2 = ({ formData }) => {
       setInputType(field.onBlur);
     }
   };
+  useEffect(() => {
+    setValue("area", formData.area || singleEventData?.area || "");
+  }, [formData.area, singleEventData?.area, setValue]);
 
   return (
     <>
@@ -92,40 +103,37 @@ const EventReg2 = ({ formData }) => {
           Select area <span className="text-red-500">*</span>
         </label>
         <select
-          name="area"
-          id="area"
-          {...register("area")}
-          className={`border border-[#CDD5DF] rounded-md shadow-sm 
-            ${errors?.area
-              ? "border-red-500 "
-              : "border-[#737373]"
-            } text-gray-900 placeholder-gray-500  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-          onFocus={() => handleFocus({ name: "area" })}
-          onBlur={() => handleBlur({ name: "area" })}
-        >
-          <option value="">Select Area</option>
-          <option value="global">Global</option>
-          <option value="country">Country</option>
-        </select>
+      name="area"
+      id="area"
+      {...register("area")}
+      onChange={(e) => setSelectArea(e.target.value)}
+      value={selectArea}
+      className={`border border-[#CDD5DF] rounded-md shadow-sm 
+        ${errors?.area
+          ? "border-red-500 "
+          : "border-[#737373]"
+        } text-gray-900 placeholder-gray-500  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+    >
+      <option value="">Select Area</option>
+      <option value="global">Global</option>
+      <option value="country">Country</option>
+    </select>
       </div>
-      {selectedArea === "country" ? (
-        <div className="relative z-0 group mb-6">
-          <label
-            htmlFor="country"
-            className="block text-sm font-medium mb-1"
-          >
-            Select Country <span className="text-red-500">*</span>
-          </label>
-          <select
-            name="country"
-            id="country"
-            {...register("country")}
-            className={`bg-gray-50 border-2 ${errors.country ? "border-red-500" : "border-[#737373]"
-              } text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-            onFocus={() => handleFocus("country")}
-            onBlur={() => handleBlur("country")}
-          >
-            <option className="text-lg font-bold" value="">
+      {selectedArea === "country" && (
+      <div className="relative z-0 group mb-6">
+        <label htmlFor="country" className="block text-sm font-medium mb-1">
+          Select Country <span className="text-red-500">*</span>
+        </label>
+        <select
+          name="country"
+          id="country"
+          {...register("country")}
+          onChange={(e) => setSelectCountry(e.target.value)}
+          value={selectCountry}
+          className={`bg-gray-50 border-2 ${errors.country ? "border-red-500" : "border-[#737373]"
+          } text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+        >
+          <option className="text-lg font-bold" value="">
               Select your country
             </option>
             {countries?.map((expert) => (
@@ -136,12 +144,11 @@ const EventReg2 = ({ formData }) => {
               >
                 {expert.name}
               </option>
-            ))}
-          </select>
-        </div>
-      ) : (
-        ""
-      )}
+          ))}
+        </select>
+      </div>
+    )}
+    
       <Toaster />
     </>
   );

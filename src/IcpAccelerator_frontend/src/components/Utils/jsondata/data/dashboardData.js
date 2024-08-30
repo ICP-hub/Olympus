@@ -193,7 +193,7 @@ export const dashboard={
       "items": 
         {
           "user": "Users",
-          "events": "Events",
+          "events": "Cohort",
           "hub": "Regional Hubs",
           "jobs": "Jobs",
           "perks": "Perks",
