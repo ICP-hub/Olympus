@@ -20,7 +20,7 @@ export function DocumentItem ({data}) {
      
 
       <div className="flex justify-center items-center">
-        {documentdata.length > 0 && (
+        {/* {documentdata.length > 0 && (
           <div className="flex justify-end">
             <button
               className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
@@ -30,7 +30,7 @@ export function DocumentItem ({data}) {
             </button>
             {isOpen && <DocumentModal setIsOpen={setIsOpen} isOpen={isOpen} />}
           </div>
-        )}
+        )} */}
         {documentdata.length === 0 ? (
           <Nodata message={message} setIsOpen={setIsOpen} isOpen={isOpen}/>
         ) : (

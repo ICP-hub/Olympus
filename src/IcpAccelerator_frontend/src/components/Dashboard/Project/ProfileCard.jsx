@@ -108,7 +108,7 @@ function ProfileCard({ cardData }) {
                 Status
               </h3>
               <div className="flex space-x-2">
-                <span className="bg-[#FFFAEB] border border-[#83e24d] text-[#B54708] px-3 py-1 rounded-md text-xs font-medium">
+                <span className="bg-[#FFFAEB] border border-[#83e24d] text-[#83e24d] px-3 py-1 rounded-md text-xs font-medium">
                   {statusText}
                 </span>
               </div>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   AccountCircle,
   Star,
@@ -22,10 +22,32 @@ import RatingCard from "../../Common/RatingCard";
 import EditRating from "../../Common/RatingReview";
 import RatingReview from "../../Common/RatingReview";
 import Avatar3 from "../../../../assets/Logo/Avatar3.png";
+import ProjectCard from "../Project/ProjectCard";
+import { useNavigate, useLocation } from "react-router-dom";
+import DashboardProjectCard from "./DashboardProjectCard";
 function DashboardHomeProfileCards(percentage) {
+  const navigate= useNavigate()
+  const location = useLocation();
   const userFullData = useSelector((currState) => currState.userData.data.Ok);
   const [show,setShow]=useState(true)
+  const [activeTab, setActiveTab] = useState("project");
 
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const tab = params.get("tab");
+    if (tab) {
+      setActiveTab(tab);
+    } else {
+      setActiveTab("project"); // default tab
+    }
+  }, [location.search]);
+
+  const handleChange = (tab) => {
+    setActiveTab(tab);
+
+    // Update the URL with the selected tab
+    navigate(`/dashboard/profile?tab=${tab}`);
+  };
   return (
     <>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6 p-6">
@@ -153,49 +175,9 @@ function DashboardHomeProfileCards(percentage) {
       <div className="bg-white rounded-lg shadow-sm p-6 mt-8">
         <div className="flex justify-between items-center m-2 p-2">
           <h2 className="text-xl font-semibold">Projects</h2>
-          <a className="text-sm font-normal">All projects</a>
+          <a className="text-sm font-normal cursor-pointer" onClick={() => handleChange("project")}>All projects</a>
         </div>
-        <div className="mb-3">
-          {/* Progress bar */}
-          <div className="bg-[#EEF2F6] rounded-t-2xl h-1.5 w-[200px] ml-[10px] -mb-[8px] dark:bg-[#EEF2F6] overflow-hidden">
-            <div className="relative h-1 bg-gray-200">
-              <div className="absolute left-0 top-0 h-full bg-green-500 w-1/3"></div>
-            </div>
-          </div>
-          <Link to="/dashboard/document">
-            <div className="flex  w-full gap-6 items-center">
-              <div className="w-[240px] h-[195px] bg-[#EEF2F6] flex justify-center items-center rounded-2xl">
-                <img
-                  src={CypherpunkLabLogo}
-                  alt="Cypherpunk Labs"
-                  className="w-20 h-20 rounded-2xl border-4 border-[#FFFFFF]"
-                />
-              </div>
-
-              <div className="ml-4 relative">
-                <div className="absolute top3 right-3">
-                  <FavoriteBorderIcon sx={{ fontSize: "medium" }} />
-                </div>
-                <h2 className="text-xl font-semibold text-gray-900">
-                  Cypherpunk Labs
-                </h2>
-                <p className="text-sm text-gray-500 mb-4">@cypherpunklabs</p>
-                <hr />
-                <p className="mt-4 text-sm text-gray-700">
-                  Bringing privacy back to users
-                </p>
-                <p className="mt-1 text-sm text-gray-500">
-                  Est malesuada ac elit gravida vel aliquam nec. Arcu
-                  pellentesque convallis quam feugiat non viverra massa
-                  fringilla.
-                </p>
-                <span className="inline-block px-2 py-1 mt-2 text-xs font-medium text-gray-800 bg-gray-100 rounded-full">
-                  Infrastructure
-                </span>
-              </div>
-            </div>
-          </Link>
-        </div>
+         <DashboardProjectCard/>
       </div>
       <div className="bg-white w-full rounded-lg shadow-sm  mt-8">
         <DashboardProfileView />

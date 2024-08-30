@@ -67,7 +67,7 @@ const AddTeamMember = ({ title, onClose, onSubmitHandler, isSubmitting }) => {
                   <input
                     type="text"
                     {...register("user_id")}
-                    className={`bg-gray-50 border-2 ${
+                    className={`bg-gray-50 border ${
                       errors.user_id
                         ? "border-red-500 placeholder:text-red-500"
                         : "border-[#737373]"

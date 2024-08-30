@@ -12,16 +12,16 @@ import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 import DeleteModel from "./DeleteModel";
 const TeamMember = ({ cardData, onDelete }) => {
   const projectTeam = cardData?.[0]?.[0]?.params?.project_team;
-  console.log("result CARD DATA", cardData?.[0]?.[0]);
 
   return (
     <>
       {projectTeam?.map((teamMember, index) => {
-        const member = teamMember?.[0]; // Adjust the index if necessary
+         if (!teamMember || !teamMember[0]) {
+          return null;
+        }
+        const member = teamMember[0];
         const result = member?.member_data;
-
-        console.log("teamMember:", teamMember);
-        console.log("result CARD DATA", result);
+        const principle = member?.member_principal;
         if (!result) return null;
 
         const name = result?.full_name ?? "Unnamed Member";
@@ -88,7 +88,7 @@ const TeamMember = ({ cardData, onDelete }) => {
                       </div>
                     </td>
                     <td class="px-6 py-4">
-                      <button className="text-gray-400 hover:text-gray-600" onClick={() => onDelete(teamMember)}>
+                      <button className="text-gray-400 hover:text-gray-600" onClick={() => onDelete(principle)}>
                         <Delete fontSize="small" />
                       </button>
                     </td>
@@ -126,25 +126,25 @@ function TeamSection({ data, cardData }) {
           if (result) {
             handleTeamMemberCloseModal();
             setIsSubmitting(false);
-            // setTimeout(() => {
-            //   window.location.reload();
-            // }, 500);
+            setTimeout(() => {
+              window.location.reload();
+            }, 500);
             toast.success("team member added successfully");
           } else {
-            // handleTeamMemberCloseModal();
-            // setIsSubmitting(false);
+            handleTeamMemberCloseModal();
+            setIsSubmitting(false);
             toast.error("something went wrong");
           }
         })
         .catch((error) => {
           console.log("error-in-update_team_member", error);
-          // handleTeamMemberCloseModal();
-          // setIsSubmitting(false);
+          handleTeamMemberCloseModal();
+          setIsSubmitting(false);
           toast.error("something went wrong");
         });
     }
   };
-console.log(" member Delete",currentMemberData)
+
   // =======================================
     // <<<<<------- member Delete ----->>>>>
 
@@ -163,10 +163,18 @@ console.log(" member Delete",currentMemberData)
     };
   
     const handleDelete = async () => {
+      let project_id = data;
+    
       if (!currentMemberData) return;
+    
       setIsSubmitting(true);
+    
       try {
-        const result = await actor.delete_team_member(currentMemberData);
+    
+        // Reconstruct the Principal object
+        const principalToPass = Principal.fromUint8Array(currentMemberData._arr);
+        const result = await actor.delete_team_member(project_id, principalToPass);
+    
         if (result) {
           toast.success("Team member deleted successfully", {
             style: {
@@ -183,12 +191,14 @@ console.log(" member Delete",currentMemberData)
           toast.error("Failed to delete the team member");
         }
       } catch (error) {
-        console.log("error-in-delete_team_member", error);
+        console.log("Error in delete_team_member:", error);
         toast.error("Something went wrong");
       } finally {
         setIsSubmitting(false);
       }
     };
+    
+    
 // useEffect(() => {
 //   if (actor && latestJobs) {
 //     fetchPostedJobs();
