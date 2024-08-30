@@ -55,6 +55,8 @@ pub async fn add_announcement(announcement_details: Announcements) -> String {
 
 #[update(guard = "combined_guard")]
 pub async fn update_announcement_by_id(announcement_id: String, new_details: Announcements) -> String {
+
+    let caller_id = caller();
     mutate_state(|state| {
         if let Some(mut caller_announcements) = state.announcement.get(&StoredPrincipal(caller())) {
             let mut updated = false;
@@ -66,6 +68,7 @@ pub async fn update_announcement_by_id(announcement_id: String, new_details: Ann
                     break;
                 }
             }
+            state.announcement.insert(StoredPrincipal(caller_id), caller_announcements); 
 
             if updated {
                 "Announcement updated successfully.".to_string()
