@@ -105,13 +105,6 @@ type IcpHubDetails = record {
   discord : opt text;
   telegram : opt text;
 };
-type InvestorInfo = record {
-  user_data : UserInformation;
-  investor_name : text;
-  investor_description : text;
-  investor_id : principal;
-  investor_image : blob;
-};
 type InviteRequest = record {
   invite_message : text;
   cohort_id : text;
@@ -154,13 +147,6 @@ type MentorFilterCriteria = record {
   country : opt text;
   area_of_expertise : opt text;
 };
-type MentorInfo = record {
-  user_data : UserInformation;
-  mentor_image : blob;
-  mentor_description : text;
-  mentor_id : principal;
-  mentor_name : text;
-};
 type MentorInternal = record {
   uid : text;
   active : bool;
@@ -196,100 +182,84 @@ type MoneyRaised = record {
 };
 type OfferToInvestor = record {
   request_status : text;
+  offer : text;
+  reciever_data : opt record { VentureCapitalist; UserInfoInternal };
   accepted_at : nat64;
   declined_at : nat64;
-  investor_name : text;
-  offer_i_have_written : text;
-  investor_id : principal;
+  receiever_principal : principal;
   offer_id : text;
   response : text;
-  time_of_request : nat64;
+  sender_data : opt record { ProjectInfoInternal; UserInfoInternal };
+  sent_at : nat64;
+  sender_principal : principal;
   self_declined_at : nat64;
-  investor_image : opt blob;
 };
 type OfferToMentor = record {
-  mentor_image : opt blob;
   request_status : text;
+  offer : text;
+  reciever_data : opt record { MentorInternal; UserInfoInternal };
   accepted_at : nat64;
   declined_at : nat64;
-  offer_i_have_written : text;
+  receiever_principal : principal;
   offer_id : text;
   response : text;
-  time_of_request : nat64;
-  mentor_id : principal;
-  mentor_name : text;
+  sender_data : opt record { ProjectInfoInternal; UserInfoInternal };
+  sent_at : nat64;
+  sender_principal : principal;
   self_declined_at : nat64;
 };
 type OfferToProject = record {
   request_status : text;
-  project_image : opt blob;
+  offer : text;
+  reciever_data : opt record { ProjectInfoInternal; UserInfoInternal };
   accepted_at : nat64;
   declined_at : nat64;
-  offer_i_have_written : text;
+  receiever_principal : principal;
   offer_id : text;
   response : text;
-  time_of_request : nat64;
-  project_id : text;
-  project_name : text;
+  sender_data : opt record { MentorInternal; UserInfoInternal };
+  sent_at : nat64;
+  sender_principal : principal;
   self_declined_at : nat64;
 };
 type OfferToProjectByInvestor = record {
   request_status : text;
-  project_image : opt blob;
+  offer : text;
+  reciever_data : opt record { ProjectInfoInternal; UserInfoInternal };
   accepted_at : nat64;
   declined_at : nat64;
-  offer_i_have_written : text;
+  receiever_principal : principal;
   offer_id : text;
   response : text;
-  time_of_request : nat64;
-  project_id : text;
-  project_name : text;
+  sender_data : opt record { VentureCapitalist; UserInfoInternal };
+  sent_at : nat64;
+  sender_principal : principal;
   self_declined_at : nat64;
 };
 type OfferToSendToInvestor = record {
   request_status : text;
   offer : text;
+  reciever_data : opt record { VentureCapitalist; UserInfoInternal };
   accepted_at : nat64;
   declined_at : nat64;
+  receiever_principal : principal;
   offer_id : text;
   response : text;
+  sender_data : opt record { ProjectInfoInternal; UserInfoInternal };
   sent_at : nat64;
-  project_info : ProjectInf;
   sender_principal : principal;
   self_declined_at : nat64;
 };
 type OfferToSendToMentor = record {
   request_status : text;
   offer : text;
+  reciever_data : opt record { MentorInternal; UserInfoInternal };
   accepted_at : nat64;
   declined_at : nat64;
+  receiever_principal : principal;
   offer_id : text;
   response : text;
-  sent_at : nat64;
-  project_info : ProjectInfoo;
-  sender_principal : principal;
-  self_declined_at : nat64;
-};
-type OfferToSendToProject = record {
-  request_status : text;
-  offer : text;
-  accepted_at : nat64;
-  declined_at : nat64;
-  offer_id : text;
-  response : text;
-  sent_at : nat64;
-  mentor_info : MentorInfo;
-  sender_principal : principal;
-  self_declined_at : nat64;
-};
-type OfferToSendToProjectByInvestor = record {
-  request_status : text;
-  offer : text;
-  accepted_at : nat64;
-  declined_at : nat64;
-  investor_info : InvestorInfo;
-  offer_id : text;
-  response : text;
+  sender_data : opt record { ProjectInfoInternal; UserInfoInternal };
   sent_at : nat64;
   sender_principal : principal;
   self_declined_at : nat64;
@@ -318,13 +288,6 @@ type PeerRatingUpdate = record {
   ratings : vec Rating;
   cohort_id : text;
   project_id : text;
-};
-type ProjectInf = record {
-  user_data : UserInformation;
-  project_description : opt text;
-  project_id : text;
-  project_logo : opt blob;
-  project_name : text;
 };
 type ProjectInfo = record {
   project_elevator_pitch : opt text;
@@ -388,13 +351,6 @@ type ProjectInfoInternal = record {
   is_active : bool;
   params : ProjectInfo;
   creation_date : nat64;
-};
-type ProjectInfoo = record {
-  user_data : UserInformation;
-  project_description : opt text;
-  project_id : text;
-  project_logo : opt blob;
-  project_name : text;
 };
 type ProjectNotification = record {
   notification_type : ProjectNotificationType;
@@ -681,56 +637,56 @@ service : {
       vec OfferToProject,
     ) query;
   get_all_offers_which_are_pending_for_project_from_investor : (text) -> (
-      vec OfferToSendToProjectByInvestor,
+      vec OfferToProjectByInvestor,
     ) query;
   get_all_offers_which_are_pending_for_project_from_mentor : (text) -> (
-      vec OfferToSendToProject,
+      vec OfferToProject,
     ) query;
   get_all_pending_docs_access_requests : () -> (vec ProjectNotification) query;
-  get_all_project_notification : (text) -> (vec OfferToSendToProject) query;
+  get_all_project_notification : (text) -> (vec OfferToProject) query;
   get_all_project_notification_sent_by_investor : (text) -> (
-      vec OfferToSendToProjectByInvestor,
+      vec OfferToProjectByInvestor,
     ) query;
   get_all_requests_which_got_accepted_by_project_of_investor : (text) -> (
-      vec OfferToSendToProjectByInvestor,
+      vec OfferToProjectByInvestor,
     ) query;
   get_all_requests_which_got_accepted_for_investor : (principal) -> (
-      vec OfferToProject,
+      vec OfferToProjectByInvestor,
     ) query;
   get_all_requests_which_got_accepted_for_mentor_via_mentor : (principal) -> (
       vec OfferToProject,
     ) query;
   get_all_requests_which_got_accepted_for_project_from_mentor : (text) -> (
-      vec OfferToSendToProject,
+      vec OfferToProject,
     ) query;
   get_all_requests_which_got_declined_by_project_of_investor : (text) -> (
-      vec OfferToSendToProjectByInvestor,
+      vec OfferToProjectByInvestor,
     ) query;
   get_all_requests_which_got_declined_for_investor : (principal) -> (
-      vec OfferToProject,
+      vec OfferToProjectByInvestor,
     ) query;
   get_all_requests_which_got_declined_for_mentor_via_mentor : (principal) -> (
       vec OfferToProject,
     ) query;
   get_all_requests_which_got_declined_for_project_from_mentor : (text) -> (
-      vec OfferToSendToProject,
+      vec OfferToProject,
     ) query;
   get_all_requests_which_got_self_declined_by_investor : (text) -> (
-      vec OfferToSendToProjectByInvestor,
+      vec OfferToProjectByInvestor,
     ) query;
   get_all_requests_which_got_self_declined_by_project : () -> (
-      vec OfferToProject,
+      vec OfferToProjectByInvestor,
     ) query;
   get_all_requests_which_got_self_declined_for_mentor_via_mentor : () -> (
       vec OfferToProject,
     ) query;
   get_all_requests_which_got_self_declined_for_project : (text) -> (
-      vec OfferToSendToProject,
+      vec OfferToProject,
     ) query;
   get_all_sent_request : () -> (vec OfferToMentor) query;
   get_all_sent_request_for_mentor : () -> (vec OfferToProject) query;
   get_all_sent_request_from_investor_to_project : () -> (
-      vec OfferToProject,
+      vec OfferToProjectByInvestor,
     ) query;
   get_announcements : (nat64, nat64) -> (
       vec record { principal; vec AnnouncementsInternal },
@@ -743,7 +699,7 @@ service : {
     ) query;
   get_approved_money_requests : (text) -> (vec ProjectNotification) query;
   get_approved_request_from_mentor_to_project_via_project : (principal) -> (
-      vec OfferToSendToMentor,
+      vec OfferToMentor,
     ) query;
   get_approved_request_from_project_to_mentor_via_project : (principal) -> (
       vec OfferToMentor,
@@ -757,10 +713,10 @@ service : {
   get_data_checking : () -> (text) query;
   get_declined_money_requests : (text) -> (vec ProjectNotification) query;
   get_declined_request_for_investor : (principal) -> (
-      vec OfferToSendToMentor,
+      vec OfferToInvestor,
     ) query;
   get_declined_request_from_mentor_to_project_via_project : (principal) -> (
-      vec OfferToSendToMentor,
+      vec OfferToMentor,
     ) query;
   get_declined_request_from_project_to_mentor_via_project : (principal) -> (
       vec OfferToMentor,
@@ -813,13 +769,13 @@ service : {
       vec OfferToInvestor,
     ) query;
   get_pending_request_for_investor_sent_by_project : (principal) -> (
-      vec OfferToSendToMentor,
+      vec OfferToInvestor,
     ) query;
   get_pending_request_from_mentor_to_project_via_project : (principal) -> (
       vec OfferToMentor,
     ) query;
   get_pending_request_from_project_to_mentor_via_project : (principal) -> (
-      vec OfferToSendToMentor,
+      vec OfferToMentor,
     ) query;
   get_project_details_for_mentor_and_investor : (text) -> (
       ProjectPublicInfoInternal,
@@ -849,10 +805,8 @@ service : {
   get_review : (principal) -> (Result_11) query;
   get_role_status : () -> (vec Role) query;
   get_roles_for_principal : (principal) -> (vec Role) query;
-  get_self_declined_requests_for_investor : () -> (
-      vec OfferToSendToMentor,
-    ) query;
-  get_self_declined_requests_for_mentor : () -> (vec OfferToSendToMentor) query;
+  get_self_declined_requests_for_investor : () -> (vec OfferToInvestor) query;
+  get_self_declined_requests_for_mentor : () -> (vec OfferToMentor) query;
   get_self_declined_requests_for_project : () -> (vec OfferToMentor) query;
   get_self_declined_requests_of_project : (text) -> (vec OfferToInvestor) query;
   get_stored_average_rating : (text, text) -> (Result_3) query;
@@ -861,7 +815,7 @@ service : {
   get_user_info_using_principal : (principal) -> (opt UserInfoInternal) query;
   get_user_information : () -> (Result_13) query;
   get_user_information_using_uid : (text) -> (Result_13) query;
-  get_vc_info : () -> (
+  get_vc_info : (principal) -> (
       opt record { VentureCapitalist; UserInfoInternal },
     ) query;
   get_vc_info_using_principal : (principal) -> (

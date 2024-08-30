@@ -4,37 +4,17 @@ use ic_cdk::{api::time, caller};
 use ic_cdk::{query, update};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
-use crate::{state_handler::*, UserInformation};
+use crate::mentor_module::get_mentor::get_mentor_info_using_principal;
+use crate::project_module::get_project::get_project_info_using_principal;
+use crate::project_module::post_project::find_project_owner_principal;
+use crate::{state_handler::*, MentorInternal, ProjectInfoInternal, UserInfoInternal};
 use crate::guard::*;
 
 #[derive(Clone, CandidType, Deserialize, Serialize, Debug)]
 pub struct OfferToProject {
-    offer_id: String, // Added field
-    project_id: String,
-    project_image: Option<Vec<u8>>,
-    project_name: String,
-    offer_i_have_written: String,
-    time_of_request: u64,
-    accepted_at: u64,
-    declined_at: u64,
-    self_declined_at: u64,
-    request_status: String,
-    response: String,
-}
-
-#[derive(Clone, CandidType, Deserialize, Serialize, Debug)]
-pub struct MentorInfo {
-    mentor_id: Principal,
-    mentor_name: String,
-    mentor_description: String,
-    mentor_image: Vec<u8>,
-    user_data: UserInformation,
-}
-
-#[derive(Clone, CandidType, Deserialize, Serialize, Debug)]
-pub struct OfferToSendToProject {
-    offer_id: String, // Added field
-    mentor_info: MentorInfo,
+    offer_id: String, 
+    reciever_data: Option<(ProjectInfoInternal, UserInfoInternal)>,
+    sender_data: Option<(MentorInternal, UserInfoInternal)> ,
     offer: String,
     sent_at: u64,
     accepted_at: u64,
@@ -42,6 +22,23 @@ pub struct OfferToSendToProject {
     self_declined_at: u64,
     request_status: String,
     sender_principal: Principal,
+    receiever_principal: Principal,
+    response: String,
+}
+
+#[derive(Clone, CandidType, Deserialize, Serialize, Debug)]
+pub struct OfferToSendToProject {
+    offer_id: String, 
+    reciever_data: Option<(ProjectInfoInternal, UserInfoInternal)>,
+    sender_data: Option<(MentorInternal, UserInfoInternal)> ,
+    offer: String,
+    sent_at: u64,
+    accepted_at: u64,
+    declined_at: u64,
+    self_declined_at: u64,
+    request_status: String,
+    sender_principal: Principal,
+    receiever_principal: Principal,
     response: String,
 }
 
@@ -96,9 +93,6 @@ pub async fn send_offer_to_project_by_mentor(
     mentor_id: Principal,
 ) -> String {
     ic_cdk::println!("MENTIR PRINCIPAL {}", mentor_id.to_string());
-    let mentor = crate::mentor_module::get_mentor::get_mentor_info_using_principal(mentor_id).expect("mentor doesn't exist");
-
-    let project = crate::project_module::get_project::get_project_using_id(project_id.clone()).expect("project not found");
 
     let uids = raw_rand().await.unwrap().0;
     let uid = format!("{:x}", Sha256::digest(&uids));
@@ -119,50 +113,42 @@ pub async fn send_offer_to_project_by_mentor(
         return "An offer already exists. No more offers can be sent.".to_string();
     }
 
+    let project_principal = find_project_owner_principal(&project_id)
+    .expect("Project principal must exist for the given project_id");
+
+    let project_info = get_project_info_using_principal(project_principal);
+    let mentor_data = get_mentor_info_using_principal(mentor_id);
+
     let offer_to_project = OfferToProject {
         offer_id: offer_id.clone(),
-        project_id: project_id.clone(),
-        project_image: project.params.project_logo,
-        project_name: project.params.project_name,
-        offer_i_have_written: msg.clone(),
-        time_of_request: time(),
-        accepted_at: 0,
-        declined_at: 0,
-        self_declined_at: 0,
-        request_status: "pending".to_string(),
-        response: "".to_string(),
-    };
-
-    store_request_sent_by_mentor(offer_to_project, mentor_id);
-
-    //let project_info = find_project_by_id(&project_id).expect("project does not exist");
-    let mut cached_user_data = None;
-    let user_data = crate::user_modules::get_user::get_user_info_with_cache(mentor_id, &mut cached_user_data);
-
-    let mentor_image = user_data
-        .profile_picture
-        .clone()
-        .unwrap_or_else(|| Vec::new());
-
-    let mentor_info = MentorInfo {
-        mentor_id: mentor_id,
-        mentor_name: user_data.full_name.clone(),
-        mentor_description: mentor.0.profile.category_of_mentoring_service,
-        mentor_image,
-        user_data,
-    };
-
-    let offer_to_send_to_project = OfferToSendToProject {
-        offer_id: offer_id.clone(),
-        mentor_info: mentor_info,
         offer: msg.clone(),
         sent_at: time(),
         accepted_at: 0,
         declined_at: 0,
         self_declined_at: 0,
         request_status: "pending".to_string(),
-        sender_principal: caller(),
         response: "".to_string(),
+        sender_data: mentor_data.clone(),
+        reciever_data: project_info.clone(),
+        sender_principal: mentor_id,
+        receiever_principal: project_principal,
+    };
+
+    store_request_sent_by_mentor(offer_to_project, mentor_id);
+
+    let offer_to_send_to_project = OfferToSendToProject {
+        offer_id: offer_id.clone(),
+        offer: msg.clone(),
+        sent_at: time(),
+        accepted_at: 0,
+        declined_at: 0,
+        self_declined_at: 0,
+        request_status: "pending".to_string(),
+        response: "".to_string(),
+        sender_data: mentor_data,
+        reciever_data: project_info,
+        sender_principal: mentor_id,
+        receiever_principal: project_principal,
     };
 
     notify_project_with_offer(project_id.clone(), offer_to_send_to_project);
