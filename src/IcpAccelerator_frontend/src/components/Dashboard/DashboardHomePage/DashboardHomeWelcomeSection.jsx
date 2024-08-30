@@ -9,6 +9,7 @@ import { dashboard } from "../../Utils/jsondata/data/dashboardData";
 import { useSelector,useDispatch } from 'react-redux';
 import Modal1 from '../../Modals/ProjectModal/Modal1';
 import { useNavigate } from 'react-router-dom';
+import { Principal } from "@dfinity/principal";
 import { getCurrentRoleStatusFailureHandler, setCurrentActiveRole, setCurrentRoleStatus } from '../../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer';
 
 const styles = {
@@ -59,31 +60,60 @@ function DashboardHomeWelcomeSection({ userName, profileCompletion }) {
     (currState) => currState.currentRoleStatus.activeRole
   );
   const dispatch = useDispatch();
+  const [completionPercentage, setCompletionPercentage] = useState(null);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const convertedPrincipal = await Principal.fromText(principal);
+      console.log("convertedPrincipal", convertedPrincipal);
+      try {
+        const data = await actor.get_user_info_using_principal(
+          convertedPrincipal
+        );
+        console.log("Received data in user update:", data);
+        if (data.length > 0) {
+          setCompletionPercentage(data[0].profile_completion);
+        }
+        setResult(data); 
+      } catch (error) {
+        console.error("Error fetching project data:", error);
+      }
+    };
+
+    if (actor) {
+      fetchUserData();
+    }
+  }, [actor]);
+
 console.log("USERFULLDATA", userFullData);
   const isAuthenticated = useSelector((curr) => curr.internet.isAuthenticated);
   const actionCards = [
     {
-      title: 'Complete profile',
-      description: 'Commodo ut non aliquam nunc nulla velit et vulputate turpis. Erat rhoncus tristique ullamcorper sit.',
-      progress: profileCompletion,
-      action: 'Complete profile',
+      title: "Complete profile",
+      description:
+        "Commodo ut non aliquam nunc nulla velit et vulputate turpis. Erat rhoncus tristique ullamcorper sit.",
+      progress: completionPercentage,
+      action: "Complete profile",
     },
     {
-      title: 'Explore platform',
-      description: 'Commodo ut non aliquam nunc nulla velit et vulputate turpis. Erat rhoncus tristique ullamcorper sit.',
-      action: 'Discover',
+      title: "Explore platform",
+      description:
+        "Commodo ut non aliquam nunc nulla velit et vulputate turpis. Erat rhoncus tristique ullamcorper sit.",
+      action: "Discover",
       dismissable: true,
     },
     {
-      title: 'Verify identity',
-      description: 'Commodo ut non aliquam nunc nulla velit et vulputate turpis. Erat rhoncus tristique ullamcorper sit.',
-      action: 'Take KYC',
+      title: "Verify identity",
+      description:
+        "Commodo ut non aliquam nunc nulla velit et vulputate turpis. Erat rhoncus tristique ullamcorper sit.",
+      action: "Take KYC",
       icon: KYCfileIcon,
     },
     {
-      title: 'Create new role',
-      description: 'Commodo ut non aliquam nunc nulla velit et vulputate turpis. Erat rhoncus tristique ullamcorper sit.',
-      action: 'Create role',
+      title: "Create new role",
+      description:
+        "Commodo ut non aliquam nunc nulla velit et vulputate turpis. Erat rhoncus tristique ullamcorper sit.",
+      action: "Create role",
       dismissable: true,
       imageGroup: true, // Adding a flag to indicate that this card should have the image group
     },
@@ -177,52 +207,89 @@ const handleButtonClick = (action) => {
   return (
     <>
       <div className="bg-white rounded-lg p-6 mb-6 pt-1">
-        <h1 className="text-3xl font-bold mb-6 mt-6">{dashboardwelcomesection.welcome}, {userFullData?.full_name}!</h1>
+        <h1 className="text-3xl font-bold mb-6 mt-6">
+          {dashboardwelcomesection.welcome}, {userFullData?.full_name}!
+        </h1>
         <div className="overflow-x-auto">
           <div className="flex gap-6 my-1">
             {actionCards.map((card, index) => (
               <div
                 key={index}
-                className="bg-[#F8FAFC] rounded-lg p-4 relative flex flex-col  md:w-[330px] w-[280px] h-[226px] flex-shrink-0 shadow-lg">
+                className="bg-[#F8FAFC] rounded-lg p-4 relative flex flex-col  md:w-[330px] w-[280px] h-[226px] flex-shrink-0 shadow-lg"
+              >
                 <div className="flex justify-between items-start mb-4">
                   <div className="flex-grow pr-4">
-                    <h3 className="text-md text-[#121926] font-semibold mb-2">{card.title}</h3>
-                    <p className="text-sm text-[#4B5565] line-clamp-3 hover:line-clamp-6  ">{card.description}</p>
+                    <h3 className="text-md text-[#121926] font-semibold mb-2">
+                      {card.title}
+                    </h3>
+                    <p className="text-sm text-[#4B5565] line-clamp-3 hover:line-clamp-6  ">
+                      {card.description}
+                    </p>
                   </div>
                   <div className="flex-shrink-0">
                     {card.progress && (
                       <div className="w-20 h-16">
                         <svg viewBox="0 0 36 36" style={styles.circularChart}>
-                          <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" style={styles.circleBg} />
-                          <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                          <path
+                            d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                            style={styles.circleBg}
+                          />
+                          <path
+                            d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                             style={{
                               ...styles.circle,
                               stroke: "#4CAF50",
                               strokeDasharray: `${card.progress}, 100`,
-                            }} />
-                          <text x="18" y="20.35" className=" font-bold" style={styles.percentage}>
+                            }}
+                          />
+                          <text
+                            x="18"
+                            y="20.35"
+                            className=" font-bold"
+                            style={styles.percentage}
+                          >
                             {card.progress}%
                           </text>
                         </svg>
                       </div>
                     )}
                     {card.icon && (
-                      <img src={card.icon} alt="KYC Icon" className="w-14 h-14 object-contain" />
+                      <img
+                        src={card.icon}
+                        alt="KYC Icon"
+                        className="w-14 h-14 object-contain"
+                      />
                     )}
                     {card.imageGroup && (
-                      <div className='w-14 pt-2'>
+                      <div className="w-14 pt-2">
                         <div className="relative  mx-auto w-[30px] h-[30px]  ">
                           <div className="absolute top-0 left-0 transform translate-x-1/4 -translate-y-1/4 ">
-                            <img src={mentor} alt="Image 1" className="rounded-full  " />
+                            <img
+                              src={mentor}
+                              alt="Image 1"
+                              className="rounded-full  "
+                            />
                           </div>
                           <div className="absolute top-0 right-0 transform -translate-x-1/4 -translate-y-1/4">
-                            <img src={founder} alt="Image 2" className="rounded-full " />
+                            <img
+                              src={founder}
+                              alt="Image 2"
+                              className="rounded-full "
+                            />
                           </div>
                           <div className="absolute bottom-0 left-0 transform translate-x-1/4 translate-y-1/4 ">
-                            <img src={founder} alt="Image 3" className="rounded-full " />
+                            <img
+                              src={founder}
+                              alt="Image 3"
+                              className="rounded-full "
+                            />
                           </div>
                           <div className="bottom-0 right-0 transform -translate-x-1/4 translate-y-1/4">
-                            <img src={talent} alt="Image 4" className="rounded-full " />
+                            <img
+                              src={talent}
+                              alt="Image 4"
+                              className="rounded-full "
+                            />
                           </div>
                         </div>
                       </div>
@@ -230,7 +297,10 @@ const handleButtonClick = (action) => {
                   </div>
                 </div>
                 <div className="mt-auto pt-4 flex items-center space-x-2">
-                  <button className="bg-white border-2 border-[#CDD5DF] text-[#364152] px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors" onClick={() => handleButtonClick(card.action)}>
+                  <button
+                    className="bg-white border-2 border-[#CDD5DF] text-[#364152] px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors"
+                    onClick={() => handleButtonClick(card.action)}
+                  >
                     {card.action}
                   </button>
                   {card.dismissable && (
@@ -244,8 +314,13 @@ const handleButtonClick = (action) => {
           </div>
         </div>
       </div>
-      <DashboardHomeProfileCards />
-      {roleModalOpen && <Modal1 isOpen={roleModalOpen} onClose={() => setRoleModalOpen(false)} />}
+      <DashboardHomeProfileCards percentage={completionPercentage} />
+      {roleModalOpen && (
+        <Modal1
+          isOpen={roleModalOpen}
+          onClose={() => setRoleModalOpen(false)}
+        />
+      )}
     </>
   );
 }
