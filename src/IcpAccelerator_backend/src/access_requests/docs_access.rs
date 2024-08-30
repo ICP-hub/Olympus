@@ -10,7 +10,7 @@ use ic_cdk_macros::*;
 use ic_cdk::api::caller;
 
 #[update(guard = "combined_guard")]
-pub async fn update_project_private_docs(project_id: String, new_docs: Vec<Docs>, status: bool) -> Result<String, String> {
+pub async fn update_project_private_docs(project_id: String, new_docs: Docs, status: bool) -> Result<String, String> {
     let caller = ic_cdk::caller();
 
     // Check if the caller is the owner of the project
@@ -28,21 +28,31 @@ pub async fn update_project_private_docs(project_id: String, new_docs: Vec<Docs>
     }
 
     let update_result = mutate_state(|state| {
-        if let Some(mut project_list) = state.project_storage.get(&StoredPrincipal(caller)) {
-            if let Some(project) = project_list.0.iter_mut().find(|p| p.uid == project_id) {
-                if status == true {
-                    project.params.upload_private_documents = Some(true);
-                    project.params.private_docs = Some(new_docs.clone());
-                }else{
-                    project.params.public_docs = Some(new_docs.clone());
-                }
+    let mut project_list = state.project_storage.get(&StoredPrincipal(caller))
+        .map(|candid_data| {
+            candid_data.0.to_vec() 
+        })
+        .unwrap_or_else(Vec::new);
 
-                state.project_storage.insert(StoredPrincipal(caller), project_list.clone());
-                return Ok("Project docs updated successfully".to_string());
+    let _found = project_list.iter_mut().any(|project| {
+        if project.uid == project_id {
+            if status {
+                project.params.upload_private_documents = Some(true);
+                let docs = project.params.private_docs.get_or_insert_with(Vec::new);
+                docs.push(new_docs.clone());
+            } else {
+                let docs = project.params.public_docs.get_or_insert_with(Vec::new);
+                docs.push(new_docs.clone());
             }
+            return true;
         }
-        Err("No existing Project profile found to update.".to_string())
+        false
     });
+    state.project_storage.insert(StoredPrincipal(caller), Candid(project_list)); 
+    Ok("Project docs updated successfully".to_string())
+});
+
+
 
     update_result
 }

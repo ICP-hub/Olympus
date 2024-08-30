@@ -919,7 +919,7 @@ service : {
   update_money_raised_data : (text, MoneyRaised) -> (Result);
   update_peer_rating_api : (PeerRatingUpdate) -> (text);
   update_project : (text, ProjectInfo) -> (text);
-  update_project_private_docs : (text, vec Docs, bool) -> (Result);
+  update_project_private_docs : (text, Docs, bool) -> (Result);
   update_rating : (RatingUpdate) -> (text);
   update_team_member : (text, principal) -> (text);
   update_user_data : (principal, UserInformation) -> (Result_15);
