@@ -6,7 +6,7 @@ use crate::types::pagination_types::*;
 use ic_cdk::api::caller;
 use candid::Principal;
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 pub fn get_roles_for_principal(principal_id: Principal) -> Vec<Role> {
     read_state(|state| {
         if let Some(roles_candid) = state.role_status.get(&StoredPrincipal(principal_id)) {
@@ -50,7 +50,7 @@ pub fn get_roles_for_principal(principal_id: Principal) -> Vec<Role> {
     })
 }
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 pub fn get_role_status() -> Vec<Role> {
     read_state(|state| {
         if let Some(Candid(role_status)) = state.role_status.get(&StoredPrincipal(caller())) {
@@ -94,7 +94,7 @@ pub fn get_role_status() -> Vec<Role> {
     })
 }
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 pub fn get_approved_role_count_for_principal(principal_id: Principal) -> usize {
     get_roles_for_principal(principal_id)
         .into_iter()
@@ -105,7 +105,7 @@ pub fn get_approved_role_count_for_principal(principal_id: Principal) -> usize {
 }
 
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 pub fn get_user_information() -> Result<UserInformation, &'static str> {
     let caller = StoredPrincipal(caller());
 
@@ -118,7 +118,7 @@ pub fn get_user_information() -> Result<UserInformation, &'static str> {
     })
 }
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 pub fn get_member_id() -> String {
     let caller = StoredPrincipal(caller());
 
@@ -131,7 +131,7 @@ pub fn get_member_id() -> String {
     })
 }
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 pub async fn get_user_information_using_uid(uid: String) -> Result<UserInformation, &'static str> {
     let mut user_info = None;
 
@@ -161,7 +161,7 @@ pub fn get_user_info_for_testimonial() -> Option<UserInformation> {
     })
 }
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 pub fn get_user_info_struct() -> Option<UserInformation> {
     let caller = StoredPrincipal(caller());
 
@@ -173,7 +173,7 @@ pub fn get_user_info_struct() -> Option<UserInformation> {
     })
 }
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 pub fn get_user_info_using_principal(caller: Principal) -> Option<UserInfoInternal> {
     read_state(|state| {
         state
@@ -195,7 +195,7 @@ pub fn get_user_information_internal(caller: Principal) -> UserInformation {
     })
 }
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 pub fn list_all_users(pagination: PaginationUser) -> Vec<UserInformation> {
     read_state(|state| {
         let user_storage = &state.user_storage;
@@ -216,7 +216,7 @@ pub fn list_all_users(pagination: PaginationUser) -> Vec<UserInformation> {
     })
 }
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 fn get_testimonials(principal_id: Principal) -> Result<Vec<Testimonial>, &'static str> {
     read_state(|state| {
         state
@@ -228,7 +228,7 @@ fn get_testimonials(principal_id: Principal) -> Result<Vec<Testimonial>, &'stati
 }
 
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 fn get_latest_testimonials() -> Vec<Testimonial> {
     read_state(|state| {
         let mut testimonials = Vec::new();
@@ -240,7 +240,7 @@ fn get_latest_testimonials() -> Vec<Testimonial> {
     })
 }
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 fn get_review(principal_id: Principal) -> Result<Vec<Review>, &'static str> {
     let principal_id_stored = StoredPrincipal(principal_id);
     read_state(|state| {

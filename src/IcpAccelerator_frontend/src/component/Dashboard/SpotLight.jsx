@@ -10,7 +10,6 @@ import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
 import NoDataCard from "../Mentors/Event/NoDataCard";
 import toast, { Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import ment from "../../../assets/images/ment.jpg";
 import girl from "../../../assets/images/girl.jpeg";
 import NoData from "../../../assets/images/file_not_found.png";
 import SpotlightSkeleton from "./Skeleton/Spotlightskeleton";
@@ -147,7 +146,7 @@ const SpotLight = ({ numSkeletons }) => {
                   ? uint8ArrayToBase64(
                       data?.project_details?.params?.project_logo[0]
                     )
-                  : ment;
+                  : '';
                 let userImage = data?.project_details?.params?.user_data
                   ?.profile_picture[0]
                   ? uint8ArrayToBase64(

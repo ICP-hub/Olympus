@@ -1,8 +1,4 @@
 import React from "react";
-// import MeWallet from "../../../../assets/WalletLogo/MeWallet.png";
-import BitfinityWallet from "../../../../assets/WalletLogo/BitfinityWallet.png";
-import IcpWallet from "../../../../assets/WalletLogo/IcpWallet.png";
-import PlugWallet from "../../../../assets/WalletLogo/PlugWallet.png";
 
 export const logoSvg = (
   <svg

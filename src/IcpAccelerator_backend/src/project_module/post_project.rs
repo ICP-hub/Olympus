@@ -13,8 +13,13 @@ use ic_cdk_macros::update;
 use serde_bytes::ByteBuf;
 use sha2::{Digest, Sha256};
 
-#[update(guard = "is_user_anonymous")]
+fn record_measurement(measurement: u64) {
+    ic_cdk::println!("Instructions used: {}", measurement);
+}
+
+#[update(guard = "combined_guard")]
 pub async fn register_project(info: ProjectInfo) -> String {
+    let initial_cycles = ic_cdk::api::canister_balance();
     if info.private_docs.is_some() && info.upload_private_documents != Some(true) {
         return "Cannot set private documents unless upload private docs has been set to true"
             .to_string();
@@ -69,13 +74,15 @@ pub async fn register_project(info: ProjectInfo) -> String {
             let _canister_id = crate::asset_manager::get_asset_canister();
             let info_with_default = change_project_images(caller, info.clone()).await;
 
-            let new_project = ProjectInfoInternal {
+            let mut new_project = ProjectInfoInternal {
                 params: info_with_default,
                 uid: new_id,
                 is_active: true,
                 is_verified: false,
                 creation_date: time(),
+                profile_completion: 0,
             };
+            new_project.update_completion_percentage();
 
             mutate_state(|state| {
                 state
@@ -97,11 +104,17 @@ pub async fn register_project(info: ProjectInfo) -> String {
                     role_status.insert(StoredPrincipal(caller), Candid(role_status_vec));
                 }
             });
+            let final_cycles = ic_cdk::api::canister_balance();
+    
+            let cycles_consumed = initial_cycles - final_cycles;
+            
+            record_measurement(cycles_consumed);
 
             format!("Project created Succesfully with UID {}", new_project.uid)
         }
         Err(e) => format!("Validation error: {}", e),
     }
+    
 }
 
 pub async fn change_project_images(
@@ -216,7 +229,7 @@ pub async fn change_project_images(
     updated_project
 }
 
-#[update(guard = "is_user_anonymous")]
+#[update(guard = "combined_guard")]
 pub async fn update_project(project_id: String, mut updated_project: ProjectInfo) -> String {
     let caller = ic_cdk::caller();
 
@@ -276,7 +289,7 @@ pub async fn update_project(project_id: String, mut updated_project: ProjectInfo
     }
 }
 
-#[update(guard = "is_user_anonymous")]
+#[update(guard = "combined_guard")]
 pub fn delete_project(id: String) -> std::string::String {
     let caller = ic_cdk::caller();
 
@@ -312,7 +325,7 @@ pub fn find_project_owner_principal(project_id: &str) -> Option<Principal> {
     })
 }
 
-#[update(guard = "is_user_anonymous")]
+#[update(guard = "combined_guard")]
 pub async fn update_team_member(project_id: String, member_principal_id: Principal) -> String {
     let member_uid = read_state(|state| {
         match state
@@ -352,6 +365,7 @@ pub async fn update_team_member(project_id: String, member_principal_id: Princip
                                     let new_team_member = TeamMember {
                                         member_uid: member_uid.clone(),
                                         member_data: user_info.clone(),
+                                        member_principal: member_principal_id
                                     };
                                     team.push(new_team_member);
                                     member_added_or_updated = true;
@@ -360,6 +374,7 @@ pub async fn update_team_member(project_id: String, member_principal_id: Princip
                                 let new_team_member = TeamMember {
                                     member_uid: member_uid.clone(),
                                     member_data: user_info.clone(),
+                                    member_principal: member_principal_id
                                 };
                                 project_internal.params.project_team = Some(vec![new_team_member]);
                                 member_added_or_updated = true;
@@ -386,7 +401,7 @@ pub async fn update_team_member(project_id: String, member_principal_id: Princip
     }
 }
 
-#[update(guard="is_user_anonymous")]
+#[update(guard="combined_guard")]
 pub async fn delete_team_member(project_id: String, member_principal_id: Principal) -> String {
     let member_uid = read_state(|state| {
         match state
@@ -453,7 +468,7 @@ pub async fn delete_team_member(project_id: String, member_principal_id: Princip
     }
 }
 
-#[update(guard = "is_user_anonymous")]
+#[update(guard = "combined_guard")]
 pub fn add_project_rating(ratings: ProjectRatingStruct) -> Result<String, String> {
     let principal = caller(); // Assuming `caller()` correctly retrieves the principal of the caller
 

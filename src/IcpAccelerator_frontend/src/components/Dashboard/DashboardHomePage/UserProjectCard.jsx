@@ -9,6 +9,7 @@ const UserProjectCard = (projectData) => {
         setOpenDetail(true)
     }
     const projectDetails= projectData?.projectData?.[0]?.[0]?.params
+    const projectId=projectData?.projectData?.[0]?.[0]?.uid
     const userDetails= projectData?.projectData?.[0]?.[1]?.params
 
     console.log("Project Data in CHILD COMPONENT at 0 ", projectData?.projectData?.[0]?.[0]?.params)
@@ -43,7 +44,7 @@ const UserProjectCard = (projectData) => {
                     </p>
                 </div>
             </div>
-            {openDetail && <DiscoverMentorPage openDetail={openDetail} setOpenDetail={setOpenDetail} projectDetails={projectDetails} />}
+            {openDetail && <DiscoverMentorPage openDetail={openDetail} setOpenDetail={setOpenDetail} projectDetails={projectDetails} projectId={projectId} />}
             <div className="flex pl-3 space-x-2 mt-4">
                 <span className=" text-gray-700 text-xs font-medium px-2.5 py-0.5 border rounded-xl">MVP</span>
                 <span className=" text-gray-700 text-xs font-medium px-2.5 py-0.5 border rounded-xl">Infrastructure</span>

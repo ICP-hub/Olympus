@@ -12,7 +12,7 @@ use crate::UserInformation;
 use candid::Principal;
 use ic_cdk_macros::*;
 
-#[update(guard = "is_user_anonymous")]
+#[update(guard = "combined_guard")]
 pub fn apply_for_a_cohort_as_a_mentor(cohort_id: String) -> String {
     let caller = ic_cdk::api::caller();
 
@@ -112,7 +112,7 @@ pub fn send_enrollment_request_as_mentor(cohort_id: String, user_info: MentorInt
     "Enrollment request sent successfully".to_string()
 }
 
-#[update(guard = "is_user_anonymous")]
+#[update(guard = "combined_guard")]
 pub fn apply_for_a_cohort_as_a_investor(cohort_id: String) -> String {
     let caller = ic_cdk::api::caller();
 
@@ -225,7 +225,7 @@ pub fn send_enrollment_request_as_investor(
     "Enrollment request sent successfully".to_string()
 }
 
-#[update(guard = "is_user_anonymous")]
+#[update(guard = "combined_guard")]
 pub fn apply_for_a_cohort_as_a_project(cohort_id: String) -> String {
     let caller = ic_cdk::api::caller();
 
@@ -335,7 +335,7 @@ pub fn send_enrollment_request_as_project(
     "Enrollment request sent successfully".to_string()
 }
 
-#[update(guard = "is_user_anonymous")]
+#[update(guard = "combined_guard")]
 pub fn approve_enrollment_request(cohort_id: String, enroller_principal: Principal) -> String {
     let caller = ic_cdk::api::caller();
     let mut enroller_data_to_update = None;
@@ -441,7 +441,7 @@ pub fn approve_enrollment_request(cohort_id: String, enroller_principal: Princip
 
 
 
-#[update(guard = "is_user_anonymous")]
+#[update(guard = "combined_guard")]
 pub fn reject_enrollment_request(
     cohort_creator_principal: Principal,
     enroller_principal: Principal,
@@ -729,9 +729,8 @@ pub fn remove_mentor_from_cohort(
 }
 
 
-#[query(guard = "is_user_anonymous")]
-pub fn get_my_pending_enrollment_requests() -> Vec<CohortEnrollmentRequest> {
-    let caller = ic_cdk::api::caller();
+#[query(guard = "combined_guard")]
+pub fn get_my_pending_enrollment_requests(caller: Principal) -> Vec<CohortEnrollmentRequest> {
 
     read_state(|state| {
         let mut pending_requests = Vec::new();
@@ -746,9 +745,8 @@ pub fn get_my_pending_enrollment_requests() -> Vec<CohortEnrollmentRequest> {
     })
 }
 
-#[query(guard = "is_user_anonymous")]
-pub fn get_my_approved_enrollment_requests() -> Vec<CohortEnrollmentRequest> {
-    let caller = ic_cdk::api::caller();
+#[query(guard = "combined_guard")]
+pub fn get_my_approved_enrollment_requests(caller: Principal) -> Vec<CohortEnrollmentRequest> {
 
     read_state(|state| {
         let mut pending_requests = Vec::new();
@@ -763,10 +761,8 @@ pub fn get_my_approved_enrollment_requests() -> Vec<CohortEnrollmentRequest> {
     })
 }
 
-#[query(guard = "is_user_anonymous")]
-pub fn get_my_rejected_enrollment_requests() -> Vec<CohortEnrollmentRequest> {
-    let caller = ic_cdk::api::caller();
-
+#[query(guard = "combined_guard")]
+pub fn get_my_rejected_enrollment_requests(caller: Principal) -> Vec<CohortEnrollmentRequest> {
     read_state(|state| {
         let mut pending_requests = Vec::new();
         for (_key, reqs) in state.cohort_enrollment_request.iter() {

@@ -8,17 +8,21 @@ import { useSelector } from "react-redux";
 const InvestorModal3 = () => {
   // DESTRUCTURING METHODS FROM USEFORMCONTEXT HOOK
   const {
-    register, // FUNCTION TO REGISTER INPUTS WITH REACT-HOOK-FORM
-    formState: { errors }, // OBJECT TO TRACK FORM ERRORS
-    watch, // FUNCTION TO WATCH SPECIFIC INPUT VALUES
+    watch,
+    register,
+    clearErrors,
+    countries,
+    formState: { errors },
+    setValue,
+    setError, // FUNCTION TO WATCH SPECIFIC INPUT VALUES
   } = useFormContext();
 
   // ACCESSING ALL ICP HUBS FROM REDUX STATE
   const getAllIcpHubs = useSelector((currState) => currState.hubs.allHubs);
 
   // WATCHING FOR CHANGES IN THE PORTFOLIO LINK INPUT
-  const watchedPortfolioLink = watch("investor_portfolio_link");
-  console.log(watchedPortfolioLink);
+  // const watchedPortfolioLink = watch("investor_portfolio_link");
+  // console.log(watchedPortfolioLink);
 
   return (
     <>
@@ -29,24 +33,25 @@ const InvestorModal3 = () => {
           <span className="text-[red] ml-1">*</span>
         </label>
         <select
-          {...register("preferred_icp_hub")} // REGISTERING THE SELECT INPUT
-          name="preferred_icp_hub" // NAME OF THE INPUT FIELD
+          {...register("preferred_icp_hub")}
+          name="preferred_icp_hub"
           className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
         >
           <option value="">Please choose an option</option>
           {getAllIcpHubs?.map((hub) => (
             <option
-              key={hub.id} // UNIQUE KEY FOR EACH OPTION
-              value={`${hub.name} ,${hub.region}`} // VALUE OF THE OPTION
+              key={hub.id}
+              value={`${hub.name} ,${hub.region}`}
               className="text-lg font-bold"
             >
-              {hub.name}, {hub.region} {/* DISPLAYING HUB NAME AND REGION */}
+              {hub.name}, {hub.region}
             </option>
           ))}
         </select>
+
         {errors.preferred_icp_hub && (
           <p className="mt-1 text-sm text-red-500 font-bold text-left">
-            {errors.preferred_icp_hub.message} {/* ERROR MESSAGE DISPLAY */}
+            {errors.preferred_icp_hub.message}
           </p>
         )}
       </div>
@@ -54,19 +59,24 @@ const InvestorModal3 = () => {
       {/* PORTFOLIO LINK INPUT */}
       <div className="mb-4">
         <label className="block text-sm font-medium mb-1">
-          Portfolio link <span className="text-[red] ml-1">*</span>
+          Portfolio Link
         </label>
         <input
-          {...register("investor_portfolio_link")} // REGISTERING THE INPUT
-          type="url" // SPECIFYING INPUT TYPE AS URL
-          placeholder="Enter your portfolio url" // PLACEHOLDER TEXT
-          name=" investor_portfolio_link" // NAME OF THE INPUT FIELD
-          className="block w-full border border-gray-300 rounded-md p-2"
+          type="text"
+          {...register("investor_portfolio_link", {
+            required: "Portfolio link is required",
+            pattern: {
+              value: /^(ftp|http|https):\/\/[^ "]+$/,
+              message: "Invalid URL format"
+            }
+          })}
+          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
         />
-        {errors?.investor_portfolio_link && (
-          <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-            {errors?.investor_portfolio_link?.message} {/* ERROR MESSAGE DISPLAY */}
-          </span>
+
+        {errors.investor_portfolio_link && (
+          <p className="mt-1 text-sm text-red-500 font-bold text-left">
+            {errors.investor_portfolio_link.message}
+          </p>
         )}
       </div>
 
@@ -76,10 +86,10 @@ const InvestorModal3 = () => {
           Fund Name <span className="text-[red] ml-1">*</span>
         </label>
         <input
-          {...register("investor_fund_name")} // REGISTERING THE INPUT
+          {...register("investor_fund_name")}
+          name="investor_fund_name" // REGISTERING THE INPUT
           type="text" // SPECIFYING INPUT TYPE AS TEXT
           placeholder="Enter your fund name" // PLACEHOLDER TEXT
-          name="investor_fund_name" // NAME OF THE INPUT FIELD
           className="block w-full border border-gray-300 rounded-md p-2"
         />
         {errors?.investor_fund_name && (
@@ -92,19 +102,25 @@ const InvestorModal3 = () => {
       {/* FUND SIZE INPUT */}
       <div className="mb-4">
         <label className="block text-sm font-medium mb-1">
-          Fund size (in million USD) <span className="text-[red] ml-1">*</span>
+          Fund size (in million USD) <span className="text-red-500 ml-1">*</span>
         </label>
         <input
-          {...register("investor_fund_size")} // REGISTERING THE INPUT
-          type="number" // SPECIFYING INPUT TYPE AS NUMBER
-          placeholder="Enter fund size in Millions" // PLACEHOLDER TEXT
-          name="investor_fund_size" // NAME OF THE INPUT FIELD
+          {...register("investor_fund_size", {
+            required: "Fund size is required",
+            min: {
+              value: 0,
+              message: "Fund size must be at least 0",
+            },
+            valueAsNumber: true, // Ensures the value is treated as a number
+          })}
+          type="number"
+          placeholder="Enter fund size in Millions"
           className="block w-full border border-gray-300 rounded-md p-2"
-          onWheel={(e) => e.target.blur()} // PREVENTING SCROLLING ON NUMBER INPUT
+          onWheel={(e) => e.target.blur()} // Prevents scrolling on number input
         />
         {errors?.investor_fund_size && (
           <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-            {errors?.investor_fund_size?.message} {/* ERROR MESSAGE DISPLAY */}
+            {errors?.investor_fund_size?.message}
           </span>
         )}
       </div>

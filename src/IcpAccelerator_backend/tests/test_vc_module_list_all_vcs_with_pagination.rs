@@ -207,3 +207,369 @@ fn test_list_all_vcs_with_pagination() {
     assert_eq!(result_page_2.data.get(&test_principal3), Some(&expected_vc_with_roles3));
     assert_eq!(result_page_2.count, 3); // Total active VCs should still be 3
 }
+
+
+
+
+
+
+
+#[test]
+fn test_list_all_vcs_with_pagination_page_size_greater_than_total_vcs() {
+    let (pic, backend_canister) = setup();
+
+    let test_principal1 = Principal::anonymous();
+    let test_principal2 = Principal::anonymous();
+
+    let vc_info1 = VentureCapitalist {
+        name_of_fund: "Fund 1".to_string(),
+        fund_size: Some(100_000_000.0),
+        assets_under_management: Some("1B USD".to_string()),
+        registered_under_any_hub: Some(true),
+        average_check_size: 5_000_000.0,
+        existing_icp_investor: true,
+        money_invested: Some(50_000_000.0),
+        existing_icp_portfolio: Some("ICP Projects".to_string()),
+        type_of_investment: "Equity".to_string(),
+        project_on_multichain: Some("Ethereum".to_string()),
+        category_of_investment: "Technology".to_string(),
+        reason_for_joining: Some("Growth".to_string()),
+        preferred_icp_hub: "ICP Hub".to_string(),
+        investor_type: Some("Venture Capital".to_string()),
+        number_of_portfolio_companies: 10,
+        portfolio_link: "https://portfolio1.example.com".to_string(),
+        website_link: None,
+        links: None,
+        registered: true,
+        registered_country: Some("United States".to_string()),
+        stage: Some("Growth".to_string()),
+        range_of_check_size: Some("$2-5M".to_string()),
+    };
+
+    let vc_info2 = VentureCapitalist {
+        name_of_fund: "Fund 2".to_string(),
+        fund_size: Some(200_000_000.0),
+        assets_under_management: Some("2B USD".to_string()),
+        registered_under_any_hub: Some(true),
+        average_check_size: 10_000_000.0,
+        existing_icp_investor: true,
+        money_invested: Some(100_000_000.0),
+        existing_icp_portfolio: Some("ICP Projects 2".to_string()),
+        type_of_investment: "Equity".to_string(),
+        project_on_multichain: Some("Solana".to_string()),
+        category_of_investment: "Technology".to_string(),
+        reason_for_joining: Some("Expansion".to_string()),
+        preferred_icp_hub: "ICP Hub".to_string(),
+        investor_type: Some("Venture Capital".to_string()),
+        number_of_portfolio_companies: 20,
+        portfolio_link: "https://portfolio2.example.com".to_string(),
+        website_link: None,
+        links: None,
+        registered: true,
+        registered_country: Some("Canada".to_string()),
+        stage: Some("Late Stage".to_string()),
+        range_of_check_size: Some("$5-10M".to_string()),
+    };
+
+    pic.update_call(
+        backend_canister,
+        test_principal1,
+        "register_venture_capitalist",
+        encode_one(vc_info1.clone()).unwrap(),
+    ).expect("VC registration failed");
+
+    pic.update_call(
+        backend_canister,
+        test_principal2,
+        "register_venture_capitalist",
+        encode_one(vc_info2.clone()).unwrap(),
+    ).expect("VC registration failed");
+
+    let pagination_params = PaginationParams {
+        page: 1,
+        page_size: 3,
+    };
+
+    let Ok(WasmResult::Reply(response)) = pic.query_call(
+        backend_canister,
+        Principal::anonymous(),
+        "list_all_vcs_with_pagination",
+        encode_one(pagination_params).unwrap(),
+    ) else {
+        panic!("Expected reply");
+    };
+
+    let result: PaginationReturnVcData = decode_one(&response).unwrap();
+
+    assert_eq!(result.data.len(), 2, "Only two VCs should be returned.");
+    assert_eq!(result.count, 2, "Total count should be 2.");
+}
+
+
+
+
+
+#[test]
+fn test_list_all_vcs_with_pagination_page_number_exceeds_total_pages() {
+    let (pic, backend_canister) = setup();
+
+    let test_principal1 = Principal::anonymous();
+    let test_principal2 = Principal::anonymous();
+
+    let vc_info1 = VentureCapitalist {
+        name_of_fund: "Fund 1".to_string(),
+        fund_size: Some(100_000_000.0),
+        assets_under_management: Some("1B USD".to_string()),
+        registered_under_any_hub: Some(true),
+        average_check_size: 5_000_000.0,
+        existing_icp_investor: true,
+        money_invested: Some(50_000_000.0),
+        existing_icp_portfolio: Some("ICP Projects".to_string()),
+        type_of_investment: "Equity".to_string(),
+        project_on_multichain: Some("Ethereum".to_string()),
+        category_of_investment: "Technology".to_string(),
+        reason_for_joining: Some("Growth".to_string()),
+        preferred_icp_hub: "ICP Hub".to_string(),
+        investor_type: Some("Venture Capital".to_string()),
+        number_of_portfolio_companies: 10,
+        portfolio_link: "https://portfolio1.example.com".to_string(),
+        website_link: None,
+        links: None,
+        registered: true,
+        registered_country: Some("United States".to_string()),
+        stage: Some("Growth".to_string()),
+        range_of_check_size: Some("$2-5M".to_string()),
+    };
+
+    let vc_info2 = VentureCapitalist {
+        name_of_fund: "Fund 2".to_string(),
+        fund_size: Some(200_000_000.0),
+        assets_under_management: Some("2B USD".to_string()),
+        registered_under_any_hub: Some(true),
+        average_check_size: 10_000_000.0,
+        existing_icp_investor: true,
+        money_invested: Some(100_000_000.0),
+        existing_icp_portfolio: Some("ICP Projects 2".to_string()),
+        type_of_investment: "Equity".to_string(),
+        project_on_multichain: Some("Solana".to_string()),
+        category_of_investment: "Technology".to_string(),
+        reason_for_joining: Some("Expansion".to_string()),
+        preferred_icp_hub: "ICP Hub".to_string(),
+        investor_type: Some("Venture Capital".to_string()),
+        number_of_portfolio_companies: 20,
+        portfolio_link: "https://portfolio2.example.com".to_string(),
+        website_link: None,
+        links: None,
+        registered: true,
+        registered_country: Some("Canada".to_string()),
+        stage: Some("Late Stage".to_string()),
+        range_of_check_size: Some("$5-10M".to_string()),
+    };
+
+    pic.update_call(
+        backend_canister,
+        test_principal1,
+        "register_venture_capitalist",
+        encode_one(vc_info1.clone()).unwrap(),
+    ).expect("VC registration failed");
+
+    pic.update_call(
+        backend_canister,
+        test_principal2,
+        "register_venture_capitalist",
+        encode_one(vc_info2.clone()).unwrap(),
+    ).expect("VC registration failed");
+
+    let pagination_params = PaginationParams {
+        page: 3,
+        page_size: 2,
+    };
+
+    let Ok(WasmResult::Reply(response)) = pic.query_call(
+        backend_canister,
+        Principal::anonymous(),
+        "list_all_vcs_with_pagination",
+        encode_one(pagination_params).unwrap()),
+    else {
+        panic!("Expected reply");
+    };
+
+    let result: PaginationReturnVcData = decode_one(&response).unwrap();
+
+    assert_eq!(result.data.len(), 0, "No VCs should be returned for an out-of-bounds page.");
+    assert_eq!(result.count, 2, "Total count should still be 2.");
+}
+
+
+
+#[test]
+fn test_list_all_vcs_with_pagination_inactive_vc() {
+    let (pic, backend_canister) = setup();
+
+    let test_principal1 = Principal::anonymous();
+    let test_principal2 = Principal::anonymous();
+
+    let vc_info1 = VentureCapitalist {
+        name_of_fund: "Fund 1".to_string(),
+        fund_size: Some(100_000_000.0),
+        assets_under_management: Some("1B USD".to_string()),
+        registered_under_any_hub: Some(true),
+        average_check_size: 5_000_000.0,
+        existing_icp_investor: true,
+        money_invested: Some(50_000_000.0),
+        existing_icp_portfolio: Some("ICP Projects".to_string()),
+        type_of_investment: "Equity".to_string(),
+        project_on_multichain: Some("Ethereum".to_string()),
+        category_of_investment: "Technology".to_string(),
+        reason_for_joining: Some("Growth".to_string()),
+        preferred_icp_hub: "ICP Hub".to_string(),
+        investor_type: Some("Venture Capital".to_string()),
+        number_of_portfolio_companies: 10,
+        portfolio_link: "https://portfolio1.example.com".to_string(),
+        website_link: None,
+        links: None,
+        registered: true,
+        registered_country: Some("United States".to_string()),
+        stage: Some("Growth".to_string()),
+        range_of_check_size: Some("$2-5M".to_string()),
+    };
+
+    let vc_info2 = VentureCapitalist {
+        name_of_fund: "Fund 2".to_string(),
+        fund_size: Some(200_000_000.0),
+        assets_under_management: Some("2B USD".to_string()),
+        registered_under_any_hub: Some(true),
+        average_check_size: 10_000_000.0,
+        existing_icp_investor: true,
+        money_invested: Some(100_000_000.0),
+        existing_icp_portfolio: Some("ICP Projects 2".to_string()),
+        type_of_investment: "Equity".to_string(),
+        project_on_multichain: Some("Solana".to_string()),
+        category_of_investment: "Technology".to_string(),
+        reason_for_joining: Some("Expansion".to_string()),
+        preferred_icp_hub: "ICP Hub".to_string(),
+        investor_type: Some("Venture Capital".to_string()),
+        number_of_portfolio_companies: 20,
+        portfolio_link: "https://portfolio2.example.com".to_string(),
+        website_link: None,
+        links: None,
+        registered: true,
+        registered_country: Some("Canada".to_string()),
+        stage: Some("Late Stage".to_string()),
+        range_of_check_size: Some("$5-10M".to_string()),
+    };
+
+    pic.update_call(
+        backend_canister,
+        test_principal1,
+        "register_venture_capitalist",
+        encode_one(vc_info1.clone()).unwrap(),
+    ).expect("VC registration failed");
+
+    pic.update_call(
+        backend_canister,
+        test_principal2,
+        "register_venture_capitalist",
+        encode_one(vc_info2.clone()).unwrap(),
+    ).expect("VC registration failed");
+
+    // Simulate making the second VC inactive
+    let mut vc_internal2 = VentureCapitalistInternal {
+        params: vc_info2.clone(),
+        uid: String::from(""),
+        is_active: false,
+        approve: true,
+        decline: false,
+    };
+
+    pic.update_call(
+        backend_canister,
+        test_principal2,
+        "update_venture_capitalist_internal",
+        encode_one(vc_internal2).unwrap(),
+    ).expect("VC update failed");
+
+    let pagination_params = PaginationParams {
+        page: 1,
+        page_size: 2,
+    };
+
+    let Ok(WasmResult::Reply(response)) = pic.query_call(
+        backend_canister,
+        Principal::anonymous(),
+        "list_all_vcs_with_pagination",
+        encode_one(pagination_params).unwrap(),
+    ) else {
+        panic!("Expected reply");
+    };
+
+    let result: PaginationReturnVcData = decode_one(&response).unwrap();
+
+    assert_eq!(result.data.len(), 1, "Only one VC should be returned.");
+    assert_eq!(result.count, 1, "Total count should be 1.");
+    assert!(result.data.get(&test_principal2).is_none(), "Inactive VC should not appear.");
+}
+
+
+#[test]
+fn test_list_all_vcs_with_pagination_large_number_of_vcs() {
+    let (pic, backend_canister) = setup();
+
+    let mut principals = vec![];
+
+    for i in 1..=1000 {
+        let test_principal = Principal::anonymous();
+        principals.push(test_principal);
+
+        let vc_info = VentureCapitalist {
+            name_of_fund: format!("Fund {}", i),
+            fund_size: Some(i as f64 * 1_000_000.0),
+            assets_under_management: Some(format!("{}B USD", i)),
+            registered_under_any_hub: Some(true),
+            average_check_size: i as f64 * 500_000.0,
+            existing_icp_investor: true,
+            money_invested: Some(i as f64 * 250_000.0),
+            existing_icp_portfolio: Some(format!("ICP Projects {}", i)),
+            type_of_investment: "Equity".to_string(),
+            project_on_multichain: Some("Ethereum".to_string()),
+            category_of_investment: "Technology".to_string(),
+            reason_for_joining: Some("Growth".to_string()),
+            preferred_icp_hub: "ICP Hub".to_string(),
+            investor_type: Some("Venture Capital".to_string()),
+            number_of_portfolio_companies: i,
+            portfolio_link: format!("https://portfolio{}.example.com", i),
+            website_link: None,
+            links: None,
+            registered: true,
+            registered_country: Some("United States".to_string()),
+            stage: Some("Growth".to_string()),
+            range_of_check_size: Some(format!("${}-{}M", i, i * 2)),
+        };
+
+        pic.update_call(
+            backend_canister,
+            test_principal,
+            "register_venture_capitalist",
+            encode_one(vc_info.clone()).unwrap(),
+        ).expect("VC registration failed");
+    }
+
+    let pagination_params = PaginationParams {
+        page: 1,
+        page_size: 100,
+    };
+
+    let Ok(WasmResult::Reply(response)) = pic.query_call(
+        backend_canister,
+        Principal::anonymous(),
+        "list_all_vcs_with_pagination",
+        encode_one(pagination_params).unwrap(),
+    ) else {
+        panic!("Expected reply");
+    };
+
+    let result: PaginationReturnVcData = decode_one(&response).unwrap();
+
+    assert_eq!(result.data.len(), 100, "100 VCs should be returned on the first page.");
+    assert_eq!(result.count, 1000, "Total count should be 1000.");
+}

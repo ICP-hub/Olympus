@@ -25,7 +25,7 @@ const InvestorForm = ({ isOpen }) => {
   const actor = useSelector((state) => state.actors.actor);
   // STATE TO STORE ACCUMULATED FORM DATA ACROSS MULTIPLE STEPS
   const [formData, setFormData] = useState({});
-
+  console.log("STATE SE AAYA HUA DATA",formData); 
   // INITIALIZE REACT HOOK FORM WITH VALIDATION SCHEMA
   const {
     register,
@@ -73,9 +73,10 @@ const InvestorForm = ({ isOpen }) => {
   const [index, setIndex] = useState(0);
 
   // FUNCTION TO HANDLE NEXT BUTTON CLICK
-  const handleNext = async () => {
+  const handleNext = async (data) => {
     const isValid = await trigger(formFields[index]); // VALIDATE CURRENT STEP
     if (isValid) {
+      console.log("PREV DATA FORM DATA ME JAANE SE PHLE", data)
       setFormData((prevData) => ({
         ...prevData,
         ...getValues(), // MERGE CURRENT STEP DATA WITH PREVIOUS DATA
@@ -94,13 +95,15 @@ const InvestorForm = ({ isOpen }) => {
   // FUNCTION TO HANDLE FORM SUBMISSION
   const onSubmitHandler = async () => {
     const data = { ...formData, ...getValues() }; // MERGE FINAL FORM DATA
+    console.log("SPREAD OPERATOR SE DATA AAYA", data)
+    console.log(data.investor_portfolio_link);
     if (actor) {
       const investorData = {
         name_of_fund: data?.investor_fund_name,
         fund_size: [
-          data?.investor_fund_size &&
-          typeof data?.investor_fund_size === "number"
-            ? data?.investor_fund_size
+          data?.fund_size &&
+          typeof data?.fund_size === "number"
+            ? data?.fund_size
             : 0,
         ],
         existing_icp_investor:
@@ -118,7 +121,7 @@ const InvestorForm = ({ isOpen }) => {
         ],
         category_of_investment: data?.investment_categories,
         preferred_icp_hub: data?.preferred_icp_hub,
-        portfolio_link: data?.investor_portfolio_link,
+        portfolio_link: data?.investor_portfolio_link ?? "asdas",
         website_link: [data?.investor_website_url || ""],
         registered: data?.investor_registered === "true" ? true : false,
         registered_country: [
@@ -138,15 +141,15 @@ const InvestorForm = ({ isOpen }) => {
             : "",
         ],
         // ADDITIONAL INVESTOR DATA (NOT FROM FORM)
-        average_check_size: 0,
+        average_check_size: 1,
         assets_under_management: [""],
         registered_under_any_hub: [false],
         logo: [[]],
         money_invested: [0],
          existing_icp_portfolio: [""],
         reason_for_joining: [""],
-        type_of_investment: "",
-        number_of_portfolio_companies: 0,
+        type_of_investment: "dwe",
+        number_of_portfolio_companies: 1,
         announcement_details: [""],
       };
       console.log(investorData);
@@ -166,9 +169,11 @@ const InvestorForm = ({ isOpen }) => {
           ) {
             toast.error(result); // SHOW ERROR TOAST WITH RETURNED MESSAGE
             setModalOpen(false);
+            window.location.reload();
           } else {
             toast.success("Investor registered successfully!"); // SHOW SUCCESS MESSAGE
             setModalOpen(false);
+            window.location.reload();
           }
         });
       } catch (error) {
@@ -202,7 +207,7 @@ const InvestorForm = ({ isOpen }) => {
       >
         <div className="container mx-auto">
           <div className="pb-12 flex items-center justify-center rounded-xl">
-            <div className="bg-white shadow-xl rounded-2xl flex w-full max-w-[30rem] relative">
+            <div className=" flex  relative bg-white rounded-lg shadow-lg w-[500px] p-6 pt-4 ">
               <div className="absolute top-2 right-4">
                 <button
                   className="text-2xl text-gray-300"

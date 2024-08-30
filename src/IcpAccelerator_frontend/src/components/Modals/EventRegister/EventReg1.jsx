@@ -1,63 +1,59 @@
+
 import React, { useState, useEffect } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { formFields1 } from "./EventFormData";
 import { useFormContext, Controller } from "react-hook-form";
 import CompressedImage from "../../../component/ImageCompressed/CompressedImage";
 
-// MAIN COMPONENT FUNCTION
-const EventReg1 = ({ formData,setFormData,imageData, setImageData}) => {
-  // STATE FOR HANDLING IMAGE DATA AND PREVIEW
+const EventReg1 = ({ formData, setFormData, imageData, setImageData, editMode ,singleEventData}) => {
 
   const [imagePreview, setImagePreview] = useState(null);
-  
-  // DESTRUCTURING REACT HOOK FORM METHODS
-  const { register, formState: { errors }, control, setValue, clearErrors, setError, trigger, getValues } = useFormContext();
 
-  // USE EFFECT HOOK TO SET FORM FIELDS WITH EXISTING FORM DATA ON COMPONENT MOUNT
-  useEffect(() => {
-    if (formData) {
-      if (formData?.image) {
-        // IF IMAGE IS AVAILABLE IN FORM DATA, SET IMAGE PREVIEW AND IMAGE DATA
-        setImagePreview(URL.createObjectURL(formData?.image));
-        setImageData(formData?.image);
-      }
+  const { register, formState: { errors }, control, setValue, clearErrors, setError, trigger } = useFormContext();
+
+ useEffect(() => {
+  if (formData?.image) {
+    if (editMode === true) {
+      setImagePreview(formData);
+    } else {
+      setImagePreview(URL.createObjectURL(formData?.image));
     }
-  }, [formData]); // DEPENDENCY ARRAY LISTENING FOR CHANGES IN formData
+    setImageData(formData?.image);
+  } else if (singleEventData?.cohort_banner) {
+    setImagePreview(singleEventData?.cohort_banner); // If in edit mode, set the banner image from singleEventData
+  }
+}, [formData, singleEventData, editMode]);
 
-  // STATE TO MANAGE INPUT TYPE, DEFAULT IS "DATE"
+
   const [inputType, setInputType] = useState("date");
 
-  // FUNCTION TO HANDLE FOCUS EVENTS AND CHANGE INPUT TYPE IF NEEDED
   const handleFocus = (field) => {
     if (field.onFocus) {
       setInputType(field.onFocus);
     }
   };
 
-  // FUNCTION TO HANDLE BLUR EVENTS AND REVERT INPUT TYPE IF NEEDED
   const handleBlur = (field) => {
     if (field.onBlur) {
       setInputType(field.onBlur);
     }
   };
 
-  // FUNCTION FOR IMAGE CREATION, COMPRESSION, AND CONVERSION TO UINT8ARRAY
   const imageCreationFunc = async (file) => {
-    const result = await trigger("image"); // TRIGGER IMAGE VALIDATION
+    const result = await trigger("cohort_banner");
     if (result) {
       try {
-        const compressedFile = await CompressedImage(file); // COMPRESS IMAGE
-        const reader = new FileReader(); // CREATE FILE READER INSTANCE
+        const compressedFile = await CompressedImage(file);
+        const reader = new FileReader();
         reader.onloadend = () => {
-          setImagePreview(reader.result); // SET IMAGE PREVIEW
+          setImagePreview(reader.result);
         };
-        reader.readAsDataURL(compressedFile); // READ COMPRESSED IMAGE AS DATA URL
-        const byteArray = await compressedFile.arrayBuffer(); // CONVERT IMAGE TO ARRAY BUFFER
-        setImageData(Array.from(new Uint8Array(byteArray))); // SET IMAGE DATA AS UINT8ARRAY
+        reader.readAsDataURL(compressedFile);
+        const byteArray = await compressedFile.arrayBuffer();
+        setImageData(Array.from(new Uint8Array(byteArray)));
         console.log("Event Image Buffer Array", byteArray);
       } catch (error) {
-        // HANDLE IMAGE PROCESSING ERROR
-        setError("image", {
+        setError("cohort_banner", {
           type: "manual",
           message: "Could not process image, please try another.",
         });
@@ -67,29 +63,27 @@ const EventReg1 = ({ formData,setFormData,imageData, setImageData}) => {
     }
   };
 
-  // FUNCTION TO CLEAR IMAGE DATA AND PREVIEW
   const clearImageFunc = (val) => {
     let field_id = val;
-    setValue(field_id, null); // CLEAR FIELD VALUE
-    clearErrors(field_id); // CLEAR FIELD ERRORS
-    setImageData(null); // RESET IMAGE DATA
-    setImagePreview(null); // RESET IMAGE PREVIEW
+    setValue(field_id, null);
+    clearErrors(field_id);
+    setImageData(null);
+    setImagePreview(null);
   };
 
   return (
     <>
-      {/* PAGE TITLE */}
-      <h1 className="text-3xl text-[#121926] font-bold mb-3">
-        Create a Cohort
-      </h1>
+      <div>
+        <h1 className="text-3xl text-[#121926] font-bold mb-3">
+          {editMode ? "Update Cohort" : "Create a New Cohort"}
+        </h1>
+      </div>
       
-      {/* IMAGE UPLOAD SECTION */}
       <div className="mb-2">
         <label className="block text-sm font-medium mb-1">
           Upload a logo<span className="text-red-500">*</span>
         </label>
-        
-        {/* IMAGE PREVIEW AND UPLOAD BUTTONS */}
+
         <div className="flex gap-2 items-center">
           <div className="h-24 w-24 rounded-2xl border-2 border-dashed border-gray-300 items-center justify-center overflow-hidden flex">
             {imagePreview && !errors.image ? (
@@ -99,7 +93,6 @@ const EventReg1 = ({ formData,setFormData,imageData, setImageData}) => {
                 className="h-full w-full object-cover"
               />
             ) : (
-              // SVG ICON FOR UPLOAD PLACEHOLDER
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -118,39 +111,34 @@ const EventReg1 = ({ formData,setFormData,imageData, setImageData}) => {
             )}
           </div>
 
-          {/* CONTROLLER FOR IMAGE UPLOAD INPUT */}
           <Controller
-            name="image"
+            name="cohort_banner"
             control={control}
             render={({ field }) => (
               <>
                 <input
                   type="file"
                   className="hidden"
-                  id="image"
-                  name="image"
+                  id="cohort_banner"
+                  name="cohort_banner"
                   onChange={(e) => {
-                    field.onChange(e.target.files[0]); // SET IMAGE FILE
-                    imageCreationFunc(e.target.files[0]); // PROCESS IMAGE
+                    field.onChange(e.target.files[0]);
+                    imageCreationFunc(e.target.files[0]);
                   }}
                   accept=".jpg, .jpeg, .png"
                 />
-
-                {/* LABEL AS BUTTON FOR IMAGE UPLOAD */}
                 <label
-                  htmlFor="image"
+                  htmlFor="cohort_banner"
                   className="p-2 border-2 border-blue-800 items-center sm:ml-6 rounded-md text-md bg-transparent text-blue-800 cursor-pointer font-semibold"
                 >
-                  {imagePreview && !errors.image
+                  {imagePreview && !errors.cohort_banner
                     ? "Change banner picture"
                     : "Upload banner picture"}
                 </label>
-                
-                {/* BUTTON TO CLEAR IMAGE SELECTION */}
-                {imagePreview || errors.image ? (
+                {imagePreview || errors.cohort_banner ? (
                   <button
                     className="p-2 border-2 border-red-500 ml-2 items-center rounded-md text-md bg-transparent text-red-500 cursor-pointer font-semibold capitalize"
-                    onClick={() => clearImageFunc("image")}
+                    onClick={() => clearImageFunc("cohort_banner")}
                   >
                     clear
                   </button>
@@ -162,15 +150,13 @@ const EventReg1 = ({ formData,setFormData,imageData, setImageData}) => {
           />
         </div>
 
-        {/* DISPLAY IMAGE UPLOAD ERRORS */}
-        {errors.image && (
+        {errors.cohort_banner && (
           <span className="mt-1 text-sm text-red-500 font-bold text-start px-4">
-            {errors?.image?.message}
+            {errors?.cohort_banner?.message}
           </span>
         )}
       </div>
 
-      {/* DYNAMIC FORM FIELDS BASED ON formFields1 ARRAY */}
       <div className="mb-2">
         {formFields1?.map((field) => (
           <div key={field.id} className="relative z-0 group mb-2">
@@ -187,7 +173,6 @@ const EventReg1 = ({ formData,setFormData,imageData, setImageData}) => {
               </span>
             </label>
 
-            {/* CONDITIONAL RENDERING FOR INPUT TYPE */}
             {field.type === "textarea" ? (
               <textarea
                 name={field.name}
@@ -219,7 +204,6 @@ const EventReg1 = ({ formData,setFormData,imageData, setImageData}) => {
               />
             )}
 
-            {/* DISPLAY FIELD-SPECIFIC ERRORS */}
             {errors[field.name] && (
               <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
                 {errors[field.name].message}
@@ -229,10 +213,10 @@ const EventReg1 = ({ formData,setFormData,imageData, setImageData}) => {
         ))}
       </div>
 
-      {/* TOASTER FOR NOTIFICATIONS */}
       <Toaster />
     </>
   );
 };
 
 export default EventReg1;
+

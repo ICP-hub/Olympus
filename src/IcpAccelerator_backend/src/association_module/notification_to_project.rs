@@ -5,7 +5,9 @@ use ic_cdk::{query, update};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use crate::{state_handler::*, UserInformation};
-#[derive(Clone, CandidType, Deserialize, Serialize)]
+use crate::guard::*;
+
+#[derive(Clone, CandidType, Deserialize, Serialize, Debug)]
 pub struct OfferToProject {
     offer_id: String, // Added field
     project_id: String,
@@ -20,7 +22,7 @@ pub struct OfferToProject {
     response: String,
 }
 
-#[derive(Clone, CandidType, Deserialize, Serialize)]
+#[derive(Clone, CandidType, Deserialize, Serialize, Debug)]
 pub struct MentorInfo {
     mentor_id: Principal,
     mentor_name: String,
@@ -29,7 +31,7 @@ pub struct MentorInfo {
     user_data: UserInformation,
 }
 
-#[derive(Clone, CandidType, Deserialize, Serialize)]
+#[derive(Clone, CandidType, Deserialize, Serialize, Debug)]
 pub struct OfferToSendToProject {
     offer_id: String, // Added field
     mentor_info: MentorInfo,
@@ -43,17 +45,17 @@ pub struct OfferToSendToProject {
     response: String,
 }
 
-pub fn store_request_sent_by_mentor(offer: OfferToProject) {
+pub fn store_request_sent_by_mentor(offer: OfferToProject, mentor_id: Principal) {
     mutate_state(|store| {
-        store
-            .my_sent_notifications_project
-            .get(&StoredPrincipal(caller()))
-            .map_or_else(Vec::new, |offer_res| offer_res.0)
-            .push(offer);
+        if let Some(mut offers) = store.my_sent_notifications_project.get(&StoredPrincipal(mentor_id)) {
+            offers.0.push(offer);
+        } else {
+            store.my_sent_notifications_project.insert(StoredPrincipal(mentor_id), Candid(vec![offer]));
+        }
     });
 }
 
-#[query]
+#[query(guard = "combined_guard")]
 pub fn get_all_sent_request_for_mentor() -> Vec<OfferToProject> {
     read_state(|state| {
         state
@@ -76,7 +78,7 @@ pub fn notify_project_with_offer(project_id: String, offer: OfferToSendToProject
     });
 }
 
-#[query]
+#[query(guard = "combined_guard")]
 pub fn get_all_project_notification(id: String) -> Vec<OfferToSendToProject> {
     read_state(|state| {
         state
@@ -87,12 +89,13 @@ pub fn get_all_project_notification(id: String) -> Vec<OfferToSendToProject> {
     })
 }
 
-#[update]
+#[update(guard = "combined_guard")]
 pub async fn send_offer_to_project_by_mentor(
     project_id: String,
     msg: String,
     mentor_id: Principal,
 ) -> String {
+    ic_cdk::println!("MENTIR PRINCIPAL {}", mentor_id.to_string());
     let mentor = crate::mentor_module::get_mentor::get_mentor_info_using_principal(mentor_id).expect("mentor doesn't exist");
 
     let project = crate::project_module::get_project::get_project_using_id(project_id.clone()).expect("project not found");
@@ -130,7 +133,7 @@ pub async fn send_offer_to_project_by_mentor(
         response: "".to_string(),
     };
 
-    store_request_sent_by_mentor(offer_to_project);
+    store_request_sent_by_mentor(offer_to_project, mentor_id);
 
     //let project_info = find_project_by_id(&project_id).expect("project does not exist");
     let mut cached_user_data = None;
@@ -144,7 +147,7 @@ pub async fn send_offer_to_project_by_mentor(
     let mentor_info = MentorInfo {
         mentor_id: mentor_id,
         mentor_name: user_data.full_name.clone(),
-        mentor_description: mentor.0.profile.area_of_expertise,
+        mentor_description: mentor.0.profile.category_of_mentoring_service,
         mentor_image,
         user_data,
     };
@@ -166,7 +169,7 @@ pub async fn send_offer_to_project_by_mentor(
     format!("offer sent sucessfully to {}", project_id)
 }
 
-// #[update]
+// #[update(guard = "combined_guard")]
 // pub fn accept_offer_of_mentor(offer_id: String, response_message: String, project_id : String) -> String{
 //     //let project_id = caller();
 
@@ -230,7 +233,7 @@ pub async fn send_offer_to_project_by_mentor(
 //     format!("you have accepted the offer with offer id: {}", offer_id)
 // }
 
-#[update]
+#[update(guard = "combined_guard")]
 pub fn accept_offer_from_mentor_to_project(offer_id: String, response_message: String, project_id: String) -> String {
     let caller_principal = ic_cdk::api::caller();
     ic_cdk::println!("Caller Principal: {:?}", caller_principal);
@@ -311,7 +314,7 @@ pub fn accept_offer_from_mentor_to_project(offer_id: String, response_message: S
 
 
 
-#[update]
+#[update(guard = "combined_guard")]
 pub fn decline_offer_from_mentor_to_project(
     offer_id: String,
     response_message: String,
@@ -353,7 +356,7 @@ pub fn decline_offer_from_mentor_to_project(
 }
 
 
-#[query]
+#[query(guard = "combined_guard")]
 pub fn get_all_offers_which_are_pending_for_project_from_mentor(
     project_id: String,
 ) -> Vec<OfferToSendToProject> {
@@ -373,24 +376,32 @@ pub fn get_all_offers_which_are_pending_for_project_from_mentor(
 }
 
 //mentor will call
-#[query]
-pub fn get_all_offers_which_are_pending_for_mentor_via_mentor() -> Vec<OfferToProject> {
+#[query(guard = "combined_guard")]
+pub fn get_all_offers_which_are_pending_for_mentor_via_mentor(mentor_id: Principal) -> Vec<OfferToProject> {
+    ic_cdk::println!("Fetching pending offers for mentor ID: {:?}", mentor_id);
+
     read_state(|pending_alerts| {
-        pending_alerts
-            .my_sent_notifications_project
-            .get(&StoredPrincipal(caller()))
-            .map_or_else(Vec::new, |offers| {
-                offers
-                    .0
-                    .iter()
-                    .filter(|offer| offer.request_status == "pending")
-                    .cloned()
-                    .collect()
-            })
+        let offers = pending_alerts.my_sent_notifications_project.get(&StoredPrincipal(mentor_id));
+        ic_cdk::println!("Offers found: {:?}", offers);
+
+        offers.map_or_else(Vec::new, |offers| {
+            let pending_offers: Vec<OfferToProject> = offers
+                .0
+                .iter()
+                .filter(|offer| {
+                    let is_pending = offer.request_status == "pending";
+                    ic_cdk::println!("Offer ID: {}, Status: {}, Is Pending: {}", offer.offer_id, offer.request_status, is_pending);
+                    is_pending
+                })
+                .cloned()
+                .collect();
+            ic_cdk::println!("Pending offers: {:?}", pending_offers);
+            pending_offers
+        })
     })
 }
 
-#[query]
+#[query(guard = "combined_guard")]
 pub fn get_all_requests_which_got_accepted_for_project_from_mentor(
     project_id: String,
 ) -> Vec<OfferToSendToProject> {
@@ -409,12 +420,12 @@ pub fn get_all_requests_which_got_accepted_for_project_from_mentor(
     })
 }
 
-#[query]
-pub fn get_all_requests_which_got_accepted_for_mentor_via_mentor() -> Vec<OfferToProject> {
+#[query(guard = "combined_guard")]
+pub fn get_all_requests_which_got_accepted_for_mentor_via_mentor(mentor_id: Principal) -> Vec<OfferToProject> {
     read_state(|pending_alerts| {
         pending_alerts
             .my_sent_notifications_project
-            .get(&StoredPrincipal(caller()))
+            .get(&StoredPrincipal(mentor_id))
             .map_or_else(Vec::new, |offers| {
                 offers
                     .0
@@ -426,7 +437,7 @@ pub fn get_all_requests_which_got_accepted_for_mentor_via_mentor() -> Vec<OfferT
     })
 }
 
-#[query]
+#[query(guard = "combined_guard")]
 pub fn get_all_requests_which_got_declined_for_project_from_mentor(
     project_id: String,
 ) -> Vec<OfferToSendToProject> {
@@ -445,12 +456,12 @@ pub fn get_all_requests_which_got_declined_for_project_from_mentor(
     })
 }
 
-#[query]
-pub fn get_all_requests_which_got_declined_for_mentor_via_mentor() -> Vec<OfferToProject> {
+#[query(guard = "combined_guard")]
+pub fn get_all_requests_which_got_declined_for_mentor_via_mentor(mentor_id: Principal) -> Vec<OfferToProject> {
     read_state(|pending_alerts| {
         pending_alerts
             .my_sent_notifications_project
-            .get(&StoredPrincipal(caller()))
+            .get(&StoredPrincipal(mentor_id))
             .map_or_else(Vec::new, |offers| {
                 offers
                     .0
@@ -466,7 +477,7 @@ pub fn get_all_requests_which_got_declined_for_mentor_via_mentor() -> Vec<OfferT
 
 //for project
 
-#[update]
+#[update(guard = "combined_guard")]
 pub fn self_decline_request_from_mentor_project(offer_id: String) -> String {
     let mut response = String::new();
 
@@ -504,7 +515,7 @@ pub fn self_decline_request_from_mentor_project(offer_id: String) -> String {
     response
 }
 
-#[query]
+#[query(guard = "combined_guard")]
 pub fn get_all_requests_which_got_self_declined_for_mentor_via_mentor() -> Vec<OfferToProject> {
     read_state(|offers| {
         let offers = &offers.my_sent_notifications_project;
@@ -520,7 +531,7 @@ pub fn get_all_requests_which_got_self_declined_for_mentor_via_mentor() -> Vec<O
     })
 }
 
-#[query]
+#[query(guard = "combined_guard")]
 pub fn get_all_requests_which_got_self_declined_for_project(
     project_id: String,
 ) -> Vec<OfferToSendToProject> {

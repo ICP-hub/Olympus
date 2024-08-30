@@ -130,6 +130,7 @@ const [reasonOfJoiningOptions, setReasonOfJoiningOptions] = useState([
   };
   return (
     <>
+    <div className="max-h-[80vh] overflow-y-auto ">
      <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700 mb-2">
           Why do you want to join this platform ?{" "}
@@ -441,6 +442,7 @@ const [reasonOfJoiningOptions, setReasonOfJoiningOptions] = useState([
 
       {/* TOASTER FOR NOTIFICATIONS */}
       <Toaster />
+      </div>
     </>
   );
 };

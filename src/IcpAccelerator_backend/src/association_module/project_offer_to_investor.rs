@@ -6,6 +6,7 @@ use ic_cdk::{api::time, caller};
 use ic_cdk::{query, update};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
+use crate::guard::*;
 
 #[derive(Clone, CandidType, Deserialize, Serialize)]
 pub struct OfferToInvestor {
@@ -47,24 +48,14 @@ pub struct OfferToSendToInvestor {
 
 pub fn store_request_sent_by_project_to_investor(project_id: String, offer: OfferToInvestor) {
     mutate_state(|store| {
-        store
-            .offers_offered_by_me
-            .get(&project_id)
-            .map_or_else(Vec::new, |candid_res| candid_res.0)
-            .push(offer);
+        let project_id = project_id.clone(); 
+        if let Some(mut store_request) = store.offers_offered_by_me.get(&project_id) {
+            store_request.0.push(offer);
+        } else {
+            store.offers_offered_by_me.insert(project_id, Candid(vec![offer]));
+        }
     });
 }
-
-// #[query]
-// pub fn get_all_sent_request() -> Vec<OfferToInvestor> {
-//     OFFERS_OFFERED_BY_ME.with(|state| {
-//         state
-//             .borrow()
-//             .get(&caller())
-//             .cloned()
-//             .unwrap_or_else(Vec::new)
-//     })
-// }
 
 pub fn notify_investor_with_offer(mentor_id: Principal, offer: OfferToSendToInvestor) {
     mutate_state(|state| {
@@ -78,23 +69,13 @@ pub fn notify_investor_with_offer(mentor_id: Principal, offer: OfferToSendToInve
     });
 }
 
-// #[query]
-// pub fn get_all_investor_notification(id: Principal) -> Vec<OfferToSendToInvestor> {
-//     INVESTOR_ALERTS.with(|state| state.borrow().get(&id).cloned().unwrap_or_else(Vec::new))
-// }
 
-#[update]
+#[update(guard = "combined_guard")]
 pub async fn send_offer_to_investor_by_project(
     investor_id: Principal,
     msg: String,
     project_id: String,
 ) -> String {
-    // //let mentor = get_mentor_by_principal(mentor_id).expect("mentor doesn't exist");
-    // let (investor_profile, user_info) = crate::get_vc_info_by_principal(investor_id)
-    // .expect("Investor does not exist")
-    // .clone();
-
-
     let mut offer_exists = false;  // Flag to check if an offer exists
 
     let _ = read_state(|state| {
@@ -167,7 +148,7 @@ pub async fn send_offer_to_investor_by_project(
     format!("offer sent sucessfully to {}", investor_id)
 }
 
-#[update]
+#[update(guard = "combined_guard")]
 pub fn accept_offer_from_project_to_investor(offer_id: String, response_message: String) -> String {
     let investor_id = ic_cdk::api::caller();
     let mut already_accepted = false;
@@ -234,7 +215,7 @@ pub fn accept_offer_from_project_to_investor(offer_id: String, response_message:
 
 
 
-#[update]
+#[update(guard = "combined_guard")]
 pub fn decline_offer_from_project_to_investor(offer_id: String, response_message: String) -> String {
     let investor_id = caller();
 
@@ -269,7 +250,7 @@ pub fn decline_offer_from_project_to_investor(offer_id: String, response_message
 }
 
 
-#[query]
+#[query(guard = "combined_guard")]
 pub fn get_pending_request_for_investor_sent_by_project(investor_id: Principal) -> Vec<OfferToSendToInvestor> {
     read_state(|pending_alerts| {
         pending_alerts
@@ -287,7 +268,7 @@ pub fn get_pending_request_for_investor_sent_by_project(investor_id: Principal) 
 }
 
 //for project to see what request are sent to investor
-#[query]
+#[query(guard = "combined_guard")]
 pub fn get_pending_offers_for_project_received_from_investor(project_id: String) -> Vec<OfferToInvestor> {
     read_state(|pending_alerts| {
         pending_alerts
@@ -304,10 +285,8 @@ pub fn get_pending_offers_for_project_received_from_investor(project_id: String)
     })
 }
 
-#[query]
-pub fn get_accepted_request_for_investor() -> Vec<OfferToSendToInvestor> {
-    let investor_id = caller();
-
+#[query(guard = "combined_guard")]
+pub fn get_accepted_request_for_investor(investor_id: Principal) -> Vec<OfferToSendToInvestor> {
     read_state(|pending_alerts| {
         pending_alerts
             .investor_alerts
@@ -323,7 +302,7 @@ pub fn get_accepted_request_for_investor() -> Vec<OfferToSendToInvestor> {
     })
 }
 
-#[query]
+#[query(guard = "combined_guard")]
 pub fn get_accepted_request_of_project_by_investor(project_id: String) -> Vec<OfferToInvestor> {
     read_state(|pending_alerts| {
         pending_alerts
@@ -340,9 +319,8 @@ pub fn get_accepted_request_of_project_by_investor(project_id: String) -> Vec<Of
     })
 }
 
-#[query]
-pub fn get_declined_request_for_investor() -> Vec<OfferToSendToInvestor> {
-    let investor_id = caller();
+#[query(guard = "combined_guard")]
+pub fn get_declined_request_for_investor(investor_id: Principal) -> Vec<OfferToSendToInvestor> {
     read_state(|pending_alerts| {
         pending_alerts
             .investor_alerts
@@ -358,7 +336,7 @@ pub fn get_declined_request_for_investor() -> Vec<OfferToSendToInvestor> {
     })
 }
 
-#[query]
+#[query(guard = "combined_guard")]
 pub fn get_declined_request_of_project_by_investor(project_id: String) -> Vec<OfferToInvestor> {
     read_state(|pending_alerts| {
         pending_alerts
@@ -375,7 +353,7 @@ pub fn get_declined_request_of_project_by_investor(project_id: String) -> Vec<Of
     })
 }
 
-#[update]
+#[update(guard = "combined_guard")]
 pub fn self_decline_request_from_project_to_investor(offer_id: String, project_id: String) -> String {
     let mut response: String = String::new();
 
@@ -413,7 +391,7 @@ pub fn self_decline_request_from_project_to_investor(offer_id: String, project_i
     response
 }
 
-#[query]
+#[query(guard = "combined_guard")]
 pub fn get_self_declined_requests_of_project(project_id: String) -> Vec<OfferToInvestor> {
     read_state(|offers| {
         let offers = &offers.offers_offered_by_me;
@@ -429,7 +407,7 @@ pub fn get_self_declined_requests_of_project(project_id: String) -> Vec<OfferToI
     })
 }
 
-#[query]
+#[query(guard = "combined_guard")]
 pub fn get_self_declined_requests_for_investor() -> Vec<OfferToSendToInvestor> {
     read_state(|offers| {
         let offers = &offers.investor_alerts;

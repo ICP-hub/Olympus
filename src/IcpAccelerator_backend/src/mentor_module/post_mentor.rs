@@ -8,7 +8,7 @@ use sha2::{Digest, Sha256};
 use crate::guard::*;
 use crate::user_modules::get_user::*;
 
-#[update(guard = "is_user_anonymous")]
+#[update(guard = "combined_guard")]
 pub async fn register_mentor(profile: MentorProfile) -> String {
     let caller = caller();
 
@@ -43,13 +43,15 @@ pub async fn register_mentor(profile: MentorProfile) -> String {
 
             let uid = format!("{:x}", Sha256::digest(&random_bytes));
 
-            let mentor_internal = MentorInternal {
+            let mut mentor_internal = MentorInternal {
                 profile: profile.clone(),
                 uid,
                 active: true,
                 approve: false,
                 decline: false,
+                profile_completion: 0
             };
+            mentor_internal.update_completion_percentage();
 
             mutate_state(|state| {
                 // Update various parts of the state
@@ -82,7 +84,7 @@ pub async fn register_mentor(profile: MentorProfile) -> String {
     }
 }
 
-#[update(guard = "is_user_anonymous")]
+#[update(guard = "combined_guard")]
 pub async fn update_mentor(updated_profile: MentorProfile) -> String {
     let caller = ic_cdk::caller();
 
@@ -128,7 +130,7 @@ pub async fn update_mentor(updated_profile: MentorProfile) -> String {
     }
 }
 
-#[update(guard = "is_user_anonymous")]
+#[update(guard = "combined_guard")]
 pub fn delete_mentor() -> String {
     let caller = ic_cdk::caller();
 
@@ -146,7 +148,7 @@ pub fn delete_mentor() -> String {
     }
 }
 
-#[update(guard = "is_user_anonymous")]
+#[update(guard = "combined_guard")]
 pub fn make_active_inactive_mentor(p_id: Principal) -> String {
     let principal_id = ic_cdk::caller();
     if p_id == principal_id || ic_cdk::api::is_controller(&principal_id) {

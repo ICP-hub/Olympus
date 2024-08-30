@@ -14,10 +14,10 @@ pub struct MentorProfile {
     pub icp_hub_or_spoke: bool,
     pub category_of_mentoring_service: String,
     pub links: Option<Vec<SocialLinksMentor>>,
-    pub multichain: Option<String>,
+    pub multichain: Option<Vec<String>>,
     pub years_of_mentoring: String,
     pub website: Option<String>,
-    pub area_of_expertise: String,
+    pub area_of_expertise: Vec<String>,
     pub reason_for_joining: Option<String>,
     pub hub_owner: Option<String>,
 }
@@ -55,6 +55,7 @@ pub struct MentorInternal {
     pub active: bool,
     pub approve: bool,
     pub decline: bool,
+    pub profile_completion: u8,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, Default, PartialEq)]
@@ -62,3 +63,27 @@ pub struct MentorFilterCriteria {
     pub country: Option<String>,
     pub area_of_expertise: Option<String>,
 }
+
+impl MentorInternal {
+    pub fn calculate_completion_percentage(&self) -> u8 {
+        let mut total_fields = 7; 
+        let mut filled_fields = total_fields; 
+
+        filled_fields += self.profile.preferred_icp_hub.is_some() as usize;
+        filled_fields += self.profile.existing_icp_project_porfolio.is_some() as usize;
+        filled_fields += self.profile.links.as_ref().map_or(0, |v| (!v.is_empty()) as usize);
+        filled_fields += self.profile.multichain.as_ref().map_or(0, |v| (!v.is_empty()) as usize);
+        filled_fields += self.profile.website.is_some() as usize;
+        filled_fields += self.profile.reason_for_joining.is_some() as usize;
+        filled_fields += self.profile.hub_owner.is_some() as usize;
+
+        total_fields += 7; 
+
+        ((filled_fields as f64 / total_fields as f64) * 100.0).round() as u8
+    }
+
+    pub fn update_completion_percentage(&mut self) {
+        self.profile_completion = self.calculate_completion_percentage();
+    }
+}
+

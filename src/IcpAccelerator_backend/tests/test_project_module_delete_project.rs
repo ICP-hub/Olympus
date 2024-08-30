@@ -1,6 +1,6 @@
 use candid::{decode_one, encode_one, Principal};
 use pocket_ic::{PocketIc, WasmResult};
-use IcpAccelerator_backend::{project_module::project_types::*, user_modules::user_types::UserInformation};
+use IcpAccelerator_backend::{project_module::project_types::*, user_modules::user_types::{UserInfoInternal, UserInformation}};
 use std::fs;
 
 // Define the path to your compiled Wasm file
@@ -123,11 +123,11 @@ fn test_delete_project() {
         panic!("Expected reply");
     };
 
-    let retrieved_project_info: Option<ProjectInfoInternal> = decode_one(&retrieved_response).unwrap();
+    let retrieved_project_info: Option<(ProjectInfoInternal, UserInfoInternal)> = decode_one(&retrieved_response).unwrap();
     assert!(retrieved_project_info.is_some(), "Project info should be present");
     let project = retrieved_project_info.unwrap();
-    assert_eq!(project.uid, project_id, "Project ID should match the deleted project");
-    assert!(project.is_active, "Project should be marked as inactive");
+    assert_eq!(project.0.uid, project_id, "Project ID should match the deleted project");
+    assert!(project.0.is_active, "Project should be marked as inactive");
 }
 
 #[test]

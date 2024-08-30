@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import ProjectCard from "../ProjectCard";
-import ment from "../../../../assets/images/ment.jpg";
 import MembersProfileCard from "../../TeamMembers/MembersProfileCard";
 import ProjectJobCard from "./ProjectJobCard";
 import { useSelector } from "react-redux";
@@ -266,13 +265,13 @@ const ProjectDetailsForUser = () => {
             </div>
             <div className="flex flex-wrap md:flex-nowrap gap-4">
               <ProjectJobCard
-                image={ment}
+                image={''}
                 tags={["Imo", "Ludi", "Ndaru"]}
                 country={"india"}
                 website={"https://www.google.co.in/"}
               />
               {/* <ProjectJobCard
-                image={ment}
+                image={''}
                 tags={["Imo", "Ludi", "Ndaru"]}
                 country={"india"}
                 website={"https://www.google.co.in/"}

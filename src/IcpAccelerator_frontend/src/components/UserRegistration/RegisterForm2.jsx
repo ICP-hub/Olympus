@@ -5,7 +5,7 @@ const RegisterForm2 = () => {
   const {
     register,
     formState: { errors },
-  } = useFormContext();
+  } = useFormContext({mode:'all'});
 
   return (
     <>

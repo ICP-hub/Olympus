@@ -9,7 +9,9 @@ import { shareSvgIcon, backSvg } from '../../Utils/Data/SvgData'; // Ensure this
 import NotificationBanner from './Notification';
 import { useLocation } from 'react-router-dom';
 import { DocumentItem } from './DocumentUpload';
-import UploadComponent from './DocumentItems';
+
+import NoMoneyRaising from './NoMoneyRaisingCard';
+import NewDocument from './NewDocument';
 
 
 function DocumentSection() {
@@ -39,7 +41,7 @@ function DocumentSection() {
           />
       <div className='flex justify-evenly'>
         <div className="w-[30%] ">
-          <ProfileCard />
+          <ProfileCard cardData={cardData}/>
         </div>
         <div className='w-[60%]'>
           <div className="flex justify-start border-b">
@@ -73,7 +75,7 @@ function DocumentSection() {
             >
               Job
             </button>
-            <button
+            {/* <button
               className={`px-4 py-2 focus:outline-none font-medium ${
                 activeTab === "rating"
                   ? "border-b-2 border-blue-500 text-blue-500 font-medium"
@@ -82,6 +84,16 @@ function DocumentSection() {
               onClick={() => handleChange("rating")}
             >
               Rating
+            </button> */}
+            <button
+              className={`px-4 py-2 focus:outline-none font-medium ${
+                activeTab === "raising"
+                  ? "border-b-2 border-blue-500 text-blue-500 font-medium"
+                  : "text-gray-400"
+              }`}
+              onClick={() => handleChange("raising")}
+            >
+              Money Rasing
             </button>
           </div>
 
@@ -97,9 +109,11 @@ function DocumentSection() {
                     selectedOption={selectedOption}
                     setSelectedOption={setSelectedOption}
                   />
-                  <UploadComponent visibility="Visible to public"
+                  <NewDocument visibility="Visible to public"
                     selectedOption={selectedOption}
-                    setSelectedOption={setSelectedOption}/>
+                    setSelectedOption={setSelectedOption}
+                    cardData={cardData}
+                    />
                 </div>
                 <FAQ />
               </>
@@ -121,10 +135,16 @@ function DocumentSection() {
                 <FAQ />
               </>
             )}
+            {activeTab === "raising" && (
+              <>
+               <NoMoneyRaising cardData={cardData} data={projectId}/>
+                
+              </>
+            )}
 
             {activeTab === "rating" && (
               <>
-                <ProjectCard />
+               <><h1>Rating </h1></>
                 <FAQ />
               </>
             )}

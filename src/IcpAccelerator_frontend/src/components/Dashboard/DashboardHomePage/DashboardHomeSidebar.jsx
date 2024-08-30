@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   Home as DashboardIcon,
@@ -20,25 +20,43 @@ import {
   staroutlineSvgIcon,
   userCircleSvgIcon,
   userSvgIcon,
+  plusSvgIcon
 } from "../../Utils/Data/SvgData";
 import { dashboard } from "../../Utils/jsondata/data/dashboardData";
 import { useDispatch, useSelector } from "react-redux";
 import { switchRoleRequestHandler } from "../../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
+import { founderRegisteredHandlerRequest } from "../../StateManagement/Redux/Reducers/founderRegisteredData";
 
 function DashboardSidebar({ isOpen, onClose }) {
   const { dashboardhomesidebar } = dashboard;
+  const [hasNavigated, setHasNavigated] = useState(false);
+
   const userCurrentRoleStatus = useSelector(
     (currState) => currState.currentRoleStatus.rolesStatusArray
   );
+  const isAuthenticated = useSelector(
+    (currState) => currState.internet.isAuthenticated
+  );
+  const actor = useSelector((currState) => currState.actors.actor);
+  const projectFullData = useSelector((currState) => currState.projectData.data);
+   const projectName = projectFullData?.[0]?.[0]?.params?.project_name
+  const cardData = projectFullData;
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
   const [activeLink, setActiveLink] = useState(location.pathname);
+
+  console.log('projectName',projectName)
+  useEffect(() => {
+    if (actor && isAuthenticated){
+          dispatch(founderRegisteredHandlerRequest());
+    }
+  }, [dispatch,isAuthenticated, actor]);
 
   const handleLinkClick = (path) => {
     setActiveLink(path);
     navigate(path);
+    setHasNavigated(false);
   };
 
   const clickEventHandler = async (roleName, value) => {
@@ -48,6 +66,18 @@ function DashboardSidebar({ isOpen, onClose }) {
         newStatus: value,
       })
     );
+  };
+
+  const handleNavigation = () => {
+    if (hasNavigated) return;
+
+    if (cardData && cardData.length > 0) {
+      const projectId = cardData[0]?.[0]?.uid || "No UID available";
+      setHasNavigated(true);
+      navigate("/dashboard/document", { state: { projectId, cardData } });
+    } else {
+      console.log("No project data available");
+    }
   };
 
   const SidebarLink = ({ path, icon, label }) => (
@@ -66,12 +96,12 @@ function DashboardSidebar({ isOpen, onClose }) {
     {
       name: "mentor",
       Mentor: true,
-      Investor: true,
+      Investor: false,
       Project: false,
     },
     {
       name: "vc",
-      Mentor: true,
+      Mentor: false,
       Investor: true,
       Project: false,
     },
@@ -100,9 +130,51 @@ function DashboardSidebar({ isOpen, onClose }) {
 
   const mergedData = mergeData(userCurrentRoleStatus, roledata);
   console.log("mergedData", mergedData);
+
+  const filteredData = mergedData.filter(
+    (role) => role.approval_status !== "default" && role.name !== "user"
+  );
+
+  console.log("Filtered Data:", filteredData);
+
+  const mentorApproved = filteredData.some(
+    (role) => role.name === "mentor" && role.approval_status === "approved"
+  );
+
+  const vcApproved = filteredData.some(
+    (role) => role.name === "vc" && role.approval_status === "approved"
+  );
+
+  const projectApproved = filteredData.some(
+    (role) => role.name === "project" && role.approval_status === "approved"
+  );
+
+  let finalData = [];
+
+  if (mentorApproved && vcApproved) {
+    console.log("Rendering both mentor and VC roles");
+    finalData = filteredData.filter(
+      (role) => role.name === "mentor" || role.name === "vc"
+    );
+  } else if (mentorApproved) {
+    console.log("Rendering mentor role only");
+    finalData = filteredData.filter((role) => role.name === "mentor");
+  } else if (vcApproved) {
+    console.log("Rendering VC role only");
+    finalData = filteredData.filter((role) => role.name === "vc");
+  } else if (projectApproved) {
+    console.log("Rendering project role only");
+    finalData = filteredData.filter((role) => role.name === "project");
+  } else {
+    console.log("No roles approved or roles in default state");
+  }
+
   const SidebarSection = ({ title, items, currentrole }) => (
-    <div className="mb-6" >
-      <h3 className="px-6 mb-2 text-xs font-semibold text-gray-500 uppercase" onClick={() => clickEventHandler(currentrole, "active")}>
+    <div className="mb-6">
+      <h3
+        className="px-6 mb-2 text-xs font-semibold text-gray-500 uppercase"
+        onClick={() => clickEventHandler(currentrole, "active")}
+      >
         {title}
       </h3>
       <ul>
@@ -114,7 +186,7 @@ function DashboardSidebar({ isOpen, onClose }) {
       </ul>
     </div>
   );
-  
+
   const sectionConfig = [
     {
       roleKey: "Mentor",
@@ -127,28 +199,28 @@ function DashboardSidebar({ isOpen, onClose }) {
         },
         {
           path: "/dashboard/mentor/new",
-          icon: gridSvgIcon,
+          icon: plusSvgIcon,
           label: "Create new Mentor",
         },
       ],
-      currentrole: 'mentor'
+      currentrole: "mentor",
     },
     {
       roleKey: "Project",
       title: dashboardhomesidebar.sidebarSections.projects.label,
       items: [
         {
-          path: "/dashboard/project",
+          path: handleNavigation,
           icon: gridSvgIcon,
-          label: dashboardhomesidebar.sidebarSections.projects.items.label1,
+          label: projectName,
         },
         {
           path: "/dashboard/project/new",
-          icon: gridSvgIcon,
+          icon: plusSvgIcon,
           label: "Create new Project",
         },
       ],
-      currentrole: 'project'
+      currentrole: "project",
     },
     {
       roleKey: "Investor",
@@ -161,19 +233,20 @@ function DashboardSidebar({ isOpen, onClose }) {
         },
         {
           path: "/dashboard/investor/new",
-          icon: gridSvgIcon,
+          icon: plusSvgIcon,
           label: "Create new Investors",
         },
       ],
-      currentrole: 'vc'
+      currentrole: "vc",
     },
   ];
-  
+
   const Sidebar = () => {
-    const approvedRoles = mergedData.filter(
+    const approvedRoles = finalData.filter(
       (role) => role.approval_status === "approved"
     );
-  
+    console.log('Approved Roles:', approvedRoles);
+
     const sidebarSections = [
       {
         title: dashboardhomesidebar.sidebarSections.identity.label,
@@ -186,9 +259,9 @@ function DashboardSidebar({ isOpen, onClose }) {
         ],
       },
     ];
-  
+
     const addedRoles = new Set();
-  
+
     approvedRoles.forEach((role) => {
       sectionConfig.forEach(({ roleKey, title, items, currentrole }) => {
         if (role[roleKey] && !addedRoles.has(roleKey)) {
@@ -197,7 +270,7 @@ function DashboardSidebar({ isOpen, onClose }) {
         }
       });
     });
-  
+
     return (
       <div>
         {sidebarSections.map((section, index) => (
@@ -211,8 +284,6 @@ function DashboardSidebar({ isOpen, onClose }) {
       </div>
     );
   };
-  
-  
 
   return (
     <>

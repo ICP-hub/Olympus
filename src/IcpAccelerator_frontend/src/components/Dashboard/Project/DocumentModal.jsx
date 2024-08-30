@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { useForm, useFieldArray, Controller } from "react-hook-form";
+import React, { useState } from "react";
+import { useForm } from "react-hook-form";
 import { ThreeDots } from "react-loader-spinner";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-
+import { useSelector } from "react-redux";
+import toast from "react-hot-toast";
 
 const schema = yup
   .object({
@@ -16,51 +17,77 @@ const schema = yup
         "Document title should not have leading spaces",
         (value) => !value || value.trimStart() === value
       ),
-      documentPrivacy: yup
+    documentPrivacy: yup
       .string()
       .required("Please select a privacy option")
       .oneOf(["public", "private"], "Invalid privacy option selected"),
-      link: yup
-        .string()
-        .required("This field is required")
-        .nullable(true)
-        .optional()
-        .url("Invalid url"),
+    link: yup
+      .string()
+      .required("This field is required")
+      .nullable(true)
+      .optional()
+      .url("Invalid url"),
   })
   .required();
 
-const DocumentModal = ({
-  setIsOpen,
-  isOpen,
-  onSubmitHandler,
-  isSubmitting,
-  isUpdate,
-  data,
-}) => {
-//   const [formData, setFormData] = useState(null);
-  const [selectedOption, setSelectedOption] = useState("file");
+const DocumentModal = ({ setIsOpen, isOpen, isUpdate }) => {
+  const actor = useSelector((state) => state.actors.actor);
 
+  const [selectedOption, setSelectedOption] = useState("file");
+  const [privacy, setPrivacy] = useState(true); // Default is private (true)
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const projectFullData = useSelector(
+    (currState) => currState.projectData.data
+  );
+  const projectId = projectFullData?.[0]?.[0]?.uid;
   const {
     register,
-    control,
     handleSubmit,
-    reset,
     formState: { errors },
-    setValue,
+    reset,
   } = useForm({
     resolver: yupResolver(schema),
     mode: "all",
   });
 
-    const onSubmit = (data) => {
-    //   setFormData(data);
-      console.log("data",data);
-      setIsOpen(false);
-      reset()
-    //   console.log("formdata" , formData)
-    };
+  const onSubmit = async (data) => {
+    setIsSubmitting(true);
 
+    try {
+      const newDocs = [
+        {
+          title: data.documentTitle ?? "",
+          link: data?.link ?? "",
+        },
+      ];
+      let privateDocs = data?.documentPrivacy === "private" ? true : false;
 
+      // Call the API with the correct privacy boolean value
+      const result = await actor.update_project_private_docs(
+        projectId,
+        newDocs,
+        privateDocs
+      );
+      if (result) {
+        console.log("Update result:", result);
+        toast.success("Document uploaded successfully!");
+        setIsSubmitting(false);
+        setIsOpen(false);
+        window.location.reload();
+      } else {
+        toast.error("Document uploaded successfully!");
+        toast.success("Document uploaded successfully!");
+        setIsSubmitting(false);
+        setIsOpen(false);
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error("Error updating project docs:", error);
+      toast.error("Failed to upload document!");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div>
@@ -81,11 +108,11 @@ const DocumentModal = ({
             </div>
             <div className="p-3">
               <h2 className="text-xl font-bold ml-4 mb-2">
-                {isUpdate === true ? "Update Document" : "Add Document"}
+                {isUpdate ? "Update Document" : "Add Document"}
               </h2>
 
               <form onSubmit={handleSubmit(onSubmit)} className="p-3 md:p-5">
-                <div className=" gap-4 mb-4 ">
+                <div className="gap-4 mb-4">
                   <div className="col-span-2">
                     <label
                       htmlFor="DocumentTitle"
@@ -97,7 +124,7 @@ const DocumentModal = ({
                       type="text"
                       {...register("documentTitle")}
                       className={`bg-gray-50 border ${
-                        errors.announcementTitle
+                        errors.documentTitle
                           ? "border-red-500 placeholder:text-red-500"
                           : "border-[#737373]"
                       } text-gray-700 placeholder-gray-500 placeholder:font-semibold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1.5`}
@@ -194,28 +221,25 @@ const DocumentModal = ({
                     </div>
                     {selectedOption === "link" && (
                       <div className="col-span-2">
-                      <label
-                        className="block text-base font-medium mb-2"
-                      >
-                         Add Link
-                      </label>
-                      <input
-                        type="url"
-                        placeholder="Enter your link "
-                        {...register("link")}
-                        className={`bg-gray-50 border ${
-                          errors.link
-                            ? "border-red-500 placeholder:text-red-500"
-                            : "border-[#737373]"
-                        } text-gray-700 placeholder-gray-500 placeholder:font-semibold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1.5`}
-                        
-                      />
-                      {errors.link && (
-                        <span className="mt-1 text-sm text-red-500 font-semibold">
-                          {errors.link.message}
-                        </span>
-                      )}
-                    </div>
+                        <label className="block text-base font-medium mb-2">
+                          Add Link
+                        </label>
+                        <input
+                          type="url"
+                          placeholder="Enter your link "
+                          {...register("link")}
+                          className={`bg-gray-50 border ${
+                            errors.link
+                              ? "border-red-500 placeholder:text-red-500"
+                              : "border-[#737373]"
+                          } text-gray-700 placeholder-gray-500 placeholder:font-semibold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1.5`}
+                        />
+                        {errors.link && (
+                          <span className="mt-1 text-sm text-red-500 font-semibold">
+                            {errors.link.message}
+                          </span>
+                        )}
+                      </div>
                     )}
                   </div>
                 </div>
@@ -225,18 +249,7 @@ const DocumentModal = ({
                   className="py-2 px-4 text-white rounded-xl bg-blue-600 border border-[#B2CCFF] w-full justify-center flex items-center"
                 >
                   {isSubmitting ? (
-                    <ThreeDots
-                      visible={true}
-                      height="35"
-                      width="35"
-                      color="#FFFEFF"
-                      radius="9"
-                      ariaLabel="three-dots-loading"
-                      wrapperStyle={{}}
-                      wrapperclassName=""
-                    />
-                  ) : isUpdate ? (
-                    "Update Document"
+                    <ThreeDots color="#FFF" height={13} width={51} />
                   ) : (
                     "Add new Document"
                   )}

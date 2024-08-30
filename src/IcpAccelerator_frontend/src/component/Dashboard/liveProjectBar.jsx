@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import ment from "../../../assets/images/ment.jpg";
 import girl from "../../../assets/images/girl.jpeg";
 import p1 from "../../../assets/Founders/p1.png";
 import p2 from "../../../assets/Founders/p2.png";
@@ -76,7 +75,7 @@ const LiveProjectBar = ({ data }) => {
   // const projectProgress = 50;
   let logo = data?.params?.project_logo
     ? uint8ArrayToBase64(data?.params?.project_logo[0])
-    : ment;
+    : '';
   let name = data?.params?.project_name ?? "";
   let area_tags = data?.params?.project_area_of_focus ?? "";
   let linkedin_link =

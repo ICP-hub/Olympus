@@ -59,7 +59,7 @@ function DashboardHomeWelcomeSection({ userName, profileCompletion }) {
     (currState) => currState.currentRoleStatus.activeRole
   );
   const dispatch = useDispatch();
-
+console.log("USERFULLDATA", userFullData);
   const isAuthenticated = useSelector((curr) => curr.internet.isAuthenticated);
   const actionCards = [
     {

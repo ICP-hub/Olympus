@@ -32,20 +32,6 @@
         "dist/IcpAccelerator_frontend/"
       ],
       "type": "assets"
-    },
-    
-    "admin_frontend": {
-      "dependencies": [
-        "IcpAccelerator_backend"
-      ],
-      "frontend": {
-        "entrypoint": "src/admin_frontend/src/index.html"
-      },
-      "source": [
-        "src/admin_frontend/assets",
-        "dist/admin_frontend/"
-      ],
-      "type": "assets"
     }
 
   }

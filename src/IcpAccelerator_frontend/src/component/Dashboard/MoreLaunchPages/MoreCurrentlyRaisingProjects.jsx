@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import ment from "../../../../assets/images/ment.jpg";
 import girl from "../../../../assets/images/girl.jpeg";
 import { IcpAccelerator_backend } from "../../../../../declarations/IcpAccelerator_backend/index";
 import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";

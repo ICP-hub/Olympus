@@ -9,6 +9,7 @@ use serde::{Deserialize, Serialize};
 pub struct TeamMember {
     pub member_uid: String,
     pub member_data: UserInformation,
+    pub member_principal: Principal
 }
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug, Default, PartialEq)]
@@ -63,10 +64,11 @@ impl ProjectInfo {
         if self.reason_to_join_incubator.is_empty() {
             return Err("Reason to join incubator is a required field.".to_string());
         }
-        if self.project_description.as_ref().map_or(true, |desc| desc.is_empty()) {
-            return Err("Project description is a required field.".to_string());
-        }
-
+        // if let Some(project_description) = &self.project_description {
+        //     if crate::guard::contains_html_tags(project_description) {
+        //         return Err("Bio contains HTML tags, which are not allowed.".into());
+        //     }
+        // }
         Ok(())
     }
 }
@@ -120,35 +122,14 @@ pub struct Docs {
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
 pub struct MoneyRaised {
-    pub target_amount: Option<f64>,
-    pub icp_grants: Option<String>,
-    pub investors: Option<String>,
-    pub sns: Option<String>,
-    pub raised_from_other_ecosystem: Option<String>,
+    pub target_amount: f64,
+    pub icp_grants: String,
+    pub investors: String,
+    pub sns: String,
+    pub raised_from_other_ecosystem: String,
 }
 
-impl MoneyRaised {
-    // Calculates the total amount raised from various sources.
-    // Assumes all Option<String> fields represent valid f64 values or None.
-    pub fn _total_amount(&self) -> f64 {
-        let mut total: f64 = 0.0;
 
-        if let Some(icp_grants) = &self.icp_grants {
-            total += icp_grants.parse::<f64>().unwrap_or(0.0);
-        }
-        if let Some(investors) = &self.investors {
-            total += investors.parse::<f64>().unwrap_or(0.0);
-        }
-        if let Some(sns) = &self.sns {
-            total += sns.parse::<f64>().unwrap_or(0.0);
-        }
-        if let Some(raised_from_other_ecosystem) = &self.raised_from_other_ecosystem {
-            total += raised_from_other_ecosystem.parse::<f64>().unwrap_or(0.0);
-        }
-
-        total
-    }
-}
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
 pub struct ProjectInfoForUser {
@@ -184,6 +165,7 @@ pub struct ProjectInfoInternal {
     pub is_active: bool,
     pub is_verified: bool,
     pub creation_date: u64,
+    pub profile_completion: u8,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
@@ -316,5 +298,49 @@ impl ProjectReview {
             tag,
             rating,
         })
+    }
+}
+
+impl ProjectInfoInternal {
+    pub fn calculate_completion_percentage(&self) -> u8 {
+        let mut total_fields = 6;  
+        let mut filled_fields = total_fields; 
+
+        filled_fields += self.params.project_logo.is_some() as usize;
+        filled_fields += self.params.preferred_icp_hub.is_some() as usize;
+        filled_fields += self.params.live_on_icp_mainnet.is_some() as usize;
+        filled_fields += self.params.money_raised_till_now.is_some() as usize;
+        filled_fields += self.params.supports_multichain.is_some() as usize;
+        filled_fields += self.params.project_elevator_pitch.is_some() as usize;
+        filled_fields += self.params.promotional_video.is_some() as usize;
+        filled_fields += self.params.project_description.is_some() as usize;
+        filled_fields += self.params.project_cover.is_some() as usize;
+        filled_fields += self.params.project_team.as_ref().map_or(0, |v| (!v.is_empty()) as usize);
+        filled_fields += self.params.token_economics.is_some() as usize;
+        filled_fields += self.params.technical_docs.is_some() as usize;
+        filled_fields += self.params.long_term_goals.is_some() as usize;
+        filled_fields += self.params.target_market.is_some() as usize;
+        filled_fields += self.params.mentors_assigned.as_ref().map_or(0, |v| (!v.is_empty()) as usize);
+        filled_fields += self.params.vc_assigned.as_ref().map_or(0, |v| (!v.is_empty()) as usize);
+        filled_fields += self.params.project_website.is_some() as usize;
+        filled_fields += self.params.links.as_ref().map_or(0, |v| (!v.is_empty()) as usize);
+        filled_fields += self.params.money_raised.is_some() as usize;
+        filled_fields += self.params.upload_private_documents.is_some() as usize;
+        filled_fields += self.params.private_docs.as_ref().map_or(0, |v| (!v.is_empty()) as usize);
+        filled_fields += self.params.public_docs.as_ref().map_or(0, |v| (!v.is_empty()) as usize);
+        filled_fields += self.params.dapp_link.is_some() as usize;
+        filled_fields += self.params.weekly_active_users.is_some() as usize;
+        filled_fields += self.params.revenue.is_some() as usize;
+        filled_fields += self.params.is_your_project_registered.is_some() as usize;
+        filled_fields += self.params.type_of_registration.is_some() as usize;
+        filled_fields += self.params.country_of_registration.is_some() as usize;
+
+        total_fields += 24; 
+
+        ((filled_fields as f64 / total_fields as f64) * 100.0).round() as u8
+    }
+
+    pub fn update_completion_percentage(&mut self) {
+        self.profile_completion = self.calculate_completion_percentage();
     }
 }

@@ -10,7 +10,7 @@ use ic_cdk::api::management_canister::main::raw_rand;
 use serde_bytes::ByteBuf;
 use sha2::{Digest, Sha256};
 
-#[update(guard = "is_user_anonymous")]
+#[update(guard = "combined_guard")]
 pub async fn create_cohort(mut params: Cohort) -> Result<String, String> {
     let caller_principal = caller();
 
@@ -89,7 +89,7 @@ pub async fn create_cohort(mut params: Cohort) -> Result<String, String> {
     Ok("Cohort Has Been Created Succesfully".to_string())
 }
 
-#[update(guard="is_user_anonymous")]
+#[update(guard="combined_guard")]
 pub async fn update_cohort(cohort_id: String, updated_params: Cohort) -> Result<String, String> {
     let caller_principal = caller();
 

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import project from "../../../assets/images/project.png";
-// import ment from "../../../assets/images/ment.jpg";
 // import btn from "../../../assets/Comprehensive/upote.png";
 import { useSelector } from "react-redux";
 import { Line } from "rc-progress";

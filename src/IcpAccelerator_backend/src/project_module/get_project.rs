@@ -9,7 +9,7 @@ use ic_cdk_macros::*;
 use candid::Principal;
 use std::collections::HashMap;
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 pub fn get_project_info_using_principal(
     caller: Principal,
 ) -> Option<(ProjectInfoInternal, UserInfoInternal)> {
@@ -49,7 +49,7 @@ pub fn _get_projects_for_caller() -> Vec<ProjectInfo> {
     })
 }
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 pub fn get_my_project() -> (ProjectInfoInternal, UserInfoInternal) {
     let caller = ic_cdk::caller();
     read_state(|state| {
@@ -69,7 +69,7 @@ pub fn get_my_project() -> (ProjectInfoInternal, UserInfoInternal) {
     })
 }
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 pub fn get_project_id() -> String {
     let caller = ic_cdk::caller();
     read_state(|state| {
@@ -82,7 +82,7 @@ pub fn get_project_id() -> String {
 }
 
 //this should only be for admin
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 pub fn get_project_using_id(project_id: String) -> Option<ProjectInfoInternal> {
     read_state(|state| {
         for (_, projects) in state.project_storage.iter() {
@@ -94,7 +94,7 @@ pub fn get_project_using_id(project_id: String) -> Option<ProjectInfoInternal> {
     })
 }
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 pub fn get_project_details_for_mentor_and_investor(
     project_id: String,
 ) -> ProjectPublicInfoInternal {
@@ -141,7 +141,7 @@ pub fn get_project_details_for_mentor_and_investor(
     project_internal
 }
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 pub fn get_project_public_information_using_id(project_id: String) -> ProjectPublicInfoInternal {
     let project_details = get_project_using_id(project_id.clone()).expect("project not found");
     let project_id = project_id.to_string().clone();
@@ -187,7 +187,7 @@ pub fn get_project_public_information_using_id(project_id: String) -> ProjectPub
 }
 
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 pub fn list_all_projects() -> Vec<(ProjectInfoInternal, UserInfoInternal)> {
     let projects_snapshot = read_state(|state| {
         state.project_storage.iter().map(|(principal, project_infos)| {
@@ -214,15 +214,21 @@ pub fn list_all_projects() -> Vec<(ProjectInfoInternal, UserInfoInternal)> {
     projects_with_users
 }
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 pub fn list_all_projects_with_pagination(
     pagination_params: PaginationParams,
 ) -> PaginationReturnProjectData {
     let (projects_snapshot, project_count) = read_state(|state| {
-        let project_count = state.project_storage.len();
+        let filtered_projects: Vec<_> = state.project_storage.iter()
+            .filter(|(_, project_infos)| {
+                project_infos.0.iter().any(|project_info| project_info.is_active && project_info.params.live_on_icp_mainnet.unwrap_or(false))
+            })
+            .collect();
+
+        let project_count = filtered_projects.len();
         let start = (pagination_params.page - 1) * pagination_params.page_size;
 
-        let projects_snapshot = state.project_storage.iter()
+        let projects_snapshot = filtered_projects.iter()
             .skip(start)
             .take(pagination_params.page_size)
             .map(|(principal, project_infos)| {
@@ -233,40 +239,33 @@ pub fn list_all_projects_with_pagination(
         (projects_snapshot, project_count)
     });
 
-    let mut list_all_projects: Vec<ListAllProjects> = Vec::new();
-    let mut user_principals: Vec<Principal> = Vec::new();
+    let mut data: Vec<(Principal, ListAllProjects, UserInformation)> = Vec::new();
 
     for (stored_principal, project_infos) in projects_snapshot {
-        user_principals.push(stored_principal.0.clone());
         for project_info in project_infos {
-            if project_info.is_active {
+            if project_info.is_active && project_info.params.live_on_icp_mainnet.unwrap_or(false) {
                 let get_rating = crate::ratings_module::rubric_ratings::calculate_average(project_info.uid.clone());
                 let project_info_struct = ListAllProjects {
-                    principal: stored_principal.clone(),
-                    params: project_info,
+                    params: project_info.clone(),
                     overall_average: get_rating.overall_average.get(0).cloned(),
                 };
-                list_all_projects.push(project_info_struct);
+                
+                let user_info = get_user_information_internal(stored_principal.0);
+
+                data.push((stored_principal.0.clone(), project_info_struct, user_info));
             }
         }
     }
 
-    let user_data: HashMap<Principal, UserInformation> = user_principals.iter()
-        .map(|principal| {
-            let user_info = get_user_information_internal(*principal);
-            (*principal, user_info)
-        })
-        .collect();
-
     PaginationReturnProjectData {
-        data: list_all_projects,
-        user_data,
+        data,
         count: project_count as u64,
     }
-
 }
 
-#[query(guard = "is_user_anonymous")]
+
+
+#[query(guard = "combined_guard")]
 pub fn filter_projects(criteria: FilterCriteria) -> Vec<ProjectInfo> {
     read_state(|projects| {
         projects
@@ -317,7 +316,7 @@ pub fn filter_projects(criteria: FilterCriteria) -> Vec<ProjectInfo> {
     })
 }
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 pub fn get_project_info_for_user(project_id: String) -> Option<ProjectInfoForUserInternal> {
     let community_ratings = crate::ratings_module::rubric_ratings::calculate_average(project_id.clone());
 
@@ -352,7 +351,7 @@ pub fn get_project_info_for_user(project_id: String) -> Option<ProjectInfoForUse
     })
 }
 
-#[update(guard = "is_user_anonymous")]
+#[update(guard = "combined_guard")]
 pub fn make_project_active_inactive(p_id: Principal, project_id: String) -> String {
     let principal_id = caller();
     if p_id == principal_id || ic_cdk::api::is_controller(&principal_id) {
@@ -386,7 +385,7 @@ pub fn check_project_exists(project_id: String) -> bool {
     get_project_using_id(project_id).is_some()
 }
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 fn get_project_ratings(
     project_id: String,
 ) -> Result<(Option<Vec<(Principal, ProjectReview)>>, f32, bool), String> {
@@ -416,7 +415,7 @@ fn get_project_ratings(
     }
 }
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 pub fn get_frequent_reviewers() -> Vec<UserInfoInternal> {
     let mut review_count: HashMap<Principal, usize> = HashMap::new();
 
@@ -443,7 +442,7 @@ pub fn get_frequent_reviewers() -> Vec<UserInfoInternal> {
 }
 
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 pub fn filter_projects_by_live_status(is_live: bool) -> Vec<ProjectInfo> {
     read_state(|projects| {
         projects

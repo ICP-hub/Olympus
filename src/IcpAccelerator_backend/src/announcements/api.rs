@@ -1,248 +1,178 @@
 use std::collections::HashMap;
-use crate::state_handler::*;
+use crate::project_module::get_project::get_project_info_using_principal;
+use crate::vc_module::get_vc::get_vc_info_using_principal;
+use crate::{mentor_module::get_mentor::get_mentor_info_using_principal, state_handler::*};
 use crate::announcements::ann_types::*;
-use crate::project_module::get_project::*;
 use candid::Principal;
 use ic_cdk::api::caller;
+use ic_cdk::api::management_canister::main::raw_rand;
 use ic_cdk::api::time;
 use ic_cdk_macros::*;
+use sha2::{Digest, Sha256};
 use crate::guard::*;
 
-#[update(guard = "is_user_anonymous")]
-pub fn add_mentor_announcement(name: String, announcement_message: String) -> String {
-    let caller_id = ic_cdk::caller();
 
-    let current_time = ic_cdk::api::time();
-
-    mutate_state(|state| {
-        let mut announcements = state
-            .mentor_announcement
-            .get(&StoredPrincipal(caller_id))
-            .unwrap_or_else(|| {
-                state
-                    .mentor_announcement
-                    .insert(StoredPrincipal(caller_id), Candid(Vec::new()));
-                state
-                    .mentor_announcement
-                    .get(&StoredPrincipal(caller_id))
-                    .unwrap()
-            });
-
-        announcements.0.push(MAnnouncements {
-            project_name: name,
-            announcement_message,
-            timestamp: current_time,
-        });
-
-        format!("Announcement added successfully at {}", current_time)
-    })
-}
-
-#[query(guard = "is_user_anonymous")]
-pub fn get_mentor_announcements() -> HashMap<Principal, Vec<MAnnouncements>> {
-    read_state(|state| {
-        state
-            .mentor_announcement
-            .iter()
-            .map(|(principal, announcements)| (principal.0, announcements.0.clone()))
-            .collect()
-    })
-}
-
-#[update(guard = "is_user_anonymous")]
-pub fn add_vc_announcement(announcement_title: String, announcement_description: String) -> String {
-    let caller_id = ic_cdk::caller();
-    let current_time = ic_cdk::api::time();
-
-    mutate_state(|state| {
-        let stored_principal = StoredPrincipal(caller_id);
-        let new_vc = VAnnouncements {
-            vc_name: "name".to_string(),
-            announcement_title: announcement_title,
-            announcement_description: announcement_description,
-        };
-
-        let mut announcements = state
-            .vc_announcement
-            .get(&stored_principal)
-            .map(|candid_vec| candid_vec.0.clone())
-            .unwrap_or_else(Vec::new);
-
-        announcements.push(new_vc);
-        state
-            .vc_announcement
-            .insert(stored_principal, Candid(announcements));
-
-        format!("Announcement added successfully at {}", current_time)
-    })
-}
-
-#[query(guard = "is_user_anonymous")]
-pub fn get_vc_announcements() -> HashMap<Principal, Vec<VAnnouncements>> {
-    read_state(|state| {
-        let announcements_map = &state.vc_announcement;
-        let mut result_map: HashMap<Principal, Vec<VAnnouncements>> = HashMap::new();
-
-        for (principal, announcements) in announcements_map.iter() {
-            let principal = principal.0;
-            let announcements = announcements.0.clone();
-
-            result_map.insert(principal, announcements);
-        }
-
-        result_map
-    })
-}
-
-#[update(guard = "is_user_anonymous")]
-pub fn add_project_announcement(announcement_details: Announcements) -> String {
+#[update(guard = "combined_guard")]
+pub async fn add_announcement(announcement_details: Announcements) -> String {
     let caller_id = caller();
     let current_time = time();
 
     ic_cdk::println!("Caller ID: {:?}", caller_id);
     ic_cdk::println!("Current Time: {}", current_time);
 
-    let project_info_internal = match get_project_using_id(announcement_details.project_id.clone()){
-        Some(info) => {
-            ic_cdk::println!("Project info fetched successfully: {:?}", info);
-            info
-        }
-        None => {
-            return "Project ID does not exist in application forms.".to_string();
-        }
-    };
+    let uids = raw_rand().await.unwrap().0;
+    let uid = format!("{:x}", Sha256::digest(&uids));
+    let announcement_id = uid;
+
+    let project_info_get = get_project_info_using_principal(caller_id);
+    let mentor_info_get = get_mentor_info_using_principal(caller_id);
+    let vc_info_get = get_vc_info_using_principal(caller_id);
 
     let new_announcement = AnnouncementsInternal {
         announcement_data: announcement_details.clone(),
+        project_info: project_info_get.map(|(proj, _)| proj),
+        mentor_info: mentor_info_get.map(|(mentor, _)| mentor),
+        vc_info: vc_info_get.map(|(vc, _)| vc.profile),
         timestamp: current_time,
-        project_name: project_info_internal.params.project_name.clone(),
-        project_desc: project_info_internal.params.project_description.clone(),
-        project_logo: project_info_internal.params.project_logo.clone(),
+        announcement_id: announcement_id.clone(),
     };
 
     ic_cdk::println!("New Announcement Details: {:?}", new_announcement);
 
-    let result = mutate_state(|state| {
-        let announcement_storage = &mut state.project_announcement;
-        if let Some(caller_announcements) = announcement_storage.get(&StoredPrincipal(caller_id)) {
-            ic_cdk::println!("Existing announcement entry found.");
-            ic_cdk::println!("State before addition: {:?}", caller_announcements.0);
-            let mut caller_announcements = caller_announcements.clone(); // Clone to mutate
-            caller_announcements.0.push(new_announcement);
-            ic_cdk::println!("State after addition: {:?}", caller_announcements.0);
-            announcement_storage.insert(StoredPrincipal(caller_id), caller_announcements);
-            format!("Announcement added successfully at {}", current_time)
+    mutate_state(|state| {
+        if let Some(mut candid_announcements) = state.announcement.get(&StoredPrincipal(caller_id)) {
+            candid_announcements.0.push(new_announcement);
+            state.announcement.insert(StoredPrincipal(caller_id), candid_announcements); 
         } else {
-            ic_cdk::println!("No announcement entry found for this caller.");
-            ic_cdk::println!("State before addition: None"); 
-            announcement_storage.insert(StoredPrincipal(caller_id), Candid(vec![new_announcement]));
-            
-            format!("Announcement added successfully at {}", current_time)
+            state.announcement.insert(
+                StoredPrincipal(caller_id),
+                Candid(vec![new_announcement]),
+            );
         }
     });
-
-    result
+    format!("Announcement added successfully with UID {}", announcement_id)
 }
 
-#[update(guard = "is_user_anonymous")]
-pub async fn update_project_announcement_by_id(
-    timestamp: u64,
-    new_details: Announcements,
-) -> String {
+#[update(guard = "combined_guard")]
+pub async fn update_announcement_by_id(announcement_id: String, new_details: Announcements) -> String {
     mutate_state(|state| {
-        let announcement_storage = &mut state.project_announcement;
-        if let Some(caller_announcements) = announcement_storage.get(&StoredPrincipal(caller()))
-        {
-            let mut caller_announcements = caller_announcements.clone();
-            ic_cdk::println!("state before update {:?}", caller_announcements.0);
-            for announcement in caller_announcements.0.iter_mut() {
-                if announcement.timestamp == timestamp {
-                    ic_cdk::println!("announcement before update: {:?}", announcement);
-                    // Update announcement details
-                    announcement.announcement_data = new_details;
-                    ic_cdk::println!("State after update: {:?}", announcement);
-                    announcement_storage.insert(StoredPrincipal(caller()), caller_announcements);
+        if let Some(mut caller_announcements) = state.announcement.get(&StoredPrincipal(caller())) {
+            let mut updated = false;
 
-                    return format!("Announcement updated successfully for {}", timestamp);
+            for announcement in caller_announcements.0.iter_mut() {
+                if announcement.announcement_id == announcement_id {
+                    announcement.announcement_data = new_details;
+                    updated = true;
+                    break;
                 }
             }
 
-            format!("No announcement found with timestamp {}", timestamp)
-        } else {
-            ic_cdk::println!("No announcement entry found for this caller.");
-            format!("No announcement entry found for this caller.")
-        }
-    })
-}
-
-#[query(guard = "is_user_anonymous")]
-pub async fn delete_project_announcement_by_id(timestamp: u64) -> String {
-    mutate_state(|state| {
-        let announcement_storage = &mut state.project_announcement;
-        if let Some(caller_announcements) = announcement_storage.get(&StoredPrincipal(caller()))
-        {
-            let mut caller_announcements = caller_announcements.clone();
-            ic_cdk::println!("state before update {:?}", caller_announcements.0);
-
-            let original_len = caller_announcements.0.len();
-            caller_announcements
-                .0
-                .retain(|announcement| announcement.timestamp != timestamp);
-
-            if caller_announcements.0.len() < original_len {
-                announcement_storage.insert(StoredPrincipal(caller()), caller_announcements);
-                ic_cdk::println!("Announcement deleted successfully for {}", timestamp);
-                format!("Announcement deleted successfully for {}", timestamp)
+            if updated {
+                "Announcement updated successfully.".to_string()
             } else {
-                ic_cdk::println!("No announcement found with timestamp {}", timestamp);
-                format!("No announcement found with timestamp {}", timestamp)
+                "No announcement found with the given ID.".to_string()
             }
         } else {
-            ic_cdk::println!("No announcement entry found for this caller.");
-            format!("No announcement entry found for this caller.")
+            "No announcement entry found for this caller.".to_string()
         }
     })
 }
 
-#[query(guard = "is_user_anonymous")]
-pub fn get_project_announcements() -> HashMap<Principal, Vec<AnnouncementsInternal>> {
+#[update(guard = "combined_guard")]
+pub fn delete_announcement_by_id(announcement_id: String) -> String {
+    mutate_state(|state| {
+        if let Some(mut caller_announcements) = state.announcement.get(&StoredPrincipal(caller())) {
+            let initial_len = caller_announcements.0.len();
+            caller_announcements.0.retain(|announcement| announcement.announcement_id != announcement_id);
+
+            if caller_announcements.0.is_empty() {
+                state.announcement.remove(&StoredPrincipal(caller()));
+                "Announcement deleted and no announcements left for this caller, entry removed.".to_string()
+            } else if caller_announcements.0.len() < initial_len {
+                state.announcement.insert(StoredPrincipal(caller()), caller_announcements.clone());
+                "Announcement deleted successfully.".to_string()
+            } else {
+                "No announcement found with the given ID.".to_string()
+            }
+        } else {
+            "No announcement entry found for this caller.".to_string()
+        }
+    })
+}
+
+
+#[query(guard = "combined_guard")]
+pub fn get_announcements(page: usize, page_size: usize) -> HashMap<Principal, Vec<AnnouncementsInternal>> {
     read_state(|state| {
         let mut hashmap = HashMap::new();
-        for (stored_principal, announcements) in state.project_announcement.iter() {
+        for (stored_principal, announcements) in state.announcement.iter() {
             let principal = stored_principal.0.clone();
-            hashmap.insert(principal, announcements.0.clone());
+            let start_index = (page - 1) * page_size;
+
+            let paginated_announcements = announcements.0
+                .iter()
+                .skip(start_index)
+                .take(page_size)
+                .cloned()
+                .collect::<Vec<_>>();
+
+            hashmap.insert(principal, paginated_announcements);
         }
         hashmap
     })
 }
 
-#[query(guard = "is_user_anonymous")]
-pub fn get_latest_project_announcements() -> HashMap<Principal, Vec<AnnouncementsInternal>> {
+
+#[query(guard = "combined_guard")]
+pub fn get_latest_announcements(page: usize, page_size: usize) -> HashMap<Principal, Vec<AnnouncementsInternal>> {
     read_state(|state| {
         let mut hashmap = HashMap::new();
-        for (stored_principal, announcement_internals) in state.project_announcement.iter() {
+        for (stored_principal, announcement_internals) in state.announcement.iter() {
             let principal = stored_principal.0.clone();
             let mut sorted_announcements = announcement_internals.0.clone();
+
             sorted_announcements.sort_by(|a, b| b.timestamp.cmp(&a.timestamp));
-            hashmap.insert(principal, sorted_announcements);
+
+            let start_index = (page - 1) * page_size;
+
+            let paginated_announcements = sorted_announcements
+                .into_iter()
+                .skip(start_index)
+                .take(page_size)
+                .collect::<Vec<_>>();
+
+            hashmap.insert(principal, paginated_announcements);
         }
         hashmap
     })
 }
 
-#[query(guard = "is_user_anonymous")]
-pub fn get_announcements_by_project_id(project_id: String) -> Vec<AnnouncementsInternal> {
+#[query(guard = "combined_guard")]
+pub fn get_announcements_by_announcement_id(announcement_id: String) -> Vec<AnnouncementsInternal> {
     read_state(|state| {
         state
-            .project_announcement
+            .announcement
             .iter()
             .flat_map(|(_, announcements)| {
                 announcements
                     .0
-                    .clone() // Clone the entire Vec<AnnouncementsInternal>
+                    .clone() 
                     .into_iter()
-                    .filter(|announcement| announcement.announcement_data.project_id == project_id)
+                    .filter(|announcement| announcement.announcement_id == announcement_id)
             })
-            .collect() // Collect the filtered announcements into a vector
+            .collect()
+    })
+}
+
+#[query]
+pub fn get_announcements_by_principal(principal: Principal) -> Vec<AnnouncementsInternal> {
+    read_state(|state| {
+        state
+            .announcement
+            .get(&StoredPrincipal(principal))  
+            .map_or_else(
+                Vec::new, 
+                |candid_announcements| candid_announcements.0.clone()  
+            )
     })
 }

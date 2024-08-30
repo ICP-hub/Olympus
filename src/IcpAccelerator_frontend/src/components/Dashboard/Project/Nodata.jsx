@@ -2,6 +2,7 @@ import React from 'react'
 import DocumentModal from './DocumentModal'
 
 const Nodata = ({message,isOpen,setIsOpen}) => {
+
   return (
     <div>
         <div className="text-center py-12">
@@ -15,14 +16,14 @@ const Nodata = ({message,isOpen,setIsOpen}) => {
           >
             <mask id="path-1-inside-1_1002_24444" fill="white">
               <path
-                fill-rule="evenodd"
-                clip-rule="evenodd"
+                fillRule="evenodd"
+                clipRule="evenodd"
                 d="M49 4C44.5817 4 41 7.58172 41 12V22.134V27.6206V47.2006C41 51.6811 41 53.9213 41.8719 55.6326C42.6389 57.1379 43.8628 58.3617 45.3681 59.1287C47.0794 60.0007 49.3196 60.0007 53.8 60.0007H90.6C95.6405 60.0007 98.1607 60.0007 100.086 59.0197C101.779 58.1569 103.156 56.78 104.019 55.0866C105 53.1614 105 50.6411 105 45.6006V22.134C105 17.6536 105 15.4134 104.128 13.7021C103.361 12.1968 102.137 10.9729 100.632 10.2059C98.9206 9.33398 96.6804 9.33398 92.2 9.33398H68.4316C68.0091 9.33398 67.6667 8.9915 67.6667 8.56903C67.6667 6.04563 65.621 4 63.0976 4H49Z"
               />
             </mask>
             <path
-              fill-rule="evenodd"
-              clip-rule="evenodd"
+              fillRule="evenodd"
+              clipRule="evenodd"
               d="M49 4C44.5817 4 41 7.58172 41 12V22.134V27.6206V47.2006C41 51.6811 41 53.9213 41.8719 55.6326C42.6389 57.1379 43.8628 58.3617 45.3681 59.1287C47.0794 60.0007 49.3196 60.0007 53.8 60.0007H90.6C95.6405 60.0007 98.1607 60.0007 100.086 59.0197C101.779 58.1569 103.156 56.78 104.019 55.0866C105 53.1614 105 50.6411 105 45.6006V22.134C105 17.6536 105 15.4134 104.128 13.7021C103.361 12.1968 102.137 10.9729 100.632 10.2059C98.9206 9.33398 96.6804 9.33398 92.2 9.33398H68.4316C68.0091 9.33398 67.6667 8.9915 67.6667 8.56903C67.6667 6.04563 65.621 4 63.0976 4H49Z"
               fill="#9AA4B2"
             />
@@ -94,7 +95,7 @@ const Nodata = ({message,isOpen,setIsOpen}) => {
            {message.button}
         </button>
       </div>
-      {open && <DocumentModal setIsOpen={setIsOpen} isOpen={isOpen}  />}
+      {open && <DocumentModal setIsOpen={setIsOpen} isOpen={isOpen}/>}
     </div>
   )
 }

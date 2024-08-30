@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from "react";
-import HalfAstro from "../../../assets/images/astroRegular.png";
-import FullAstro from "../../../assets/images/astro1.png";
 
 const HomeHeroSection = () => {
   return (
@@ -20,7 +18,7 @@ const HomeHeroSection = () => {
           </div>
           <div className="relative flex justify-center items-center">
             <img
-              src={FullAstro}
+              src=''
               alt="Astronaut"
               className={`z-20 w-[500px] md:w-[400px] sm:w-[300px] sxs:w-[295px] relative top-4 sxs:right-0 right-16 md:right-8 sm:right-4 transition-transform duration-1000 ease-in-out transform animate-translate-y`}
             />

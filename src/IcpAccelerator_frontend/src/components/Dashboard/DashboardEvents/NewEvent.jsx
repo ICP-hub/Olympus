@@ -1,87 +1,85 @@
-; import React, { useEffect, useState } from 'react';
-import EventCard from './EventCard';
-import Filters from './EventFilter';
-import eventbg from "../../../../assets/images/bg.png"
-import { Link } from "react-router-dom"
-import EventRegMain from '../../Modals/EventRegister/EventRegMain';
-import { useSelector } from 'react-redux';
-import { title } from 'process';
-import parse from 'html-react-parser';
-import { useNavigate } from 'react-router-dom';
-
-
-
-import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
+import React, { useEffect, useState } from 'react';
 import EventSection from '../Project/EventSection';
 import uint8ArrayToBase64 from '../../Utils/uint8ArrayToBase64';
-
-
-const descriptionStyle = {
-    display: '-webkit-box',
-    WebkitLineClamp: 2, // Limits the text to 2 lines
-    WebkitBoxOrient: 'vertical',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis', // Add ellipsis (...) if the text overflows
-};
-
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import EventRegMain from '../../Modals/EventRegister/EventRegMain';
+import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
+import parse from 'html-react-parser';
+import { Principal } from "@dfinity/principal";
+import Edit from "../../../../assets/Logo/edit.png";
 
 const NewEvent = ({ event }) => {
-
     const [modalOpen, setModalOpen] = useState(false);
+    const [editMode, setEditMode] = useState(false); // State to track if we are in edit mode
     const [cohortEvents, setCohortEvents] = useState([]);
+    const [selectedEvent, setSelectedEvent] = useState(null); // State to track the selected event
     const actor = useSelector((currState) => currState.actors.actor);
+    const principal = useSelector((currState) => currState.internet.principal);
+    const navigate = useNavigate();
 
     const handleModalOpen = () => {
         setModalOpen(true);
+        setEditMode(false); // When creating a new cohort, edit mode is false
+        setSelectedEvent(null);
     };
 
     useEffect(() => {
         const fetchCohorts = async () => {
             try {
-                const data = await actor.get_cohorts_by_principal();
+                const covertedPrincipal = Principal.fromText(principal);
+                const data = await actor.get_cohorts_by_principal(covertedPrincipal);
 
                 if (data && Array.isArray(data) && data.length > 0) {
-                    const cohortId = data[0].cohort_id;
-                    console.log("Cohort ID:", cohortId);
+                    const formattedEvents = data.map(cohort => {
+                        if (!cohort || !cohort.cohort || !cohort.cohort.cohort_banner) {
+                            return null;
+                        }
+
+                        return {
+                            title: cohort.cohort.title,
+                            cohort_banner: cohort.cohort.cohort_banner[0]
+                                ? uint8ArrayToBase64(cohort.cohort.cohort_banner[0])
+                                : [],
+                            cohort_launch_date: cohort.cohort.cohort_launch_date,
+                            cohort_end_date: cohort.cohort.cohort_end_date,
+                            start_date: cohort.cohort.start_date,
+                            no_of_seats: cohort.cohort.no_of_seats,
+                            tags: cohort.cohort.tags,
+                            country: cohort.cohort.country,
+                            description: cohort.cohort.description,
+                            funding_amount: cohort.cohort.funding_amount,
+                            contact_links: cohort.cohort.contact_links,
+                            deadline: cohort.cohort.deadline,
+                            eligibility: cohort.cohort.criteria.eligibility,
+                            funding_type: cohort.cohort.funding_type,
+                            host_name: cohort.cohort.host_name,
+                            level_on_rubric: cohort.cohort.criteria.level_on_rubric,
+                            cohort_id: cohort.cohort_id,
+                        };
+                    }).filter(event => event !== null);
+
+                    setCohortEvents(formattedEvents);
+                    console.log("formattedEvents", formattedEvents);
                 } else {
                     console.log("No data found or the structure is not as expected.");
                 }
-                const formattedEvents = data.map(cohort => {
-                    if (!cohort || !cohort.cohort || !cohort.cohort.cohort_banner) {
-                        return null;
-                    }
-
-                    return {
-                        title: cohort.cohort.title,
-                        cohort_banner: cohort.cohort.cohort_banner[0]
-                            ? uint8ArrayToBase64(cohort.cohort.cohort_banner[0])
-                            : [],
-                        cohort_launch_date: cohort.cohort.cohort_launch_date,
-                        cohort_end_date: cohort.cohort.cohort_end_date,
-                        start_date: cohort.cohort.start_date,
-                        no_of_seats: cohort.cohort.no_of_seats,
-                        tags: cohort.cohort.tags,
-                        country: cohort.cohort.country,
-                        description: cohort.cohort.description,
-                        funding_amount: cohort.cohort.funding_amount,
-                        cohort_id: cohort.cohort_id, // Include cohort_id here
-                    };
-                }).filter(event => event !== null);
-
-                setCohortEvents(formattedEvents);
-                console.log("formattedEvents", formattedEvents)
             } catch (error) {
                 console.error('Error fetching cohort data:', error);
             }
         };
 
         fetchCohorts();
-    }, [actor]);
-
-    const navigate = useNavigate();
+    }, [actor, principal]);
 
     const handleClick = (cohort_id) => {
         navigate('/dashboard/single-event', { state: { cohort_id } });
+    };
+
+    const handleEditClick = (event) => {
+        setModalOpen(true);
+        setEditMode(true); // Set edit mode to true when editing a cohort
+        setSelectedEvent(event);
     };
 
     return (
@@ -102,12 +100,28 @@ const NewEvent = ({ event }) => {
                         {cohortEvents.map((event, index) => (
                             <div
                                 key={index}
-                                className="bg-white rounded-lg shadow p-4 mb-6"
-                                onClick={() => handleClick(event.cohort_id)} // Pass cohort_id from the current event
+                                className="bg-white rounded-lg shadow p-4 mb-6 relative group" 
+                                onClick={() => handleClick(event.cohort_id)}
                             >
+                                <div 
+                                    className="absolute top-4 right-4 flex justify-end" 
+                                    onClick={(e) => { 
+                                        e.stopPropagation(); 
+                                        handleEditClick(event);
+                                    }}>
+                                    <img
+                                        src={Edit}
+                                        onClick={(e) => { 
+                                            e.stopPropagation(); 
+                                            handleEditClick(event);
+                                        }}
+                                        className="h-6 w-6 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity z-50"
+                                        alt="edit"
+                                    />
+                                </div>
+
                                 <div className="flex justify-between items-center">
                                     <div className="flex items-center gap-2 w-full relative">
-
                                         <div className="max-w-[160px] absolute top-1 left-1 bg-white p-2 rounded-[8px]">
                                             <p className="text-sm font-normal">{event.start_date}</p>
                                         </div>
@@ -119,12 +133,10 @@ const NewEvent = ({ event }) => {
                                             />
                                         </div>
                                         <div className='w-2/3'>
-
-                                            <p className="bg-white font-medium border-2 border-[#CDD5DF] text-[#364152] w-[86px] px-2 py-1 rounded-full text-sm">
+                                            <p className="bg-white font-medium border-2 border-[#CDD5DF] text-[#364152] w-[86px] px-2 py-1 rounded-full text-sm -mt-3">
                                                 Workshop
                                             </p>
                                             <h3 className="text-lg font-bold mt-1">{event.title}</h3>
-                                            {/* <h3 className="text-lg font-semibold">{event.no_of_seats}</h3> */}
                                             <p
                                                 className="text-sm text-gray-500 overflow-hidden text-ellipsis line-clamp-3 mt-2"
                                                 style={{ maxHeight: '3em', lineHeight: '1em' }}
@@ -141,7 +153,6 @@ const NewEvent = ({ event }) => {
                                                 </span>
                                                 <span className="text-sm text-gray-500">${event.funding_amount}</span>
                                             </div>
-
                                         </div>
                                     </div>
                                 </div>
@@ -151,10 +162,17 @@ const NewEvent = ({ event }) => {
                 </>
             )}
             {modalOpen && (
-                <EventRegMain modalOpen={modalOpen} setModalOpen={setModalOpen} />
+                <EventRegMain 
+                    modalOpen={modalOpen} 
+                    setModalOpen={setModalOpen} 
+                    editMode={editMode} 
+                    singleEventData={selectedEvent} 
+                    cohortId={selectedEvent?.cohort_id} // Pass the cohort_id here
+                />
             )}
         </>
     );
 };
 
 export default NewEvent;
+

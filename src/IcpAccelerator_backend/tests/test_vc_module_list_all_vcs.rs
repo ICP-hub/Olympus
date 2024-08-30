@@ -186,7 +186,300 @@ fn test_list_all_vcs() {
         roles: vec![], // This should match the roles returned by get_roles_for_principal
     };
 
-    // Assert that the returned VC information matches the expected VC information
-    //assert_eq!(result.get(&test_principal1), Some(&expected_vc_with_roles1.vc_profile,&expected_vc_with_roles1.roles));
-    //(result.get(&test_principal2), Some(&expected_vc_with_roles2));
+
+    let binding = (expected_vc_with_roles1.vc_profile, user_info1, expected_vc_with_roles1.roles);
+    let compare = Some(&binding);
+
+
+
+    //Assert that the returned VC information matches the expected VC information
+    assert_eq!(result.get(&test_principal1), compare);
+    (result.get(&test_principal2), Some(&expected_vc_with_roles2));
+}
+
+
+
+
+
+
+
+
+
+#[test]
+fn test_list_all_vcs_with_inactive_vcs() {
+    let (pic, backend_canister) = setup();
+
+    let test_principal = Principal::anonymous();
+
+    let user_info = UserInformation {
+        full_name: "Inactive VC User".to_string(),
+        profile_picture: None,
+        email: None,
+        country: "United States".to_string(),
+        social_links: None,
+        bio: Some("An inactive VC user.".to_string()),
+        area_of_interest: "Finance".to_string(),
+        openchat_username: None,
+        type_of_profile: Some("vc".to_string()),
+        reason_to_join: None,
+    };
+
+    pic.update_call(
+        backend_canister,
+        test_principal,
+        "register_user",
+        encode_one(user_info.clone()).unwrap(),
+    ).expect("User registration failed");
+
+    let vc_info = VentureCapitalist {
+        name_of_fund: "Inactive Fund".to_string(),
+        fund_size: Some(100_000_000.0),
+        assets_under_management: Some("1B USD".to_string()),
+        registered_under_any_hub: Some(true),
+        average_check_size: 5_000_000.0,
+        existing_icp_investor: true,
+        money_invested: Some(50_000_000.0),
+        existing_icp_portfolio: Some("ICP Projects".to_string()),
+        type_of_investment: "Equity".to_string(),
+        project_on_multichain: Some("Ethereum, Solana".to_string()),
+        category_of_investment: "Technology".to_string(),
+        reason_for_joining: Some("Growth opportunities".to_string()),
+        preferred_icp_hub: "ICP Hub".to_string(),
+        investor_type: Some("Venture Capital".to_string()),
+        number_of_portfolio_companies: 10,
+        portfolio_link: "https://portfolio.example.com".to_string(),
+        website_link: Some("https://vcfund.example.com".to_string()),
+        links: None,
+        registered: true,
+        registered_country: Some("United States".to_string()),
+        stage: Some("Growth".to_string()),
+        range_of_check_size: Some("$2-5M".to_string()),
+    };
+
+    pic.update_call(
+        backend_canister,
+        test_principal,
+        "register_venture_capitalist",
+        encode_one(vc_info.clone()).unwrap(),
+    ).expect("VC registration failed");
+
+    pic.update_call(
+        backend_canister,
+        test_principal,
+        "deactivate_vc", // Assuming a deactivate function exists
+        encode_one(()).unwrap(),
+    ).expect("VC deactivation failed");
+
+    // Call the list_all_vcs function
+    let Ok(WasmResult::Reply(response)) = pic.query_call(
+        backend_canister,
+        Principal::anonymous(),
+        "list_all_vcs",
+        encode_one(()).unwrap(),
+    ) else {
+        panic!("Expected reply");
+    };
+
+    let result: HashMap<Principal, (VentureCapitalistInternal, UserInfoInternal, Vec<Role>)> = decode_one(&response).unwrap();
+
+    assert!(result.is_empty(), "The VC list should be empty when all VCs are inactive.");
+}
+
+
+
+
+#[test]
+fn test_list_all_vcs_with_large_number_of_vcs() {
+    let (pic, backend_canister) = setup();
+
+    let mut expected_vc_info_map = HashMap::new();
+
+    for i in 0..100 {
+        let test_principal = Principal::anonymous();
+
+        let user_info = UserInformation {
+            full_name: format!("VC User {}", i),
+            profile_picture: None,
+            email: None,
+            country: "United States".to_string(),
+            social_links: None,
+            bio: Some(format!("VC user {}.", i)),
+            area_of_interest: "Finance".to_string(),
+            openchat_username: None,
+            type_of_profile: Some("vc".to_string()),
+            reason_to_join: None,
+        };
+
+        pic.update_call(
+            backend_canister,
+            test_principal,
+            "register_user",
+            encode_one(user_info.clone()).unwrap(),
+        ).expect("User registration failed");
+
+        let vc_info = VentureCapitalist {
+            name_of_fund: format!("Fund {}", i),
+            fund_size: Some(100_000_000.0 + i as f64),
+            assets_under_management: Some(format!("{}B USD", i + 1)),
+            registered_under_any_hub: Some(true),
+            average_check_size: 5_000_000.0 + i as f64,
+            existing_icp_investor: true,
+            money_invested: Some(50_000_000.0 + i as f64),
+            existing_icp_portfolio: Some(format!("ICP Projects {}", i)),
+            type_of_investment: "Equity".to_string(),
+            project_on_multichain: Some("Ethereum, Solana".to_string()),
+            category_of_investment: "Technology".to_string(),
+            reason_for_joining: Some(format!("Growth opportunities {}", i)),
+            preferred_icp_hub: format!("ICP Hub {}", i),
+            investor_type: Some("Venture Capital".to_string()),
+            number_of_portfolio_companies: 10 + i,
+            portfolio_link: format!("https://portfolio{}.example.com", i),
+            website_link: Some(format!("https://vcfund{}.example.com", i)),
+            links: None,
+            registered: true,
+            registered_country: Some("United States".to_string()),
+            stage: Some("Growth".to_string()),
+            range_of_check_size: Some("$2-5M".to_string()),
+        };
+
+        pic.update_call(
+            backend_canister,
+            test_principal,
+            "register_venture_capitalist",
+            encode_one(vc_info.clone()).unwrap(),
+        ).expect("VC registration failed");
+
+        expected_vc_info_map.insert(test_principal, vc_info);
+    }
+
+    // Call the list_all_vcs function
+    let Ok(WasmResult::Reply(response)) = pic.query_call(
+        backend_canister,
+        Principal::anonymous(),
+        "list_all_vcs",
+        encode_one(()).unwrap(),
+    ) else {
+        panic!("Expected reply");
+    };
+
+    let result: HashMap<Principal, (VentureCapitalistInternal, UserInfoInternal, Vec<Role>)> = decode_one(&response).unwrap();
+
+    assert_eq!(result.len(), 100, "The VC list should contain exactly 100 VCs.");
+
+    for (principal, expected_vc_info) in expected_vc_info_map {
+        let (returned_vc_internal, _, _) = result.get(&principal).expect("VC info should be found for the registered principal.");
+        assert_eq!(returned_vc_internal.params, expected_vc_info, "Returned VC info should match the registered VC info.");
+    }
+}
+
+
+
+
+#[test]
+fn test_list_all_vcs_with_duplicate_vcs() {
+    let (pic, backend_canister) = setup();
+
+    let test_principal1 = Principal::anonymous();
+    let test_principal2 = test_principal1; // Intentionally duplicate the principal
+
+    let user_info = UserInformation {
+        full_name: "Duplicate VC User".to_string(),
+        profile_picture: None,
+        email: None,
+        country: "United States".to_string(),
+        social_links: None,
+        bio: Some("A VC user with a duplicate principal.".to_string()),
+        area_of_interest: "Finance".to_string(),
+        openchat_username: None,
+        type_of_profile: Some("vc".to_string()),
+        reason_to_join: None,
+    };
+
+    pic.update_call(
+        backend_canister,
+        test_principal1,
+        "register_user",
+        encode_one(user_info.clone()).unwrap(),
+    ).expect("User registration failed");
+
+    let vc_info1 = VentureCapitalist {
+        name_of_fund: "Duplicate Fund 1".to_string(),
+        fund_size: Some(100_000_000.0),
+        assets_under_management: Some("1B USD".to_string()),
+        registered_under_any_hub: Some(true),
+        average_check_size: 5_000_000.0,
+        existing_icp_investor: true,
+        money_invested: Some(50_000_000.0),
+        existing_icp_portfolio: Some("ICP Projects 1".to_string()),
+        type_of_investment: "Equity".to_string(),
+        project_on_multichain: Some("Ethereum, Solana".to_string()),
+        category_of_investment: "Technology".to_string(),
+        reason_for_joining: Some("Growth opportunities 1".to_string()),
+        preferred_icp_hub: "ICP Hub 1".to_string(),
+        investor_type: Some("Venture Capital".to_string()),
+        number_of_portfolio_companies: 10,
+        portfolio_link: "https://portfolio1.example.com".to_string(),
+        website_link: Some("https://vcfund1.example.com".to_string()),
+        links: None,
+        registered: true,
+        registered_country: Some("United States".to_string()),
+        stage: Some("Growth".to_string()),
+        range_of_check_size: Some("$2-5M".to_string()),
+    };
+
+    let vc_info2 = VentureCapitalist {
+        name_of_fund: "Duplicate Fund 2".to_string(),
+        fund_size: Some(200_000_000.0),
+        assets_under_management: Some("2B USD".to_string()),
+        registered_under_any_hub: Some(true),
+        average_check_size: 10_000_000.0,
+        existing_icp_investor: true,
+        money_invested: Some(100_000_000.0),
+        existing_icp_portfolio: Some("ICP Projects 2".to_string()),
+        type_of_investment: "Equity".to_string(),
+        project_on_multichain: Some("Ethereum, Solana".to_string()),
+        category_of_investment: "Technology".to_string(),
+        reason_for_joining: Some("Growth opportunities 2".to_string()),
+        preferred_icp_hub: "ICP Hub 2".to_string(),
+        investor_type: Some("Venture Capital".to_string()),
+        number_of_portfolio_companies: 20,
+        portfolio_link: "https://portfolio2.example.com".to_string(),
+        website_link: Some("https://vcfund2.example.com".to_string()),
+        links: None,
+        registered: true,
+        registered_country: Some("United States".to_string()),
+        stage: Some("Growth".to_string()),
+        range_of_check_size: Some("$2-5M".to_string()),
+    };
+
+    pic.update_call(
+        backend_canister,
+        test_principal1,
+        "register_venture_capitalist",
+        encode_one(vc_info1.clone()).unwrap(),
+    ).expect("VC 1 registration failed");
+
+    pic.update_call(
+        backend_canister,
+        test_principal2,
+        "register_venture_capitalist",
+        encode_one(vc_info2.clone()).unwrap(),
+    ).expect("VC 2 registration failed");
+
+    // Call the list_all_vcs function
+    let Ok(WasmResult::Reply(response)) = pic.query_call(
+        backend_canister,
+        Principal::anonymous(),
+        "list_all_vcs",
+        encode_one(()).unwrap(),
+    ) else {
+        panic!("Expected reply");
+    };
+
+    let result: HashMap<Principal, (VentureCapitalistInternal, UserInfoInternal, Vec<Role>)> = decode_one(&response).unwrap();
+
+    assert_eq!(result.len(), 1, "The VC list should contain only one VC due to duplicate principal.");
+    let (returned_vc_internal, _returned_user_info, _) = result.get(&test_principal1).expect("VC info should be found for the registered principal.");
+    assert_eq!(returned_vc_internal.params, vc_info2, "Returned VC info should match the second registered VC info.");
+    //assert_eq!(*returned_user_info, user_info, "Returned user info should match the registered user info.");
 }

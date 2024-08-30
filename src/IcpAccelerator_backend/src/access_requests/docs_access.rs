@@ -9,8 +9,8 @@ use ic_cdk::api::time;
 use ic_cdk_macros::*;
 use ic_cdk::api::caller;
 
-#[update(guard = "is_user_anonymous")]
-pub async fn update_project_private_docs(project_id: String, new_docs: Vec<Docs>) -> Result<String, String> {
+#[update(guard = "combined_guard")]
+pub async fn update_project_private_docs(project_id: String, new_docs: Vec<Docs>, status: bool) -> Result<String, String> {
     let caller = ic_cdk::caller();
 
     // Check if the caller is the owner of the project
@@ -30,8 +30,12 @@ pub async fn update_project_private_docs(project_id: String, new_docs: Vec<Docs>
     let update_result = mutate_state(|state| {
         if let Some(mut project_list) = state.project_storage.get(&StoredPrincipal(caller)) {
             if let Some(project) = project_list.0.iter_mut().find(|p| p.uid == project_id) {
-                project.params.upload_private_documents = Some(true);
-                project.params.private_docs = Some(new_docs.clone());
+                if status == true {
+                    project.params.upload_private_documents = Some(true);
+                    project.params.private_docs = Some(new_docs.clone());
+                }else{
+                    project.params.public_docs = Some(new_docs.clone());
+                }
 
                 state.project_storage.insert(StoredPrincipal(caller), project_list.clone());
                 return Ok("Project docs updated successfully".to_string());
@@ -44,7 +48,7 @@ pub async fn update_project_private_docs(project_id: String, new_docs: Vec<Docs>
 }
 
 
-#[update(guard = "is_user_anonymous")]
+#[update(guard = "combined_guard")]
 pub async fn send_private_docs_access_request(project_id: String) -> String {
     //sender
     let caller = caller();
@@ -131,7 +135,7 @@ fn add_user_to_private_docs_access(project_id: String, user: Principal) {
     });
 }
 
-#[update(guard = "is_user_anonymous")]
+#[update(guard = "combined_guard")]
 pub async fn approve_private_docs_access_request(
     project_id: String,
     sender_id: Principal,
@@ -183,7 +187,7 @@ pub async fn approve_private_docs_access_request(
     "Private docs access request approved successfully.".to_string()
 }
 
-#[update(guard = "is_user_anonymous")]
+#[update(guard = "combined_guard")]
 pub fn decline_private_docs_access_request(project_id: String, sender_id: Principal) -> String {
     let mut request_found_and_updated = false;
 
@@ -229,7 +233,7 @@ pub fn decline_private_docs_access_request(project_id: String, sender_id: Princi
     "Private docs access request declined successfully.".to_string()
 }
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 pub fn get_all_pending_docs_access_requests() -> Vec<ProjectNotification> {
     read_state(|state| {
         state
@@ -254,7 +258,7 @@ pub fn get_all_pending_docs_access_requests() -> Vec<ProjectNotification> {
     })
 }
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 pub fn get_all_approved_docs_access_requests() -> Vec<ProjectNotification> {
     read_state(|state| {
         state
@@ -279,7 +283,7 @@ pub fn get_all_approved_docs_access_requests() -> Vec<ProjectNotification> {
     })
 }
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 pub fn get_all_declined_docs_access_requests() -> Vec<ProjectNotification> {
     read_state(|state| {
         state
@@ -304,7 +308,7 @@ pub fn get_all_declined_docs_access_requests() -> Vec<ProjectNotification> {
     })
 }
 
-#[query(guard = "is_user_anonymous")]
+#[query(guard = "combined_guard")]
 pub fn access_private_docs(project_id: String) -> Result<Vec<Docs>, CustomError> {
     let caller = ic_cdk::api::caller();
 

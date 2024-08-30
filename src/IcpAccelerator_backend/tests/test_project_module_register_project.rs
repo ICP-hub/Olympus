@@ -1,6 +1,6 @@
 use candid::{decode_one, encode_one, Principal};
 use pocket_ic::{PocketIc, WasmResult};
-use IcpAccelerator_backend::{project_module::project_types::*, user_modules::user_types::UserInformation, vc_module::vc_types::VentureCapitalist};
+use IcpAccelerator_backend::{project_module::project_types::*, user_modules::user_types::{UserInfoInternal, UserInformation}, vc_module::vc_types::VentureCapitalist};
 use std::fs;
 
 // Define the path to your compiled Wasm file
@@ -106,10 +106,11 @@ fn test_register_project() {
         panic!("Expected reply");
     };
 
-    let retrieved_project_info: Option<ProjectInfoInternal> = decode_one(&retrieved_response).unwrap();
+    let retrieved_project_info: Option<(ProjectInfoInternal, UserInfoInternal)> = decode_one(&retrieved_response).unwrap();
+    ic_cdk::println!("RETRIVED PROJECT INFO {:?}", retrieved_project_info);
     assert!(retrieved_project_info.is_some(), "Project info should be present");
     let project = retrieved_project_info.unwrap();
-    assert_eq!(project.params.project_name, "Sample Project".to_string(), "Project name should match");
+    assert_eq!(project.0.params.project_name, "Sample Project".to_string(), "Project name should match");
 }
 
 #[test]
@@ -147,7 +148,6 @@ fn test_register_project_with_existing_role() {
         name_of_fund: "Tech Fund".to_string(),
         fund_size: Some(100000000.0),
         assets_under_management: Some("1B USD".to_string()),
-        logo: None, // Example binary data
         registered_under_any_hub: Some(true),
         average_check_size: 5000000.0,
         existing_icp_investor: true,
@@ -161,7 +161,6 @@ fn test_register_project_with_existing_role() {
         investor_type: Some("Venture Capital".to_string()),
         number_of_portfolio_companies: 10,
         portfolio_link: "https://portfolio.example.com".to_string(),
-        announcement_details: Some("Exciting investment".to_string()),
         website_link: Some("https://vcfund.example.com".to_string()),
         links: None, // Replace with actual data if needed
         registered: true,
@@ -232,7 +231,7 @@ fn test_register_project_with_existing_role() {
 
     // Decode the response and verify the role conflict message
     let result: String = decode_one(&response).unwrap();
-    assert_eq!(result, "You are not allowed to get this role because you already have the Mentor role.", "Expected VC role conflict message");
+    assert_eq!(result, "You are not allowed to get this role because you already have the Venture Capitalist role.", "Expected VC role conflict message");
 }
 
 #[test]

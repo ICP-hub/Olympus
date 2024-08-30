@@ -1,5 +1,4 @@
 use candid::{decode_one, encode_one, Principal};
-use ic_agent::agent::http_transport::reqwest_transport::reqwest::Response;
 use pocket_ic::{PocketIc, WasmResult};
 use IcpAccelerator_backend::{project_module::project_types::*, user_modules::user_types::UserInformation};
 use std::fs;
@@ -253,9 +252,12 @@ fn test_add_project_rating_already_rated() {
     };
 
     // Decode and verify the error message for already rated project
-    let result: String = decode_one(&response).unwrap();
-    assert_eq!(result, "User has already rated this project.", "Expected already rated error message");
+    let result: Result<String, String> = decode_one(&response).unwrap();
+    assert_eq!(result.unwrap(), "User has already rated this project.", "Expected already rated error message");
 }
+
+
+
 
 #[test]
 fn test_add_project_rating_project_not_found() {
@@ -283,6 +285,6 @@ fn test_add_project_rating_project_not_found() {
     };
 
     // Decode and verify the error message for non-existent project
-    let result: String = decode_one(&response).unwrap();
-    assert_eq!(result, "Project with ID does not exist.", "Expected project not found error message");
+    let result: Result<String, String> = decode_one(&response).unwrap();
+    assert_eq!(result.unwrap(), "Project with ID does not exist.", "Expected project not found error message");
 }

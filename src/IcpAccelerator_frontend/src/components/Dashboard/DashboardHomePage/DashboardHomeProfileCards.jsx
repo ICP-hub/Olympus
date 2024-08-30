@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   AccountCircle,
   Star,
@@ -18,8 +18,13 @@ import Nodatafound from "../../../../assets/Logo/Nodatafound.png";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import DashboardProfileView from "./DashboardProfileView";
+import RatingCard from "../../Common/RatingCard";
+import EditRating from "../../Common/RatingReview";
+import RatingReview from "../../Common/RatingReview";
+import Avatar3 from "../../../../assets/Logo/Avatar3.png";
 function DashboardHomeProfileCards() {
   const userFullData = useSelector((currState) => currState.userData.data.Ok);
+  const [show,setShow]=useState(true)
 
   return (
     <>
@@ -82,7 +87,7 @@ function DashboardHomeProfileCards() {
               View details &gt;
             </button>
           </div>
-          <div className="border border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center">
+          {/* <div className="border border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center">
             <svg
               className="text-gray-200 w-20 h-20 mb-4"
               viewBox="0 0 24 24"
@@ -102,7 +107,10 @@ function DashboardHomeProfileCards() {
               Commodo ut non aliquam nunc nulla velit et vulputate turpis. Erat
               rhoncus tristique ullamcorper sit.
             </p>
-          </div>
+          </div> */}
+          {show === true ? <RatingCard show={show} setShow={setShow} /> : <RatingReview />}
+          
+          {/* <RatingReview /> */}
         </div>
 
         {/* Roles card */}
@@ -121,12 +129,12 @@ function DashboardHomeProfileCards() {
           </div>
           <div className="mt-2 h-35 flex justify-center items-center border border-dashed border-gray-300 rounded-lg p-6">
             <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
-              <PersonOutlineOutlinedIcon className="text-gray-400 w-8 h-8" />
+              <img src={Avatar3} className="text-gray-400 w-12 h-12" />
             </div>
           </div>
           <div className="mt-8 h-35 flex justify-center items-center border border-dashed border-gray-300 rounded-lg p-6">
             <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
-              <PersonOutlineOutlinedIcon className="text-gray-400 w-8 h-8" />
+              <img src={Avatar3} className="text-gray-400 w-12 h-12" />
             </div>
           </div>
         </div>
@@ -192,3 +200,4 @@ function DashboardHomeProfileCards() {
   );
 }
 export default DashboardHomeProfileCards;
+

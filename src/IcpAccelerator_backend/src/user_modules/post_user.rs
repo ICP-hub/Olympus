@@ -66,11 +66,16 @@ pub fn initialize_roles() {
     });
 }
 
-#[update(guard = "rate_limiter_guard")]
-pub async fn register_user(info: UserInformation) -> Result<std::string::String, std::string::String> {
-    // if !verify_captcha(captcha_id, captcha_input) {
-    //     return Err::<std::string::String, std::string::String>("CAPTCHA verification failed.".to_string());
-    // }
+fn record_measurement(measurement: u64) {
+    ic_cdk::println!("Instructions used: {}", measurement);
+}
+
+#[update(guard = "is_user_anonymous")]
+pub async fn register_user(captcha_id: String, captcha_input: String, info: UserInformation) -> Result<std::string::String, std::string::String> {
+    if !verify_captcha(captcha_id, captcha_input) {
+        return Err::<std::string::String, std::string::String>("CAPTCHA verification failed.".to_string());
+    }
+    let start = ic_cdk::api::instruction_counter();
     initialize_roles();
 
     let caller = caller();
@@ -110,12 +115,14 @@ pub async fn register_user(info: UserInformation) -> Result<std::string::String,
     //convert_to_lowercase
     info_with_default.type_of_profile = info_with_default.type_of_profile.map(|s| s.to_lowercase());
 
-    let user_info_internal = UserInfoInternal {
+    let mut user_info_internal = UserInfoInternal {
         uid: new_id.clone(),
         params: info_with_default,
         is_active: true,
         joining_date: time(),
+        profile_completion: 0, 
     };
+    user_info_internal.update_completion_percentage();
 
     let user_added = mutate_state(|state| {
         let user_storage = &mut state.user_storage;
@@ -184,10 +191,12 @@ pub async fn register_user(info: UserInformation) -> Result<std::string::String,
             role_status.insert(StoredPrincipal(caller), Candid(initial_roles));
         }
     });
+    let end = ic_cdk::api::instruction_counter();  
+    record_measurement(end - start);  
     Ok(format!("User registered successfully with ID: {}", new_id))
 }
 
-#[update(guard = "is_user_anonymous")]
+#[update(guard = "combined_guard")]
 async fn update_user_data(user_id: Principal, mut user_data: UserInformation) -> Result<(), String> {
     let temp_image = user_data.profile_picture.clone();
     let canister_id = crate::asset_manager::get_asset_canister();
@@ -235,7 +244,7 @@ async fn update_user_data(user_id: Principal, mut user_data: UserInformation) ->
     })
 }
 
-#[update(guard = "is_user_anonymous")]
+#[update(guard = "combined_guard")]
 pub fn switch_role(role_to_switch: String, new_status: String){
     let caller_id = StoredPrincipal(caller());
 
@@ -270,7 +279,7 @@ pub fn switch_role(role_to_switch: String, new_status: String){
     });
 }
 
-#[update(guard = "is_user_anonymous")]
+#[update(guard = "combined_guard")]
 pub fn make_user_inactive() -> std::string::String {
     let caller = caller();
 
@@ -288,7 +297,7 @@ pub fn make_user_inactive() -> std::string::String {
     })
 }
 
-#[update(guard = "is_user_anonymous")]
+#[update(guard = "combined_guard")]
 fn add_testimonial(message: String) -> String {
     let principal_id = caller();
 
@@ -322,7 +331,7 @@ fn add_testimonial(message: String) -> String {
     }
 }
 
-#[update(guard = "is_user_anonymous")]
+#[update(guard = "combined_guard")]
 fn add_review(rating: f32, message: String) -> String {
     let principal_id = ic_cdk::caller();
     let principal_id_stored = StoredPrincipal(principal_id);

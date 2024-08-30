@@ -45,8 +45,8 @@ export const validationSchema = yup
     ),
   investor_portfolio_link: yup
     .string()
-    .url("Invalid URL"),
-  // .required("Portfolio URL is required"),
+    .url("Invalid URL")
+  .required("Portfolio URL is required"),
 
 
   investor_fund_name: yup

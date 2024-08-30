@@ -97,7 +97,7 @@ const DiscoverUserModal = ({ openDetail, setOpenDetail, userData }) => {
             openDetail ? "translate-x-0" : "translate-x-full"
           } z-20`}
         >
-          <div className="p-5 mb-5">
+          <div className="p-2 mb-2">
             <CloseIcon
               sx={{ cursor: "pointer" }}
               onClick={() => setOpenDetail(false)}
