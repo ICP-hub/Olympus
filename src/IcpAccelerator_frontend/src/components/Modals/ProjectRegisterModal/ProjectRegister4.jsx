@@ -15,7 +15,7 @@ const ProjectRegister4 = ({ isOpen, onClose, onBack }) => {
       {/* FUNDRAISING QUESTION WITH SELECT DROPDOWN */}
       <div className="max-h-[80vh] overflow-y-auto ">
       <div className="mb-2">
-        <label className="block text-sm font-medium mb-1">
+        <label className="block mb-1">
           Have you raised any funds in past
           <span className="text-red-500">*</span>
         </label>
@@ -46,15 +46,15 @@ const ProjectRegister4 = ({ isOpen, onClose, onBack }) => {
         <>
           {/* INPUT FOR GRANTS FUNDING AMOUNT */}
           <div className="mb-2">
-            <label className="block text-sm font-medium mb-1">
+            <label className="block mb-1">
               <div className="flex flex-col">
                 <span>
                   How much funding have you raised in grants (USD)?
                   <span className="text-red-500">*</span>
                 </span>
-                <span className="text-red-500">
+                {/* <span className="text-red-500">
                   If you have not raised any grants enter 0
-                </span>
+                </span> */}
               </div>
             </label>
             <input
@@ -81,15 +81,15 @@ const ProjectRegister4 = ({ isOpen, onClose, onBack }) => {
 
           {/* INPUT FOR INVESTOR FUNDING AMOUNT */}
           <div className="mb-2">
-            <label className="block text-sm font-medium mb-1">
+            <label className="block mb-1">
               <div className="flex flex-col">
                 <span>
                   How much funding have you received from Investors (USD)?
                 <span className="text-red-500">*</span>
                 </span>
-                <span className="text-red-500">
+                {/* <span className="text-red-500">
                   If you have not recieved any funds from Investor enter 0
-                </span>
+                </span> */}
               </div>
             </label>
             <input
@@ -114,21 +114,18 @@ const ProjectRegister4 = ({ isOpen, onClose, onBack }) => {
             )}
           </div>
 
-          {/* INPUT FOR LAUNCHPAD FUNDING AMOUNT */}
+        
           <div className="mb-2">
-            <label className="block text-sm font-medium mb-1">
+            <label className="block mb-1">
               <div className="flex flex-col">
                 <span>
                   How much funding has been provided through the launchpad
                   program (USD)?<span className="text-red-500">*</span>
                 </span>
-                <span className="text-red-500">
-                  If you have not recieved any funds from launchpad program
-                  enter 0
-                </span>
+             
               </div>
             </label>
-            <input
+            {/* <input
               type="number"
               {...register("raised_from_other_ecosystem")} // REGISTER INPUT FIELD
               className={`border border-[#CDD5DF] rounded-md shadow-sm 
@@ -141,6 +138,21 @@ const ProjectRegister4 = ({ isOpen, onClose, onBack }) => {
               onWheel={(e) => e.target.blur()} // DISABLE MOUSE WHEEL FOR NUMBER INPUTS
               min={0} // SET MINIMUM VALUE TO 0
               defaultValue=""
+            /> */}
+             <input
+              type="number"
+              {...register("raised_from_other_ecosystem")} // REGISTER INPUT FIELD
+              className={`border border-[#CDD5DF] rounded-md shadow-sm
+                                             ${
+                                               errors?.raised_from_other_ecosystem
+                                                 ? "border-red-500 "
+                                                 : "border-[#737373]"
+                                             } text-gray-900 placeholder-gray-500  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+              placeholder="Enter your Launchpad Amount"
+              // onWheel={(e) => e.target.blur()} // DISABLE MOUSE WHEEL FOR NUMBER INPUTS
+              // min={0} // SET MINIMUM VALUE TO 0
+              // defaultValue=""
+
             />
             {/* DISPLAY ERROR MESSAGE FOR 'raised_from_other_ecosystem' FIELD */}
             {errors?.raised_from_other_ecosystem && (
@@ -156,7 +168,7 @@ const ProjectRegister4 = ({ isOpen, onClose, onBack }) => {
 
       {/* CURRENT FUNDRAISING STATUS QUESTION WITH SELECT DROPDOWN */}
       <div className="mb-2">
-        <label className="block text-sm font-medium mb-1">
+        <label className="block mb-1">
           Are you currently raising money
           <span className="text-red-500">*</span>
         </label>
@@ -186,15 +198,15 @@ const ProjectRegister4 = ({ isOpen, onClose, onBack }) => {
         <>
           {/* INPUT FOR TARGET AMOUNT */}
           <div className="mb-2">
-            <label className="block text-sm font-medium mb-1">
+            <label className="block mb-1">
               <div className="flex flex-col">
                 <span>
                   Target Amount (in Millions USD)
                   <span className="text-red-500">*</span>
                 </span>
-                <span className="text-red-500 block mt-1">
+                {/* <span className="text-red-500 block mt-1">
                   If you are not seeking any funds, enter 0.
-                </span>
+                </span> */}
               </div>
             </label>
 
@@ -208,9 +220,10 @@ const ProjectRegister4 = ({ isOpen, onClose, onBack }) => {
                                                  : "border-[#737373]"
                                              } text-gray-900 placeholder-gray-500  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
               placeholder="Enter your Target Amount"
-              defaultValue=""
               onWheel={(e) => e.target.blur()} // DISABLE MOUSE WHEEL FOR NUMBER INPUTS
               min={0} // SET MINIMUM VALUE TO 0
+              defaultValue=""
+
             />
             {/* DISPLAY ERROR MESSAGE FOR 'target_amount' FIELD */}
             {errors?.target_amount && (
@@ -222,15 +235,15 @@ const ProjectRegister4 = ({ isOpen, onClose, onBack }) => {
 
           {/* INPUT FOR VALUATION */}
           <div className="mb-2">
-            <label className="block text-sm font-medium mb-1">
+            <label className="block mb-1">
               <div className="flex flex-col">
                 <span>
                   Valuation (USD)
                   <span className="text-red-500">*</span>
                 </span>
-                <span className="text-red-500 block mt-1">
+                {/* <span className="text-red-500 block mt-1">
                   If you do not have a valuation, enter 0.
-                </span>
+                </span> */}
               </div>
             </label>
             <input
@@ -243,9 +256,10 @@ const ProjectRegister4 = ({ isOpen, onClose, onBack }) => {
                                                  : "border-[#737373]"
                                              } text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
               placeholder="Enter valuation (In million)"
-              defaultValue=""
+             
               onWheel={(e) => e.target.blur()} // DISABLE MOUSE WHEEL FOR NUMBER INPUTS
               min={0} // SET MINIMUM VALUE TO 0
+              defaultValue=""
             />
             {/* DISPLAY ERROR MESSAGE FOR 'valuation' FIELD */}
             {errors?.valuation && (

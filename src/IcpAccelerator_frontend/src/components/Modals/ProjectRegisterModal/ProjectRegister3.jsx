@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Select from "react-select";
 import { useFormContext } from "react-hook-form";
 import { useSelector } from "react-redux";
+import { CiWarning } from "react-icons/ci";
 
 // COMPONENT TO HANDLE THE THIRD STEP OF PROJECT REGISTRATION FORM
 const ProjectRegister3 = ({ formData }) => {
@@ -76,7 +77,7 @@ const ProjectRegister3 = ({ formData }) => {
     <>
       {/* MULTI-CHAIN TOGGLE DROPDOWN */}
       <div className="mb-2">
-        <label className="block text-sm font-medium mb-1">
+        <label className="block mb-1">
           Are you also multi-chain<span className="text-red-500">*</span>
         </label>
         <select
@@ -104,7 +105,7 @@ const ProjectRegister3 = ({ formData }) => {
       {/* CONDITIONAL RENDERING OF MULTI-CHAIN SELECTION IF MULTI-CHAIN IS ENABLED */}
       {watch("multi_chain") === "true" ? (
         <div className="mb-2">
-          <label className="block text-sm font-medium mb-1">
+          <label className="block mb-1">
             Please select the chains<span className="text-red-500">*</span>
           </label>
           <Select
@@ -197,11 +198,47 @@ const ProjectRegister3 = ({ formData }) => {
       ) : null}
 
       {/* ICP MAINNET TOGGLE DROPDOWN */}
-      <div className="mb-2">
-        <label className="block text-sm font-medium mb-1">
+      {/* <div className="mb-2">
+        <label className="block mb-1">
           <div className="flex flex-col">
           <span>Live on ICP<span className="text-red-500">*</span></span>
-          <span className="text-red-500">If you not fill this field your project will not show live in platform</span> 
+          <span className="text-yellow-600 flex items-center">
+  <CiWarning className="mr-2 text-yellow-600" /> 
+  If you select No, project won't go live on platform
+</span>          </div>
+        </label>
+        <select
+          {...register("live_on_icp_mainnet")}
+          className={`border border-[#CDD5DF] rounded-md shadow-sm ${
+            errors.live_on_icp_mainnet ? "border-red-500" : "border-[#737373]"
+          } text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+        >
+          <option className="text-lg font-bold" value="false">
+            No
+          </option>
+          <option className="text-lg font-bold" value="true">
+            Yes
+          </option>
+        </select>
+       
+        {errors.live_on_icp_mainnet && (
+          <p className="mt-1 text-sm text-red-500 font-bold text-left">
+            {errors.live_on_icp_mainnet.message}
+          </p>
+        )}
+      </div> */}
+        <div className="mb-2">
+        <label className="block mb-1">
+          <div className="flex flex-col">
+            <span>
+              Live on ICP<span className="text-red-500">*</span>
+            </span>
+            {watch("live_on_icp_mainnet") === "false" && (
+              <span className="text-yellow-600 flex items-center">
+                <CiWarning className="mr-2 text-yellow-600" />
+                If you select <strong> &nbsp;No</strong>, project won't go live on platform
+              </span>
+            )}
           </div>
         </label>
         <select
@@ -230,7 +267,7 @@ const ProjectRegister3 = ({ formData }) => {
         <>
           {/* DAPP LINK INPUT FIELD */}
           <div className="mb-2">
-            <label className="block text-sm font-medium mb-1">
+            <label className="block mb-1">
               dApp Link<span className="text-red-500">*</span>
             </label>
             <input
@@ -255,7 +292,7 @@ const ProjectRegister3 = ({ formData }) => {
 
           {/* WEEKLY ACTIVE USERS INPUT FIELD */}
           <div className="mb-2">
-            <label className="block text-sm font-medium mb-1">
+            <label className="block mb-1">
               Weekly active user<span className="text-red-500">*</span>
             </label>
             <input
@@ -277,7 +314,7 @@ const ProjectRegister3 = ({ formData }) => {
             )}
           </div>
           <div className="mb-2">
-            <label htmlFor="revenue" className="block text-sm font-medium mb-1">
+            <label htmlFor="revenue" className="block mb-1">
               Revenue (in Million USD){" "}
               {/* <span className="text-red-500">*</span> */}
             </label>

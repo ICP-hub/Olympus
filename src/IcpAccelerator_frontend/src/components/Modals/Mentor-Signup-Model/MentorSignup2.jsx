@@ -131,8 +131,8 @@ const [reasonOfJoiningOptions, setReasonOfJoiningOptions] = useState([
   return (
     <>
     <div className="max-h-[80vh] overflow-y-auto ">
-     <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+     <div className="mb-2">
+        <label className="block mb-1">
           Why do you want to join this platform ?{" "}
           <span className="text-[#155EEF]">*</span>
         </label>
@@ -225,7 +225,7 @@ const [reasonOfJoiningOptions, setReasonOfJoiningOptions] = useState([
         )}
       </div>
     <div className="mb-2">
-        <label className="block text-sm font-medium mb-1">
+        <label className="block mb-1">
           Area of focus <span className="text-[red] ml-1">*</span>
         </label>
         <Select
@@ -324,10 +324,13 @@ const [reasonOfJoiningOptions, setReasonOfJoiningOptions] = useState([
         </label>
         <select
           {...register("icp_hub_or_spoke")}
-          className={`bg-gray-50 border rounded-md shadow-sm ${errors.icp_hub_or_spoke ? "border-red-500" : "border-[#CDD5DF]"} text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-        >
-          <option value="false">No</option>
-          <option value="true">Yes</option>
+         
+          className={`bg-gray-50 border rounded-md shadow-sm ${
+            errors.icp_hub_or_spoke ? "border-red-500" : "border-[#CDD5DF]"
+          } text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+       >
+          <option  className = "text-lg font-bold" value="false">No</option>
+          <option  className = "text-lg font-bold" value="true">Yes</option>
         </select>
         {errors.icp_hub_or_spoke && (
           <p className="mt-1 text-sm text-red-500 font-bold">{errors.icp_hub_or_spoke.message}</p>
@@ -336,7 +339,7 @@ const [reasonOfJoiningOptions, setReasonOfJoiningOptions] = useState([
 
       {/* CONDITIONAL HUB OWNER SELECTION FIELD */}
       {watch("icp_hub_or_spoke") === "true" && (
-        <div className="mb-2">
+        <div className="relative z-0 group mb-2">
           <label className="block mb-1">
             Hub Owner <span className="text-red-500">*</span>
           </label>
@@ -344,9 +347,9 @@ const [reasonOfJoiningOptions, setReasonOfJoiningOptions] = useState([
             {...register("hub_owner")}
             className={`bg-gray-50 border rounded-md shadow-sm ${errors.hub_owner ? "border-red-500" : "border-[#CDD5DF]"} text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
           >
-            <option value="">Select your ICP Hub</option>
+            <option className= "text-lg font-bold" value="">Select your ICP Hub</option>
             {getAllIcpHubs?.map((hub) => (
-              <option key={hub.id} value={`${hub.name} ,${hub.region}`}>
+              <option key={hub.id} value={`${hub.name} ,${hub.region}`} className="text-lg font-bold">
                 {hub.name}, {hub.region}
               </option>
             ))}
@@ -395,7 +398,7 @@ const [reasonOfJoiningOptions, setReasonOfJoiningOptions] = useState([
 
       {/* DYNAMIC LINKS INPUT FIELD */}
       <div className="mb-2">
-        <label className="block text-sm font-medium mb-1">
+        <label className="block mb-1">
           Links
         </label>
         <div className="relative">

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ReactSelect from "react-select";
+import Select from "react-select";
 import { useFormContext } from "react-hook-form";
 import { useSelector } from "react-redux";
 import toast, { Toaster } from "react-hot-toast";
@@ -88,7 +89,7 @@ const MentorSignup1 = ({ formData }) => {
             errors.preferred_icp_hub ? "border-red-500 " : " border-[#CDD5DF] "
           } text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
         >
-          <option className="text-sm font-normal" value="">
+          <option className="text-lg font-bold" value="">
             Select your ICP Hub
           </option>
           {getAllIcpHubs?.map((hub) => (
@@ -131,10 +132,10 @@ const MentorSignup1 = ({ formData }) => {
 
       {/* CHAIN SELECTION FOR MULTICHAIN MENTORING */}
       {watch("multi_chain") === "true" && (
-        <div className="relative z-0 group mb-6">
+        <div className="relative z-0 group mb-2">
           <label
             htmlFor="multi_chain_names"
-            className="block mb-2 text-lg font-medium text-gray-500 hover:text-black hover:whitespace-normal truncate overflow-hidden text-start"
+            className="block mb-1"
           >
             Please select the chains <span className="text-red-500">*</span>
           </label>

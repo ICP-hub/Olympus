@@ -87,8 +87,9 @@ const ProjectRegister2 = ({ formData,setFormData, coverData,setCoverData}) => {
             {/* COVER IMAGE UPLOAD SECTION */}
             {/* COVER IMAGE UPLOAD SECTION */}
             <div className="mb-2">
-                <label className="block text-sm font-medium mb-1">
-                    Upload a Cover Photo<span className="text-red-500">*</span>
+                <label className="block mb-1">
+                    Upload a Cover Photo
+                    {/* <span className="text-red-500">*</span> */}
                 </label>
 
                 <div className="flex gap-2 mb-3">
@@ -171,7 +172,7 @@ const ProjectRegister2 = ({ formData,setFormData, coverData,setCoverData}) => {
             {/* PROJECT WEBSITE INPUT SECTION */}
             {/* PROJECT WEBSITE INPUT SECTION */}
             <div className="mb-2">
-                <label className="block text-sm font-medium mb-1">
+                <label className="block mb-1">
                     Project Website
                 </label>
                 <input
@@ -196,7 +197,7 @@ const ProjectRegister2 = ({ formData,setFormData, coverData,setCoverData}) => {
 
             {/* PROJECT REGISTRATION STATUS SELECTION */}
             <div className="mb-2">
-                <label className="block text-sm font-medium mb-1">
+                <label className="block mb-1">
                     Is your project registered<span className="text-red-500">*</span>
                 </label>
                 <select
@@ -229,8 +230,8 @@ const ProjectRegister2 = ({ formData,setFormData, coverData,setCoverData}) => {
                     {/* TYPE OF REGISTRATION SELECTION */}
                     {/* TYPE OF REGISTRATION SELECTION */}
                     <div className="mb-2">
-                        <label className="block text-sm font-medium mb-1">
-                            Type of registration<span className="text-[#155EEF]">*</span>
+                        <label className="block mb-1">
+                            Type of registration<span className="text-red-500">*</span>
                         </label>
                         <select
                             {...register("type_of_registration")}
@@ -261,8 +262,8 @@ const ProjectRegister2 = ({ formData,setFormData, coverData,setCoverData}) => {
 
                     {/* COUNTRY OF REGISTRATION SELECTION */}
                     <div className="mb-2">
-                        <label className="block text-sm font-medium mb-1">
-                            Country of registration<span className="text-[#155EEF]">*</span>
+                        <label className="block mb-1">
+                            Country of registration<span className="text-red-500">*</span>
                         </label>
                         <select
                             {...register("country_of_registration")}

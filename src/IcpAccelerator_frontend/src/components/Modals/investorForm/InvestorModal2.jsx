@@ -216,8 +216,9 @@ const InvestorModal2 = ({ formData }) => {
 
   return (
     <>
-      {/* CATEGORY OF INVESTMENT SELECTION FIELD */}
-      <div className="mb-4">
+    
+      <div className="max-h-[80vh] overflow-y-auto ">
+       <div className="mb-4">
         <label className="block text-sm font-medium mb-1">
           Category of investment <span className="text-[red] ml-1">*</span>
         </label>
@@ -227,55 +228,47 @@ const InvestorModal2 = ({ formData }) => {
           menuPosition={"fixed"}
           styles={{
             menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-            control: (provided, state) => ({
+            control: (provided) => ({
               ...provided,
               paddingBlock: "2px",
               borderRadius: "8px",
               border: errors.investment_categories
                 ? "2px solid #ef4444"
                 : "2px solid #737373",
-              backgroundColor: "rgb(249 250 251)",
-              "&::placeholder": {
-                color: errors.investment_categories
-                  ? "#ef4444"
-                  : "currentColor",
-              },
-              display: "flex",
-              overflowX: "auto",
-              maxHeight: "43px",
-              "&::-webkit-scrollbar": {
-                display: "none",
-              },
-            }),
-            valueContainer: (provided, state) => ({
-              ...provided,
-              overflow: "scroll",
-              maxHeight: "40px",
-              scrollbarWidth: "none",
-            }),
-            placeholder: (provided, state) => ({
-              ...provided,
+                backgroundColor: "rgb(249 250 251)",
+                display: "flex",
+                overflowX: "auto",
+                maxHeight: "43px",
+                "&::-webkit-scrollbar": { display: "none" },
+              }),
+              valueContainer: (provided) => ({
+                ...provided,
+                overflow: "scroll",
+                maxHeight: "40px",
+                scrollbarWidth: "none",
+              }),
+              placeholder: (provided) => ({
+                ...provided,
               color: errors.investment_categories
                 ? "#ef4444"
                 : "rgb(107 114 128)",
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-            }),
-            multiValue: (provided) => ({
-              ...provided,
-              display: "inline-flex",
-              alignItems: "center",
-              backgroundColor: "white",
-              border: "1px solid gray",
-              borderRadius: "5px",
-            }),
-            multiValueRemove: (provided) => ({
-              ...provided,
-              display: "inline-flex",
-              alignItems: "center",
-            }),
-          }}
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+              }),
+              multiValue: (provided) => ({
+                ...provided,
+                display: "inline-flex",
+                alignItems: "center",
+                backgroundColor: "white",
+                border: "2px solid #CDD5DF",
+              }),
+              multiValueRemove: (provided) => ({
+                ...provided,
+                display: "inline-flex",
+                alignItems: "center",
+              }),
+            }}
           value={investmentCategoriesSelectedOptions}
           options={investmentCategoriesOptions}
           classNamePrefix="select"
@@ -359,8 +352,7 @@ const InvestorModal2 = ({ formData }) => {
               display: "inline-flex",
               alignItems: "center",
               backgroundColor: "white",
-              border: "1px solid gray",
-              borderRadius: "5px",
+              border: "2px solid #CDD5DF",
             }),
             multiValueRemove: (provided) => ({
               ...provided,
@@ -446,24 +438,23 @@ const InvestorModal2 = ({ formData }) => {
               color: errors.investment_stage_range
                 ? "#ef4444"
                 : "rgb(107 114 128)",
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-            }),
-            multiValue: (provided) => ({
-              ...provided,
-              display: "inline-flex",
-              alignItems: "center",
-              backgroundColor: "white",
-              border: "1px solid gray",
-              borderRadius: "5px",
-            }),
-            multiValueRemove: (provided) => ({
-              ...provided,
-              display: "inline-flex",
-              alignItems: "center",
-            }),
-          }}
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+              }),
+              multiValue: (provided) => ({
+                ...provided,
+                display: "inline-flex",
+                alignItems: "center",
+                backgroundColor: "white",
+                border: "2px solid #CDD5DF",
+              }),
+              multiValueRemove: (provided) => ({
+                ...provided,
+                display: "inline-flex",
+                alignItems: "center",
+              }),
+            }}
           value={investStageRangeSelectedOptions}
           options={investStageRangeOptions}
           classNamePrefix="select"
@@ -502,7 +493,8 @@ const InvestorModal2 = ({ formData }) => {
       {/* WEBSITE LINK INPUT FIELD */}
       <div className="mb-4">
         <label className="block text-sm font-medium mb-1">
-          Website link <span className="text-[red] ml-1">*</span>
+          Website link 
+          {/* <span className="text-[red] ml-1">*</span> */}
         </label>
         <input
           {...register("investor_website_url")}
@@ -569,7 +561,7 @@ const InvestorModal2 = ({ formData }) => {
           </button>
         </div>
       </div>
-    </>
+   </div> </>
   );
 };
 

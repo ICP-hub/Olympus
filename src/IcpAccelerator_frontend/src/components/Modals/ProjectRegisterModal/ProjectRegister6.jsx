@@ -36,12 +36,7 @@ const ProjectRegister6 = ({formData}) => {
       [{ align: [] }],                                 // Text alignment options
       ["link"],                                        // Link option
       ["clean"],                                       // Clear formatting option
-      [{ header: "1" }, { header: "2" }, { font: [] }], // Heading and font options
-      [{ list: "ordered" }, { list: "bullet" }],       // List options
-      ["bold", "italic", "underline"],                 // Text formatting options
-      [{ align: [] }],                                 // Text alignment options
-      ["link"],                                        // Link option
-      ["clean"],                                       // Clear formatting option
+                                          // Clear formatting option
     ],
   }), []);
 
@@ -111,10 +106,10 @@ const ProjectRegister6 = ({formData}) => {
   };
   return (
     <>
-     <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+     <div className="mb-2">
+        <label className="block mb-1">
           Why do you want to join this platform ?{" "}
-          <span className="text-[#155EEF]">*</span>
+          <span className="text-[red] ml-1">*</span>
         </label>
         <ReactSelect
           isMulti
@@ -205,13 +200,14 @@ const ProjectRegister6 = ({formData}) => {
         )}
       </div>
     <div className="mb-2">
-        <label className="block text-sm font-medium mb-1">
+        <label className="block mb-1">
           Area of focus <span className="text-[red] ml-1">*</span>
         </label>
         <Select
           isMulti
           menuPortalTarget={document.body}
           menuPosition={"fixed"}
+         
           styles={{
             menuPortal: (base) => ({ ...base, zIndex: 9999 }),
             control: (provided, state) => ({
@@ -219,7 +215,7 @@ const ProjectRegister6 = ({formData}) => {
               paddingBlock: "2px",
               borderRadius: "8px",
               border: errors.project_area_of_focus
-                ? "2px solid #ef4444"
+                ? "2px solid #737373"
                 : "2px solid #737373",
               backgroundColor: "rgb(249 250 251)",
               "&::placeholder": {
@@ -253,9 +249,9 @@ const ProjectRegister6 = ({formData}) => {
               ...provided,
               display: "inline-flex",
               alignItems: "center",
+
               backgroundColor: "white",
-              border: "1px solid gray",
-              borderRadius: "5px",
+              border: "2px solid #E3E3E3",
             }),
             multiValueRemove: (provided) => ({
               ...provided,
@@ -297,25 +293,25 @@ const ProjectRegister6 = ({formData}) => {
           </span>
         )}
       </div>
-      <div className="mb-2">
-      {/* Label for the project description */}
-      <label className="block text-sm font-medium mb-1">
-        Project Description (50 words)
+      <div className="mb-24">
+     
+      <label className="block mb-1">
+        Project Description (50 words) <span className="text-[red] ml-1">*</span>
       </label>
 
-      {/* Use Controller to integrate ReactQuill with React Hook Form */}
+     
       <Controller
         name="project_description"  // Name of the form field
-        control={control}           // Control prop passed from useFormContext
-        defaultValue=""             // Default value for the field
+        control={control}
+        defaultValue=""
         render={({ field: { onChange, value } }) => (
           <ReactQuill
-            value={value}           // Set the current value of the editor
-            onChange={onChange}     // Update form state when the content changes
-            modules={modules}       // Editor modules configuration
-            formats={formats}       // Editor formats configuration
-            placeholder="Enter your project description here..." // Placeholder text
-            className="relative"
+            value={value}
+            onChange={onChange}
+            modules={modules}
+            formats={formats}
+            placeholder="Enter your Project description here..."
+            style={{ height: '120px' }}
           />
         )}
       />
@@ -327,6 +323,7 @@ const ProjectRegister6 = ({formData}) => {
         </span>
       )}
     </div>
+    
     </>
    
   );

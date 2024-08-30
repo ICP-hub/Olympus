@@ -199,24 +199,32 @@ const InvestorForm = ({ isOpen }) => {
   }, [actor, dispatch]);
 
   return (
+    // <>
+    //   <div
+    //     className={`fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 ${
+    //       modalOpen ? "block" : "hidden"
+    //     }`}
+    //   >
+    //     <div className="container mx-auto">
+    //       <div className="pb-12 flex items-center justify-center rounded-xl">
+    //         <div className=" flex  relative bg-white rounded-lg shadow-lg w-[500px] p-6 pt-4 ">
+    //           <div className="absolute top-2 right-4">
+    //             <button
+    //               className="text-2xl text-gray-300"
+    //               onClick={() => setModalOpen(false)} // CLOSE MODAL
+    //             >
+    //               &times;
+    //             </button>
+    //           </div>
+    //           <div className="w-full p-6">
     <>
-      <div
-        className={`fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 ${
-          modalOpen ? "block" : "hidden"
-        }`}
-      >
-        <div className="container mx-auto">
-          <div className="pb-12 flex items-center justify-center rounded-xl">
-            <div className=" flex  relative bg-white rounded-lg shadow-lg w-[500px] p-6 pt-4 ">
-              <div className="absolute top-2 right-4">
-                <button
-                  className="text-2xl text-gray-300"
-                  onClick={() => setModalOpen(false)} // CLOSE MODAL
-                >
-                  &times;
-                </button>
-              </div>
-              <div className="w-full p-6">
+    <div className={`fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 ${modalOpen ? 'block' : 'hidden'}`}>
+        <div className="bg-white rounded-lg shadow-lg w-[500px] p-6 pt-4 ">
+          <div className="flex justify-end mr-4  ">
+            <button className="text-2xl text-[#121926]" onClick={() => setModalOpen(!modalOpen)}>
+              &times; {/* BUTTON TO CLOSE MODAL */}
+            </button>
+          </div>
                 <h2 className="text-[#364152] text-sm font-normal mb-2 text-start">
                   Step {index + 1} of 3
                 </h2>
@@ -315,9 +323,7 @@ const InvestorForm = ({ isOpen }) => {
                 </FormProvider>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
+          
       <Toaster /> {/* TOAST NOTIFICATIONS */}
     </>
   );

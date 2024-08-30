@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import mentor from "../../../../assets/Logo/mentor.png";
-import talent from "../../../../assets/Logo/talent.png";
-import founder from "../../../../assets/Logo/founder.png";
+import founder from "../../../../assets/Logo/mentor.png";
+import mentor from "../../../../assets/Logo/talent.png";
+import project from "../../../../assets/Logo/founder.png";
+import investor from "../../../../assets/Logo/investor.png";
 import ProjectRegisterMain from '../ProjectRegisterModal/ProjectRegisterMain';
 import MentorSignupMain from '../Mentor-Signup-Model/MentorsignUpmain';
 import { useDispatch, useSelector } from 'react-redux';
@@ -28,8 +29,8 @@ useEffect(() => {
 
 const roles = [
     { name: 'user', image: founder, description: 'List your project, build connections, find investments' },
-    { name: 'project', image: founder, description: 'List your project, build connections, find investments' },
-    { name: 'vc', image: talent, description: 'Find promising projects, build your portfolio' },
+    { name: 'project', image: project, description: 'List your project, build connections, find investments' },
+    { name: 'vc', image: investor, description: 'Find promising projects, build your portfolio' },
     { name: 'mentor', image: mentor, description: 'Provide consultations, build professional network' },
 ];
 

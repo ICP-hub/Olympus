@@ -688,7 +688,7 @@ const reason_to_join_incubator = projectFullData[0]?.[0]?.params.reason_to_join_
       <div className="px-1">
         <form onSubmit={handleSubmit(onSubmitHandler, onErrorHandler)}>
           {/* Preferred ICP Hub */}
-          <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
+          <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3 mb-2">
   <div className="flex justify-between items-center">
   <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start mb-2">
           Reason for joining this platform {" "}
@@ -816,7 +816,7 @@ const reason_to_join_incubator = projectFullData[0]?.[0]?.params.reason_to_join_
 </div>
 
           
-          <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
+          <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3 mb-2">
   <div className="flex justify-between items-center">
     <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
       Preferred ICP Hub you would like to be associated with
@@ -867,7 +867,7 @@ const reason_to_join_incubator = projectFullData[0]?.[0]?.params.reason_to_join_
 
 
           {/* Project Name */}
-          <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
+          <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3 mb-2">
             <div className="flex justify-between items-center">
               <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
                 Project Name
@@ -908,7 +908,7 @@ const reason_to_join_incubator = projectFullData[0]?.[0]?.params.reason_to_join_
           </div>
 
           {/* Project Description */}
-          <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
+          <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3 mb-2">
             <div className="flex justify-between items-center">
               <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
                 Project Description
@@ -941,7 +941,7 @@ const reason_to_join_incubator = projectFullData[0]?.[0]?.params.reason_to_join_
               </div>
             ) : (
               <div className="flex justify-between items-center cursor-pointer py-1">
-                <span className="mr-2 text-sm">
+                <span className="mr-2 text-sm line-clamp-3 hover:line-clamp-6">
                   {project_description}
                 </span>
               </div>
@@ -949,7 +949,7 @@ const reason_to_join_incubator = projectFullData[0]?.[0]?.params.reason_to_join_
           </div>
 
           {/* Project Elevator Pitch */}
-          <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
+          <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3 mb-2">
             <div className="flex justify-between items-center">
               <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
                 Project Elevator Pitch
@@ -990,7 +990,7 @@ const reason_to_join_incubator = projectFullData[0]?.[0]?.params.reason_to_join_
           </div>
 
           {/* Project Website */}
-          <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
+          <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3 mb-2">
             <div className="flex justify-between items-center">
               <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
                 Project Website
@@ -1031,7 +1031,7 @@ const reason_to_join_incubator = projectFullData[0]?.[0]?.params.reason_to_join_
           </div>
 
           {/* Is Your Project Registered */}
-          <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
+          <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3 mb-2">
             <div className="flex justify-between items-center">
               <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
                 Is Your Project Registered?
@@ -1080,7 +1080,7 @@ const reason_to_join_incubator = projectFullData[0]?.[0]?.params.reason_to_join_
           {watch("is_your_project_registered") === "true" && (
             <>
               {/* Type of Registration */}
-              <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
+              <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3 mb-2">
                 <div className="flex justify-between items-center">
                   <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
                     Type of Registration
@@ -1128,7 +1128,7 @@ const reason_to_join_incubator = projectFullData[0]?.[0]?.params.reason_to_join_
               </div>
 
               {/* Country of Registration */}
-              <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
+              <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3 mb-2">
                 <div className="flex justify-between items-center">
                   <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
                     Country of Registration
@@ -1181,7 +1181,7 @@ const reason_to_join_incubator = projectFullData[0]?.[0]?.params.reason_to_join_
           )}
 
           {/* Are you also multi-chain */}
-          <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
+          <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3 mb-2">
             <div className="flex justify-between items-center">
               <label className="font-semibold text-xs text-gray-500 uppercase">
                 Are you also multi-chain
@@ -1228,7 +1228,7 @@ const reason_to_join_incubator = projectFullData[0]?.[0]?.params.reason_to_join_
           </div>
 
           {watch("multi_chain") === "true" && (
-            <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
+            <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3 mb-2">
               <div className="flex justify-between items-center">
                 <label className="font-semibold text-xs text-gray-500 uppercase mb-1 ">
                   Please select the chains
@@ -1350,7 +1350,7 @@ const reason_to_join_incubator = projectFullData[0]?.[0]?.params.reason_to_join_
           )}
 
           {/* Live on ICP Mainnet */}
-          <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
+          <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3 mb-2">
             <div className="flex justify-between items-center">
               <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
                 Live on ICP Mainnet?
@@ -1398,7 +1398,7 @@ const reason_to_join_incubator = projectFullData[0]?.[0]?.params.reason_to_join_
           {watch("live_on_icp_mainnet") === "true" && (
             <>
               {/* dApp Link */}
-              <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
+              <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3 mb-2">
                 <div className="flex justify-between items-center">
                   <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
                     dApp Link
@@ -1439,7 +1439,7 @@ const reason_to_join_incubator = projectFullData[0]?.[0]?.params.reason_to_join_
               </div>
 
               {/* Weekly Active Users */}
-              <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
+              <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3 mb-2">
                 <div className="flex justify-between items-center">
                   <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
                     Weekly Active Users
@@ -1482,7 +1482,7 @@ const reason_to_join_incubator = projectFullData[0]?.[0]?.params.reason_to_join_
               </div>
 
               {/* Revenue */}
-              <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
+              <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3 mb-2">
                 <div className="flex justify-between items-center">
                   <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
                     Revenue (in Million USD)
@@ -1525,7 +1525,7 @@ const reason_to_join_incubator = projectFullData[0]?.[0]?.params.reason_to_join_
           )}
 
           {/* Money Raised Till Now */}
-          <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
+          <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3 mb-2">
             <div className="flex justify-between items-center">
               <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
                 Money Raised Till Now?
@@ -1573,7 +1573,7 @@ const reason_to_join_incubator = projectFullData[0]?.[0]?.params.reason_to_join_
           {watch("money_raised_till_now") === "true" && (
             <>
               {/* ICP Grants */}
-              <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
+              <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3 mb-2">
                 <div className="flex justify-between items-center">
                   <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
                     ICP Grants
@@ -1616,7 +1616,7 @@ const reason_to_join_incubator = projectFullData[0]?.[0]?.params.reason_to_join_
               </div>
 
               {/* Investors */}
-              <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
+              <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3 mb-2">
                 <div className="flex justify-between items-center">
                   <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
                     Investors
@@ -1659,7 +1659,7 @@ const reason_to_join_incubator = projectFullData[0]?.[0]?.params.reason_to_join_
               </div>
 
               {/* Raised from Other Ecosystem */}
-              <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
+              <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3 mb-2">
                 <div className="flex justify-between items-center">
                   <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
                     Raised from Other Ecosystem
@@ -1706,7 +1706,7 @@ const reason_to_join_incubator = projectFullData[0]?.[0]?.params.reason_to_join_
           )}
 
           {/* Money Raising */}
-          <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
+          <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3 mb-2">
             <div className="flex justify-between items-center">
               <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
                 Money Raising?
@@ -1752,7 +1752,7 @@ const reason_to_join_incubator = projectFullData[0]?.[0]?.params.reason_to_join_
           {watch("money_raising") === "true" && (
             <>
               {/* Target Amount */}
-              <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
+              <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3 mb-2">
                 <div className="flex justify-between items-center">
                   <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
                     Target Amount (in Million USD)
@@ -1795,7 +1795,7 @@ const reason_to_join_incubator = projectFullData[0]?.[0]?.params.reason_to_join_
               </div>
 
               {/* SNS */}
-              <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
+              <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3 mb-2">
                 <div className="flex justify-between items-center">
                   <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
                     SNS
@@ -1837,7 +1837,7 @@ const reason_to_join_incubator = projectFullData[0]?.[0]?.params.reason_to_join_
             </>
           )}
 
-          <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-2 px-3">
+          <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-2 px-3 mb-2">
             <div className="flex justify-between">
               <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
                 Interests
@@ -1950,7 +1950,7 @@ const reason_to_join_incubator = projectFullData[0]?.[0]?.params.reason_to_join_
           </div>
 
           {/* Promotional Video */}
-          <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
+          <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3 mb-2">
             <div className="flex justify-between items-center">
               <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
                 Promotional Video
@@ -1991,7 +1991,7 @@ const reason_to_join_incubator = projectFullData[0]?.[0]?.params.reason_to_join_
           </div>
 
           {/* Links */}
-          {/* <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3">
+          {/* <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3 mb-2">
             <div className="flex justify-between items-center">
               <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
                 Links

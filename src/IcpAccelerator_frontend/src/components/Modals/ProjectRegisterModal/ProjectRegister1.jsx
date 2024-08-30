@@ -85,8 +85,9 @@ const ProjectRegister1 = ({ formData,setFormData,logoData,setLogoData }) => { //
       </h1>
       {/* HEADING FOR THE PROJECT REGISTRATION FORM */}
       <div className="mb-2">
-        <label className="block text-sm font-medium mb-1">
-          Upload a logo<span className="text-red-500">*</span>
+        <label className="block mb-1">
+          Upload a logo
+          {/* <span className="text-red-500">*</span> */}
         </label>
         {/* LABEL FOR LOGO UPLOAD FIELD */}
         <div className="flex gap-2 mb-3 ">
@@ -170,7 +171,7 @@ const ProjectRegister1 = ({ formData,setFormData,logoData,setLogoData }) => { //
       )}
 
       <div className="mb-2 ">
-        <label className="block text-sm font-medium mb-1">
+        <label className="block mb-1">
           Preferred ICP Hub you would like to be associated with
           <span className="text-red-500">*</span>
         </label>
@@ -205,7 +206,7 @@ const ProjectRegister1 = ({ formData,setFormData,logoData,setLogoData }) => { //
         )}
       </div>
       <div className="mb-2">
-        <label className="block text-sm font-medium mb-1">
+        <label className="block mb-1">
           Project Name<span className="text-red-500">*</span>
         </label>
         {/* LABEL FOR PROJECT NAME INPUT FIELD */}
@@ -230,7 +231,7 @@ const ProjectRegister1 = ({ formData,setFormData,logoData,setLogoData }) => { //
       </div>
 
       <div className="mb-2">
-        <label className="block text-sm font-medium mb-1">
+        <label className="block mb-1">
           Project pitch deck
         </label>
         {/* LABEL FOR PROJECT PITCH DECK INPUT FIELD */}

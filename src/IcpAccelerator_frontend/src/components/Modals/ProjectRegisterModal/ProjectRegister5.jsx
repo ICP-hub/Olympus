@@ -69,7 +69,7 @@ const ProjectRegister5 = ({ isOpen, onClose, onBack }) => {
       {/* PROMOTION VIDEO LINK INPUT */}
       <div className="max-h-[80vh] overflow-y-auto ">
       <div className="mb-2">
-        <label className="block text-sm font-medium mb-1">
+        <label className="block mb-1">
           Promotion video link
         </label>
         <input
@@ -93,7 +93,7 @@ const ProjectRegister5 = ({ isOpen, onClose, onBack }) => {
 
       {/* TOKENOMICS INPUT */}
       <div className="mb-2">
-        <label className="block text-sm font-medium mb-1">Tokenomics</label>
+        <label className="block mb-1">Tokenomics</label>
         <input
           type="text"
           {...register("token_economics")}
@@ -115,7 +115,7 @@ const ProjectRegister5 = ({ isOpen, onClose, onBack }) => {
 
       {/* SOCIAL LINKS INPUT WITH ADD/REMOVE FUNCTIONALITY */}
       <div className="mb-2">
-        <label className="block text-sm font-medium mb-1">Links</label>
+        <label className="block mb-1">Links</label>
         <div className="relative">
           {fields.map((item, index) => (
             <div key={item.id} className="flex items-center mb-4 border-b pb-2">
