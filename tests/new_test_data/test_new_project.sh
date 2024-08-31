@@ -73,19 +73,6 @@ for i in $(seq $START $NUM_PROJECTS); do
     long_term_goals = opt \"To become a leading blockchain platform\";
     target_market = opt \"Global\";
     self_rating_of_project = $self_rating_of_project;
-    user_data = record { 
-        full_name = \"$full_name\"; 
-        email = opt \"$email\"; 
-        profile_picture = opt vec $profile_image; 
-        country = \"$country\"; 
-        telegram_id = opt \"\"; 
-        bio = opt \"$bio\"; 
-        area_of_interest = \"$area_of_interest\"; 
-        twitter_id = opt \"\"; 
-        openchat_username = opt \"\"; 
-        type_of_profile = opt \"Individual\"; 
-        reason_to_join = opt vec { \"Funding\" }; 
-    }; 
     mentors_assigned = opt vec {};
     vc_assigned = opt vec {};
     project_twitter = opt \"https://twitter.com/sample\";
