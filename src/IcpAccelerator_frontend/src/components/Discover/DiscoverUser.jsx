@@ -10,7 +10,7 @@ import DiscoverUserModal from "../Dashboard/DashboardHomePage/discoverMentorPage
 import RatingCard from "../Common/RatingCard";
 import RatingReview from "../Common/RatingReview";
 import RatingModal from "../Common/RatingModal";
-const DiscoverUser = () => {
+const DiscoverUser = ({onUserCountChange}) => {
   const actor = useSelector((currState) => currState.actors.actor);
   const [allUserData, setAllUserData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -29,9 +29,14 @@ const DiscoverUser = () => {
         if (isMounted) {
           console.log("result-in-get-all-user USERS", result);
           if (result) {
-            // Log the exact structure of result.data to verify it
-            console.log("Data received:", result.data);
-            setAllUserData(result);
+            const userData = result;
+
+            setAllUserData((prevData) => {
+              const newData = [...prevData, ...userData];
+              console.log("New data array:", newData); // Log the combined data array
+              onUserCountChange(newData.length); // Update count using the length of the data array
+              return newData;
+            });
           } else {
             setAllUserData([]); // Set to an empty array if no data
           }

@@ -88,8 +88,21 @@ const UserCard = ({ name, username, tags, role, description, rating, skills, loc
 };
 
 const UsersSection = () => {
-  const [currentTab, setCurrentTab] = useState('Users');
-  const tabs = [ 'Users', 'Projects', 'Mentors', 'Investors'];
+  const [currentTab, setCurrentTab] = useState("Users");
+
+  // Simulated counts for each category
+  const [usersCount, setUsersCount] = useState(0);
+  const [projectsCount, setProjectsCount] = useState(0);
+  const [mentorsCount, setMentorsCount] = useState(0);
+  const [investorsCount, setInvestorsCount] = useState(0);
+
+  const tabs = [
+    { label: `Users ${usersCount}`, value: "Users" },
+    { label: `Projects ${projectsCount}`, value: "Projects" },
+    { label: `Mentors ${mentorsCount}`, value: "Mentors" },
+    { label: `Investors ${investorsCount}`, value: "Investors" },
+  ];
+
   const handleTabChange = (tab) => {
     setCurrentTab(tab);
   };
@@ -158,35 +171,37 @@ const UsersSection = () => {
   ];
 
   return (
-    <div className=" mx-auto px-4 sm:px-6 lg:px-8 bg-white">
-      <h1 className="text-3xl font-bold p-6 px-0   -top-[0.6rem] bg-opacity-95 sticky bg-white z-20">Discover</h1>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bg-white">
+      <h1 className="text-3xl font-bold p-6 px-0   -top-[0.6rem] bg-opacity-95 sticky bg-white z-20">
+        Discover
+      </h1>
       <Tabs tabs={tabs} currentTab={currentTab} onTabChange={handleTabChange} />
-   
-      <div className="flex justify-between gap-3">
-        <div className=" pr-6 w-[60%]">
-          {/* {users.map((user, index) => (
-           <UserCard key={index} {...user} />
-         ))} */}
-          {currentTab === 'Users' && 
-            <DiscoverUser />
-         }
-          {currentTab === 'Projects' && <DiscoverProject />}
 
-           {currentTab === 'Mentors' && 
-            <DiscoverMentor />}
-           {/* {currentTab === 'Talent' && users.map((user, index) => (
-            <UserCard key={index} {...user} />
-          ))} */}
-           {currentTab === 'Investors' && 
-            <DiscoverInvestor />
-          }
+      <div className="flex">
+        <div className="pr-6">
+          <div className="pr-6">
+            {currentTab === "Users" && (
+              <DiscoverUser onUserCountChange={setUsersCount} />
+            )}
+            {currentTab === "Projects" && (
+              <DiscoverProject onProjectCountChange={setProjectsCount} />
+            )}
+            {currentTab === "Mentors" && (
+              <DiscoverMentor onMentorCountChange={setMentorsCount} />
+            )}
+            {currentTab === "Investors" && (
+              <DiscoverInvestor onInvestorCountChange={setInvestorsCount} />
+            )}
+          </div>
         </div>
-        <div className=" w-[28%]">
-          <div className="bg-white py-6 rounded-lg shadow-sm sticky top-0" >
+        <div className="max-w-[320px] w-[320px]">
+          <div className="bg-white py-6 rounded-lg shadow-sm sticky top-0">
             <h2 className="text-lg font-semibold mb-4">Filters</h2>
             <div className="mb-4">
-              <label className="block text-sm font-semibold text-gray-700 mb-1">Role</label>
-              <select onChange={(e)=>handleTabChange(e.target.value)} className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Role
+              </label>
+              <select className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                 <option>Select role</option>
                 <option value="Users">Users</option>
                 <option value="Projects">Projects</option>
@@ -194,14 +209,26 @@ const UsersSection = () => {
                 <option value="Investors">Investors</option>
               </select>
             </div>
-            {/* <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Interests</label>
-              <input type="text" placeholder="Start typing" className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500" />
-            </div> */}
-            {/* <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
-              <input type="text" placeholder="E.g., Dubai" className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500" />
-            </div> */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Interests
+              </label>
+              <input
+                type="text"
+                placeholder="Start typing"
+                className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Location
+              </label>
+              <input
+                type="text"
+                placeholder="E.g., Dubai"
+                className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
           </div>
         </div>
       </div>

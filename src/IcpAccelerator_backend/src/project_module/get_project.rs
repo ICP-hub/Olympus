@@ -219,14 +219,28 @@ pub fn list_all_projects_with_pagination(
     pagination_params: PaginationParams,
 ) -> PaginationReturnProjectData {
     let (projects_snapshot, project_count) = read_state(|state| {
+        // Debugging: Output total projects before filtering
+        ic_cdk::println!("Total Projects in Storage: {}", state.project_storage.len());
+
         let filtered_projects: Vec<_> = state.project_storage.iter()
             .filter(|(_, project_infos)| {
-                project_infos.0.iter().any(|project_info| project_info.is_active && project_info.params.live_on_icp_mainnet.unwrap_or(false))
+                let is_valid = project_infos.0.iter().any(|project_info| 
+                    project_info.is_active && project_info.params.live_on_icp_mainnet.unwrap_or(true) // Assume true if null
+                );
+                // Debugging: Check each project's status
+                println!("Project Active and Live on ICP: {}", is_valid);
+                is_valid
             })
             .collect();
 
+        // Debugging: Output number of filtered projects
+        ic_cdk::println!("Filtered Projects Count: {}", filtered_projects.len());
+
         let project_count = filtered_projects.len();
         let start = (pagination_params.page - 1) * pagination_params.page_size;
+
+        // Debugging: Check pagination start and size
+        ic_cdk::println!("Pagination Start Index: {}, Page Size: {}", start, pagination_params.page_size);
 
         let projects_snapshot = filtered_projects.iter()
             .skip(start)
@@ -235,6 +249,9 @@ pub fn list_all_projects_with_pagination(
                 (principal.clone(), project_infos.0.clone())
             })
             .collect::<Vec<_>>();
+
+        // Debugging: Output the snapshot size
+        ic_cdk::println!("Projects Snapshot Size for Current Page: {}", projects_snapshot.len());
 
         (projects_snapshot, project_count)
     });
@@ -253,15 +270,21 @@ pub fn list_all_projects_with_pagination(
                 let user_info = get_user_information_internal(stored_principal.0);
 
                 data.push((stored_principal.0.clone(), project_info_struct, user_info));
+                // Debugging: Output project info being added
+                ic_cdk::println!("Adding Project: {}", project_info.params.project_name);
             }
         }
     }
+
+    // Debugging: Output final count and data size
+    ic_cdk::println!("Final Data Size: {}, Project Count: {}", data.len(), project_count);
 
     PaginationReturnProjectData {
         data,
         count: project_count as u64,
     }
 }
+
 
 
 

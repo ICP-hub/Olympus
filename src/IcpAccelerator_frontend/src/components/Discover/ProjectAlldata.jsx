@@ -26,6 +26,7 @@ const DiscoverProject = () => {
   const [allProjectData, setAllProjectData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const itemsPerPage = 10;
+
   const [currentPage, setCurrentPage] = useState(1);
   const [userData, setUserData] = useState([]);
   const [cardDetail, setCadDetail] = useState(null);
@@ -154,11 +155,11 @@ const DiscoverProject = () => {
           // setprincipal(result.data[0][0]);
           // console.log("principal data ", result.data[0][0]);
           if (result && result.data) {
-            const ProjectData = result.data ? Object.values(result.data) : [];
+            const projectData = result.data ? Object.values(result.data) : [];
             const userData = result.user_data
               ? Object.values(result.user_data)
               : [];
-            setAllProjectData(ProjectData);
+            setAllProjectData(projectData);
             setUserData(userData);
             console.log("userdata =>",userData)
           } else {
