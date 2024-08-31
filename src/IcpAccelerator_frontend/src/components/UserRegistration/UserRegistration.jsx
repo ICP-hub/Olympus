@@ -32,6 +32,8 @@ const UserRegistration = () => {
   const [isChecked, setIsChecked] = useState(false);
   const [captchaError, setCaptchaError] = useState('');
   const [iscaptchaSuccess, setCaptchaSuccess] = useState(false);
+  const [isCaptchaLoading, setIsCaptchaLoading] = useState(false);
+  const [cooldown, setCooldown] = useState(0);
 
   const captchaRef = useRef(null); // Ref for captcha input field
 
@@ -82,18 +84,36 @@ const UserRegistration = () => {
     }
   };
 
+  const startCooldown = () => {
+    setCooldown(20);
+    const interval = setInterval(() => {
+      setCooldown((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
+
   const handleCheckboxChange = async () => {
     const newCheckedState = !isChecked;
     setIsChecked(newCheckedState);
     setCaptchaSuccess(false)
+    setCaptchaVisible(false);
     if (newCheckedState) {
+      setIsCaptchaLoading(true);
       setRotating(true);
+      setCaptchaVisible(true);
       try {
         const result = await actor.generate_captcha_with_id();
         if (result) {
           console.log('result',result)
           setCaptcha(result);
           setCaptchaSuccess(true)
+          startCooldown();
         }
       } catch (error) {
         console.error("Error making API call:", error);
@@ -101,20 +121,25 @@ const UserRegistration = () => {
         setCaptchaSuccess(false);
       } finally {
         setRotating(false);
+        setIsCaptchaLoading(false);
       }
     }
   };
 
   const refreshCaptcha = async () => {
+    if (cooldown > 0) return; // Prevent refresh if cooldown is active
+    setIsCaptchaLoading(true);
     try {
       const result = await actor.generate_captcha_with_id();
       if (result) {
         setCaptcha(result);
+        startCooldown(); // Restart the cooldown timer after refreshing
       }
     } catch (error) {
       console.error("Error making API call:", error);
       toast.error("Failed to generate captcha. Please try again.");
     } finally {
+      setIsCaptchaLoading(false);
       setRotating(false);
     }
   };
@@ -237,7 +262,9 @@ const UserRegistration = () => {
                     Step {index + 1} of 3
                   </h2>
 
-                  <form onSubmit={handleSubmit(onSubmitHandler, onErrorHandler)}>
+                  <form
+                    onSubmit={handleSubmit(onSubmitHandler, onErrorHandler)}
+                  >
                     {index === 0 && <RegisterForm1 />}
                     {index === 1 && <RegisterForm2 />}
                     {index === 2 && (
@@ -261,32 +288,43 @@ const UserRegistration = () => {
                         </div>
                         <div className="flex items-center">
                           <div className="captcha-content">
-                            <CustomCaptcha text={captcha[1]} />
-                          </div>
-                          {captcha && (
-                            <FaArrowRotateLeft
-                              id="refresh-icon"
-                              className={`ml-2 ${
-                                rotating ? "animate-spin" : ""
-                              }`}
-                              onClick={refreshCaptcha}
+                            <CustomCaptcha
+                              text={captcha[1]}
+                              isCaptchaLoading={isCaptchaLoading}
                             />
-                          )}
+                          </div>
+                          <div className="ml-2 flex items-center">
+                            <button
+                              id="refresh-icon"
+                              className={`${rotating ? "animate-spin" : ""}`}
+                              onClick={refreshCaptcha}
+                              disabled={cooldown > 0}
+                            >
+                              <FaArrowRotateLeft />
+                            </button>
+                            {cooldown > 0 && (
+                              <span className="text-sm text-gray-500 ml-2">
+                                (Retry After {cooldown}s)
+                              </span>
+                            )}
+                          </div>
                         </div>
-                        {iscaptchaSuccess &&
-                        <div className="mt-4">
-                          <input
-                            ref={captchaRef} // Use ref for captcha input
-                            type="text"
-                            placeholder="Enter captcha"
-                            className="border border-gray-300 rounded p-2 w-full"
-                          />
-                          {captchaError && (
-              <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-                {captchaError}
-              </span>
-            )}
-                        </div>}
+
+                        {iscaptchaSuccess && (
+                          <div className="mt-4">
+                            <input
+                              ref={captchaRef} // Use ref for captcha input
+                              type="text"
+                              placeholder="Enter captcha"
+                              className="border border-gray-300 rounded p-2 w-full"
+                            />
+                            {captchaError && (
+                              <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                                {captchaError}
+                              </span>
+                            )}
+                          </div>
+                        )}
                       </div>
                     )}
 
