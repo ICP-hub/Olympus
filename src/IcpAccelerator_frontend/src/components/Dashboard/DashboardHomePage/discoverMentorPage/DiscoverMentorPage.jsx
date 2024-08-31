@@ -5,6 +5,7 @@ import DiscoverDocument from "./DiscoverDocument";
 import DiscoverTeam from "./DiscoverTeam";
 import DiscoverRatings from "../../../Discover/DiscoverRatings";
 import MoneyRaising from "../../Project/NoMoneyRaisingCard";
+import DiscoverMoneyRaising from "../../Project/DiscoverMoneyRais";
 
 const DiscoverMentorPage = ({ openDetail, setOpenDetail, projectDetails ,projectId}) => {
 
@@ -102,8 +103,8 @@ const DiscoverMentorPage = ({ openDetail, setOpenDetail, projectDetails ,project
               {activeTab === "team" && (
                 <DiscoverTeam projectDetails={projectDetails} />
               )}
-              {activeTab === "ratings" && <DiscoverRatings />}
-              {activeTab === "moneyraised" && <MoneyRaising />}
+              {activeTab === "ratings" && <DiscoverRatings  />}
+              {activeTab === "moneyraised" && <DiscoverMoneyRaising cardData={projectDetails} />}
             </div>
           </div>
         </div>

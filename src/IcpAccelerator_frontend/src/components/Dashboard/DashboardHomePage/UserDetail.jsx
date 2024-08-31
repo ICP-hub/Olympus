@@ -1,23 +1,59 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState } from "react";
 import awtar from "../../../../assets/images/icons/_Avatar.png";
 import VerifiedIcon from "@mui/icons-material/Verified";
 import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
 import ArrowOutwardOutlinedIcon from "@mui/icons-material/ArrowOutwardOutlined";
 import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
-import Select from "react-select";
-import { useSelector } from "react-redux";
-import { LinkedIn, GitHub, Telegram } from "@mui/icons-material";
+
+import { LanguageIcon } from "../../UserRegistration/DefaultLink";
+import {
+  FaLinkedin,
+  FaTwitter,
+  FaGithub,
+  FaTelegram,
+  FaFacebook,
+  FaInstagram,
+  FaYoutube,
+  FaReddit,
+  FaTiktok,
+  FaSnapchat,
+  FaWhatsapp,
+  FaMedium,
+} from "react-icons/fa";
 
 const UserDetail = (projectData) => {
-
   const userData = projectData?.projectData?.[0]?.[1]?.params;
   console.log("user data", userData);
+  console.log("Type of Profile:", userData?.type_of_profile?.[0]);
 
   const handleChange = (tab) => {
     setActiveTab(tab);
   };
-  const [activeTab, setActiveTab] = useState("general");
 
+  const [activeTab, setActiveTab] = useState("general");
+  const getLogo = (url) => {
+    try {
+      const domain = new URL(url).hostname.split(".").slice(-2).join(".");
+      const size = "text-2xl"; // Adjust size as needed
+      const icons = {
+        "linkedin.com": <FaLinkedin className={`text-blue-600 ${size}`} />,
+        "twitter.com": <FaTwitter className={`text-blue-400 ${size}`} />,
+        "github.com": <FaGithub className={`text-gray-700 ${size}`} />,
+        "telegram.com": <FaTelegram className={`text-blue-400 ${size}`} />,
+        "facebook.com": <FaFacebook className={`text-blue-400 ${size}`} />,
+        "instagram.com": <FaInstagram className={`text-pink-950 ${size}`} />,
+        "youtube.com": <FaYoutube className={`text-red-600 ${size}`} />,
+        "reddit.com": <FaReddit className={`text-orange-500 ${size}`} />,
+        "tiktok.com": <FaTiktok className={`text-black ${size}`} />,
+        "snapchat.com": <FaSnapchat className={`text-yellow-400 ${size}`} />,
+        "whatsapp.com": <FaWhatsapp className={`text-green-600 ${size}`} />,
+        "medium.com": <FaMedium className={`text-black ${size}`} />,
+      };
+      return icons[domain] || <LanguageIcon />;
+    } catch (error) {
+      return <LanguageIcon />;
+    }
+  };
   const profilepic =
     userData?.profile_picture && userData?.profile_picture[0]
       ? uint8ArrayToBase64(userData?.profile_picture[0])
@@ -29,6 +65,8 @@ const UserDetail = (projectData) => {
   const area_of_interest = userData?.area_of_interest || "N/A";
   const location = userData?.country || "Unknown Location";
   const openchat_username = userData?.openchat_username ?? "username";
+  
+  const type_of_profile = userData?.type_of_profile?.[0] ?? "Type of Profile";
 
   return (
     <div className="">
@@ -39,7 +77,7 @@ const UserDetail = (projectData) => {
         <div className="p-6 bg-gray-50">
           <img
             src={profilepic}
-            alt="Matt Bowers"
+            alt="Profile"
             className="w-24 h-24 mx-auto rounded-full mb-4"
           />
           <div className="flex items-center justify-center mb-1">
@@ -62,15 +100,15 @@ const UserDetail = (projectData) => {
               Roles
             </h3>
             <div className="flex space-x-2">
-              <span className="bg-[#F0F9FF] border border-[#B9E6FE] text-[#026AA2] px-1 py-1 rounded-md text-xs font-normal">
+              <span className="bg-[#FFFAEB] border-[#FEDF89] border text-[#B54708] rounded-md px-1 py-1 text-xs font-normal">
                 OLYMPIAN
               </span>
               <span className="bg-[#F0F9FF] border border-[#B9E6FE] text-[#026AA2] px-1 py-1 rounded-md text-xs font-normal">
-                FOUNDER
+                PROJECT
               </span>
-              <span className="bg-[#F0F9FF] border border-[#B9E6FE] text-[#C5237C] px-1 py-1 rounded-md text-xs font-normal">
+              {/* <span className="bg-[#F0F9FF] border border-[#B9E6FE] text-[#C5237C] px-1 py-1 rounded-md text-xs font-normal">
                 MENTOR
-              </span>
+              </span> */}
             </div>
           </div>
           <div className="">
@@ -92,86 +130,88 @@ const UserDetail = (projectData) => {
             >
               General
             </button>
-            <button
-              className={`px-4 py-2 focus:outline-none font-medium  ${
-                activeTab === "experties"
-                  ? "border-b-2 border-blue-500 text-blue-500 font-medium"
-                  : "text-gray-400"
-              }`}
-              onClick={() => handleChange("experties")}
-            >
-              Experties
-            </button>
           </div>
 
-          {activeTab === "general" ? (
-            <div className=" px-1">
-              <div className="mb-4  group relative hover:bg-gray-100 rounded-lg p-2 px-3">
-                <div className="flex justify-between">
-                  <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
+          {activeTab === "general" && (
+            <div className="px-1">
+              <div className="mb-2 group relative hover:bg-gray-100 rounded-lg p-2 ">
+              <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
                     Email
                   </h3>
-                </div>
+               
                 <div className="flex items-center">
                   <p className="mr-2 text-sm">{email}</p>
                   <VerifiedIcon
                     className="text-blue-500 mr-2 w-2 h-2"
                     fontSize="small"
                   />
-                  {/* <span className="bg-[#F8FAFC] border border-[#E3E8EF] text-[#364152] px-2 py-0.5 rounded text-xs">
-                    HIDDEN
-                  </span> */}
                 </div>
               </div>
 
-              {/* Tagline Section */}
-              {/* <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-1 px-3">
-                <div className="flex justify-between">
-                  <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
-                    Tagline
-                  </h3>
+              <div className="mb-2 group relative hover:bg-gray-100 rounded-lg p-2 ">
+              <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
+                  Type of Profile
+                </h3>
+                <div className="flex items-center">
+                  <p className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-3 py-1 bg-gray-100">
+                    {type_of_profile}
+                  </p>
                 </div>
-                <p className="text-sm">tagline</p>
-              </div> */}
+              </div>
 
-              {/* About Section */}
-              <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-1 px-3">
-                <div className="flex justify-between">
-                  <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
+              <div className="mb-2 group relative hover:bg-gray-100 rounded-lg p-2 ">
+              <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
                     About
                   </h3>
-                </div>
+              
                 <p className="text-sm">{bio}</p>
               </div>
 
-              {/* Location Section */}
-              <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-1 px-3">
-                <div className="flex justify-between">
-                  <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
+              <div className="mb-2 group relative hover:bg-gray-100 rounded-lg p-2 ">
+              <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
                     Location
                   </h3>
-                </div>
+               
                 <div className="flex">
-                <PlaceOutlinedIcon
-                  className="text-gray-500 mr-1"
-                  fontSize="small"
-                />
-                <p className="text-sm">{location}</p>
+                  <PlaceOutlinedIcon
+                    className="text-gray-500 mr-1"
+                    fontSize="small"
+                  />
+                  <p className="text-sm">{location}</p>
                 </div>
               </div>
 
-              {/* Reasons to Join Platform Section */}
-              <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-1 px-3">
-                <div className="flex justify-between">
-                  <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
+              <div className="mb-2 group relative hover:bg-gray-100 rounded-lg p-2">
+                <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
+                  Area of Interest
+                </h3>
+                <div>
+                  <div className="flex flex-wrap gap-2">
+                    {userData?.area_of_interest &&
+                      userData.area_of_interest
+                        .split(", ")
+                        .map((interest, index) => (
+                          <span
+                            key={index}
+                            className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-3 py-1 bg-gray-100"
+                          >
+                            {interest}
+                          </span>
+                        ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="mb-2 group relative hover:bg-gray-100 rounded-lg p-2 ">
+              <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
                     Reasons to Join Platform
                   </h3>
-                </div>
+             
                 <div className="flex flex-wrap gap-2">
-                  {userData?.reason_to_join?.map((reason) => (
+                  {userData?.reason_to_join[0]?.map((reason) => (
                     <span
                       key={reason}
-                      className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 "
+                      className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1"
                     >
                       {reason}
                     </span>
@@ -179,32 +219,35 @@ const UserDetail = (projectData) => {
                 </div>
               </div>
 
-              {/* Interests Section */}
-              {/* <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-1 px-3">
-                <div className="flex justify-between">
-                  <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
-                    Interests
-                  </h3>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {profileData.domains_interested_in.map((interest) => (
-                    <span
-                      key={interest}
-                      className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 "
-                    >
-                      {interest}
-                    </span>
-                  ))}
-                </div>
-              </div> */}
+              <div className="p-2 group relative hover:bg-gray-100 rounded-lg">
+                      {userData?.social_links[0] && (
+                       
+                           <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase ">
+                          LINKS
+                        </h3>
+                      )}
 
-              <div>
-                <h3 className="mb-2 text-xs text-gray-500 px-3">LINKS</h3>
-                
-              </div>
+                      <div className="flex items-center ">
+                        <div className="flex gap-3">
+                          {userData?.social_links[0]
+                            ? userData?.social_links[0]?.map(
+                                (link, i) => {
+                                  const icon = getLogo(link);
+                                  return (
+                                    <div
+                                      key={i}
+                                      className="flex items-center space-x-2"
+                                    >
+                                      {icon ? icon : ""}
+                                    </div>
+                                  );
+                                }
+                              )
+                            : ""}
+                        </div>
+                      </div>
+                    </div>
             </div>
-          ) : (
-            ""
           )}
         </div>
       </div>
@@ -213,3 +256,4 @@ const UserDetail = (projectData) => {
 };
 
 export default UserDetail;
+
