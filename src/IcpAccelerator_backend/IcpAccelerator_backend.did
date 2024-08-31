@@ -573,7 +573,7 @@ service : {
   add_data_checking : () -> (text);
   add_icp_hub_details : (IcpHubDetails) -> (text);
   add_project_rating : (ProjectRatingStruct) -> (Result);
-  add_review : (float32, text) -> (text);
+  add_review : (principal, float32, text) -> (text);
   add_testimonial : (text) -> (text);
   apply_for_a_cohort_as_a_investor : (text) -> (text);
   apply_for_a_cohort_as_a_mentor : (text) -> (text);
@@ -829,7 +829,9 @@ service : {
   list_all_projects_with_pagination : (Pagination) -> (
       PaginationReturnProjectData,
     ) query;
-  list_all_users : (Pagination) -> (vec UserInformation) query;
+  list_all_users : (Pagination) -> (
+      vec record { principal; UserInformation },
+    ) query;
   list_all_vcs : () -> (
       vec record {
         principal;

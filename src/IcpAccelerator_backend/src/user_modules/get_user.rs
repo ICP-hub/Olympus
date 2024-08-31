@@ -196,7 +196,7 @@ pub fn get_user_information_internal(caller: Principal) -> UserInformation {
 }
 
 #[query(guard = "combined_guard")]
-pub fn list_all_users(pagination: PaginationUser) -> Vec<UserInformation> {
+pub fn list_all_users(pagination: PaginationUser) -> Vec<(Principal, UserInformation)> {
     read_state(|state| {
         let user_storage = &state.user_storage;
         
@@ -205,16 +205,17 @@ pub fn list_all_users(pagination: PaginationUser) -> Vec<UserInformation> {
         let start = pagination.page.saturating_sub(1) * pagination.page_size;
         let end = std::cmp::min(start + pagination.page_size, total_users.try_into().unwrap());
 
-        let users_info: Vec<UserInformation> = user_storage
+        let users_info: Vec<(Principal, UserInformation)> = user_storage
             .iter()
-            .skip(start)  
-            .take(end - start)  
-            .map(|(_, candid_user_internal)| candid_user_internal.0.params.clone())
+            .skip(start)
+            .take(end - start)
+            .map(|(principal, candid_user_internal)| (principal.0, candid_user_internal.0.params.clone()))
             .collect();
 
         users_info
     })
 }
+
 
 #[query(guard = "combined_guard")]
 fn get_testimonials(principal_id: Principal) -> Result<Vec<Testimonial>, &'static str> {

@@ -54,7 +54,7 @@ const UserCard = ({ name, username, tags, role, description, rating, skills, loc
           <FavoriteBorder className="text-gray-400 cursor-pointer" />
         </div>
         <div className="mb-2">
-          {tags.map((tag, index) => (
+          {tags?.map((tag, index) => (
             <span
               key={index}
               className={`inline-block ${tagColors[tag] || "bg-gray-100 text-gray-800"
@@ -69,7 +69,7 @@ const UserCard = ({ name, username, tags, role, description, rating, skills, loc
 
         <p className="text-gray-600 mb-4">{description}</p>
         <div className="flex items-center text-sm text-gray-500 flex-wrap">
-          {skills.map((skill, index) => (
+          {skills?.map((skill, index) => (
             <span
               key={index}
               className="mr-2 mb-2 border boder-[#CDD5DF] bg-white text-[#364152] px-3 py-1 rounded-full">
