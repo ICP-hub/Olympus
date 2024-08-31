@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { Principal } from "@dfinity/principal";
 import { MoreVert } from "@mui/icons-material";
 import { Link } from "react-router-dom";
+import Nodatafound from "../../../../assets/Logo/Nodatafound.png";
 import ProjectRegisterMain from "../../Modals/ProjectRegisterModal/ProjectRegisterMain";
 import parse from "html-react-parser"
 import { useSelector } from "react-redux";
@@ -97,7 +98,13 @@ const DashboardProjectCard = () => {
     );
   })
 ) : (
-  <p className="text-center text-gray-500">No projects available</p>
+    <div className="bg-white rounded-lg shadow-sm p-6 mt-8">
+    <div className="border border-dashed border-gray-300 p-6 ">
+      <div className="flex  items-center justify-center h-full text-center">
+        <img src={Nodatafound} alt="" className="h-full " />
+      </div>
+    </div>
+  </div>
 )}
     </div>
   );
