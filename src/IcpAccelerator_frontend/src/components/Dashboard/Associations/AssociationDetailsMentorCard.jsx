@@ -12,8 +12,9 @@ import AcceptOfferModal from "../../../models/AcceptOfferModal";
 import DeclineOfferModal from "../../../models/DeclineOfferModal";
 import { useSelector } from "react-redux";
 import timestampAgo from "../../Utils/navigationHelper/timeStampAgo";
+import AssociationSenderDataCard from "./AssociationSenderDataCard";
 
-const AssociationDetailsCard = ({
+const AssociationDetailsMentorCard = ({
   user,
   index,
   selectedTypeData,
@@ -28,65 +29,91 @@ const AssociationDetailsCard = ({
   const [isSubmitting, setIsSubmitting] = useState(null);
 
   console.log("user", user);
-  let projectImage = user?.project_info?.project_logo[0]
-    ? uint8ArrayToBase64(user?.project_info?.project_logo[0])
+  
+// Offer details
+let offer = user?.offer ?? "offer";
+let offerId = user?.offer_id ?? "offerId";
+let acceptedAt = user?.accepted_at ?? 0n;
+let declinedAt = user?.declined_at ?? 0n;
+let selfDeclinedAt = user?.self_declined_at ?? 0n;
+
+// Receiver details
+let receiverPrincipal = user?.receiever_principal ?? "Principal not available";
+
+// Reciever Data
+let recieverData = user?.reciever_data[0]?? {};
+
+// Project and User Details
+let projectImage = recieverData[0]?.params?.project_cover[0]
+    ? uint8ArrayToBase64(recieverData[0]?.params?.project_cover[0])
     : "../../../assets/Logo/CypherpunkLabLogo.png";
 
-  let projectName = user?.project_info?.project_name ?? "projectName";
+let projectName = recieverData[0]?.params?.project_name ?? "projectName";
+let projectDescription = recieverData[0]?.params?.project_description?.[0] ?? "Project description not available";
+let projectWebsite = recieverData[0]?.params?.project_website?.[0] ?? "https://defaultwebsite.com";
+let projectElevatorPitch = recieverData[0]?.params?.project_elevator_pitch?.[0] ?? "No project elevator pitch available";
+let projectLogo = recieverData[0]?.params?.project_logo[0]
+    ? uint8ArrayToBase64(recieverData[0]?.params?.project_logo[0])
+    : "../../../assets/Logo/CypherpunkLabLogo.png";
+let dappLink = recieverData[0]?.params?.dapp_link?.[0] ?? "No dapp link available";
+let preferredIcpHub = recieverData[0]?.params?.preferred_icp_hub?.[0] ?? "Hub not available";
+let longTermGoals = recieverData[0]?.params?.long_term_goals?.[0] ?? "Long term goals not available";
+let revenue = recieverData[0]?.params?.revenue?.[0] ?? 0n;
+let weeklyActiveUsers = recieverData[0]?.params?.weekly_active_users?.[0] ?? 0n;
+let supportsMultichain = recieverData[0]?.params?.supports_multichain?.[0] ?? "Chain not available";
+let technicalDocs = recieverData[0]?.params?.technical_docs?.[0] ?? "No technical docs available";
+let tokenEconomics = recieverData[0]?.params?.token_economics?.[0] ?? "No token economics available";
+let targetMarket = recieverData[0]?.params?.target_market?.[0] ?? "Target market not available";
+let moneyRaisedTillNow = recieverData[0]?.params?.money_raised_till_now?.[0] ?? false;
+let isYourProjectRegistered = recieverData[0]?.params?.is_your_project_registered?.[0] ?? false;
+let liveOnIcpMainnet = recieverData[0]?.params?.live_on_icp_mainnet?.[0] ?? false;
+let uploadPrivateDocuments = recieverData[0]?.params?.upload_private_documents?.[0] ?? false;
+let typeOfRegistration = recieverData[0]?.params?.type_of_registration?.[0] ?? "Company";
+let projectAreaOfFocus = recieverData[0]?.params?.project_area_of_focus ?? "Area of Focus not available";
 
-  let profile = user?.project_info?.user_data?.profile_picture[0]
-    ? uint8ArrayToBase64(user?.project_info?.user_data?.profile_picture[0])
+// User details within the receiver data
+let userFullName = recieverData[1]?.params?.full_name ?? "User Name";
+let userProfilePicture = recieverData[1]?.params?.profile_picture[0]
+    ? uint8ArrayToBase64(recieverData[1]?.params?.profile_picture[0])
     : "../../../assets/Logo/CypherpunkLabLogo.png";
 
-  let userName = user?.project_info?.user_data?.full_name ?? "userName";
+let userEmail = recieverData[1]?.params?.email?.[0] ?? "email@example.com";
+let userCountry = recieverData[1]?.params?.country ?? "Country not available";
+let userBio = recieverData[1]?.params?.bio?.[0] ?? "Bio not available";
+let userAreaOfInterest = recieverData[1]?.params?.area_of_interest ?? "Area of Interest not available";
+let userReasonToJoin = recieverData[1]?.params?.reason_to_join?.[0] ?? "Reason to join not available";
+let userTypeOfProfile = recieverData[1]?.params?.type_of_profile?.[0] ?? "individual";
+let socialLinks = recieverData[1]?.params?.social_links?.[0] ?? "No social links available";
 
-  let openchat_name =
-    user?.project_info?.user_data?.openchat_username[0] ?? "openchatName";
+// Sender Data
+let senderData = user?.sender_data?.[0]?.profile ?? {};
 
-  let userEmail =
-    user?.project_info?.user_data?.email[0] ?? "email@example.com";
+let senderFullName = senderData?.full_name ?? "Sender Name";
+let senderProfilePicture = senderData?.profile_picture?.[0]
+    ? uint8ArrayToBase64(senderData?.profile_picture[0])
+    : "../../../assets/Logo/CypherpunkLabLogo.png";
 
-  let userCountry = user?.project_info?.user_data?.country ?? "Country";
+let senderEmail = senderData?.email?.[0] ?? "sender@example.com";
+let senderCountry = senderData?.country ?? "Country not available";
+let senderBio = senderData?.bio?.[0] ?? "Bio not available";
+let senderAreaOfInterest = senderData?.area_of_interest ?? "Area of Interest not available";
+let senderReasonToJoin = senderData?.reason_to_join?.[0] ?? "Reason to join not available";
+let senderTypeOfProfile = senderData?.type_of_profile?.[0] ?? "individual";
+let senderSocialLinks = senderData?.social_links?.[0] ?? "No social links available";
 
-  let userBio = user?.project_info?.user_data?.bio[0] ?? "Bio not available";
+let isSenderActive = senderData?.active ?? false;
+let isSenderApproved = senderData?.approve ?? false;
+let isSenderDeclined = senderData?.decline ?? false;
 
-  let userAreaOfInterest =
-    user?.project_info?.user_data?.area_of_interest ?? "Area of Interest";
+let senderPrincipal = user?.sender_principal ?? "Sender Principal not available";
+let sentAt = user?.sent_at ?? 0n;
 
-  let userReasonToJoin =
-    user?.project_info?.user_data?.reason_to_join[0] ??
-    "Reason to join not available";
-
-  let userTypeOfProfile =
-    user?.project_info?.user_data?.type_of_profile[0] ?? "individual";
-
-  let socialLinks =
-    user?.project_info?.user_data?.social_links[0] ??
-    "No social links available";
-
-  let projectDescription =
-    user?.project_info?.project_description[0] ??
-    "Project description not available";
-
-  let projectId = user?.project_info?.project_id ?? "projectId";
-
-  let offer = user?.offer ?? "offer";
-
-  let offerId = user?.offer_id ?? "offerId";
-
-  let requestStatus = user?.request_status ?? "pending";
-
-  let response = user?.response ?? "No response";
-
-  let acceptedAt = user?.accepted_at ?? 0n;
-
-  let declinedAt = user?.declined_at ?? 0n;
-
-  let selfDeclinedAt = user?.self_declined_at ?? 0n;
- 
-  let senderPrincipal = user?.sender_principal ?? "Principal not available";
-
-  let sentAt = user?.sent_at ?? 0n;
+let senderYearsOfMentoring = senderData?.years_of_mentoring ?? "0";
+let senderIcpHubOrSpoke = senderData?.icp_hub_or_spoke ?? false;
+let senderHubOwner = senderData?.hub_owner?.[0] ?? "Hub not available";
+let senderWebsite = senderData?.website?.[0] ?? "https://defaultwebsite.com";
+let senderExistingIcpMentor = senderData?.existing_icp_mentor ?? false;
+let senderCategoryOfMentoringService = senderData?.category_of_mentoring_service ?? "Category not available";
   // POST API HANDLER TO SELF-REJECT A REQUEST WHERE MENTOR APPROCHES PROJECT
   const handleSelfReject = async (offer_id) => {
     try {
@@ -155,6 +182,7 @@ const AssociationDetailsCard = ({
 
   return (
     <>
+    <AssociationSenderDataCard user={user} activeTabData={activeTabData}/>
       <div key={index} className="p-6 w-[650px] rounded-lg shadow-sm flex">
         <div className="w-[272px]">
           <div className="max-w-[250px] w-[250px] bg-gray-100 rounded-lg flex flex-col justify-between h-full relative overflow-hidden cursor-pointer">
@@ -163,8 +191,8 @@ const AssociationDetailsCard = ({
               onClick={() => setOpenDetail(true)}
             >
               <img
-                src={projectImage}
-                alt="projectImage"
+                src={projectLogo}
+                alt="projectLogo"
                 className="w-24 h-24 rounded-full object-cover"
               />
             </div>
@@ -183,13 +211,13 @@ const AssociationDetailsCard = ({
               <span className="flex py-2">
                 <Avatar
                   alt="Mentor"
-                  src={profile}
+                  src={userProfilePicture}
                   className=" mr-2"
                   sx={{ width: 24, height: 24 }}
                 />
-                <span className="text-gray-500">{userName}</span>
+                <span className="text-gray-500">{userFullName}</span>
               </span>
-              <span className="text-gray-500">@{openchat_name}</span>
+              <span className="text-gray-500">@{userEmail}</span>
             </div>
             <span className="mr-2 mb-2 text-[#016AA2] px-3 py-1 rounded-full bg-gray-100 text-sm">
   {activeTabData === "pending" ? (
@@ -304,4 +332,4 @@ const AssociationDetailsCard = ({
   );
 };
 
-export default AssociationDetailsCard;
+export default AssociationDetailsMentorCard;

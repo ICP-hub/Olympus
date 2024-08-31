@@ -3,7 +3,7 @@ import org from "../../../../../assets/images/Org.png";
 import uint8ArrayToBase64 from "../../../Utils/uint8ArrayToBase64";
 import { LanguageIcon } from "../../../UserRegistration/DefaultLink";
 import { FaLinkedin, FaTwitter, FaGithub, FaTelegram, FaFacebook, FaInstagram, FaYoutube, FaReddit, FaTiktok, FaSnapchat, FaWhatsapp, FaMedium } from 'react-icons/fa';
-
+import Avatar from '@mui/material/Avatar';
 const DiscoverMentorDetail = (projectDetails) => {
 
   const projectDetail = projectDetails?.projectDetails;
@@ -58,7 +58,30 @@ const DiscoverMentorDetail = (projectDetails) => {
       return <LanguageIcon/>;
     }
   };
+  const associations = [
+    { name: 'Investor', imgSrc: '/path/to/image1.jpg' },
+    { name: 'Investor', imgSrc: '/path/to/image2.jpg' },
+    { name: 'Investor', imgSrc: '/path/to/image3.jpg' },
+  ];
+  const [hoveredIndex, setHoveredIndex] = useState(null);
+  const [activeIndex, setActiveIndex] = useState(null);
 
+  const handleMouseEnter = (index) => {
+    if (hoveredIndex === null) {
+      setHoveredIndex(index);
+      setActiveIndex(index);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    setHoveredIndex(null);
+  };
+
+  const handleTransitionEnd = () => {
+    if (hoveredIndex === null) {
+      setActiveIndex(null);
+    }
+  };
   
   return (
     <div className="bg-white shadow-lg rounded-lg w-full max-w-sm">
@@ -95,23 +118,38 @@ const DiscoverMentorDetail = (projectDetails) => {
       <div className="p-6 ">
         <div className="">
           <h3 className="text-gray-600 text-sm font-medium">ASSOCIATIONS</h3>
-          <div className="flex gap-4 mt-2 ml-2">
-            <img
-              src="https://via.placeholder.com/40"
-              alt="Association 1"
-              className="rounded-full w-10 h-10 border-2 border-white shadow-lg -ml-3"
-            />
-            <img
-              src="https://via.placeholder.com/40"
-              alt="Association 2"
-              className="rounded-full w-10 h-10 border-2 border-white shadow-lg -ml-3"
-            />
-            <img
-              src="https://via.placeholder.com/40"
-              alt="Association 3"
-              className="rounded-full w-10 h-10 border-2 border-white shadow-lg -ml-3"
-            />
-          </div>
+          <div className="flex items-center space-x-2">
+      {associations.map((association, index) => (
+        <div
+          key={index}
+          className="relative flex items-center transition-all duration-[600ms] ease-[cubic-bezier(0.25, 0.1, 0.25, 1)]"
+          onMouseEnter={() => handleMouseEnter(index)}
+          onMouseLeave={handleMouseLeave}
+          onTransitionEnd={handleTransitionEnd}
+        >
+          {/* Name appears on hover */}
+          <span
+            className={`absolute left-12 transition-all duration-[600ms] ease-[cubic-bezier(0.25, 0.1, 0.25, 1)] transform ${
+              activeIndex === index
+                ? 'translate-x-0 opacity-100 delay-[100ms]'
+                : '-translate-x-4 opacity-0'
+            }`}
+          >
+            {association.name}
+          </span>
+
+          {/* Main Avatar */}
+          <Avatar
+            src={association.imgSrc}
+            className={`h-12 w-12 rounded-full transition-transform duration-[600ms] ease-[cubic-bezier(0.25, 0.1, 0.25, 1)] hover:scale-105 ${
+              activeIndex === index ? 'mr-16 delay-[100ms]' : 'mr-0'
+            }`}
+          />
+        </div>
+      ))}
+    </div>
+
+
         </div>
 
         <div className="mt-6">
