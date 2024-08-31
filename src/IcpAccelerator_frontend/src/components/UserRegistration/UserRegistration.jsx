@@ -91,6 +91,7 @@ const UserRegistration = () => {
       try {
         const result = await actor.generate_captcha_with_id();
         if (result) {
+          console.log('result',result)
           setCaptcha(result);
           setCaptchaSuccess(true)
         }
@@ -189,13 +190,15 @@ const UserRegistration = () => {
 
       try {
         await actor.register_user(captcha[0],captchaInputValue,userData).then((result) => {
-          if (result) {
-            toast.success(result);
+          if (result.Ok) {
+            toast.success(result.Ok); // Assuming 'Ok' contains the success message
             setIsSubmititng(false);
-            window.location.href = "/dashboard";
+             window.location.href = "/dashboard";
+          } else if (result.Err) {
+            toast.error(result.Err); // Assuming 'Err' contains the error message
+            setIsSubmititng(false);
           } else {
-            setIsSubmititng(false);
-            toast.error("Something went wrong");
+            toast.error("Unknown response from server");
           }
         });
       } catch (error) {

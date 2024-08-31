@@ -15,7 +15,7 @@ export default function fetchRequestAssociation(activeTab, selectedStatus, role,
                     case 'project':
                         switch (selectedStatus) {
                             case 'to-mentor':
-                                api_data = actor.get_pending_request_from_mentor_to_project_via_project();
+                                api_data = actor.get_pending_request_from_mentor_to_project_via_project(principal);
                                 break;
                             case 'from-mentor':
                                 api_data = actor.get_all_offers_which_are_pending_for_project_from_mentor(project_id);
@@ -41,7 +41,7 @@ export default function fetchRequestAssociation(activeTab, selectedStatus, role,
                     case 'vc':
                         switch (selectedStatus) {
                             case 'to-project':
-                                api_data = actor.get_all_offers_which_are_pending_for_investor();
+                                api_data = actor.get_all_offers_which_are_pending_for_investor(principal);
                                 break;
                             case 'from-project':
                                 api_data = actor.get_pending_request_for_investor_sent_by_project(principal);
@@ -55,7 +55,7 @@ export default function fetchRequestAssociation(activeTab, selectedStatus, role,
                     case 'project':
                         switch (selectedStatus) {
                             case 'to-mentor':
-                                api_data = actor.get_approved_request_from_project_to_mentor_via_project();
+                                api_data = actor.get_approved_request_from_project_to_mentor_via_project(principal);
                                 break;
                             case 'from-mentor':
                                 api_data = actor.get_all_requests_which_got_accepted_for_project_from_mentor(project_id);
@@ -81,10 +81,10 @@ export default function fetchRequestAssociation(activeTab, selectedStatus, role,
                     case 'vc':
                         switch (selectedStatus) {
                             case 'to-project':
-                                api_data = actor.get_all_requests_which_got_accepted_for_investor();
+                                api_data = actor.get_all_requests_which_got_accepted_for_investor(principal);
                                 break;
                             case 'from-project':
-                                api_data = actor.get_accepted_request_for_investor();
+                                api_data = actor.get_accepted_request_for_investor(principal);
                                 break;
                         }
                         break;
@@ -95,7 +95,7 @@ export default function fetchRequestAssociation(activeTab, selectedStatus, role,
                     case 'project':
                         switch (selectedStatus) {
                             case 'to-mentor':
-                                api_data = actor.get_declined_request_from_project_to_mentor_via_project();
+                                api_data = actor.get_declined_request_from_project_to_mentor_via_project(principal);
                                 break;
                             case 'from-mentor':
                                 api_data = actor.get_all_requests_which_got_declined_for_project_from_mentor(project_id);
@@ -121,10 +121,10 @@ export default function fetchRequestAssociation(activeTab, selectedStatus, role,
                     case 'vc':
                         switch (selectedStatus) {
                             case 'to-project':
-                                api_data = actor.get_all_requests_which_got_declined_for_investor();
+                                api_data = actor.get_all_requests_which_got_declined_for_investor(principal);
                                 break;
                             case 'from-project':
-                                api_data = actor.get_declined_request_for_investor();
+                                api_data = actor.get_declined_request_for_investor(principal);
                                 break;
                         }
                         break;
