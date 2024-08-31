@@ -154,7 +154,7 @@ const MoneyRaising = ({ cardData }) => {
   const [moneyRaisingData, setMoneyRaisingData] = useState(
     cardData || []
   ); // Store money-raising data
- console.log("Store money-raising data",moneyRaisingData)
+ console.log("Store money-raising data",cardData)
   const handleAddMoneyRaising = (newMoneyData) => {
     setMoneyRaisingData([...moneyRaisingData, newMoneyData]);
     setIsOpen(false); 

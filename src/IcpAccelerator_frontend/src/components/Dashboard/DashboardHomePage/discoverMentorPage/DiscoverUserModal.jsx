@@ -15,7 +15,7 @@ import uint8ArrayToBase64 from "../../../Utils/uint8ArrayToBase64";
 import { LanguageIcon } from "../../../UserRegistration/DefaultLink";
 
 
-// import { LanguageIcon } from "../UserRegistration/DefaultLink";
+
 import {
   FaLinkedin,
   FaTwitter,

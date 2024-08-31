@@ -49,14 +49,14 @@ const TeamCard = ({ member }) => {
   let links = member?.social_links?.links?.[0];
 
   return (
-    <div className="flex gap-6 items-center p-4 bg-white shadow-sm rounded-lg mb-4">
-      <div>
-        <img
-          src={profile}
-          alt={member?.full_name}
-          className="w-[70px] h-[70px] rounded-full"
-        />
-      </div>
+    <div className="flex gap-6 items-center p-4 bg-white shadow-lg border border-gray-200 rounded-xl mt-3  mb-4">
+     <div className="bg-gray-100 w-[100px] h-[100px] flex items-center justify-center">
+  <img
+    src={profile}
+    alt={member?.full_name}
+    className="w-[70px] h-[70px] rounded-full"
+  />
+</div>
 
       <div className="ml-4">
         <h4 className="text-base font-semibold">{member?.full_name}</h4>
@@ -88,10 +88,10 @@ const DiscoverTeam = ({ projectDetails }) => {
   return (
     <>
       {members.length > 0 ? (
-        <div className="p-6 border border-gray-200 shadow-lg rounded-xl mt-3 bg-white">
+        <div className="p-6  rounded-xl mt-3 ">
           <div className="mx-auto">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-semibold text-gray-900">Team</h2>
+            <div className="flex justify-end items-center mb-6">
+              {/* <h2 className="text-xl font-semibold text-gray-900">Team</h2> */}
               <a href="#" className="text-sm font-medium text-blue-500">
                 View all team
               </a>
@@ -102,7 +102,7 @@ const DiscoverTeam = ({ projectDetails }) => {
           ))}
         </div>
       ) : (
-        <div className="text-center py-12">
+        <div className="text-center py-12 mt-20 ">
           <div className="flex justify-center items-center">
           <svg
                 width="154"
@@ -176,7 +176,7 @@ const DiscoverTeam = ({ projectDetails }) => {
                 </defs>
               </svg>
           </div>
-          <h2 className="text-xl font-semibold mb-2">
+          <h2 className="text-xl font-semibold mb-2 mt-4">
             You haven't posted any Team yet
           </h2>
           <p className="text-gray-600 mb-2">
