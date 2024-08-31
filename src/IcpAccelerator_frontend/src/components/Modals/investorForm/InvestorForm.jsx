@@ -101,11 +101,12 @@ const InvestorForm = ({ isOpen }) => {
       const investorData = {
         name_of_fund: data?.investor_fund_name,
         fund_size: [
-          data?.fund_size &&
-          typeof data?.fund_size === "number"
-            ? data?.fund_size
+          data?.investor_fund_size &&
+          typeof data?.investor_fund_size === "number"
+            ? data?.investor_fund_size
             : 0,
         ],
+
         existing_icp_investor:
           data?.existing_icp_investor === "true" ? true : false,
         investor_type: [

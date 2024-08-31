@@ -26,6 +26,7 @@ const DiscoverInvestor = () => {
   const [investorId, setInvestorId] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showRatingModal, setShowRatingModal] = useState(false);
+  const [userRatingDetail,setUserRatingDetail]=useState(null)
 
   const isAuthenticated = useSelector(
     (currState) => currState.internet.isAuthenticated
@@ -178,6 +179,12 @@ const DiscoverInvestor = () => {
     console.log("passed principle", principal);
   };
 
+  const handleRating=(ratings)=>{
+    setShowRatingModal(true)
+    setUserRatingDetail(ratings)
+  }
+  console.log("userRatingDetail =>",userRatingDetail)
+
   return (
     <div>
       {isLoading ? (
@@ -232,7 +239,7 @@ const DiscoverInvestor = () => {
                     />
                   </div>
                 </div>
-                <div onClick={() => setShowRatingModal(true)} className="absolute cursor-pointer bottom-0 right-[6px] flex items-center bg-gray-100 p-1">
+                <div onClick={() => handleRating(user)} className="absolute cursor-pointer bottom-0 right-[6px] flex items-center bg-gray-100 p-1">
                   <Star className="text-yellow-400 w-4 h-4" />
                   <span className="text-sm font-medium">5.0</span>
                 </div>
@@ -321,6 +328,7 @@ const DiscoverInvestor = () => {
         <RatingModal
           showRating={showRatingModal}
           setShowRatingModal={setShowRatingModal}
+          userRatingDetail={userRatingDetail}
         />
       )}
     </div>

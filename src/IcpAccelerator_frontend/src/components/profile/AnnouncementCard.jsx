@@ -580,19 +580,18 @@ const AnnouncementCard = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentAnnouncementData, setCurrentAnnouncementData] = useState(null);
 
-  // Open modal for adding a new announcement or editing an existing one
+  
   const handleOpenModal = (card = null) => {
-    setCurrentAnnouncementData(card); // Set the announcement data if editing, or null if adding new
-    setAnnouncementModalOpen(true); // Open the modal
+    setCurrentAnnouncementData(card); 
+    setAnnouncementModalOpen(true); 
   };
 
-  // Close the modal and reset the current announcement data
   const handleCloseModal = () => {
-    setAnnouncementModalOpen(false); // Close the modal
-    setCurrentAnnouncementData(null); // Reset the current data
+    setAnnouncementModalOpen(false); 
+    setCurrentAnnouncementData(null); 
   };
 
-  // Submit handler passed to the modal
+  // Submit handler passed 
   const handleAddOrUpdateAnnouncement = async (formData) => {
     setIsSubmitting(true);
 
@@ -626,7 +625,7 @@ const AnnouncementCard = () => {
           }
         }
 
-        fetchLatestAnnouncement(); // Reload data
+        fetchLatestAnnouncement(); 
         handleCloseModal();
       } catch (error) {
         toast.error("Something went wrong");
@@ -636,16 +635,16 @@ const AnnouncementCard = () => {
     }
   };
 
-  // Handle deleting an announcement
+ 
   const handleDelete = async (announcementId) => {
     setIsSubmitting(true);
     try {
       const result = await actor.delete_announcement_by_id(announcementId);
 
-      if (result && result.includes("Announcement deleted successfully")) {
+      if (latestAnnouncementData.length >=0 ) {
         toast.success("Announcement deleted successfully");
-        fetchLatestAnnouncement(); // Reload data
-        handleCloseDeleteModal(); // Close the delete modal after successful deletion
+        fetchLatestAnnouncement(); 
+        handleCloseDeleteModal(); 
       } else {
         throw new Error("Deletion failed");
       }
@@ -680,6 +679,7 @@ const AnnouncementCard = () => {
         } else {
           setLatestAnnouncementData(result);
           setNoData(false);
+          
         }
       })
       .catch((error) => {
@@ -694,6 +694,8 @@ const AnnouncementCard = () => {
       fetchLatestAnnouncement();
     }
   }, [actor]);
+
+  console.log("latestAnnouncementData =>",latestAnnouncementData)
 
   return (
     <div className="bg-white">
@@ -721,17 +723,17 @@ const AnnouncementCard = () => {
         </div>
       ) : (
         latestAnnouncementData.map((card, index) => {
-          let ann_name = card?.announcement_data?.announcement_title ?? "abc";
+          let ann_name = card?.announcement_data?.announcement_title ?? "";
           let ann_time = card?.timestamp
             ? formatFullDateFromBigInt(card?.timestamp)
-            : "def";
+            : "";
           let ann_desc =
-            card?.announcement_data?.announcement_description ?? "ghi";
-          let ann_project_logo = card?.project_logo
-            ? uint8ArrayToBase64(card?.project_logo[0])
+            card?.announcement_data?.announcement_description ?? "";
+          let ann_project_logo = card?.user_data[0]?.params?.profile_picture[0]
+            ? uint8ArrayToBase64(card?.user_data[0]?.params?.profile_picture[0])
             : '';
-          let ann_project_name = card?.project_name ?? "jkl";
-          let ann_project_desc = card?.project_desc ?? "mno";
+          let ann_project_name = card?.project_name ?? "";
+          let ann_project_desc = card?.project_desc ?? "";
           return (
             <div key={index} className="container mx-auto my-6 p-4 bg-white">
               <div className="flex justify-between items-center pb-1 mb-2">
@@ -757,25 +759,25 @@ const AnnouncementCard = () => {
                   </div>
                 </div>
               </div>
-              <h2 className="text-gray-900 text-xl font-bold mb-3">
+              {/* <h2 className="text-gray-900 text-xl font-bold mb-3">
                 {ann_name}
-              </h2>
+              </h2> */}
               <div className="flex items-center mb-4 space-x-4">
                 <img
                   src={ann_project_logo}
                   alt="pic"
                   className="h-12 w-12 rounded-full border border-gray-300"
                 />
-                <div>
-                  <h2 className="text-lg font-semibold">{ann_project_name}</h2>
-                  <h3 className="text-gray-600 font-normal">
-                    {ann_project_desc}
+                <div className="flex flex-col gap-1">
+                  <h2 className="text-lg font-semibold">{ann_name}</h2>
+                  <h3 className="text-gray-600 text-sm font-normal">
+                    {ann_desc}
                   </h3>
                 </div>
               </div>
-              <div className="text-gray-500 leading-relaxed">
+              {/* <div className="text-gray-500 leading-relaxed">
                 <p>{ann_desc}</p>
-              </div>
+              </div> */}
               <hr className="mt-4" />
             </div>
           );
@@ -784,12 +786,12 @@ const AnnouncementCard = () => {
 
       {isAnnouncementModalOpen && (
         <AnnouncementModal
-          isOpen={isAnnouncementModalOpen} // Control modal visibility
-          onClose={handleCloseModal} // Close modal handler
-          onSubmitHandler={handleAddOrUpdateAnnouncement} // Submission handler
-          isSubmitting={isSubmitting} // Manage loading state
-          isUpdate={!!currentAnnouncementData} // Determine if it's an update or add
-          data={currentAnnouncementData} // Pass current data for editing
+          isOpen={isAnnouncementModalOpen} 
+          onClose={handleCloseModal} 
+          onSubmitHandler={handleAddOrUpdateAnnouncement} 
+          isSubmitting={isSubmitting} 
+          isUpdate={!!currentAnnouncementData} 
+          data={currentAnnouncementData} 
         />
       )}
       {isDeleteModalOpen && (

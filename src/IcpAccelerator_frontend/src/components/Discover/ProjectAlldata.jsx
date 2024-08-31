@@ -17,6 +17,10 @@ import UserDetailPage from "../Dashboard/DashboardHomePage/UserDetailPage";
 import AddAMentorRequestModal from "../../models/AddAMentorRequestModal";
 import { mentorRegisteredHandlerRequest } from "../StateManagement/Redux/Reducers/mentorRegisteredData";
 import RatingModal from "../Common/RatingModal";
+import NoDataCard from "../../component/Mentors/Event/MentorAssociatedNoDataCard";
+import NoCardData from "../Profile/NoCardData";
+import Nodata from "../Dashboard/Project/Nodata";
+import NoData from "../NoDataCard/NoData";
 const DiscoverProject = () => {
   const actor = useSelector((currState) => currState.actors.actor);
   const [allProjectData, setAllProjectData] = useState([]);
@@ -28,6 +32,7 @@ const DiscoverProject = () => {
   const [principal, setprincipal] = useState(null);
   const [listProjectId, setListProjectId] = useState(null);
   const [showRatingModal, setShowRatingModal] = useState(false);
+  const [userRatingDetail,setUserRatingDetail]=useState(null)
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const mentorPrincipal = useSelector(
@@ -155,6 +160,7 @@ const DiscoverProject = () => {
               : [];
             setAllProjectData(ProjectData);
             setUserData(userData);
+            console.log("userdata =>",userData)
           } else {
             setAllProjectData([]);
             setUserData([]);
@@ -221,6 +227,12 @@ const DiscoverProject = () => {
     console.log("passed principle", principal);
   };
 
+  const handleRating=(ratings)=>{
+    setShowRatingModal(true)
+    setUserRatingDetail(ratings)
+  }
+  console.log("userRatingDetail =>",userRatingDetail)
+
   return (
     <div>
       {isLoading ? (
@@ -273,7 +285,7 @@ const DiscoverProject = () => {
                   </div>
                 </div>
                 <div
-                  onClick={() => setShowRatingModal(true)}
+                  onClick={() => handleRating(user)}
                   className="absolute cursor-pointer bottom-0 right-[6px] flex items-center bg-gray-100 p-1"
                 >
                   <Star className="text-yellow-400 w-4 h-4" />
@@ -349,12 +361,13 @@ const DiscoverProject = () => {
           );
         })
       ) : (
-        <div>No Data Available</div>
+        <div><NoData message="No projects posted yet "/> </div>
       )}
       {showRatingModal && (
         <RatingModal
           showRating={showRatingModal}
           setShowRatingModal={setShowRatingModal}
+          userRatingDetail={userRatingDetail}
         />
       )}
       {isAddProjectModalOpen && (
