@@ -98,19 +98,21 @@ pub async fn send_offer_to_project_by_mentor(
     let uid = format!("{:x}", Sha256::digest(&uids));
     let offer_id = uid.clone().to_string();
 
-    let mut offer_exists = false;  // Flag to check if an offer exists
+    let mut offer_exists = false; 
+    let mut existing_status = String::new(); 
 
     let _ = read_state(|state| {
         if let Some(offers) = state.project_alerts.get(&project_id) {
-            if !offers.0.is_empty() {
-                ic_cdk::println!("An offer already exists for project {}. No more offers can be sent.", project_id);
-                offer_exists = true;  // Set flag if an offer exists
+            if let Some(offer) = offers.0.iter().find(|o| o.sender_principal == mentor_id) {
+                offer_exists = true; 
+                existing_status = offer.request_status.clone();  
+                ic_cdk::println!("An offer with status '{}' already exists for project {}.", existing_status, project_id);
             }
         }
     });
 
-    if offer_exists {
-        return "An offer already exists. No more offers can be sent.".to_string();
+    if offer_exists && (existing_status == "accepted" || existing_status == "declined") {
+        return format!("An offer already exists with status '{}'. No more offers can be sent.", existing_status);
     }
 
     let project_principal = find_project_owner_principal(&project_id)
@@ -155,69 +157,6 @@ pub async fn send_offer_to_project_by_mentor(
     format!("offer sent sucessfully to {}", project_id)
 }
 
-// #[update(guard = "combined_guard")]
-// pub fn accept_offer_of_mentor(offer_id: String, response_message: String, project_id : String) -> String{
-//     //let project_id = caller();
-
-//     PROJECT_ALERTS.with(|state| {
-//         //let state = state.borrow_mut().get(&mentor_id).cloned().unwrap_or_else(Vec::new);
-//         if let Some(offers) = state.borrow_mut().get_mut(&project_id) {
-//             if let Some(offer) = offers.iter_mut().find(|o| o.offer_id == offer_id) {
-//                 offer.request_status = "accepted".to_string();
-//                 offer.response = response_message.clone();
-//                 offer.accepted_at = time();
-
-//                 MY_SENT_NOTIFICATIONS.with(|sent_state| {
-//                     if let Some(sent_status_vector) =
-//                         sent_state.borrow_mut().get_mut(&offer.sender_principal)
-//                     {
-//                         if let Some(project_offer) = sent_status_vector
-//                             .iter_mut()
-//                             .find(|offer| offer.offer_id == offer_id)
-//                         {
-//                             project_offer.request_status = "accepted".to_string();
-//                             project_offer.response = response_message.clone();
-//                             project_offer.accepted_at = time();
-
-//                             MENTOR_REGISTRY.with(|storage|{
-//                                 let mentor_profile = storage.borrow().get(&offer.sender_principal).expect("couldn't get mentor profile").clone();
-
-//                                 APPLICATION_FORM.with(|projects| {
-
-//                                     let mut project = projects.borrow_mut();
-
-//                                    if let Some(project) =  project.get_mut(&offer.sender_principal){
-//                                     if let Some(project) = project.iter_mut().find(|project|{project.uid == project_offer.project_id}){
-
-//                                         if project.params.mentors_assigned.is_none() {
-//                                             project.params.mentors_assigned = Some(Vec::new());
-//                                         }
-
-//                                         project.params.mentors_assigned.as_mut().unwrap().push(mentor_profile.profile.clone());
-
-//                                         //get_assigned_projects_to_mentor
-//                             PROJECTS_ASSOCIATED_WITH_MENTOR.with(|storage|{
-//                                 let mut associate_project = storage.borrow_mut();
-//                                 associate_project.entry(offer.sender_principal).or_insert_with(Vec::new).push(project.params.clone())
-//                             })
-
-//                                     }
-
-//                                    }
-
-//                                 })
-//                             });
-
-//                         }
-//                     }
-//                 });
-
-//             }
-//         }
-//     });
-
-//     format!("you have accepted the offer with offer id: {}", offer_id)
-// }
 
 #[update(guard = "combined_guard")]
 pub fn accept_offer_from_mentor_to_project(offer_id: String, response_message: String, project_id: String) -> String {
@@ -467,6 +406,7 @@ pub fn get_all_requests_which_got_declined_for_mentor_via_mentor(mentor_id: Prin
 pub fn self_decline_request_from_mentor_project(offer_id: String) -> String {
     let mut response = String::new();
 
+    // Mutate state for my_sent_notifications_project
     mutate_state(|sent_ones| {
         let my_offers = &mut sent_ones.my_sent_notifications_project;
         let caller_offers = my_offers.get(&StoredPrincipal(caller()));
@@ -483,16 +423,28 @@ pub fn self_decline_request_from_mentor_project(offer_id: String) -> String {
                     }
                 }
             }
+            my_offers.insert(StoredPrincipal(caller()), offers.clone());
         }
     });
 
     if response == "Request got self declined." {
         mutate_state(|mentors| {
             let mentor_offers = &mut mentors.project_alerts;
-            for (_, mut offers) in mentor_offers.iter() {
-                if let Some(offer) = offers.0.iter_mut().find(|off| off.offer_id == offer_id) {
-                    offer.request_status = "self_declined".to_string();
-                    offer.self_declined_at = time();
+            let mut keys_to_update = Vec::new();
+
+            for (key, offers) in mentor_offers.iter() {
+                if offers.0.iter().any(|off| off.offer_id == offer_id) {
+                    keys_to_update.push(key.clone());
+                }
+            }
+
+            for key in keys_to_update {
+                if let Some(mut offers) = mentor_offers.get(&key) {
+                    if let Some(offer) = offers.0.iter_mut().find(|off| off.offer_id == offer_id) {
+                        offer.request_status = "self_declined".to_string();
+                        offer.self_declined_at = time();
+                    }
+                    mentor_offers.insert(key.clone(), offers.clone());
                 }
             }
         });
@@ -500,6 +452,7 @@ pub fn self_decline_request_from_mentor_project(offer_id: String) -> String {
 
     response
 }
+
 
 #[query(guard = "combined_guard")]
 pub fn get_all_requests_which_got_self_declined_for_mentor_via_mentor() -> Vec<OfferToProject> {
