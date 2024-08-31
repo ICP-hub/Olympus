@@ -17,6 +17,7 @@ const DiscoverUser = () => {
   const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
   const [showRatingModal, setShowRatingModal] = useState(false);
+  const [userRatingDetail,setUserRatingDetail]=useState(null)
   console.log(".............USERS", allUserData);
   const getAllUser = async (caller, isMounted) => {
     await caller
@@ -95,6 +96,13 @@ const DiscoverUser = () => {
     console.log("cardDetail => ", cardDetail);
   };
 
+  const handleRating=(ratings)=>{
+    setShowRatingModal(true)
+    setUserRatingDetail(ratings)
+  }
+  console.log("userRatingDetail =>",userRatingDetail)
+
+
   return (
     <>
       <div>
@@ -139,7 +147,7 @@ const DiscoverUser = () => {
                         </div>
                       </div>
                       <div
-                        onClick={() => setShowRatingModal(true)}
+                        onClick={() => handleRating(user)}
                         className="absolute cursor-pointer bottom-0 right-[6px] flex items-center bg-gray-100 p-1"
                       >
                         <Star className="text-yellow-400 w-4 h-4" />
@@ -205,6 +213,8 @@ const DiscoverUser = () => {
         <RatingModal
           showRating={showRatingModal}
           setShowRatingModal={setShowRatingModal}
+          userRatingDetail={userRatingDetail}
+          
         />
       )}
       {openDetail && (

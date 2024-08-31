@@ -7,9 +7,12 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useSelector } from "react-redux";
 import { Principal } from "@dfinity/principal";
 import toast, { Toaster } from "react-hot-toast";
+import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
+import { ThreeDots } from "react-loader-spinner";
 
 
-const RatingModal = ({ showRating, setShowRatingModal }) => {
+
+const RatingModal = ( {showRating, setShowRatingModal, userRatingDetail }) => {
   const [rating, setRating] = useState(0);
   const [showReview, setShowReview] = useState(false);
   const actor = useSelector((currState) => currState.actors.actor);
@@ -18,6 +21,8 @@ const RatingModal = ({ showRating, setShowRatingModal }) => {
   const isMounted = useRef(true);
   const principal = useSelector((currState) => currState.internet.principal);
 
+  
+
   const schema = yup.object().shape({
     review: yup
       .string()
@@ -25,10 +30,12 @@ const RatingModal = ({ showRating, setShowRatingModal }) => {
       .min(10, "Review must be at least 10 characters"),
   });
 
+  
+
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
     reset,
   } = useForm({
     resolver: yupResolver(schema),
@@ -92,6 +99,13 @@ const RatingModal = ({ showRating, setShowRatingModal }) => {
     } finally {
     }
   };
+  const full_name= userRatingDetail?.full_name
+  const openchat_username=userRatingDetail?.openchat_username
+  const profilepic= userRatingDetail?.profile_picture && userRatingDetail?.profile_picture[0]
+  ? uint8ArrayToBase64(userRatingDetail?.profile_picture[0])
+  : "userpic";
+
+  console.log("userRatingDetail =>", userRatingDetail)
   return (
     <div
       className={`fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 ${
@@ -108,16 +122,16 @@ const RatingModal = ({ showRating, setShowRatingModal }) => {
           </button>
         </div>
         <div className="p-6">
-          <h1 className="text-2xl text-[#121926] font-bold mb-4">Rate Us</h1>
+          {/* <h1 className="text-2xl text-[#121926] font-bold mb-4">Rate Us</h1> */}
 
-          <div className="flex flex-col mt-6 items-center">
+          <div className="flex flex-col mt-6 gap-2 items-center">
             <img
-              src={ProfileImage}
+              src={profilepic}
               alt="Profile"
               className="rounded-full w-28 h-28 mb-4"
             />
-            <h2 className="text-2xl font-bold">Matt Bower</h2>
-            <p className="text-gray-500">@mattbowers</p>
+            <h2 className="text-2xl font-bold">{full_name} </h2>
+            <p className="text-gray-500">{openchat_username}</p>
             <div className="flex gap-2 my-5">
               {[...Array(5)].map((_, index) => (
                 <svg
@@ -159,12 +173,32 @@ const RatingModal = ({ showRating, setShowRatingModal }) => {
                   </p>
                 )}
                 <div className="flex items-center justify-center mb-4 ">
-                  <button
+                  {/* <button
                     type="submit"
                     className="mt-4 bg-blue-500 text-white py-2 px-6 rounded-lg hover:bg-blue-600"
                   >
                     Submit
-                  </button>
+                  </button> */}
+                   <button
+                disabled={isSubmitting}
+                type="submit"
+                className="bg-blue-600 text-white py-2 px-4 mt-3 rounded"
+              >
+                {isSubmitting ? (
+                  <ThreeDots
+                    visible={true}
+                    height="35"
+                    width="35"
+                    color="#FFFEFF"
+                    radius="9"
+                    ariaLabel="three-dots-loading"
+                    wrapperStyle={{}}
+                    wrapperclassName=""
+                  />
+                ) : (
+                  "Submit"
+                )}
+              </button>
                 </div>
               </form>
             )}

@@ -64,7 +64,7 @@ const DiscoverInvestorPage = ({ openDetail, setOpenDetail, principal }) => {
         <div className="container h-[calc(100%-50px)] ml-2 pb-8 overflow-y-auto">
           <div className="container">
             <div className="flex justify-evenly px-[1%] ">
-              <div className="border h-fit rounded-lg w-[32%]">
+              <div className=" h-fit rounded-lg w-[32%]">
                 <DiscoverInvestorAbout investorData={allInvestorData} />
               </div>
               <div className="px-3 w-[63%] overflow-y-auto h-[84vh]">
