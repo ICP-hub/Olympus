@@ -110,9 +110,7 @@ const DiscoverInvestor = ({onInvestorCountChange }) => {
 
             setAllInvestorData(InvestorData);
             setUserData(userData);
-            onInvestorCountChange(InvestorData.length);
-
-            setIsSubmitting(false);
+            onInvestorCountChange(InvestorData.length>0?InvestorData.length:0)
           } else {
             setAllInvestorData([]);
             setIsSubmitting(false);

@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import org from "../../../../../assets/images/Org.png";
 import uint8ArrayToBase64 from "../../../Utils/uint8ArrayToBase64";
 import { LanguageIcon } from "../../../UserRegistration/DefaultLink";
+import ArrowOutwardOutlinedIcon from "@mui/icons-material/ArrowOutwardOutlined";
+
 import {
   FaLinkedin,
   FaTwitter,
@@ -120,47 +122,51 @@ const DiscoverMentorDetail = (projectDetails) => {
         </div>
 
         <div className="text-center w-full mt-6">
-          <button className="bg-blue-600 text-white font-normal text-sm py-2 px-12 rounded hover:bg-blue-700">
+          {/* <button className="bg-transparent border border-[#3505B2] text-[#3505B2] text-sm font-[950] px-2 py-1 rounded-md">
             Get in touch{" "}
-            <span className="ml-3" aria-hidden="true">
-              ↗️
-            </span>
-          </button>
+          </button> */}
+          <a
+            href={project_website}
+            className="w-full h-[#155EEF] bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 mb-6 flex items-center justify-center"
+          >
+            Get in touch
+            <ArrowOutwardOutlinedIcon  className="ml-1" fontSize="small" />
+          </a>
         </div>
       </div>
 
       <div className="p-6 ">
         <div className="">
-          <h3 className="text-gray-600 text-sm font-medium">ASSOCIATIONS</h3>
+          {/* <h3 className="text-gray-600 text-sm font-medium">ASSOCIATIONS</h3> */}
           <div className="flex items-center space-x-2">
-      {associations.map((association, index) => (
+      {/* {associations.map((association, index) => ( */}
         <div
-          key={index}
-          className="relative flex items-center transition-all duration-[600ms] ease-[cubic-bezier(0.25, 0.1, 0.25, 1)]"
-          onMouseEnter={() => handleMouseEnter(index)}
-          onMouseLeave={handleMouseLeave}
-          onTransitionEnd={handleTransitionEnd}
+          // key={index}
+          // className="relative flex items-center transition-all duration-[600ms] ease-[cubic-bezier(0.25, 0.1, 0.25, 1)]"
+          // onMouseEnter={() => handleMouseEnter()}
+          // onMouseLeave={handleMouseLeave}
+          // onTransitionEnd={handleTransitionEnd}
         >
           {/* Name appears on hover */}
-          <span
+          {/* <span
             className={`absolute left-12 transition-all duration-[600ms] ease-[cubic-bezier(0.25, 0.1, 0.25, 1)] transform ${
               activeIndex === index
                 ? 'translate-x-0 opacity-100 delay-[100ms]'
                 : '-translate-x-4 opacity-0'
-            }`}
-          >
-            {association.name}
-          </span>
+            }`} */}
+          {/* > */}
+            {/* {association.name}  */}
+          {/* </span> */}
 
           {/* Main Avatar */}
-          <Avatar
-            src={association.imgSrc}
-            className={`h-12 w-12 rounded-full transition-transform duration-[600ms] ease-[cubic-bezier(0.25, 0.1, 0.25, 1)] hover:scale-105 ${
-              activeIndex === index ? 'mr-16 delay-[100ms]' : 'mr-0'
-            }`}
-          />
+          {/* <Avatar */}
+            {/* // src={association.imgSrc} */}
+            {/* className={`h-12 w-12 rounded-full transition-transform duration-[600ms] ease-[cubic-bezier(0.25, 0.1, 0.25, 1)] hover:scale-105 ${ */}
+              {/* activeIndex === index ? 'mr-16 delay-[100ms]' : 'mr-0' */}
+            {/* }`} */}
+          {/* /> */}
         </div>
-      ))}
+      {/* ))} */}
     </div>
         </div>
         <div className="mt-4">

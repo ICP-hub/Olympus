@@ -153,7 +153,7 @@ const DocumentCard = ({ doc, type, projectId }) => {
         <img
           src={Filetype}
           alt="Document Thumbnail"
-          className="w-[50px] h-[50px] rounded-lg object-cover mx-auto"
+          className="w-[50px] h-[50px] rounded-lg object-cover mx-auto hover:blur-none"
         />
         <a
           href={link}

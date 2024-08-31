@@ -4,12 +4,14 @@ import UserProjectCard from "./UserProjectCard";
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 
-const UserDetailPage = ({ openDetail, setOpenDetail, principal,userData }) => {
+const UserDetailPage = ({ openDetail, setOpenDetail, principal,userData,email }) => {
   const actor = useSelector((currState) => currState.actors.actor);
   console.log("principal in detailpage", principal);
   console.log("userdata in detailpage", userData);
   const [allProjectData, setAllProjectData] = useState(null);
   const [loaing, setIsLoading] = useState(true);
+  const [userDataToNext, setUserDataToNext] = useState(null);
+  const [princiapToNext, setPrincipalToNext] = useState(null);
 
   const getAllUser = async (caller, isMounted) => {
     await caller
@@ -67,7 +69,7 @@ const UserDetailPage = ({ openDetail, setOpenDetail, principal,userData }) => {
               </div>
               <div className=" px-3 w-[63%] overflow-y-auto h-[84vh] ">
                 <div className="">
-                  <UserProjectCard projectData={allProjectData}/>
+                  <UserProjectCard projectData={allProjectData} principal={principal} userData={userData}/>
                 </div>
               </div>
             </div>

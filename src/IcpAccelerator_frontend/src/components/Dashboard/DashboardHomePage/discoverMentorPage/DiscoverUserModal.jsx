@@ -124,7 +124,7 @@ const DiscoverUserModal = ({ openDetail, setOpenDetail, userData }) => {
                     <h2 className="text-xl font-semibold">{full_name}</h2>
                   </div>
                   <p className="text-gray-600 text-center mb-2">
-                    {openchat_username}{" "}
+                    @{openchat_username}{" "}
                   </p>
                   <a
                     href={`mailto:${email}`}
@@ -153,7 +153,7 @@ const DiscoverUserModal = ({ openDetail, setOpenDetail, userData }) => {
 
                   <div className=" ">
                     <div className="mb-2 group relative hover:bg-gray-100 rounded-lg p-2 ">
-                      <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
+                      <h3 className="font-semibold mb-1 text-xs text-gray-500 uppercase">
                         Email
                       </h3>
 
@@ -171,7 +171,7 @@ const DiscoverUserModal = ({ openDetail, setOpenDetail, userData }) => {
 
                     {/* About Section */}
                     <div className="mb-2 group relative hover:bg-gray-100 rounded-lg p-2 ">
-                    <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
+                    <h3 className="font-semibold mb-1 text-xs text-gray-500 uppercase">
                         About
                       </h3>
                       <div>
