@@ -13,34 +13,34 @@ use crate::guard::*;
 
 #[derive(Clone, CandidType, Deserialize, Serialize)]
 pub struct OfferToProjectByInvestor {
-    offer_id: String, // Added field
-    reciever_data: Option<(ProjectInfoInternal, UserInfoInternal)>,
-    sender_data: Option<(VentureCapitalist, UserInfoInternal)>,
-    offer: String,
-    sent_at: u64,
-    accepted_at: u64,
-    declined_at: u64,
-    self_declined_at: u64,
-    request_status: String,
-    receiever_principal: Principal,
-    sender_principal: Principal,
-    response: String,
+    pub offer_id: String, // Added field
+    pub reciever_data: Option<(ProjectInfoInternal, UserInfoInternal)>,
+    pub sender_data: Option<(VentureCapitalist, UserInfoInternal)>,
+    pub offer: String,
+    pub sent_at: u64,
+    pub accepted_at: u64,
+    pub declined_at: u64,
+    pub self_declined_at: u64,
+    pub request_status: String,
+    pub receiever_principal: Principal,
+    pub sender_principal: Principal,
+    pub response: String,
 }
 
 #[derive(Clone, CandidType, Deserialize, Serialize)]
 pub struct OfferToSendToProjectByInvestor {
-    offer_id: String, // Added field
-    reciever_data: Option<(ProjectInfoInternal, UserInfoInternal)>,
-    sender_data: Option<(VentureCapitalist, UserInfoInternal)>,
-    offer: String,
-    sent_at: u64,
-    accepted_at: u64,
-    declined_at: u64,
-    self_declined_at: u64,
-    request_status: String,
-    receiever_principal: Principal,
-    sender_principal: Principal,
-    response: String,
+    pub offer_id: String, // Added field
+    pub reciever_data: Option<(ProjectInfoInternal, UserInfoInternal)>,
+    pub sender_data: Option<(VentureCapitalist, UserInfoInternal)>,
+    pub offer: String,
+    pub sent_at: u64,
+    pub accepted_at: u64,
+    pub declined_at: u64,
+    pub self_declined_at: u64,
+    pub request_status: String,
+    pub receiever_principal: Principal,
+    pub sender_principal: Principal,
+    pub response: String,
 }
 
 pub fn store_request_sent_by_capitalist(offer: OfferToProjectByInvestor) {
@@ -95,18 +95,20 @@ pub fn get_all_project_notification_sent_by_investor(
 pub async fn send_offer_to_project_by_investor(project_id: String, msg: String) -> String {
     let investor_id = caller();
 
-    let mut offer_exists = false;  // Flag to check if an offer exists
+    let mut offer_exists = false;  
+    let mut existing_status = String::new();  
 
     let _ = read_state(|state| {
         if let Some(offers) = state.project_alerts_of_investor.get(&project_id) {
-            if !offers.0.is_empty() {
-                offer_exists = true;  // Set flag if an offer exists
+            if let Some(offer) = offers.0.iter().find(|o| o.sender_principal == investor_id) {
+                offer_exists = true;  
+                existing_status = offer.request_status.clone(); 
             }
         }
     });
 
-    if offer_exists {
-        return "An offer already exists. No more offers can be sent.".to_string();
+    if offer_exists && (existing_status == "accepted" || existing_status == "declined") {
+        return format!("An offer already exists with status '{}'. No more offers can be sent.", existing_status);
     }
 
     let uids = raw_rand().await.unwrap().0;
@@ -386,38 +388,54 @@ pub fn self_decline_request_from_investor_to_project(offer_id: String) -> String
     let mut response = String::new();
 
     mutate_state(|sent_ones| {
-        let my_offers = &mut sent_ones.offers_sent_by_investor;
-        let caller_offers = my_offers.get(&StoredPrincipal(caller()));
-
-        if let Some(mut offers) = caller_offers {
-            if let Some(offer) = offers.0.iter_mut().find(|o| o.offer_id == offer_id) {
+        if let Some(mut my_offers) = sent_ones.offers_sent_by_investor.get(&StoredPrincipal(caller())) {
+            if let Some(offer) = my_offers.0.iter_mut().find(|o| o.offer_id == offer_id) {
                 match offer.request_status.as_str() {
                     "accepted" => response = "Your request has been approved.".to_string(),
                     "declined" => response = "Your request has been declined.".to_string(),
-                    _ => {
+                    "pending" => {
                         offer.request_status = "self_declined".to_string();
                         offer.self_declined_at = time();
                         response = "Request got self declined.".to_string();
                     }
+                    _ => {
+                        response = "Invalid request status.".to_string();
+                    }
                 }
+            } else {
+                response = "Offer not found.".to_string();
             }
+            sent_ones.offers_sent_by_investor.insert(StoredPrincipal(caller()), my_offers.clone());
+        } else {
+            response = "No offers found for the caller.".to_string();
         }
     });
 
     if response == "Request got self declined." {
         mutate_state(|mentors| {
             let mentor_offers = &mut mentors.project_alerts_of_investor;
-            for mut offers in mentor_offers.iter() {
-                if let Some(offer) = offers.1 .0.iter_mut().find(|off| off.offer_id == offer_id) {
-                    offer.request_status = "self_declined".to_string();
-                    offer.self_declined_at = time();
+            let mut keys_to_update = Vec::new();
+            for (key, offers) in mentor_offers.iter() {
+                if let Some(_offer) = offers.0.iter().find(|off| off.offer_id == offer_id) {
+                    keys_to_update.push(key.clone());
+                }
+            }
+
+            for key in keys_to_update {
+                if let Some(mut offers) = mentor_offers.get(&key) {
+                    if let Some(offer) = offers.0.iter_mut().find(|off| off.offer_id == offer_id) {
+                        offer.request_status = "self_declined".to_string();
+                        offer.self_declined_at = time();
+                    }
+                    
+                    mentor_offers.insert(key.clone(), offers.clone());
                 }
             }
         });
     }
-
     response
 }
+
 
 #[query(guard = "combined_guard")]
 pub fn get_all_requests_which_got_self_declined_by_project() -> Vec<OfferToProjectByInvestor> {
