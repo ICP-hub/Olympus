@@ -1,4 +1,7 @@
-use crate::{state_handler::*, UserInformation};
+use crate::project_module::get_project::get_project_info_using_principal;
+use crate::project_module::post_project::find_project_owner_principal;
+use crate::vc_module::get_vc::get_vc_info;
+use crate::{state_handler::*, ProjectInfoInternal, UserInfoInternal, VentureCapitalist};
 use candid::{CandidType, Principal};
 use ic_cdk::api::management_canister::main::raw_rand;
 use ic_cdk::{api::time, caller};
@@ -11,37 +14,31 @@ use crate::guard::*;
 #[derive(Clone, CandidType, Deserialize, Serialize)]
 pub struct OfferToProjectByInvestor {
     offer_id: String, // Added field
-    project_id: String,
-    project_image: Option<Vec<u8>>,
-    project_name: String,
-    offer_i_have_written: String,
-    time_of_request: u64,
-    accepted_at: u64,
-    declined_at: u64,
-    self_declined_at: u64,
-    request_status: String,
-    response: String,
-}
-
-#[derive(Clone, CandidType, Deserialize, Serialize)]
-pub struct InvestorInfo {
-    investor_id: Principal,
-    investor_name: String,
-    investor_description: String,
-    investor_image: Vec<u8>,
-    user_data: UserInformation
-}
-
-#[derive(Clone, CandidType, Deserialize, Serialize)]
-pub struct OfferToSendToProjectByInvestor {
-    offer_id: String, // Added field
-    investor_info: InvestorInfo,
+    reciever_data: Option<(ProjectInfoInternal, UserInfoInternal)>,
+    sender_data: Option<(VentureCapitalist, UserInfoInternal)>,
     offer: String,
     sent_at: u64,
     accepted_at: u64,
     declined_at: u64,
     self_declined_at: u64,
     request_status: String,
+    receiever_principal: Principal,
+    sender_principal: Principal,
+    response: String,
+}
+
+#[derive(Clone, CandidType, Deserialize, Serialize)]
+pub struct OfferToSendToProjectByInvestor {
+    offer_id: String, // Added field
+    reciever_data: Option<(ProjectInfoInternal, UserInfoInternal)>,
+    sender_data: Option<(VentureCapitalist, UserInfoInternal)>,
+    offer: String,
+    sent_at: u64,
+    accepted_at: u64,
+    declined_at: u64,
+    self_declined_at: u64,
+    request_status: String,
+    receiever_principal: Principal,
     sender_principal: Principal,
     response: String,
 }
@@ -98,12 +95,6 @@ pub fn get_all_project_notification_sent_by_investor(
 pub async fn send_offer_to_project_by_investor(project_id: String, msg: String) -> String {
     let investor_id = caller();
 
-    let (investor_profile, _user_info) = crate::vc_module::get_vc::get_vc_info_using_principal(investor_id)
-    .expect("Investor does not exist")
-    .clone();
-
-    let project = crate::project_module::get_project::get_project_using_id(project_id.clone()).expect("project not found");
-
     let mut offer_exists = false;  // Flag to check if an offer exists
 
     let _ = read_state(|state| {
@@ -122,43 +113,31 @@ pub async fn send_offer_to_project_by_investor(project_id: String, msg: String) 
     let uid = format!("{:x}", Sha256::digest(&uids));
     let offer_id = uid.clone().to_string();
 
+    let project_principal = find_project_owner_principal(&project_id)
+    .expect("Project principal must exist for the given project_id");
+
+    let project_info = get_project_info_using_principal(project_principal);
+    let vc_data = get_vc_info(investor_id);
+
     let offer_to_project = OfferToProjectByInvestor {
         offer_id: offer_id.clone(),
-        project_id: project_id.clone(),
-        project_image: project.params.project_logo,
-        project_name: project.params.project_name,
-        offer_i_have_written: msg.clone(),
-        time_of_request: time(),
+        offer: msg.clone(),
+        sent_at: time(),
         accepted_at: 0,
         declined_at: 0,
         self_declined_at: 0,
         request_status: "pending".to_string(),
         response: "".to_string(),
+        reciever_data: project_info.clone(),
+        sender_data: vc_data.clone(),
+        receiever_principal: project_principal,
+        sender_principal: investor_id
     };
 
     store_request_sent_by_capitalist(offer_to_project);
-    let mut cached_user_data = None;
-
-    let user_data = crate::user_modules::get_user::get_user_info_with_cache(investor_id, &mut cached_user_data);
-
-    let investor_info = InvestorInfo {
-        investor_id,
-        investor_name: user_data.full_name.clone(),
-        investor_description: investor_profile
-            .profile
-            .params
-            .category_of_investment
-            .clone(),
-        investor_image: user_data
-            .profile_picture
-            .clone()
-            .unwrap_or_else(|| Vec::new()),
-        user_data,  
-    };
 
     let offer_to_send_to_project = OfferToSendToProjectByInvestor {
         offer_id: offer_id.clone(),
-        investor_info,
         offer: msg.clone(),
         sent_at: time(),
         accepted_at: 0,
@@ -167,6 +146,9 @@ pub async fn send_offer_to_project_by_investor(project_id: String, msg: String) 
         request_status: "pending".to_string(),
         sender_principal: caller(),
         response: "".to_string(),
+        reciever_data: project_info.clone(),
+        sender_data: vc_data.clone(),
+        receiever_principal: project_principal
     };
 
     notify_project_with_offer(project_id.clone(), offer_to_send_to_project);

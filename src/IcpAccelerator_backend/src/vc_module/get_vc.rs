@@ -10,8 +10,7 @@ use std::collections::HashMap;
 use crate::guard::*;
 
 #[query(guard = "combined_guard")]
-pub fn get_vc_info() -> Option<(VentureCapitalist, UserInfoInternal)> {
-    let caller = ic_cdk::caller();
+pub fn get_vc_info(caller: Principal) -> Option<(VentureCapitalist, UserInfoInternal)> {
     println!("Fetching venture capitalist info for caller: {:?}", caller);
 
     read_state(|state| {

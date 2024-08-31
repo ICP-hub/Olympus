@@ -1,5 +1,7 @@
+use crate::project_module::get_project::get_project_info_using_principal;
 use crate::project_module::post_project::find_project_owner_principal;
-use crate::{state_handler::*, UserInformation};
+use crate::vc_module::get_vc::get_vc_info;
+use crate::{state_handler::*, ProjectInfoInternal, UserInfoInternal, VentureCapitalist};
 use candid::{CandidType, Principal};
 use ic_cdk::api::management_canister::main::raw_rand;
 use ic_cdk::{api::time, caller};
@@ -10,32 +12,9 @@ use crate::guard::*;
 
 #[derive(Clone, CandidType, Deserialize, Serialize)]
 pub struct OfferToInvestor {
-    offer_id: String, // Added field
-    investor_id: Principal,
-    investor_image: Option<Vec<u8>>,
-    investor_name: String,
-    offer_i_have_written: String,
-    time_of_request: u64,
-    accepted_at: u64,
-    declined_at: u64,
-    self_declined_at: u64,
-    request_status: String,
-    response: String,
-}
-
-#[derive(Clone, CandidType, Deserialize, Serialize)]
-pub struct ProjectInf {
-    project_id: String,
-    project_name: String,
-    project_description: Option<String>,
-    project_logo: Option<Vec<u8>>,
-    user_data: UserInformation
-}
-
-#[derive(Clone, CandidType, Deserialize, Serialize)]
-pub struct OfferToSendToInvestor {
-    offer_id: String, // Added field
-    project_info: ProjectInf,
+    offer_id: String, 
+    sender_data: Option<(ProjectInfoInternal, UserInfoInternal)>,
+    reciever_data: Option<(VentureCapitalist, UserInfoInternal)> ,
     offer: String,
     sent_at: u64,
     accepted_at: u64,
@@ -43,6 +22,32 @@ pub struct OfferToSendToInvestor {
     self_declined_at: u64,
     request_status: String,
     sender_principal: Principal,
+    receiever_principal: Principal,
+    response: String,
+}
+
+// #[derive(Clone, CandidType, Deserialize, Serialize)]
+// pub struct ProjectInf {
+//     project_id: String,
+//     project_name: String,
+//     project_description: Option<String>,
+//     project_logo: Option<Vec<u8>>,
+//     user_data: UserInformation
+// }
+
+#[derive(Clone, CandidType, Deserialize, Serialize)]
+pub struct OfferToSendToInvestor {
+    offer_id: String, 
+    sender_data: Option<(ProjectInfoInternal, UserInfoInternal)>,
+    reciever_data: Option<(VentureCapitalist, UserInfoInternal)> ,
+    offer: String,
+    sent_at: u64,
+    accepted_at: u64,
+    declined_at: u64,
+    self_declined_at: u64,
+    request_status: String,
+    sender_principal: Principal,
+    receiever_principal: Principal,
     response: String,
 }
 
@@ -93,55 +98,42 @@ pub async fn send_offer_to_investor_by_project(
     let uids = raw_rand().await.unwrap().0;
     let uid = format!("{:x}", Sha256::digest(&uids));
     let offer_id = uid.clone().to_string();
+    let project_principal = find_project_owner_principal(&project_id)
+    .expect("Project principal must exist for the given project_id");
 
-    let mut cached_user_data = None;
-    let user_data = crate::user_modules::get_user::get_user_info_with_cache(investor_id, &mut cached_user_data);
+    let project_info = get_project_info_using_principal(project_principal);
+    let vc_data = get_vc_info(investor_id);
 
     let offer_to_investor = OfferToInvestor {
         offer_id: offer_id.clone(),
-        investor_id,
-        investor_image: user_data.profile_picture,
-        investor_name: user_data.full_name,
-        offer_i_have_written: msg.clone(),
-        time_of_request: time(),
-        accepted_at: 0,
-        declined_at: 0,
-        self_declined_at: 0,
-        request_status: "pending".to_string(),
-        response: "".to_string(),
-    };
-
-    store_request_sent_by_project_to_investor(project_id.clone(), offer_to_investor);
-
-    let project_info = crate::project_module::get_project::get_project_using_id(project_id.clone())
-        .expect("project does not exist")
-        .clone();
-
-    let project_principal = find_project_owner_principal(&project_id.clone())
-    .expect("Project principal not found");
-    let mut cached_user_data = None;
-    let user_data_project = crate::user_modules::get_user::get_user_info_with_cache(project_principal, &mut cached_user_data);
-
-
-    let project_info = ProjectInf {
-        project_id,
-        project_name: project_info.params.project_name,
-        project_description: project_info.params.project_description,
-        project_logo: project_info.params.project_logo,
-        user_data: user_data_project
-    };
-
-    let offer_to_send_to_investor = OfferToSendToInvestor {
-        offer_id: offer_id.clone(),
-        project_info,
         offer: msg.clone(),
         sent_at: time(),
         accepted_at: 0,
         declined_at: 0,
         self_declined_at: 0,
         request_status: "pending".to_string(),
-        sender_principal: caller(),
         response: "".to_string(),
+        sender_data: project_info.clone(),
+        reciever_data: vc_data.clone(),
+        sender_principal: project_principal,
+        receiever_principal: investor_id
+    };
+
+    store_request_sent_by_project_to_investor(project_id.clone(), offer_to_investor);
+
+    let offer_to_send_to_investor = OfferToSendToInvestor {
+        offer_id: offer_id.clone(),
+        offer: msg.clone(),
+        sent_at: time(),
+        accepted_at: 0,
+        declined_at: 0,
+        self_declined_at: 0,
+        request_status: "pending".to_string(),
+        response: "".to_string(),
+        sender_data: project_info,
+        reciever_data: vc_data,
+        sender_principal: project_principal,
+        receiever_principal: investor_id
     };
 
     notify_investor_with_offer(investor_id, offer_to_send_to_investor);
@@ -175,7 +167,7 @@ pub fn accept_offer_from_project_to_investor(offer_id: String, response_message:
 
                 // Additional logic for updating project storage and notifications
                 let sender_principal = offer.sender_principal;
-                let project_id = offer.project_info.project_id.clone();
+                let project_id = offer.sender_data.as_ref().map(|(project_info, _)| project_info.uid.clone()).unwrap_or_else(|| {panic!("Project data must be present");});
 
                 if let Some(mut projects) = state.project_storage.get(&StoredPrincipal(sender_principal)) {
                     if let Some(project) = projects.0.iter_mut().find(|p| p.uid == project_id) {

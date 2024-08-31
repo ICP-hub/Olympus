@@ -155,7 +155,7 @@ const DiscoverUser = () => {
                           <h3 className="text-xl font-bold">{full_name}</h3>
                           <p className="text-gray-500">@{openchat_username}</p>
                         </div>
-                        <FavoriteBorder className="text-gray-400 cursor-pointer" />
+                        {/* <FavoriteBorder className="text-gray-400 cursor-pointer" /> */}
                       </div>
                       <div className="mb-2">
                         {randomTags.map((tag, index) => (

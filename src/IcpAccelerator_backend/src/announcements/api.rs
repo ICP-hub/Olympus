@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 use crate::project_module::get_project::get_project_info_using_principal;
+use crate::user_modules::get_user::get_user_info_using_principal;
 use crate::vc_module::get_vc::get_vc_info_using_principal;
 use crate::{mentor_module::get_mentor::get_mentor_info_using_principal, state_handler::*};
 use crate::announcements::ann_types::*;
@@ -27,6 +28,7 @@ pub async fn add_announcement(announcement_details: Announcements) -> String {
     let project_info_get = get_project_info_using_principal(caller_id);
     let mentor_info_get = get_mentor_info_using_principal(caller_id);
     let vc_info_get = get_vc_info_using_principal(caller_id);
+    let user_info = get_user_info_using_principal(caller_id);
 
     let new_announcement = AnnouncementsInternal {
         announcement_data: announcement_details.clone(),
@@ -35,6 +37,7 @@ pub async fn add_announcement(announcement_details: Announcements) -> String {
         vc_info: vc_info_get.map(|(vc, _)| vc.profile),
         timestamp: current_time,
         announcement_id: announcement_id.clone(),
+        user_data: Some(user_info.unwrap()),
     };
 
     ic_cdk::println!("New Announcement Details: {:?}", new_announcement);
@@ -55,6 +58,8 @@ pub async fn add_announcement(announcement_details: Announcements) -> String {
 
 #[update(guard = "combined_guard")]
 pub async fn update_announcement_by_id(announcement_id: String, new_details: Announcements) -> String {
+
+    let caller_id = caller();
     mutate_state(|state| {
         if let Some(mut caller_announcements) = state.announcement.get(&StoredPrincipal(caller())) {
             let mut updated = false;
@@ -66,6 +71,7 @@ pub async fn update_announcement_by_id(announcement_id: String, new_details: Ann
                     break;
                 }
             }
+            state.announcement.insert(StoredPrincipal(caller_id), caller_announcements); 
 
             if updated {
                 "Announcement updated successfully.".to_string()

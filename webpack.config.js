@@ -36,7 +36,6 @@ module.exports = (env) => {
         util: require.resolve("util/"),
         crypto: require.resolve("crypto-browserify"),
         vm: require.resolve("vm-browserify"),
-        path: require.resolve("path-browserify")
       },
     },
     output: {

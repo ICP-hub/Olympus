@@ -10,10 +10,8 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useCountries } from "react-countries";
 import { useSelector } from "react-redux";
 import { LinkedIn, GitHub, Telegram, Language } from "@mui/icons-material";
-import InvestorDetail from "./InvestorDetail";
 import MentorEdit from "../../component/Mentors/MentorEdit";
 import { FaEdit, FaPlus } from "react-icons/fa";
-import ProjectDetail from "./ProjectDetail";
 import { Principal } from "@dfinity/principal";
 import { ThreeDots } from "react-loader-spinner";
 import ReactSelect from "react-select";
@@ -34,15 +32,18 @@ import {
 } from "react-icons/fa";
 import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
 import CompressedImage from "../ImageCompressed/CompressedImage";
-import { validationSchema } from "./UserValidation";
 import { LanguageIcon } from "../UserRegistration/DefaultLink";
+import InvestorDetail from "./InvestorDetail";
+import { validationSchema } from "./UserValidation";
 const ProfileDetail = () => {
+  const [isImageEditing, setIsImageEditing] = useState(false);
   const principal = useSelector((currState) => currState.internet.principal);
   const { countries } = useCountries();
   const userFullData = useSelector((currState) => currState.userData.data.Ok);
   console.log("User aa raha hai", userFullData);
   const actor = useSelector((currState) => currState.actors.actor);
   const [imagePreview, setImagePreview] = useState(null);
+  console.log("......./image ......../", imagePreview)
   const [imageData, setImageData] = useState(null);
   const [interestedDomainsOptions, setInterestedDomainsOptions] = useState([]);
   const [
@@ -121,6 +122,7 @@ const ProfileDetail = () => {
     clearErrors,
     setValue,
     control,
+    setError,
     trigger,
     formState: { errors, isSubmitting, isValid },
   } = useForm({
@@ -168,6 +170,8 @@ const ProfileDetail = () => {
   }, [areaOfExpertise]);
 
   const imageCreationFunc = async (file) => {
+
+    setIsImageEditing(true);
     const result = await trigger("image");
     if (result) {
       try {
@@ -190,12 +194,18 @@ const ProfileDetail = () => {
     }
   };
 
+
+
+
   const handleSave = async (data) => {
-    console.log("data", data); // Debugging line
+    console.log("data", data); 
 
     try {
+     
       const convertedPrincipal = await Principal.fromText(principal);
-
+      const updatedSocialLinks = Object.entries(socialLinks).map(([key, value]) => ({
+        link: value ? [value] : [],
+      }));
       const user_data = {
         bio: [data?.bio],
         full_name: data?.full_name,
@@ -213,9 +223,7 @@ const ProfileDetail = () => {
         //   social_links: Object.entries(socialLinks).map(([key, value]) => ({
         //     link: value ? [value] : [],
         // })),
-        social_links: data?.links
-          ? [data.links.map((val) => ({ link: val?.link ? [val.link] : [] }))]
-          : [],
+        social_links: [updatedSocialLinks], 
       };
 
       console.log("Sending user_data to backend:", user_data); // Debugging line
@@ -239,6 +247,7 @@ const ProfileDetail = () => {
       toast.error("Failed to update profile");
     }
     setIsLinkBeingEdited(false);
+    setIsEditingLink(false)
   };
 
   const handleCancel = () => {
@@ -251,6 +260,8 @@ const ProfileDetail = () => {
       reason_to_join: false,
     });
     // setTempData(profileData);
+    setIsLinkBeingEdited(false);
+    setIsEditingLink(false)
   };
 
   useEffect(() => {
@@ -300,26 +311,9 @@ const ProfileDetail = () => {
     }
   };
 
-  // set values handler
-  // const setValuesHandler = (val) => {
-  //   if (val) {
-  //     setValue("full_name", val?.full_name ?? "");
-  //     setValue("email", val?.email?.[0] ?? "");
-  //     setValue("openchat_user_name", val?.openchat_username?.[0] ?? "");
-  //     setValue("bio", val?.bio?.[0] ?? "");
-  //     setValue("country", val?.country ?? "");
-  //     setValue("domains_interested_in", val?.area_of_interest ?? "");
-  //     setInterestedDomainsSelectedOptionsHandler(val?.area_of_interest ?? null);
-  //     setImagePreview(val?.profile_picture?.[0] ?? "");
-  //     setValue("type_of_profile", val?.type_of_profile?.[0]);
-  //     setValue(
-  //       "reasons_to_join_platform",
-  //       val?.reason_to_join ? val?.reason_to_join.join(", ") : ""
-  //     );
-  //     setReasonOfJoiningSelectedOptionsHandler(val?.reason_to_join);
-  //   }
-  // };
+
   const setValuesHandler = (val) => {
+    
     if (val) {
       setValue("full_name", val?.full_name ?? "");
       setValue("email", val?.email?.[0] ?? "");
@@ -339,36 +333,28 @@ const ProfileDetail = () => {
       // Set social links
       if (val?.social_links?.length) {
         const links = {};
-        val.social_links.forEach((linkArray, index) => {
-          // Assuming linkArray is an array with a single object inside
-          if (Array.isArray(linkArray) && linkArray.length > 0) {
-            const linkData = linkArray[0];
-            console.log(`Processing social link #${index + 1}:`, linkData);
-
-            if (linkData?.link?.length > 0) {
-              const url = linkData.link[0];
-              console.log("Found URL: ", url);
-
-              if (url && typeof url === "string") {
-                if (url.includes("linkedin.com")) {
-                  links["LinkedIn"] = url;
-                } else if (url.includes("github.com")) {
-                  links["GitHub"] = url;
-                } else if (url.includes("t.me") || url.includes("telegram")) {
-                  links["Telegram"] = url;
-                } else {
-                  links[`OtherLink${index + 1}`] = url; // Differentiate other links
-                }
+  
+        val.social_links.forEach((linkArray) => {
+          linkArray.forEach((linkData) => {
+            const url = linkData.link[0];
+            console.log("Found URL: ", url);
+  
+            if (url && typeof url === "string") {
+              if (url.includes("linkedin.com")) {
+                links["LinkedIn"] = url;
+              } else if (url.includes("github.com")) {
+                links["GitHub"] = url;
+              } else if (url.includes("t.me") || url.includes("telegram")) {
+                links["Telegram"] = url;
               } else {
-                console.log("Invalid URL or not a string:", url);
+                // Use the domain as the key to avoid overwriting
+                const domainKey = new URL(url).hostname.replace("www.", "");
+                links[domainKey] = url;
               }
-            } else {
-              console.log("No valid link found in linkData:", linkData);
             }
-          } else {
-            console.log("Link array is empty or not an array:", linkArray);
-          }
+          });
         });
+  
         console.log("Final links object:", links);
         setSocialLinks(links);
       } else {
@@ -431,29 +417,7 @@ const ProfileDetail = () => {
     }
   }, [userFullData]);
 
-  const getLogo = (url) => {
-    try {
-      const domain = new URL(url).hostname.split(".").slice(-2).join(".");
-      const size = "size-8";
-      const icons = {
-        "linkedin.com": <FaLinkedin className={`text-blue-600 ${size}`} />,
-        "twitter.com": <FaTwitter className={`text-blue-400 ${size}`} />,
-        "github.com": <FaGithub className={`text-gray-700 ${size}`} />,
-        "telegram.com": <FaTelegram className={`text-blue-400 ${size}`} />,
-        "facebook.com": <FaFacebook className={`text-blue-400 ${size}`} />,
-        "instagram.com": <FaInstagram className={`text-pink-950 ${size}`} />,
-        "youtube.com": <FaYoutube className={`text-red-600 ${size}`} />,
-        "reddit.com": <FaReddit className={`text-orange-500 ${size}`} />,
-        "tiktok.com": <FaTiktok className={`text-black ${size}`} />,
-        "snapchat.com": <FaSnapchat className={`text-yellow-400 ${size}`} />,
-        "whatsapp.com": <FaWhatsapp className={`text-green-600 ${size}`} />,
-        "medium.com": <FaMedium className={`text-black ${size}`} />,
-      };
-      return icons[domain] || <LanguageIcon />;
-    } catch (error) {
-      return <LanguageIcon />;
-    }
-  };
+ 
   return (
     <div
       ref={containerRef}
@@ -1194,52 +1158,57 @@ const ProfileDetail = () => {
                 )}
               </div>
               <div>
-              <h3 className="mb-2 text-xs text-gray-500 px-3">LINKS</h3>
-          <div className="flex items-center px-3">
-            {/* Display existing links */}
-            {console.log("Display existing links ", socialLinks)}
-            {socialLinks &&
-              Object.keys(socialLinks).map((key, index) => {
-                const url = socialLinks[key];
-                if (!url) {
-                  return null;
-                }
+                <h3 className="mb-2 text-xs text-gray-500 px-3">LINKS</h3>
+                <div className="flex items-center gap-5 px-3">
+                  {/* Display existing links */}
+                  {console.log("Display existing links ", socialLinks)}
+                  {socialLinks &&
+                    Object.keys(socialLinks).map((key, index) => {
+                      const url = socialLinks[key];
+                      if (!url) {
+                        return null;
+                      }
 
-                const Icon = getIconForLink(url);
-                return (
-                  <div className="group relative flex items-center" key={index}>
-                    <a
-                      href={url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center"
-                    >
-                      <Icon className="text-gray-400 hover:text-gray-600 cursor-pointer transform transition-all duration-300 hover:scale-110" />
-                    </a>
-                    <button
-                      type="button"
-                      className="absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 ease-in-out transform opacity-0 group-hover:opacity-100 group-hover:translate-x-8 h-10 w-7"
-                      onClick={() => handleLinkEditToggle(key)}
-                    >
-                      <img src={edit} alt="edit" />
-                    </button>
-                    {isEditingLink[key] && (
-                      <input
-                        type="text"
-                        {...register(`social_links[${key}]`)}
-                        value={url}
-                        onChange={(e) => handleLinkChange(e, key)}
-                        className="border p-1 rounded w-full ml-2 transition-all duration-300 ease-in-out transform"
-                      />
-                    )}
-                  </div>
-                );
-              })}
-          </div>
+                      const Icon = getIconForLink(url);
+                      return (
+                        <div
+                          className="group relative flex items-center"
+                          key={index}
+                        >
+                          <a
+                            href={url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center"
+                          >
+                            <Icon className="text-gray-400 hover:text-gray-600 cursor-pointer transform transition-all duration-300 hover:scale-110" />
+                          </a>
+                          <button
+                            type="button"
+                            className="absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 ease-in-out transform opacity-0 group-hover:opacity-100 group-hover:translate-x-6 h-10 w-7"
+                            onClick={() => handleLinkEditToggle(key)}
+                          >
+                            <img src={edit} alt="edit" />
+                          </button>
+                          {isEditingLink[key] && (
+                            <div className="flex flex-col w-full">
+                              <input
+                                type="text"
+                                value={url}
+                                onChange={(e) => handleLinkChange(e, key)}
+                                className="border p-2 rounded-md w-full"
+                                placeholder="Enter your social media URL"
+                              />
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                </div>
 
                 {/* Save/Cancel Section */}
                 {/* {Object.values(isEditing).some((value) => value) && ( */}
-                {(Object.values(isEditing).some((value) => value) || isLinkBeingEdited) && (
+                  {(Object.values(isEditing).some((value) => value) || isLinkBeingEdited || isImageEditing) && (
                   <div className="flex justify-end gap-4 mt-4">
                     <button
                       type="button"

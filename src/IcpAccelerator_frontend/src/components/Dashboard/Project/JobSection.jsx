@@ -22,8 +22,8 @@ const JobSection = () => {
   const [latestJobs, setLatestJobs] = useState([]);
   const [timeAgo] = useFormatDateFromBigInt();
   const [isLoading, setIsLoading] = useState(true);
-  const itemsPerPage = 1;
-  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+  const [currentPage, setCurrentPage] = useState(0);
   const [openJobUid, setOpenJobUid] = useState(null);
   useEffect(() => {
       let isMounted = true;

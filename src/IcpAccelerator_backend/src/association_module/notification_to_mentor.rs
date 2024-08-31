@@ -1,5 +1,7 @@
+use crate::mentor_module::get_mentor::get_mentor_info_using_principal;
+use crate::project_module::get_project::get_project_info_using_principal;
 use crate::project_module::post_project::find_project_owner_principal;
-use crate::{state_handler::*, UserInformation};
+use crate::{state_handler::*, MentorInternal, ProjectInfoInternal, UserInfoInternal};
 use candid::{CandidType, Principal};
 use ic_cdk::api::management_canister::main::raw_rand;
 use ic_cdk::{api::time, caller};
@@ -10,32 +12,9 @@ use crate::guard::*;
 
 #[derive(Clone, CandidType, Deserialize, Serialize)]
 pub struct OfferToMentor {
-    offer_id: String, // Added field
-    mentor_id: Principal,
-    mentor_image: Option<Vec<u8>>,
-    mentor_name: String,
-    offer_i_have_written: String,
-    time_of_request: u64,
-    accepted_at: u64,
-    declined_at: u64,
-    self_declined_at: u64,
-    request_status: String,
-    response: String,
-}
-
-#[derive(Clone, CandidType, Deserialize, Serialize)]
-pub struct ProjectInfoo {
-    project_id: String,
-    project_name: String,
-    project_description: Option<String>,
-    project_logo: Option<Vec<u8>>,
-    user_data: UserInformation
-}
-
-#[derive(Clone, CandidType, Deserialize, Serialize)]
-pub struct OfferToSendToMentor {
-    offer_id: String, // Added field
-    project_info: ProjectInfoo,
+    offer_id: String, 
+    reciever_data: Option<(MentorInternal, UserInfoInternal)>,
+    sender_data: Option<(ProjectInfoInternal, UserInfoInternal)>,
     offer: String,
     sent_at: u64,
     accepted_at: u64,
@@ -43,6 +22,23 @@ pub struct OfferToSendToMentor {
     self_declined_at: u64,
     request_status: String,
     sender_principal: Principal,
+    receiever_principal: Principal,
+    response: String,
+}
+
+#[derive(Clone, CandidType, Deserialize, Serialize)]
+pub struct OfferToSendToMentor {
+    offer_id: String, 
+    reciever_data: Option<(MentorInternal, UserInfoInternal)>,
+    sender_data: Option<(ProjectInfoInternal, UserInfoInternal)>,
+    offer: String,
+    sent_at: u64,
+    accepted_at: u64,
+    declined_at: u64,
+    self_declined_at: u64,
+    request_status: String,
+    sender_principal: Principal,
+    receiever_principal: Principal,
     response: String,
 }
 
@@ -113,54 +109,45 @@ pub async fn send_offer_to_mentor_from_project(mentor_id: Principal, msg: String
     let uids = raw_rand().await.unwrap().0;
     let uid = format!("{:x}", Sha256::digest(&uids));
     let offer_id = uid.clone().to_string();
+    let project_principal = find_project_owner_principal(&project_id)
+    .expect("Project principal must exist for the given project_id");
 
-    let mut cached_user_data = None;
-
-    let user_data = crate::user_modules::get_user::get_user_info_with_cache(mentor_id, &mut cached_user_data);
+    let project_info = get_project_info_using_principal(project_principal);
+    let mentor_data = get_mentor_info_using_principal(mentor_id);
 
     let offer_to_mentor = OfferToMentor {
         offer_id: offer_id.clone(),
-        mentor_id: mentor_id,
-        mentor_image: user_data.profile_picture,
-        mentor_name: user_data.full_name,
-        offer_i_have_written: msg.clone(),
-        time_of_request: time(),
-        accepted_at: 0,
-        declined_at: 0,
-        self_declined_at: 0,
-        request_status: "pending".to_string(),
-        response: "".to_string(),
-    };
-
-    store_request_sent_by_project(offer_to_mentor);
-
-    let project_info = crate::project_module::get_project::get_project_using_id(project_id.clone()).expect("project does not exist");
-
-    let project_principal = find_project_owner_principal(&project_id.clone())
-    .expect("Project principal not found");
-
-    let mut cached_user_data = None;
-    let user_data_project = crate::user_modules::get_user::get_user_info_with_cache(project_principal, &mut cached_user_data);
-
-    let project_info = ProjectInfoo {
-        project_id,
-        project_name: project_info.params.project_name,
-        project_description: project_info.params.project_description,
-        project_logo: project_info.params.project_logo,
-        user_data: user_data_project
-    };
-
-    let offer_to_send_to_mentor = OfferToSendToMentor {
-        offer_id: offer_id.clone(),
-        project_info: project_info,
         offer: msg.clone(),
         sent_at: time(),
         accepted_at: 0,
         declined_at: 0,
         self_declined_at: 0,
         request_status: "pending".to_string(),
-        sender_principal: caller(),
         response: "".to_string(),
+        sender_data: project_info.clone(),
+        reciever_data: mentor_data.clone(),
+        sender_principal: project_principal,
+        receiever_principal: mentor_id,
+    };
+
+    store_request_sent_by_project(offer_to_mentor);
+
+    let project_principal = find_project_owner_principal(&project_id.clone())
+    .expect("Project principal not found");
+
+    let offer_to_send_to_mentor = OfferToSendToMentor {
+        offer_id: offer_id.clone(),
+        offer: msg.clone(),
+        sent_at: time(),
+        accepted_at: 0,
+        declined_at: 0,
+        self_declined_at: 0,
+        request_status: "pending".to_string(),
+        response: "".to_string(),
+        sender_data: project_info.clone(),
+        reciever_data: mentor_data.clone(),
+        sender_principal: project_principal,
+        receiever_principal: mentor_id,
     };
 
     notify_mentor_with_offer(mentor_id, offer_to_send_to_mentor);
@@ -275,7 +262,7 @@ pub fn accept_offer_from_project_to_mentor(offer_id: String, response_message: S
         if let Some(offers) = state.mentor_alerts.get(&stored_mentor_id_copy) {
             if let Some(offer) = offers.0.iter().find(|o| o.offer_id == offer_id) {
                 let sender_principal = offer.sender_principal.clone();
-                let project_id = offer.project_info.project_id.clone();
+                let project_id = offer.sender_data.as_ref().map(|(project_info, _)| project_info.uid.clone()).unwrap_or_else(|| {panic!("Project data must be present");});
 
                 if let Some(mut projects) = state.project_storage.get(&StoredPrincipal(sender_principal)) {
                     if let Some(project) = projects.0.iter_mut().find(|p| p.uid == project_id) {

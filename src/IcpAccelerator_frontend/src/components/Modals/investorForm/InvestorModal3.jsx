@@ -27,8 +27,8 @@ const InvestorModal3 = () => {
   return (
     <>
       {/* ICP HUB SELECTION */}
-      <div className="mb-4">
-        <label className="block text-sm font-medium mb-1">
+      <div className="mb-2">
+        <label className="block mb-1">
           Which ICP hub you will like to be associated{" "}
           <span className="text-[red] ml-1">*</span>
         </label>
@@ -57,19 +57,21 @@ const InvestorModal3 = () => {
       </div>
 
       {/* PORTFOLIO LINK INPUT */}
-      <div className="mb-4">
-        <label className="block text-sm font-medium mb-1">
+      <div className="mb-2">
+        <label className="block mb-1">
           Portfolio Link
         </label>
         <input
           type="text"
           {...register("investor_portfolio_link", {
             required: "Portfolio link is required",
+            
             pattern: {
               value: /^(ftp|http|https):\/\/[^ "]+$/,
               message: "Invalid URL format"
             }
           })}
+           placeholder="Enter your Portfolio url"
           className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
         />
 
@@ -81,8 +83,8 @@ const InvestorModal3 = () => {
       </div>
 
       {/* FUND NAME INPUT */}
-      <div className="mb-4">
-        <label className="block text-sm font-medium mb-1">
+      <div className="mb-2">
+        <label className="block mb-1">
           Fund Name <span className="text-[red] ml-1">*</span>
         </label>
         <input
@@ -100,8 +102,8 @@ const InvestorModal3 = () => {
       </div>
 
       {/* FUND SIZE INPUT */}
-      <div className="mb-4">
-        <label className="block text-sm font-medium mb-1">
+      <div className="mb-2">
+        <label className="block mb-1">
           Fund size (in million USD) <span className="text-red-500 ml-1">*</span>
         </label>
         <input
