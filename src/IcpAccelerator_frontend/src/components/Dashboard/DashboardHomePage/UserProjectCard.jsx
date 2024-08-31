@@ -7,36 +7,27 @@ import parse from "html-react-parser";
 const UserProjectCard = ({projectData,userData,principal}) => {
   console.log("PRINCIPAL IN PROJECT PAGE", principal);
   console.log("USER DATA IN PROJECT PAGE", userData);
+  console.log("PROJECT DATA IN LINE 10", projectData);
   const [openDetail, setOpenDetail] = useState(false);
   const handleClick = () => {
     setOpenDetail(true);
   };
-  const projectDetails = projectData?.projectData?.[0]?.[0]?.params;
+  const projectDetails = projectData?.[0]?.[0]?.params;
+  console.log("PROJECT DATA IN LINE 16", projectDetails);
 
   const description =
-    projectData?.projectData?.[0]?.[0]?.params.project_description?.[0];
+    projectData?.[0]?.[0]?.params.project_description?.[0];
 
   console.log("desc", description);
-  const projectId = projectData?.projectData?.[0]?.[0]?.uid;
-  const userDetails = projectData?.projectData?.[0]?.[1]?.params;
-  const fullname = projectData?.projectData?.[0]?.[1]?.params.full_name;
+  const projectId = projectData?.[0]?.[0]?.uid;
+  const userDetails = projectData?.[0]?.[1]?.params;
+  const fullname = projectData?.[0]?.[1]?.params.full_name;
 
   // const areaoffocus = projectData?.projectData?.[0]?.[0]?.params.project_area_of_focus
   const areaoffocus =
-    projectData?.projectData?.[0]?.[0]?.params.project_area_of_focus?.split(
+    projectData?.[0]?.[0]?.params.project_area_of_focus?.split(
       ", "
     );
-  console.log("areaoffocus", areaoffocus);
-
-  console.log(
-    "Project Data in CHILD COMPONENT at 0 ",
-    projectData?.projectData?.[0]?.[0]?.params
-  );
-  console.log(
-    "Project Data in CHILD COMPONENT at 1 ",
-    projectData?.projectData?.[0]?.[1]?.params
-  );
-
   const projectlogo =
     projectDetails?.project_logo && projectDetails?.project_logo[0]
       ? uint8ArrayToBase64(projectDetails?.project_logo[0])

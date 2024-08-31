@@ -23,8 +23,7 @@ import {
 
 const UserDetail = (projectData) => {
   const userData = projectData?.projectData?.[0]?.[1]?.params;
-  console.log("user data", userData);
-  console.log("Type of Profile:", userData?.type_of_profile?.[0]);
+  console.log("PROJECT DATA ON USER DETAILS PAGE", projectData);
 
   const handleChange = (tab) => {
     setActiveTab(tab);

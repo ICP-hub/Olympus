@@ -17,8 +17,7 @@ const DiscoverReview = (userData,principalId) => {
   const actor = useSelector((currState) => currState.actors.actor);
   const [reviews, setReviews] = useState([]);
   const isMounted = useRef(true);
-  const principal = useSelector((currState) => currState.internet.principal);
-  const userFullData = useSelector((currState) => currState.userData.data.Ok);
+  const userFullData = userData.userData;
 
   const schema = yup.object().shape({
     review: yup
@@ -45,7 +44,8 @@ const DiscoverReview = (userData,principalId) => {
 
   const getAllReview = async (caller) => {
     try {
-      const convertedPrincipal = Principal.fromText(principal);
+      const convertedPrincipal = userData?.principalId;
+      console.log("Principal inside get Function", convertedPrincipal);
       await caller.get_review(convertedPrincipal).then((result) => {
         if (isMounted.current) {
           console.log("review from api", result);
@@ -55,12 +55,13 @@ const DiscoverReview = (userData,principalId) => {
 
             const hasRated = fetchedReviews.some(
               (review) =>
-                review.reviewer_principal.toString() === principal.toString()
+                review.reviewer_principal.toString() ===
+                convertedPrincipal.toString()
             );
             setCurrentUserHasRated(hasRated);
           } else {
             setReviews([]);
-            setCurrentUserHasRated(false); 
+            setCurrentUserHasRated(false);
           }
         }
       });
@@ -91,61 +92,9 @@ const DiscoverReview = (userData,principalId) => {
     userFullData?.profile_picture && userFullData?.profile_picture[0]
       ? uint8ArrayToBase64(userFullData?.profile_picture[0])
       : "userpic";
-
+    console.log("USER PROFILE PIC", userPic);
   return (
     <div className="p-6">
-      <div className="flex flex-col mt-6 items-center">
-        <img
-          src={userFullData?.profile_picture[0]}
-          alt="Profile"
-          className="rounded-full w-28 h-28 mb-4"
-        />
-        <h2 className="text-2xl font-bold">{userFullData.full_name} </h2>
-        <p className="text-gray-500">{userFullData.openchat_username}</p>
-        
-
-        {showReview && (
-          <form onSubmit={handleSubmit(onSubmit)} className="w-full mt-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">
-              Enter Review
-            </label>
-            <textarea
-              {...register("review")}
-              className={`w-full p-2 text-sm border rounded-lg focus:outline-none focus:border-blue-500 ${
-                errors.review ? "border-red-500" : "border-gray-300"
-              }`}
-              rows="4"
-              placeholder="Write your review here..."
-            ></textarea>
-            {errors.review && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.review.message}
-              </p>
-            )}
-            <div className="flex items-center justify-center mb-4 ">
-              <button
-                disabled={isSubmitting}
-                type="submit"
-                className="bg-blue-600 text-white py-2 px-4 rounded"
-              >
-                {isSubmitting ? (
-                  <ThreeDots
-                    visible={true}
-                    height="35"
-                    width="35"
-                    color="#FFFEFF"
-                    radius="9"
-                    ariaLabel="three-dots-loading"
-                  />
-                ) : (
-                  "Submit"
-                )}
-              </button>
-            </div>
-          </form>
-        )}
-      </div>
-      <hr className="mt-4" />
       {reviews &&
         reviews.map((review, indx) => {
           const profilepic =

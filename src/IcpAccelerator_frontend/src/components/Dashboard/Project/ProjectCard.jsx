@@ -27,6 +27,7 @@ const ProjectCard = () => {
         const data = await actor.get_project_info_using_principal(
           convertedPrincipal
         );
+        console.log("DATA FROM API", data);
         setCardData(data);
       } catch (error) {
         console.error("Error fetching project data:", error);
@@ -35,7 +36,6 @@ const ProjectCard = () => {
 
     fetchProjectData();
   }, [actor]);
-
   const navigate = useNavigate();
 
   const handleNavigation = () => {
@@ -56,9 +56,13 @@ const ProjectCard = () => {
      
       {cardData && cardData.length > 0 ? (
   cardData.map((data, index) => {
+    
     const projectDescription = data[0]?.params?.project_description[0] ?? "No description available";
     const projectLogo = data[0]?.params?.project_logo?.[0] ?
     uint8ArrayToBase64(data[0]?.params?.project_logo?.[0] ):"";
+    const projectcover = data[0]?.params?.project_cover?.[0]
+      ? uint8ArrayToBase64(data[0]?.params?.project_cover?.[0])
+      : "";
     const projectName = data[0]?.params?.project_name || "Unknown Project";
     const projectId = data.uid;
     const fullName = data[1]?.params?.full_name || "No name provided";
@@ -74,11 +78,45 @@ const ProjectCard = () => {
           </div>
         </div>
         <div className="flex items-center" onClick={handleNavigation}>
-          <div className="w-[240px] h-[195px] bg-[#EEF2F6] flex justify-center items-center rounded-2xl">
+          {/* <div className="w-[240px] h-[195px] bg-[#EEF2F6] flex justify-center items-center rounded-2xl">
             <img
               src={projectLogo }
               alt={projectName ?? "ICP"}
               className="w-20 h-20 rounded-2xl border-4 border-[#FFFFFF]"
+            />
+          </div> */}
+          {/* <div
+            className="w-[240px] h-[195px] bg-cover bg-center flex justify-center items-center rounded-2xl "
+            style={{
+              backgroundImage: `url(${projectcover})`,
+              backgroundColor: "rgba(255, 255, 255, 0.3)", // Slight white tint with transparency
+              backdropFilter: "blur(200px)", // Glass effect
+            }}
+          >
+            <img
+              src={projectLogo}
+              alt={projectName ?? "ICP"}
+              className="w-3/4 h-28 rounded-2xl border-4 border-[#FFFFFF] z-20"
+            />
+          </div> */}
+          <div
+            className="w-[240px] h-[195px] flex justify-center items-center rounded-2xl relative overflow-hidden"
+            style={{
+              backgroundImage: `url(${projectcover})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }}
+          >
+            <div
+              className="absolute inset-0 bg-white bg-opacity-30 backdrop-blur-sm"
+              style={{
+                borderRadius: "inherit",
+              }}
+            ></div>
+            <img
+              src={projectLogo}
+              alt={projectName ?? "ICP"}
+              className="w-3/4 h-28 rounded-2xl border-4 border-[#FFFFFF] relative z-10"
             />
           </div>
           <div className="ml-4 w-2/3 relative">
@@ -88,21 +126,22 @@ const ProjectCard = () => {
             <h2 className="text-xl font-semibold text-gray-900">
               {projectName ?? "ICP"}
             </h2>
-            <p className="text-sm text-gray-500 mb-4">
-              @{fullName ?? "ICP"}
-            </p>
+            <p className="text-sm text-gray-500 mb-4">@{fullName ?? "ICP"}</p>
             <hr />
             <p className="mt-4 text-sm text-gray-700">
               Bringing privacy back to users
             </p>
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-1 text-sm text-gray-500 line-clamp-3">
               {parse(projectDescription) ?? "This is ICP"}
             </p>
             {areaOfInterest.map((interest, i) => (
-            <span key={i} className="inline-block px-2 py-1 mt-2 text-xs font-medium text-gray-800 bg-gray-100 rounded-full">
-              {interest}
-                      </span>
-                    ))}
+              <span
+                key={i}
+                className="inline-block px-2 py-1 mt-2 text-xs font-medium text-gray-800 bg-gray-100 rounded-full"
+              >
+                {interest}
+              </span>
+            ))}
           </div>
         </div>
       </div>
