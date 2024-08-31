@@ -4,7 +4,9 @@ import DiscoverMentorPage from "./discoverMentorPage/DiscoverMentorPage";
 import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 import parse from "html-react-parser";
 
-const UserProjectCard = (projectData) => {
+const UserProjectCard = ({projectData,userData,principal}) => {
+  console.log("PRINCIPAL IN PROJECT PAGE", principal);
+  console.log("USER DATA IN PROJECT PAGE", userData);
   const [openDetail, setOpenDetail] = useState(false);
   const handleClick = () => {
     setOpenDetail(true);
@@ -60,7 +62,7 @@ const UserProjectCard = (projectData) => {
           />
         </div>
         <div>
-          <h3 className="text-lg font-bold text-gray-900">
+          <h3 className="text-lg font-bold text-gray-900 line-clamp-1">
             {projectDetails?.project_name}
           </h3>
           <p className="text-gray-500 text-sm">@{fullname}</p>
@@ -86,6 +88,8 @@ const UserProjectCard = (projectData) => {
           setOpenDetail={setOpenDetail}
           projectDetails={projectDetails}
           projectId={projectId}
+          userData={userData}
+          principal={principal}
         />
       )}
 

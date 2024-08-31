@@ -120,8 +120,8 @@ export  const validationSchema = yup
         .required("dApp Link is required")
       : schema
   ),
-  weekly_active_users: yup.number().nullable(true).optional(),
-  revenue: yup.number().nullable(true).optional(),
+  weekly_active_users: yup.number().nullable(true).optional().min(0, "Must be a non-negative number"),
+  revenue: yup.number().nullable(true).optional().min(0, "Must be a non-negative number"),
 
   money_raising: yup
     .string()

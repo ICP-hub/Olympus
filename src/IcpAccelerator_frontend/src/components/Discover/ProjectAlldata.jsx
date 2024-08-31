@@ -21,10 +21,8 @@ import RatingModal from "../Common/RatingModal";
 import { bufferToImageBlob } from "../Utils/formatter/bufferToImageBlob";
 import parse from "html-react-parser"
 import NoDataCard from "../../component/Mentors/Event/MentorAssociatedNoDataCard";
-import NoCardData from "../Profile/NoCardData";
-import Nodata from "../Dashboard/Project/Nodata";
 import NoData from "../NoDataCard/NoData";
-const DiscoverProject = () => {
+const DiscoverProject = ({onProjectCountChange}) => {
   const actor = useSelector((currState) => currState.actors.actor);
   const [allProjectData, setAllProjectData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -36,7 +34,7 @@ const DiscoverProject = () => {
   const [listProjectId, setListProjectId] = useState(null);
   const [showRatingModal, setShowRatingModal] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
-
+  const [userDataToSend, setUserDataToSend] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const mentorPrincipal = useSelector(
     (currState) => currState.internet.principal
@@ -162,6 +160,7 @@ const DiscoverProject = () => {
               ? Object.values(result.user_data)
               : [];
             setAllProjectData(projectData);
+            onProjectCountChange(projectData.length>0?projectData.length:0)
             setUserData(userData);
             console.log("userdata =>",userData)
           } else {
@@ -224,11 +223,17 @@ const DiscoverProject = () => {
   };
   const [openDetail, setOpenDetail] = useState(false);
 
-  const handleClick = (principal) => {
+  const handleClick = (principal, user) => {
     setprincipal(principal);
     setOpenDetail(true);
+    setUserDataToSend(user)
     console.log("passed principle", principal);
+
   };
+  const handleRating=(ratings)=>{
+    setShowRatingModal(true)
+    setUserRatingDetail(ratings)
+  }
   
   async function convertBufferToImageBlob(buffer) {
     try {
@@ -298,7 +303,7 @@ const DiscoverProject = () => {
             >
               <div className="w-[272px] relative">
                 <div
-                  onClick={() => handleClick(principle_id)}
+                  onClick={() => handleClick(principle_id, user)}
                   className="max-w-[250px] w-[250px] h-[254px] bg-gray-100 rounded-lg flex flex-col justify-between relative overflow-hidden"
                 >
                   <div className="absolute inset-0 flex items-center justify-center">
@@ -434,6 +439,7 @@ const DiscoverProject = () => {
           openDetail={openDetail}
           setOpenDetail={setOpenDetail}
           principal={principal}
+          userData ={userDataToSend}
         />
       )}
     </div>

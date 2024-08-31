@@ -73,7 +73,7 @@ const DiscoverMentor = ({onMentorCountChange}) => {
         } else {
           setMentorData((prevData) => {
             const newData = [...prevData, ...mentorData];
-            onMentorCountChange(newData.length); // Update count using the length of the data array
+            onMentorCountChange(newData.length>0?newData.length:0); // Update count using the length of the data array
             return newData;
           });
           setUserData((prevData) => [...prevData, ...userData]);

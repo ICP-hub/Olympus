@@ -111,14 +111,14 @@ const UserDetail = (projectData) => {
               </span> */}
             </div>
           </div>
-          <div className="">
+          {/* <div className="">
             <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
               Associations
             </h3>
             <div className="mb-2">
               <img src={awtar} alt="icon" />
             </div>
-          </div>
+          </div> */}
           <div className="flex justify-start border-b">
             <button
               className={`px-4 py-2 focus:outline-none font-medium  ${
