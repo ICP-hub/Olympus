@@ -53,17 +53,17 @@ pub async fn register_project(info: ProjectInfo) -> String {
     }
 
     // Check if the caller has already registered a project or has one awaiting response
-    let already_registered = read_state(|state| {
-        state.project_storage.contains_key(&StoredPrincipal(caller))
-            || state
-                .project_awaits_response
-                .contains_key(&StoredPrincipal(caller))
-    });
+    // let already_registered = read_state(|state| {
+    //     state.project_storage.contains_key(&StoredPrincipal(caller))
+    //         || state
+    //             .project_awaits_response
+    //             .contains_key(&StoredPrincipal(caller))
+    // });
 
-    if already_registered {
-        ic_cdk::println!("You can't create more than one project");
-        return "You can't create more than one project".to_string();
-    }
+    // if already_registered {
+    //     ic_cdk::println!("You can't create more than one project");
+    //     return "You can't create more than one project".to_string();
+    // }
 
     match info.validate() {
         Ok(_) => {

@@ -3,7 +3,7 @@
 set -e
 
 # Number of mentors you want to register (ensure this matches the number of existing identities)
-NUM_MENTORS=5
+NUM_MENTORS=15
 START=1
 
 
@@ -37,36 +37,32 @@ for i in $(seq $START $NUM_MENTORS); do
     area_of_interest="Interest $i"
 
 
+    social_links='opt vec { record { link = opt "https://twitter.com/user'$i'"; }; record { link = opt "https://linkedin.com/in/user'$i'"; }; }'
+
     mentors[$i]='record { 
-    name_of_fund = "Angel"; 
-    assets_under_management = opt ""; 
-    registered = false; 
-    average_check_size = 500000.00; 
-    existing_icp_investor = false; 
-    existing_icp_portfolio = opt ""; 
-    type_of_investment = "Defi"; 
-    project_on_multichain = opt ""; 
-    category_of_investment = "Defi"; 
-    preferred_icp_hub = "Portugal"; 
-    investor_type = opt "MVP to Initial Traction"; 
-    number_of_portfolio_companies = 10; 
-    portfolio_link = "lunarstrategy.com"; 
-    user_data = record { 
-        full_name = "user $i"; 
-        email = opt "user$i@example.com"; 
-        profile_picture  = opt vec '$profile_image';
-        country = "India"; 
-        telegram_id = opt ""; 
-        bio = opt "bio for user$i"; 
-        area_of_interest = "Defi"; 
-        twitter_id = opt ""; 
-        openchat_username = opt ""; 
-        type_of_profile = opt "Individual"; 
-        reason_to_join = opt vec { "Funding" }; 
-    }; 
-    website_link = opt "lunarstrategy.com"; 
-    linkedin_link = "https://www.linkedin.com/feed/"; 
-}'
+        name_of_fund = "Fund Name '"$i"'"; 
+        fund_size = opt 10000000.00; 
+        assets_under_management = opt "10M"; 
+        registered_under_any_hub = opt false; 
+        average_check_size = 500000.00; 
+        existing_icp_investor = false; 
+        money_invested = opt 2000000.00; 
+        existing_icp_portfolio = opt "Portfolio details here"; 
+        type_of_investment = "Equity"; 
+        project_on_multichain = opt "Yes"; 
+        category_of_investment = "Defi"; 
+        reason_for_joining = opt "Interested in ICP ecosystem"; 
+        preferred_icp_hub = "Portugal"; 
+        investor_type = opt "Institutional"; 
+        number_of_portfolio_companies = 15; 
+        portfolio_link = "https://portfolio-link.com"; 
+        website_link = opt "https://fund-website.com"; 
+        links = '"$social_links"'; 
+        registered = true; 
+        registered_country = opt "Portugal"; 
+        stage = opt "Early Stage"; 
+        range_of_check_size = opt "500K-1M"; 
+    }'
 
     vc_data="${mentors[$i]}" 
     echo "Registering VC $i with data: $vc_data"

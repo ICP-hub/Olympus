@@ -14,11 +14,12 @@ import { Tooltip } from "react-tooltip";
 import DiscoverMentorMain from "../Dashboard/DashboardHomePage/discoverMentor/DiscoverMentorMain";
 import RatingModal from "../Common/RatingModal";
 
-const DiscoverMentor = () => {
+const DiscoverMentor = ({onMentorCountChange}) => {
   const actor = useSelector((currState) => currState.actors.actor);
   const isAuthenticated = useSelector(
     (currState) => currState.internet.isAuthenticated
   );
+  const [mentorCount, setMentorCount] = useState(0);
   const [allMentorData, setMentorData] = useState([]);
   const [userData, setUserData] = useState([]);
   const [hasMore, setHasMore] = useState(true);
@@ -70,7 +71,11 @@ const DiscoverMentor = () => {
         if (mentorData.length === 0) {
           setHasMore(false); // No more data to load
         } else {
-          setMentorData((prevData) => [...prevData, ...mentorData]);
+          setMentorData((prevData) => {
+            const newData = [...prevData, ...mentorData];
+            onMentorCountChange(newData.length); // Update count using the length of the data array
+            return newData;
+          });
           setUserData((prevData) => [...prevData, ...userData]);
 
           // If fewer items than expected are returned, stop further requests
@@ -204,7 +209,7 @@ const DiscoverMentor = () => {
             }
           >
             {allMentorData.map((mentorArray, index) => {
-               const mentor_id = mentorArray[0]?.toText();
+              const mentor_id = mentorArray[0]?.toText();
               const mentor = mentorArray[1];
               const user = mentorArray[2];
 
@@ -237,19 +242,17 @@ const DiscoverMentor = () => {
                   key={index}
                 >
                   <div className="w-[272px] relative">
-                    <div onClick={() => handleClick(principle_id)} className="max-w-[250px] w-[250px] h-[254px] bg-gray-100 rounded-lg flex flex-col justify-between relative overflow-hidden">
-                      <div
-                        className="absolute inset-0 flex items-center justify-center"
-                        
-                      >
+                    <div
+                      onClick={() => handleClick(principle_id)}
+                      className="max-w-[250px] w-[250px] h-[254px] bg-gray-100 rounded-lg flex flex-col justify-between relative overflow-hidden"
+                    >
+                      <div className="absolute inset-0 flex items-center justify-center">
                         <img
                           src={profile}
                           alt={full_name ?? "Mentor"}
                           className="w-24 h-24 rounded-full object-cover"
                         />
                       </div>
-
-                      
                     </div>
                     <div  onClick={() => handleRating(user)} className="absolute bottom-0 right-[6px] flex items-center bg-gray-100 p-1">
                         <Star className="text-yellow-400 w-4 h-4" />

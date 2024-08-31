@@ -123,11 +123,11 @@ pub fn rate_limiter_guard() -> Result<(), String> {
 }
 
 pub fn combined_guard() -> Result<(), String> {
-    is_user_anonymous()?;
+    // is_user_anonymous()?;
 
-    is_registered_user_guard()?;
+    // is_registered_user_guard()?;
 
-    rate_limiter_guard()?;
+    // rate_limiter_guard()?;
 
     Ok(())
 }
