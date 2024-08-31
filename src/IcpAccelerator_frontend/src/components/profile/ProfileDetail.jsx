@@ -35,6 +35,7 @@ import CompressedImage from "../ImageCompressed/CompressedImage";
 import { LanguageIcon } from "../UserRegistration/DefaultLink";
 import InvestorDetail from "./InvestorDetail";
 import { validationSchema } from "./UserValidation";
+import ProjectDetail from "./ProjectDetail";
 const ProfileDetail = () => {
   const [isImageEditing, setIsImageEditing] = useState(false);
   const principal = useSelector((currState) => currState.internet.principal);

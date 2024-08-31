@@ -25,7 +25,7 @@ const DiscoverProject = () => {
   const actor = useSelector((currState) => currState.actors.actor);
   const [allProjectData, setAllProjectData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const itemsPerPage = 1;
+  const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
   const [userData, setUserData] = useState([]);
   const [cardDetail, setCadDetail] = useState(null);
