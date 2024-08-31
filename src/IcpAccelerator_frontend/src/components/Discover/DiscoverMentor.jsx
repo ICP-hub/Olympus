@@ -31,6 +31,7 @@ const DiscoverMentor = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [mentorId, setMentorId] = useState(null);
   const [showRatingModal, setShowRatingModal] = useState(false);
+  const [userRatingDetail,setUserRatingDetail]=useState(null)
 
   const dispatch = useDispatch();
   const userCurrentRoleStatusActiveRole = useSelector(
@@ -171,6 +172,13 @@ const DiscoverMentor = () => {
     setOpenDetail(true);
     console.log("passed principle", principal);
   };
+
+  const handleRating=(ratings)=>{
+    setShowRatingModal(true)
+    setUserRatingDetail(ratings)
+  }
+  console.log("userRatingDetail =>",userRatingDetail)
+
   return (
     <>
       <div>
@@ -243,7 +251,7 @@ const DiscoverMentor = () => {
 
                       
                     </div>
-                    <div className="absolute bottom-0 right-[6px] flex items-center bg-gray-100 p-1">
+                    <div  onClick={() => handleRating(user)} className="absolute bottom-0 right-[6px] flex items-center bg-gray-100 p-1">
                         <Star className="text-yellow-400 w-4 h-4" />
                         <span className="text-sm font-medium">5.0</span>
                       </div>
@@ -316,6 +324,7 @@ const DiscoverMentor = () => {
         <RatingModal
           showRating={showRatingModal}
           setShowRatingModal={setShowRatingModal}
+          userRatingDetail={userRatingDetail}
         />
       )}
         {isAddMentorModalOpen && (

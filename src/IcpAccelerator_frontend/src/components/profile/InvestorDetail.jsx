@@ -241,6 +241,7 @@ const InvestorDetail = () => {
           const result = await actor.update_venture_capitalist(investorData);
           if (result?.includes("Profile updated successfully")) {
             toast.success("Profile updated successfully");
+            window.location.href = "/dashboard/profile";
           } else {
             toast.error(result);
           }

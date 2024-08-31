@@ -2,6 +2,7 @@ import React from 'react';
 import Avatar from '@mui/material/Avatar';
 
 const RollingComponent = ({ isToggled, toggle, image }) => {
+  console.log('isToggled',isToggled)
   return (
     <div className="relative">
       <input

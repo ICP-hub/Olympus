@@ -96,22 +96,22 @@ function DashboardHomeNavbar() {
     }
     // Condition 2: Project and user are approved -> false for user, true for project
     else if (projectRole?.approval_status === "approved" && userRole?.approval_status === "approved") {
-      newRole = toggleValue ? "project" : "user";
+      newRole = toggleValue === true ? "project" : "user";
       newImage = findRoleImage(newRole);
     }
     // Condition 3: VC and user are approved -> false for user, true for VC
     else if (vcRole?.approval_status === "approved" && userRole?.approval_status === "approved") {
-      newRole = toggleValue ? "vc" : "user";
+      newRole = toggleValue === true ? "vc" : "user";
       newImage = findRoleImage(newRole);
     }
     // Condition 4: Mentor and user are approved -> false for user, true for mentor
     else if (mentorRole?.approval_status === "approved" && userRole?.approval_status === "approved") {
-      newRole = toggleValue ? "mentor" : "user";
+      newRole = toggleValue === true ? "mentor" : "user";
       newImage = findRoleImage(newRole);
     }
     // Condition 5: Mentor and VC are approved -> false for mentor, true for VC
     else if (mentorRole?.approval_status === "approved" && vcRole?.approval_status === "approved") {
-      newRole = toggleValue ? "vc" : "mentor";
+      newRole = toggleValue === true ? "vc" : "mentor";
       newImage = findRoleImage(newRole);
     }
     // Default case: disable toggle if no valid condition is met

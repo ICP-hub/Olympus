@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useState, useMemo, useCallback, useEffect } from "react";
 import {
   MoreVert,
   Star,
@@ -15,21 +15,22 @@ import ProjectAssociationFilter from "./ProjectAssociationFilter";
 import { useSelector } from "react-redux";
 import { Principal } from "@dfinity/principal";
 import AssociationDetailsProjectCard from "./AssociationDetailsProjectCard";
-import AssociationDetailsCard from "./AssociationDetailsCard";
+import AssociationDetailsCard from "./AssociationDetailsMentorCard";
 import AssociationDetailsInvestorCard from "./AssociationDetailsInvestorCard";
+import NoData from "../../NoDataCard/NoData";
 
 // Memoize AssociationDetailsCard and AssociationDetailsProjectCard
-const MemoizedAssociationDetailsCard = React.memo(AssociationDetailsCard);
+const MemoizedAssociationDetailsMentorCard = React.memo(AssociationDetailsCard);
 const MemoizedAssociationDetailsProjectCard = React.memo(AssociationDetailsProjectCard);
 const MemoizedAssociationDetailsInvestorCard = React.memo(AssociationDetailsInvestorCard);
-
-
 
 const AssociationRequestCard = () => {
   const [selectedTypeData, setSelectedTypeData] = useState("");
   const [activeTabData, setActiveTabTypeData] = useState("");
   const [filterOpen, setFilterOpen] = useState(false);
   const [associateData, setAssociateData] = useState([]);
+  const [noDataMessage, setNoDataMessage] = useState("No Data Available");
+
   const projectFullData = useSelector(
     (currState) => currState.projectData.data
   );
@@ -59,6 +60,140 @@ const AssociationRequestCard = () => {
   const toggleFilter = useCallback(() => {
     setFilterOpen((prev) => !prev);
   }, []);
+
+  useEffect(() => {
+    // Set custom no data message based on role, active tab data, and selected type data
+    if (associateData.length === 0) {
+      if (userCurrentRoleStatusActiveRole === "project") {
+        if (activeTabData === "pending") {
+          if (selectedTypeData === "to-mentor") {
+            setNoDataMessage("No pending requests sent to mentors.");
+          } else if (selectedTypeData === "from-mentor") {
+            setNoDataMessage("No pending requests received from mentors.");
+          } else if (selectedTypeData === "to-investor") {
+            setNoDataMessage("No pending requests sent to investors.");
+          } else if (selectedTypeData === "from-investor") {
+            setNoDataMessage("No pending requests received from investors.");
+          } else {
+            setNoDataMessage("No pending requests available.");
+          }
+        } else if (activeTabData === "approved") {
+          if (selectedTypeData === "to-mentor") {
+            setNoDataMessage("No approved requests sent to mentors.");
+          } else if (selectedTypeData === "from-mentor") {
+            setNoDataMessage("No approved requests received from mentors.");
+          } else if (selectedTypeData === "to-investor") {
+            setNoDataMessage("No approved requests sent to investors.");
+          } else if (selectedTypeData === "from-investor") {
+            setNoDataMessage("No approved requests received from investors.");
+          } else {
+            setNoDataMessage("No approved requests available.");
+          }
+        } else if (activeTabData === "declined") {
+          if (selectedTypeData === "to-mentor") {
+            setNoDataMessage("No declined requests sent to mentors.");
+          } else if (selectedTypeData === "from-mentor") {
+            setNoDataMessage("No declined requests received from mentors.");
+          } else if (selectedTypeData === "to-investor") {
+            setNoDataMessage("No declined requests sent to investors.");
+          } else if (selectedTypeData === "from-investor") {
+            setNoDataMessage("No declined requests received from investors.");
+          } else {
+            setNoDataMessage("No declined requests available.");
+          }
+        } else if (activeTabData === "self-reject") {
+          if (selectedTypeData === "to-mentor") {
+            setNoDataMessage("No self-rejected requests sent to mentors.");
+          } else if (selectedTypeData === "from-mentor") {
+            setNoDataMessage("No self-rejected requests received from mentors.");
+          } else if (selectedTypeData === "to-investor") {
+            setNoDataMessage("No self-rejected requests sent to investors.");
+          } else if (selectedTypeData === "from-investor") {
+            setNoDataMessage("No self-rejected requests received from investors.");
+          } else {
+            setNoDataMessage("No self-rejected requests available.");
+          }
+        } else {
+          setNoDataMessage("No data available for projects.");
+        }
+      } else if (userCurrentRoleStatusActiveRole === "mentor") {
+        if (activeTabData === "pending") {
+          if (selectedTypeData === "to-project") {
+            setNoDataMessage("No pending requests sent to projects.");
+          } else if (selectedTypeData === "from-project") {
+            setNoDataMessage("No pending requests received from projects.");
+          } else {
+            setNoDataMessage("No pending requests available.");
+          }
+        } else if (activeTabData === "approved") {
+          if (selectedTypeData === "to-project") {
+            setNoDataMessage("No approved requests sent to projects.");
+          } else if (selectedTypeData === "from-project") {
+            setNoDataMessage("No approved requests received from projects.");
+          } else {
+            setNoDataMessage("No approved requests available.");
+          }
+        } else if (activeTabData === "declined") {
+          if (selectedTypeData === "to-project") {
+            setNoDataMessage("No declined requests sent to projects.");
+          } else if (selectedTypeData === "from-project") {
+            setNoDataMessage("No declined requests received from projects.");
+          } else {
+            setNoDataMessage("No declined requests available.");
+          }
+        } else if (activeTabData === "self-reject") {
+          if (selectedTypeData === "to-project") {
+            setNoDataMessage("No self-rejected requests sent to projects.");
+          } else if (selectedTypeData === "from-project") {
+            setNoDataMessage("No self-rejected requests received from projects.");
+          } else {
+            setNoDataMessage("No self-rejected requests available.");
+          }
+        } else {
+          setNoDataMessage("No data available for mentors.");
+        }
+      } else if (userCurrentRoleStatusActiveRole === "vc") {
+        if (activeTabData === "pending") {
+          if (selectedTypeData === "to-project") {
+            setNoDataMessage("No pending requests sent to projects.");
+          } else if (selectedTypeData === "from-project") {
+            setNoDataMessage("No pending requests received from projects.");
+          } else {
+            setNoDataMessage("No pending requests available.");
+          }
+        } else if (activeTabData === "approved") {
+          if (selectedTypeData === "to-project") {
+            setNoDataMessage("No approved requests sent to projects.");
+          } else if (selectedTypeData === "from-project") {
+            setNoDataMessage("No approved requests received from projects.");
+          } else {
+            setNoDataMessage("No approved requests available.");
+          }
+        } else if (activeTabData === "declined") {
+          if (selectedTypeData === "to-project") {
+            setNoDataMessage("No declined requests sent to projects.");
+          } else if (selectedTypeData === "from-project") {
+            setNoDataMessage("No declined requests received from projects.");
+          } else {
+            setNoDataMessage("No declined requests available.");
+          }
+        } else if (activeTabData === "self-reject") {
+          if (selectedTypeData === "to-project") {
+            setNoDataMessage("No self-rejected requests sent to projects.");
+          } else if (selectedTypeData === "from-project") {
+            setNoDataMessage("No self-rejected requests received from projects.");
+          } else {
+            setNoDataMessage("No self-rejected requests available.");
+          }
+        } else {
+          setNoDataMessage("No data available for VCs.");
+        }
+      } else {
+        setNoDataMessage("No Data Available.");
+      }
+    }
+  }, [associateData, activeTabData, selectedTypeData, userCurrentRoleStatusActiveRole]);
+  
 
   return (
     <div className="space-y-4 relative">
@@ -108,33 +243,39 @@ const AssociationRequestCard = () => {
         />
       </div>
 
-      {associateData.map((user, index) => (
-        <div key={user.username || index}>
-          {userCurrentRoleStatusActiveRole === "project" ? (
-            <MemoizedAssociationDetailsProjectCard
+      {associateData.length === 0 ? (
+        <NoData message={noDataMessage} />
+      ) : (
+        associateData.map((user, index) => (
+          <div key={index}>
+            {userCurrentRoleStatusActiveRole === "project" ? (
+              <MemoizedAssociationDetailsProjectCard
+                user={user}
+                index={index}
+                selectedTypeData={selectedTypeData}
+                activeTabData={activeTabData}
+              />
+            ) : userCurrentRoleStatusActiveRole === "mentor" ? (
+              <MemoizedAssociationDetailsMentorCard
               user={user}
               index={index}
               selectedTypeData={selectedTypeData}
               activeTabData={activeTabData}
             />
-          ) : userCurrentRoleStatusActiveRole === "mentor" ? (
-            <MemoizedAssociationDetailsCard
-              user={user}
-              index={index}
-              selectedTypeData={selectedTypeData}
-              activeTabData={activeTabData}
-            />
-          ) : userCurrentRoleStatusActiveRole === "vc" ? (
-            <MemoizedAssociationDetailsInvestorCard
-            user={user}
-            index={index}
-            selectedTypeData={selectedTypeData}
-            activeTabData={activeTabData}/>
-          ) : (
-            ""
-          )}
-        </div>
-      ))}
+             
+            ) : userCurrentRoleStatusActiveRole === "vc" ? (
+              <MemoizedAssociationDetailsInvestorCard
+                user={user}
+                index={index}
+                selectedTypeData={selectedTypeData}
+                activeTabData={activeTabData}
+              />
+            ) : (
+              ""
+            )}
+          </div>
+        ))
+      )}
 
       {filterOpen && (
         <ProjectAssociationFilter
@@ -155,3 +296,4 @@ const AssociationRequestCard = () => {
 };
 
 export default AssociationRequestCard;
+

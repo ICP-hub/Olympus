@@ -26,7 +26,7 @@ const UserCard = ({ name, username, tags, role, description, rating, skills, loc
   const [openDetail,setOpenDetail]=useState(false)
 
   return (
-    <div className=" p-6 w-[750px] rounded-lg shadow-sm mb-4 flex">
+    <div className=" p-6 w-[60%] rounded-lg shadow-sm mb-4 flex">
       <div className="w-[272px]  ">
         <div onClick={()=>setOpenDetail(true)} className="max-w-[250px] w-[250px] bg-gray-100 rounded-lg flex flex-col justify-between h-full relative overflow-hidden">
           <div className="absolute inset-0 flex items-center justify-center">
@@ -45,7 +45,7 @@ const UserCard = ({ name, username, tags, role, description, rating, skills, loc
         </div>
       </div>
       {openDetail && <UserDetailPage openDetail={openDetail} setOpenDetail={setOpenDetail} />}
-      <div className="flex-grow ml-[25px] w-[544px]">
+      <div className="flex-grow ml-[25px] ">
         <div className="flex justify-between items-start mb-2">
           <div>
             <h3 className="text-xl font-bold">{name}</h3>
@@ -64,7 +64,7 @@ const UserCard = ({ name, username, tags, role, description, rating, skills, loc
             </span>
           ))}
         </div>
-        <div className="border-t border-gray-200 my-3"></div>
+        <div className="border-t border-gray-200 my-3 mr-3"></div>
         <p className="font-medium mb-2">{role}</p>
 
         <p className="text-gray-600 mb-4">{description}</p>
@@ -158,12 +158,12 @@ const UsersSection = () => {
   ];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bg-white">
+    <div className=" mx-auto px-4 sm:px-6 lg:px-8 bg-white">
       <h1 className="text-3xl font-bold p-6 px-0   -top-[0.6rem] bg-opacity-95 sticky bg-white z-20">Discover</h1>
       <Tabs tabs={tabs} currentTab={currentTab} onTabChange={handleTabChange} />
    
-      <div className="flex">
-        <div className=" pr-6">
+      <div className="flex justify-between gap-3">
+        <div className=" pr-6 w-[60%]">
           {/* {users.map((user, index) => (
            <UserCard key={index} {...user} />
          ))} */}
@@ -181,23 +181,27 @@ const UsersSection = () => {
             <DiscoverInvestor />
           }
         </div>
-        <div className="max-w-[320px] w-[320px]">
+        <div className=" w-[28%]">
           <div className="bg-white py-6 rounded-lg shadow-sm sticky top-0" >
             <h2 className="text-lg font-semibold mb-4">Filters</h2>
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
-              <select className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+              <label className="block text-sm font-semibold text-gray-700 mb-1">Role</label>
+              <select onChange={(e)=>handleTabChange(e.target.value)} className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                 <option>Select role</option>
+                <option value="Users">Users</option>
+                <option value="Projects">Projects</option>
+                <option value="Mentors">Mentors</option>
+                <option value="Investors">Investors</option>
               </select>
             </div>
-            <div className="mb-4">
+            {/* <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-1">Interests</label>
               <input type="text" placeholder="Start typing" className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500" />
-            </div>
-            <div>
+            </div> */}
+            {/* <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
               <input type="text" placeholder="E.g., Dubai" className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500" />
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

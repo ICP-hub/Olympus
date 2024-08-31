@@ -1,15 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React from 'react';
 import CampaignIcon from "@mui/icons-material/Campaign";
-import AnnouncementModal from "../Modals/AnnouncementModal";
-import toast, { Toaster } from "react-hot-toast";
 
-import { useSelector } from "react-redux";
-const NoCardData = ({  }) => {
+const NoData = ({message}) => {
 
   return (
     <div className="p-6">
       {/* Content */}
-      <div className="text-center pt-12">
+      <div className="text-center py-12">
         <div className="flex justify-center items-center">
           <svg
             width="154"
@@ -84,33 +81,13 @@ const NoCardData = ({  }) => {
           </svg>
         </div>
         <h2 className="text-xl font-semibold mb-2">
-          You haven't posted any Announcement yet
+        {message}
         </h2>
-        <p className="text-gray-600 mb-2">
-          Any assets used in projects will live here.
-        </p>
-        <p className="text-gray-600 mb-6">
-          Start creating by uploading your files.
-        </p>
-        {/* <button
-          className="bg-[#155EEF] text-white px-4 py-2 rounded-md flex items-center justify-center mx-auto"
-          onClick={handleOpenModal}
-        >
-          <CampaignIcon className="mr-2" />
-          Create a new Announcement
-        </button> */}
       </div>
-      {/* {isAnnouncementModalOpen && (
-        <AnnouncementModal
-          isOpen={handleOpenModal}
-          onClose={handleCloseModal}
-          onSubmitHandler={handleAddAnnouncement}
-          isSubmitting={isSubmitting}
-          isUpdate={false}
-        />
-      )} */}
-    </div>
+</div>
   );
 };
 
-export default NoCardData;
+
+
+export default NoData

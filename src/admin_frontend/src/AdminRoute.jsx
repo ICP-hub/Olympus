@@ -87,14 +87,14 @@ const AdminRoute = ({ setModalOpen }) => {
   // const dispatch = useDispatch();
 
   return (
-    <Suspense fallback={<Loader />}>
+    // <Suspense fallback={<Loader />}>
       <Routes>
         {publicRoutes.map((route, index) => (
           <Route key={index} path={route.path} element={route.element} />
         ))}
         <Route path="*" element={<Error404 />} />
       </Routes>
-    </Suspense>
+    // </Suspense>
   );
 };
 
