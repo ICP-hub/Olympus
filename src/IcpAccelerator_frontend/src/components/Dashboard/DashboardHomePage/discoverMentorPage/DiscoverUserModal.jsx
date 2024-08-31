@@ -193,7 +193,7 @@ const DiscoverUserModal = ({ openDetail, setOpenDetail, userData }) => {
                       </h3>
                       <div>
                         <div className="flex flex-wrap gap-2">
-                          {userData?.reason_to_join[0].map((reason, index) => (
+                          {userData?.reason_to_join[0]?.map((reason, index) => (
                             <span
                               key={index}
                               className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-3 py-1 bg-gray-100"
@@ -213,7 +213,7 @@ const DiscoverUserModal = ({ openDetail, setOpenDetail, userData }) => {
                           {userData?.area_of_interest &&
                             userData.area_of_interest
                               .split(", ")
-                              .map((interest, index) => (
+                              ?.map((interest, index) => (
                                 <span
                                   key={index}
                                   className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-3 py-1 bg-gray-100"

@@ -332,11 +332,11 @@ fn add_testimonial(message: String) -> String {
 }
 
 #[update(guard = "combined_guard")]
-fn add_review(rating: f32, message: String) -> String {
+fn add_review(principal: Principal, rating: f32, message: String) -> String {
     let principal_id = ic_cdk::caller();
-    let principal_id_stored = StoredPrincipal(principal_id);
+    let principal_id_stored = StoredPrincipal(principal);
 
-    let user_data = match read_state(|state| state.user_storage.get(&principal_id_stored)) {
+    let user_data = match read_state(|state| state.user_storage.get(&StoredPrincipal(principal_id))) {
         Some(user_info) => user_info.0,
         None => return "User not found".to_string(),
     };
@@ -352,14 +352,11 @@ fn add_review(rating: f32, message: String) -> String {
     };
 
     mutate_state(|state| {
-        let user_ratings = state.user_rating.get(&principal_id_stored);
-        match user_ratings {
-            Some(mut ratings) => ratings.0.push(review),
-            None => {
-                state
-                    .user_rating
-                    .insert(principal_id_stored, Candid(vec![review]));
-            }
+        if let Some(mut ratings) = state.user_rating.get(&principal_id_stored) {
+            ratings.0.push(review); 
+            state.user_rating.insert(principal_id_stored, ratings);
+        } else {
+            state.user_rating.insert(principal_id_stored, Candid(vec![review])); 
         }
     });
 

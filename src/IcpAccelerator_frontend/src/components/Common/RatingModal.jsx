@@ -12,7 +12,7 @@ import { ThreeDots } from "react-loader-spinner";
 
 
 
-const RatingModal = ( {showRating, setShowRatingModal, userRatingDetail }) => {
+const RatingModal = ( {showRating, setShowRatingModal, userRatingDetail, cardPrincipal}) => {
   const [rating, setRating] = useState(0);
   const [showReview, setShowReview] = useState(false);
   const actor = useSelector((currState) => currState.actors.actor);
@@ -20,6 +20,8 @@ const RatingModal = ( {showRating, setShowRatingModal, userRatingDetail }) => {
   const [loaing, setIsLoading] = useState(true);
   const isMounted = useRef(true);
   const principal = useSelector((currState) => currState.internet.principal);
+
+  console.log("Principal from Main Component", cardPrincipal);
 
   
 
@@ -51,14 +53,14 @@ const RatingModal = ( {showRating, setShowRatingModal, userRatingDetail }) => {
   const onSubmit = async (data) => {
     let message = data.review;
     try {
-      await actor.add_review(rating, message).then((result) => {
+      await actor.add_review(cardPrincipal, rating, message).then((result) => {
         if (isMounted) {
-            toast.success("Review added successfully");
+          toast.success("Review added successfully");
           console.log("review from api", result);
           console.log("review send Successfully");
           setIsLoading(false);
           setShowReview(false);
-          setShowRatingModal(false)
+          setShowRatingModal(false);
         }
       });
     } catch (error) {

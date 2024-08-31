@@ -14,10 +14,11 @@ const DiscoverUser = ({onUserCountChange}) => {
   const actor = useSelector((currState) => currState.actors.actor);
   const [allUserData, setAllUserData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const itemsPerPage = 10;
+  const itemsPerPage = 20;
   const [currentPage, setCurrentPage] = useState(1);
   const [showRatingModal, setShowRatingModal] = useState(false);
   const [userRatingDetail,setUserRatingDetail]=useState(null)
+  const [currentPrincipal, setCurrentPrincipal] = useState([]);
   console.log(".............USERS", allUserData);
   const getAllUser = async (caller, isMounted) => {
     await caller
@@ -101,9 +102,10 @@ const DiscoverUser = ({onUserCountChange}) => {
     console.log("cardDetail => ", cardDetail);
   };
 
-  const handleRating=(ratings)=>{
+  const handleRating=(ratings, principalId)=>{
     setShowRatingModal(true)
     setUserRatingDetail(ratings)
+    setCurrentPrincipal(principalId);
   }
   console.log("userRatingDetail =>",userRatingDetail)
 
@@ -113,9 +115,9 @@ const DiscoverUser = ({onUserCountChange}) => {
       <div>
         {isLoading ? (
           <div>Loading...</div>
-        ) : allUserData.length > 0 ? (
+        ) : allUserData?.length > 0 ? (
           <div>
-            {allUserData.map((user, index) => {
+            {allUserData?.map(([principal, user], index) => {
               //   project card data
               const randomTags = getRandomTags();
               const randomSkills = getRandomskills();
@@ -130,6 +132,7 @@ const DiscoverUser = ({onUserCountChange}) => {
               const area_of_interest = user.area_of_interest || "N/A";
               const location = user.country || "Unknown Location";
               const openchat_username = user.openchat_username ?? "ICP";
+              const principalId = principal;
 
               return (
                 <>
@@ -152,7 +155,7 @@ const DiscoverUser = ({onUserCountChange}) => {
                         </div>
                       </div>
                       <div
-                        onClick={() => handleRating(user)}
+                        onClick={() => handleRating(user, principalId)}
                         className="absolute cursor-pointer bottom-0 right-[6px] flex items-center bg-gray-100 p-1"
                       >
                         <Star className="text-yellow-400 w-4 h-4" />
@@ -171,7 +174,7 @@ const DiscoverUser = ({onUserCountChange}) => {
                         {/* <FavoriteBorder className="text-gray-400 cursor-pointer" /> */}
                       </div>
                       <div className="mb-2">
-                        {randomTags.map((tag, index) => (
+                        {randomTags?.map((tag, index) => (
                           <span
                             key={index}
                             className={`inline-block ${
@@ -190,7 +193,7 @@ const DiscoverUser = ({onUserCountChange}) => {
                       </p>
 
                       <div className="flex items-center text-sm text-gray-500 flex-wrap">
-                        {randomSkills.map((skill, index) => (
+                        {randomSkills?.map((skill, index) => (
                           <span
                             key={index}
                             className="mr-2 mb-2 border boder-[#CDD5DF] bg-white text-[#364152] px-3 py-1 rounded-full"
@@ -219,7 +222,7 @@ const DiscoverUser = ({onUserCountChange}) => {
           showRating={showRatingModal}
           setShowRatingModal={setShowRatingModal}
           userRatingDetail={userRatingDetail}
-          
+          cardPrincipal={currentPrincipal}
         />
       )}
       {openDetail && (
