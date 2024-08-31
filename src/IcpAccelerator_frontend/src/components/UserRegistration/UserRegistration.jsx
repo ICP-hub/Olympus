@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useForm, FormProvider } from "react-hook-form";
+import { useForm, FormProvider,useFieldArray } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { ThreeDots } from "react-loader-spinner";
@@ -39,7 +39,7 @@ const UserRegistration = () => {
 
   const methods = useForm({
     resolver: yupResolver(validationSchema),
-    mode: "onBlur",
+    mode: "all",
     defaultValues: {
       full_name: "",
       email: "",
