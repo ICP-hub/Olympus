@@ -22,6 +22,7 @@ const ProjectRegisterMain = ({ isopen }) => {
   const [coverData, setCoverData] = useState(null); // STORES COVER IMAGE FILE DATA
   const [modalOpen, setModalOpen] = useState(isopen || true); // TRACKS MODAL OPEN/CLOSE STATE
   const [formData, setFormData] = useState({}); // STORES ACCUMULATED FORM DATA
+const [isSubmitting,setIsSubmitting]=useState(false)
 
   // INITIALIZE REACT HOOK FORM WITH VALIDATION SCHEMA
   const methods = useForm({
@@ -45,7 +46,7 @@ const ProjectRegisterMain = ({ isopen }) => {
     handleSubmit,
     trigger,
     getValues,
-    formState: { isSubmitting },
+    formState: {  },
   } = methods;
 
   // MAP FORM FIELDS TO DIFFERENT STEPS
@@ -107,6 +108,7 @@ const ProjectRegisterMain = ({ isopen }) => {
   const onSubmitHandler = async () => {
     const data = { ...formData, ...getValues() };
     console.log("data", data);
+    setIsSubmitting(true)
     if (actor) {
       const projectData = {
         project_cover: coverData ? [coverData] : [],
@@ -220,10 +222,12 @@ const ProjectRegisterMain = ({ isopen }) => {
         ) {
           toast.error(result); // Show error toast with the returned message
           setModalOpen(false);
+          setIsSubmitting(false)
           window.location.reload();
         } else {
           toast.success("Project registered successfully!"); // Show success message
           setModalOpen(false)
+          setIsSubmitting(false)
           window.location.reload();
 
         }
