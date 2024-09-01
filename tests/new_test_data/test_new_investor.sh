@@ -3,7 +3,7 @@
 set -e
 
 # Number of mentors you want to register (ensure this matches the number of existing identities)
-NUM_MENTORS=15
+NUM_MENTORS=50
 START=1
 
 

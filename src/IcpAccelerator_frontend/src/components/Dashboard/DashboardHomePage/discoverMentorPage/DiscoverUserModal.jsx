@@ -86,8 +86,8 @@ const DiscoverUserModal = ({ openDetail, setOpenDetail, userData }) => {
   const bio = userData.bio[0] || "No bio available.";
   const area_of_interest = userData.area_of_interest || "N/A";
   const location = userData.country || "Unknown Location";
-  const openchat_username = userData.openchat_username ?? "username";
-  const type_of_profile = userData.type_of_profile ?? "typeofprofile";
+  const openchat_username = userData.openchat_username[0] ?? "N/A";
+  const type_of_profile = userData.type_of_profile[0] ?? "N/A";
 
   return (
     <div
@@ -248,21 +248,21 @@ const DiscoverUserModal = ({ openDetail, setOpenDetail, userData }) => {
 
                       <div className="flex items-center ">
                         <div className="flex gap-3">
-                          {userData?.social_links[0]
-                            ? userData?.social_links[0]?.map(
-                                (link, i) => {
-                                  const icon = getLogo(link);
-                                  return (
-                                    <div
-                                      key={i}
-                                      className="flex items-center space-x-2"
-                                    >
-                                      {icon ? icon : ""}
-                                    </div>
-                                  );
-                                }
-                              )
-                            : ""}
+                        {userData?.social_links[0]?.map((linkObj, i) => {
+                                const link = linkObj.link[0]; // Assuming the link is in this format
+                                const icon = getLogo(link);
+                                return (
+                                  <a
+                                    key={i}
+                                    href={link}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center space-x-2"
+                                  >
+                                    {icon}
+                                  </a>
+                                );
+                              })}
                         </div>
                       </div>
                     </div>

@@ -182,11 +182,12 @@ const DiscoverUser = ({ onUserCountChange }) => {
                   : "default-profile.png";
 
               const full_name = user.full_name || "Unknown User";
-              console.log("full_name.........", full_name);
+              
               const bio = user.bio[0] || "No bio available.";
               const area_of_interest = user.area_of_interest || "N/A";
               const location = user.country || "Unknown Location";
-              const openchat_username = user.openchat_username ?? "ICP";
+              const openchat_username = user.openchat_username[0] || "N/A";
+              console.log("full_name.........", openchat_username);
               const principalId = principal;
 
               return (
