@@ -253,6 +253,20 @@ fn get_review(principal_id: Principal) -> Result<Vec<Review>, &'static str> {
     })
 }
 
+#[query(guard = "combined_guard")]
+fn get_review_with_count(principal_id: Principal) -> Result<(Vec<Review>, usize), &'static str> {
+    let principal_id_stored = StoredPrincipal(principal_id);
+    read_state(|state| {
+        if let Some(rating) = state.user_rating.get(&principal_id_stored) {
+            let reviews = rating.0.clone();
+            let count = reviews.len();
+            Ok((reviews, count)) 
+        } else {
+            Err("No rating found for the given user.")
+        }
+    })
+}
+
 pub(crate) fn get_user_info_with_cache(caller: Principal, cache: &mut Option<UserInformation>) -> UserInformation {
     if let Some(cached_data) = cache {
         ic_cdk::println!("RETRUNING DATA FROM CACHE");
