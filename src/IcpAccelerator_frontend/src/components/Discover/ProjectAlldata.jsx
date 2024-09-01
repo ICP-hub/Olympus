@@ -40,6 +40,8 @@ const DiscoverProject = ({onProjectCountChange}) => {
   const [imagePreview, setImagePreview] = useState(null);
   const [userDataToSend, setUserDataToSend] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [currentPrincipal, setCurrentPrincipal] = useState([]);
+
   const mentorPrincipal = useSelector(
     (currState) => currState.internet.principal
   );
@@ -281,9 +283,10 @@ const DiscoverProject = ({onProjectCountChange}) => {
     setUserDataToSend(user)
     console.log("passed principle", principal);
   };
-  const handleRating=(ratings)=>{
+  const handleRating=(ratings,principalId)=>{
     setShowRatingModal(true)
     setUserRatingDetail(ratings)
+    setCurrentPrincipal(principalId);
   }  
   async function convertBufferToImageBlob(buffer) {
     try {
@@ -381,7 +384,7 @@ const DiscoverProject = ({onProjectCountChange}) => {
                   </div>
                 </div>
                 <div
-                  onClick={() => handleRating(user)}
+                  onClick={() => handleRating(user,principle_id)}
                   className="absolute cursor-pointer bottom-0 right-[6px] flex items-center bg-gray-100 p-1"
                 >
                   <Star className="text-yellow-400 w-4 h-4" />
@@ -475,13 +478,14 @@ const DiscoverProject = ({onProjectCountChange}) => {
         })}
           </InfiniteScroll>
       ) : (
-        <div>No Data Available</div>
+        <div><NoData message={"No Projects Posted Yet"} /></div>
       )}
       {showRatingModal && (
         <RatingModal
           showRating={showRatingModal}
           setShowRatingModal={setShowRatingModal}
-          userRatingDetail={userRatingDetail}        />
+          userRatingDetail={userRatingDetail} 
+          cardPrincipal={currentPrincipal}       />
       )}
       {isAddProjectModalOpen && (
         <AddAMentorRequestModal

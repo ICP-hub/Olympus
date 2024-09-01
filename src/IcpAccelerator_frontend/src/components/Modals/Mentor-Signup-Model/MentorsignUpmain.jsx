@@ -17,6 +17,7 @@ const MentorSignupMain = ({ }) => {
   const dispatch = useDispatch(); // INITIALIZING DISPATCH FUNCTION TO TRIGGER ACTIONS
   const actor = useSelector((state) => state.actors.actor); // SELECTING ACTOR FROM REDUX STORE
 
+  const [isSubmitting,setIsSubmitting]=useState(false)
   // SETTING UP LOCAL STATE
   const [modalOpen, setModalOpen] = useState(true); // STATE TO CONTROL MODAL VISIBILITY
   const [index, setIndex] = useState(0); // STATE TO TRACK CURRENT STEP OF THE FORM
@@ -28,7 +29,7 @@ const MentorSignupMain = ({ }) => {
     mode: "all",  // VALIDATION MODE SET TO VALIDATE ON ALL INPUTS CHANGE
   });
   
-  const { handleSubmit, trigger, formState: { isSubmitting }, getValues } = methods; // DESTRUCTURING USEFORM METHODS
+  const { handleSubmit, trigger, formState: {  }, getValues } = methods; // DESTRUCTURING USEFORM METHODS
 
   // OBJECT TO STORE FIELDS BASED ON CURRENT FORM STEP
   const formFields = {
@@ -82,6 +83,7 @@ const MentorSignupMain = ({ }) => {
   // FUNCTION TO HANDLE FORM SUBMISSION SUCCESS
   const onSubmitHandler = async (data) => {
     console.log("Form data on submit:", data); // LOG SUBMITTED FORM DATA
+    setIsSubmitting(true)
     const multichainNames = data.multi_chain === "true"
   ? Array.isArray(data.multi_chain_names) && data.multi_chain_names.length > 0
     ? data.multi_chain_names.map(name => name.trim())
@@ -121,10 +123,12 @@ const MentorSignupMain = ({ }) => {
           result.startsWith("Profile image is already uploaded")
         ) {
           toast.error(result);
+          setIsSubmitting(false)
           setModalOpen(false);
           // window.location.reload();
         } else {
           toast.success("Mentor registered successfully!");
+          setIsSubmitting(false)
           setModalOpen(false);
           // window.location.reload();
         }
@@ -169,7 +173,7 @@ const MentorSignupMain = ({ }) => {
                     type="submit"
                     className="py-2 px-4 bg-blue-600 text-white rounded  border-2 border-[#B2CCFF]"
                   >
-                    {isSubmitting ? (
+                    {setIsSubmitting ? (
                       <ThreeDots
                         visible={true}
                         height="35"

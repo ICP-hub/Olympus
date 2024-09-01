@@ -157,7 +157,7 @@ export const AboutcardSkeleton = (getAllData) => {
               <label className="block mt-3 font-medium text-gray-600">
                 Reason to join platform
               </label>
-             {/* <div className="w-[24rem] h-[3rem] overflow-x-auto ">
+             <div className="w-[24rem] overflow-x-auto ">
              {getAllData?.getAllData?.reasons_to_join_platform ? (
                 getAllData?.getAllData?.reasons_to_join_platform
                   .split(", ")
@@ -176,11 +176,11 @@ export const AboutcardSkeleton = (getAllData) => {
                   <Skeleton height={25} width={80} className="rounded-3xl" />
                 </div>
               )}
-             </div> */}
+             </div>
               <label className="block mt-3 font-medium text-gray-600">
                 Interests
               </label>
-              {/* <div className="w-[24rem] h-[3rem] overflow-x-auto ">
+              <div className="w-[24rem]  overflow-x-auto ">
               {getAllData?.getAllData?.domains_interested_in ? (
                 getAllData?.getAllData?.domains_interested_in
                   .split(", ")
@@ -199,7 +199,7 @@ export const AboutcardSkeleton = (getAllData) => {
                   <Skeleton height={25} width={80} className="rounded-3xl" />
                 </div>
               )}
-              </div> */}
+              </div>
 
               <div className="mt-4">
                 <label className="block font-medium text-gray-600 pb-1">

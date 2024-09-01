@@ -516,40 +516,49 @@ const InvestorModal2 = ({ formData }) => {
         <label className="block text-sm font-medium mb-1">Links</label>
         <div className="relative">
           {fields.map((item, index) => (
-            <div key={item.id} className="flex items-center mb-4 border-b pb-2">
-              <Controller
-                name={`links[${index}].link`}
-                control={control}
-                defaultValue="" // ENSURE THERE’S AN INITIAL VALUE
-                render={({ field, fieldState }) => (
-                  <div className="flex items-center w-full">
-                    <div className="flex items-center space-x-2 w-full">
-                      <div className="flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full">
-                        {field.value && getLogo(field.value)} {/* GET LOGO BASED ON URL */}
-                      </div>
-                      <input
-                        type="text"
-                        placeholder="Enter your social media URL"
-                        className={`p-2 border ${
-                          fieldState.error
-                            ? "border-red-500"
-                            : "border-gray-300"
-                        } rounded-md w-full`}
-                        {...field} // SPREAD THE FIELD PROPS, WHICH INCLUDE VALUE AND ONCHANGE
-                      />
-                    </div>
-                  </div>
-                )}
-              />
-              {/* REMOVE LINK BUTTON */}
-              <button
-                type="button"
-                onClick={() => remove(index)}
-                className="ml-2 text-red-500 hover:text-red-700"
-              >
-                <FaTrash />
-              </button>
-            </div>
+             <div key={item.id} className="flex flex-col ">
+             <div className="flex items-center mb-2  pb-1">
+             <Controller
+               name={`links[${index}].link`}
+               control={control}
+               render={({ field, fieldState }) => (
+                 <div className="flex items-center w-full">
+                   <div className="flex items-center space-x-2 w-full">
+                     <div className="flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full">
+                       {field.value && getLogo(field.value)}
+                     </div>
+                     <input
+                       type="text"
+                       placeholder="Enter your social media URL"
+                       className={`p-2 border ${
+                         fieldState.error
+                           ? "border-red-500"
+                           : "border-gray-300"
+                       } rounded-md w-full`}
+                       {...field}
+                     />
+                   </div>
+                 </div>
+               )}
+             />
+             <button
+               type="button"
+               onClick={() => remove(index)}
+               className="ml-2 text-red-500 hover:text-red-700"
+             >
+               <FaTrash />
+             </button>
+             </div>
+             <div className="mb-4 border-b pb-2">
+               {errors.links &&
+                 errors.links[index] &&
+                 errors.links[index].link && (
+                   <span className="mt-1 text-sm text-red-500 font-bold">
+                     {errors.links[index].link.message}
+                   </span>
+                 )}
+             </div>
+           </div>
           ))}
           {/* ADD ANOTHER LINK BUTTON */}
           <button
