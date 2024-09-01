@@ -174,12 +174,13 @@ const EventDetails = () => {
     funding_amount,
     funding_type,
     host_name,
+    email,
     no_of_seats,
     start_date,
     tags,
     title,
   } = cohortData.cohort;
-
+console.log("jai ho tags",email)
   const Seats = Number(no_of_seats);
   const bannerImage =
     cohort_banner && cohort_banner.length > 0
@@ -471,9 +472,18 @@ const EventDetails = () => {
                 <span className="text-[#697586] text-[12px] block mb-2">
                   EVENT CATEGORY
                 </span>
-                <span className="bg-white font-medium border borer-[#CDD5DF] text-[#364152] px-2 py-1 rounded-full text-sm">
-                  {tags}
-                </span>
+                <div className="flex flex-wrap gap-2">
+                {tags
+  ?.split(',')
+  .map((interest, index) => (
+    <span
+      key={index}
+      className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1"
+    >
+      {interest.trim()}
+    </span>
+  ))}
+  </div>
               </div>
               <div>
                 <span className="text-[#697586] text-[12px] block mb-1">
@@ -544,11 +554,19 @@ const EventDetails = () => {
                 <span className="text-[#697586] text-[12px] block mb-1">
                   FUNDING TYPE
                 </span>
-                <div className="flex items-center">
-                  <span className="bg-white font-medium border borer-[#CDD5DF] text-[#364152] px-2 py-1 rounded-full text-sm">
-                    {funding_type}
-                  </span>
-                </div>
+                
+                <div className="flex flex-wrap gap-2">
+                {funding_type
+  ?.split(',')
+  .map((interest, index) => (
+    <span
+      key={index}
+      className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1"
+    >
+      {interest.trim()}
+    </span>
+  ))}
+  </div>
                 {/* <div>
                 <span className="text-[#697586] text-[12px] block mb-1">
                   END DATE

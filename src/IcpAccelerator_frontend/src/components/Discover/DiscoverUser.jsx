@@ -229,7 +229,7 @@ const DiscoverUser = ({ onUserCountChange }) => {
                         </div>
                         {/* <FavoriteBorder className="text-gray-400 cursor-pointer" /> */}
                       </div>
-                      <div className="mb-2">
+                      <div className="">
                         {randomTags?.map((tag, index) => (
                           <span
                             key={index}
@@ -241,7 +241,7 @@ const DiscoverUser = ({ onUserCountChange }) => {
                           </span>
                         ))}
                       </div>
-                      <div className="border-t border-gray-200 my-3"></div>
+                      <div className="border-t border-gray-200 my-1"></div>
                       {/* <p className="font-medium mb-2"> {area_of_interest}</p> */}
 
                       <p className="text-gray-600 mb-4 overflow-hidden text-ellipsis max-h-12 line-clamp-2 ">
@@ -249,7 +249,7 @@ const DiscoverUser = ({ onUserCountChange }) => {
                       </p>
 
                       <div className="flex items-center text-sm text-gray-500 flex-wrap">
-                        <div className="flex flex-wrap gap-2">
+                        <div className="flex flex-wrap ">
                           {area_of_interest
                             .split(",")
                             .map((interest, index) => (
