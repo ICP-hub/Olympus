@@ -158,11 +158,7 @@ export  const validationSchema = yup
         .required("dApp Link is required")
       : schema
   ),
-<<<<<<< Updated upstream
-  weekly_active_users: yup.number().nullable(true).optional().min(0, "Must be a non-negative number"),
-  revenue: yup.number().nullable(true).optional().min(0, "Must be a non-negative number"),
-=======
-  // weekly_active_users: yup.number().nullable(true).optional(),
+
   weekly_active_users: yup
   .number()
   .nullable(false)
@@ -170,7 +166,6 @@ export  const validationSchema = yup
   .min(0, 'Weekly active users cannot be a negative number'),
 
   revenue: yup.number().nullable(true).optional().min(0, 'Weekly active users cannot be a negative number'),
->>>>>>> Stashed changes
 
   money_raising: yup
     .string()
