@@ -65,16 +65,21 @@ const DiscoverRegionalHubs = () => {
         </div>
       </div>
       <div className="grid md:grid-cols-3 gap-6">
-        {allHubsData.map((hub, index) => {
-          let name = hub.params.name[0] ?? "";
-          let desc = hub.params.description[0] ?? "";
-          let discord = hub.params.discord[0] ?? "";
-          let telegram = hub.params.telegram[0] ?? "";
-          let twitter = hub.params.twitter[0] ?? "";
-          let website = hub.params.website[0] ?? "";
+      {isLoading ? (
+          <p>Loading...</p>
+        ) : allHubsData.length === 0 ? (
+          <p>No data available</p>
+        ) : (        
+        allHubsData.map((hub, index) => {
+          let name = hub.params.name[0] ?? "N/A";
+          let desc = hub.params.description[0] ?? "N/A";
+          let discord = hub.params.discord[0] ?? "N/A";
+          let telegram = hub.params.telegram[0] ?? "N/A";
+          let twitter = hub.params.twitter[0] ?? "N/A";
+          let website = hub.params.website[0] ?? "N/A";
           let logo = hub.params?.flag[0]
             ? uint8ArrayToBase64(hub.params?.flag[0])
-            : null;
+            : "";
           return (
             <div key={index} className="bg-white rounded-lg shadow-lg p-4">
               <div>
@@ -124,8 +129,7 @@ const DiscoverRegionalHubs = () => {
                 </div>
               </div>
             </div>
-          );
-        })}
+         )}))}
       </div>
 
       {/* Render the modal when isModalOpen is true */}

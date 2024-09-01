@@ -15,6 +15,7 @@ import { allHubHandlerRequest } from "../../StateManagement/Redux/Reducers/All_I
 import { validationSchema } from "./investorvalidation";
 
 const InvestorForm = ({ isOpen }) => {
+  const navigate= useNavigate()
   // STATE TO CONTROL MODAL OPEN/CLOSE
   const [modalOpen, setModalOpen] = useState(isOpen || true);
   // FETCH COUNTRIES LIST
@@ -173,12 +174,12 @@ const InvestorForm = ({ isOpen }) => {
             toast.error(result); // SHOW ERROR TOAST WITH RETURNED MESSAGE
             setIsSubmitting(false)
             setModalOpen(false);
-            // window.location.reload();
+            navigate("/dashboard/profile")
           } else {
             toast.success("Investor registered successfully!"); // SHOW SUCCESS MESSAGE
             setModalOpen(false);
-            setIsSubmitting(false)
-            // window.location.reload();
+           setIsSubmitting(false)
+            navigate("/dashboard/profile")
           }
         });
       } catch (error) {

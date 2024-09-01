@@ -11,12 +11,12 @@ import { allHubHandlerRequest } from "../../StateManagement/Redux/Reducers/All_I
 import MentorSignup3 from "./MentorSignUp1";
 import MentorSignup4 from "./MentorSignup2";
 import { validationSchema } from "./mentorValidation";
-
+import {useNavigate} from "react-router-dom"
 // MAIN COMPONENT FOR MENTOR SIGNUP PROCESS
 const MentorSignupMain = ({ }) => {
   const dispatch = useDispatch(); // INITIALIZING DISPATCH FUNCTION TO TRIGGER ACTIONS
   const actor = useSelector((state) => state.actors.actor); // SELECTING ACTOR FROM REDUX STORE
-
+const navigate= useNavigate()
   const [isSubmitting,setIsSubmitting]=useState(false)
   // SETTING UP LOCAL STATE
   const [modalOpen, setModalOpen] = useState(true); // STATE TO CONTROL MODAL VISIBILITY
@@ -126,11 +126,13 @@ const MentorSignupMain = ({ }) => {
           setIsSubmitting(false)
           setModalOpen(false);
           // window.location.reload();
+          navigate("/dashboard/profile")
         } else {
           toast.success("Mentor registered successfully!");
           setIsSubmitting(false)
           setModalOpen(false);
           // window.location.reload();
+          navigate("/dashboard/profile")
         }
       } catch (error) {
         toast.error(error.message);

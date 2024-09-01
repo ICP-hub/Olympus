@@ -15,6 +15,8 @@ import { FaEdit, FaPlus } from "react-icons/fa";
 import { Principal } from "@dfinity/principal";
 import { ThreeDots } from "react-loader-spinner";
 import ReactSelect from "react-select";
+import {useNavigate} from "react-router-dom"
+import images from "../../../assets/images/coverImage.jpg";
 import {
   FaLinkedin,
   FaTwitter,
@@ -37,6 +39,7 @@ import InvestorDetail from "./InvestorDetail";
 import { validationSchema } from "./UserValidation";
 import ProjectDetail from "./ProjectDetail";
 const ProfileDetail = () => {
+  const navigate = useNavigate()
   const [isImageEditing, setIsImageEditing] = useState(false);
   const principal = useSelector((currState) => currState.internet.principal);
   const { countries } = useCountries();
@@ -237,7 +240,8 @@ const ProfileDetail = () => {
       if ("Ok" in result) {
         toast.success("User profile updated successfully");
         setTimeout(() => {
-          window.location.reload();
+          // window.location.reload();
+          navigate("/dashboard/profile")
         }, 500);
       } else {
         console.log("Error:", result);
@@ -495,7 +499,7 @@ const ProfileDetail = () => {
         <div
           className="p-6 bg-gray-50 relative cursor-pointer"
           style={{
-            backgroundImage: `url(${ProfileImages})`,
+            backgroundImage: `url(${images})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}
@@ -511,7 +515,7 @@ const ProfileDetail = () => {
           </div>
           <div className="relative w-24 h-24 mx-auto rounded-full mb-4 group">
             <img
-              src={ProfileImages}
+              src={ProfileImage}
               alt={full_name}
               className="w-full h-full rounded-full object-cover"
             />
@@ -544,7 +548,7 @@ const ProfileDetail = () => {
         <div
           className="p-6 bg-gray-50 relative cursor-pointer"
           style={{
-            backgroundImage: `url(${ProfileImages})`,
+            backgroundImage: `url(${images})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}
@@ -560,7 +564,7 @@ const ProfileDetail = () => {
           </div>
           <div className="relative w-24 h-24 mx-auto rounded-full mb-4 group">
             <img
-              src={ProfileImages}
+              src={ProfileImage}
               alt={full_name}
               className="w-full h-full rounded-full object-cover"
             />
@@ -593,7 +597,7 @@ const ProfileDetail = () => {
         <div
           className="p-6 bg-gray-50 relative cursor-pointer"
           style={{
-            backgroundImage: `url(${ProfileImages})`,
+            backgroundImage: `url(${images})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}
@@ -609,7 +613,7 @@ const ProfileDetail = () => {
           </div>
           <div className="relative w-24 h-24 mx-auto rounded-full mb-4 group">
             <img
-              src={ProfileImages}
+              src={ProfileImage}
               alt={full_name}
               className="w-full h-full rounded-full object-cover"
             />

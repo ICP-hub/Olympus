@@ -27,6 +27,24 @@ import { useDispatch, useSelector } from "react-redux";
 import { switchRoleRequestHandler } from "../../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
 import { founderRegisteredHandlerRequest } from "../../StateManagement/Redux/Reducers/founderRegisteredData";
 import { Principal } from "@dfinity/principal";
+import Tooltip from '@mui/material/Tooltip';
+
+const Toggle = ({ isChecked, onToggle }) => (
+  <label className="relative h-4 w-8 cursor-pointer">
+    <input
+      className="peer sr-only"
+      type="checkbox"
+      checked={isChecked}
+      onChange={onToggle}
+    />
+    <span className="absolute inset-0 m-auto h-2 rounded-full bg-stone-400"></span>
+    <span
+      className="absolute inset-y-0 start-0 m-auto w-4 h-4 rounded-full bg-stone-600 transition-all peer-checked:start-6 peer-checked:[&amp;_>_*]:scale-0"
+    >
+      <span className="absolute inset-0 m-auto w-2 h-2 rounded-full bg-stone-300 transition"></span>
+    </span>
+  </label>
+);
 function DashboardSidebar({ isOpen, onClose }) {
   const { dashboardhomesidebar } = dashboard;
   const [hasNavigated, setHasNavigated] = useState(false);
@@ -45,7 +63,11 @@ function DashboardSidebar({ isOpen, onClose }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [activeLink, setActiveLink] = useState(location.pathname);
-
+  const [toggleState, setToggleState] = useState({
+    mentor: false,
+    investor: false,
+    project: false,
+  });
   console.log('projectName',projectName)
   useEffect(() => {
     if (actor && isAuthenticated){
@@ -99,16 +121,37 @@ function DashboardSidebar({ isOpen, onClose }) {
     }
   };
 
-  const SidebarLink = ({ path, icon, label }) => (
-    <div
-      onClick={() => handleLinkClick(path)}
-      className={`flex items-center px-6 py-2 cursor-pointer rounded-lg ${
-        activeLink === path ? "bg-[#e4e3e2b1]" : "hover:bg-[#e4e3e2b1]"
-      }`}
-    >
-      {icon}
-      <span className="ml-3">{label}</span>
-    </div>
+  // const SidebarLink = ({ path, icon, label,disabled, tooltip }) => (
+  //   <div
+  //     onClick={() => handleLinkClick(path)}
+  //     className={`flex items-center px-6 py-2 cursor-pointer rounded-lg ${
+  //       activeLink === path ? "bg-[#e4e3e2b1]" : "hover:bg-[#e4e3e2b1]"
+  //     }`}
+  //   >
+  //     {icon}
+  //     <span className="ml-3">{label}</span>
+  //   </div>
+  // );
+  const SidebarLink = ({ path, icon, label, disabled, tooltip }) => (
+    <Tooltip title={disabled ? tooltip : ""} arrow>
+      <div
+        onClick={() => {
+          if (!disabled) {
+            if (typeof path === 'function') {
+              path(); // If path is a function, execute it
+            } else {
+              handleLinkClick(path); // Otherwise, navigate normally
+            }
+          }
+        }}
+        className={`flex items-center px-6 py-2 cursor-pointer rounded-lg ${
+          activeLink === path ? "bg-[#e4e3e2b1]" : "hover:bg-[#e4e3e2b1]"
+        } ${disabled ? "cursor-not-allowed opacity-50" : ""}`}
+      >
+        {icon}
+        <span className="ml-3">{label}</span>
+      </div>
+    </Tooltip>
   );
 
   const roledata = [
@@ -188,23 +231,72 @@ function DashboardSidebar({ isOpen, onClose }) {
     console.log("No roles approved or roles in default state");
   }
 
+
+  const handleToggle = async (role) => {
+    setToggleState((prevState) => ({
+      mentor: role === "mentor" ? !prevState.mentor : false,
+      vc: role === "vc" ? !prevState.vc : false,
+      project: role === "project" ? !prevState.project : false,
+    }));
+    await clickEventHandler(role, "active");
+  };
   const SidebarSection = ({ title, items, currentrole }) => (
     <div className="mb-6">
-      <h3
-        className="px-6 mb-2 text-xs font-semibold text-gray-500 uppercase"
-        onClick={() => clickEventHandler(currentrole, "active")}
-      >
-        {title}
-      </h3>
+      <div className="flex items-center justify-between px-6 mb-2">
+        <h3 className="text-xs font-semibold text-gray-500 uppercase">
+          {title}
+        </h3>
+        {(currentrole === "mentor" || currentrole === "vc" || currentrole === "project") && (
+          <Toggle
+            isChecked={toggleState[currentrole]}
+            onToggle={() => handleToggle(currentrole)}
+          />
+        )}
+      </div>
       <ul>
-        {items.map(({ path, icon, label }, index) => (
+        {items.map(({ path, icon, label, disabled, tooltip }, index) => (
           <li key={index}>
-            <SidebarLink path={path} icon={icon} label={label} />
+            <SidebarLink
+              path={path}
+              icon={icon}
+              label={label}
+              disabled={disabled}
+              tooltip={tooltip}
+            />
           </li>
         ))}
       </ul>
     </div>
   );
+  
+  // const SidebarSection = ({ title, items, currentrole }) => (
+    
+  //   <div className="mb-6">
+  //     <div className="flex items-center justify-between px-6 mb-2">
+  //         <h3
+  //           className="text-xs font-semibold text-gray-500 uppercase"
+  //           onClick={() => clickEventHandler(currentrole, "active")}
+  //         >
+  //           {title}
+  //         </h3>
+  //         <Toggle isChecked={isToggled} onToggle={handleToggle} />
+  //       </div>
+  //     {/* <ul>
+  //       {items.map(({ path, icon, label }, index) => (
+  //         <li key={index}>
+  //           <SidebarLink path={path} icon={icon} label={label} />
+  //         </li>
+  //       ))}
+  //     </ul> */}
+  //      <ul>
+  //       {items.map(({ path, icon, label, disabled, tooltip }, index) => (
+  //         <li key={index}>
+  //           <SidebarLink path={path} icon={icon} label={label} disabled={disabled} tooltip={tooltip} />
+  //         </li>
+  //       ))}
+  //     </ul>
+  //   </div>
+  // );
 
   const sectionConfig = [
     {
@@ -219,6 +311,8 @@ function DashboardSidebar({ isOpen, onClose }) {
         {
           path: "/dashboard/mentor/new",
           icon: plusSvgIcon,
+          disabled: true, 
+        tooltip: "Coming soon",
           label: "Create new Mentor",
         },
       ],
@@ -236,6 +330,8 @@ function DashboardSidebar({ isOpen, onClose }) {
         {
           path: "/dashboard/project/new",
           icon: plusSvgIcon,
+          disabled: true, 
+        tooltip: "Coming soon",
           label: "Create new Project",
         },
       ],
@@ -253,6 +349,8 @@ function DashboardSidebar({ isOpen, onClose }) {
         {
           path: "/dashboard/investor/new",
           icon: plusSvgIcon,
+          disabled: true, 
+        tooltip: "Coming soon",
           label: "Create new Investors",
         },
       ],
@@ -328,7 +426,7 @@ function DashboardSidebar({ isOpen, onClose }) {
           </button>
         </div>
         <nav className="flex-1 py-6">
-          <div className="px-4 mb-6">
+          <div className="px-2 mb-6">
             <SidebarLink
               path="/dashboard"
               icon={homeSvgIcon}
