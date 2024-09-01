@@ -329,34 +329,32 @@ const DiscoverProject = ({onProjectCountChange}) => {
            </h3>
          }
        >
-        {allProjectData.map((projectArray, index) => {
+        {allProjectData?.map((projectArray, index) => {
           console.log("projectArray", projectArray);
           // const project_id = projectArray?.principal?.toText();
           const project_id = projectArray[1]?.params?.uid;
           const project = projectArray[1];
           const user = projectArray[2];
-          console.log("000000000000000000000", project);
-          console.log("000000000000000000000", project.params.params.project_name);
-          console.log("111111111111111111111", user);
           const randomTags = getRandomTags();
           // const randomSkills = getRandomskills();
           let profile = user?.profile_picture[0]
             ? uint8ArrayToBase64(user?.profile_picture[0])
             : "../../../assets/Logo/CypherpunkLabLogo.png";
-            const projectlogo = (project.params.params.project_logo[0]? uint8ArrayToBase64(project.params.params.project_logo[0])
-            : CypherpunkLabLogo)
+            const projectlogo = project.params.params.project_logo[0]
+            ? uint8ArrayToBase64(project.params.params.project_logo[0])
+            : CypherpunkLabLogo; 
             console.log("projectlogo",imagePreview)
           const projectname = project.params.params.project_name;
           const projectdescription = project.params.params.project_description[0]
           // console.log(project_name)
           let full_name = user?.full_name;
-          let openchat_name = user?.openchat_username;
+          let openchat_name = user?.openchat_username[0]??"N/A";
           let country = user?.country;
           let bio = user?.bio[0];
           let email = user?.email[0];
           const randomSkills = user?.area_of_interest
             .split(",")
-            .map((skill) => skill.trim());
+            ?.map((skill) => skill.trim());
           const activeRole = project?.roles?.find(
             (role) => role.status === "approved"
           );
@@ -405,7 +403,7 @@ const DiscoverProject = ({onProjectCountChange}) => {
                 />
                 <span className="text-gray-500">{full_name}</span>
               </span>
-              <span className="text-gray-500">@{openchat_name}</span>
+              {/* <span className="text-gray-500">@{openchat_name}</span> */}
             
             </div>
                    {/* <h3 className="text-xl font-bold">{projectname}</h3> */}
@@ -457,7 +455,7 @@ const DiscoverProject = ({onProjectCountChange}) => {
 
                 <p className="text-gray-600 mb-4 line-clamp-3  "> {parse(projectdescription)}</p>
                 <div className="flex items-center text-sm text-gray-500 flex-wrap">
-                  {randomSkills.map((skill, index) => (
+                  {randomSkills?.map((skill, index) => (
                     <span
                       key={index}
                       className="mr-2 mb-2 border boder-[#CDD5DF] bg-white text-[#364152] px-3 py-1 rounded-full"

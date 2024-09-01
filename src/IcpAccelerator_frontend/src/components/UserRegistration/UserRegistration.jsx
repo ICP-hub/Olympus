@@ -70,6 +70,7 @@ const UserRegistration = () => {
     ],
   };
 
+  
   const handleNext = async () => {
     const fieldsToValidate = formFields[index];
     const isValid = await trigger(fieldsToValidate);

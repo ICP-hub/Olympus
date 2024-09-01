@@ -49,7 +49,7 @@ const UserProjectCard = ({projectData,userData,principal}) => {
           <img
             src={projectlogo}
             alt="Cypherpunk Labs Logo"
-            className="w-[80px] h-[80px] object-fill rounded-lg"
+            className="w-[80px] h-[80px]  object-cover object-center rounded-lg"
           />
         </div>
         <div>
@@ -57,9 +57,9 @@ const UserProjectCard = ({projectData,userData,principal}) => {
             {projectDetails?.project_name}
           </h3>
           <p className="text-gray-500 text-sm">@{fullname}</p>
-          <p className="text-gray-600 text-sm mt-2 line-clamp-3">
+          <div className="text-gray-600 text-sm mt-2 overflow-hidden text-ellipsis max-h-14 line-clamp-3 break-all">
             {description ? parse(description) : "No description available."}
-          </p>
+          </div>
           <div className="flex space-x-2 mt-2 overflow-x-auto w-full max-w-full">
     {areaoffocus?.map((focus, index) => (
         <span

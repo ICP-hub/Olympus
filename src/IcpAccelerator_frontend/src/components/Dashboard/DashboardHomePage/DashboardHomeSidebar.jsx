@@ -361,7 +361,7 @@ function DashboardSidebar({ isOpen, onClose }) {
               </li>
               <li>
                 <SidebarLink
-                  path="/regional-hubs"
+                  path="/dashboard/regional-hubs"
                   icon={locationHubSvgIcon}
                   label={
                     dashboardhomesidebar.sidebarSections.discover.items.hub

@@ -1,7 +1,7 @@
 import React from "react";
 import { useFormContext } from "react-hook-form";
 // import{  FaEmail} from "react-icons/fa";
-const RegisterForm2 = () => {
+const RegisterForm2 = React.memo(() => {
   const {
     register,
     formState: { errors },
@@ -50,5 +50,5 @@ const RegisterForm2 = () => {
       </div>
     </>
   );
-};
+});
 export default RegisterForm2;

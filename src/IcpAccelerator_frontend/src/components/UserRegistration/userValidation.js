@@ -4,19 +4,21 @@ export const validationSchema = yup
   .object()
   .shape({
     full_name: yup
-    .string()
-    .trim("Full name should not have leading or trailing spaces") // Ensures no leading/trailing spaces
-    .strict(true) // Enforce strict trimming, so leading/trailing spaces cause validation errors
-    .matches(
-      /^[A-Za-z\s]+$/,
-      "Full name can only contain letters and spaces"
-    )
-    .test(
-      "no-leading-space",
-      "Full name should not start with a space",
-      (value) => value && value[0] !== ' ' // Ensure no leading space
-    )
-    .required("Full name is required")
+  .string()
+  .trim("Full name should not have leading or trailing spaces") // Ensures no leading/trailing spaces
+  .strict(true) // Enforce strict trimming, so leading/trailing spaces cause validation errors
+  .matches(
+    /^[A-Za-z\s]+$/,
+    "Full name can only contain letters and spaces"
+  )
+  .test(
+    "no-leading-space",
+    "Full name should not start with a space",
+    (value) => value && value[0] !== ' ' // Ensure no leading space
+  )
+  .min(3, "Full name must be at least 3 characters long")
+  .max(30, "Full name cannot be more than 30 characters long")
+  .required("Full name is required")
 ,
 
     email: yup
