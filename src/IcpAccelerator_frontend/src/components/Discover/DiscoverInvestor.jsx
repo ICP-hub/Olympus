@@ -139,7 +139,7 @@ const DiscoverInvestor = ({onInvestorCountChange }) => {
         page_size: itemsPerPage,
         page: currentPage,
       });
-      {result?.data.map(val=>{
+      {result?.data?.map(val=>{
         setSendprincipal(val[0])
       })}
       console.log("result =>", result?.data);
@@ -260,7 +260,7 @@ const DiscoverInvestor = ({onInvestorCountChange }) => {
            </h3>
          }
        >
-        {allInvestorData.map((investorArray, index) => {
+        {allInvestorData?.map((investorArray, index) => {
           console.log("investorArray", investorArray);
           const investor_id = investorArray[0]?.toText();
           const investor = investorArray[1];
@@ -280,7 +280,7 @@ const DiscoverInvestor = ({onInvestorCountChange }) => {
           let email = user?.email[0];
           const randomSkills = user?.area_of_interest
             .split(",")
-            .map((skill) => skill.trim());
+            ?.map((skill) => skill.trim());
           const activeRole = investor?.roles.find(
             (role) => role.status === "approved"
           );
@@ -343,7 +343,6 @@ const DiscoverInvestor = ({onInvestorCountChange }) => {
                 <div className="mb-2">
                   {activeRole && (
                     <span
-                      key={index}
                       className={`inline-block ${
                         tagColors[activeRole.name] ||
                         "bg-gray-100 text-gray-800"
@@ -357,7 +356,7 @@ const DiscoverInvestor = ({onInvestorCountChange }) => {
 
                 <p className="text-gray-600 mb-4">{bio}</p>
                 <div className="flex items-center text-sm text-gray-500 flex-wrap">
-                  {randomSkills.map((skill, index) => (
+                  {randomSkills?.map((skill, index) => (
                     <span
                       key={index}
                       className="mr-2 mb-2 border boder-[#CDD5DF] bg-white text-[#364152] px-3 py-1 rounded-full"

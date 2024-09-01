@@ -208,7 +208,7 @@ const DiscoverMentor = ({onMentorCountChange}) => {
               </h3>
             }
           >
-            {allMentorData.map((mentorArray, index) => {
+            {allMentorData?.map((mentorArray, index) => {
               const mentor_id = mentorArray[0]?.toText();
               const mentor = mentorArray[1];
               const user = mentorArray[2];
@@ -229,7 +229,7 @@ const DiscoverMentor = ({onMentorCountChange}) => {
               let email = user?.email[0];
               const randomSkills = user?.area_of_interest
                 .split(",")
-                .map((skill) => skill.trim());
+                ?.map((skill) => skill.trim());
               const activeRole = mentor?.roles.find(
                 (role) => role.status === "approved"
               );
@@ -287,7 +287,6 @@ const DiscoverMentor = ({onMentorCountChange}) => {
                     <div className="mb-2">
                       {activeRole && (
                         <span
-                          key={index}
                           className={`inline-block ${
                             tagColors[activeRole.name] ||
                             "bg-gray-100 text-gray-800"
@@ -301,7 +300,7 @@ const DiscoverMentor = ({onMentorCountChange}) => {
 
                     <p className="text-gray-600 mb-4">{bio}</p>
                     <div className="flex items-center text-sm text-gray-500 flex-wrap">
-                      {randomSkills.map((skill, index) => (
+                      {randomSkills?.map((skill, index) => (
                         <span
                           key={index}
                           className="mr-2 mb-2 border boder-[#CDD5DF] bg-white text-[#364152] px-3 py-1 rounded-full"

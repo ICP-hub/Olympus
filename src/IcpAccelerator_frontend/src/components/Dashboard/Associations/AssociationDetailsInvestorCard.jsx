@@ -12,6 +12,9 @@ import AcceptOfferModal from "../../../models/AcceptOfferModal";
 import DeclineOfferModal from "../../../models/DeclineOfferModal";
 import { useSelector } from "react-redux";
 import timestampAgo from "../../Utils/navigationHelper/timeStampAgo";
+import AssociationRecieverMentorDataToProject from "./AssociationRecieverDataToProject ";
+import AssociationRecieverDataToProject from "./AssociationRecieverDataToProject ";
+import AssociationRecieverDataFromProject from "./AssociationRecieverDataFromProject";
 
 const AssociationDetailsInvestorCard = ({
   user,
@@ -154,128 +157,29 @@ const AssociationDetailsInvestorCard = ({
   };
   return (
     <>
-      <div key={index} className="p-6 w-[650px] rounded-lg shadow-sm flex">
-        <div className="w-[272px]">
-          <div className="max-w-[250px] w-[250px] bg-gray-100 rounded-lg flex flex-col justify-between h-full relative overflow-hidden cursor-pointer">
-            <div
-              className="absolute inset-0 flex items-center justify-center"
-              onClick={() => setOpenDetail(true)}
-            >
-              <img
-                src={projectImage}
-                alt="projectImage"
-                className="w-24 h-24 rounded-full object-cover"
-              />
-            </div>
-
-            <div className="absolute bottom-0 right-[6px] flex items-center bg-gray-100 p-1">
-              <Star className="text-yellow-400 w-4 h-4" />
-              <span className="text-sm font-medium">9</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex-grow ml-[25px] w-[544px]">
-          <div className="flex justify-between items-start mb-2">
-            <div>
-              <h3 className="text-xl font-bold">{projectName}</h3>
-              <span className="flex py-2">
-                <Avatar
-                  alt="Mentor"
-                  src={profile}
-                  className=" mr-2"
-                  sx={{ width: 24, height: 24 }}
-                />
-                <span className="text-gray-500">{userName}</span>
-              </span>
-              <span className="text-gray-500">@{openchat_name}</span>
-            </div>
-            <span className="mr-2 mb-2 text-[#016AA2] px-3 py-1 rounded-full bg-gray-100 text-sm">
-  {activeTabData === "pending" ? (
-    <span className="font-semibold">{timestampAgo(sentAt)}</span>
-  ) : activeTabData === "approved" ? (
-    <span className="font-semibold">{timestampAgo(acceptedAt)}</span>
-  ) : activeTabData === "declined" ? (
-    <span className="font-semibold">{timestampAgo(declinedAt)}</span>
-  ) : activeTabData === "self-reject" ? (
-    <span className="font-semibold">{timestampAgo(selfDeclinedAt)}</span>
-  ) : null}
-</span>
-
-          </div>
-
-          <div className="border-t border-gray-200 mt-3"></div>
-
-          <p className="text-gray-600 my-2 overflow-hidden line-clamp-2 text-ellipsis max-h-[2rem]">
-            {parse(projectDescription)}
-          </p>
-          <div className="flex items-center text-sm text-gray-500 flex-wrap py-2">
-            {userAreaOfInterest &&
-              userAreaOfInterest
-                .split(",")
-                .slice(0, 2)
-                .map((tag, index) => (
-                  <span
-                    key={index}
-                    className="mr-2 mb-2 border boder-[#CDD5DF] bg-white text-[#364152] px-3 py-1 rounded-full"
-                  >
-                    {tag.trim()}
-                  </span>
-                ))}
-
-            <span className="mr-2 mb-2 flex text-[#121926] items-center">
-              <PlaceOutlinedIcon className="text-[#364152] mr-1 w-4 h-4" />{" "}
-              {userCountry}
-            </span>
-          </div>
-          {activeTabData === "pending" ? (
-            <div className="">
-              <button
-                className="mr-2 mb-2 border border-[#097647] bg-[#EBFDF3] text-[#097647]  px-3 py-1 rounded-full"
-                onClick={() => handleAcceptModalOpenHandler(offerId)}
-              >
-                Accept
-              </button>
-              <button
-                className="mr-2 mb-2 border border-[#C11574] bg-[#FDF2FA] text-[#C11574]  px-3 py-1 rounded-full"
-                onClick={() => handleDeclineModalOpenHandler(offerId)}
-              >
-                Reject
-              </button>
-              {selectedTypeData === "to-project" ? (
-                <button
-                  className="mr-2 mb-2 border border-[#FEDF89] bg-[#FFFAEB] text-[#B54707]  px-3 py-1 rounded-full"
-                  onClick={() => handleSelfReject(offerId)}
-                >
-                  Self Decline
-                </button>
-              ) : (
-                ""
-              )}
-            </div>
-          ) : activeTabData === "approved" ? (
-            <div className="py-2 flex justify-end">
-              <span className="mr-2 mb-2 border border-[#097647] bg-[#EBFDF3] text-[#097647]  px-3 py-1 rounded-full capitalize">
-              {requestStatus}
-              </span>
-            </div>
-          ) : activeTabData === "declined" ? (
-            <div className="py-2 flex justify-end">
-              <span className="mr-2 mb-2 border border-[#C11574] bg-[#FDF2FA] text-[#C11574]  px-3 py-1 rounded-full capitalize">
-              {requestStatus}
-              </span>
-            </div>
-          ) : activeTabData === "self-reject" ? (
-            <div className="py-2 flex justify-end">
-              <span className="mr-2 mb-2 border border-[#C11574] bg-[#FDF2FA] text-[#C11574]  px-3 py-1 rounded-full capitalize ">
-              {requestStatus}
-              </span>
-            </div>
-          ) : (
-            ""
-          )}
-        </div>
-      </div>
+       {selectedTypeData === "to-project" ? (
+        <AssociationRecieverDataToProject
+          user={user}
+          activeTabData={activeTabData}
+          selectedTypeData={selectedTypeData}
+          handleSelfReject={handleSelfReject}
+          handleAcceptModalOpenHandler={handleAcceptModalOpenHandler}
+          handleDeclineModalOpenHandler={handleDeclineModalOpenHandler}
+          setOpenDetail={setOpenDetail}
+        />
+      ) : selectedTypeData === "from-project" ? (
+        <AssociationRecieverDataFromProject
+          user={user}
+          activeTabData={activeTabData}
+          selectedTypeData={selectedTypeData}
+          handleSelfReject={handleSelfReject}
+          handleAcceptModalOpenHandler={handleAcceptModalOpenHandler}
+          handleDeclineModalOpenHandler={handleDeclineModalOpenHandler}
+          setOpenDetail={setOpenDetail}
+        />
+      ) : (
+        ""
+      )}
       {openDetail && (
         <AssociationOfferModal
           openDetail={openDetail}

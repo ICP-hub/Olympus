@@ -23,7 +23,7 @@ import {
 import CompressedImage from "../../component/ImageCompressed/CompressedImage";
 import { LanguageIcon } from "./DefaultLink";
 
-const RegisterForm3 = ({ setImageData }) => {
+const RegisterForm3 = React.memo(({ setImageData }) => {
   const { countries } = useCountries();
   const areaOfExpertise = useSelector(
     (currState) => currState.expertiseIn.expertise || []
@@ -33,25 +33,14 @@ const RegisterForm3 = ({ setImageData }) => {
   );
   const actor = useSelector((currState) => currState.actors.actor);
 
-  // State to track touched fields
-  const [touchedFields, setTouchedFields] = useState({
-    reasons_to_join_platform: false,
-    domains_interested_in: false,
-    type_of_profile: false,
-    country: false,
-    bio: false,
-  });
-
-  const [
-    interestedDomainsSelectedOptions,
-    setInterestedDomainsSelectedOptions,
-  ] = useState([]);
+  const [interestedDomainsSelectedOptions, setInterestedDomainsSelectedOptions] =
+    useState([]);
   const [reasonOfJoiningSelectedOptions, setReasonOfJoiningSelectedOptions] =
     useState([]);
   const [interestedDomainsOptions, setInterestedDomainsOptions] = useState([]);
   const [typeOfProfileOptions, setTypeOfProfileOptions] = useState([]);
   const [imagePreview, setImagePreview] = useState(null);
-  const [reasonOfJoiningOptions, setReasonOfJoiningOptions] = useState([
+  const [reasonOfJoiningOptions] = useState([
     { value: "listing_and_promotion", label: "Project listing and promotion" },
     { value: "Funding", label: "Funding" },
     { value: "Mentoring", label: "Mentoring" },
@@ -62,7 +51,6 @@ const RegisterForm3 = ({ setImageData }) => {
     },
     { value: "Jobs", label: "Jobs" },
   ]);
-  const [formData, setFormData] = useState([]);
 
   const {
     register,
@@ -72,22 +60,25 @@ const RegisterForm3 = ({ setImageData }) => {
     clearErrors,
     setError,
     control,
+    watch,
   } = useFormContext({
     mode: "all",
     defaultValues: {
-      full_name: "",
-      email: "",
-      links: [{ link: "" }],
-      openchat_user_name: "",
-      bio: "",
-      country: "",
-      domains_interested_in: "",
-      type_of_profile: "",
       reasons_to_join_platform: "",
-      image: null,
+      domains_interested_in: "",
+      bio: "",
+      type_of_profile: "",
+      country: "",
     },
   });
 
+  const allFields = watch(); // Watching all fields
+
+  useEffect(() => {
+    console.log("Form Data:", allFields); // Logging all field data on every change
+  }, [allFields]);
+
+  
   const imageCreationFunc = async (file) => {
     const result = await trigger("image");
     if (result) {
@@ -112,9 +103,8 @@ const RegisterForm3 = ({ setImageData }) => {
   };
 
   const clearImageFunc = (val) => {
-    let field_id = val;
-    setValue(field_id, null);
-    clearErrors(field_id);
+    setValue(val, null);
+    clearErrors(val);
     setImageData(null);
     setImagePreview(null);
   };
@@ -154,7 +144,7 @@ const RegisterForm3 = ({ setImageData }) => {
       ...provided,
       paddingBlock: "2px",
       borderRadius: "8px",
-      borderColor: state.isFocused ? '#737373' : '#D1D5DB', 
+      borderColor: state.isFocused ? "#737373" : "#D1D5DB",
       border: state.selectProps.error
         ? "2px solid #ef4444"
         : "2px solid #737373",
@@ -169,7 +159,7 @@ const RegisterForm3 = ({ setImageData }) => {
         display: "none",
       },
     }),
-    valueContainer: (provided, state) => ({
+    valueContainer: (provided) => ({
       ...provided,
       overflow: "scroll",
       maxHeight: "40px",
@@ -222,13 +212,7 @@ const RegisterForm3 = ({ setImageData }) => {
     }
   }, [typeOfProfile]);
 
-  // Function to mark field as touched
-  const handleBlur = (field) => {
-    setTouchedFields({
-      ...touchedFields,
-      [field]: true,
-    });
-  };
+ 
 
   return (
     <div className="">
@@ -315,73 +299,59 @@ const RegisterForm3 = ({ setImageData }) => {
           Why do you want to join this platform ?{" "}
           <span className="text-[#155EEF]">*</span>
         </label>
-        <Controller
-          name="reasons_to_join_platform"
-          control={control}
-          defaultValue={[]}
-          render={({ field: { onChange, onBlur, value, name, ref } }) => (
-            <ReactSelect
-              inputRef={ref}
-              isMulti
-              menuPortalTarget={document.body}
-              menuPosition={"fixed"}
-              styles={reactSelectStyles}
-              value={
-                value
-                  ? reasonOfJoiningOptions.filter((option) =>
-                      value.split(", ").includes(option.value)
-                    )
-                  : []
-              }
-              options={reasonOfJoiningOptions}
-              classNamePrefix="select"
-              className="basic-multi-select border-[#737373] w-full text-start"
-              placeholder="Select your reasons to join this platform"
-              onChange={(selectedOptions) => {
-                const selectedValues = selectedOptions
-                  ? selectedOptions.map((option) => option.value).join(", ")
-                  : "";
-                onChange(selectedValues);
-                setReasonOfJoiningSelectedOptions(selectedOptions || []);
-              }}
-              onBlur={() => {
-                onBlur();
-                handleBlur("reasons_to_join_platform");
-              }}
-            />
-          )}
-        />
-
-        {touchedFields.reasons_to_join_platform &&
-          errors.reasons_to_join_platform && (
-            <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-              {errors.reasons_to_join_platform.message}
-            </span>
-          )}
+        <ReactSelect
+                    isMulti
+                    menuPortalTarget={document.body}
+                    menuPosition={"fixed"}
+                    styles={reactSelectStyles}
+                    value={reasonOfJoiningSelectedOptions}
+                    options={reasonOfJoiningOptions}
+                    classNamePrefix="select"
+                    className="basic-multi-select w-full text-start"
+                    placeholder="Select your reasons to join this platform"
+                    name="reasons_to_join_platform"
+                    onChange={(selectedOptions) => {
+                      if (selectedOptions && selectedOptions.length > 0) {
+                        setReasonOfJoiningSelectedOptions(selectedOptions);
+                        clearErrors("reasons_to_join_platform");
+                        setValue(
+                          "reasons_to_join_platform",
+                          selectedOptions
+                            .map((option) => option.value)
+                            .join(", "),
+                          { shouldValidate: true }
+                        );
+                      } else {
+                        setReasonOfJoiningSelectedOptions([]);
+                        setValue("reasons_to_join_platform", "", {
+                          shouldValidate: true,
+                        });
+                        setError("reasons_to_join_platform", {
+                          type: "required",
+                          message: "Selecting a reason is required",
+                        });
+                      }
+                    }}
+                  />
+        {errors.reasons_to_join_platform && (
+          <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+            {errors.reasons_to_join_platform.message}
+          </span>
+        )}
       </div>
 
       <div className="mb-4">
-        <label
-          htmlFor="bio"
-          className="block text-sm font-medium text-gray-700"
-        >
+        <label htmlFor="bio" className="block text-sm font-medium text-gray-700">
           About <span className="text-[#155EEF]">*</span>
         </label>
-        <Controller
-          name="bio"
-          control={control}
-          render={({ field }) => (
-            <textarea
-              {...field}
-              className={`bg-gray-50 border-2 ${
-                errors?.bio ? "border-red-500 " : "border-[#737373]"
-              } mt-2 p-2 border border-gray-300 rounded-md w-full h-24`}
-              placeholder="Enter your bio"
-              rows={1}
-              onBlur={() => handleBlur("bio")}
-            ></textarea>
-          )}
-        />
+        <textarea
+          {...register("bio", { required: "This field is required" })}
+          className={`bg-gray-50 border-2 ${
+            errors?.bio ? "border-red-500 " : "border-[#737373]"
+          } mt-2 p-2 border border-gray-300 rounded-md w-full h-24`}
+          placeholder="Enter your bio"
+          rows={1}
+        ></textarea>
         {errors?.bio && (
           <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
             {errors?.bio?.message}
@@ -396,52 +366,46 @@ const RegisterForm3 = ({ setImageData }) => {
         >
           Interests <span className="text-[#155EEF]">*</span>
         </label>
-        <Controller
-          name="domains_interested_in"
-          control={control}
-          render={({ field }) => (
-            <ReactSelect
-              {...field}
-              isMulti
-              menuPortalTarget={document.body}
-              menuPosition={"fixed"}
-              styles={reactSelectStyles}
-              value={interestedDomainsSelectedOptions}
-              options={interestedDomainsOptions}
-              classNamePrefix="select"
-              className="basic-multi-select border-[#737373] w-full text-start"
-              placeholder="Select domains you are interested in"
-              onChange={(selectedOptions) => {
-                if (selectedOptions && selectedOptions.length > 0) {
-                  setInterestedDomainsSelectedOptions(selectedOptions);
-                  clearErrors("domains_interested_in");
-                  setValue(
-                    "domains_interested_in",
-                    selectedOptions.map((option) => option.value).join(", "),
-                    { shouldValidate: true }
-                  );
-                } else {
-                  setInterestedDomainsSelectedOptions([]);
-                  setValue("domains_interested_in", "", {
-                    shouldValidate: false,
-                  });
-                  setError("domains_interested_in", {
-                    type: "required",
-                    message: "Selecting an interest is required",
-                  });
-                }
-              }}
-              onBlur={() => handleBlur("domains_interested_in")}
-            />
-          )}
-        />
+        <ReactSelect
+                    isMulti
+                    menuPortalTarget={document.body}
+                    menuPosition={"fixed"}
+                    styles={reactSelectStyles}
+                    value={interestedDomainsSelectedOptions}
+                    options={interestedDomainsOptions}
+                    classNamePrefix="select"
+                    className="basic-multi-select w-full text-start"
+                    placeholder="Select domains you are interested in"
+                    name="domains_interested_in"
+                    onChange={(selectedOptions) => {
+                      if (selectedOptions && selectedOptions.length > 0) {
+                        setInterestedDomainsSelectedOptions(selectedOptions);
+                        clearErrors("domains_interested_in");
+                        setValue(
+                          "domains_interested_in",
+                          selectedOptions
+                            .map((option) => option.value)
+                            .join(", "),
+                          { shouldValidate: true }
+                        );
+                      } else {
+                        setInterestedDomainsSelectedOptions([]);
+                        setValue("domains_interested_in", "", {
+                          shouldValidate: true,
+                        });
+                        setError("domains_interested_in", {
+                          type: "required",
+                          message: "Selecting an interest is required",
+                        });
+                      }
+                    }}
+                  />
 
-        {touchedFields.domains_interested_in &&
-          errors.domains_interested_in && (
-            <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-              {errors.domains_interested_in.message}
-            </span>
-          )}
+        {errors.domains_interested_in && (
+          <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+            {errors.domains_interested_in.message}
+          </span>
+        )}
       </div>
 
       <div className="mb-4">
@@ -452,15 +416,10 @@ const RegisterForm3 = ({ setImageData }) => {
           Type of Profile<span className="text-[#155EEF]">*</span>
         </label>
         <select
-          {...register("type_of_profile", {
-            validate: (value) =>
-              value !== "" || "Please select a valid profile type",
-          })}
+          {...register("type_of_profile", { required: "You must select at least one option" })}
           className={`bg-gray-50 border-2 ${
-            errors?.type_of_profile ? "border-red-500 " : "border-[#737373]"
-          } mt-2 p-2 border border-gray-300 rounded-md w-full`}
-          onBlur={() => handleBlur("type_of_profile")}
-          defaultValue="" // Ensure the default value is set
+            errors.type_of_profile ? "border-red-500 " : "border-[#737373]"
+          } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
         >
           <option className="text-lg font-bold" value="">
             Select profile type
@@ -476,7 +435,7 @@ const RegisterForm3 = ({ setImageData }) => {
               </option>
             ))}
         </select>
-        {touchedFields.type_of_profile && errors?.type_of_profile && (
+        {errors?.type_of_profile && (
           <p className="mt-1 text-sm text-red-500 font-bold text-left">
             {errors?.type_of_profile?.message}
           </p>
@@ -494,17 +453,13 @@ const RegisterForm3 = ({ setImageData }) => {
           name="country"
           control={control}
           defaultValue="" // Set the initial default value
-          render={({ field }) => (
+          rules={{ required: "You must select at least one option" }}
+          render={({ field: { onChange, onBlur, value, ref } }) => (
             <select
-              {...field}
+              {...{ ref, value, onChange, onBlur }}
               className={`bg-gray-50 border-2 ${
                 errors?.country ? "border-red-500 " : "border-[#737373]"
               }  p-2 border border-gray-300 rounded-md w-full`}
-              onBlur={() => handleBlur("country")}
-              onChange={(e) => {
-                field.onChange(e);
-                clearErrors("country"); // Clear error if the value is valid
-              }}
             >
               <option className="text-lg font-bold" value="">
                 Select your country
@@ -521,7 +476,7 @@ const RegisterForm3 = ({ setImageData }) => {
             </select>
           )}
         />
-        {touchedFields?.country && errors?.country && (
+        {errors?.country && (
           <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
             {errors?.country?.message}
           </span>
@@ -533,77 +488,39 @@ const RegisterForm3 = ({ setImageData }) => {
           Links
         </label>
         <div className="relative">
-          {/* {fields.map((item, index) => (
-            <div key={item.id} className="flex items-center mb-4 border-b pb-2">
-              <Controller
-                name={`links[${index}].link`}
-                control={control}
-                render={({ field, fieldState }) => (
-                  <div className="flex items-center w-full">
-                    <div className="flex items-center space-x-2 w-full">
-                      <div className="flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full">
-                        {field.value && getLogo(field.value)}
-                      </div>
-                      <input
-                        type="text"
-                        placeholder="Enter your social media URL"
-                        className={`p-2 border ${fieldState.error
-                          ? "border-red-500"
-                          : "border-gray-300"
-                          } rounded-md w-full`}
-                        {...field}
-                      />
-                    </div>
-                  </div>
-                )}
-              />
-              <button
-                type="button"
-                onClick={() => remove(index)}
-                className="ml-2 text-red-500 hover:text-red-700"
-              >
-                <FaTrash />
-              </button>
-              {touchedFields?.links && errors?.links && (
-    <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-      {errors?.links?.message}
-    </span>
-  )}
-            </div>
-          ))} */}
           {fields.map((item, index) => (
             <div key={item.id} className="flex flex-col ">
               <div className="flex items-center mb-2  pb-1">
-              <Controller
-                name={`links[${index}].link`}
-                control={control}
-                render={({ field, fieldState }) => (
-                  <div className="flex items-center w-full">
-                    <div className="flex items-center space-x-2 w-full">
-                      <div className="flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full">
-                        {field.value && getLogo(field.value)}
+                <Controller
+                  name={`links[${index}].link`}
+                  control={control}
+                  render={({ field, fieldState }) => (
+                    <div className="flex items-center w-full">
+                      <div className="flex items-center space-x-2 w-full">
+                        <div className="flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full">
+                          {field.value && getLogo(field.value)}
+                        </div>
+                        <input
+                          type="text"
+                          placeholder="Enter your social media URL"
+                          className={`p-2 border ${
+                            fieldState.error
+                              ? "border-red-500"
+                              : "border-gray-300"
+                          } rounded-md w-full`}
+                          {...field}
+                        />
                       </div>
-                      <input
-                        type="text"
-                        placeholder="Enter your social media URL"
-                        className={`p-2 border ${
-                          fieldState.error
-                            ? "border-red-500"
-                            : "border-gray-300"
-                        } rounded-md w-full`}
-                        {...field}
-                      />
                     </div>
-                  </div>
-                )}
-              />
-              <button
-                type="button"
-                onClick={() => remove(index)}
-                className="ml-2 text-red-500 hover:text-red-700"
-              >
-                <FaTrash />
-              </button>
+                  )}
+                />
+                <button
+                  type="button"
+                  onClick={() => remove(index)}
+                  className="ml-2 text-red-500 hover:text-red-700"
+                >
+                  <FaTrash />
+                </button>
               </div>
               <div className="mb-4 border-b pb-2">
                 {errors.links &&
@@ -628,6 +545,6 @@ const RegisterForm3 = ({ setImageData }) => {
       </div>
     </div>
   );
-};
+});
 
 export default RegisterForm3;
