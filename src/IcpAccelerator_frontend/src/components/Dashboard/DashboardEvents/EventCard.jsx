@@ -1,14 +1,13 @@
-
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
-import { useSelector } from 'react-redux';
-import { IcpAccelerator_backend } from '../../../../../declarations/IcpAccelerator_backend/index';
-import uint8ArrayToBase64 from '../../Utils/uint8ArrayToBase64';
-import { useNavigate } from 'react-router-dom';
-import parse from 'html-react-parser';
-import NoDataFound from './NoDataFound';
-
-const EventCard = ({ eventType }) => { // Accept eventType as a prop
+import { useSelector } from "react-redux";
+import { IcpAccelerator_backend } from "../../../../../declarations/IcpAccelerator_backend/index";
+import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
+import { useNavigate } from "react-router-dom";
+import parse from "html-react-parser";
+import images from "../../../../assets/images/bg.png";
+import { formatFullDateFromSimpleDate } from "../../Utils/formatter/formatDateFromBigInt";
+const EventCard = () => {
   const actor = useSelector((currState) => currState.actors.actor);
   const [noData, setNoData] = useState(null);
   const [allLiveEventsData, setAllLiveEventsData] = useState([]);
@@ -17,6 +16,11 @@ const EventCard = ({ eventType }) => { // Accept eventType as a prop
   const [countData, setCountData] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+  const [cohortids, setCohortIds] = useState([]);
+
+  console.log("cohort Id...........", allLiveEventsData);
+
+  const cohortId = allLiveEventsData[0]?.cohort_id;
 
   useEffect(() => {
     let isMounted = true;
@@ -65,36 +69,30 @@ const EventCard = ({ eventType }) => { // Accept eventType as a prop
     };
   }, [actor, currentPage, itemsPerPage]);
 
+  useEffect(() => {
+    if (allLiveEventsData && allLiveEventsData.length > 0) {
+      const cohortIdsArray = allLiveEventsData.map(
+        (eventData) => eventData.cohort_id
+      );
+      setCohortIds(cohortIdsArray);
+    }
+  }, [allLiveEventsData]);
+
+  console.log("allliveevents", allLiveEventsData);
   const navigate = useNavigate();
 
   const handleClick = (cohort_id) => {
-    navigate('/dashboard/single-event', { state: { cohort_id } });
+    navigate("/dashboard/single-event", { state: { cohort_id } });
   };
-
-  // Filter events based on the selected event type
-  const filteredEvents = allLiveEventsData.filter((eventData) => {
-    if (eventType === 'All') return true;
-    if (eventType === 'Ongoing') {
-      // Assuming there's a way to determine if the event is ongoing
-      const now = new Date();
-      return now >= new Date(eventData.cohort.cohort_launch_date) && now <= new Date(eventData.cohort.cohort_end_date);
-    }
-    if (eventType === 'Upcoming') {
-      return new Date(eventData.cohort.cohort_launch_date) > new Date();
-    }
-    if (eventType === 'Dead') {
-      return new Date(eventData.cohort.cohort_end_date) < new Date();
-    }
-    return false;
-  });
+  //registerHandler
 
   return (
     <div>
       {isLoading ? (
         <div>Loading...</div>
-      ) : filteredEvents.length > 0 ? ( // Use filteredEvents instead of allLiveEventsData
+      ) : allLiveEventsData.length > 0 ? (
         <div>
-          {filteredEvents.map((data, index) => {
+          {allLiveEventsData.map((data, index) => {
             console.log("banner before", data.cohort.cohort_banner[0]);
             const image = data?.cohort?.cohort_banner[0]
               ? uint8ArrayToBase64(data?.cohort?.cohort_banner[0])
@@ -102,30 +100,59 @@ const EventCard = ({ eventType }) => { // Accept eventType as a prop
             const name = data?.cohort?.title ?? "No Title...";
             console.log("banner after", image);
 
+            // const launch_date = data?.cohort?.cohort_launch_date
+            //   ? new Date(data?.cohort?.cohort_launch_date).toLocaleDateString()
+            //   : "";
+            // const end_date = data?.cohort?.cohort_end_date
+            //   ? new Date(data?.cohort?.cohort_end_date).toLocaleDateString()
+            //   : "";
             const launch_date = data?.cohort?.cohort_launch_date
-              ? new Date(data.cohort.cohort_launch_date).toLocaleDateString("en-US", {
-                month: "short",
-                day: "numeric",
-              })
+              ? new Date(data.cohort.cohort_launch_date).toLocaleDateString(
+                  "en-US",
+                  {
+                    month: "short",
+                    day: "numeric",
+                  }
+                )
               : "";
 
             const end_date = data?.cohort?.cohort_end_date
-              ? new Date(data.cohort.cohort_end_date).toLocaleDateString("en-US", {
-                month: "short",
-                day: "numeric",
-              })
+              ? new Date(data.cohort.cohort_end_date).toLocaleDateString(
+                  "en-US",
+                  {
+                    month: "short",
+                    day: "numeric",
+                  }
+                )
+              : "";
+            const deadline = data?.cohort?.deadline
+              ? new Date(data?.cohort?.deadline).toLocaleDateString()
               : "";
             const desc = data?.cohort?.description ?? "";
+            const tags = data?.cohort?.tags ?? [];
+            const seats = data?.cohort?.no_of_seats ?? 0;
+            const start_date = data?.cohort?.start_date ?? "";
             const funding = data?.cohort?.funding_amount ?? "";
             const country = data?.cohort?.country ?? "";
 
+            console.log("cohort Id...........///////////", cohortids);
+            console.log("country", country);
+            console.log("funding", funding);
+
             return (
-              <div key={index} className="bg-white rounded-lg shadow p-4 mb-6" onClick={() => handleClick(data.cohort_id)}>
+              <div
+                key={index}
+                className="bg-white rounded-lg shadow p-4 mb-6"
+                onClick={() => handleClick(data.cohort_id)}
+              >
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-3 relative w-full">
                     <div className="max-w-[160px] absolute top-1 left-1 bg-white p-2 rounded-[8px]">
                       <p className="text-base font-bold">
                         {launch_date} – {end_date}
+                      </p>
+                      <p className="text-sm font-normal">
+                        Start at: {start_date}
                       </p>
                     </div>
                     <div className="w-[240px] h-[172px]">
@@ -135,7 +162,7 @@ const EventCard = ({ eventType }) => { // Accept eventType as a prop
                         className="w-[240px] h-[172px] rounded-lg mr-4 object-cover object-center"
                       />
                     </div>
-                    <div className='w-2/3'>
+                    <div className="w-2/3">
                       <div>
                         <p className="bg-white font-medium border-2 borer-[#CDD5DF] text-[#364152] w-[86px] px-2 py-1 rounded-full text-sm">
                           Workshop
@@ -147,7 +174,10 @@ const EventCard = ({ eventType }) => { // Accept eventType as a prop
                       </div>
                       <div className="flex gap-3 items-center -bottom-4 relative">
                         <span className="text-sm text-[#121926]">
-                          <PlaceOutlinedIcon className="text-[#364152]" fontSize="small" />
+                          <PlaceOutlinedIcon
+                            className="text-[#364152]"
+                            fontSize="small"
+                          />
                           {country}
                         </span>
                         <span className="text-sm text-[#121926]">
@@ -172,11 +202,10 @@ const EventCard = ({ eventType }) => { // Accept eventType as a prop
           })}
         </div>
       ) : (
-        <NoDataFound message="No events found" />
+        <div>No Data Available</div>
       )}
     </div>
   );
 };
 
 export default EventCard;
-

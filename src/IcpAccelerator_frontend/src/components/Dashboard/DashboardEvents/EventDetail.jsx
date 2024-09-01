@@ -1,5 +1,4 @@
-
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import eventbg from "../../../../assets/images/bg.png";
 import ProfileImage from "../../../../assets/Logo/ProfileImage.png";
 import GuestProfile1 from "../../../../assets/Logo/GuestProfile1.png";
@@ -7,23 +6,22 @@ import CapacityGroupIcon from "../../../../assets/Logo/CapacityGroupIcon.png";
 import StartDateCalender from "../../../../assets/Logo/StartDateCalender.png";
 import StartTimeClock from "../../../../assets/Logo/StartTimeClock.png";
 import PriceIcon from "../../../../assets/Logo/PriceIcon.png";
-import ArrowOutwardOutlinedIcon from '@mui/icons-material/ArrowOutwardOutlined';
-import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
-import RemoveCircleOutlineOutlinedIcon from '@mui/icons-material/RemoveCircleOutlineOutlined';
+import ArrowOutwardOutlinedIcon from "@mui/icons-material/ArrowOutwardOutlined";
+import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
+import RemoveCircleOutlineOutlinedIcon from "@mui/icons-material/RemoveCircleOutlineOutlined";
 import { useLocation } from "react-router-dom";
-import { useSelector } from 'react-redux';
-import uint8ArrayToBase64 from '../../Utils/uint8ArrayToBase64';
-import parse from 'html-react-parser';
+import { useSelector } from "react-redux";
+import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
+import parse from "html-react-parser";
 import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
-import { formatFullDateFromSimpleDate } from '../../Utils/formatter/formatDateFromBigInt';
+import { formatFullDateFromSimpleDate } from "../../Utils/formatter/formatDateFromBigInt";
 import { ThreeDots } from "react-loader-spinner";
 import toast, { Toaster } from "react-hot-toast";
-import NoDataFound from './NoDataFound';
-import EventRequestCard from './EventRequestCard';
-import EventRequestStatus from './EventRequestStatus';
-import Tabs from '../../Common/Tabs/Tabs';
-import Attendees from './Attendees';
-
+import NoDataFound from "./NoDataFound";
+import EventRequestCard from "./EventRequestCard";
+import EventRequestStatus from "./EventRequestStatus";
+import Tabs from "../../Common/Tabs/Tabs";
+import Attendees from "./Attendees";
 
 const FAQItem = ({ question, answer }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -52,7 +50,8 @@ const FAQ = () => {
   const faqData = [
     {
       question: "What is a role, actually?",
-      answer: "Est malesuada ac elit gravida vel aliquam nec. Arcu pelle ntesque convallis quam feugiat non viverra massa fringilla.",
+      answer:
+        "Est malesuada ac elit gravida vel aliquam nec. Arcu pelle ntesque convallis quam feugiat non viverra massa fringilla.",
     },
     {
       question: "How do roles work?",
@@ -60,7 +59,8 @@ const FAQ = () => {
     },
     {
       question: "Can I change roles?",
-      answer: "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+      answer:
+        "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
     },
   ];
 
@@ -74,9 +74,8 @@ const FAQ = () => {
 };
 
 const EventDetails = () => {
-
-  const [currentTab, setCurrentTab] = useState('Summary');
-  const tabs = ['Summary', 'Request', 'Announcements', 'Attendees', 'Reviews'];
+  const [currentTab, setCurrentTab] = useState("Summary");
+  const tabs = ["Summary", "Request", "Announcements", "Attendees", "Reviews"];
   const handleTabChange = (tab) => {
     setCurrentTab(tab);
   };
@@ -84,21 +83,25 @@ const EventDetails = () => {
   const { cohort_id } = location.state || {};
   const [cohortData, setCohortData] = useState(null);
   const actor = useSelector((currState) => currState.actors.actor);
-  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+  const [timeLeft, setTimeLeft] = useState({
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+  });
   const [difference, setDifference] = useState(null); // Add this state
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-// console.log("............./.........../cohortData",cohortData)
-  const userCurrentRoleStatusActiveRole = useSelector(
-    (currState) => currState.currentRoleStatus.activeRole
-  );
-  
+  // console.log("............./.........../cohortData",cohortData)
+  // const userCurrentRoleStatusActiveRole = useSelector(
+  //   (currState) => currState.currentRoleStatus.activeRole
+  // );
+  const userCurrentRoleStatusActiveRole = "vc";
   useEffect(() => {
     const fetchCohortData = async () => {
       console.log("Actor:", actor);
       console.log("Cohort ID:", cohort_id);
-      
-  
+
       if (actor && cohort_id) {
         try {
           const result = await actor.get_cohort(cohort_id);
@@ -168,20 +171,22 @@ const EventDetails = () => {
     no_of_seats,
     start_date,
     tags,
-    title
+    title,
   } = cohortData.cohort;
 
   const Seats = Number(no_of_seats);
-  const bannerImage = cohort_banner && cohort_banner.length > 0
-    ? uint8ArrayToBase64(cohort_banner[0])
-    : [];
+  const bannerImage =
+    cohort_banner && cohort_banner.length > 0
+      ? uint8ArrayToBase64(cohort_banner[0])
+      : [];
 
   const TabButton = ({ name, label }) => (
     <button
-      className={`py-2 px-4 ${activeTab === name
-        ? "text-blue-600 border-b-2 border-blue-600"
-        : "text-gray-600"
-        }`}
+      className={`py-2 px-4 ${
+        activeTab === name
+          ? "text-blue-600 border-b-2 border-blue-600"
+          : "text-gray-600"
+      }`}
       onClick={() => setActiveTab(name)}
     >
       {label}
@@ -221,13 +226,13 @@ const EventDetails = () => {
   //       <h2 className="text-2xl font-semibold mb-2">Description</h2>
   //       {/* <div className="text-gray-700">{parse(description)}</div> */}
   //       <div className="relative text-gray-700 overflow-hidden max-h-[10rem] hover:max-h-none transition-all duration-300 ease-in-out group">
-  //   <div 
+  //   <div
   //     className="overflow-hidden text-ellipsis line-clamp-10"
   //   >
   //     { parse(description) }
 
   //   </div>
-  //   <div 
+  //   <div
   //     className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-white to-transparent pointer-events-none"
   //   ></div>
   // </div>
@@ -267,16 +272,13 @@ const EventDetails = () => {
           await actor
             .apply_for_a_cohort_as_a_project(cohort_id)
             .then((result) => {
-
               setIsSubmitting(false);
               if (
                 result &&
                 result.includes(`Request Has Been Sent To Cohort Creator`)
-
               ) {
                 toast.success(result);
                 // window.location.href = "/";
-
               } else {
                 toast.error(result);
               }
@@ -341,9 +343,7 @@ const EventDetails = () => {
   // console.log("current role",userCurrentRoleStatusActiveRole);
 
   return (
-    
     <div className="flex flex-col">
-     
       <div className="flex flex-col gap-10 md:flex-row">
         <div className="w-[30%] bg-white rounded-lg shadow-md pt-4">
           <div className="bg-gray-100 p-4">
@@ -354,7 +354,9 @@ const EventDetails = () => {
                 className="w-14 h-14 rounded-full mr-3"
               />
               <div>
-                <h2 className="text-lg font-medium">{host_name || "Host Name"}</h2>
+                <h2 className="text-lg font-medium">
+                  {host_name || "Host Name"}
+                </h2>
                 <span className="inline-block border border-[#FEDF89] bg-[#FFFAEB] text-[#B54708] text-xs px-2 py-0.5 rounded-md uppercase font-medium tracking-wide">
                   ORGANISER
                 </span>
@@ -382,13 +384,14 @@ const EventDetails = () => {
                       </div>
                     </div>
                     {index < 3 && (
-                      <div className="text-2xl font-bold mx-1 self-start mt-2">:</div>
+                      <div className="text-2xl font-bold mx-1 self-start mt-2">
+                        :
+                      </div>
                     )}
                   </React.Fragment>
                 ))}
               </div>
             </div>
-
 
             {/* <button className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-300 mb-2 text-sm "
              onClick={registerHandler}>
@@ -509,12 +512,11 @@ const EventDetails = () => {
                 <span className="text-[#697586] text-[12px] block mb-1">
                   COUNTRY
                 </span>
-                <div className='flex items-center'>
+                <div className="flex items-center">
                   <PlaceOutlinedIcon
                     className="text-gray-500 h-4 w-4 mr-2"
                     fontSize="small"
                   />
-
 
                   <span className="text-gray-700">{country}</span>
                 </div>
@@ -537,8 +539,9 @@ const EventDetails = () => {
                   FUNDING TYPE
                 </span>
                 <div className="flex items-center">
-
-                  <span className="bg-white font-medium border borer-[#CDD5DF] text-[#364152] px-2 py-1 rounded-full text-sm">{funding_type}</span>
+                  <span className="bg-white font-medium border borer-[#CDD5DF] text-[#364152] px-2 py-1 rounded-full text-sm">
+                    {funding_type}
+                  </span>
                 </div>
                 {/* <div>
                 <span className="text-[#697586] text-[12px] block mb-1">
@@ -581,11 +584,19 @@ const EventDetails = () => {
             <h1 className="text-3xl font-bold mt-4">{title}</h1>
             <div className="flex items-center mt-2 text-gray-600">
               <span className="mr-2">
-                <img src={StartDateCalender} className="w-5 h-5 font-bold" alt="Price icon" />
+                <img
+                  src={StartDateCalender}
+                  className="w-5 h-5 font-bold"
+                  alt="Price icon"
+                />
               </span>
-              <span className="mr-2">   {timeLeft.days} days</span>
+              <span className="mr-2"> {timeLeft.days} days</span>
               <span className="mr-2">
-                <img src={PriceIcon} className="w-5 h-5 font-bold" alt="Price icon" />
+                <img
+                  src={PriceIcon}
+                  className="w-5 h-5 font-bold"
+                  alt="Price icon"
+                />
               </span>
               <span>{funding_amount}</span>
             </div>
@@ -601,44 +612,47 @@ const EventDetails = () => {
               <TabContent />
               
             </div> */}
-            <Tabs tabs={tabs} currentTab={currentTab} onTabChange={handleTabChange} />
+            <Tabs
+              tabs={tabs}
+              currentTab={currentTab}
+              onTabChange={handleTabChange}
+            />
             <div className=" pr-6">
-
-              {currentTab === 'Summary' &&
+              {currentTab === "Summary" && (
                 <>
                   <div>
-
-
                     <div className="mt-4">
-                      <h2 className="text-2xl font-semibold mb-2">Description</h2>
+                      <h2 className="text-2xl font-semibold mb-2">
+                        Description
+                      </h2>
                       {/* <div className="text-gray-700">{parse(description)}</div> */}
                       <div className="relative text-gray-700 overflow-hidden max-h-[10rem] hover:max-h-none transition-all duration-300 ease-in-out group">
-                        <div
-                          className="overflow-hidden text-ellipsis line-clamp-10"
-                        >
+                        <div className="overflow-hidden text-ellipsis line-clamp-10">
                           {parse(description)}
-
                         </div>
-                        <div
-                          className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-white to-transparent pointer-events-none"
-                        ></div>
+                        <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-white to-transparent pointer-events-none"></div>
                       </div>
                       <h2 className="text-2xl font-semibold mt-2">FAQ</h2>
                       <FAQ />
                     </div>
                   </div>
                 </>
-              }
-              {currentTab === 'Announcements' && <NoDataFound message="No active announcements found" />}
-              {currentTab === 'Attendees' && <Attendees  cohortData={cohortData}/>}
-              {currentTab === 'Request' && <EventRequestCard />
-              }
-              {currentTab === 'Reviews' && <NoDataFound message="No active reviews found" />}
+              )}
+              {currentTab === "Announcements" && (
+                <NoDataFound message="No active announcements found" />
+              )}
+              {currentTab === "Attendees" && (
+                <Attendees cohortData={cohortData} />
+              )}
+              {currentTab === "Request" && <EventRequestCard />}
+              {currentTab === "Reviews" && (
+                <NoDataFound message="No active reviews found" />
+              )}
             </div>
           </div>
         </div>
-      </div><Toaster />
-
+      </div>
+      <Toaster />
     </div>
   );
 };
