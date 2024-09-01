@@ -175,7 +175,7 @@ const ProjectRegister6 = ({formData}) => {
           onChange={(selectedOptions) => {
             if (selectedOptions && selectedOptions.length > 0) {
               setReasonOfJoiningSelectedOptions(selectedOptions);
-              clearErrors("reason_to_join_incubator");
+              // clearErrors("reason_to_join_incubator");
               setValue(
                 "reason_to_join_incubator",
                 selectedOptions.map((option) => option.value).join(", "),
@@ -183,13 +183,13 @@ const ProjectRegister6 = ({formData}) => {
               );
             } else {
               setReasonOfJoiningSelectedOptions([]);
-              setValue("reason_to_join_incubator", "", {
-                shouldValidate: true,
-              });
-              setError("reason_to_join_incubator", {
-                type: "required",
-                message: "Selecting a reason is required",
-              });
+              // setValue("reason_to_join_incubator", "", {
+              //   shouldValidate: true,
+              // });
+              // setError("reason_to_join_incubator", {
+              //   type: "required",
+              //   message: "Selecting a reason is required",
+              // });
             }
           }}
         />
@@ -268,7 +268,7 @@ const ProjectRegister6 = ({formData}) => {
           onChange={(selectedOptions) => {
             if (selectedOptions && selectedOptions.length > 0) {
               setproject_area_of_focusSelectedOptions(selectedOptions);
-              clearErrors("project_area_of_focus");
+              // clearErrors("project_area_of_focus");
               setValue(
                 "project_area_of_focus",
                 selectedOptions.map((option) => option.value).join(", "),
@@ -276,13 +276,13 @@ const ProjectRegister6 = ({formData}) => {
               );
             } else {
               setproject_area_of_focusSelectedOptions([]);
-              setValue("project_area_of_focus", "", {
-                shouldValidate: true,
-              });
-              setError("project_area_of_focus", {
-                type: "required",
-                message: "Selecting a category is required",
-              });
+              // setValue("project_area_of_focus", "", {
+              //   shouldValidate: true,
+              // });
+              // setError("project_area_of_focus", {
+              //   type: "required",
+              //   message: "Selecting a category is required",
+              // });
             }
           }}
         />
@@ -319,7 +319,7 @@ const ProjectRegister6 = ({formData}) => {
       {/* Display an error message if the project description field has an error */}
       {errors?.project_description && (
         <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-          {errors?.project_description?.message}  // Show the error message
+          {errors?.project_description?.message}  
         </span>
       )}
     </div>

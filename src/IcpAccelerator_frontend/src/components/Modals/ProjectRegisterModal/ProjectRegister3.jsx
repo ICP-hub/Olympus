@@ -227,7 +227,7 @@ const ProjectRegister3 = ({ formData }) => {
           </p>
         )}
       </div> */}
-        <div className="mb-2">
+      <div className="mb-2">
         <label className="block mb-1">
           <div className="flex flex-col">
             <span>
@@ -236,7 +236,8 @@ const ProjectRegister3 = ({ formData }) => {
             {watch("live_on_icp_mainnet") === "false" && (
               <span className="text-yellow-600 flex items-center">
                 <CiWarning className="mr-2 text-yellow-600" />
-                If you select <strong> &nbsp;No</strong>, project won't go live on platform
+                If you select <strong> &nbsp;No</strong>, project won't go live
+                on platform
               </span>
             )}
           </div>
@@ -298,15 +299,19 @@ const ProjectRegister3 = ({ formData }) => {
             <input
               type="number"
               {...register("weekly_active_users")}
-              defaultValue=""
+              
               className={`border border-[#CDD5DF] rounded-md shadow-sm
                                              ${
                                                errors?.weekly_active_users
                                                  ? "border-red-500 "
                                                  : "border-[#737373]"
                                              } text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+              placeholder="Enter your users number"
+              onWheel={(e) => e.target.blur()} // DISABLE MOUSE WHEEL FOR NUMBER INPUTS
+               // SET MINIMUM VALUE TO 0
+              defaultValue=""
             />
-            {/* DISPLAY ERROR MESSAGE FOR WEEKLY ACTIVE USERS FIELD */}
+            
             {errors?.weekly_active_users && (
               <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
                 {errors?.weekly_active_users?.message}
@@ -326,7 +331,7 @@ const ProjectRegister3 = ({ formData }) => {
       text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
               placeholder="Enter Revenue"
               onWheel={(e) => e.target.blur()}
-              min={0}
+              
             />
             {errors?.revenue && (
               <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
