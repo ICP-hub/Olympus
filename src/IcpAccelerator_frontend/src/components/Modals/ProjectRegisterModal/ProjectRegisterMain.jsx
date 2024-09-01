@@ -14,7 +14,6 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { ThreeDots } from "react-loader-spinner";
 import { validationSchema } from "./projectValidation";
 import ProjectRegister6 from "./ProjectRegister6";
-
 const ProjectRegisterMain = ({ isopen }) => {
   const actor = useSelector((currState) => currState.actors.actor);
   const [index, setIndex] = useState(0); // TRACKS THE CURRENT FORM PAGE
@@ -22,7 +21,8 @@ const ProjectRegisterMain = ({ isopen }) => {
   const [coverData, setCoverData] = useState(null); // STORES COVER IMAGE FILE DATA
   const [modalOpen, setModalOpen] = useState(isopen || true); // TRACKS MODAL OPEN/CLOSE STATE
   const [formData, setFormData] = useState({}); // STORES ACCUMULATED FORM DATA
-const [isSubmitting,setIsSubmitting]=useState(false)
+  const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // INITIALIZE REACT HOOK FORM WITH VALIDATION SCHEMA
   const methods = useForm({
@@ -33,12 +33,12 @@ const [isSubmitting,setIsSubmitting]=useState(false)
       publicDocs: [],
       upload_private_documents: false,
       privateDocs: [],
-      weekly_active_users: null,  // Keep as a number
-      revenue: null,  // Keep as a number
+      weekly_active_users: null, // Keep as a number
+      revenue: null, // Keep as a number
       money_raised_till_now: false,
-      icp_grants: null,  // Keep as a number
-      investors: null,  // Keep as a number
-      raised_from_other_ecosystem: null
+      icp_grants: null, // Keep as a number
+      investors: null, // Keep as a number
+      raised_from_other_ecosystem: null,
     },
   });
 
@@ -46,7 +46,7 @@ const [isSubmitting,setIsSubmitting]=useState(false)
     handleSubmit,
     trigger,
     getValues,
-    formState: {  },
+    formState: {},
   } = methods;
 
   // MAP FORM FIELDS TO DIFFERENT STEPS
@@ -76,7 +76,11 @@ const [isSubmitting,setIsSubmitting]=useState(false)
       "target_amount",
     ],
     4: ["promotional_video", "token_economics", "links"],
-    5: ["reason_to_join_incubator","project_area_of_focus", "project_description"],
+    5: [
+      "reason_to_join_incubator",
+      "project_area_of_focus",
+      "project_description",
+    ],
   };
 
   // HANDLE FORM VALIDATION ERROR
@@ -108,7 +112,7 @@ const [isSubmitting,setIsSubmitting]=useState(false)
   const onSubmitHandler = async () => {
     const data = { ...formData, ...getValues() };
     console.log("data", data);
-    setIsSubmitting(true)
+    setIsSubmitting(true);
     if (actor) {
       const projectData = {
         project_cover: coverData ? [coverData] : [],
@@ -122,12 +126,14 @@ const [isSubmitting,setIsSubmitting]=useState(false)
           data?.is_your_project_registered === "true" ? true : false,
         ],
         type_of_registration: [
-          data?.is_your_project_registered === "true" && data?.type_of_registration
+          data?.is_your_project_registered === "true" &&
+          data?.type_of_registration
             ? data?.type_of_registration
             : "",
         ],
         country_of_registration: [
-          data?.is_your_project_registered === "true" && data?.country_of_registration
+          data?.is_your_project_registered === "true" &&
+          data?.country_of_registration
             ? data?.country_of_registration
             : "",
         ],
@@ -160,29 +166,33 @@ const [isSubmitting,setIsSubmitting]=useState(false)
         money_raising: [data?.money_raising === "true" ? true : false],
         money_raised: [
           {
-            icp_grants: data?.money_raised_till_now === "true" && data?.icp_grants
-              ? data.icp_grants.toString()
-              : '',
-            investors: data?.money_raised_till_now === "true" && data?.investors
-              ? data.investors.toString()
-              : '',
-            raised_from_other_ecosystem: data?.money_raised_till_now === "true" && data?.raised_from_other_ecosystem
-              ? data.raised_from_other_ecosystem.toString()
-              : '',
-            sns: data?.money_raising === "true" && data?.valuation
-              ? data.valuation.toString()
-              : '',
-            target_amount: data?.money_raising === "true" && data?.target_amount
-              ? parseFloat(data.target_amount)
-              : 0,
-  
-        
+            icp_grants:
+              data?.money_raised_till_now === "true" && data?.icp_grants
+                ? data.icp_grants.toString()
+                : "",
+            investors:
+              data?.money_raised_till_now === "true" && data?.investors
+                ? data.investors.toString()
+                : "",
+            raised_from_other_ecosystem:
+              data?.money_raised_till_now === "true" &&
+              data?.raised_from_other_ecosystem
+                ? data.raised_from_other_ecosystem.toString()
+                : "",
+            sns:
+              data?.money_raising === "true" && data?.valuation
+                ? data.valuation.toString()
+                : "",
+            target_amount:
+              data?.money_raising === "true" && data?.target_amount
+                ? parseFloat(data.target_amount)
+                : 0,
+
             // icp_grants: data.icp_grants ? data.icp_grants.toString() : null, // Convert to string or null
             // investors: data?.investors ? data?.investors.toString() : null, // Convert to string or null
             // raised_from_other_ecosystem: data.raised_from_other_ecosystem ? data.raised_from_other_ecosystem.toString() : null, // Convert to string or null
             // target_amount: data.target_amount ? parseFloat(data.target_amount) : null, // Convert to float or null
             // sns: data.valuation ? data.valuation.toString() : null,
-
           },
         ],
         promotional_video: [data?.promotional_video ?? ""],
@@ -215,21 +225,28 @@ const [isSubmitting,setIsSubmitting]=useState(false)
         console.log("result", result);
         if (
           result.startsWith("You can't create more than one project") ||
-          result.startsWith("You are not eligible for this role because you have 2 or more roles") ||
-          result.startsWith("Cannot set private documents unless upload private docs has been set to true")||
-          result.startsWith("You are not allowed to get this role because you already have the Venture Capitalist role") ||
-          result.startsWith("You are not allowed to get this role because you already have the Mentor role.")
+          result.startsWith(
+            "You are not eligible for this role because you have 2 or more roles"
+          ) ||
+          result.startsWith(
+            "Cannot set private documents unless upload private docs has been set to true"
+          ) ||
+          result.startsWith(
+            "You are not allowed to get this role because you already have the Venture Capitalist role"
+          ) ||
+          result.startsWith(
+            "You are not allowed to get this role because you already have the Mentor role."
+          )
         ) {
           toast.error(result); // Show error toast with the returned message
           setModalOpen(false);
-          setIsSubmitting(false)
-          window.location.reload();
+          setIsSubmitting(false);
+          navigate("/dashboard/profile");
         } else {
           toast.success("Project registered successfully!"); // Show success message
-          setModalOpen(false)
-          setIsSubmitting(false)
-          window.location.reload();
-
+          setModalOpen(false);
+          setIsSubmitting(false);
+          navigate("/dashboard/profile");
         }
       } catch (error) {
         console.log(error.message);
@@ -337,25 +354,25 @@ const [isSubmitting,setIsSubmitting]=useState(false)
                       "Submit"
                     )}
                   </button>
-              //     <button
-              //   disabled={isSubmitting}
-              //   type="submit"
-              //   className="bg-blue-600 text-white py-2 px-4 rounded"
-              // >
-              //   {isSubmitting ? (
-              //     <ThreeDots
-              //       visible={true}
-              //       height="35"
-              //       width="35"
-              //       color="#FFFEFF"
-              //       radius="9"
-              //       ariaLabel="three-dots-loading"
-              //     />
-              //   ) : (
-              //     "Submit"
-              //   )}
-              // </button>
                 ) : (
+                  //     <button
+                  //   disabled={isSubmitting}
+                  //   type="submit"
+                  //   className="bg-blue-600 text-white py-2 px-4 rounded"
+                  // >
+                  //   {isSubmitting ? (
+                  //     <ThreeDots
+                  //       visible={true}
+                  //       height="35"
+                  //       width="35"
+                  //       color="#FFFEFF"
+                  //       radius="9"
+                  //       ariaLabel="three-dots-loading"
+                  //     />
+                  //   ) : (
+                  //     "Submit"
+                  //   )}
+                  // </button>
                   <button
                     type="button"
                     className="py-2 px-4 bg-[#D1E0FF] text-white rounded hover:bg-blue-600 border-2 border-[#B2CCFF] flex items-center"
