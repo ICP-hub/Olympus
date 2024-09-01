@@ -51,6 +51,7 @@ function DashboardHomeWelcomeSection({ userName, profileCompletion }) {
   const [roleModalOpen, setRoleModalOpen] = useState(false);
   const { dashboardwelcomesection } = dashboard
   const userFullData = useSelector((currState) => currState.userData.data.Ok);
+  console.log("USER DATA FROM REDUX IS ", userFullData);
   const projectFullData = useSelector(
     (currState) => currState.projectData.data[0]
   );
@@ -72,17 +73,7 @@ function DashboardHomeWelcomeSection({ userName, profileCompletion }) {
     (currState) => currState.currentRoleStatus.activeRole
   );
   const dispatch = useDispatch();
-  const [completionPercentage, setCompletionPercentage] = useState(null);
-
-  const getCompletionPercentage = (role) => {
-    const completionPercentages = {
-      user: profileCompletion,
-      mentor: mentorCompletion,
-      project: projectCompletion,
-      vc: investorCompletion,
-    };
-    return completionPercentages[role] || 0;
-  };
+  const [usercompletionPercentage, setCompletionPercentage] = useState(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -108,10 +99,20 @@ function DashboardHomeWelcomeSection({ userName, profileCompletion }) {
   }, [actor]);
 
 console.log("USERFULLDATA", userFullData);
-  const completionPercentagetoRender = getCompletionPercentage(
-    userCurrentRoleStatusActiveRole
-  );
 
+const getCompletionPercentage = (role) => {
+  const completionPercentages = {
+    user: usercompletionPercentage,
+    mentor: mentorCompletion,
+    project: projectCompletion,
+    vc: investorCompletion,
+  };
+  return completionPercentages[role] || 0;
+};
+
+const completionPercentagetoRender = getCompletionPercentage(
+  userCurrentRoleStatusActiveRole
+);
   const isAuthenticated = useSelector((curr) => curr.internet.isAuthenticated);
   const actionCards = [
     {
@@ -344,7 +345,7 @@ const handleButtonClick = (action) => {
           </div>
         </div>
       </div>
-      <DashboardHomeProfileCards percentage={completionPercentage} />
+      <DashboardHomeProfileCards percentage={usercompletionPercentage} />
       {roleModalOpen && (
         <Modal1
           isOpen={roleModalOpen}
