@@ -4,7 +4,7 @@ set -e
 
 # Number of mentors and projects you want to register (ensure this matches the number of existing identities)
 
-NUM_PROJECTS=5
+NUM_PROJECTS=20
 START=1
 echo "Using existing User Identities to Register as Mentors and Projects..."
 CANISTER=$(dfx canister id IcpAccelerator_backend)
@@ -46,11 +46,11 @@ for i in $(seq $START $NUM_PROJECTS); do
 
     # Sample data for money raised
     money_raised="opt record {
-        sns = opt \"Some SNS\";
-        investors = opt \"Some Investors\";
-        raised_from_other_ecosystem = opt \"Yes\";
-        target_amount = opt 500000.00;
-        icp_grants = opt \"Some Grants\";
+        sns = \"SNS\";
+        investors = \"Investors\";
+        raised_from_other_ecosystem = \"Yes\";
+        target_amount = 500000.00;
+        icp_grants = \"Some Grants\";
     }"
 
     projects[$i]="record {
@@ -96,9 +96,4 @@ for i in $(seq $START $NUM_PROJECTS); do
     project_data="${projects[$i]}" 
     echo "Registering Project $i with data: $project_data"
     dfx canister call $CANISTER register_project "($project_data)"
-
-    # Optiona
-    # Optionally approve the project
-    echo "Approving the project request"
-    dfx canister call --identity default $CANISTER approve_project_creation_request "(principal \"$CURRENT_PRINCIPAL\", true)"
 done

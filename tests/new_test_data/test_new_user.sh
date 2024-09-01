@@ -3,7 +3,7 @@
 set -e
 
 # Number of mentors you want to register
-NUM_MENTORS=10
+NUM_MENTORS=20
 START_NUM=1
 echo "Creating User Identities..."
 

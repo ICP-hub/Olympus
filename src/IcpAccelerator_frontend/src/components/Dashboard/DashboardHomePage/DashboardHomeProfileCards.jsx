@@ -165,13 +165,7 @@ function DashboardHomeProfileCards(percentage) {
           </div>
         </div>
       </div>
-      <div className="bg-white rounded-lg shadow-sm p-6 mt-8">
-        <div className="border border-dashed border-gray-300 p-6 ">
-          <div className="flex  items-center justify-center h-full text-center">
-            <img src={Nodatafound} alt="" className="h-full " />
-          </div>
-        </div>
-      </div>
+    
       <div className="bg-white rounded-lg shadow-sm p-6 mt-8">
         <div className="flex justify-between items-center m-2 p-2">
           <h2 className="text-xl font-semibold">Projects</h2>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { IcpAccelerator_backend } from "../../../../declarations/IcpAccelerator_backend/index";
 import { useDispatch, useSelector } from "react-redux";
 import { Star } from "@mui/icons-material";
+import InfiniteScroll from "react-infinite-scroll-component";
 import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
 import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
 import toast, { Toaster } from "react-hot-toast";
@@ -13,7 +14,7 @@ import { Principal } from "@dfinity/principal";
 import DiscoverInvestorPage from "../Dashboard/DashboardHomePage/DiscoverInvestor/DiscoverInvestorPage";
 import RatingModal from "../Common/RatingModal";
 
-const DiscoverInvestor = () => {
+const DiscoverInvestor = ({onInvestorCountChange }) => {
   const actor = useSelector((currState) => currState.actors.actor);
   const [allInvestorData, setAllInvestorData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -27,7 +28,8 @@ const DiscoverInvestor = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showRatingModal, setShowRatingModal] = useState(false);
   const [userRatingDetail,setUserRatingDetail]=useState(null)
-
+  const [hasMore, setHasMore] = useState(true);
+  const [isFetching, setIsFetching] = useState(false);
   const isAuthenticated = useSelector(
     (currState) => currState.internet.isAuthenticated
   );
@@ -87,63 +89,113 @@ const DiscoverInvestor = () => {
   };
 
   console.log(".............Investor", allInvestorData);
-  const getAllInvestor = async (caller, isMounted) => {
-    setIsSubmitting(true);
-    await caller
-      .list_all_vcs_with_pagination({
+  // const getAllInvestor = async (caller, isMounted) => {
+  //   setIsSubmitting(true);
+  //   await caller
+  //     .list_all_vcs_with_pagination({
+  //       page_size: itemsPerPage,
+  //       page: currentPage,
+  //     })
+  //     .then((result) => {
+  //       if (isMounted) {
+  //         console.log("result-in-get-all-investor", result);
+  //         {
+  //           result?.data.map((val) => {
+  //             setSendprincipal(val[0]);
+  //           });
+  //         }
+  //         if (result && result.data) {
+  //           const InvestorData = result.data ? Object.values(result.data) : [];
+  //           const userData = result.user_data
+  //             ? Object.values(result.user_data)
+  //             : [];
+  //           setAllInvestorData(InvestorData);
+  //           setIsSubmitting(false);
+  //           setUserData(userData);
+  //         } else {
+  //           setAllInvestorData([]);
+  //           setIsSubmitting(false);
+  //           setUserData([]);
+  //           // Set to an empty array if no data
+  //         }
+  //         setIsLoading(false);
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       if (isMounted) {
+  //         setAllInvestorData([]);
+  //         setUserData([]);
+  //         setIsSubmitting(false);
+  //         setIsLoading(false);
+  //         console.log("error-in-get-all-investor", error);
+  //       }
+  //     });
+  // };
+
+  const getAllInvestor = async (caller) => {
+    setIsFetching(true);
+    try {
+      const result = await caller.list_all_vcs_with_pagination({
         page_size: itemsPerPage,
         page: currentPage,
-      })
-      .then((result) => {
-        if (isMounted) {
-          console.log("result-in-get-all-investor", result);
-          {
-            result?.data.map((val) => {
-              setSendprincipal(val[0]);
-            });
-          }
-          if (result && result.data) {
-            const InvestorData = result.data ? Object.values(result.data) : [];
-            const userData = result.user_data
-              ? Object.values(result.user_data)
-              : [];
-            setAllInvestorData(InvestorData);
-            setIsSubmitting(false);
-            setUserData(userData);
-          } else {
-            setAllInvestorData([]);
-            setIsSubmitting(false);
-            setUserData([]);
-            // Set to an empty array if no data
-          }
-          setIsLoading(false);
-        }
-      })
-      .catch((error) => {
-        if (isMounted) {
-          setAllInvestorData([]);
-          setUserData([]);
-          setIsSubmitting(false);
-          setIsLoading(false);
-          console.log("error-in-get-all-investor", error);
-        }
       });
+      {result?.data.map(val=>{
+        setSendprincipal(val[0])
+      })}
+      console.log("result =>", result?.data);
+
+      if (result && result.data) {
+        const InvestorData = Object.values(result.data);
+        const userData = Object.values(result.user_data || {});
+
+        if (InvestorData.length === 0) {
+          setHasMore(false); // No more data to load
+        } else {
+          setAllInvestorData((prevData) => [...prevData, ...InvestorData]);
+          onInvestorCountChange(InvestorData.length>0?InvestorData.length:0)
+          setUserData((prevData) => [...prevData, ...userData]);
+
+          // If fewer items than expected are returned, stop further requests
+          if (InvestorData.length < itemsPerPage) {
+            setHasMore(false);
+          }
+        }
+      } else {
+        setHasMore(false);
+      }
+    } catch (error) {
+      console.error("error-in-get-all-mentor", error);
+      setHasMore(false);
+    } finally {
+      setIsFetching(false);
+    }
   };
   console.log("sendPrincipal", sendprincipal);
 
   useEffect(() => {
-    let isMounted = true;
-
-    if (actor) {
-      getAllInvestor(actor, isMounted);
-    } else {
-      getAllInvestor(IcpAccelerator_backend);
+    if (!isFetching && hasMore) {
+      if (actor) {
+        getAllInvestor(actor, currentPage);
+      } else {
+        getAllInvestor(IcpAccelerator_backend, currentPage);
+      }
     }
-
-    return () => {
-      isMounted = false;
-    };
   }, [actor, currentPage]);
+  const loadMore = () => {
+    if (!isFetching && hasMore) {
+      setCurrentPage((prevPage) => {
+        const newPage = prevPage + 1;
+        getAllInvestor(actor, newPage); // Fetch data for the next page
+        return newPage;
+      });
+    }
+  };
+  const refresh = () => {
+    if (actor) {
+      getAllInvestor(actor, 1); // Fetch the data starting from the first page
+    }
+  };
+
 
   /////////////////////////
   const tagColors = {
@@ -187,10 +239,28 @@ const DiscoverInvestor = () => {
 
   return (
     <div>
-      {isLoading ? (
-        <div>Loading...</div>
-      ) : allInvestorData.length > 0 ? (
-        allInvestorData.map((investorArray, index) => {
+      {allInvestorData.length > 0 ? (
+         <InfiniteScroll
+         dataLength={allInvestorData.length}
+         next={loadMore}
+         hasMore={hasMore}
+         loader={<h4>Loading more...</h4>}
+         endMessage={<p>No more data available</p>}
+         refreshFunction={refresh}
+         pullDownToRefresh
+         pullDownToRefreshThreshold={50}
+         pullDownToRefreshContent={
+           <h3 style={{ textAlign: "center" }}>
+             &#8595; Pull down to refresh
+           </h3>
+         }
+         releaseToRefreshContent={
+           <h3 style={{ textAlign: "center" }}>
+             &#8593; Release to refresh
+           </h3>
+         }
+       >
+        {allInvestorData.map((investorArray, index) => {
           console.log("investorArray", investorArray);
           const investor_id = investorArray[0]?.toText();
           const investor = investorArray[1];
@@ -223,11 +293,11 @@ const DiscoverInvestor = () => {
               className="p-6 w-[750px] rounded-lg shadow-sm mb-4 flex"
               key={index}
             >
-              <div
-                
-                className="w-[272px] relative"
-              >
-                <div onClick={() => handleClick(principle_id)} className="max-w-[250px] w-[250px] h-[254px] bg-gray-100 rounded-lg flex flex-col justify-between relative overflow-hidden">
+              <div className="w-[272px] relative">
+                <div
+                  onClick={() => handleClick(principle_id)}
+                  className="max-w-[250px] w-[250px] h-[254px] bg-gray-100 rounded-lg flex flex-col justify-between relative overflow-hidden"
+                >
                   <div
                     className="absolute inset-0 flex items-center justify-center"
                     onClick={handleClick}
@@ -304,7 +374,8 @@ const DiscoverInvestor = () => {
               </div>
             </div>
           );
-        })
+        })}
+        </InfiniteScroll>
       ) : (
         <div>No Data Available</div>
       )}

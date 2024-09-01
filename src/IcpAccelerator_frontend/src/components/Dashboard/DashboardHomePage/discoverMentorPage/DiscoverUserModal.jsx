@@ -15,7 +15,7 @@ import uint8ArrayToBase64 from "../../../Utils/uint8ArrayToBase64";
 import { LanguageIcon } from "../../../UserRegistration/DefaultLink";
 
 
-// import { LanguageIcon } from "../UserRegistration/DefaultLink";
+
 import {
   FaLinkedin,
   FaTwitter,
@@ -124,7 +124,7 @@ const DiscoverUserModal = ({ openDetail, setOpenDetail, userData }) => {
                     <h2 className="text-xl font-semibold">{full_name}</h2>
                   </div>
                   <p className="text-gray-600 text-center mb-2">
-                    {openchat_username}{" "}
+                    @{openchat_username}{" "}
                   </p>
                   <a
                     href={`mailto:${email}`}
@@ -153,7 +153,7 @@ const DiscoverUserModal = ({ openDetail, setOpenDetail, userData }) => {
 
                   <div className=" ">
                     <div className="mb-2 group relative hover:bg-gray-100 rounded-lg p-2 ">
-                      <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
+                      <h3 className="font-semibold mb-1 text-xs text-gray-500 uppercase">
                         Email
                       </h3>
 
@@ -171,7 +171,7 @@ const DiscoverUserModal = ({ openDetail, setOpenDetail, userData }) => {
 
                     {/* About Section */}
                     <div className="mb-2 group relative hover:bg-gray-100 rounded-lg p-2 ">
-                    <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
+                    <h3 className="font-semibold mb-1 text-xs text-gray-500 uppercase">
                         About
                       </h3>
                       <div>
@@ -193,7 +193,7 @@ const DiscoverUserModal = ({ openDetail, setOpenDetail, userData }) => {
                       </h3>
                       <div>
                         <div className="flex flex-wrap gap-2">
-                          {userData?.reason_to_join[0].map((reason, index) => (
+                          {userData?.reason_to_join[0]?.map((reason, index) => (
                             <span
                               key={index}
                               className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-3 py-1 bg-gray-100"
@@ -213,7 +213,7 @@ const DiscoverUserModal = ({ openDetail, setOpenDetail, userData }) => {
                           {userData?.area_of_interest &&
                             userData.area_of_interest
                               .split(", ")
-                              .map((interest, index) => (
+                              ?.map((interest, index) => (
                                 <span
                                   key={index}
                                   className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-3 py-1 bg-gray-100"

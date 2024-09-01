@@ -43,17 +43,24 @@ export  const validationSchema = yup
       /\S/.test(value)
     )
     .required("ICP Hub selection is required"),
-  project_name: yup
-    .string()
-    .test("is-non-empty", "Project name is required", (value) =>
-      /\S/.test(value)
-    )
-    .test(
-      "no-leading-spaces",
-      "Project name should not have leading spaces",
-      (value) => !value || value.trimStart() === value
-    )
-    .required("Project name is required"),
+
+   project_name: yup
+  .string()
+  .test("is-non-empty", "Project name is required", (value) =>
+    /\S/.test(value)
+  )
+  .test(
+    "no-leading-spaces",
+    "Project name should not have leading spaces",
+    (value) => !value || value.trimStart() === value
+  )
+  .matches(
+    /^[a-zA-Z0-9\s,]+$/,
+    "Project name should only contain letters, numbers, spaces, and commas"
+  )
+  .required("Project name is required"),
+
+  
   project_description: yup
     .string()
     .test(
@@ -69,17 +76,48 @@ export  const validationSchema = yup
     )
     .optional(),
   // .required("Project Description is required"),
-  project_elevator_pitch: yup.string().url("Invalid url").optional(),
+  project_elevator_pitch: yup
+  .string()
+  .nullable()
+  .notRequired()
+  .test(
+    "is-valid-url",
+    "Project elevator pitch should only contain letters, numbers, @, ., :, -, /",
+    (value) =>
+      !value || /^[a-zA-Z0-9@.\-:/]+$/.test(value)
+  )
+  .test(
+    "is-url",
+    "Invalid URL",
+    (value) =>
+      !value || yup.string().url().isValidSync(value)
+  ),
+
+
+
   // .required("Project Pitch deck is required"),
   project_website: yup
-    .string()
-    .nullable(true)
-    .optional()
-    .url("Invalid url"),
+  .string()
+  .nullable()
+  .notRequired()
+  .test(
+    "is-valid-url",
+    "Project elevator pitch should only contain letters, numbers, @, ., :, -, /",
+    (value) =>
+      !value || /^[a-zA-Z0-9@.\-:/]+$/.test(value)
+  )
+  .test(
+    "is-url",
+    "Invalid URL",
+    (value) =>
+      !value || yup.string().url().isValidSync(value)
+  ),
+
   is_your_project_registered: yup
     .string()
     .required("Required")
     .oneOf(["true", "false"], "Invalid value"),
+
   type_of_registration: yup
     .string()
     .when("is_your_project_registered", (val, schema) =>
@@ -120,8 +158,14 @@ export  const validationSchema = yup
         .required("dApp Link is required")
       : schema
   ),
-  weekly_active_users: yup.number().nullable(true).optional(),
-  revenue: yup.number().nullable(true).optional(),
+
+  weekly_active_users: yup
+  .number()
+  .nullable(false)
+  .required('Weekly active users is a required field')
+  .min(0, 'Weekly active users cannot be a negative number'),
+
+  revenue: yup.number().nullable(true).optional().min(0, 'Weekly active users cannot be a negative number'),
 
   money_raising: yup
     .string()
@@ -277,6 +321,35 @@ export  const validationSchema = yup
     links: yup.array().of(
       yup.object().shape({
         url: yup.string().url("Invalid URL").nullable(true).optional(),
+      })
+    ),
+    links: yup.array().of(
+      yup.object().shape({
+        link: yup.string()
+          .test('no-leading-trailing-spaces', 'URL should not have leading or trailing spaces', value => {
+            return value === value?.trim();
+          })
+          .test('no-invalid-extensions', 'URL should not end with .php, .js, or .txt', value => {
+            const invalidExtensions = ['.php', '.js', '.txt'];
+            return value ? !invalidExtensions.some(ext => value.endsWith(ext)) : true;
+          })
+          .test('is-website', 'Only website links are allowed', value => {
+            if (value) {
+              try {
+                const url = new URL(value);
+                const hostname = url.hostname.toLowerCase();
+                const validExtensions = ['.com', '.org', '.net','.in', '.co', '.io', '.gov'];
+                const hasValidExtension = validExtensions.some(ext => hostname.endsWith(ext));
+                return hasValidExtension;
+              } catch (err) {
+                return false;
+              }
+            }
+            return true;
+          })
+          .url('Invalid URL')
+          .nullable(true)
+          .optional(),
       })
     ),
 })

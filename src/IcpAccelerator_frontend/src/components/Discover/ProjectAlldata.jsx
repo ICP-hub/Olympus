@@ -1,3 +1,5 @@
+
+
 import React, { useState, useEffect } from "react";
 // import { IcpAccelerator_backend } from "../../../../declarations/IcpAccelerator_backend/index";
 import { IcpAccelerator_backend } from "../../../../declarations/IcpAccelerator_backend/index";
@@ -12,28 +14,31 @@ import { RiSendPlaneLine } from "react-icons/ri";
 import { Tooltip } from "react-tooltip";
 import { Principal } from "@dfinity/principal";
 import toast, { Toaster } from "react-hot-toast";
+import Avatar from "@mui/material/Avatar";
 
 import UserDetailPage from "../Dashboard/DashboardHomePage/UserDetailPage";
 import AddAMentorRequestModal from "../../models/AddAMentorRequestModal";
 import { mentorRegisteredHandlerRequest } from "../StateManagement/Redux/Reducers/mentorRegisteredData";
 import RatingModal from "../Common/RatingModal";
-import NoDataCard from "../../component/Mentors/Event/MentorAssociatedNoDataCard";
-import NoCardData from "../Profile/NoCardData";
-import Nodata from "../Dashboard/Project/Nodata";
+import { bufferToImageBlob } from "../Utils/formatter/bufferToImageBlob";
+import parse from "html-react-parser"
+import InfiniteScroll from "react-infinite-scroll-component";
 import NoData from "../NoDataCard/NoData";
-const DiscoverProject = () => {
+const DiscoverProject = ({onProjectCountChange}) => {
   const actor = useSelector((currState) => currState.actors.actor);
   const [allProjectData, setAllProjectData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const itemsPerPage = 1;
+  const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
   const [userData, setUserData] = useState([]);
   const [cardDetail, setCadDetail] = useState(null);
   const [principal, setprincipal] = useState(null);
   const [listProjectId, setListProjectId] = useState(null);
   const [showRatingModal, setShowRatingModal] = useState(false);
-  const [userRatingDetail,setUserRatingDetail]=useState(null)
-
+  const [hasMore, setHasMore] = useState(true);
+  const [isFetching, setIsFetching] = useState(false);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [userDataToSend, setUserDataToSend] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const mentorPrincipal = useSelector(
     (currState) => currState.internet.principal
@@ -142,56 +147,105 @@ const DiscoverProject = () => {
     }
   };
 
-  const getAllProject = async (caller, isMounted) => {
-    await caller
-      .list_all_projects_with_pagination({
+  // const getAllProject = async (caller, isMounted) => {
+  //   await caller
+  //     .list_all_projects_with_pagination({
+  //       page_size: itemsPerPage,
+  //       page: currentPage,
+  //     })
+  //     .then((result) => {
+  //       if (isMounted) {
+  //         console.log("result-in-get-all-projects", result);
+  //         // setprincipal(result.data[0][0]);
+  //         // console.log("principal data ", result.data[0][0]);
+  //         if (result && result.data) {
+  //           const ProjectData = result.data ? Object.values(result.data) : [];
+  //           const userData = result.user_data
+  //             ? Object.values(result.user_data)
+  //             : [];
+  //           setAllProjectData(ProjectData);
+  //           setUserData(userData);
+  //         } else {
+  //           setAllProjectData([]);
+  //           setUserData([]);
+  //         }
+  //         setIsLoading(false);
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       if (isMounted) {
+  //         setAllProjectData([]);
+  //         setUserData([]);
+  //         setIsLoading(false);
+  //         console.log("error-in-get-all-projects", error);
+  //       }
+  //     });
+  // };
+
+  const getAllProject = async (caller) => {
+    setIsFetching(true);
+    try {
+      const result = await caller.list_all_projects_with_pagination({
         page_size: itemsPerPage,
         page: currentPage,
-      })
-      .then((result) => {
-        if (isMounted) {
-          console.log("result-in-get-all-projects", result);
-          // setprincipal(result.data[0][0]);
-          // console.log("principal data ", result.data[0][0]);
-          if (result && result.data) {
-            const ProjectData = result.data ? Object.values(result.data) : [];
-            const userData = result.user_data
-              ? Object.values(result.user_data)
-              : [];
-            setAllProjectData(ProjectData);
-            setUserData(userData);
-            console.log("userdata =>",userData)
-          } else {
-            setAllProjectData([]);
-            setUserData([]);
-          }
-          setIsLoading(false);
-        }
-      })
-      .catch((error) => {
-        if (isMounted) {
-          setAllProjectData([]);
-          setUserData([]);
-          setIsLoading(false);
-          console.log("error-in-get-all-projects", error);
-        }
       });
+          // setprincipal(result.data[0][0]);
+      // {result?.data.map(val=>{
+      //   setSendprincipal(val[0])
+      // })}
+      console.log("result =>", result?.data);
+
+      if (result && result.data) {
+        const ProjectData = Object.values(result.data);
+        const userData = Object.values(result.user_data || {});
+
+        if (ProjectData.length === 0) {
+          setHasMore(false); // No more data to load
+        } else {
+          setAllProjectData((prevData) => [...prevData, ...ProjectData]);
+          setUserData((prevData) => [...prevData, ...userData]);
+          onProjectCountChange(ProjectData.length>0?ProjectData.length:0)
+          // If fewer items than expected are returned, stop further requests
+          if (ProjectData.length < itemsPerPage) {
+            setHasMore(false);
+          }
+        }
+      } else {
+        setHasMore(false);
+      }
+    } catch (error) {
+      console.error("error-in-get-all-project", error);
+      setHasMore(false);
+    } finally {
+      setIsFetching(false);
+    }
   };
 
+
   useEffect(() => {
-    let isMounted = true;
-
-    if (actor) {
-      getAllProject(actor, isMounted);
-    } else {
-      getAllProject(IcpAccelerator_backend);
+    if (!isFetching && hasMore) {
+      if (actor) {
+        getAllProject(actor, currentPage);
+      } else {
+        getAllProject(IcpAccelerator_backend, currentPage);
+      }
     }
-
-    return () => {
-      isMounted = false;
-    };
   }, [actor, currentPage]);
 
+  const loadMore = () => {
+    if (!isFetching && hasMore) {
+      setCurrentPage((prevPage) => {
+        const newPage = prevPage + 1;
+        getAllProject(actor, newPage); // Fetch data for the next page
+        return newPage;
+      });
+    }
+  };
+  const refresh = () => {
+    if (actor) {
+      getAllProject(actor, 1); // Fetch the data starting from the first page
+    }
+  };
   /////////////////////////
   const tagColors = {
     // OLYMPIAN: "bg-[#F0F9FF] border-[#B9E6FE] border text-[#026AA2] rounded-md",
@@ -221,36 +275,80 @@ const DiscoverProject = () => {
   };
   const [openDetail, setOpenDetail] = useState(false);
 
-  const handleClick = (principal) => {
+  const handleClick = (principal,user) => {
     setprincipal(principal);
     setOpenDetail(true);
+    setUserDataToSend(user)
     console.log("passed principle", principal);
   };
-
   const handleRating=(ratings)=>{
     setShowRatingModal(true)
     setUserRatingDetail(ratings)
+  }  
+  async function convertBufferToImageBlob(buffer) {
+    try {
+      // Assuming bufferToImageBlob returns a Promise
+      const blob = await bufferToImageBlob(buffer);
+      return blob;
+    } catch (error) {
+      console.error("Error converting buffer to image blob:", error);
+      throw error; // Re-throw the error to be handled by the caller
+    }
   }
-  console.log("userRatingDetail =>",userRatingDetail)
 
+  // Usage:
+  async function handleProfilePicture(profilePicture) {
+    try {
+      const blob = await convertBufferToImageBlob(profilePicture);
+      setImagePreview(blob);
+    } catch (error) {
+      // Handle any errors
+      console.error("Error handling profile picture:", error);
+    }
+  }
   return (
     <div>
-      {isLoading ? (
-        <div>Loading...</div>
-      ) : allProjectData.length > 0 ? (
-        allProjectData.map((projectArray, index) => {
+      {allProjectData.length > 0 ? (
+         <InfiniteScroll
+         dataLength={allProjectData.length}
+         next={loadMore}
+         hasMore={hasMore}
+         loader={<h4>Loading more...</h4>}
+         endMessage={<p>No more data available</p>}
+         refreshFunction={refresh}
+         pullDownToRefresh
+         pullDownToRefreshThreshold={50}
+         pullDownToRefreshContent={
+           <h3 style={{ textAlign: "center" }}>
+             &#8595; Pull down to refresh
+           </h3>
+         }
+         releaseToRefreshContent={
+           <h3 style={{ textAlign: "center" }}>
+             &#8593; Release to refresh
+           </h3>
+         }
+       >
+        {allProjectData.map((projectArray, index) => {
           console.log("projectArray", projectArray);
           // const project_id = projectArray?.principal?.toText();
           const project_id = projectArray[1]?.params?.uid;
           const project = projectArray[1];
           const user = projectArray[2];
           console.log("000000000000000000000", project);
+          console.log("000000000000000000000", project.params.params.project_name);
           console.log("111111111111111111111", user);
           const randomTags = getRandomTags();
           // const randomSkills = getRandomskills();
           let profile = user?.profile_picture[0]
             ? uint8ArrayToBase64(user?.profile_picture[0])
             : "../../../assets/Logo/CypherpunkLabLogo.png";
+            const projectlogo = (project.params.params.project_logo[0]? uint8ArrayToBase64(project.params.params.project_logo[0])
+            : CypherpunkLabLogo)
+            console.log("projectlogo",imagePreview)
+          const projectname = project.params.params.project_name;
+          const projectdescription = project.params.params.project_description[0]
+          // console.log(project_name)
           let full_name = user?.full_name;
           let openchat_name = user?.openchat_username;
           let country = user?.country;
@@ -273,12 +371,12 @@ const DiscoverProject = () => {
             >
               <div className="w-[272px] relative">
                 <div
-                  onClick={() => handleClick(principle_id)}
+                  onClick={() => handleClick(principle_id, user)}
                   className="max-w-[250px] w-[250px] h-[254px] bg-gray-100 rounded-lg flex flex-col justify-between relative overflow-hidden"
                 >
                   <div className="absolute inset-0 flex items-center justify-center">
                     <img
-                      src={profile} // Placeholder logo image
+                      src={projectlogo ||CypherpunkLabLogo}  // Placeholder logo image
                       alt={full_name ?? "Project"}
                       className="w-24 h-24 rounded-full object-cover"
                     />
@@ -296,8 +394,23 @@ const DiscoverProject = () => {
               <div className="flex-grow ml-[25px] w-[544px]">
                 <div className="flex justify-between items-start mb-2">
                   <div>
-                    <h3 className="text-xl font-bold">{full_name}</h3>
-                    <p className="text-gray-500">@{openchat_name}</p>
+                  <div>
+              <h3 className="text-xl font-bold">{projectname}</h3>
+              <span className="flex py-2">
+                <Avatar
+                  alt="Mentor"
+                  src={profile}
+                  className=" mr-2"
+                  sx={{ width: 24, height: 24 }}
+                />
+                <span className="text-gray-500">{full_name}</span>
+              </span>
+              <span className="text-gray-500">@{openchat_name}</span>
+            
+            </div>
+                   {/* <h3 className="text-xl font-bold">{projectname}</h3> */}
+                    {/* <h3 className="text-xl font-bold">{full_name}</h3> */}
+                    {/* <p className="text-gray-500">@{openchat_name}</p> */}
                   </div>
                   {userCurrentRoleStatusActiveRole === "mentor" ||
                   userCurrentRoleStatusActiveRole === "vc" ? (
@@ -325,6 +438,8 @@ const DiscoverProject = () => {
                     ""
                   )}
                 </div>
+                <div className="border-t border-gray-200 mt-3"></div>
+
                 <div className="mb-2">
                   {activeRole && (
                     <span
@@ -338,9 +453,9 @@ const DiscoverProject = () => {
                     </span>
                   )}
                 </div>
-                <div className="border-t border-gray-200 my-3">{email}</div>
+                {/* <div className="border-t border-gray-200 my-3">{email}</div> */}
 
-                <p className="text-gray-600 mb-4">{bio}</p>
+                <p className="text-gray-600 mb-4 line-clamp-3  "> {parse(projectdescription)}</p>
                 <div className="flex items-center text-sm text-gray-500 flex-wrap">
                   {randomSkills.map((skill, index) => (
                     <span
@@ -359,16 +474,16 @@ const DiscoverProject = () => {
               </div>
             </div>
           );
-        })
+        })}
+          </InfiniteScroll>
       ) : (
-        <div><NoData message="No projects posted yet "/> </div>
+        <div>No Data Available</div>
       )}
       {showRatingModal && (
         <RatingModal
           showRating={showRatingModal}
           setShowRatingModal={setShowRatingModal}
-          userRatingDetail={userRatingDetail}
-        />
+          userRatingDetail={userRatingDetail}        />
       )}
       {isAddProjectModalOpen && (
         <AddAMentorRequestModal
@@ -392,7 +507,7 @@ const DiscoverProject = () => {
           openDetail={openDetail}
           setOpenDetail={setOpenDetail}
           principal={principal}
-        />
+          userData ={userDataToSend}        />
       )}
     </div>
   );

@@ -49,6 +49,7 @@ const MoneyRaisedCard = ({ data }) => {
         sns,
         target_amount,
     } = data[0].params.money_raised[0]; // Destructure the necessary fields
+    console.log("data kya kya aa rha h",data)
 
     return (
         <div className="space-y-4">

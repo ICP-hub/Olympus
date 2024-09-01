@@ -1,56 +1,92 @@
-import React, { useState } from 'react'
-import org from "../../../../assets/images/Org.png"
-import DiscoverMentorPage from './discoverMentorPage/DiscoverMentorPage'
+import React, { useState } from "react";
+import org from "../../../../assets/images/Org.png";
+import DiscoverMentorPage from "./discoverMentorPage/DiscoverMentorPage";
 import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
+import parse from "html-react-parser";
 
-const UserProjectCard = (projectData) => {
-    const [openDetail,setOpenDetail]=useState(false)
-    const handleClick =()=>{
-        setOpenDetail(true)
-    }
-    const projectDetails= projectData?.projectData?.[0]?.[0]?.params
-    const projectId=projectData?.projectData?.[0]?.[0]?.uid
-    const userDetails= projectData?.projectData?.[0]?.[1]?.params
+const UserProjectCard = ({projectData,userData,principal}) => {
+  console.log("PRINCIPAL IN PROJECT PAGE", principal);
+  console.log("USER DATA IN PROJECT PAGE", userData);
+  console.log("PROJECT DATA IN LINE 10", projectData);
+  const [openDetail, setOpenDetail] = useState(false);
+  const handleClick = () => {
+    setOpenDetail(true);
+  };
+  const projectDetails = projectData?.[0]?.[0]?.params;
+  console.log("PROJECT DATA IN LINE 16", projectDetails);
 
-    console.log("Project Data in CHILD COMPONENT at 0 ", projectData?.projectData?.[0]?.[0]?.params)
-    console.log("Project Data in CHILD COMPONENT at 1 ", projectData?.projectData?.[0]?.[1]?.params)
+  const description =
+    projectData?.[0]?.[0]?.params.project_description?.[0];
 
-    const projectlogo =
+  console.log("desc", description);
+  const projectId = projectData?.[0]?.[0]?.uid;
+  const userDetails = projectData?.[0]?.[1]?.params;
+  const fullname = projectData?.[0]?.[1]?.params.full_name;
+
+  // const areaoffocus = projectData?.projectData?.[0]?.[0]?.params.project_area_of_focus
+  const areaoffocus =
+    projectData?.[0]?.[0]?.params.project_area_of_focus?.split(
+      ", "
+    );
+  const projectlogo =
     projectDetails?.project_logo && projectDetails?.project_logo[0]
       ? uint8ArrayToBase64(projectDetails?.project_logo[0])
       : "default-profile.png";
 
-      const projectcover =
-      projectDetails?.project_cover && projectDetails?.project_cover[0]
+  const projectcover =
+    projectDetails?.project_cover && projectDetails?.project_cover[0]
       ? uint8ArrayToBase64(projectDetails?.project_cover[0])
       : "default-profile.png";
 
-    return (
-        <div className="bg-white shadow-md border rounded-lg p-4 ">
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">Projects</h2>
-            <div onClick={()=>handleClick()} className="flex items-center cursor-pointer pl-3 gap-6">
-                <div className="w-[260px] h-[120px] bg-gray-100 rounded-md flex items-center justify-center">
-                    <img
-                        src={projectlogo}
-                        alt="Cypherpunk Labs Logo"
-                        className="w-[90px] h-[90px] "
-                    />
-                </div>
-                <div>
-                    <h3 className="text-lg font-bold text-gray-900">{projectDetails?.project_name}</h3>
-                    {/* <p className="text-gray-500">@cypherpunklabs</p> */}
-                    <p className="text-gray-600 text-sm mt-2">
-                        {projectDetails?.project_description}
-                    </p>
-                </div>
-            </div>
-            {openDetail && <DiscoverMentorPage openDetail={openDetail} setOpenDetail={setOpenDetail} projectDetails={projectDetails} projectId={projectId} />}
-            <div className="flex pl-3 space-x-2 mt-4">
-                <span className=" text-gray-700 text-xs font-medium px-2.5 py-0.5 border rounded-xl">MVP</span>
-                <span className=" text-gray-700 text-xs font-medium px-2.5 py-0.5 border rounded-xl">Infrastructure</span>
-            </div>
+  return (
+    <div className="bg-white shadow-md border rounded-lg p-4 ">
+      <h2 className="text-lg font-semibold text-gray-800 mb-4">Projects</h2>
+      <div
+        onClick={() => handleClick()}
+        className="flex items-center cursor-pointer pl-3 gap-6"
+      >
+        <div className="w-[400px] h-[140px] bg-gray-100 rounded-md flex items-center justify-center px-10 py-2">
+          <img
+            src={projectlogo}
+            alt="Cypherpunk Labs Logo"
+            className="w-[80px] h-[80px] object-fill rounded-lg"
+          />
         </div>
-    )
-}
+        <div>
+          <h3 className="text-lg font-bold text-gray-900 line-clamp-1">
+            {projectDetails?.project_name}
+          </h3>
+          <p className="text-gray-500 text-sm">@{fullname}</p>
+          <p className="text-gray-600 text-sm mt-2 line-clamp-3">
+            {description ? parse(description) : "No description available."}
+          </p>
+          <div className="flex space-x-2 mt-2 overflow-x-auto w-full max-w-full">
+    {areaoffocus?.map((focus, index) => (
+        <span
+            key={index}
+            className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1"
+        >
+            {focus}
+        </span>
+    ))}
+   
+</div>
+        </div>
+      </div>
+      {openDetail && (
+        <DiscoverMentorPage
+          openDetail={openDetail}
+          setOpenDetail={setOpenDetail}
+          projectDetails={projectDetails}
+          projectId={projectId}
+          userData={userData}
+          principal={principal}
+        />
+      )}
 
-export default UserProjectCard
+     
+    </div>
+  );
+};
+
+export default UserProjectCard;

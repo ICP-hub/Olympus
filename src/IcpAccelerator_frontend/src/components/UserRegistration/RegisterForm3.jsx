@@ -23,7 +23,6 @@ import {
 import CompressedImage from "../../component/ImageCompressed/CompressedImage";
 import { LanguageIcon } from "./DefaultLink";
 
-
 const RegisterForm3 = ({ setImageData }) => {
   const { countries } = useCountries();
   const areaOfExpertise = useSelector(
@@ -155,6 +154,7 @@ const RegisterForm3 = ({ setImageData }) => {
       ...provided,
       paddingBlock: "2px",
       borderRadius: "8px",
+      borderColor: state.isFocused ? '#737373' : '#D1D5DB', 
       border: state.selectProps.error
         ? "2px solid #ef4444"
         : "2px solid #737373",
@@ -233,9 +233,7 @@ const RegisterForm3 = ({ setImageData }) => {
   return (
     <div className="">
       <h2 className="text-3xl font-bold mb-4">Tell about yourself</h2>
-      <label className="block text-sm font-medium mb-2">
-        Upload a photo<span className="text-[#155EEF]">*</span>
-      </label>
+      <label className="block text-sm font-medium mb-2">Upload a photo</label>
       <div className="flex gap-2 mb-3">
         <div className="h-24 w-24 rounded-2xl border-2 border-dashed border-gray-300 items-center justify-center overflow-hidden flex">
           {imagePreview && !errors.image ? (
@@ -260,55 +258,57 @@ const RegisterForm3 = ({ setImageData }) => {
             </svg>
           )}
         </div>
-        <div className="flex gap-1 items-center justify-center">
-          <Controller
-            name="image"
-            control={control}
-            render={({ field }) => (
-              <>
-                <input
-                  type="file"
-                  className="hidden"
-                  id="image"
-                  name="image"
-                  onChange={(e) => {
-                    field.onChange(e.target.files[0]);
-                    imageCreationFunc(e.target.files[0]);
-                  }}
-                  accept=".jpg, .jpeg, .png"
-                />
-                <label
-                  htmlFor="image"
-                  className="font-medium text-gray-700 border border-[#CDD5DF] px-4 py-1 cursor-pointer rounded"
-                >
-                  <ControlPointIcon
-                    fontSize="small"
-                    className="items-center -mt-1 mr-2"
+        <div className="flex flex-col gap-1 items-center justify-center">
+          <div className="flex gap-3">
+            <Controller
+              name="image"
+              control={control}
+              render={({ field }) => (
+                <>
+                  <input
+                    type="file"
+                    className="hidden"
+                    id="image"
+                    name="image"
+                    onChange={(e) => {
+                      field.onChange(e.target.files[0]);
+                      imageCreationFunc(e.target.files[0]);
+                    }}
+                    accept=".jpg, .jpeg, .png"
                   />
-                  {imagePreview && !errors.image
-                    ? "Change profile picture"
-                    : "Upload profile picture"}
-                </label>
-                {imagePreview || errors.image ? (
-                  <button
-                    className="font-medium px-4 py-1 cursor-pointer rounded border border-red-500 items-center text-md bg-transparent text-red-500  capitalize ml-1 sm0:ml-0"
-                    onClick={() => clearImageFunc("image")}
+                  <label
+                    htmlFor="image"
+                    className="font-medium text-gray-700 border border-[#CDD5DF] px-4 py-1 cursor-pointer rounded"
                   >
-                    clear
-                  </button>
-                ) : (
-                  ""
-                )}
-              </>
-            )}
-          />
+                    <ControlPointIcon
+                      fontSize="small"
+                      className="items-center -mt-1 mr-2"
+                    />
+                    {imagePreview && !errors.image
+                      ? "Change profile picture"
+                      : "Upload profile picture"}
+                  </label>
+                  {imagePreview || errors.image ? (
+                    <button
+                      className="font-medium px-4 py-1 cursor-pointer rounded border border-red-500 items-center text-md bg-transparent text-red-500  capitalize ml-1 sm0:ml-0"
+                      onClick={() => clearImageFunc("image")}
+                    >
+                      clear
+                    </button>
+                  ) : (
+                    ""
+                  )}
+                </>
+              )}
+            />
+          </div>
         </div>
-        {errors.image && (
-          <span className="mt-1 text-sm text-red-500 font-bold text-start px-4">
-            {errors?.image?.message}
-          </span>
-        )}
       </div>
+      {errors.image && (
+        <div className="my-3 text-sm text-red-500 font-bold text-start px-4">
+          {errors?.image?.message}
+        </div>
+      )}
 
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -335,7 +335,7 @@ const RegisterForm3 = ({ setImageData }) => {
               }
               options={reasonOfJoiningOptions}
               classNamePrefix="select"
-              className="basic-multi-select w-full text-start"
+              className="basic-multi-select border-[#737373] w-full text-start"
               placeholder="Select your reasons to join this platform"
               onChange={(selectedOptions) => {
                 const selectedValues = selectedOptions
@@ -352,11 +352,12 @@ const RegisterForm3 = ({ setImageData }) => {
           )}
         />
 
-        {touchedFields.reasons_to_join_platform && errors.reasons_to_join_platform && (
-          <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-            {errors.reasons_to_join_platform.message}
-          </span>
-        )}
+        {touchedFields.reasons_to_join_platform &&
+          errors.reasons_to_join_platform && (
+            <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+              {errors.reasons_to_join_platform.message}
+            </span>
+          )}
       </div>
 
       <div className="mb-4">
@@ -408,7 +409,7 @@ const RegisterForm3 = ({ setImageData }) => {
               value={interestedDomainsSelectedOptions}
               options={interestedDomainsOptions}
               classNamePrefix="select"
-              className="basic-multi-select w-full text-start"
+              className="basic-multi-select border-[#737373] w-full text-start"
               placeholder="Select domains you are interested in"
               onChange={(selectedOptions) => {
                 if (selectedOptions && selectedOptions.length > 0) {
@@ -435,104 +436,104 @@ const RegisterForm3 = ({ setImageData }) => {
           )}
         />
 
-        {touchedFields.domains_interested_in && errors.domains_interested_in && (
-          <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-            {errors.domains_interested_in.message}
-          </span>
+        {touchedFields.domains_interested_in &&
+          errors.domains_interested_in && (
+            <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+              {errors.domains_interested_in.message}
+            </span>
+          )}
+      </div>
+
+      <div className="mb-4">
+        <label
+          htmlFor="type_of_profile"
+          className="block text-sm font-medium text-gray-700 mb-2"
+        >
+          Type of Profile<span className="text-[#155EEF]">*</span>
+        </label>
+        <select
+          {...register("type_of_profile", {
+            validate: (value) =>
+              value !== "" || "Please select a valid profile type",
+          })}
+          className={`bg-gray-50 border-2 ${
+            errors?.type_of_profile ? "border-red-500 " : "border-[#737373]"
+          } mt-2 p-2 border border-gray-300 rounded-md w-full`}
+          onBlur={() => handleBlur("type_of_profile")}
+          defaultValue="" // Ensure the default value is set
+        >
+          <option className="text-lg font-bold" value="">
+            Select profile type
+          </option>
+          {typeOfProfileOptions &&
+            typeOfProfileOptions.map((val, index) => (
+              <option
+                className="text-lg font-bold"
+                key={index}
+                value={val?.value}
+              >
+                {val?.label}
+              </option>
+            ))}
+        </select>
+        {touchedFields.type_of_profile && errors?.type_of_profile && (
+          <p className="mt-1 text-sm text-red-500 font-bold text-left">
+            {errors?.type_of_profile?.message}
+          </p>
         )}
       </div>
 
       <div className="mb-4">
-  <label
-    htmlFor="type_of_profile"
-    className="block text-sm font-medium text-gray-700 mb-2"
-  >
-    Type of Profile<span className="text-[#155EEF]">*</span>
-  </label>
-  <select
-    {...register("type_of_profile", {
-      validate: (value) => value !== "" || "Please select a valid profile type"
-    })}
-    className={`bg-gray-50 border-2 ${
-      errors?.type_of_profile ? "border-red-500 " : "border-[#737373]"
-    } mt-2 p-2 border border-gray-300 rounded-md w-full`}
-    onBlur={() => handleBlur("type_of_profile")}
-    defaultValue="" // Ensure the default value is set
-  >
-    <option className="text-lg font-bold" value="">
-      Select profile type
-    </option>
-    {typeOfProfileOptions &&
-      typeOfProfileOptions.map((val, index) => (
-        <option
-          className="text-lg font-bold"
-          key={index}
-          value={val?.value}
+        <label
+          htmlFor="country"
+          className="block text-sm font-medium text-gray-700 mb-2"
         >
-          {val?.label}
-        </option>
-      ))}
-  </select>
-  {touchedFields.type_of_profile && errors?.type_of_profile && (
-    <p className="mt-1 text-sm text-red-500 font-bold text-left">
-      {errors?.type_of_profile?.message}
-    </p>
-  )}
-</div>
-
-
-      <div className="mb-4">
-  <label
-    htmlFor="country"
-    className="block text-sm font-medium text-gray-700 mb-2"
-  >
-    Location <span className="text-[#155EEF]">*</span>
-  </label>
-  <Controller
-    name="country"
-    control={control}
-    defaultValue="" // Set the initial default value
-    render={({ field }) => (
-      <select
-        {...field}
-        className={`bg-gray-50 border-2 ${
-          errors?.country ? "border-red-500 " : "border-[#737373]"
-        }  p-2 border border-gray-300 rounded-md w-full`}
-        onBlur={() => handleBlur("country")}
-        onChange={(e) => {
-          field.onChange(e);
-          clearErrors("country"); // Clear error if the value is valid
-        }}
-      >
-        <option className="text-lg font-bold" value="">
-          Select your country
-        </option>
-        {countries?.map((expert) => (
-          <option
-            key={expert.name}
-            value={expert.name}
-            className="text-lg font-bold"
-          >
-            {expert.name}
-          </option>
-        ))}
-      </select>
-    )}
-  />
-  {touchedFields?.country && errors?.country && (
-    <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-      {errors?.country?.message}
-    </span>
-  )}
-</div>
-
+          Location <span className="text-[#155EEF]">*</span>
+        </label>
+        <Controller
+          name="country"
+          control={control}
+          defaultValue="" // Set the initial default value
+          render={({ field }) => (
+            <select
+              {...field}
+              className={`bg-gray-50 border-2 ${
+                errors?.country ? "border-red-500 " : "border-[#737373]"
+              }  p-2 border border-gray-300 rounded-md w-full`}
+              onBlur={() => handleBlur("country")}
+              onChange={(e) => {
+                field.onChange(e);
+                clearErrors("country"); // Clear error if the value is valid
+              }}
+            >
+              <option className="text-lg font-bold" value="">
+                Select your country
+              </option>
+              {countries?.map((expert) => (
+                <option
+                  key={expert.name}
+                  value={expert.name}
+                  className="text-lg font-bold"
+                >
+                  {expert.name}
+                </option>
+              ))}
+            </select>
+          )}
+        />
+        {touchedFields?.country && errors?.country && (
+          <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+            {errors?.country?.message}
+          </span>
+        )}
+      </div>
 
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700 mb-2">
           Links
         </label>
         <div className="relative">
-          {fields.map((item, index) => (
+          {/* {fields.map((item, index) => (
             <div key={item.id} className="flex items-center mb-4 border-b pb-2">
               <Controller
                 name={`links[${index}].link`}
@@ -563,8 +564,59 @@ const RegisterForm3 = ({ setImageData }) => {
               >
                 <FaTrash />
               </button>
+              {touchedFields?.links && errors?.links && (
+    <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+      {errors?.links?.message}
+    </span>
+  )}
+            </div>
+          ))} */}
+          {fields.map((item, index) => (
+            <div key={item.id} className="flex flex-col ">
+              <div className="flex items-center mb-2  pb-1">
+              <Controller
+                name={`links[${index}].link`}
+                control={control}
+                render={({ field, fieldState }) => (
+                  <div className="flex items-center w-full">
+                    <div className="flex items-center space-x-2 w-full">
+                      <div className="flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full">
+                        {field.value && getLogo(field.value)}
+                      </div>
+                      <input
+                        type="text"
+                        placeholder="Enter your social media URL"
+                        className={`p-2 border ${
+                          fieldState.error
+                            ? "border-red-500"
+                            : "border-gray-300"
+                        } rounded-md w-full`}
+                        {...field}
+                      />
+                    </div>
+                  </div>
+                )}
+              />
+              <button
+                type="button"
+                onClick={() => remove(index)}
+                className="ml-2 text-red-500 hover:text-red-700"
+              >
+                <FaTrash />
+              </button>
+              </div>
+              <div className="mb-4 border-b pb-2">
+                {errors.links &&
+                  errors.links[index] &&
+                  errors.links[index].link && (
+                    <span className="mt-1 text-sm text-red-500 font-bold">
+                      {errors.links[index].link.message}
+                    </span>
+                  )}
+              </div>
             </div>
           ))}
+
           <button
             type="button"
             onClick={() => append({ link: "" })}

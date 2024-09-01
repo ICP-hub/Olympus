@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -8,8 +8,11 @@ import { useCountries } from "react-countries";
 import editp from "../../../assets/Logo/edit.png";
 import { allHubHandlerRequest } from "../StateManagement/Redux/Reducers/All_IcpHubReducer";
 import { ThreeDots } from "react-loader-spinner";
-import parse from 'html-react-parser'
-import { toast,Toaster } from "react-hot-toast";
+import parse from "html-react-parser";
+import { toast, Toaster } from "react-hot-toast";
+import { LinkedIn, GitHub, Telegram, Language } from "@mui/icons-material";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 import {
   FaLinkedin,
   FaTwitter,
@@ -26,7 +29,6 @@ import {
   FaPlus,
   FaTrash,
 } from "react-icons/fa";
-import { LanguageIcon } from "../UserRegistration/DefaultLink";
 import { validationSchema } from "../Modals/ProjectRegisterModal/projectValidation";
 import { founderRegisteredHandlerRequest } from "../StateManagement/Redux/Reducers/founderRegisteredData";
 
@@ -69,14 +71,11 @@ const ProjectDetail = () => {
   ]);
   const [reasonOfJoiningSelectedOptions, setReasonOfJoiningSelectedOptions] =
     useState([]);
-  // Mentor from states
   const [multiChainOptions, setMultiChainOptions] = useState([]);
   const [multiChainSelectedOptions, setMultiChainSelectedOptions] = useState(
     []
   );
   const [editMode, setEditMode] = useState({});
-
-  // const [formData, setFormData] = useState(defaultValues);
 
   const { countries } = useCountries();
   const dispatch = useDispatch();
@@ -84,18 +83,6 @@ const ProjectDetail = () => {
     (currState) => currState.internet.isAuthenticated
   );
   const projectId = projectFullData?.[0]?.[0]?.uid;
-
-
-  // const defaultValues = {
-  //   multi_chain: "false", 
-  //   weekly_active_users: 0,
-  //   revenue: 0,
-  //   money_raised_till_now: "false",
-  //   icp_grants: 0,
-  //   investors: 0,
-  //   raised_from_other_ecosystem: 0,
-  
-  // };
 
   const {
     register,
@@ -117,21 +104,19 @@ const ProjectDetail = () => {
       publicDocs: [],
       upload_private_documents: false,
       privateDocs: [],
-      weekly_active_users: 0,  // Keep as a number
-      revenue: 0,  // Keep as a number
+      weekly_active_users: 0,
+      revenue: 0,
       money_raised_till_now: false,
-      icp_grants: 0,  // Keep as a number
-      investors: 0,  // Keep as a number
-      raised_from_other_ecosystem: 0
+      icp_grants: 0,
+      investors: 0,
+      raised_from_other_ecosystem: 0,
     },
   });
 
   const { fields, append, remove } = useFieldArray({
     name: "links",
-    control
+    control,
   });
- 
-
 
   useEffect(() => {
     dispatch(allHubHandlerRequest());
@@ -143,8 +128,6 @@ const ProjectDetail = () => {
     }
   }, [isAuthenticated, dispatch]);
 
-
-
   const setFormValues = (data) => {
     if (data) {
       Object.keys(data).forEach((key) => {
@@ -153,11 +136,11 @@ const ProjectDetail = () => {
       setFormData(data);
     }
   };
-  // default interests set function
+
   const [socialLinks, setSocialLinks] = useState({});
-  console.log("mere link aa rahe hai ", socialLinks);
   const [isEditingLink, setIsEditingLink] = useState({});
   const [isLinkBeingEdited, setIsLinkBeingEdited] = useState(false);
+
   const handleLinkEditToggle = (link) => {
     setIsEditingLink((prev) => ({
       ...prev,
@@ -174,45 +157,41 @@ const ProjectDetail = () => {
   };
 
   const getIconForLink = (url) => {
-    console.log("URL being checked:", url); // Add this line for debugging
     if (url.includes("linkedin.com")) {
-      console.log("LinkedIn detected");
       return LinkedIn;
     } else if (url.includes("github.com")) {
-      console.log("GitHub detected");
       return GitHub;
     } else if (url.includes("t.me") || url.includes("telegram")) {
-      console.log("Telegram detected");
       return Telegram;
     } else {
-      console.log("Generic link detected");
       return Language;
     }
   };
+
   const onSubmitHandler = async (data) => {
-    console.log("mera submit data ja raha hai ",data)
+    console.log("on submit data ....",data )
+    const updatedSocialLinks = Object.entries(socialLinks).map(([key, value]) => ({
+      link: value ? [value] : [],
+    }));
     if (actor) {
       const projectData = {
-        // project data
         project_cover: coverData ? [coverData] : [],
         project_logo: logoData ? [logoData] : [],
-        preferred_icp_hub: [data?.preferred_icp_hub || ""],
-        project_name: data?.project_name || "",
-        project_description: [data?.project_description || ""],
-        project_elevator_pitch: [data?.project_elevator_pitch || ""],
-        project_website: [data?.project_website || ""],
+        preferred_icp_hub: [data?.preferred_icp_hub ?? ""],
+        project_name: data?.project_name ?? "",
+        project_description: [data?.project_description ?? ""],
+        project_elevator_pitch: [data?.project_elevator_pitch ?? ""],
+        project_website: [data?.project_website ?? ""],
         is_your_project_registered: [
           data?.is_your_project_registered === "true" ? true : false,
         ],
         type_of_registration: [
-          data?.is_your_project_registered === "true" &&
-          data?.type_of_registration
+          data?.is_your_project_registered === "true" && data?.type_of_registration
             ? data?.type_of_registration
             : "",
         ],
         country_of_registration: [
-          data?.is_your_project_registered === "true" &&
-          data?.country_of_registration
+          data?.is_your_project_registered === "true" && data?.country_of_registration
             ? data?.country_of_registration
             : "",
         ],
@@ -226,12 +205,12 @@ const ProjectDetail = () => {
         ],
         weekly_active_users: [
           data?.live_on_icp_mainnet === "true" && data?.weekly_active_users
-            ? data?.weekly_active_users
+            ? Number(data.weekly_active_users)
             : 0,
         ],
         revenue: [
           data?.live_on_icp_mainnet === "true" && data?.revenue
-            ? data?.revenue
+            ? Number(data.revenue)
             : 0,
         ],
         supports_multichain: [
@@ -245,6 +224,30 @@ const ProjectDetail = () => {
         money_raising: [data?.money_raising === "true" ? true : false],
         money_raised: [
           {
+            // icp_grants: [
+            //   data?.money_raised_till_now === "true" && data?.icp_grants
+            //     ? data?.icp_grants.toString()
+            //     : "",
+            // ],
+            // investors: [
+            //   data?.money_raised_till_now === "true" && data?.investors
+            //     ? data?.investors.toString()
+            //     : "",
+            // ],
+            // raised_from_other_ecosystem: [
+            //   data?.money_raised_till_now === "true" && data?.raised_from_other_ecosystem
+            //     ? data?.raised_from_other_ecosystem.toString()
+            //     : "",
+            // ],
+            // sns: [
+            //   data?.money_raising === "true" && data?.valuation
+            //     ? data?.valuation.toString()
+            //     : "",
+            // ],
+            // target_amount:
+            //   data?.money_raising === "true" && data?.target_amount
+            //     ? [Number(data.target_amount)]
+            //     : [],
             icp_grants: data.icp_grants ? data.icp_grants.toString() : null, // Convert to string or null
             investors: data?.investors ? data?.investors.toString() : null, // Convert to string or null
             raised_from_other_ecosystem: data.raised_from_other_ecosystem ? data.raised_from_other_ecosystem.toString() : null, // Convert to string or null
@@ -253,15 +256,13 @@ const ProjectDetail = () => {
 
           },
         ],
-        promotional_video: [data?.promotional_video || ""],
-        links: data?.links
-          ? [data.links.map((val) => ({ link: val?.link ? [val.link] : [] }))]
-          : [],
-        // project_discord: [data?.project_discord || ""],
-        // project_linkedin: [data?.project_linkedin || ""],
-        // github_link: [data?.github_link || ""],
-        token_economics: [data?.token_economics || ""],
-        long_term_goals: [data?.white_paper || ""],
+        promotional_video: [data?.promotional_video ?? ""],
+        // links: data?.links
+        //   ? [data.links.map((val) => ({ link: val?.link ? [val.link] : [] }))]
+        //   : [],
+          links: [updatedSocialLinks], 
+        token_economics: [data?.token_economics ?? ""],
+        long_term_goals: [data?.white_paper ?? ""],
         private_docs:
           data?.upload_private_documents === "true" ? [data?.privateDocs] : [],
         public_docs:
@@ -269,9 +270,10 @@ const ProjectDetail = () => {
         upload_private_documents: [
           data?.upload_private_documents === "true" ? true : false,
         ],
-        // Extra field at Project
-        project_area_of_focus: "",
-        reason_to_join_incubator: data?.reason_to_join_incubator ?? "",
+        project_area_of_focus: data?.project_area_of_focus
+        .map((focus) => focus.value)
+        .join(", "), 
+        reason_to_join_incubator: data?.reason_to_join_incubator.join(", "),
         vc_assigned: [],
         mentors_assigned: [],
         project_team: [],
@@ -280,40 +282,34 @@ const ProjectDetail = () => {
         technical_docs: [""],
         self_rating_of_project: 0,
       };
-
+    
+      console.log("on submit mera project update data ja raha hai  ....",projectData )
+      console.log("on submit mera projectId update data ja raha hai  ....",projectId )
       try {
-       
-          console.log("project id ",projectId)
-        
-          await actor.update_project(projectId, projectData).then((result) => {
-            console.log("result in project to check update call==>", result);
-            if(result){
-              toast.success(result)
-            }
-          });
+        await actor.update_project(projectId, projectData).then((result) => {
+          console.log("on submit mera result update data ja raha hai  ....",result )
+          if (result) {
+            toast.success(result);
+          }
+        });
       } catch (error) {
-        toast.error(error);
-        console.error("Error sending data to the backend:", error);
+        toast.error(error.message);
+        console.error("Error:", error);
       }
     } else {
       toast.error("Please signup with internet identity first");
       window.location.href = "/";
     }
+    setIsEditingLink({});
+    setIsLinkBeingEdited(false);
   };
 
-
   const onErrorHandler = (val) => {
-    console.log("error", val);
     toast.error("Empty fields or invalid values, please recheck the form");
   };
 
   const setProjectValuesHandler = (val) => {
-    console.log("val", val);
-    // console.log("valdata",  val[0]?.[0]?.params.reason_to_join_incubator);
-
     if (val) {
-
-     
       setLogoPreview(
         val?.project_logo?.[0] instanceof Uint8Array
           ? uint8ArrayToBase64(val?.project_logo?.[0])
@@ -324,14 +320,16 @@ const ProjectDetail = () => {
           ? uint8ArrayToBase64(val?.project_cover?.[0])
           : ""
       );
-      // setValue(
-      //   "reason_to_join_incubator",
-      //   val[0]?.[0]?.params.reason_to_join_incubator ? val[0]?.[0]?.params.reason_to_join_incubator.join(", ") : ""
-      // );
-      
-      setValue("preferred_icp_hub", val[0]?.[0]?.params.preferred_icp_hub?.[0]);
+
+      setValue(
+        "preferred_icp_hub",
+        val[0]?.[0]?.params.preferred_icp_hub?.[0]
+      );
       setValue("project_name", val[0]?.[0]?.params.project_name ?? "");
-      setValue("project_description", parse(val[0]?.[0]?.params.project_description?.[0]) ?? "");
+      setValue(
+        "project_description",
+        val[0]?.[0]?.params.project_description?.[0] ?? ""
+      );
       setValue(
         "project_elevator_pitch",
         val[0]?.[0]?.params.project_elevator_pitch?.[0] ?? ""
@@ -339,18 +337,18 @@ const ProjectDetail = () => {
       setValue("project_website", val[0]?.[0]?.params.project_website?.[0] ?? "");
       setValue(
         "is_your_project_registered",
-        val[0]?.[0]?.params.is_your_project_registered ?? ""
-      );
-      setValue(
-        "is_your_project_registered",
         val[0]?.[0]?.params.is_your_project_registered?.[0] ?? ""
       );
+
       if (val[0]?.[0]?.params.is_your_project_registered?.[0] === true) {
         setValue("is_your_project_registered", "true");
       } else {
         setValue("is_your_project_registered", "false");
       }
-      setValue("type_of_registration", val[0]?.[0]?.params.type_of_registration?.[0] ?? "");
+      setValue(
+        "type_of_registration",
+        val[0]?.[0]?.params.type_of_registration?.[0] ?? ""
+      );
       setValue(
         "country_of_registration",
         val[0]?.[0]?.params.country_of_registration?.[0] ?? ""
@@ -362,7 +360,10 @@ const ProjectDetail = () => {
         setValue("live_on_icp_mainnet", "false");
       }
       setValue("dapp_link", val[0]?.[0]?.params.dapp_link?.[0] ?? "");
-      setValue("weekly_active_users", val[0]?.[0]?.params.weekly_active_users?.[0] ?? 0);
+      setValue(
+        "weekly_active_users",
+        val[0]?.[0]?.params.weekly_active_users?.[0] ?? 0
+      );
       setValue("revenue", val[0]?.[0]?.params.revenue?.[0] ?? 0);
       if (val[0]?.[0]?.params.supports_multichain?.[0]) {
         setValue("multi_chain", "true");
@@ -371,15 +372,31 @@ const ProjectDetail = () => {
       }
       setValue(
         "multi_chain_names",
-        val[0]?.[0]?.params.supports_multichain ? val[0]?.[0]?.params.supports_multichain.join(", ") : ""
+        val[0]?.[0]?.params.supports_multichain
+          ? val[0]?.[0]?.params.supports_multichain.join(", ")
+          : ""
       );
-      setMultiChainSelectedOptionsHandler(val[0]?.[0]?.params.supports_multichain ?? null);
-      setValue("multi_chain", val[0]?.[0]?.params.supports_multichain?.[0] ? "true" : "false");
-      
+      setMultiChainSelectedOptionsHandler(
+        val[0]?.[0]?.params.supports_multichain ?? null
+      );
       setValue(
-        "reason_to_join_incubator",
-        val[0]?.[0]?.params.reason_to_join_incubator ? val[0]?.[0]?.params.reason_to_join_incubator : null
+        "multi_chain",
+        val[0]?.[0]?.params.supports_multichain?.[0] ? "true" : "false"
       );
+
+      const reasonToJoinString =
+        val[0]?.[0]?.params?.reason_to_join_incubator || "";
+      const reasonToJoinOptions = reasonToJoinString
+        .split(",")
+        .map((reason) => reason.trim());
+
+      const formattedReasons = reasonToJoinOptions.map((reason) => ({
+        value: reason,
+        label: reason.charAt(0).toUpperCase() + reason.slice(1),
+      }));
+
+      setReasonOfJoiningSelectedOptions(formattedReasons);
+      setValue("reason_to_join_incubator", formattedReasons);
       if (val[0]?.[0]?.params.money_raised_till_now?.[0] === true) {
         setValue("money_raised_till_now", "true");
       } else {
@@ -393,25 +410,42 @@ const ProjectDetail = () => {
       } else {
         setValue("money_raising", "false");
       }
-      setValue("icp_grants", val[0]?.[0]?.params.money_raised?.[0]?.icp_grants || 0);
-      setValue("investors", val[0]?.[0]?.params.money_raised?.[0]?.investors || 0);
+      setValue(
+        "icp_grants",
+        val[0]?.[0]?.params.money_raised?.[0]?.icp_grants || 0
+      );
+      setValue(
+        "investors",
+        val[0]?.[0]?.params.money_raised?.[0]?.investors || 0
+      );
       setValue(
         "raised_from_other_ecosystem",
-        val[0]?.[0]?.params.money_raised?.[0]?.raised_from_other_ecosystem || 0
+        val[0]?.[0]?.params.money_raised?.[0]?.raised_from_other_ecosystem ||
+          0
       );
       setValue("valuation", val[0]?.[0]?.params.money_raised?.[0]?.sns ?? 0);
       setValue(
         "target_amount",
-        val[0]?.[0]?.params.money_raised?.[0]?.target_amount?? 0
+        val[0]?.[0]?.params.money_raised?.[0]?.target_amount ?? 0
       );
-     
 
-      setValue("promotional_video", val[0]?.[0]?.params.promotional_video?.[0] ?? "");
-      setValue("project_discord", val[0]?.[0]?.params.project_discord?.[0] ?? "");
-      setValue("project_linkedin", val[0]?.[0]?.params.project_linkedin?.[0] ?? "");
-      setValue("github_link", val[0]?.[0]?.params.github_link?.[0] ?? "");
-      setValue("token_economics", val[0]?.[0]?.params.token_economics?.[0] ?? "");
-      setValue("white_paper", val[0]?.[0]?.params.long_term_goals?.[0] ?? "");
+      const projectAreaOfFocusString =
+        val[0]?.[0]?.params?.project_area_of_focus || "";
+      const projectAreaOfFocusArray = projectAreaOfFocusString
+        .split(",")
+        .map((area) => area.trim());
+
+      const formattedAreas = projectAreaOfFocusArray.map((area) => ({
+        value: area,
+        label: area.charAt(0).toUpperCase() + area.slice(1),
+      }));
+
+      setInterestedDomainsSelectedOptions(formattedAreas);
+      setValue("project_area_of_focus", formattedAreas);
+      setValue(
+        "promotional_video",
+        val[0]?.[0]?.params.promotional_video?.[0] ?? ""
+      );
       setValue(
         "upload_private_documents",
         val[0]?.[0]?.params.upload_private_documents?.[0] ?? ""
@@ -421,54 +455,46 @@ const ProjectDetail = () => {
       } else {
         setValue("upload_private_documents", "false");
       }
-      if (val[0]?.[0]?.params && val[0]?.[0]?.params.public_docs?.[0] && val[0]?.[0]?.params.public_docs?.[0].length) {
+      if (
+        val[0]?.[0]?.params &&
+        val[0]?.[0]?.params.public_docs?.[0] &&
+        val[0]?.[0]?.params.public_docs?.[0].length
+      ) {
         setValue("upload_public_documents", "true");
       } else {
         setValue("upload_public_documents", "false");
       }
       setValue("privateDocs", val[0]?.[0]?.params.private_docs?.[0] ?? []);
       setValue("publicDocs", val[0]?.[0]?.params.public_docs?.[0] ?? []);
-      if (val[0]?.[0]?.params.social_links?.length) {
+      if (val[0]?.[0]?.params.links?.length) {
         const links = {};
-        val[0]?.[0]?.params.links.forEach((linkArray, index) => {
-          // Assuming linkArray is an array with a single object inside
-          if (Array.isArray(linkArray) && linkArray.length > 0) {
-            const linkData = linkArray[0];
-            console.log(`Processing social link #${index + 1}:`, linkData);
 
-            if (linkData?.link?.length > 0) {
-              const url = linkData.link[0];
-              console.log("Found URL: ", url);
+        val[0]?.[0]?.params.links.forEach((linkArray) => {
+          linkArray.forEach((linkData) => {
+            const url = linkData.link[0];
 
-              if (url && typeof url === "string") {
-                if (url.includes("linkedin.com")) {
-                  links["LinkedIn"] = url;
-                } else if (url.includes("github.com")) {
-                  links["GitHub"] = url;
-                } else if (url.includes("t.me") || url.includes("telegram")) {
-                  links["Telegram"] = url;
-                } else {
-                  links[`OtherLink${index + 1}`] = url; // Differentiate other links
-                }
+            if (url && typeof url === "string") {
+              if (url.includes("linkedin.com")) {
+                links["LinkedIn"] = url;
+              } else if (url.includes("github.com")) {
+                links["GitHub"] = url;
+              } else if (url.includes("t.me") || url.includes("telegram")) {
+                links["Telegram"] = url;
               } else {
-                console.log("Invalid URL or not a string:", url);
+                const domainKey = new URL(url).hostname.replace("www.", "");
+                links[domainKey] = url;
               }
-            } else {
-              console.log("No valid link found in linkData:", linkData);
             }
-          } else {
-            console.log("Link array is empty or not an array:", linkArray);
-          }
+          });
         });
-        console.log("Final links object:", links);
+
         setSocialLinks(links);
       } else {
-        console.log("No social_links array or it's empty");
         setSocialLinks({});
       }
-
     }
   };
+
   const setInterestedDomainsSelectedOptionsHandler = (val) => {
     setInterestedDomainsSelectedOptions(
       val
@@ -504,7 +530,7 @@ const ProjectDetail = () => {
       setMultiChainOptions([]);
     }
   }, [multiChainNames]);
-  // default reasons set function
+
   const setReasonOfJoiningSelectedOptionsHandler = (val) => {
     setReasonOfJoiningSelectedOptions(
       val && val.length > 0 && val[0].length > 0
@@ -522,7 +548,7 @@ const ProjectDetail = () => {
 
   const handleCancel = () => {
     setEditMode(false);
-    setFormValues(formData);
+    setIsLinkBeingEdited(false);
   };
 
   const handleEditClick = (field) => {
@@ -580,7 +606,7 @@ const ProjectDetail = () => {
       setTypeOfProfileOptions([]);
     }
   }, [typeOfProfile]);
-  // Mentor form states
+
   useEffect(() => {
     if (multiChainNames) {
       setMultiChainOptions(
@@ -601,11 +627,9 @@ const ProjectDetail = () => {
   useEffect(() => {
     if (actor) {
       (async () => {
-        // Add the necessary condition here, for example: if (actor.get_my_project)
         if (actor.get_my_project) {
           const result = await actor.get_my_project();
           if (result) {
-            console.log("result", result);
             setImageData(
               result?.params?.user_data?.profile_picture?.[0] ?? null
             );
@@ -630,58 +654,115 @@ const ProjectDetail = () => {
       })();
     }
   }, [actor]);
-  
-
 
   useEffect(() => {
-    if (projectFullData ) {
-      console.log("Project full data ..............==>", projectFullData);
+    if (projectFullData) {
       setProjectValuesHandler(projectFullData);
       setEditMode(true);
     }
   }, [projectFullData]);
 
-  // const preferIcp= projectFullData[0]?.[0]?.params.preferred_icp_hub
-  // console.log(preferIcp)
- // Extract values from projectFullData
-const preferred_icp_hub = projectFullData[0]?.[0]?.params.preferred_icp_hub?.[0] ?? "";
-const project_name = projectFullData[0]?.[0]?.params.project_name ?? "";
-const project_description = parse(projectFullData[0]?.[0]?.params.project_description?.[0]) ?? "";
-const project_elevator_pitch = projectFullData[0]?.[0]?.params.project_elevator_pitch ?? "";
-const project_website = projectFullData[0]?.[0]?.params.project_website?.[0] ?? "";
-const is_your_project_registered = projectFullData[0]?.[0]?.params.is_your_project_registered?.[0] ? "true" : "false";
-const isyourprojectregistered = is_your_project_registered ? "Yes":"No";
-const type_of_registration = projectFullData[0]?.[0]?.params.type_of_registration?.[0] ?? "";
-const country_of_registration = projectFullData[0]?.[0]?.params.country_of_registration?.[0] ?? "";
-const live_on_icp_mainnet = projectFullData[0]?.[0]?.params.live_on_icp_mainnet?.[0] ? "true" : "false";
-const liveonicpmainnet = live_on_icp_mainnet ? "Yes":"No";
-const dapp_link = projectFullData[0]?.[0]?.params.dapp_link?.[0] ?? "";
-const weekly_active_users = projectFullData[0]?.[0]?.params.weekly_active_users?.[0] ?? "";
-const revenue = projectFullData[0]?.[0]?.params.revenue?.[0] ?? "";
-const multi_chain = projectFullData[0]?.[0]?.params.supports_multichain?.[0] ? "true" : "false";
- const multichain = multi_chain ? "Yes":"No";
-const project_area_of_focus = projectFullData[0]?.[0]?.params.project_area_of_focus;
-const multi_chain_names = projectFullData[0]?.[0]?.params.supports_multichain?.join(", ") ?? "";
-const money_raised_till_now = projectFullData[0]?.[0]?.params.money_raised_till_now?.[0] ? "true" : "false";
-const moneyraisedtillnow = money_raised_till_now ? "Yes":"No";
-const money_raising = projectFullData[0]?.[0]?.params.money_raised?.[0]?.target_amount?.[0] && val[0]?.[0]?.params.money_raised?.[0]?.sns?.[0] ? "true" : "false";
-const moneyraising = money_raising ? "Yes":"No";
-const icp_grants = projectFullData[0]?.[0]?.params.money_raised?.[0]?.icp_grants ?? "";
-const investors = projectFullData[0]?.[0]?.params.money_raised?.[0]?.investors ?? "";
-const raised_from_other_ecosystem = projectFullData[0]?.[0]?.params.money_raised?.[0]?.raised_from_other_ecosystem ?? "";
-const valuation = projectFullData[0]?.[0]?.params.money_raised?.[0]?.sns ?? "";
-const target_amount = projectFullData[0]?.[0]?.params.money_raised?.[0]?.target_amount ?? 0;
-const promotional_video = projectFullData[0]?.[0]?.params.promotional_video?.[0] ?? "";
-const links = projectFullData[0]?.[0]?.params.links ;
-const token_economics = projectFullData[0]?.[0]?.params.token_economics?.[0] ?? "";
-const white_paper = projectFullData[0]?.[0]?.params.long_term_goals?.[0] ?? "";
-const upload_private_documents = projectFullData[0]?.[0]?.params.upload_private_documents?.[0] ? "true" : "false";
-const upload_public_documents = projectFullData[0]?.[0]?.params.public_docs?.[0]?.length ? "true" : "false";
-const privateDocs = projectFullData[0]?.[0]?.params.private_docs?.[0] ?? [];
-const publicDocs = projectFullData[0]?.[0]?.params.public_docs?.[0] ?? [];
-const reason_to_join_incubator = projectFullData[0]?.[0]?.params.reason_to_join_incubator;
-// You can then use these constants as needed in your application
+  const preferred_icp_hub =
+    projectFullData[0]?.[0]?.params.preferred_icp_hub?.[0] ?? "";
+  const project_name = projectFullData[0]?.[0]?.params.project_name ?? "";
+  const project_description =
+    projectFullData[0]?.[0]?.params.project_description?.[0] ?? "";
+  const project_elevator_pitch =
+    projectFullData[0]?.[0]?.params.project_elevator_pitch ?? "";
+  const project_website =
+    projectFullData[0]?.[0]?.params.project_website?.[0] ?? "";
+  const is_your_project_registered = projectFullData[0]?.[0]?.params
+    .is_your_project_registered?.[0]
+    ? "true"
+    : "false";
+  const isyourprojectregistered = is_your_project_registered ? "Yes" : "No";
+  const type_of_registration =
+    projectFullData[0]?.[0]?.params.type_of_registration?.[0] ?? "";
+  const country_of_registration =
+    projectFullData[0]?.[0]?.params.country_of_registration?.[0] ?? "";
+  const live_on_icp_mainnet = projectFullData[0]?.[0]?.params
+    .live_on_icp_mainnet?.[0]
+    ? "true"
+    : "false";
+  const liveonicpmainnet = live_on_icp_mainnet ? "Yes" : "No";
+  const dapp_link = projectFullData[0]?.[0]?.params.dapp_link?.[0] ?? "";
+  const weekly_active_users =
+    projectFullData[0]?.[0]?.params.weekly_active_users?.[0] ?? "";
+  const revenue = projectFullData[0]?.[0]?.params.revenue?.[0] ?? "";
+  const multi_chain = projectFullData[0]?.[0]?.params.supports_multichain?.[0]
+    ? "true"
+    : "false";
+  const multichain = multi_chain ? "Yes" : "No";
+  const project_area_of_focus =
+    projectFullData[0]?.[0]?.params.project_area_of_focus;
+  const multi_chain_names =
+    projectFullData[0]?.[0]?.params.supports_multichain?.join(", ") ?? "";
+  const money_raised_till_now = projectFullData[0]?.[0]?.params
+    .money_raised_till_now?.[0]
+    ? "true"
+    : "false";
+  const moneyraisedtillnow = money_raised_till_now ? "Yes" : "No";
+  const money_raising =
+    projectFullData[0]?.[0]?.params.money_raised?.[0]?.target_amount?.[0] &&
+    projectFullData[0]?.[0]?.params.money_raised?.[0]?.sns?.[0]
+      ? "true"
+      : "false";
+  const moneyraising = money_raising ? "Yes" : "No";
+  const icp_grants =
+    projectFullData[0]?.[0]?.params.money_raised?.[0]?.icp_grants ?? "";
+  const investors =
+    projectFullData[0]?.[0]?.params.money_raised?.[0]?.investors ?? "";
+  const raised_from_other_ecosystem =
+    projectFullData[0]?.[0]?.params.money_raised?.[0]?.raised_from_other_ecosystem ??
+    "";
+  const valuation = projectFullData[0]?.[0]?.params.money_raised?.[0]?.sns ?? "";
+  const target_amount =
+    projectFullData[0]?.[0]?.params.money_raised?.[0]?.target_amount ?? 0;
+  const promotional_video =
+    projectFullData[0]?.[0]?.params.promotional_video?.[0] ?? "";
+  const links = projectFullData[0]?.[0]?.params.links;
+  const token_economics =
+    projectFullData[0]?.[0]?.params.token_economics?.[0] ?? "";
+  const white_paper =
+    projectFullData[0]?.[0]?.params.long_term_goals?.[0] ?? "";
+  const upload_private_documents = projectFullData[0]?.[0]?.params
+    .upload_private_documents?.[0]
+    ? "true"
+    : "false";
+  const upload_public_documents = projectFullData[0]?.[0]?.params
+    .public_docs?.[0]?.length
+    ? "true"
+    : "false";
+  const privateDocs = projectFullData[0]?.[0]?.params.private_docs?.[0] ?? [];
+  const publicDocs = projectFullData[0]?.[0]?.params.public_docs?.[0] ?? [];
+  const reason_to_join_incubator =
+    projectFullData[0]?.[0]?.params.reason_to_join_incubator;
 
+  const modules = useMemo(
+    () => ({
+      toolbar: [
+        [{ header: "1" }, { header: "2" }, { font: [] }],
+        [{ list: "ordered" }, { list: "bullet" }],
+        ["bold", "italic", "underline"],
+        [{ align: [] }],
+        ["link"],
+        ["clean"],
+      ],
+    }),
+    []
+  );
+
+  const formats = [
+    "header",
+    "font",
+    "list",
+    "bullet",
+    "bold",
+    "italic",
+    "underline",
+    "align",
+    "link",
+  ];
 
   return (
     <div ref={projectDetailRef} className="px-1">
@@ -703,88 +784,67 @@ const reason_to_join_incubator = projectFullData[0]?.[0]?.params.reason_to_join_
   </div>
   {editMode.reason_to_join_incubator ? (
     <div>
-        <ReactSelect
-          isMulti
-          menuPortalTarget={document.body}
-          menuPosition={"fixed"}
-          styles={{
-            menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-            control: (provided, state) => ({
-              ...provided,
-              paddingBlock: "2px",
-              borderRadius: "8px",
-              border: errors.reason_to_join_incubator
-                ? "2px solid #737373"
-                : "2px solid #737373",
-              backgroundColor: "rgb(249 250 251)",
-              "&::placeholder": {
-                color: errors.reason_to_join_incubator
-                  ? "#ef4444"
-                  : "currentColor",
-              },
-              display: "flex",
-              overflowX: "auto",
-              maxHeight: "43px",
-              "&::-webkit-scrollbar": {
-                display: "none",
-              },
-            }),
-            valueContainer: (provided, state) => ({
-              ...provided,
-              overflow: "scroll",
-              maxHeight: "40px",
-              scrollbarWidth: "none",
-            }),
-            placeholder: (provided, state) => ({
-              ...provided,
-              color: errors.reason_to_join_incubator
-                ? "#ef4444"
-                : "rgb(107 114 128)",
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-            }),
-            multiValue: (provided) => ({
-              ...provided,
-              display: "inline-flex",
-              alignItems: "center",
+     <ReactSelect
+  isMulti
+  menuPortalTarget={document.body}
+  menuPosition={"fixed"}
+  styles={{
+    menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+    control: (provided, state) => ({
+      ...provided,
+      paddingBlock: "2px",
+      borderRadius: "8px",
+      border: errors.reason_to_join_incubator
+        ? "2px solid #737373"
+        : "2px solid #737373",
+      backgroundColor: "rgb(249 250 251)",
+      display: "flex",
+      overflowX: "auto",
+      maxHeight: "43px",
+    }),
+    valueContainer: (provided) => ({
+      ...provided,
+      overflow: "scroll",
+      maxHeight: "40px",
+      scrollbarWidth: "none",
+    }),
+    placeholder: (provided) => ({
+      ...provided,
+      color: errors.reason_to_join_incubator ? "#ef4444" : "rgb(107 114 128)",
+      whiteSpace: "nowrap",
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+    }),
+    multiValue: (provided) => ({
+      ...provided,
+      display: "inline-flex",
+      alignItems: "center",
+      backgroundColor: "white",
+      border: "2px solid #E3E3E3",
+    }),
+    multiValueRemove: (provided) => ({
+      ...provided,
+      display: "inline-flex",
+      alignItems: "center",
+    }),
+  }}
+  value={reasonOfJoiningSelectedOptions}
+  options={reasonOfJoiningOptions}
+  classNamePrefix="select"
+  className="basic-multi-select w-full text-start"
+  placeholder="Select your reasons to join this platform"
+  name="reason_to_join_incubator"
+  onChange={(selectedOptions) => {
+    setReasonOfJoiningSelectedOptions(selectedOptions);
+    clearErrors("reason_to_join_incubator");
+    setValue(
+      "reason_to_join_incubator",
+      selectedOptions.map((option) => option.value),
+      { shouldValidate: true }
+    );
+  }}
+/>
 
-              backgroundColor: "white",
-              border: "2px solid #E3E3E3",
-            }),
-            multiValueRemove: (provided) => ({
-              ...provided,
-              display: "inline-flex",
-              alignItems: "center",
-            }),
-          }}
-          value={reasonOfJoiningSelectedOptions}
-          options={reasonOfJoiningOptions}
-          classNamePrefix="select"
-          className="basic-multi-select w-full text-start"
-          placeholder="Select your reasons to join this platform"
-          name="reason_to_join_incubator"
-          onChange={(selectedOptions) => {
-            if (selectedOptions && selectedOptions.length > 0) {
-              setReasonOfJoiningSelectedOptions(selectedOptions);
-              clearErrors("reason_to_join_incubator");
-              setValue(
-                "reason_to_join_incubator",
-                selectedOptions.map((option) => option.value).join(", "),
-                { shouldValidate: true }
-              );
-            } else {
-              setReasonOfJoiningSelectedOptions([]);
-              setValue("reason_to_join_incubator", "", {
-                shouldValidate: true,
-              });
-              setError("reason_to_join_incubator", {
-                type: "required",
-                message: "Selecting a reason is required",
-              });
-            }
-          }}
-        />
         {errors.reason_to_join_incubator && (
           <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
             {errors.reason_to_join_incubator.message}
@@ -922,27 +982,30 @@ const reason_to_join_incubator = projectFullData[0]?.[0]?.params.reason_to_join_
             </div>
             {editMode.project_description ? (
               <div>
-                <input
-                  type="text"
-                  {...register("project_description")}
-                  className={`bg-gray-50 border-2 
-                                             ${
-                                               errors?.project_description
-                                                 ? "border-red-500 "
-                                                 : "border-[#737373]"
-                                             } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                  placeholder="Max 50 words"
-                />
-                {errors?.project_description && (
-                  <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-                    {errors?.project_description?.message}
+                <Controller
+        name="project_description"
+        control={control}
+        defaultValue={project_description}
+        render={({ field: { onChange, value } }) => (
+          <ReactQuill
+            value={value}
+            onChange={onChange}
+            modules={modules}
+            formats={formats}
+            placeholder="Enter your description here..."
+          />
+        )}
+      />
+                {errors.project_description && (
+                  <span className="mt-1 text-sm text-red-500 font-bold">
+                    {errors.project_description.message}
                   </span>
                 )}
               </div>
             ) : (
               <div className="flex justify-between items-center cursor-pointer py-1">
                 <span className="mr-2 text-sm line-clamp-3 hover:line-clamp-6">
-                  {project_description}
+                  {parse(project_description)}
                 </span>
               </div>
             )}
@@ -1853,85 +1916,86 @@ const reason_to_join_incubator = projectFullData[0]?.[0]?.params.reason_to_join_
               </div>
             </div>
             {editMode.project_area_of_focus ? (
-              <ReactSelect
-                isMulti
-                menuPortalTarget={document.body}
-                menuPosition={"fixed"}
-                styles={{
-                  menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-                  control: (provided, state) => ({
-                    ...provided,
-                    paddingBlock: "2px",
-                    borderRadius: "8px",
-                    border: errors.domains_interested_in
-                      ? "2px solid #ef4444"
-                      : "2px solid #737373",
-                    backgroundColor: "rgb(249 250 251)",
-                    "&::placeholder": {
-                      color: errors.domains_interested_in
-                        ? "#ef4444"
-                        : "currentColor",
-                    },
-                    display: "flex",
-                    overflowX: "auto",
-                    maxHeight: "43px",
-                    "&::-webkit-scrollbar": {
-                      display: "none",
-                    },
-                  }),
-                  valueContainer: (provided, state) => ({
-                    ...provided,
-                    overflow: "scroll",
-                    maxHeight: "40px",
-                    scrollbarWidth: "none",
-                  }),
-                  placeholder: (provided, state) => ({
-                    ...provided,
-                    color: errors.domains_interested_in
-                      ? "#ef4444"
-                      : "rgb(107 114 128)",
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                  }),
-                  multiValue: (provided) => ({
-                    ...provided,
-                    display: "inline-flex",
-                    alignItems: "center",
-                  }),
-                  multiValueRemove: (provided) => ({
-                    ...provided,
-                    display: "inline-flex",
-                    alignItems: "center",
-                  }),
-                }}
-                value={interestedDomainsSelectedOptions}
-                options={interestedDomainsOptions}
-                classNamePrefix="select"
-                className="basic-multi-select w-full text-start"
-                placeholder="Select domains you are interested in"
-                name="project_area_of_focus"
-                onChange={(selectedOptions) => {
-                  if (selectedOptions && selectedOptions.length > 0) {
-                    setInterestedDomainsSelectedOptions(selectedOptions);
-                    clearErrors("domains_interested_in");
-                    setValue(
-                      "domains_interested_in",
-                      selectedOptions.map((option) => option.value).join(", "),
-                      { shouldValidate: true }
-                    );
-                  } else {
-                    setInterestedDomainsSelectedOptions([]);
-                    setValue("project_area_of_focus", "", {
-                      shouldValidate: true,
-                    });
-                    setError("project_area_of_focus", {
-                      type: "required",
-                      message: "Selecting an interest is required",
-                    });
-                  }
-                }}
-              />
+             <ReactSelect
+             isMulti
+             menuPortalTarget={document.body}
+             menuPosition={"fixed"}
+             styles={{
+               menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+               control: (provided, state) => ({
+                 ...provided,
+                 paddingBlock: "2px",
+                 borderRadius: "8px",
+                 border: errors.project_area_of_focus
+                   ? "2px solid #ef4444"
+                   : "2px solid #737373",
+                 backgroundColor: "rgb(249 250 251)",
+                 "&::placeholder": {
+                   color: errors.project_area_of_focus
+                     ? "#ef4444"
+                     : "currentColor",
+                 },
+                 display: "flex",
+                 overflowX: "auto",
+                 maxHeight: "43px",
+                 "&::-webkit-scrollbar": {
+                   display: "none",
+                 },
+               }),
+               valueContainer: (provided, state) => ({
+                 ...provided,
+                 overflow: "scroll",
+                 maxHeight: "40px",
+                 scrollbarWidth: "none",
+               }),
+               placeholder: (provided, state) => ({
+                 ...provided,
+                 color: errors.project_area_of_focus
+                   ? "#ef4444"
+                   : "rgb(107 114 128)",
+                 whiteSpace: "nowrap",
+                 overflow: "hidden",
+                 textOverflow: "ellipsis",
+               }),
+               multiValue: (provided) => ({
+                 ...provided,
+                 display: "inline-flex",
+                 alignItems: "center",
+               }),
+               multiValueRemove: (provided) => ({
+                 ...provided,
+                 display: "inline-flex",
+                 alignItems: "center",
+               }),
+             }}
+             value={interestedDomainsSelectedOptions}
+             options={interestedDomainsOptions}
+             classNamePrefix="select"
+             className="basic-multi-select w-full text-start"
+             placeholder="Select domains you are interested in"
+             name="project_area_of_focus"
+             onChange={(selectedOptions) => {
+               if (selectedOptions && selectedOptions.length > 0) {
+                 setInterestedDomainsSelectedOptions(selectedOptions);
+                 clearErrors("project_area_of_focus");
+                 setValue(
+                   "project_area_of_focus",
+                   selectedOptions.map((option) => option.value).join(", "),
+                   { shouldValidate: true }
+                 );
+               } else {
+                 setInterestedDomainsSelectedOptions([]);
+                 setValue("project_area_of_focus", "", {
+                   shouldValidate: true,
+                 });
+                 setError("project_area_of_focus", {
+                   type: "required",
+                   message: "Selecting an interest is required",
+                 });
+               }
+             }}
+           />
+           
             ) : (
               <div className="flex flex-wrap gap-2">
                 {(project_area_of_focus) &&
@@ -2067,7 +2131,7 @@ const reason_to_join_incubator = projectFullData[0]?.[0]?.params.reason_to_join_
             )}
           </div> */}
           <h3 className="mb-2 text-xs text-gray-500 px-3">LINKS</h3>
-          <div className="flex items-center px-3">
+          <div className="flex items-center gap-5 px-3">
             {/* Display existing links */}
             {console.log("Display existing links ", socialLinks)}
             {socialLinks &&
@@ -2090,10 +2154,10 @@ const reason_to_join_incubator = projectFullData[0]?.[0]?.params.reason_to_join_
                     </a>
                     <button
                       type="button"
-                      className="absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 ease-in-out transform opacity-0 group-hover:opacity-100 group-hover:translate-x-8 h-10 w-7"
+                      className="absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 ease-in-out transform opacity-0 group-hover:opacity-100 group-hover:translate-x-6 h-10 w-7"
                       onClick={() => handleLinkEditToggle(key)}
                     >
-                      <img src={edit} alt="edit" />
+                      <img src={editp} alt="edit" />
                     </button>
                     {isEditingLink[key] && (
                       <input
@@ -2110,7 +2174,8 @@ const reason_to_join_incubator = projectFullData[0]?.[0]?.params.reason_to_join_
           </div>
 
           {/* Buttons */}
-            {Object.values(editMode).some((value) => value) && (
+            {/* {Object.values(editMode).some((value) => value) && ( */}
+                {(Object.values(editMode).some((value) => value) || isLinkBeingEdited ) && (
             <div className="flex justify-end gap-4 mt-4">
               <button
                 type="button"
