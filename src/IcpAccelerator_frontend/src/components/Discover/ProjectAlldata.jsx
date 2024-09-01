@@ -335,22 +335,20 @@ const DiscoverProject = ({onProjectCountChange}) => {
           const project_id = projectArray[1]?.params?.uid;
           const project = projectArray[1];
           const user = projectArray[2];
-          console.log("000000000000000000000", project);
-          console.log("000000000000000000000", project.params.params.project_name);
-          console.log("111111111111111111111", user);
           const randomTags = getRandomTags();
           // const randomSkills = getRandomskills();
           let profile = user?.profile_picture[0]
             ? uint8ArrayToBase64(user?.profile_picture[0])
             : "../../../assets/Logo/CypherpunkLabLogo.png";
-            const projectlogo = (project.params.params.project_logo[0]? uint8ArrayToBase64(project.params.params.project_logo[0])
-            : CypherpunkLabLogo)
+            const projectlogo = project.params.params.project_logo[0]
+            ? uint8ArrayToBase64(project.params.params.project_logo[0])
+            : CypherpunkLabLogo; 
             console.log("projectlogo",imagePreview)
           const projectname = project.params.params.project_name;
           const projectdescription = project.params.params.project_description[0]
           // console.log(project_name)
           let full_name = user?.full_name;
-          let openchat_name = user?.openchat_username;
+          let openchat_name = user?.openchat_username[0]??"N/A";
           let country = user?.country;
           let bio = user?.bio[0];
           let email = user?.email[0];
@@ -405,7 +403,7 @@ const DiscoverProject = ({onProjectCountChange}) => {
                 />
                 <span className="text-gray-500">{full_name}</span>
               </span>
-              <span className="text-gray-500">@{openchat_name}</span>
+              {/* <span className="text-gray-500">@{openchat_name}</span> */}
             
             </div>
                    {/* <h3 className="text-xl font-bold">{projectname}</h3> */}

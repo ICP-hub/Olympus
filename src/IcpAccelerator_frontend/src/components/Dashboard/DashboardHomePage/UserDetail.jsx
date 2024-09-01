@@ -228,21 +228,21 @@ const UserDetail = (projectData) => {
 
                       <div className="flex items-center ">
                         <div className="flex gap-3">
-                          {userData?.social_links[0]
-                            ? userData?.social_links[0]?.map(
-                                (link, i) => {
-                                  const icon = getLogo(link);
-                                  return (
-                                    <div
-                                      key={i}
-                                      className="flex items-center space-x-2"
-                                    >
-                                      {icon ? icon : ""}
-                                    </div>
-                                  );
-                                }
-                              )
-                            : ""}
+                        {userData?.social_links[0]?.map((linkObj, i) => {
+                                const link = linkObj.link[0]; // Assuming the link is in this format
+                                const icon = getLogo(link);
+                                return (
+                                  <a
+                                    key={i}
+                                    href={link}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center space-x-2"
+                                  >
+                                    {icon}
+                                  </a>
+                                );
+                              })}
                         </div>
                       </div>
                     </div>
