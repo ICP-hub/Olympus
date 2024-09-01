@@ -4,26 +4,37 @@ import { formFields2 } from "./EventFormData";
 import { useCountries } from "react-countries";
 import { useFormContext } from "react-hook-form";
 
-const EventReg2 = ({ formData ,singleEventData}) => {
-  const { register, formState: { errors }, setValue, watch } = useFormContext();
+const EventReg2 = ({ formData, singleEventData }) => {
+  const {
+    register,
+    formState: { errors },
+    setValue,
+    watch,
+  } = useFormContext();
   const { countries } = useCountries();
   const [inputType, setInputType] = useState("date");
-  const [selectCountry,setSelectCountry]=useState('')
-  const [selectArea,setSelectArea]=useState('')
+  const [selectCountry, setSelectCountry] = useState("");
+  const [selectArea, setSelectArea] = useState("");
 
   // Watch the value of the 'area' field
   const selectedArea = watch("area");
 
-  console.log('formData',formData)
+  console.log("formData", formData);
   useEffect(() => {
     if (formData) {
-      setValue("area", singleEventData?.country === "global" ? "global" : "country");
-      setSelectArea(singleEventData?.country === "global" ? "global" : singleEventData?.country)
-  setValue("country", singleEventData?.country ?? "");
-  setSelectCountry(singleEventData?.country )
+      setValue(
+        "area",
+        singleEventData?.country === "global" ? "global" : "country"
+      );
+      setSelectArea(
+        singleEventData?.country === "global"
+          ? "global"
+          : singleEventData?.country
+      );
+      setValue("country", singleEventData?.country ?? "");
+      setSelectCountry(singleEventData?.country);
     }
   }, [formData, singleEventData, setValue]);
-  
 
   const handleFocus = (field) => {
     if (field.onFocus) {
@@ -45,14 +56,12 @@ const EventReg2 = ({ formData ,singleEventData}) => {
       <div className="mb-2">
         {formFields2?.map((field) => (
           <div key={field.id} className="relative z-0 group mb-2">
-            <label
-              htmlFor={field.id}
-              className="text-sm font-medium mb-1 flex"
-            >
+            <label htmlFor={field.id} className="text-sm font-medium mb-1 flex">
               {field.label}{" "}
               <span
-                className={`${field.label === "Eligibility Cirteria" ? "hidden" : "flex"
-                  } text-red-500`}
+                className={`${
+                  field.label === "Eligibility Cirteria" ? "hidden" : "flex"
+                } text-red-500`}
               >
                 *
               </span>
@@ -63,9 +72,10 @@ const EventReg2 = ({ formData ,singleEventData}) => {
                 id={field.id}
                 {...register(field.name)}
                 className={`border border-[#CDD5DF] rounded-md shadow-sm 
-                  ${errors[field.name]
-                    ? "border-red-500 placeholder:text-red-500"
-                    : "border-[#737373]"
+                  ${
+                    errors[field.name]
+                      ? "border-red-500 placeholder:text-red-500"
+                      : "border-[#737373]"
                   } text-gray-900 placeholder-gray-500  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                 placeholder={field.placeholder}
                 onFocus={() => handleFocus(field)}
@@ -78,9 +88,10 @@ const EventReg2 = ({ formData ,singleEventData}) => {
                 id={field.id}
                 {...register(field.name)}
                 className={`border border-[#CDD5DF] rounded-md shadow-sm 
-                  ${errors[field.name]
-                    ? "border-red-500 placeholder:text-red-500"
-                    : "border-[#737373]"
+                  ${
+                    errors[field.name]
+                      ? "border-red-500 placeholder:text-red-500"
+                      : "border-[#737373]"
                   } text-gray-900 placeholder-gray-500  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                 placeholder={field.placeholder}
                 onFocus={() => handleFocus(field)}
@@ -96,44 +107,41 @@ const EventReg2 = ({ formData ,singleEventData}) => {
         ))}
       </div>
       <div className="mb-2">
-        <label
-          htmlFor="area"
-          className="block text-sm font-medium mb-1"
-        >
+        <label htmlFor="area" className="block text-sm font-medium mb-1">
           Select area <span className="text-red-500">*</span>
         </label>
         <select
-      name="area"
-      id="area"
-      {...register("area")}
-      onChange={(e) => setSelectArea(e.target.value)}
-      value={selectArea}
-      className={`border border-[#CDD5DF] rounded-md shadow-sm 
-        ${errors?.area
-          ? "border-red-500 "
-          : "border-[#737373]"
+          name="area"
+          id="area"
+          {...register("area")}
+          onChange={(e) => setSelectArea(e.target.value)}
+          value={selectArea}
+          className={`border border-[#CDD5DF] rounded-md shadow-sm 
+        ${
+          errors?.area ? "border-red-500 " : "border-[#737373]"
         } text-gray-900 placeholder-gray-500  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-    >
-      <option value="">Select Area</option>
-      <option value="global">Global</option>
-      <option value="country">Country</option>
-    </select>
+        >
+          <option value="">Select Area</option>
+          <option value="global">Global</option>
+          <option value="country">Country</option>
+        </select>
       </div>
       {selectedArea === "country" && (
-      <div className="relative z-0 group mb-6">
-        <label htmlFor="country" className="block text-sm font-medium mb-1">
-          Select Country <span className="text-red-500">*</span>
-        </label>
-        <select
-          name="country"
-          id="country"
-          {...register("country")}
-          onChange={(e) => setSelectCountry(e.target.value)}
-          value={selectCountry}
-          className={`bg-gray-50 border-2 ${errors.country ? "border-red-500" : "border-[#737373]"
-          } text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-        >
-          <option className="text-lg font-bold" value="">
+        <div className="relative z-0 group mb-6">
+          <label htmlFor="country" className="block text-sm font-medium mb-1">
+            Select Country <span className="text-red-500">*</span>
+          </label>
+          <select
+            name="country"
+            id="country"
+            {...register("country")}
+            onChange={(e) => setSelectCountry(e.target.value)}
+            value={selectCountry}
+            className={`bg-gray-50 border-2 ${
+              errors.country ? "border-red-500" : "border-[#737373]"
+            } text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+          >
+            <option className="text-lg font-bold" value="">
               Select your country
             </option>
             {countries?.map((expert) => (
@@ -144,11 +152,11 @@ const EventReg2 = ({ formData ,singleEventData}) => {
               >
                 {expert.name}
               </option>
-          ))}
-        </select>
-      </div>
-    )}
-    
+            ))}
+          </select>
+        </div>
+      )}
+
       <Toaster />
     </>
   );

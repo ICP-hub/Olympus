@@ -51,6 +51,18 @@ function DashboardHomeWelcomeSection({ userName, profileCompletion }) {
   const [roleModalOpen, setRoleModalOpen] = useState(false);
   const { dashboardwelcomesection } = dashboard
   const userFullData = useSelector((currState) => currState.userData.data.Ok);
+  const projectFullData = useSelector(
+    (currState) => currState.projectData.data[0]
+  );
+  const mentorFullData = useSelector(
+    (currState) => currState.mentorData.data[0]
+  );
+  const investorFullData = useSelector(
+    (currState) => currState.investorData.data[0]
+  );
+  const mentorCompletion = mentorFullData?.[0].profile_completion;
+  const projectCompletion = projectFullData?.[0].profile_completion;
+  const investorCompletion = investorFullData?.[0].profile_completion
   const actor = useSelector((currState) => currState.actors.actor);
   const principal = useSelector((currState) => currState.internet.principal);
   const userCurrentRoleStatus = useSelector(
@@ -61,6 +73,16 @@ function DashboardHomeWelcomeSection({ userName, profileCompletion }) {
   );
   const dispatch = useDispatch();
   const [completionPercentage, setCompletionPercentage] = useState(null);
+
+  const getCompletionPercentage = (role) => {
+    const completionPercentages = {
+      user: profileCompletion,
+      mentor: mentorCompletion,
+      project: projectCompletion,
+      vc: investorCompletion,
+    };
+    return completionPercentages[role] || 0;
+  };
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -86,13 +108,21 @@ function DashboardHomeWelcomeSection({ userName, profileCompletion }) {
   }, [actor]);
 
 console.log("USERFULLDATA", userFullData);
+  const completionPercentagetoRender = getCompletionPercentage(
+    userCurrentRoleStatusActiveRole
+  );
+
   const isAuthenticated = useSelector((curr) => curr.internet.isAuthenticated);
   const actionCards = [
     {
       title: "Complete profile",
       description:
         "Commodo ut non aliquam nunc nulla velit et vulputate turpis. Erat rhoncus tristique ullamcorper sit.",
-      progress: completionPercentage,
+      progress: ["user", "mentor", "project", "vc"].includes(
+        userCurrentRoleStatusActiveRole
+      )
+        ? completionPercentagetoRender
+        : undefined,
       action: "Complete profile",
     },
     {

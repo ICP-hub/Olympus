@@ -12,6 +12,7 @@ import EventReg4 from "./EventReg4";
 import { format } from "date-fns";
 import { useSelector } from "react-redux";
 import { validationSchema } from "./cohortValidation";
+import { useNavigate } from "react-router-dom";
 
 const EventRegMain = ({
   modalOpen,
@@ -23,10 +24,12 @@ const EventRegMain = ({
   console.log("cohort singleEventData reg main me ", singleEventData);
 
   // GETTING ACTOR FROM REDUX STORE
+  const navigate = useNavigate();
   const actor = useSelector((currState) => currState.actors.actor);
 
   // INDEX STATE TO TRACK THE CURRENT STEP OF THE FORM
   const [index, setIndex] = useState(0);
+  const [isSubmiting, setIsSubmiting] = useState(false);
   const mentorFullData = useSelector(
     (currState) => currState.mentorData.data[0]
   );
@@ -152,6 +155,7 @@ const EventRegMain = ({
       };
 
       try {
+        setIsSubmiting(true);
         let result;
         if (editMode && singleEventData) {
           console.log("Updating cohort with data:", eventData);
@@ -164,26 +168,21 @@ const EventRegMain = ({
         console.log("API result", result);
 
         if (result && result.Ok) {
-          if (
-            result.startsWith(
-              "You are not privileged to create a cohort ,Please Register as Mentor ..."
-            ) ||
-            result.startsWith("Cohort Banner is already uploaded")
-          ) {
-            toast.error(result);
-            setModalOpen(false);
-          } else {
-            toast.success(
-              editMode
-                ? "Cohort updated successfully!"
-                : "Cohort registered successfully!"
-            );
-            setModalOpen(false);
-          }
+          toast.success(result.Ok);
+          setModalOpen(false);
+          navigate("/dashboard/");
+        } else if (result && result.Err) {
+          toast.error(result.Err);
+          setModalOpen(false);
+        } else {
+          toast.error("Unknown error occurred.");
+          setModalOpen(false);
         }
       } catch (error) {
         toast.error("Error submitting cohort");
         console.error("Error sending data to the backend:", error);
+      } finally {
+        setIsSubmiting(false); 
       }
     }
   };
@@ -214,93 +213,93 @@ const EventRegMain = ({
           </div>
           <h2 className="text-xs text-[#364152] mb-3">Step {index + 1} of 4</h2>
           <div className="max-h-[90vh] overflow-y-auto">
-
-          {/* FORM PROVIDER TO PASS DOWN FORM METHODS */}
-          <FormProvider {...methods}>
-            <form onSubmit={handleSubmit(onSubmitHandler, onErrorHandler)}>
-              {/* CONDITIONAL RENDERING OF FORMS BASED ON CURRENT STEP */}
-              {index === 0 && (
-                <EventReg1
-                  formData={formData}
-                  setFormData={setFormData}
-                  imageData={imageData}
-                  setImageData={setImageData}
-                  editMode={editMode}
-                  singleEventData={singleEventData}
-                />
-              )}
-              {index === 1 && (
-                <EventReg2
-                  formData={formData}
-                  setFormData={setFormData}
-                  singleEventData={singleEventData}
-                />
-              )}
-              {index === 2 && (
-                <EventReg3
-                  formData={formData}
-                  setFormData={setFormData}
-                  singleEventData={singleEventData}
-                />
-              )}
-              {index === 3 && (
-                <EventReg4
-                  formData={formData}
-                  setFormData={setFormData}
-                  singleEventData={singleEventData}
-                />
-              )}
-
-              {/* NAVIGATION BUTTONS */}
-              <div
-                className={`flex mt-4 ${
-                  index === 0 ? "justify-end" : "justify-between"
-                }`}
-              >
-                {index > 0 && (
-                  <button
-                    type="button"
-                    className="py-2 px-4 text-gray-600 rounded border border-[#CDD5DF] hover:text-black"
-                    onClick={handleBack}
-                  >
-                    <ArrowBackIcon fontSize="medium" /> Back
-                  </button>
+            {/* FORM PROVIDER TO PASS DOWN FORM METHODS */}
+            <FormProvider {...methods}>
+              <form onSubmit={handleSubmit(onSubmitHandler, onErrorHandler)}>
+                {/* CONDITIONAL RENDERING OF FORMS BASED ON CURRENT STEP */}
+                {index === 0 && (
+                  <EventReg1
+                    formData={formData}
+                    setFormData={setFormData}
+                    imageData={imageData}
+                    setImageData={setImageData}
+                    editMode={editMode}
+                    singleEventData={singleEventData}
+                  />
                 )}
-                {index === 3 ? (
-                  <button
-                    type="button"
-                    className="py-2 px-4 bg-blue-600 text-white rounded  border-2 border-[#B2CCFF]"
-                    onClick={onSubmitHandler}
-                  >
-                    {isSubmitting ? (
-                      <ThreeDots
-                        visible={true}
-                        height="35"
-                        width="35"
-                        color="#FFFEFF"
-                        radius="9"
-                        ariaLabel="three-dots-loading"
-                      />
-                    ) : editMode === true ? (
-                      "Update"
-                    ) : (
-                      "Submit"
-                    )}
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    className="py-2 px-4 bg-blue-600 text-white rounded  border-2 border-[#B2CCFF] flex items-center"
-                    onClick={handleNext}
-                  >
-                    Continue
-                    <ArrowForwardIcon fontSize="medium" className="ml-2" />
-                  </button>
+                {index === 1 && (
+                  <EventReg2
+                    formData={formData}
+                    setFormData={setFormData}
+                    singleEventData={singleEventData}
+                  />
                 )}
-              </div>
-            </form>
-          </FormProvider>
-        </div>
+                {index === 2 && (
+                  <EventReg3
+                    formData={formData}
+                    setFormData={setFormData}
+                    singleEventData={singleEventData}
+                  />
+                )}
+                {index === 3 && (
+                  <EventReg4
+                    formData={formData}
+                    setFormData={setFormData}
+                    singleEventData={singleEventData}
+                  />
+                )}
+
+                {/* NAVIGATION BUTTONS */}
+                <div
+                  className={`flex mt-4 ${
+                    index === 0 ? "justify-end" : "justify-between"
+                  }`}
+                >
+                  {index > 0 && (
+                    <button
+                      type="button"
+                      className="py-2 px-4 text-gray-600 rounded border border-[#CDD5DF] hover:text-black"
+                      onClick={handleBack}
+                    >
+                      <ArrowBackIcon fontSize="medium" /> Back
+                    </button>
+                  )}
+                  {index === 3 ? (
+                    <button
+                      type="button"
+                      className="py-2 px-4 bg-blue-600 text-white rounded  border-2 border-[#B2CCFF]"
+                      onClick={onSubmitHandler}
+                      disabled={isSubmiting}
+                    >
+                      {isSubmiting ? (
+                        <ThreeDots
+                          visible={true}
+                          height="35"
+                          width="35"
+                          color="#FFFEFF"
+                          radius="9"
+                          ariaLabel="three-dots-loading"
+                        />
+                      ) : editMode === true ? (
+                        "Update"
+                      ) : (
+                        "Submit"
+                      )}
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      className="py-2 px-4 bg-blue-600 text-white rounded  border-2 border-[#B2CCFF] flex items-center"
+                      onClick={handleNext}
+                    >
+                      Continue
+                      <ArrowForwardIcon fontSize="medium" className="ml-2" />
+                    </button>
+                  )}
+                </div>
+              </form>
+            </FormProvider>
+          </div>
         </div>
       </div>
       {/* TOAST NOTIFICATIONS */}

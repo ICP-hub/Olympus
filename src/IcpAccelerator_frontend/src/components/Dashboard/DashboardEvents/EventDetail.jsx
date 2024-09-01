@@ -75,7 +75,13 @@ const FAQ = () => {
 
 const EventDetails = () => {
   const [currentTab, setCurrentTab] = useState("Summary");
-  const tabs = ["Summary", "Request", "Announcements", "Attendees", "Reviews"];
+  const tabs = [
+    { label: "Summary", value: "Summary" },
+    { label: "Request", value: "Request" },
+    { label: "Announcements", value: "Announcements" },
+    { label: "Attendees", value: "Attendees" },
+    { label: "Reviews", value: "Reviews" },
+  ];
   const handleTabChange = (tab) => {
     setCurrentTab(tab);
   };
@@ -93,10 +99,10 @@ const EventDetails = () => {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   // console.log("............./.........../cohortData",cohortData)
-  // const userCurrentRoleStatusActiveRole = useSelector(
-  //   (currState) => currState.currentRoleStatus.activeRole
-  // );
-  const userCurrentRoleStatusActiveRole = "vc";
+  const userCurrentRoleStatusActiveRole = useSelector(
+    (currState) => currState.currentRoleStatus.activeRole
+  );
+  //const userCurrentRoleStatusActiveRole = "vc";
   useEffect(() => {
     const fetchCohortData = async () => {
       console.log("Actor:", actor);
