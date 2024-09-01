@@ -608,6 +608,7 @@ const AnnouncementCard = () => {
             currentAnnouncementData.announcement_id,
             argument
           );
+          console.log("update function call hua h")
 
           if (result && result.includes("Announcement updated successfully")) {
             toast.success("Announcement updated successfully");

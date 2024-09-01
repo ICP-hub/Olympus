@@ -12,6 +12,7 @@ import AcceptOfferModal from "../../../models/AcceptOfferModal";
 import DeclineOfferModal from "../../../models/DeclineOfferModal";
 import { useSelector } from "react-redux";
 import timestampAgo from "../../Utils/navigationHelper/timeStampAgo";
+import AssociationRecieverProjectSideDataToMentor from "./AssociationRecieverProjectSideDataToMentor";
 
 const AssociationDetailsProjectCard = ({
   user,
@@ -235,7 +236,60 @@ const handleMentorSelfReject = async (offer_id) => {
 
   return (
     <>
-      <div key={index} className="p-6 w-[650px] rounded-lg shadow-sm flex">
+   {selectedTypeData === "to-mentor" ? (
+        <AssociationRecieverProjectSideDataToMentor
+          user={user}
+          activeTabData={activeTabData}
+          selectedTypeData={selectedTypeData}
+          handleMentorSelfReject={handleMentorSelfReject}
+          handleInvestorSelfReject={handleInvestorSelfReject}
+          handleMentorDeclineModalOpenHandler={handleMentorDeclineModalOpenHandler}
+          handleMentorAcceptModalOpenHandler={handleMentorAcceptModalOpenHandler}
+          handleInvestorDeclineModalOpenHandler={handleInvestorDeclineModalOpenHandler}
+          handleInvestorAcceptModalOpenHandler={handleInvestorDeclineModalOpenHandler}
+          setOpenDetail={setOpenDetail}
+        />
+      ) : selectedTypeData === "from-mentor" ? (
+        <AssociationRecieverProjectSideDataToMentor
+          user={user}
+          activeTabData={activeTabData}
+          selectedTypeData={selectedTypeData}
+          handleMentorSelfReject={handleMentorSelfReject}
+          handleInvestorSelfReject={handleInvestorSelfReject}
+          handleMentorDeclineModalOpenHandler={handleMentorDeclineModalOpenHandler}
+          handleMentorAcceptModalOpenHandler={handleMentorAcceptModalOpenHandler}
+          handleInvestorDeclineModalOpenHandler={handleInvestorDeclineModalOpenHandler}
+          handleInvestorAcceptModalOpenHandler={handleInvestorDeclineModalOpenHandler}
+          setOpenDetail={setOpenDetail}
+        />
+      ) : selectedTypeData === "to-investor" ? (
+        <AssociationRecieverProjectSideDataToMentor
+          user={user}
+          activeTabData={activeTabData}
+          selectedTypeData={selectedTypeData}
+          handleMentorSelfReject={handleMentorSelfReject}
+          handleInvestorSelfReject={handleInvestorSelfReject}
+          handleMentorDeclineModalOpenHandler={handleMentorDeclineModalOpenHandler}
+          handleMentorAcceptModalOpenHandler={handleMentorAcceptModalOpenHandler}
+          handleInvestorDeclineModalOpenHandler={handleInvestorDeclineModalOpenHandler}
+          handleInvestorAcceptModalOpenHandler={handleInvestorDeclineModalOpenHandler}
+          setOpenDetail={setOpenDetail}
+        />
+      ) : selectedTypeData === "from-investor" ? (
+        <AssociationRecieverProjectSideDataToMentor
+          user={user}
+          activeTabData={activeTabData}
+          selectedTypeData={selectedTypeData}
+          handleMentorSelfReject={handleMentorSelfReject}
+          handleInvestorSelfReject={handleInvestorSelfReject}
+          handleMentorDeclineModalOpenHandler={handleMentorDeclineModalOpenHandler}
+          handleMentorAcceptModalOpenHandler={handleMentorAcceptModalOpenHandler}
+          handleInvestorDeclineModalOpenHandler={handleInvestorDeclineModalOpenHandler}
+          handleInvestorAcceptModalOpenHandler={handleInvestorDeclineModalOpenHandler}
+          setOpenDetail={setOpenDetail}
+        />
+      ):''}
+      {/* <div key={index} className="p-6 w-[650px] rounded-lg shadow-sm flex">
         <div className="w-[272px]">
           <div className="max-w-[250px] w-[250px] bg-gray-100 rounded-lg flex flex-col justify-between h-full relative overflow-hidden cursor-pointer">
             <div
@@ -316,7 +370,7 @@ const handleMentorSelfReject = async (offer_id) => {
           </div>
           {activeTabData === "pending" ? (
             <div className="">
-              {/* Handle Self Decline for Mentor or Investor */}
+       
               {selectedTypeData === "to-mentor" ||
               selectedTypeData === "to-investor" ? (
                 <button
@@ -331,14 +385,14 @@ const handleMentorSelfReject = async (offer_id) => {
                 </button>
               ) : selectedTypeData === "to-mentor" ? (
                 <>
-                  {/* Handle Mentor Reject */}
+
                   <button
                     className="mr-2 mb-2 border border-[#C11574] bg-[#FDF2FA] text-[#C11574] px-3 py-1 rounded-full"
                     onClick={() => handleMentorDeclineModalOpenHandler(offerId)}
                   >
                     Reject
                   </button>
-                  {/* Handle Mentor Approve */}
+       
                   <button
                     className="mr-2 mb-2 border border-[#097647] bg-[#EBFDF3] text-[#097647] px-3 py-1 rounded-full"
                     onClick={() => handleMentorAcceptModalOpenHandler(offerId)}
@@ -348,7 +402,7 @@ const handleMentorSelfReject = async (offer_id) => {
                 </>
               ) : (
                 <>
-                  {/* Handle Investor Reject */}
+           
                   <button
                     className="mr-2 mb-2 border border-[#C11574] bg-[#FDF2FA] text-[#C11574] px-3 py-1 rounded-full"
                     onClick={() =>
@@ -357,7 +411,7 @@ const handleMentorSelfReject = async (offer_id) => {
                   >
                     Reject
                   </button>
-                  {/* Handle Investor Approve */}
+                
                   <button
                     className="mr-2 mb-2 border border-[#097647] bg-[#EBFDF3] text-[#097647] px-3 py-1 rounded-full"
                     onClick={() =>
@@ -391,7 +445,7 @@ const handleMentorSelfReject = async (offer_id) => {
             ""
           )}
         </div>
-      </div>
+      </div> */}
       {openDetail && (
         <AssociationOfferModal
           openDetail={openDetail}

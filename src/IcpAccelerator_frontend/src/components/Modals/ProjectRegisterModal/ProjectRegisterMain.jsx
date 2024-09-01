@@ -32,12 +32,12 @@ const ProjectRegisterMain = ({ isopen }) => {
       publicDocs: [],
       upload_private_documents: false,
       privateDocs: [],
-      weekly_active_users: 0,  // Keep as a number
-      revenue: 0,  // Keep as a number
+      weekly_active_users: null,  // Keep as a number
+      revenue: null,  // Keep as a number
       money_raised_till_now: false,
-      icp_grants: 0,  // Keep as a number
-      investors: 0,  // Keep as a number
-      raised_from_other_ecosystem: 0
+      icp_grants: null,  // Keep as a number
+      investors: null,  // Keep as a number
+      raised_from_other_ecosystem: null
     },
   });
 
@@ -158,35 +158,28 @@ const ProjectRegisterMain = ({ isopen }) => {
         money_raising: [data?.money_raising === "true" ? true : false],
         money_raised: [
           {
-            // icp_grants: [
-            //   data?.money_raised_till_now === "true" && data?.icp_grants
-            //     ? data?.icp_grants.toString()
-            //     : "",
-            // ],
-            // investors: [
-            //   data?.money_raised_till_now === "true" && data?.investors
-            //     ? data?.investors.toString()
-            //     : "",
-            // ],
-            // raised_from_other_ecosystem: [
-            //   data?.money_raised_till_now === "true" && data?.raised_from_other_ecosystem
-            //     ? data?.raised_from_other_ecosystem.toString()
-            //     : "",
-            // ],
-            // sns: [
-            //   data?.money_raising === "true" && data?.valuation
-            //     ? data?.valuation.toString()
-            //     : "",
-            // ],
-            // target_amount:
-            //   data?.money_raising === "true" && data?.target_amount
-            //     ? [Number(data.target_amount)]
-            //     : [],
-            icp_grants: data.icp_grants ? data.icp_grants.toString() : null, // Convert to string or null
-            investors: data?.investors ? data?.investors.toString() : null, // Convert to string or null
-            raised_from_other_ecosystem: data.raised_from_other_ecosystem ? data.raised_from_other_ecosystem.toString() : null, // Convert to string or null
-            target_amount: data.target_amount ? parseFloat(data.target_amount) : null, // Convert to float or null
-            sns: data.valuation ? data.valuation.toString() : null,
+            icp_grants: data?.money_raised_till_now === "true" && data?.icp_grants
+              ? data.icp_grants.toString()
+              : '',
+            investors: data?.money_raised_till_now === "true" && data?.investors
+              ? data.investors.toString()
+              : '',
+            raised_from_other_ecosystem: data?.money_raised_till_now === "true" && data?.raised_from_other_ecosystem
+              ? data.raised_from_other_ecosystem.toString()
+              : '',
+            sns: data?.money_raising === "true" && data?.valuation
+              ? data.valuation.toString()
+              : '',
+            target_amount: data?.money_raising === "true" && data?.target_amount
+              ? parseFloat(data.target_amount)
+              : 0,
+  
+        
+            // icp_grants: data.icp_grants ? data.icp_grants.toString() : null, // Convert to string or null
+            // investors: data?.investors ? data?.investors.toString() : null, // Convert to string or null
+            // raised_from_other_ecosystem: data.raised_from_other_ecosystem ? data.raised_from_other_ecosystem.toString() : null, // Convert to string or null
+            // target_amount: data.target_amount ? parseFloat(data.target_amount) : null, // Convert to float or null
+            // sns: data.valuation ? data.valuation.toString() : null,
 
           },
         ],
@@ -340,6 +333,24 @@ const ProjectRegisterMain = ({ isopen }) => {
                       "Submit"
                     )}
                   </button>
+              //     <button
+              //   disabled={isSubmitting}
+              //   type="submit"
+              //   className="bg-blue-600 text-white py-2 px-4 rounded"
+              // >
+              //   {isSubmitting ? (
+              //     <ThreeDots
+              //       visible={true}
+              //       height="35"
+              //       width="35"
+              //       color="#FFFEFF"
+              //       radius="9"
+              //       ariaLabel="three-dots-loading"
+              //     />
+              //   ) : (
+              //     "Submit"
+              //   )}
+              // </button>
                 ) : (
                   <button
                     type="button"
