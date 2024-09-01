@@ -329,7 +329,7 @@ const DiscoverProject = ({onProjectCountChange}) => {
            </h3>
          }
        >
-        {allProjectData.map((projectArray, index) => {
+        {allProjectData?.map((projectArray, index) => {
           console.log("projectArray", projectArray);
           // const project_id = projectArray?.principal?.toText();
           const project_id = projectArray[1]?.params?.uid;
@@ -356,7 +356,7 @@ const DiscoverProject = ({onProjectCountChange}) => {
           let email = user?.email[0];
           const randomSkills = user?.area_of_interest
             .split(",")
-            .map((skill) => skill.trim());
+            ?.map((skill) => skill.trim());
           const activeRole = project?.roles?.find(
             (role) => role.status === "approved"
           );
@@ -457,7 +457,7 @@ const DiscoverProject = ({onProjectCountChange}) => {
 
                 <p className="text-gray-600 mb-4 line-clamp-3  "> {parse(projectdescription)}</p>
                 <div className="flex items-center text-sm text-gray-500 flex-wrap">
-                  {randomSkills.map((skill, index) => (
+                  {randomSkills?.map((skill, index) => (
                     <span
                       key={index}
                       className="mr-2 mb-2 border boder-[#CDD5DF] bg-white text-[#364152] px-3 py-1 rounded-full"

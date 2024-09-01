@@ -247,6 +247,7 @@ const AssociationRequestCard = () => {
         <NoData message={noDataMessage} />
       ) : (
         associateData.map((user, index) => (
+          console.log(user),
           <div key={index}>
             {userCurrentRoleStatusActiveRole === "project" ? (
               <MemoizedAssociationDetailsProjectCard

@@ -5,7 +5,7 @@ import { useFormContext } from "react-hook-form";
 import { generateUsername } from 'unique-username-generator';
 
 
-const RegisterForm1 = () => {
+const RegisterForm1 = React.memo(() => {
 
   const { register, formState: { errors }, watch, setValue } = useFormContext({mode:'all'});
   const [suggestions, setSuggestions] = useState([]);
@@ -102,6 +102,7 @@ const RegisterForm1 = () => {
       </div>
     </>
   );
-};
+  
+});
 
 export default RegisterForm1;

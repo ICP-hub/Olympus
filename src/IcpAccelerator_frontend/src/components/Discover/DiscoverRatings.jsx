@@ -177,14 +177,14 @@ const DiscoverRatings = () => {
   return (
     <div className="p-6">
       {reviews &&
-        reviews.map((review, indx) => {
+        reviews?.map((review, index) => {
           const profilepic =
             review?.profile_picture && review?.profile_picture[0]
               ? uint8ArrayToBase64(review?.profile_picture[0])
               : "default-profile.png";
           return (
             <div
-              key={indx}
+              key={index}
               className="bg-gray-100 rounded-lg p-4 flex mt-4 flex-col gap-4"
             >
               <div className="flex gap-4 flex-shrink-0">
@@ -199,7 +199,7 @@ const DiscoverRatings = () => {
                   </h2>
                   {review.rating !== undefined && review.rating !== null ? (
                     <div className="flex gap-1 mb-2">
-                      {[...Array(Math.floor(review.rating))].map((_, index) => (
+                      {[...Array(Math.floor(review.rating))]?.map((_, index) => (
                         <svg
                           key={index}
                           xmlns="http://www.w3.org/2000/svg"
@@ -221,7 +221,7 @@ const DiscoverRatings = () => {
                           <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
                         </svg>
                       )}
-                      {[...Array(5 - Math.ceil(review.rating))].map(
+                      {[...Array(5 - Math.ceil(review.rating))]?.map(
                         (_, index) => (
                           <svg
                             key={index}
