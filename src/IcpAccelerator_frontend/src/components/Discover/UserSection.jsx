@@ -97,11 +97,60 @@ const UsersSection = () => {
   const [investorsCount, setInvestorsCount] = useState(0);
 
   const tabs = [
-    { label: `Users ${usersCount}`, value: "Users" },
-    { label: `Projects ${projectsCount}`, value: "Projects" },
-    { label: `Mentors ${mentorsCount}`, value: "Mentors" },
-    { label: `Investors ${investorsCount}`, value: "Investors" },
+    {
+      label: (
+        <span>
+          Users{" "}
+          {usersCount > 0 && (
+            <div className='border-2 rounded-full text-gray-700 text-xs px-1 inline-block'>
+              {usersCount}
+            </div>
+          )}
+        </span>
+      ),
+      value: "Users",
+    },
+    {
+      label: (
+        <span>
+          Projects{" "}
+          {projectsCount > 0 && (
+            <div className='border-2 rounded-full text-gray-700 text-xs px-1 inline-block'>
+              {projectsCount}
+            </div>
+          )}
+        </span>
+      ),
+      value: "Projects",
+    },
+    {
+      label: (
+        <span>
+          Mentors{" "}
+          {mentorsCount > 0 && (
+            <div className='border-2 rounded-full text-gray-700 text-xs px-1 inline-block'>
+              {mentorsCount}
+            </div>
+          )}
+        </span>
+      ),
+      value: "Mentors",
+    },
+    {
+      label: (
+        <span>
+          Investors{" "}
+          {investorsCount > 0 && (
+            <div className='border-2 rounded-full text-gray-700 text-xs px-1 inline-block'>
+              {investorsCount}
+            </div>
+          )}
+        </span>
+      ),
+      value: "Investors",
+    },
   ];
+  
 
   const handleTabChange = (tab) => {
     setCurrentTab(tab);

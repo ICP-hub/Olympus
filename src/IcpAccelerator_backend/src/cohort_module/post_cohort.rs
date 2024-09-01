@@ -100,7 +100,7 @@ pub async fn update_cohort(cohort_id: String, updated_params: Cohort) -> Result<
 
     let canister_id = crate::asset_manager::get_asset_canister();
     if params.cohort_banner.is_some() && params.cohort_banner.clone().unwrap().len() > 300 {
-        let cohort_logo_key = "/uploads/".to_owned() + &caller_principal.to_string() + "_project_logo.jpeg";
+        let cohort_logo_key = "/uploads/".to_owned() + &caller_principal.to_string() + "_cohort_logo.jpeg";
 
         let cohort_logo_arg = StoreArg {
             key: cohort_logo_key.clone(),

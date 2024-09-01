@@ -13,6 +13,8 @@ import UserModal from "./UserModal";
 import NoDataFound from "./NoDataFound";
 import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 import CloseIcon from "@mui/icons-material/Close";
+import Avatar from "@mui/material/Avatar";
+
 
 const EventRequestCard = () => {
   const [filterOpen, setFilterOpen] = useState(false);
@@ -43,7 +45,7 @@ const EventRequestCard = () => {
     setSelectedUserData(userData);
     setOpenUserModal(true);
   };
-
+// console.log("data user ka ",selectedUserData);
   const handleCloseModal = () => {
     setOpenUserModal(false);
     setSelectedUserData(null);
@@ -314,6 +316,16 @@ const EventRequestCard = () => {
                   </div>
                   <div>
                     <h3 className="text-lg font-bold mt-2">{title}</h3>
+                    <span className="flex py-2">
+                <Avatar
+                  alt="Mentor"
+                  src={profileImageSrc}
+                  className=" mr-2"
+                  sx={{ width: 24, height: 24 }}
+                />
+                <span className="text-gray-500">{fullname}</span>
+              </span>
+              <div className="border-t border-gray-200 mt-2"></div>
                     <p
                       className="text-sm text-gray-500 overflow-hidden text-ellipsis break-all line-clamp-3 mt-2"
                       style={{ maxHeight: "3em", lineHeight: "1em" }}
@@ -321,31 +333,46 @@ const EventRequestCard = () => {
                       {parse(description)}
                     </p>
                     <div className="flex flex-wrap gap-3 items-center mt-2">
-                      <span className="text-gray-700 px-2 border-2 rounded-xl">
-                        {tags}
-                      </span>
-                      <span className="text-sm text-gray-700">
-                        <PlaceOutlinedIcon
-                          className="text-[#364152]"
-                          fontSize="small"
-                        />
-                        {country}
-                      </span>
-                      <div className="flex items-center">
+
+                    <div className="flex items-center mt-2">
                         <img
                           src={PriceIcon}
                           alt="Funding Amount"
                           className="w-4 h-4 text-gray-400 mr-2"
                         />
                         <span className="text-gray-500">{fundingAmount}</span>
-                      </div>
                     </div>
+                    <span className="flex items-center mt-2 text-gray-700">
+                        <PlaceOutlinedIcon
+                          className=""
+                          fontSize="small"
+                        />
+                        {country}
+                      </span>
+                      </div>
+                    <div className="flex flex-wrap gap-3 items-center mt-2">
+                   
+                         <div className="flex flex-wrap gap-2">
+                {tags
+  ?.split(',')
+  .map((interest, index) => (
+    <span
+      key={index}
+      className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1"
+    >
+      {interest.trim()}
+    </span>
+  ))}
+  </div>
+                      
+                      
+                    </div>
+
                     <div className="flex py-2">
                       {appliedType === "pending" && event.status === "pending" && (
                         <>
                           <button
-                            className="bg-blue-500 text-white px-4 py-2 rounded mr-2 font-normal text-sm flex items-center"
-                            onClick={() => handleAction("Approve", index)}
+className="mr-2 mb-2 border border-[#097647] bg-[#EBFDF3] text-[#097647] px-3 py-1 rounded-full"                            onClick={() => handleAction("Approve", index)}
                             disabled={loadingIndexes[index] === "Approve"}
                           >
                             Accept
@@ -363,8 +390,8 @@ const EventRequestCard = () => {
                             )}
                           </button>
                           <button
-                            className="bg-gray-300 text-gray-700 px-4 py-2 rounded font-normal text-sm flex items-center"
-                            onClick={() => handleAction("Reject", index)}
+                    className="mr-2 mb-2 border border-[#C11574] bg-[#FDF2FA] text-[#C11574] px-3 py-1 rounded-full"
+                    onClick={() => handleAction("Reject", index)}
                             disabled={loadingIndexes[index] === "Reject"}
                           >
                             Reject

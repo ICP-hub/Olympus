@@ -26,7 +26,7 @@ const DiscoverMentorProfile = ({mentorData}) => {
   const area_of_interest = mentorEvent?.params?.area_of_interest || "N/A";
   const location = mentorEvent?.params?.country || "Unknown Location";
   const openchat_username = mentorEvent?.params?.openchat_username ?? "username";
-  let links=mentorEvent?.params?.social_links?.links?.[0]?.[0]
+  let links=mentorEvent?.params?.social_links[0];
   console.log('Links ', links)
 
   const getLogo = (url) => {
@@ -94,22 +94,22 @@ const DiscoverMentorProfile = ({mentorData}) => {
             <span className="bg-[#F0F9FF] border border-[#B9E6FE] text-[#026AA2] px-1 py-1 rounded-md text-xs font-normal">
               OLYMPIAN
             </span>
-            <span className="bg-[#F0F9FF] border border-[#B9E6FE] text-[#026AA2] px-1 py-1 rounded-md text-xs font-normal">
+            {/* <span className="bg-[#F0F9FF] border border-[#B9E6FE] text-[#026AA2] px-1 py-1 rounded-md text-xs font-normal">
               FOUNDER
-            </span>
+            </span> */}
             <span className="bg-[#F0F9FF] border border-[#B9E6FE] text-[#C5237C] px-1 py-1 rounded-md text-xs font-normal">
               MENTOR
             </span>
           </div>
         </div>
-        <div className="">
+        {/* <div className="">
           <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
             Associations
           </h3>
           <div className="mb-2">
             <img src={"awtar"} alt="icon" />
           </div>
-        </div>
+        </div> */}
         <div className="flex justify-start border-b">
           <button
             className={`px-4 py-2 focus:outline-none font-medium  ${
@@ -121,7 +121,7 @@ const DiscoverMentorProfile = ({mentorData}) => {
           >
             General
           </button>
-          <button
+          {/* <button
             className={`px-4 py-2 focus:outline-none font-medium  ${
               activeTab === "experties"
                 ? "border-b-2 border-blue-500 text-blue-500 font-medium"
@@ -130,7 +130,7 @@ const DiscoverMentorProfile = ({mentorData}) => {
             onClick={() => handleChange("experties")}
           >
             Experties
-          </button>
+          </button> */}
         </div>
 
         {activeTab === "general" ? (
@@ -153,15 +153,7 @@ const DiscoverMentorProfile = ({mentorData}) => {
               </div>
             </div>
 
-            {/* Tagline Section */}
-            {/* <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-1 px-3">
-              <div className="flex justify-between">
-                <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
-                  Tagline
-                </h3>
-              </div>
-              <p className="text-sm">tagline</p>
-            </div> */}
+           
 
             {/* About Section */}
             <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-1 ">
@@ -197,7 +189,7 @@ const DiscoverMentorProfile = ({mentorData}) => {
                 </h3>
               </div>
               <div className="flex flex-wrap gap-2">
-                {mentorEvent?.params?.reason_to_join?.map((reason) => (
+                {mentorEvent?.params?.reason_to_join[0]?.map((reason) => (
                   <span
                     key={reason}
                     className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 "
@@ -215,12 +207,24 @@ const DiscoverMentorProfile = ({mentorData}) => {
                  Area of Interests
                 </h3>
               </div>
-              <div className="flex flex-wrap text-sm gap-2">
+              {/* <div className="flex flex-wrap text-sm gap-2">
                 {mentorEvent?.params?.area_of_interest}
+              </div> */}
+              <div className="flex flex-wrap gap-2">
+                {mentorEvent?.params?.area_of_interest
+  ?.split(',')
+  .map((interest, index) => (
+    <span
+      key={index}
+      className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1"
+    >
+      {interest.trim()}
+    </span>
+  ))}
               </div>
             </div>
 
-            <div>
+            {/* <div>
               <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase ">LINKS</h3>
               {links?.link.map((alllink,i)=>{
                const icon = getLogo(alllink);
@@ -236,7 +240,24 @@ const DiscoverMentorProfile = ({mentorData}) => {
                 </div>
               );
             })}
-            </div>
+            </div> */}
+             <div>
+                <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
+                  LINKS
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {links?.map((linkObj, i) => 
+                    linkObj.link?.map((link, index) => {
+                      const icon = getLogo(link);
+                      return (
+                        <a key={index} href={link} target="_blank" rel="noopener noreferrer" className="flex items-center space-x-2">
+                          {icon}
+                        </a>
+                      );
+                    })
+                  )}
+                </div>
+              </div>
           </div>
         ) : (
           ""
