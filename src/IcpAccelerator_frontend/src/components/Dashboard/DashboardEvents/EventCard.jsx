@@ -165,9 +165,11 @@ const EventCard = () => {
                     </div>
                     <div className="w-2/3">
                       <div>
-                        <p className="bg-white font-medium border-2 borer-[#CDD5DF] text-[#364152] w-[86px] px-2 py-1 rounded-full text-sm">
-                          Workshop
-                        </p>
+                        {/* <p className="bg-white font-medium border-2 borer-[#CDD5DF] text-[#364152] w-[86px] px-2 py-1 rounded-full text-sm">
+                          Cohort
+                        </p> */}
+                        <div className="bg-[#c8eaef] border-[#45b0c1] border text-[#090907] text-xs px-2 py-1 rounded-full w-[70px]">
+COHORT </div>
                         <h3 className="text-lg font-bold mt-2">{name}</h3>
                         <p className="text-sm text-gray-500 mb-4 overflow-hidden text-ellipsis max-h-12 line-clamp-2 mt-2">
                           {parse(desc)}
