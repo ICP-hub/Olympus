@@ -21,17 +21,82 @@ import DashboardProfileView from "./DashboardProfileView";
 import RatingCard from "../../Common/RatingCard";
 import EditRating from "../../Common/RatingReview";
 import RatingReview from "../../Common/RatingReview";
+import mentor from "../../../../assets/Logo/mentor.png";
+import talent from "../../../../assets/Logo/talent.png";
+import founder from "../../../../assets/Logo/founder.png";
 import Avatar3 from "../../../../assets/Logo/Avatar3.png";
 import ProjectCard from "../Project/ProjectCard";
 import { useNavigate, useLocation } from "react-router-dom";
 import DashboardProjectCard from "./DashboardProjectCard";
+
+function getAvatarsByRoles(approvedRoles) {
+  const defaultAvatar = Avatar3;  // User avatar
+  const mentorAvatar = mentor;    // Mentor avatar
+  const investorAvatar = talent;  // Investor avatar
+  const projectAvatar = founder;  // Project avatar
+
+  let firstCardAvatar = defaultAvatar;
+  let secondCardAvatar = defaultAvatar;
+
+  // Prioritize combinations of mentor and investor
+  if (approvedRoles.includes("mentor") && approvedRoles.includes("vc")) {
+    firstCardAvatar = mentorAvatar;
+    secondCardAvatar = investorAvatar;
+  } else if (approvedRoles.includes("vc") && approvedRoles.includes("mentor")) {
+    firstCardAvatar = investorAvatar;
+    secondCardAvatar = mentorAvatar;
+  }
+  // If only one of mentor or investor is present
+  else if (approvedRoles.includes("mentor")) {
+    firstCardAvatar = defaultAvatar;
+    secondCardAvatar = mentorAvatar;
+  } else if (approvedRoles.includes("vc")) {
+    firstCardAvatar = defaultAvatar;
+    secondCardAvatar = investorAvatar;
+  }
+  // Handle user combined with other roles
+  else if (approvedRoles.includes("user") && approvedRoles.includes("project")) {
+    firstCardAvatar = defaultAvatar;
+    secondCardAvatar = projectAvatar;
+  } else if (approvedRoles.includes("user") && approvedRoles.includes("mentor")) {
+    firstCardAvatar = defaultAvatar;
+    secondCardAvatar = mentorAvatar;
+  } else if (approvedRoles.includes("user") && approvedRoles.includes("vc")) {
+    firstCardAvatar = defaultAvatar;
+    secondCardAvatar = investorAvatar;
+  }
+  // Handle single roles
+  else if (approvedRoles.includes("user") && approvedRoles.length === 1) {
+    firstCardAvatar = defaultAvatar;
+    secondCardAvatar = defaultAvatar;
+  } else if (approvedRoles.includes("project") && approvedRoles.length === 1) {
+    firstCardAvatar = defaultAvatar;
+    secondCardAvatar = projectAvatar;
+  }
+
+  return [firstCardAvatar, secondCardAvatar];
+}
+
+
+
+
+
 function DashboardHomeProfileCards(percentage) {
   const navigate= useNavigate()
   const location = useLocation();
   const userFullData = useSelector((currState) => currState.userData.data.Ok);
   const [show,setShow]=useState(true)
   const [activeTab, setActiveTab] = useState("project");
-
+  const userRoles = useSelector(
+    (currState) => currState.currentRoleStatus.activeRole
+  );
+  const userCurrentRoleStatus = useSelector(
+    (currState) => currState.currentRoleStatus.rolesStatusArray
+  );
+  const approvedRoles = userCurrentRoleStatus
+  .filter((role) => role.approval_status === 'approved')
+  .map((role) => role.name);
+  console.log(".../.../.../../userrole", userCurrentRoleStatus)
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const tab = params.get("tab");
@@ -48,6 +113,10 @@ function DashboardHomeProfileCards(percentage) {
     // Update the URL with the selected tab
     navigate(`/dashboard/profile?tab=${tab}`);
   };
+
+
+  const [firstCardAvatar, secondCardAvatar] = getAvatarsByRoles(approvedRoles);
+
   return (
     <>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6 p-6">
@@ -155,12 +224,12 @@ function DashboardHomeProfileCards(percentage) {
           </div>
           <div className="mt-2 h-35 flex justify-center items-center border border-dashed border-gray-300 rounded-lg p-6">
             <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
-              <img src={Avatar3} className="text-gray-400 w-12 h-12" />
+              <img src={firstCardAvatar} className="text-gray-400 w-12 h-12" />
             </div>
           </div>
           <div className="mt-8 h-35 flex justify-center items-center border border-dashed border-gray-300 rounded-lg p-6">
             <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
-              <img src={Avatar3} className="text-gray-400 w-12 h-12" />
+              <img src={secondCardAvatar} className="text-gray-400 w-12 h-12" />
             </div>
           </div>
         </div>

@@ -11,7 +11,7 @@ const NewDocument = ({ cardData }) => {
     return docs.map((doc, index) => (
       <div
         key={index}
-        className={`relative flex items-center p-4 rounded-lg mb-4 shadow-md bg-white transition-all duration-300 ${type === "private" ? "blur-sm" : ""}`}
+        className={`relative flex items-center p-4 rounded-lg mb-4 shadow-md bg-white transition-all duration-300 `}
       >
         {/* Image Section with Background */}
         <div className="bg-gray-100 w-[180px] px-10 py-4 rounded-lg flex-shrink-0 text-center">

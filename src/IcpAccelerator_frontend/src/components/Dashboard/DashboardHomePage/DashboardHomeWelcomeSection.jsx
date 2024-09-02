@@ -10,6 +10,7 @@ import { useSelector,useDispatch } from 'react-redux';
 import Modal1 from '../../Modals/ProjectModal/Modal1';
 import { useNavigate } from 'react-router-dom';
 import { Principal } from "@dfinity/principal";
+import Tooltip from '@mui/material/Tooltip';
 import { getCurrentRoleStatusFailureHandler, setCurrentActiveRole, setCurrentRoleStatus } from '../../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer';
 
 const styles = {
@@ -51,6 +52,7 @@ function DashboardHomeWelcomeSection({ userName, profileCompletion }) {
   const [roleModalOpen, setRoleModalOpen] = useState(false);
   const { dashboardwelcomesection } = dashboard
   const userFullData = useSelector((currState) => currState.userData.data.Ok);
+  console.log("USER DATA FROM REDUX IS ", userFullData);
   const projectFullData = useSelector(
     (currState) => currState.projectData.data[0]
   );
@@ -72,17 +74,7 @@ function DashboardHomeWelcomeSection({ userName, profileCompletion }) {
     (currState) => currState.currentRoleStatus.activeRole
   );
   const dispatch = useDispatch();
-  const [completionPercentage, setCompletionPercentage] = useState(null);
-
-  const getCompletionPercentage = (role) => {
-    const completionPercentages = {
-      user: profileCompletion,
-      mentor: mentorCompletion,
-      project: projectCompletion,
-      vc: investorCompletion,
-    };
-    return completionPercentages[role] || 0;
-  };
+  const [usercompletionPercentage, setCompletionPercentage] = useState(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -108,10 +100,20 @@ function DashboardHomeWelcomeSection({ userName, profileCompletion }) {
   }, [actor]);
 
 console.log("USERFULLDATA", userFullData);
-  const completionPercentagetoRender = getCompletionPercentage(
-    userCurrentRoleStatusActiveRole
-  );
 
+const getCompletionPercentage = (role) => {
+  const completionPercentages = {
+    user: usercompletionPercentage,
+    mentor: mentorCompletion,
+    project: projectCompletion,
+    vc: investorCompletion,
+  };
+  return completionPercentages[role] || 0;
+};
+
+const completionPercentagetoRender = getCompletionPercentage(
+  userCurrentRoleStatusActiveRole
+);
   const isAuthenticated = useSelector((curr) => curr.internet.isAuthenticated);
   const actionCards = [
     {
@@ -135,9 +137,12 @@ console.log("USERFULLDATA", userFullData);
     {
       title: "Verify identity",
       description:
-        "Commodo ut non aliquam nunc nulla velit et vulputate turpis. Erat rhoncus tristique ullamcorper sit.",
+        "Coming soon",
       action: "Take KYC",
       icon: KYCfileIcon,
+      disabled: true,
+      tooltip: "Coming soon", 
+
     },
     {
       title: "Create new role",
@@ -243,10 +248,20 @@ const handleButtonClick = (action) => {
         <div className="overflow-x-auto">
           <div className="flex gap-6 my-1">
             {actionCards.map((card, index) => (
-              <div
+                <Tooltip
+                key={index}
+                title={card.disabled ? card.tooltip : ""}
+                arrow
+              >
+              {/* <div
                 key={index}
                 className="bg-[#F8FAFC] rounded-lg p-4 relative flex flex-col  md:w-[330px] w-[280px] h-[226px] flex-shrink-0 shadow-lg"
-              >
+              > */}
+                <div
+                  className={`bg-[#F8FAFC] rounded-lg p-4 relative flex flex-col md:w-[330px] w-[280px] h-[226px] flex-shrink-0 shadow-lg ${
+                    card.disabled ? "cursor-not-allowed opacity-50" : ""
+                  }`}
+                >
                 <div className="flex justify-between items-start mb-4">
                   <div className="flex-grow pr-4">
                     <h3 className="text-md text-[#121926] font-semibold mb-2">
@@ -340,11 +355,13 @@ const handleButtonClick = (action) => {
                   )}
                 </div>
               </div>
+              </Tooltip>
             ))}
+            
           </div>
         </div>
       </div>
-      <DashboardHomeProfileCards percentage={completionPercentage} />
+      <DashboardHomeProfileCards percentage={usercompletionPercentage} />
       {roleModalOpen && (
         <Modal1
           isOpen={roleModalOpen}

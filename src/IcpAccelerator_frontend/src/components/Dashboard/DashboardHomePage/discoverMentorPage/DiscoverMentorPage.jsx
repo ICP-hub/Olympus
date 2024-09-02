@@ -105,7 +105,7 @@ const DiscoverMentorPage = ({ openDetail, setOpenDetail, projectDetails ,project
                 <DiscoverTeam projectDetails={projectDetails} />
               )}
               {activeTab === "ratings" && <DiscoverReview userData={userData} principalId={principal} />}
-              {activeTab === "moneyraised" && <DiscoverMoneyRaising cardData={projectDetails} />}
+              {activeTab === "moneyraised" && <DiscoverMoneyRaising cardData={projectDetails} projectId={projectId}/>}
             </div>
           </div>
         </div>

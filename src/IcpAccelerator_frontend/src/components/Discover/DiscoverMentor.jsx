@@ -13,6 +13,7 @@ import { founderRegisteredHandlerRequest } from "../StateManagement/Redux/Reduce
 import { Tooltip } from "react-tooltip";
 import DiscoverMentorMain from "../Dashboard/DashboardHomePage/discoverMentor/DiscoverMentorMain";
 import RatingModal from "../Common/RatingModal";
+import NoData from "../NoDataCard/NoData";
 
 const DiscoverMentor = ({onMentorCountChange}) => {
   const actor = useSelector((currState) => currState.actors.actor);
@@ -33,6 +34,8 @@ const DiscoverMentor = ({onMentorCountChange}) => {
   const [mentorId, setMentorId] = useState(null);
   const [showRatingModal, setShowRatingModal] = useState(false);
   const [userRatingDetail,setUserRatingDetail]=useState(null)
+  const [currentPrincipal, setCurrentPrincipal] = useState([]);
+  const [activeTab, setActiveTab] = useState("Users"); // Default active tab
 
   const dispatch = useDispatch();
   const userCurrentRoleStatusActiveRole = useSelector(
@@ -178,9 +181,10 @@ const DiscoverMentor = ({onMentorCountChange}) => {
     console.log("passed principle", principal);
   };
 
-  const handleRating=(ratings)=>{
+  const handleRating=(ratings,principalId)=>{
     setShowRatingModal(true)
     setUserRatingDetail(ratings)
+    setCurrentPrincipal(principalId);
   }
   console.log("userRatingDetail =>",userRatingDetail)
 
@@ -254,7 +258,7 @@ const DiscoverMentor = ({onMentorCountChange}) => {
                         />
                       </div>
                     </div>
-                    <div  onClick={() => handleRating(user)} className="absolute bottom-0 right-[6px] flex items-center bg-gray-100 p-1">
+                    <div  onClick={() => handleRating(user,principle_id)} className="absolute bottom-0 right-[6px] flex items-center bg-gray-100 p-1">
                         <Star className="text-yellow-400 w-4 h-4" />
                         <span className="text-sm font-medium">5.0</span>
                       </div>
@@ -289,27 +293,29 @@ const DiscoverMentor = ({onMentorCountChange}) => {
                         <span
                           className={`inline-block ${
                             tagColors[activeRole.name] ||
-                            "bg-gray-100 text-gray-800"
-                          } text-xs px-3 py-1 rounded-full mr-2 mb-2`}
+                            "border-2 border-gray-500 rounded-full text-gray-700 text-xs px-3 py-1 bg-gray-100"
+                          } text-xs px-3 py-1 rounded-full mr-2 `}
                         >
                           {activeRole.name}
                         </span>
                       )}
                     </div>
-                    <div className="border-t border-gray-200 my-3">{email}</div>
+                    <div className="border-t border-gray-200 my-3  line-clamp-1 ">{email}</div>
 
-                    <p className="text-gray-600 mb-4">{bio}</p>
-                    <div className="flex items-center text-sm text-gray-500 flex-wrap">
-                      {randomSkills?.map((skill, index) => (
-                        <span
-                          key={index}
-                          className="mr-2 mb-2 border boder-[#CDD5DF] bg-white text-[#364152] px-3 py-1 rounded-full"
-                        >
-                          {skill}
-                        </span>
-                      ))}
+                    <p className="text-gray-600 mb-4 line-clamp-3">{bio}</p>
+                    <div className="flex items-center text-sm text-gray-500 flex-wrap gap-1">
+                    <div className="flex overflow-x-auto space-x-2">
+  {randomSkills.map((skill, index) => (
+    <span
+      key={index}
+      className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-3 py-1 bg-gray-100"
+    >
+      {skill}
+    </span>
+  ))}
+</div>
 
-                      <span className="mr-2 mb-2 flex text-[#121926] items-center">
+                      <span className="mr-2  flex text-[#121926] items-center py-1">
                         <PlaceOutlinedIcon className="text-[#364152] mr-1 w-4 h-4" />
                         {country}
                       </span>
@@ -320,13 +326,14 @@ const DiscoverMentor = ({onMentorCountChange}) => {
             })}
           </InfiniteScroll>
         ) : (
-          <div>No Data Available</div>
+          <div><NoData message={"No Mentor Present Yet"} /></div>
         )}
         {showRatingModal && (
         <RatingModal
           showRating={showRatingModal}
           setShowRatingModal={setShowRatingModal}
           userRatingDetail={userRatingDetail}
+          cardPrincipal={currentPrincipal}
         />
       )}
         {isAddMentorModalOpen && (

@@ -11,6 +11,7 @@ import RatingCard from "../Common/RatingCard";
 import RatingReview from "../Common/RatingReview";
 import RatingModal from "../Common/RatingModal";
 import InfiniteScroll from "react-infinite-scroll-component";
+import NoData from "../NoDataCard/NoData";
 const DiscoverUser = ({ onUserCountChange }) => {
   const actor = useSelector((currState) => currState.actors.actor);
   const [allUserData, setAllUserData] = useState([]);
@@ -182,11 +183,12 @@ const DiscoverUser = ({ onUserCountChange }) => {
                   : "default-profile.png";
 
               const full_name = user.full_name || "Unknown User";
-              console.log("full_name.........", full_name);
+              
               const bio = user.bio[0] || "No bio available.";
               const area_of_interest = user.area_of_interest || "N/A";
               const location = user.country || "Unknown Location";
-              const openchat_username = user.openchat_username ?? "ICP";
+              const openchat_username = user.openchat_username[0] || "N/A";
+              console.log("full_name.........", openchat_username);
               const principalId = principal;
 
               return (
@@ -228,7 +230,7 @@ const DiscoverUser = ({ onUserCountChange }) => {
                         </div>
                         {/* <FavoriteBorder className="text-gray-400 cursor-pointer" /> */}
                       </div>
-                      <div className="mb-2">
+                      <div className="">
                         {randomTags?.map((tag, index) => (
                           <span
                             key={index}
@@ -240,7 +242,7 @@ const DiscoverUser = ({ onUserCountChange }) => {
                           </span>
                         ))}
                       </div>
-                      <div className="border-t border-gray-200 my-3"></div>
+                      <div className="border-t border-gray-200 my-1"></div>
                       {/* <p className="font-medium mb-2"> {area_of_interest}</p> */}
 
                       <p className="text-gray-600 mb-4 overflow-hidden text-ellipsis max-h-12 line-clamp-2 ">
@@ -248,7 +250,7 @@ const DiscoverUser = ({ onUserCountChange }) => {
                       </p>
 
                       <div className="flex items-center text-sm text-gray-500 flex-wrap">
-                        <div className="flex flex-wrap gap-2">
+                        <div className="flex flex-wrap ">
                           {area_of_interest
                             .split(",")
                             .map((interest, index) => (
@@ -272,7 +274,7 @@ const DiscoverUser = ({ onUserCountChange }) => {
             })}
           </InfiniteScroll>
         ) : (
-          <div>No Data Available</div>
+          <div><NoData message={"No User Listed Yet"} /></div>
         )}
       </div>
       {showRatingModal && (

@@ -97,13 +97,10 @@ type FilterCriteria = record {
 };
 type IcpHub = record { id : int32; region : text; name : text };
 type IcpHubDetails = record {
-  twitter : opt text;
   flag : opt blob;
   name : opt text;
   description : opt text;
-  website : opt text;
-  discord : opt text;
-  telegram : opt text;
+  links : opt vec Sociallinks;
 };
 type InviteRequest = record {
   invite_message : text;
@@ -441,13 +438,14 @@ type Result = variant { Ok : text; Err : text };
 type Result_1 = variant { Ok : MoneyRaised; Err : CustomError };
 type Result_10 = variant { Ok : vec RatingView; Err : text };
 type Result_11 = variant { Ok : vec Review; Err : text };
-type Result_12 = variant { Ok : vec Testimonial; Err : text };
-type Result_13 = variant { Ok : UserInformation; Err : text };
-type Result_14 = variant {
+type Result_12 = variant { Ok : record { vec Review; nat64 }; Err : text };
+type Result_13 = variant { Ok : vec Testimonial; Err : text };
+type Result_14 = variant { Ok : UserInformation; Err : text };
+type Result_15 = variant {
   Ok : vec record { VentureCapitalistInternal; UserInfoInternal };
   Err : text;
 };
-type Result_15 = variant { Ok; Err : text };
+type Result_16 = variant { Ok; Err : text };
 type Result_2 = variant { Ok : vec Docs; Err : CustomError };
 type Result_3 = variant { Ok : float64; Err : text };
 type Result_4 = variant { Ok : CanisterStatusResponse; Err : text };
@@ -485,6 +483,7 @@ type Role = record {
 type SocialLinks = record { link : opt text };
 type SocialLinks_1 = record { link : opt text };
 type SocialLinks_2 = record { link : opt text };
+type Sociallinks = record { links : opt text };
 type TeamMember = record {
   member_data : UserInformation;
   member_uid : text;
@@ -803,6 +802,7 @@ service : {
       vec CohortEnrollmentRequest,
     ) query;
   get_review : (principal) -> (Result_11) query;
+  get_review_with_count : (principal) -> (Result_12) query;
   get_role_status : () -> (vec Role) query;
   get_roles_for_principal : (principal) -> (vec Role) query;
   get_self_declined_requests_for_investor : () -> (vec OfferToInvestor) query;
@@ -810,18 +810,18 @@ service : {
   get_self_declined_requests_for_project : () -> (vec OfferToMentor) query;
   get_self_declined_requests_of_project : (text) -> (vec OfferToInvestor) query;
   get_stored_average_rating : (text, text) -> (Result_3) query;
-  get_testimonials : (principal) -> (Result_12) query;
+  get_testimonials : (principal) -> (Result_13) query;
   get_user_info_struct : () -> (opt UserInformation) query;
   get_user_info_using_principal : (principal) -> (opt UserInfoInternal) query;
-  get_user_information : () -> (Result_13) query;
-  get_user_information_using_uid : (text) -> (Result_13) query;
+  get_user_information : () -> (Result_14) query;
+  get_user_information_using_uid : (text) -> (Result_14) query;
   get_vc_info : (principal) -> (
       opt record { VentureCapitalist; UserInfoInternal },
     ) query;
   get_vc_info_using_principal : (principal) -> (
       opt record { VentureCapitalistAll; UserInfoInternal },
     ) query;
-  get_vcs_applied_for_cohort : (text) -> (Result_14) query;
+  get_vcs_applied_for_cohort : (text) -> (Result_15) query;
   greet : (text) -> (text) query;
   list_all_projects : () -> (
       vec record { ProjectInfoInternal; UserInfoInternal },
@@ -878,7 +878,7 @@ service : {
   update_project_private_docs : (text, Docs, bool) -> (Result);
   update_rating : (RatingUpdate) -> (text);
   update_team_member : (text, principal) -> (text);
-  update_user_data : (principal, UserInformation) -> (Result_15);
+  update_user_data : (principal, UserInformation) -> (Result_16);
   update_vc_ratings : (text, RatingMentorInvestor) -> ();
   update_venture_capitalist : (VentureCapitalist) -> (text);
 }

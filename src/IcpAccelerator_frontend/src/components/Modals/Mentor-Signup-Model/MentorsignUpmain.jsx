@@ -11,16 +11,19 @@ import { allHubHandlerRequest } from "../../StateManagement/Redux/Reducers/All_I
 import MentorSignup3 from "./MentorSignUp1";
 import MentorSignup4 from "./MentorSignup2";
 import { validationSchema } from "./mentorValidation";
-
+import {useNavigate} from "react-router-dom"
+import { rolesHandlerRequest } from "../../StateManagement/Redux/Reducers/RoleReducer";
 // MAIN COMPONENT FOR MENTOR SIGNUP PROCESS
 const MentorSignupMain = ({ }) => {
   const dispatch = useDispatch(); // INITIALIZING DISPATCH FUNCTION TO TRIGGER ACTIONS
   const actor = useSelector((state) => state.actors.actor); // SELECTING ACTOR FROM REDUX STORE
-
+const navigate= useNavigate()
+  const [isSubmitting,setIsSubmitting]=useState(false)
   // SETTING UP LOCAL STATE
   const [modalOpen, setModalOpen] = useState(true); // STATE TO CONTROL MODAL VISIBILITY
   const [index, setIndex] = useState(0); // STATE TO TRACK CURRENT STEP OF THE FORM
   const [formData, setFormData] = useState({}); // STATE TO STORE FORM DATA
+  const [isfetchCall,setFetchCall]=useState(false)
 
   // INITIALIZE REACT HOOK FORM WITH YUP VALIDATION
   const methods = useForm({
@@ -28,7 +31,7 @@ const MentorSignupMain = ({ }) => {
     mode: "all",  // VALIDATION MODE SET TO VALIDATE ON ALL INPUTS CHANGE
   });
   
-  const { handleSubmit, trigger, formState: { isSubmitting }, getValues } = methods; // DESTRUCTURING USEFORM METHODS
+  const { handleSubmit, trigger, formState: {  }, getValues } = methods; // DESTRUCTURING USEFORM METHODS
 
   // OBJECT TO STORE FIELDS BASED ON CURRENT FORM STEP
   const formFields = {
@@ -82,6 +85,7 @@ const MentorSignupMain = ({ }) => {
   // FUNCTION TO HANDLE FORM SUBMISSION SUCCESS
   const onSubmitHandler = async (data) => {
     console.log("Form data on submit:", data); // LOG SUBMITTED FORM DATA
+    setIsSubmitting(true)
     const multichainNames = data.multi_chain === "true"
   ? Array.isArray(data.multi_chain_names) && data.multi_chain_names.length > 0
     ? data.multi_chain_names.map(name => name.trim())
@@ -121,12 +125,16 @@ const MentorSignupMain = ({ }) => {
           result.startsWith("Profile image is already uploaded")
         ) {
           toast.error(result);
+          setIsSubmitting(false)
           setModalOpen(false);
-          // window.location.reload();
+          setFetchCall(false);
+          navigate("/dashboard/profile")
         } else {
           toast.success("Mentor registered successfully!");
+          setIsSubmitting(false)
           setModalOpen(false);
-          // window.location.reload();
+          setFetchCall(true);
+          navigate("/dashboard/profile")
         }
       } catch (error) {
         toast.error(error.message);
@@ -137,7 +145,11 @@ const MentorSignupMain = ({ }) => {
       window.location.href = "/";
     }
   }
-  
+  useEffect(() => {
+    if(isfetchCall){
+    dispatch(rolesHandlerRequest());
+  }
+  }, [actor, dispatch,isfetchCall]);
 
   // RENDER COMPONENT
   return (

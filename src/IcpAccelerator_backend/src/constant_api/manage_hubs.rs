@@ -15,16 +15,16 @@ pub struct IcpHub {
     pub name: String,
     pub region: String,
 }
-
+#[derive(Serialize, Deserialize, Debug, CandidType,Clone)]
+pub struct Sociallinks{
+    pub links: Option<String>
+}
 #[derive(Serialize, Deserialize, Debug, CandidType, Clone)]
 pub struct IcpHubDetails{
     pub name: Option<String>,
     pub flag: Option<Vec<u8>>,
-    pub twitter: Option<String>,
-    pub telegram: Option<String>,
-    pub discord: Option<String>,
+    pub links: Option<Vec<Sociallinks>>,
     pub description: Option<String>,
-    pub website: Option<String>,
 }
 
 pub async fn add_hubs_images(caller: Principal, mut data: IcpHubDetails)->IcpHubDetails{
