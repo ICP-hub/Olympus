@@ -7,13 +7,14 @@ import { Principal } from "@dfinity/principal";
 import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
 import toast from "react-hot-toast";
 import { ThreeDots } from "react-loader-spinner";
+import NoDataFound from "../Dashboard/DashboardEvents/NoDataFound";
 
-const DiscoverReview = (userData,principalId) => {
-    console.log("principal discover pe",principalId)
-    console.log("userdata discoverreview pe ",userData);
+const DiscoverReview = (userData, principalId) => {
+  console.log("principal discover pe", principalId);
+  console.log("userdata discoverreview pe ", userData);
   const [rating, setRating] = useState(0);
   const [showReview, setShowReview] = useState(false);
-  const [currentUserHasRated, setCurrentUserHasRated] = useState(null); 
+  const [currentUserHasRated, setCurrentUserHasRated] = useState(null);
   const actor = useSelector((currState) => currState.actors.actor);
   const [reviews, setReviews] = useState([]);
   const isMounted = useRef(true);
@@ -92,11 +93,14 @@ const DiscoverReview = (userData,principalId) => {
     userFullData?.profile_picture && userFullData?.profile_picture[0]
       ? uint8ArrayToBase64(userFullData?.profile_picture[0])
       : "userpic";
-    console.log("USER PROFILE PIC", userPic);
+  console.log("USER PROFILE PIC", userPic);
+
   return (
     <div className="p-6">
-      {reviews &&
-        reviews?.map((review, index) => {
+      {reviews.length === 0 ? (
+        <div className="text-center "><NoDataFound message="No Review Found"/></div>
+      ) : (
+        reviews.map((review, index) => {
           const profilepic =
             review?.profile_pic && review?.profile_pic
               ? uint8ArrayToBase64(review?.profile_pic)
@@ -160,9 +164,11 @@ const DiscoverReview = (userData,principalId) => {
               </div>
             </div>
           );
-        })}
+        })
+      )}
     </div>
   );
 };
 
 export default DiscoverReview;
+

@@ -379,10 +379,10 @@ className="mr-2 mb-2 border border-[#097647] bg-[#EBFDF3] text-[#097647] px-3 py
                             {loadingIndexes[index] === "Approve" && (
                               <ThreeDots
                               visible={true}
-                              height="20"
+                              height="15"
                               width="20"
                               color="#FFFFFF"
-                              radius="9"
+                              radius="8"
                               ariaLabel="three-dots-loading"
                               wrapperStyle={{ }}
                               wrapperclassName=""
@@ -398,10 +398,10 @@ className="mr-2 mb-2 border border-[#097647] bg-[#EBFDF3] text-[#097647] px-3 py
                             {loadingIndexes[index] === "Reject" && (
                               <ThreeDots
                                 visible={true}
-                                height="20"
+                                height="15"
                                 width="20"
                                 color="#FFFFFF"
-                                radius="9"
+                                radius="8"
                                 ariaLabel="three-dots-loading"
                                 wrapperStyle={{ }}
                                 wrapperclassName=""

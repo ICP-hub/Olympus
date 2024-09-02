@@ -28,6 +28,7 @@ const DiscoverInvestorAbout = ({investorData}) => {
   const openchat_username = investorDetail?.openchat_username ?? "username";
   let links=investorDetail?.social_links?.links?.[0]?.[0]
   console.log('Links ', links)
+ console.log("areaofinterest",area_of_interest);
 
   const getLogo = (url) => {
     try {
@@ -102,14 +103,14 @@ const DiscoverInvestorAbout = ({investorData}) => {
             </span>
           </div>
         </div>
-        <div className="">
+        {/* <div className="">
           <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
             Associations
           </h3>
           <div className="mb-2">
             <img src={awtar} alt="icon" />
           </div>
-        </div>
+        </div> */}
         <div className="flex justify-start border-b">
           <button
             className={`px-4 py-2 focus:outline-none font-medium  ${
@@ -153,17 +154,7 @@ const DiscoverInvestorAbout = ({investorData}) => {
               </div>
             </div>
 
-            {/* Tagline Section */}
-            {/* <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-1 px-3">
-              <div className="flex justify-between">
-                <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
-                  Tagline
-                </h3>
-              </div>
-              <p className="text-sm">tagline</p>
-            </div> */}
-
-            {/* About Section */}
+           
             <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-1 ">
               <div className="flex justify-between">
                 <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
@@ -197,7 +188,7 @@ const DiscoverInvestorAbout = ({investorData}) => {
                 </h3>
               </div>
               <div className="flex flex-wrap gap-2">
-                {investorDetail?.reason_to_join?.map((reason) => (
+                {investorDetail?.reason_to_join[0]?.map((reason) => (
                   <span
                     key={reason}
                     className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 "
@@ -216,7 +207,15 @@ const DiscoverInvestorAbout = ({investorData}) => {
                 </h3>
               </div>
               <div className="flex flex-wrap text-sm gap-2">
-                {investorDetail?.area_of_interest}
+              {investorDetail?.area_of_interest &&
+    investorDetail.area_of_interest.split(", ").map((interest, index) => (
+      <span
+        key={index}
+        className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1"
+      >
+        {interest}
+      </span>
+    ))}
               </div>
             </div>
 
