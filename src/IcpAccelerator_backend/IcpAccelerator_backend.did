@@ -97,13 +97,10 @@ type FilterCriteria = record {
 };
 type IcpHub = record { id : int32; region : text; name : text };
 type IcpHubDetails = record {
-  twitter : opt text;
   flag : opt blob;
   name : opt text;
   description : opt text;
-  website : opt text;
-  discord : opt text;
-  telegram : opt text;
+  links : opt vec Sociallinks;
 };
 type InviteRequest = record {
   invite_message : text;
@@ -486,6 +483,7 @@ type Role = record {
 type SocialLinks = record { link : opt text };
 type SocialLinks_1 = record { link : opt text };
 type SocialLinks_2 = record { link : opt text };
+type Sociallinks = record { links : opt text };
 type TeamMember = record {
   member_data : UserInformation;
   member_uid : text;
