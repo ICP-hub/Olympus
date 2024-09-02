@@ -13,6 +13,7 @@ import InvestorModal2 from "./InvestorModal2";
 import InvestorModal3 from "./InvestorModal3";
 import { allHubHandlerRequest } from "../../StateManagement/Redux/Reducers/All_IcpHubReducer";
 import { validationSchema } from "./investorvalidation";
+import { rolesHandlerRequest } from "../../StateManagement/Redux/Reducers/RoleReducer";
 
 const InvestorForm = ({ isOpen }) => {
   const navigate= useNavigate()
@@ -29,6 +30,8 @@ const InvestorForm = ({ isOpen }) => {
   console.log("STATE SE AAYA HUA DATA",formData); 
   // INITIALIZE REACT HOOK FORM WITH VALIDATION SCHEMA
   const [isSubmitting,setIsSubmitting]=useState(false)
+  const [isfetchCall,setFetchCall]=useState(false)
+
   const {
     register,
     handleSubmit,
@@ -174,11 +177,13 @@ const InvestorForm = ({ isOpen }) => {
             toast.error(result); // SHOW ERROR TOAST WITH RETURNED MESSAGE
             setIsSubmitting(false)
             setModalOpen(false);
+            setFetchCall(false)
             navigate("/dashboard/profile")
           } else {
             toast.success("Investor registered successfully!"); // SHOW SUCCESS MESSAGE
             setModalOpen(false);
            setIsSubmitting(false)
+           setFetchCall(true)
             navigate("/dashboard/profile")
           }
         });
@@ -203,6 +208,11 @@ const InvestorForm = ({ isOpen }) => {
   useEffect(() => {
     dispatch(allHubHandlerRequest());
   }, [actor, dispatch]);
+  useEffect(() => {
+    if(isfetchCall){
+    dispatch(rolesHandlerRequest());
+  }
+  }, [actor, dispatch,isfetchCall]);
 
   return (
     // <>

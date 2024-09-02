@@ -1,7 +1,7 @@
 import React from "react";
 import DiscoverFundingCard from "./DiscoverFundingCard";
 
-const DiscoverMoneyRaising = ({ cardData }) => {
+const DiscoverMoneyRaising = ({ cardData ,projectId}) => {
   // Ensure that cardData is an array
   const moneyRaisedData = Array.isArray(cardData?.money_raised) ? cardData.money_raised : [];
 
@@ -11,11 +11,11 @@ const DiscoverMoneyRaising = ({ cardData }) => {
   return (
     <div>
      
-      <div className="flex flex-col items-end mb-8 max-w-7xl pt-4"></div>
+      <div className="flex flex-col items-end mb-4 max-w-7xl pt-4"></div>
       <div className="max-w-7xl mx-auto bg-white">
         {moneyRaisedData.length > 0 ? (
           moneyRaisedData.map((data, index) => (
-            <DiscoverFundingCard key={index} data={data} />
+            <DiscoverFundingCard key={index} data={data} projectId={projectId} />
           ))
         ) : (
           // <p>No funding data available.</p>

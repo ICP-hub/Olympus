@@ -18,6 +18,8 @@ import AssociationDetailsProjectCard from "./AssociationDetailsProjectCard";
 import AssociationDetailsCard from "./AssociationDetailsMentorCard";
 import AssociationDetailsInvestorCard from "./AssociationDetailsInvestorCard";
 import NoData from "../../NoDataCard/NoData";
+import DocumentRequestCard from "../../Request/DocumentRequestCard";
+import MoneyRaiseRequestCard from "../../Request/MoneyRaiseRequestCard";
 
 // Memoize AssociationDetailsCard and AssociationDetailsProjectCard
 const MemoizedAssociationDetailsMentorCard = React.memo(AssociationDetailsCard);
@@ -30,6 +32,7 @@ const AssociationRequestCard = () => {
   const [filterOpen, setFilterOpen] = useState(false);
   const [associateData, setAssociateData] = useState([]);
   const [noDataMessage, setNoDataMessage] = useState("No Data Available");
+  const [selectedType, setSelectedType] = useState("");
 
   const projectFullData = useSelector(
     (currState) => currState.projectData.data
@@ -61,6 +64,7 @@ const AssociationRequestCard = () => {
     setFilterOpen((prev) => !prev);
   }, []);
 
+  console.log('selectedType',selectedType)
   useEffect(() => {
     // Set custom no data message based on role, active tab data, and selected type data
     if (associateData.length === 0) {
@@ -249,7 +253,8 @@ const AssociationRequestCard = () => {
         associateData.map((user, index) => (
           console.log(user),
           <div key={index}>
-            {userCurrentRoleStatusActiveRole === "project" ? (
+            {selectedType.value ==='Associates'?
+            userCurrentRoleStatusActiveRole === "project" ? (
               <MemoizedAssociationDetailsProjectCard
                 user={user}
                 index={index}
@@ -273,7 +278,18 @@ const AssociationRequestCard = () => {
               />
             ) : (
               ""
-            )}
+            ):selectedType.value ==='Document'?
+            <DocumentRequestCard
+            user={user}
+            index={index}
+            activeTabData={activeTabData}/>:
+            selectedType.value ==='FundRaised'?
+            <MoneyRaiseRequestCard
+            user={user}
+            index={index}
+            activeTabData={activeTabData}
+            />:''
+          }
           </div>
         ))
       )}
@@ -290,6 +306,8 @@ const AssociationRequestCard = () => {
           selectedTypeData={selectedTypeData}
           setActiveTabTypeData={setActiveTabTypeData}
           activeTabData={activeTabData}
+          setSelectedType={setSelectedType}
+          selectedType={selectedType}
         />
       )}
     </div>

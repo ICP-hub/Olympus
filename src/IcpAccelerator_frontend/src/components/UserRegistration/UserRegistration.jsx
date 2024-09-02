@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useForm, FormProvider,useFieldArray } from "react-hook-form";
+import { useForm, FormProvider } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { ThreeDots } from "react-loader-spinner";
 import toast, { Toaster } from "react-hot-toast";
-import { Principal } from "@dfinity/principal";
 import { useSelector } from "react-redux";
 import Layer1 from "../../../assets/Logo/Layer1.png";
 import AboutcardSkeleton from "../LatestSkeleton/AbourcardSkeleton";
@@ -34,6 +33,7 @@ const UserRegistration = () => {
   const [iscaptchaSuccess, setCaptchaSuccess] = useState(false);
   const [isCaptchaLoading, setIsCaptchaLoading] = useState(false);
   const [cooldown, setCooldown] = useState(0);
+  const [isInitialSubmit, setIsInitialSubmit] = useState(false);  // Track if the initial submission has happened
 
   const captchaRef = useRef(null); // Ref for captcha input field
 
@@ -53,7 +53,7 @@ const UserRegistration = () => {
       image: null,
     },
   });
-  const { handleSubmit, trigger, getValues, formState, watch } = methods;
+  const { handleSubmit, trigger, getValues, formState, watch, resetField } = methods;
   const { errors } = formState;
 
   const formFields = {
@@ -72,7 +72,7 @@ const UserRegistration = () => {
 
   
   const handleNext = async () => {
-    const fieldsToValidate = formFields[index];
+    const fieldsToValidate = index < 2 ? formFields[index] : [...formFields[2], "captcha"];
     const isValid = await trigger(fieldsToValidate);
     if (isValid) {
       setIndex((prevIndex) => prevIndex + 1);
@@ -98,11 +98,10 @@ const UserRegistration = () => {
     }, 1000);
   };
 
-
   const handleCheckboxChange = async () => {
     const newCheckedState = !isChecked;
     setIsChecked(newCheckedState);
-    setCaptchaSuccess(false)
+    setCaptchaSuccess(false);
     setCaptchaVisible(false);
     if (newCheckedState) {
       setIsCaptchaLoading(true);
@@ -111,9 +110,9 @@ const UserRegistration = () => {
       try {
         const result = await actor.generate_captcha_with_id();
         if (result) {
-          console.log('result',result)
+          console.log('result',result);
           setCaptcha(result);
-          setCaptchaSuccess(true)
+          setCaptchaSuccess(true);
           startCooldown();
         }
       } catch (error) {
@@ -134,6 +133,7 @@ const UserRegistration = () => {
       const result = await actor.generate_captcha_with_id();
       if (result) {
         setCaptcha(result);
+        resetField("captcha"); // Clear the captcha input field
         startCooldown(); // Restart the cooldown timer after refreshing
       }
     } catch (error) {
@@ -146,23 +146,6 @@ const UserRegistration = () => {
   };
 
   useEffect(() => {
-    if (rotating) {
-      const icon = document.getElementById("refresh-icon");
-      if (icon) {
-        const animationEndHandler = () => {
-          setRotating(false);
-        };
-
-        icon.addEventListener("animationend", animationEndHandler);
-
-        return () => {
-          icon.removeEventListener("animationend", animationEndHandler);
-        };
-      }
-    }
-  }, [rotating]);
-
-  useEffect(() => {
     const subscription = watch((value) => {
       setGetAllData(value);
     });
@@ -170,6 +153,7 @@ const UserRegistration = () => {
   }, [watch, setGetAllData]);
 
   const onSubmitHandler = async () => {
+    setIsInitialSubmit(true); // Set that initial submission has happened
     const data = { ...formData, ...getValues() };
     setFormData(data);
     setCaptchaVisible(true);
@@ -177,10 +161,10 @@ const UserRegistration = () => {
 
   const onFinalSubmit = async () => {
     const data = { ...formData, ...getValues() };
-    console.log('data',data)
+    console.log('data',data);
     // Get the value of the captcha input using useRef
     const captchaInputValue = captchaRef.current.value;
-    console.log('captchaInputValue',captchaInputValue)
+    console.log('captchaInputValue',captchaInputValue);
     // Validate captcha manually
     if (!captchaInputValue) {
       setCaptchaError("Captcha is required. Please enter the captcha.");
@@ -219,7 +203,7 @@ const UserRegistration = () => {
           if (result.Ok) {
             toast.success(result.Ok); // Assuming 'Ok' contains the success message
             setIsSubmititng(false);
-             window.location.href = "/dashboard";
+            window.location.href = "/dashboard";
           } else if (result.Err) {
             toast.error(result.Err); // Assuming 'Err' contains the error message
             setIsSubmititng(false);
@@ -245,6 +229,7 @@ const UserRegistration = () => {
     console.log("error", val);
   };
 
+  
   return (
     <>
       <FormProvider {...methods}>
@@ -334,7 +319,7 @@ const UserRegistration = () => {
                         type="button"
                         className="py-2 px-4 text-gray-600 rounded hover:text-black border-gray-300 border-2"
                         onClick={handleBack}
-                        disabled={index === 0}
+                        disabled={index === 0 || isInitialSubmit} // Disable back button after initial submission
                       >
                         <ArrowBackIcon fontSize="medium" className="mr-2" />
                         Back
@@ -362,10 +347,13 @@ const UserRegistration = () => {
                         </button>
                       ) : (
                         <>
+
                           {index === 2 ? (
                             <button
                               type="submit"
                               className="py-2 px-4 bg-[#D1E0FF] text-white rounded hover:bg-blue-600 border-2 border-[#B2CCFF] flex items-center"
+                             
+                              // Disable submit until captcha is correct
                             >
                               {isSubmitting ? (
                                 <ThreeDots

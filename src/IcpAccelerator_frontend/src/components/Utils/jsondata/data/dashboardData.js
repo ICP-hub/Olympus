@@ -172,7 +172,7 @@ export const dashboard={
       "label": "MENTOR",
       "items": 
         {
-          "label1": "Cyperhunk Labs",
+          "label1": "Mentor Services",
           "label2": "Create new Mentor",
           "icon": "gridSvgIcon",
          
@@ -182,7 +182,7 @@ export const dashboard={
       "label": "INVESTOR",
       "items": 
         {
-          "label1": "Cyperhunk Labs",
+          "label1": "Investor Services",
           "label2": "Create new Investor",
           "icon": "gridSvgIcon",
          

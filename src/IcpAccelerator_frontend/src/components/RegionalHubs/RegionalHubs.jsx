@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
 
 import RegionalHubModal from "./RegionalHubModal";
+import NoData from "../NoDataCard/NoData";
 
 const DiscoverRegionalHubs = () => {
   const actor = useSelector((currState) => currState.actors.actor);
@@ -60,17 +61,20 @@ const DiscoverRegionalHubs = () => {
             onClick={() => setIsModalOpen(true)}
             className="border-2 px-2 border-black py-1"
           >
-            Jai ho
+            Add Hub
           </button>
         </div>
       </div>
-      <div className="grid md:grid-cols-3 gap-6">
       {isLoading ? (
           <p>Loading...</p>
         ) : allHubsData.length === 0 ? (
-          <p>No data available</p>
+          <div className="flex items-center justify-center">
+          <NoData message={'No Hubs Data Available'}/>
+          </div>
         ) : (        
-        allHubsData.map((hub, index) => {
+      <div className="grid md:grid-cols-3 gap-6">
+          
+        {allHubsData.map((hub, index) => {
           let name = hub.params.name[0] ?? "N/A";
           let desc = hub.params.description[0] ?? "N/A";
           let discord = hub.params.discord[0] ?? "N/A";
@@ -129,12 +133,12 @@ const DiscoverRegionalHubs = () => {
                 </div>
               </div>
             </div>
-         )}))}
+         )})}
       </div>
-
+        )}
       {/* Render the modal when isModalOpen is true */}
       {isModalOpen && <RegionalHubModal onClose={() => setIsModalOpen(false)} />}
-    </div>
+        </div>
   );
 };
 
