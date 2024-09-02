@@ -17,7 +17,7 @@ import CustomCaptcha from "../Common/ToogleSwitch/CustomCaptcha";
 import { FaArrowRotateLeft } from "react-icons/fa6";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
-
+import {useNavigate} from "react-router-dom"
 const UserRegistration = () => {
   const [index, setIndex] = useState(0);
   const [imageData, setImageData] = useState(null);
@@ -33,6 +33,7 @@ const UserRegistration = () => {
   const [iscaptchaSuccess, setCaptchaSuccess] = useState(false);
   const [isCaptchaLoading, setIsCaptchaLoading] = useState(false);
   const [cooldown, setCooldown] = useState(0);
+ const navigate=useNavigate() 
   const [isInitialSubmit, setIsInitialSubmit] = useState(false);  // Track if the initial submission has happened
 
   const captchaRef = useRef(null); // Ref for captcha input field
@@ -203,7 +204,7 @@ const UserRegistration = () => {
           if (result.Ok) {
             toast.success(result.Ok); // Assuming 'Ok' contains the success message
             setIsSubmititng(false);
-            window.location.href = "/dashboard";
+             navigate("/dashboard")
           } else if (result.Err) {
             toast.error(result.Err); // Assuming 'Err' contains the error message
             setIsSubmititng(false);
@@ -215,13 +216,13 @@ const UserRegistration = () => {
         toast.error(error.message);
         setIsSubmititng(false);
         console.error("Error sending data to the backend:", error);
-        window.location.href = "/";
+        navigate("/")
       } finally {
         setIsSubmititng(false);
       }
     } else {
       toast.error("Please signup with internet identity first");
-      window.location.href = "/";
+      navigate("/")
     }
   };
 

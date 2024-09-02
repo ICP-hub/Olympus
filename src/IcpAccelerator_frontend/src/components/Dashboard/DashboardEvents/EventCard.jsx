@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import parse from "html-react-parser";
 import images from "../../../../assets/images/bg.png";
 import { formatFullDateFromSimpleDate } from "../../Utils/formatter/formatDateFromBigInt";
+import NoData from "../../NoDataCard/NoData";
 const EventCard = () => {
   const actor = useSelector((currState) => currState.actors.actor);
   const [noData, setNoData] = useState(null);
@@ -202,7 +203,7 @@ const EventCard = () => {
           })}
         </div>
       ) : (
-        <div>No Data Available</div>
+        <div className="flex justify-center items-center"><NoData message={"No Cohort Available"}/></div>
       )}
     </div>
   );

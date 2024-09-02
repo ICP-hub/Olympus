@@ -100,7 +100,7 @@ const navigate= useNavigate()
       const mentorData = {
         preferred_icp_hub: data.preferred_icp_hub ? [data.preferred_icp_hub] : null,
         icp_hub_or_spoke: data.icp_hub_or_spoke === "true",
-        hub_owner: data.icp_hub_or_spoke === "true" && data.hub_owner ? [data.hub_owner] : null,
+        hub_owner: data.icp_hub_or_spoke === "true" && data.hub_owner ? [data.hub_owner] : ['N/A'],
         category_of_mentoring_service: data.category_of_mentoring_service,
         years_of_mentoring: data.years_of_mentoring.toString(),
         links: data?.links

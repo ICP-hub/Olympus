@@ -300,9 +300,9 @@ const DiscoverMentor = ({onMentorCountChange}) => {
                         </span>
                       )}
                     </div>
-                    <div className="border-t border-gray-200 my-3  line-clamp-1 ">{email}</div>
+                    <div className="border-t border-gray-200 my-3 mb-2 line-clamp-1 ">{email}</div>
 
-                    <p className="text-gray-600 mb-4 line-clamp-3">{bio}</p>
+                    <p className="text-gray-600 mb-2 line-clamp-3">{bio}</p>
                     <div className="flex items-center text-sm text-gray-500 flex-wrap gap-1">
                     <div className="flex overflow-x-auto space-x-2">
   {randomSkills.map((skill, index) => (

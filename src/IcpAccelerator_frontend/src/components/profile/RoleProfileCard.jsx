@@ -1,7 +1,7 @@
 import React from "react";
 import { MoreVert } from "@mui/icons-material"; 
 import founder from "../../../assets/Logo/founder.png";
-const RoleProfileCard = ({role,image}) => {
+const RoleProfileCard = ({role,image,message}) => {
   return (
     <div className="bg-[#EEF2F6] shadow-md rounded-lg p-6 w-3/4 h-60 flex flex-col items-center text-center relative">
       <img
@@ -13,7 +13,8 @@ const RoleProfileCard = ({role,image}) => {
         {role}
       </div>
       <p className="text-gray-700 font-semibold mb-4">
-        Maximize the expansion of your projects and find investments
+        {/* Maximize the expansion of your projects and find investments */}
+        {message}
       </p>
       {/* <div className="text-sm text-gray-500">
         <span className="font-semibold">Projects:</span> 1
