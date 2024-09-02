@@ -43,16 +43,16 @@ const UserProjectCard = ({projectData,userData,principal}) => {
       <h2 className="text-lg font-semibold text-gray-800 mb-4">Projects</h2>
       <div
         onClick={() => handleClick()}
-        className="flex items-center cursor-pointer pl-3 gap-6"
+        className="flex w-full items-center cursor-pointer pl-3 gap-6"
       >
-        <div className="w-[400px] h-[140px] bg-gray-100 rounded-md flex items-center justify-center px-10 py-2">
+        <div className="h-[140px] bg-gray-100 rounded-md flex items-center justify-center px-10 py-2">
           <img
             src={projectlogo}
             alt="Cypherpunk Labs Logo"
             className="w-[80px] h-[80px]  object-cover object-center rounded-lg"
           />
         </div>
-        <div>
+        <div className="w-3/4">
           <h3 className="text-lg font-bold text-gray-900 line-clamp-1">
             {projectDetails?.project_name}
           </h3>
