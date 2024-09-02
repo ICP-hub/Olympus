@@ -21,6 +21,7 @@ import { formatFullDateFromBigInt } from "../Utils/formatter/formatDateFromBigIn
 import LinkIcon from "@mui/icons-material/Link";
 import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
 import parse from "html-react-parser";
+import Tooltip from "@mui/material/Tooltip"; 
 import NoData from "../NoDataCard/NoData";
 const Jobs = () => {
   const actor = useSelector((currState) => currState.actors.actor);
@@ -314,6 +315,7 @@ const refresh = () => {
           </div>
 
           <div className="w-[30%]">
+          <Tooltip title="Coming Soon">
             <div className="p-4 bg-white sticky top-0  max-w-sm">
               <h2 className="text-xl font-semibold mb-4">Filters</h2>
 
@@ -336,6 +338,7 @@ const refresh = () => {
                   options={roleOptions}
                   placeholder="Select role"
                   className="mt-1 block w-full text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                  isDisabled={true}
                 />
               </div>
 
@@ -352,6 +355,7 @@ const refresh = () => {
                       name="fullTime"
                       type="checkbox"
                       className="h-4 w-4 text-indigo-600 border-2 border-gray-300 rounded"
+                      disabled
                     />
                     <label
                       htmlFor="full-time"
@@ -368,6 +372,7 @@ const refresh = () => {
                       name="partTime"
                       type="checkbox"
                       className="h-4 w-4 text-indigo-600 border-gray-300 border-2  rounded"
+                      disabled
                     />
                     <label
                       htmlFor="part-time"
@@ -384,6 +389,7 @@ const refresh = () => {
                       name="contract"
                       type="checkbox"
                       className="h-4 w-4 text-indigo-600 border-gray-300 border-2 rounded"
+                      disabled
                     />
                     <label
                       htmlFor="contract"
@@ -400,6 +406,7 @@ const refresh = () => {
                       name="internship"
                       type="checkbox"
                       className="h-4 w-4 text-indigo-600 border-gray-300 border-2 rounded"
+                      disabled
                     />
                     <label
                       htmlFor="internship"
@@ -426,6 +433,7 @@ const refresh = () => {
                   id="location"
                   className="mt-1 block w-full pl-3 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   placeholder="Start typing"
+                  disabled
                 />
                 <div className="flex items-center mt-2">
                   <input
@@ -435,6 +443,7 @@ const refresh = () => {
                     name="remote"
                     type="checkbox"
                     className="h-4 w-4 text-indigo-600 border-gray-300 border-2 rounded"
+                    disabled
                   />
                   <label
                     htmlFor="remote"
@@ -454,6 +463,7 @@ const refresh = () => {
                             </div>
                         </div> */}
             </div>
+            </Tooltip>
           </div>
         </div>
       </div>

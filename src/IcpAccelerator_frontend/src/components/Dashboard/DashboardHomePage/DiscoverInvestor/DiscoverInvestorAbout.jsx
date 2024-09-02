@@ -26,7 +26,7 @@ const DiscoverInvestorAbout = ({investorData}) => {
   const area_of_interest = investorDetail?.area_of_interest || "N/A";
   const location = investorDetail?.country || "Unknown Location";
   const openchat_username = investorDetail?.openchat_username ?? "username";
-  let links=investorDetail?.social_links?.links?.[0]?.[0]
+  let links=investorDetail?.social_links[0]
   console.log('Links ', links)
  console.log("areaofinterest",area_of_interest);
 
@@ -221,20 +221,18 @@ const DiscoverInvestorAbout = ({investorData}) => {
 
             <div>
               <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase ">LINKS</h3>
-              {/* {links?.link.map((alllink,i)=>{
-               const icon = getLogo(alllink);
-               return (
-                <div key={i} className="flex items-center space-x-2">
-                  {icon ? (
-                    <a href={`${alllink}`}>
-                      {icon}
-                    </a>
-                  ) : (
-                    ""
+              <div className="flex flex-wrap gap-2">
+                  {links?.map((linkObj, i) => 
+                    linkObj.link?.map((link, index) => {
+                      const icon = getLogo(link);
+                      return (
+                        <a key={index} href={link} target="_blank" rel="noopener noreferrer" className="flex items-center space-x-2">
+                          {icon}
+                        </a>
+                      );
+                    })
                   )}
                 </div>
-              );
-            })} */}
             </div>
           </div>
         ) : (
