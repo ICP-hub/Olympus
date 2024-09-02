@@ -25,7 +25,7 @@ import {
 const MentorSignup2 = ({formData}) => {
   // EXTRACT NECESSARY FUNCTIONS FROM useFormContext HOOK
   const { register, formState: { errors }, watch, control,   setValue, 
-  clearErrors,   } = useFormContext();
+  clearErrors, setError  } = useFormContext({mode:'all'});
 //Reason to join
 const [reasonOfJoiningOptions, setReasonOfJoiningOptions] = useState([
   { value: "listing_and_promotion", label: "Project listing and promotion" },
@@ -38,6 +38,16 @@ const [reasonOfJoiningOptions, setReasonOfJoiningOptions] = useState([
   },
   { value: "Jobs", label: "Jobs" },
 ]);
+const [isFormTouched, setIsFormTouched] = useState({
+  years_of_mentoring: false,
+});
+
+const handleFieldTouch = (fieldName) => {
+  setIsFormTouched((prevState) => ({
+    ...prevState,
+    [fieldName]: true,
+  }));
+};
   // RETRIEVE ALL ICP HUBS FROM REDUX STATE
   const getAllIcpHubs = useSelector((currState) => currState.hubs.allHubs);
 
@@ -71,6 +81,53 @@ const [reasonOfJoiningOptions, setReasonOfJoiningOptions] = useState([
       return <LanguageIcon />;
     }
   };
+  const getReactSelectStyles = (error) => ({
+    menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+    control: (provided, state) => ({
+      ...provided,
+      paddingBlock: "2px",
+      borderRadius: "8px",
+      borderColor: error ? "#ef4444" : state.isFocused ? "#737373" : "#D1D5DB",
+      border: error
+        ? "2px solid #ef4444"
+        : "2px solid #D1D5DA",
+      backgroundColor: "rgb(249 250 251)",
+      "&::placeholder": {
+        color:  "currentColor",
+      },
+      display: "flex",
+      overflowX: "auto",
+      maxHeight: "43px",
+      "&::-webkit-scrollbar": {
+        display: "none",
+      },
+    }),
+    valueContainer: (provided) => ({
+      ...provided,
+      overflow: "scroll",
+      maxHeight: "40px",
+      scrollbarWidth: "none",
+    }),
+    placeholder: (provided, state) => ({
+      ...provided,
+      color:  "rgb(107 114 128)",
+      whiteSpace: "nowrap",
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+    }),
+    multiValue: (provided) => ({
+      ...provided,
+      display: "inline-flex",
+      alignItems: "center",
+      backgroundColor: "white",
+      border: "2px solid #E3E3E3",
+    }),
+    multiValueRemove: (provided) => ({
+      ...provided,
+      display: "inline-flex",
+      alignItems: "center",
+    }),
+  });
 
   useEffect(() => {
     if (formData) {
@@ -140,57 +197,7 @@ const [reasonOfJoiningOptions, setReasonOfJoiningOptions] = useState([
           isMulti
           menuPortalTarget={document.body}
           menuPosition={"fixed"}
-          styles={{
-            menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-            control: (provided, state) => ({
-              ...provided,
-              paddingBlock: "2px",
-              borderRadius: "8px",
-              border: errors.reason_for_joining
-                ? "2px solid #737373"
-                : "2px solid #737373",
-              backgroundColor: "rgb(249 250 251)",
-              "&::placeholder": {
-                color: errors.reason_for_joining
-                  ? "#ef4444"
-                  : "currentColor",
-              },
-              display: "flex",
-              overflowX: "auto",
-              maxHeight: "43px",
-              "&::-webkit-scrollbar": {
-                display: "none",
-              },
-            }),
-            valueContainer: (provided, state) => ({
-              ...provided,
-              overflow: "scroll",
-              maxHeight: "40px",
-              scrollbarWidth: "none",
-            }),
-            placeholder: (provided, state) => ({
-              ...provided,
-              color: errors.reason_for_joining
-                ? "#ef4444"
-                : "rgb(107 114 128)",
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-            }),
-            multiValue: (provided) => ({
-              ...provided,
-              display: "inline-flex",
-              alignItems: "center",
-
-              backgroundColor: "white",
-              border: "2px solid #E3E3E3",
-            }),
-            multiValueRemove: (provided) => ({
-              ...provided,
-              display: "inline-flex",
-              alignItems: "center",
-            }),
-          }}
+          styles={getReactSelectStyles(errors.reason_for_joining )}
           value={reasonOfJoiningSelectedOptions}
           options={reasonOfJoiningOptions}
           classNamePrefix="select"
@@ -232,57 +239,7 @@ const [reasonOfJoiningOptions, setReasonOfJoiningOptions] = useState([
           isMulti
           menuPortalTarget={document.body}
           menuPosition={"fixed"}
-          styles={{
-            menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-            control: (provided, state) => ({
-              ...provided,
-              paddingBlock: "2px",
-              borderRadius: "8px",
-              border: errors.area_of_expertise
-                ? "2px solid #ef4444"
-                : "2px solid #737373",
-              backgroundColor: "rgb(249 250 251)",
-              "&::placeholder": {
-                color: errors.area_of_expertise
-                  ? "#ef4444"
-                  : "currentColor",
-              },
-              display: "flex",
-              overflowX: "auto",
-              maxHeight: "43px",
-              "&::-webkit-scrollbar": {
-                display: "none",
-              },
-            }),
-            valueContainer: (provided, state) => ({
-              ...provided,
-              overflow: "scroll",
-              maxHeight: "40px",
-              scrollbarWidth: "none",
-            }),
-            placeholder: (provided, state) => ({
-              ...provided,
-              color: errors.area_of_expertise
-                ? "#ef4444"
-                : "rgb(107 114 128)",
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-            }),
-            multiValue: (provided) => ({
-              ...provided,
-              display: "inline-flex",
-              alignItems: "center",
-              backgroundColor: "white",
-              border: "1px solid gray",
-              borderRadius: "5px",
-            }),
-            multiValueRemove: (provided) => ({
-              ...provided,
-              display: "inline-flex",
-              alignItems: "center",
-            }),
-          }}
+          styles={getReactSelectStyles(errors.area_of_expertise )}
           value={areaof_focus_SelectedOptions}
           options={projectOptions}
           classNamePrefix="select"
@@ -384,10 +341,13 @@ const [reasonOfJoiningOptions, setReasonOfJoiningOptions] = useState([
         <input
           type="number"
           {...register("years_of_mentoring", { valueAsNumber: true })}
-          className={`bg-gray-50 border rounded-md shadow-sm ${errors.years_of_mentoring ? "border-red-500" : "border-[#CDD5DF]"} text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+          className={`bg-gray-50 border-2 rounded-md shadow-sm ${errors.years_of_mentoring ? "border-red-500" : "border-[#CDD5DF]"} text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
           placeholder="Enter your mentoring experience years"
           min={0}
-          onWheel={(e) => e.target.blur()} // PREVENTS SCROLLING
+          onChange={(e) => {
+            register("years_of_mentoring").onChange(e);
+            handleFieldTouch("years_of_mentoring");
+          }}
         />
         {errors.years_of_mentoring && (
           <span className="mt-1 text-sm text-red-500 font-bold">
