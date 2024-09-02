@@ -1,51 +1,151 @@
 import * as yup from "yup";
 
 export const validationSchema = yup
-  .object({
+  .object()
+  .shape({
     full_name: yup
       .string()
-      .required("Full name is required")
-      .matches(/\S/, "Full name cannot be empty"),
-    email: yup.string().email("Invalid email").nullable(),
-    telegram_id: yup.string().nullable().url("Invalid URL"),
-    twitter_url: yup.string().nullable().url("Invalid URL"),
+      .trim("Full name should not have leading or trailing spaces") // Ensures no leading/trailing spaces
+      .strict(true) // Enforce strict trimming, so leading/trailing spaces cause validation errors
+      .matches(/^[A-Za-z\s]+$/, "Full name can only contain letters and spaces")
+      .test(
+        "no-leading-space",
+        "Full name should not start with a space",
+        (value) => value && value[0] !== " " // Ensure no leading space
+      )
+      .min(3, "Full name must be at least 3 characters long")
+      .max(30, "Full name cannot be more than 30 characters long")
+      .required("Full name is required"),
+      email: yup
+      .string()
+      .trim("Email should not have leading or trailing spaces")
+      .required("Email is required")
+      .matches(
+        /^[a-z0-9]+(?:\.[a-z0-9]+)*@[a-z0-9]+\.[a-z]{2,}(?:\.[a-z]{2,})?$/,
+        "Invalid Email format"
+      )
+      .test("no-special-chars", "Email should not contain special characters", (value) => {
+        return /^[^@]*@[a-z0-9]+\.[a-z]{2,}(?:\.[a-z]{2,})?$/.test(value);
+      })
+      .test("single-at", "Email should contain only one '@'", (value) => {
+        return (value.match(/@/g) || []).length === 1;
+      }),
+    links: yup
+      .array()
+      .of(
+        yup.object().shape({
+          link: yup
+            .string()
+            .test(
+              "no-leading-trailing-spaces",
+              "URL should not have leading or trailing spaces",
+              (value) => {
+                return value === value?.trim();
+              }
+            )
+            .test(
+              "no-invalid-extensions",
+              "URL should not end with .php, .js, or .txt",
+              (value) => {
+                const invalidExtensions = [".php", ".js", ".txt"];
+                return value
+                  ? !invalidExtensions.some((ext) => value.endsWith(ext))
+                  : true;
+              }
+            )
+            .test("is-website", "Only website links are allowed", (value) => {
+              if (value) {
+                try {
+                  const url = new URL(value);
+                  const hostname = url.hostname.toLowerCase();
+                  const validExtensions = [
+                    ".com",
+                    ".org",
+                    ".net",
+                    ".in",
+                    ".co",
+                    ".io",
+                    ".gov",
+                  ];
+                  const hasValidExtension = validExtensions.some((ext) =>
+                    hostname.endsWith(ext)
+                  );
+                  return hasValidExtension;
+                } catch (err) {
+                  return false;
+                }
+              }
+              return true;
+            })
+            .url("Invalid URL")
+            .nullable(true)
+            .optional(),
+        })
+      )
+      .max(10, "You can only add up to 10 links") // Restrict the array to a maximum of 10 links
+      .optional(),
+
     openchat_user_name: yup
       .string()
-      .nullable()
-      .matches(
-        /^[^\s]{5,20}$/,
-        "Username must be between 5 and 20 characters, and cannot contain spaces"
-      ),
+      .required("Username is required")
+      .test(
+        "is-valid-username",
+        "Username must be between 5 and 20 characters",
+        (value) => {
+          const isValidLength = value.length >= 5 && value.length <= 20;
+          const isValidFormat = /^[a-zA-Z0-9_@]+$/.test(value); // Allows letters, numbers, underscores, and '@'
+          const noSpaces = !/\s/.test(value);
+          return isValidLength && isValidFormat && noSpaces;
+        }
+      )
+      ,
     bio: yup
       .string()
-      .max(500, "Bio must not exceed 500 characters")
+      .required("This field is required")
       .test(
         "maxWords",
         "Bio must not exceed 50 words",
-        (value) => !value || value.split(/\s+/).length <= 50
+        (value) =>
+          !value || value.trim().split(/\s+/).filter(Boolean).length <= 50
+      )
+      .test(
+        "no-leading-spaces",
+        "Bio should not have leading spaces",
+        (value) => !value || value.trimStart() === value
+      )
+      .test(
+        "maxChars",
+        "Bio must not exceed 500 characters",
+        (value) => !value || value.length <= 500
       ),
-    country: yup.string().required("Country is required"),
+
+    country: yup.string().required("You must select at least one option"),
     domains_interested_in: yup
       .string()
       .required("Selecting an interest is required"),
-    type_of_profile: yup.string().required("Type of profile is required"),
+
+    type_of_profile: yup
+      .string()
+      .required("You must select at least one option"),
     reasons_to_join_platform: yup
       .string()
+      .test("is-non-empty", "Selecting a reason is required", (value) =>
+        /\S/.test(value)
+      )
       .required("Selecting a reason is required"),
+
     image: yup
       .mixed()
-      .nullable()
-      .test(
-        "fileSize",
-        "File size max 10MB allowed",
-        (value) => !value || value.size <= 10 * 1024 * 1024
-      )
-      .test(
-        "fileType",
-        "Only jpeg, jpg & png formats allowed",
-        (value) =>
+      .nullable(true) // Allow null for optional file input
+      .test("fileSize", "File size max 10MB allowed", (value) => {
+        return !value || (value && value.size <= 10 * 1024 * 1024); // 10 MB limit
+      })
+      .test("fileType", "Only jpeg, jpg & png file format allowed", (value) => {
+        return (
           !value ||
-          ["image/jpeg", "image/jpg", "image/png"].includes(value.type)
-      ),
+          (value &&
+            ["image/jpeg", "image/jpg", "image/png"].includes(value.type))
+        );
+      }),
   })
   .required();

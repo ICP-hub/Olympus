@@ -48,7 +48,9 @@ export const validationSchema = yup.object().shape({
         (value) => Object.is(value, -0) === false
       ),
     
-      links: yup.array().of(
+      links: yup
+      .array()
+      .of(
         yup.object().shape({
           link: yup
             .string()
@@ -97,5 +99,7 @@ export const validationSchema = yup.object().shape({
             .nullable(true)
             .optional(),
         })
-      ),
+      )
+      .max(10, "You can only add up to 10 links") // Restrict the array to a maximum of 10 links
+      .optional(),
   });

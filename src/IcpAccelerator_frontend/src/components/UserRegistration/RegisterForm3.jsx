@@ -562,13 +562,15 @@ const RegisterForm3 = React.memo(({ setImageData }) => {
             </div>
           ))}
 
-          <button
-            type="button"
-            onClick={() => append({ link: "" })}
-            className="flex items-center p-1 text-[#155EEF]"
-          >
-            <FaPlus className="mr-1" /> Add Another Link
-          </button>
+{fields.length < 10 && (
+      <button
+        type="button"
+        onClick={() => append({ links: "" })}
+        className="flex items-center p-1 text-[#155EEF]"
+      >
+        <FaPlus className="mr-1" /> Add Another Link
+      </button>
+    )}
         </div>
       </div>
     </div>
