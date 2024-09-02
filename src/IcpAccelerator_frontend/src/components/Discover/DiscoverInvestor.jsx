@@ -344,8 +344,9 @@ const DiscoverInvestor = ({onInvestorCountChange }) => {
                     ""
                   )}
                 </div>
-                <div className="mb-2">
-                  {activeRole && (
+                <div className="bg-[#FFFAEB] border-[#f2c855] border text-[#090907] rounded-md text-xs px-3 py-1 mr-2 mb-2 w-[5.3rem]">
+                  INVESTOR
+                  {/* {activeRole && (
                     <span
                       className={`inline-block ${
                         tagColors[activeRole.name] ||
@@ -354,7 +355,8 @@ const DiscoverInvestor = ({onInvestorCountChange }) => {
                     >
                       {activeRole.name}
                     </span>
-                  )}
+                  )} */}
+                  
                 </div>
                 <div className="border-t border-gray-200 my-3 line-clamp-1">{email}</div>
 

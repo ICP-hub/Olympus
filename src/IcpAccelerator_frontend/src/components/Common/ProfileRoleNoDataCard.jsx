@@ -19,7 +19,7 @@ const ProfileRoleNoDataCard = () => {
         No Role
       </div>
       <h3 className="text-gray-800 text-sm font-semibold">
-        You can't have any another role,  you are registered as a Project
+        You can't have any another role, You're registered as a Project
       </h3>
     </div>
   );
