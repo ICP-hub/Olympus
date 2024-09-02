@@ -16,7 +16,9 @@ import { allHubHandlerRequest } from "../StateManagement/Redux/Reducers/All_IcpH
 import { uint8ArrayToBase64 } from "../../../../admin_frontend/src/components/Utils/AdminData/saga_function/blobImageToUrl";
 import editp from "../../../assets/Logo/edit.png";
 import { ThreeDots } from "react-loader-spinner";
-import { Principal } from "@dfinity/principal";
+
+import {Principal} from "@dfinity/principal"
+
 
 const InvestorDetail = () => {
   const navigate = useNavigate();

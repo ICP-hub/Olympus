@@ -204,7 +204,9 @@ const UserRegistration = () => {
           if (result.Ok) {
             toast.success(result.Ok); // Assuming 'Ok' contains the success message
             setIsSubmititng(false);
-             navigate("/dashboard")
+            window.location.href = "/dashboard";
+
+            //  navigate("/dashboard")
           } else if (result.Err) {
             toast.error(result.Err); // Assuming 'Err' contains the error message
             setIsSubmititng(false);
