@@ -126,6 +126,8 @@ pub async fn update_venture_capitalist(params: VentureCapitalist) -> String {
                         existing_vc_internal.0.params.links = params.links.clone();
                         existing_vc_internal.0.params.website_link = params.website_link.clone();
                         existing_vc_internal.0.params.registered = params.registered.clone();
+                        existing_vc_internal.0.params.range_of_check_size = params.range_of_check_size.clone();
+                        existing_vc_internal.0.params.stage = params.stage.clone();
 
                         state.vc_storage.insert(StoredPrincipal(caller), existing_vc_internal);
                         return Ok("Profile updated successfully");

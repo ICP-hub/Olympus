@@ -50,10 +50,10 @@ pub async fn send_money_access_request(project_id: String) -> String {
     let caller = caller();
     let mut has_pending_request = false;
 
+    ic_cdk::println!("Checking for existing pending requests for caller {}", caller);
+
     let has_pending_request_result = read_state(|state| {
-        // Check if the caller exists in the HashMap
         if let Some(request_vec) = state.money_access_request.get(&StoredPrincipal(caller)) {
-            // Iterate through the Vec<AccessRequest> to find a matching and pending project_id request
             has_pending_request = request_vec
                 .0
                 .iter()
@@ -63,16 +63,16 @@ pub async fn send_money_access_request(project_id: String) -> String {
     });
 
     if has_pending_request_result {
+        ic_cdk::println!("Pending request found for project {}", project_id);
         return "You already have a pending request for this project.".to_string();
     }
 
     let user_data: Result<UserInformation, &str> = get_user_information();
-
-    // Assuming the existence of get_user_info() which might fail hence the unwrap_or_else pattern
     let user_data = user_data.unwrap_or_else(|_| panic!("Failed to get user data"));
+    ic_cdk::println!("User data retrieved successfully");
 
     let access_request = AccessRequest {
-        sender: caller.clone(), // Assuming caller() gives us Principal
+        sender: caller.clone(),
         name: user_data.full_name,
         image: user_data.profile_picture.expect("Profile picture not found"),
         project_id: project_id.clone(),
@@ -80,36 +80,44 @@ pub async fn send_money_access_request(project_id: String) -> String {
         status: "pending".to_string(),
     };
 
-    // Add request to the MONEY_ACCESS_REQUESTS hashmap
+    ic_cdk::println!("Access request created for project {}", project_id);
+
     mutate_state(|state| {
         if let Some(mut request_vec) = state.money_access_request.get(&StoredPrincipal(caller)) {
             request_vec.0.push(access_request.clone());
+            state.money_access_request.insert(
+                StoredPrincipal(caller), request_vec);
+            ic_cdk::println!("Added access request to existing vector for caller {}", caller);
         } else {
             state.money_access_request.insert(
                 StoredPrincipal(caller),
                 Candid(vec![access_request.clone()]),
             );
+            ic_cdk::println!("Inserted new access request vector for caller {}", caller);
         }
     });
 
-    // Create and send a notification for the request
     let notification_to_send = ProjectNotification {
         notification_type: ProjectNotificationType::AccessRequest(access_request.clone()),
-        timestamp: time(), 
+        timestamp: time(),
     };
+
+    ic_cdk::println!("Created notification for access request");
 
     mutate_state(|state| {
         if let Some(mut notifications) = state.project_access_notifications.get(&project_id) {
             notifications.0.push(notification_to_send);
+            state.project_access_notifications.insert(project_id.clone(), notifications);
+            ic_cdk::println!("Added notification to existing notifications for project {}", project_id);
         } else {
-            state
-                .project_access_notifications
-                .insert(project_id.clone(), Candid(vec![notification_to_send]));
+            state.project_access_notifications.insert(project_id.clone(), Candid(vec![notification_to_send]));
+            ic_cdk::println!("Inserted new notifications vector for project {}", project_id);
         }
     });
 
     "Your access request has been sent and is pending approval.".to_string()
 }
+
 
 fn add_user_to_money_access(project_id: String, user: Principal) {
     mutate_state(|state| {
@@ -125,16 +133,17 @@ fn add_user_to_money_access(project_id: String, user: Principal) {
 pub async fn approve_money_access_request(project_id: String, sender_id: Principal) -> String {
     let mut request_found_and_updated = false;
 
-    // Update the status in MONEY_ACCESS_REQUESTS
     mutate_state(|state| {
-        if let Some(mut request_vec) = state.money_access_request.get(&StoredPrincipal(sender_id)) {
-            for request in request_vec.0.iter_mut() {
+        if let Some(request_vec) = state.money_access_request.remove(&StoredPrincipal(sender_id)) {
+            let updated_request_vec = request_vec.0.into_iter().map(|mut request| {
                 if request.project_id == project_id && request.status == "pending" {
                     request.status = "approved".to_string();
                     request_found_and_updated = true;
-                    break;
                 }
-            }
+                request
+            }).collect::<Vec<_>>();
+
+            state.money_access_request.insert(StoredPrincipal(sender_id), Candid(updated_request_vec));
         }
     });
 
@@ -142,45 +151,47 @@ pub async fn approve_money_access_request(project_id: String, sender_id: Princip
         return "Request not found or already approved.".to_string();
     }
 
-    // Update the status in PROJECT_ACCESS_NOTIFICATIONS
     mutate_state(|state| {
-        if let Some(mut notification_vec) = state.project_access_notifications.get(&project_id) {
-            for notification in notification_vec.0.iter_mut() {
+        if let Some(notification_vec) = state.project_access_notifications.remove(&project_id) {
+            let updated_notification_vec = notification_vec.0.into_iter().map(|mut notification| {
                 match &mut notification.notification_type {
                     ProjectNotificationType::AccessRequest(access_request)
                         if access_request.sender == sender_id
                             && access_request.status == "pending"
-                            && access_request.request_type == "money_details_access" =>
-                    {
-                        access_request.status = "approved".to_string();
-                        break; // Exit after finding and updating the first matching request
-                    }
-                    _ => {} // Do nothing for other cases or variants
+                            && access_request.request_type == "money_details_access" => {
+                            access_request.status = "approved".to_string();
+                            request_found_and_updated = true; 
+                        },
+                    _ => {}
                 }
-            }
+                notification
+            }).collect::<Vec<_>>();
+
+            state.project_access_notifications.insert(project_id.clone(), Candid(updated_notification_vec));
         }
     });
 
-    // Assuming the existence of a function or mechanism to add the sender's Principal to a money_access vector
     add_user_to_money_access(project_id, sender_id);
 
     "Money access request approved successfully.".to_string()
 }
 
+
 #[update(guard = "combined_guard")]
 pub fn decline_money_access_request(project_id: String, sender_id: Principal) -> String {
     let mut request_found_and_updated = false;
 
-    // Update the status in MONEY_ACCESS_REQUESTS
     mutate_state(|state| {
-        if let Some(mut request_vec) = state.money_access_request.get(&StoredPrincipal(sender_id)) {
-            for request in request_vec.0.iter_mut() {
+        if let Some(request_vec) = state.money_access_request.remove(&StoredPrincipal(sender_id)) {
+            let updated_request_vec = request_vec.0.into_iter().map(|mut request| {
                 if request.project_id == project_id && request.status == "pending" {
                     request.status = "declined".to_string();
                     request_found_and_updated = true;
-                    break;
                 }
-            }
+                request
+            }).collect::<Vec<_>>();
+
+            state.money_access_request.insert(StoredPrincipal(sender_id), Candid(updated_request_vec));
         }
     });
 
@@ -188,44 +199,67 @@ pub fn decline_money_access_request(project_id: String, sender_id: Principal) ->
         return "Request not found or not in pending status.".to_string();
     }
 
-    // Update the status in PROJECT_ACCESS_NOTIFICATIONS
     mutate_state(|state| {
-        if let Some(mut notification_vec) = state.project_access_notifications.get(&project_id) {
-            for notification in notification_vec.0.iter_mut() {
+        if let Some(notification_vec) = state.project_access_notifications.remove(&project_id) {
+            let updated_notification_vec = notification_vec.0.into_iter().map(|mut notification| {
                 match &mut notification.notification_type {
                     ProjectNotificationType::AccessRequest(access_request)
                         if access_request.sender == sender_id
                             && access_request.status == "pending"
-                            && access_request.request_type == "money_details_access" =>
-                    {
-                        access_request.status = "declined".to_string();
-                        break;
-                    }
-                    _ => {} // Do nothing for other types or statuses
+                            && access_request.request_type == "money_details_access" => {
+                            access_request.status = "declined".to_string();
+                            request_found_and_updated = true; 
+                        },
+                    _ => {} 
                 }
-            }
+                notification
+            }).collect::<Vec<_>>();
+
+            state.project_access_notifications.insert(project_id, Candid(updated_notification_vec));
         }
     });
 
     "Money access request declined successfully.".to_string()
 }
 
+
 #[query(guard = "combined_guard")]
 pub fn get_pending_money_requests(project_id: String) -> Vec<ProjectNotification> {
-    read_state(
-        |state| match state.project_access_notifications.get(&project_id) {
-            Some(info) => info.0.iter()
-                .filter(|notif| match &notif.notification_type {
-                    ProjectNotificationType::AccessRequest(access_request) => 
-                        access_request.request_type == "money_details_access" && 
-                        access_request.status == "pending",
-                })
-                .cloned()
-                .collect(),
-            None => Vec::new(),
-        },
-    )
+    ic_cdk::println!("Retrieving pending money requests for project_id: {}", project_id);
+
+    let pending_requests = read_state(|state| {
+        match state.project_access_notifications.get(&project_id) {
+            Some(info) => {
+                ic_cdk::println!("Notifications found for project_id: {}. Total notifications: {}", project_id, info.0.len());
+                info.0.iter()
+                    .enumerate()
+                    .filter(|(index, notif)| {
+                        ic_cdk::println!("Processing notification #{}: {:?}", index, notif);
+                        match &notif.notification_type {
+                            ProjectNotificationType::AccessRequest(access_request) => {
+                                let is_pending = access_request.request_type == "money_details_access" && 
+                                                 access_request.status == "pending";
+                                ic_cdk::println!("AccessRequest #{}: type={}, status={}, is_pending={}", 
+                                                 index, access_request.request_type, access_request.status, is_pending);
+                                is_pending
+                            }
+                        }
+                    })
+                    .map(|(_, notif)| notif.clone())
+                    .collect()
+            },
+            None => {
+                ic_cdk::println!("No notifications found for project_id: {}", project_id);
+                Vec::new()
+            },
+        }
+    });
+
+    ic_cdk::println!("Total pending requests found: {}", pending_requests.len());
+    pending_requests
 }
+
+
 
 #[query(guard = "combined_guard")]
 pub fn get_declined_money_requests(project_id: String) -> Vec<ProjectNotification> {
