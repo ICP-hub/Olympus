@@ -84,6 +84,15 @@ const DiscoverRegionalHubs = () => {
           let logo = hub.params?.flag[0]
             ? uint8ArrayToBase64(hub.params?.flag[0])
             : "";
+      <div className="grid md:grid-cols-3 gap-6">
+        {allHubsData?.map((hub, index) => {
+          console.log("HUBS INSIDE MAP", hub);
+          let name = hub?.params.name ?? "";
+          let desc = hub.params.description ?? "";
+          let logo = hub.params?.flag
+            ? uint8ArrayToBase64(hub.params?.flag)
+            : null;
+          let links = hub.params.links;
           return (
             <div key={index} className="bg-white rounded-lg shadow-lg p-4">
               <div>
@@ -99,14 +108,14 @@ const DiscoverRegionalHubs = () => {
               </div>
               <div className="items-center mt-4">
                 <div className="flex items-center space-x-2 mb-3">
-                  <a
+                  {/* <a
                     href={twitter}
                     target="_blank"
                     className="text-gray-500 hover:text-red-500"
                   >
                     <XIcon />
-                  </a>
-                  <a
+                  </a> */}
+                  {/* <a
                     href={discord}
                     target="_blank"
                     className="text-gray-500 hover:text-blue-500"
@@ -123,17 +132,18 @@ const DiscoverRegionalHubs = () => {
                 </div>
                 <hr />
                 <div className="mt-3">
-                  <a
-                    href={website}
+                  <a */}
+                    {/* href={website}
                     target="_blank"
                     className="bg-[#155EEF] shadow-[0px_1px_2px_0px_#1018280D,0px_-2px_0px_0px_#1018280D_inset,0px_0px_0px_1px_#1018282E_inset] block border-2 border-white text-white py-[10px] px-4 rounded-[4px] text-sm font-medium hover:bg-blue-700 my-4"
-                  >
-                    {website} &#8594;
-                  </a>
+                  > */}
+                    {/* {website} &#8594;
+                  </a> */}
                 </div>
               </div>
             </div>
-         )})}
+          );
+        })}
       </div>
         )}
       {/* Render the modal when isModalOpen is true */}
