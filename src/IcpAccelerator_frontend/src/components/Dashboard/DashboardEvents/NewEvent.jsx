@@ -125,9 +125,9 @@ const NewEvent = ({ event }) => {
                                         <div className="max-w-[160px] absolute top-1 left-1 bg-white p-2 rounded-[8px]">
                                             <p className="text-sm font-normal">{event.start_date}</p>
                                             <div>
-                <p className="rounded-md inline-block text-sm font-semibold ">
+                {/* <p className="rounded-md inline-block text-sm font-semibold ">
                   {event.start_date}
-                </p>
+                </p> */}
                 <p className="text-sm text-gray-600">Start at 15:00 GMT+4</p>
               </div>
                                         </div>

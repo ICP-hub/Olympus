@@ -439,6 +439,9 @@ const DiscoverProject = ({onProjectCountChange}) => {
                     ""
                   )}
                 </div>
+                <div className="bg-[#daebf3] border-[#70b2e9] border text-[#144579] rounded-md text-xs px-3 py-1 mr-2 mb-2 w-[4.9rem]">
+PROJECT
+</div>
                 <div className="border-t border-gray-200 mt-3"></div>
 
                 <div className="mb-2">
@@ -454,6 +457,7 @@ const DiscoverProject = ({onProjectCountChange}) => {
                     </span>
                   )}
                 </div>
+  
                 {/* <div className="border-t border-gray-200 my-3">{email}</div> */}
 
                 <p className="text-gray-600 mb-4 line-clamp-3  "> {parse(projectdescription)}</p>
