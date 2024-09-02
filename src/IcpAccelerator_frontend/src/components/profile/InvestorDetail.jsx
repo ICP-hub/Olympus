@@ -17,6 +17,9 @@ import { uint8ArrayToBase64 } from "../../../../admin_frontend/src/components/Ut
 import editp from "../../../assets/Logo/edit.png";
 import { ThreeDots } from "react-loader-spinner";
 
+import {Principal} from "@dfinity/principal"
+
+
 const InvestorDetail = () => {
   const navigate = useNavigate();
   const { countries } = useCountries();
@@ -34,6 +37,9 @@ const InvestorDetail = () => {
   const investorFullData = useSelector(
     (currState) => currState.investorData.data[0]
   );
+  const principal = useSelector((currState) => currState.internet.principal);
+  const principalId=Principal.fromText(principal)
+console.log("principal in investordetail",principal)
 
   const userCurrentRoleStatusActiveRole = useSelector(
     (currState) => currState.currentRoleStatus.activeRole
@@ -198,7 +204,9 @@ const InvestorDetail = () => {
   // form submit handler func
 
   const onSubmitHandler = async (data) => {
-    const linksValue = data?.links || [];
+    const updatedSocialLinks = Object.entries(socialLinks).map(([key, value]) => ({
+      link: value ? [value] : [],
+    }));
     console.log("Form data being sent to backend: ", data);
     if (actor) {
       const investorData = {
@@ -226,9 +234,7 @@ const InvestorDetail = () => {
         reason_for_joining: [],
         average_check_size: 0,
         money_invested: [parseInt(0)],
-        links: data?.links
-          ? [data.links.map((val) => ({ links: val?.links ? [val.links] : [] }))]
-          : [],
+        links: [updatedSocialLinks], 
         number_of_portfolio_companies: 0,
         assets_under_management: [""],
         type_of_investment: data?.type_of_investment || "",
@@ -241,7 +247,7 @@ const InvestorDetail = () => {
           const result = await actor.update_venture_capitalist(investorData);
           if (result?.includes("Profile updated successfully")) {
             toast.success("Profile updated successfully");
-            window.location.href = "/dashboard/profile";
+            navigate("/dashboard/profile")
           } else {
             toast.error(result);
           }
@@ -268,7 +274,7 @@ const InvestorDetail = () => {
   
 
   const setInvestorValuesHandler = (val) => {
-    console.log("val==========>>>>>>>>>>>>>>>", val);
+    console.log("val==========>>>>>>>>>>>>>>>INVESTOR JI", val);
     if (val) {
       setValue(
         "investor_registered",
@@ -361,41 +367,47 @@ const InvestorDetail = () => {
       setInvestStageRangeSelectedOptionsHandler(
         val?.[0].profile?.params?.range_of_check_size
       );
-      if (val?.links?.length) {
-        const links = {};
-        val.links.forEach((linkArray, index) => {
-          // Assuming linkArray is an array with a single object inside
-          if (Array.isArray(linkArray) && linkArray.length > 0) {
-            const linkData = linkArray[0];
-            console.log(`Processing social link #${index + 1}:`, linkData);
-
-            if (linkData?.links?.length > 0) {
-              const url = linkData.links[0];
-              console.log("Found URL: ", url);
-
+      if (val) {
+        // Existing code for setting other values...
+    
+        if (val[0].profile?.params.links?.length) {
+          const links = {};
+    
+          val[0].profile?.params.links.forEach((linkArray) => {
+            linkArray.forEach((linkData) => {
+              const url = linkData.link[0];
+    
               if (url && typeof url === "string") {
+                let domainKey;
+    
                 if (url.includes("linkedin.com")) {
-                  links["LinkedIn"] = url;
+                  domainKey = "LinkedIn";
                 } else if (url.includes("github.com")) {
-                  links["GitHub"] = url;
+                  domainKey = "GitHub";
                 } else if (url.includes("t.me") || url.includes("telegram")) {
-                  links["Telegram"] = url;
+                  domainKey = "Telegram";
                 } else {
-                  links[`OtherLink${index + 1}`] = url; // Differentiate other links
+                  domainKey = new URL(url).hostname.replace("www.", "");
                 }
-              } else {
-                console.log("Invalid URL or not a string:", url);
+    
+                // Initialize array for this domain if it doesn't exist
+                if (!links[domainKey]) {
+                  links[domainKey] = [];
+                }
+    
+                // Add the URL to the corresponding domain array
+                links[domainKey].push(url);
               }
-            } else {
-              console.log("No valid link found in linkData:", linkData);
-            }
-          } else {
-            console.log("Link array is empty or not an array:", linkArray);
-          }
-        });
-        console.log("Final links object:", links);
-        setLinks(links);
+            });
+          });
+    
+          setSocialLinks(links);
+        } else {
+          setSocialLinks({});
+        }
       }
+      
+      
     }
   };
 
@@ -590,7 +602,7 @@ const InvestorDetail = () => {
     if (actor) {
       (async () => {
         if (userCurrentRoleStatusActiveRole === "vc") {
-          const result = await actor.get_vc_info();
+          const result = await actor.get_vc_info(principalId);
           if (result) {
             setImageData(result?.[0]?.user_data?.profile_picture?.[0] ?? null);
             setValue(
@@ -669,43 +681,36 @@ const InvestorDetail = () => {
   }, [actor]);
  
   console.log("mere link aa rahe hai ", links);
+  const [socialLinks, setSocialLinks] = useState({});
   const [isEditingLink, setIsEditingLink] = useState({});
   const [isLinkBeingEdited, setIsLinkBeingEdited] = useState(false);
 
-  const getIconForLink = (url) => {
-    console.log("URL being checked:", url); // Add this line for debugging
-    if (url.includes("linkedin.com")) {
-      console.log("LinkedIn detected");
-      return LinkedIn;
-    } else if (url.includes("github.com")) {
-      console.log("GitHub detected");
-      return GitHub;
-    } else if (url.includes("t.me") || url.includes("telegram")) {
-      console.log("Telegram detected");
-      return Telegram;
-    } else {
-      console.log("Generic link detected");
-      return Language;
-    }
-  };
-
   
-
-  const handleLinkEditToggle = (links) => {
+  const handleLinkEditToggle = (linkKey) => {
     setIsEditingLink((prev) => ({
       ...prev,
-      [links]: !prev[links],
+      [linkKey]: !prev[linkKey],
     }));
     setIsLinkBeingEdited(!isLinkBeingEdited);
   };
-
-  const handleLinkChange = (e, links) => {
-    setLinks((prev) => ({
+  
+  const handleLinkChange = (e, link) => {
+    setSocialLinks((prev) => ({
       ...prev,
-      [links]: e.target.value,
+      [link]: e.target.value,
     }));
   };
-
+  const getIconForLink = (url) => {
+    if (url.includes("linkedin.com")) {
+      return LinkedIn;
+    } else if (url.includes("github.com")) {
+      return GitHub;
+    } else if (url.includes("t.me") || url.includes("telegram")) {
+      return Telegram;
+    } else {
+      return Language;
+    }
+  };
   const handleSave = () => {
     // Validate form and update the main state
     const isFormValid = Object.keys(errors).length === 0;
@@ -1106,7 +1111,7 @@ const InvestorDetail = () => {
                 investor_type[0].split(", ").map((type, index) => (
                   <span
                     key={index}
-                    className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1"
+                    className="border-2 border-gray-500 min-w-[80px] truncate text-center rounded-full text-gray-700 text-xs px-2 py-1"
                   >
                     {type}
                   </span>
@@ -1390,7 +1395,7 @@ const InvestorDetail = () => {
               project_on_multichain[0].split(", ").map((projects, index) => (
                 <span
                   key={index}
-                  className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1"
+                  className="border-2 border-gray-500 min-w-[80px] truncate text-center rounded-full text-gray-700 text-xs px-2 py-1"
                 >
                   {projects}
                 </span>
@@ -1509,7 +1514,7 @@ const InvestorDetail = () => {
                 category_of_investment.split(", ").map((category, index) => (
                   <span
                     key={index}
-                    className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1"
+                    className="border-2 border-gray-500 text-center min-w-[80px] truncate rounded-full text-gray-700 text-xs px-2 py-1"
                   >
                     {category}
                   </span>
@@ -1667,7 +1672,7 @@ const InvestorDetail = () => {
               stage[0].split(", ").map((value, index) => (
                 <span
                   key={index}
-                  className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1"
+                  className="border-2 text-center min-w-[80px] truncate border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1"
                 >
                   {value}
                 </span>
@@ -1788,7 +1793,7 @@ const InvestorDetail = () => {
                 range_of_check_size[0].split(", ").map((range, index) => (
                   <span
                     key={index}
-                    className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1"
+                    className="border-2 text-center min-w-[80px] truncate border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1"
                   >
                     {range}
                   </span>
@@ -1802,47 +1807,54 @@ const InvestorDetail = () => {
           )}
         </div>
 
-        <div className="flex items-center px-3">
-            {/* Display existing links */}
-            {console.log("Display existing links ", links)}
-            {links &&
-              Object.keys(links).map((key, index) => {
-                const url = links[key];
-                if (!url) {
-                  return null;
-                }
+        <div className="flex items-center gap-6 px-3">
+  {/* Display existing links */}
+  {console.log("Display existing links ", socialLinks)}
+  {socialLinks &&
+    Object.keys(socialLinks).map((key) => {
+      const urls = socialLinks[key];
+      
+      if (!Array.isArray(urls) || urls.length === 0) {
+        return null; // Skip rendering if urls is not an array or is empty
+      }
 
-                const Icon = getIconForLink(url);
-                return (
-                  <div className="group relative flex items-center" key={index}>
-                    <a
-                      href={url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center"
-                    >
-                      <Icon className="text-gray-400 hover:text-gray-600 cursor-pointer transform transition-all duration-300 hover:scale-110" />
-                    </a>
-                    <button
-                      type="button"
-                      className="absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 ease-in-out transform opacity-0 group-hover:opacity-100 group-hover:translate-x-8 h-10 w-7"
-                      onClick={() => handleLinkEditToggle(key)}
-                    >
-                      <img src={edit} alt="edit" />
-                    </button>
-                    {isEditingLink[key] && (
-                      <input
-                        type="text"
-                        {...register(`links[${key}]`)}
-                        value={url}
-                        onChange={(e) => handleLinkChange(e, key)}
-                        className="border p-1 rounded w-full ml-2 transition-all duration-300 ease-in-out transform"
-                      />
-                    )}
-                  </div>
-                );
-              })}
+      return urls.map((url, index) => {
+        const uniqueKey = `${key}-${index}`;
+        const Icon = getIconForLink(url);
+        return (
+          <div className="group relative flex items-center" key={uniqueKey}>
+            <a
+              href={url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center"
+            >
+              <Icon className="text-gray-400 hover:text-gray-600 cursor-pointer transform transition-all duration-300 hover:scale-110" />
+            </a>
+            <button
+              type="button"
+              className="absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 ease-in-out transform opacity-0 group-hover:opacity-100 group-hover:translate-x-6 h-10 w-7"
+              onClick={() => handleLinkEditToggle(uniqueKey)}
+            >
+              <img src={editp} alt="edit" />
+            </button>
+            {isEditingLink[uniqueKey] && (
+              <input
+                type="text"
+                {...register(`social_links[${key}][${index}]`)}
+                value={url}
+                onChange={(e) => handleLinkChange(e, key, index)}
+                className="border p-1 rounded w-full ml-2 transition-all duration-300 ease-in-out transform"
+              />
+            )}
           </div>
+        );
+      });
+    })}
+</div>
+
+
+
 
 
         {Object.values(edit).some((value) => value) && (

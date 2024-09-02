@@ -342,7 +342,7 @@ import { afterCopySvg, beforeCopySvg } from "../../../component/Utils/Data/SvgDa
 import { changeHasSelectedRoleHandler } from "../../../components/StateManagement/Redux/Reducers/userRoleReducer";
 import { useAuth } from "../../../components/StateManagement/useContext/useAuth";
 import toast from "react-hot-toast";
-
+import Tooltip from '@mui/material/Tooltip';
 function DashboardHomeNavbar() {
   const principal = useSelector((currState) => currState.internet.principal);
   const userCurrentRoleStatusActiveRole = useSelector(
@@ -394,15 +394,18 @@ function DashboardHomeNavbar() {
 
       <div className="flex-grow mr-4 hidden md:block">
         <div className="relative">
+        <Tooltip title="Coming Soon" arrow>
           <input
             type="text"
             placeholder="Search people, projects, jobs, events"
             className="w-[480px] h-[44px] py-2 pl-10 pr-4 rounded-md bg-white-100 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            disabled
           />
           <dashboard.dashboardhomenavbar.icons.searchOutlined.SearchOutlined
             className="absolute left-3 text-gray-400"
             style={{ top: "50%", transform: "translateY(-50%)" }}
           />
+           </Tooltip>
         </div>
       </div>
 

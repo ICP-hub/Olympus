@@ -15,19 +15,13 @@ import WorkSectionDetailPage from './WorkSectionDetailPage'
 import EventDetails from '../DashboardEvents/EventDetail'
 import DocumentSection from '../Project/DocumentSection'
 import DiscoverRegionalHubs from '../../RegionalHubs/RegionalHubs'
-import ProfilePage from '../../Profile/ProfilePage';
+import ProfilePage from '../../profile/ProfilePage';
 
 
 
 function DashboardHomePage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
-
-  console.log("%cSTOP!", "color: red; font-size: 50px;");
-  console.log(
-    "%cThis is a browser feature intended for developers. If someone told you to copy and paste something here to 'hack' someone's account, it is a scam and will give them access to your Olympus account.",
-    "color: yellow; font-weight: bold; font-size: 15px"
-  );
 
   return (
     <div className="flex flex-col h-screen bg-[#FFF4ED] lg:flex-row">

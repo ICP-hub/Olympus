@@ -30,9 +30,9 @@ import { useNavigate, useLocation } from "react-router-dom";
 import DashboardProjectCard from "./DashboardProjectCard";
 
 function getAvatarsByRoles(approvedRoles) {
-  const defaultAvatar = Avatar3;  // User avatar
-  const mentorAvatar = mentor;    // Mentor avatar
-  const investorAvatar = talent;  // Investor avatar
+  const defaultAvatar = mentor;  // User avatar
+  const mentorAvatar = talent;    // Mentor avatar
+  const investorAvatar = Avatar3;  // Investor avatar
   const projectAvatar = founder;  // Project avatar
 
   let firstCardAvatar = defaultAvatar;
