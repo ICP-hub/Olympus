@@ -163,6 +163,8 @@ const EventDetails = () => {
     return <div>Loading...</div>;
   }
 
+  console.log('cohortData',cohortData)
+
   const {
     cohort_banner,
     cohort_end_date,
