@@ -81,28 +81,31 @@ const Role = () => {
       Mentor: true,
       Investor: true,
       Project: false,
-       image:mentor
+       image:user,
+       message:"Share your expertise with next generation of Innovators"
     },
     {
       name: 'vc',
       Mentor: true,
       Investor: true,
       Project: false,
-      image:vc
+      image:vc,
+      message:"Discover and Invest in promising project at earliest stages"
     },
     {
       name: 'project',
       Mentor: false,
       Investor: false,
       Project: true,
-      image:project
+      image:project,
+      message:"Maximize the expansion of your projects and find investments"
     },
     {
       name: 'user',
       Mentor:true,
       Investor:true,
       Project: true,
-      image:user
+      image:mentor
     }
   ];
   
@@ -298,7 +301,7 @@ const mergedData = mergeData(userCurrentRoleStatus, roledata);
         vcRole?.approval_status === "default"
       ) {
         elements.push(
-          <RoleProfileCard key={projectRole.name} role={projectRole.name} image={projectRole.image}/>
+          <RoleProfileCard key={projectRole.name} role={projectRole.name} image={projectRole.image} message={projectRole.message}/>
         );
         cardsShown++;
         elements.push(
@@ -313,11 +316,11 @@ const mergedData = mergeData(userCurrentRoleStatus, roledata);
         vcRole?.approval_status === "default"
       ) {
         elements.push(
-          <RoleProfileCard key={mentorRole.name} role={mentorRole.name} image={mentorRole.image}/>
+          <RoleProfileCard key={mentorRole.name} role={mentorRole.name} image={mentorRole.image} message={mentorRole.message}/>
         );
         cardsShown++;
         elements.push(
-          <div className="border-2 rounded-lg text-center w-3/4 h-60" key="mentor-vc-default-card">
+          <div className="bg-[#EEF2F6] shadow-md rounded-lg p-6 w-3/4 h-60 flex flex-col items-center text-center relative" key="mentor-vc-default-card">
             <div className="p-3 flex justify-center mt-5">
               <AvatarGroup max={4}>
                 <Avatar alt="Mentor" src={mentor} />
@@ -329,7 +332,7 @@ const mergedData = mergeData(userCurrentRoleStatus, roledata);
             <div className="mt-5 px-5">
               <p className="max-w-[250px]">{roles.description1}</p>
             </div>
-            <div className="my-5 px-5 flex items-center">
+            <div className="my-2 px-5 flex items-center">
               <button
                 onClick={() => setRoleModalOpen(!roleModalOpen)}
                 className="border flex gap-2 justify-center rounded-md bg-[#155EEF] p-2 font-medium w-full text-white"
@@ -349,11 +352,11 @@ const mergedData = mergeData(userCurrentRoleStatus, roledata);
         mentorRole?.approval_status === "default"
       ) {
         elements.push(
-          <RoleProfileCard key={vcRole.name} role={vcRole.name} image={vcRole.image}/>
+          <RoleProfileCard key={vcRole.name} role={vcRole.name} image={vcRole.image} message={vcRole.message}/>
         );
         cardsShown++;
         elements.push(
-          <div className="border-2 rounded-lg text-center w3/4 h-60" key="vc-approved-card">
+          <div className="bg-[#EEF2F6] shadow-md rounded-lg p-6 w-3/4 h-60 flex flex-col items-center text-center relative" key="vc-approved-card">
             <div className="p-3 flex justify-center mt-5">
               <AvatarGroup max={4}>
                 <Avatar alt="Mentor" src={mentor} />
@@ -365,7 +368,7 @@ const mergedData = mergeData(userCurrentRoleStatus, roledata);
             <div className="mt-5 px-5">
               <p className="max-w-[250px]">{roles.description1}</p>
             </div>
-            <div className="my-5 px-5 flex items-center">
+            <div className="my-2 px-5 flex items-center">
               <button
                 onClick={() => setRoleModalOpen(!roleModalOpen)}
                 className="border flex gap-2 justify-center rounded-md bg-[#155EEF] p-2 font-medium w-full text-white"
@@ -385,10 +388,10 @@ const mergedData = mergeData(userCurrentRoleStatus, roledata);
         vcRole?.approval_status === "approved"
       ) {
         elements.push(
-          <RoleProfileCard key={mentorRole.name} role={mentorRole.name} image={mentorRole.image}/>
+          <RoleProfileCard key={mentorRole.name} role={mentorRole.name} image={mentorRole.image} message={mentorRole.message}/>
         );
         elements.push(
-          <RoleProfileCard key={vcRole.name} role={vcRole.name} image={vcRole.image}/>
+          <RoleProfileCard key={vcRole.name} role={vcRole.name} image={vcRole.image} message={vcRole.message}/>
         );
         cardsShown ++;
       }
