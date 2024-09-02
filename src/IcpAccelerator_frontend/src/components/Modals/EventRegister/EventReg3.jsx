@@ -203,7 +203,7 @@ const setRubricEligibilitySelectedOptionsHandler = (val) => {
   };
   return (
     <>
-
+<div className="max-h-[70vh] overflow-y-auto">
       <div className="mb-2">
         <label
           htmlFor="rubric_eligibility"
@@ -567,6 +567,7 @@ const setRubricEligibilitySelectedOptionsHandler = (val) => {
             <FaPlus className="mr-1" /> Add Another Link
           </button>
         </div>
+      </div>
       </div>
     </>
   );

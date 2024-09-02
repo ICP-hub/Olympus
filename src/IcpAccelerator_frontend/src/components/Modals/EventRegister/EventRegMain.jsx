@@ -212,7 +212,7 @@ const EventRegMain = ({
             </button>
           </div>
           <h2 className="text-xs text-[#364152] mb-3">Step {index + 1} of 4</h2>
-          <div className="max-h-[90vh] overflow-y-auto">
+          <div className="">
             {/* FORM PROVIDER TO PASS DOWN FORM METHODS */}
             <FormProvider {...methods}>
               <form onSubmit={handleSubmit(onSubmitHandler, onErrorHandler)}>
