@@ -50,8 +50,22 @@ const RegisterForm3 = React.memo(({ setImageData }) => {
       label: "Engaging and building community",
     },
     { value: "Jobs", label: "Jobs" },
+    
   ]);
+  const [isFormTouched, setIsFormTouched] = useState({
+    reasons_to_join_platform: false,
+    bio: false,
+    domains_interested_in: false,
+    type_of_profile: false,
+    country: false,
+  });
 
+  const handleFieldTouch = (fieldName) => {
+    setIsFormTouched((prevState) => ({
+      ...prevState,
+      [fieldName]: true,
+    }));
+  };
   const {
     register,
     formState: { errors },
@@ -147,7 +161,7 @@ const RegisterForm3 = React.memo(({ setImageData }) => {
       borderColor: state.isFocused ? "#737373" : "#D1D5DB",
       border: state.selectProps.error
         ? "2px solid #ef4444"
-        : "2px solid #737373",
+        : "2px solid #D1D5DA",
       backgroundColor: "rgb(249 250 251)",
       "&::placeholder": {
         color: state.selectProps.error ? "#ef4444" : "currentColor",
@@ -331,9 +345,10 @@ const RegisterForm3 = React.memo(({ setImageData }) => {
                           message: "Selecting a reason is required",
                         });
                       }
+                      handleFieldTouch("reasons_to_join_platform");
                     }}
                   />
-        {errors.reasons_to_join_platform && (
+        {errors.reasons_to_join_platform && isFormTouched.reasons_to_join_platform && (
           <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
             {errors.reasons_to_join_platform.message}
           </span>
@@ -347,12 +362,16 @@ const RegisterForm3 = React.memo(({ setImageData }) => {
         <textarea
           {...register("bio", { required: "This field is required" })}
           className={`bg-gray-50 border-2 ${
-            errors?.bio ? "border-red-500 " : "border-[#737373]"
+            errors?.bio && isFormTouched.bio ? "border-red-500 " : "border-[#737373]"
           } mt-2 p-2 border border-gray-300 rounded-md w-full h-24`}
+          onChange={(e) => {
+            register("bio").onChange(e);
+            handleFieldTouch("bio");
+          }}
           placeholder="Enter your bio"
           rows={1}
         ></textarea>
-        {errors?.bio && (
+        {errors?.bio && isFormTouched.bio && (
           <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
             {errors?.bio?.message}
           </span>
@@ -398,10 +417,11 @@ const RegisterForm3 = React.memo(({ setImageData }) => {
                           message: "Selecting an interest is required",
                         });
                       }
+                      handleFieldTouch("domains_interested_in");
                     }}
                   />
 
-        {errors.domains_interested_in && (
+        {errors.domains_interested_in && isFormTouched.domains_interested_in &&(
           <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
             {errors.domains_interested_in.message}
           </span>
@@ -417,9 +437,13 @@ const RegisterForm3 = React.memo(({ setImageData }) => {
         </label>
         <select
           {...register("type_of_profile", { required: "You must select at least one option" })}
+          onChange={(e) => {
+            register("type_of_profile").onChange(e);
+            handleFieldTouch("type_of_profile");
+          }}
           className={`bg-gray-50 border-2 ${
-            errors.type_of_profile ? "border-red-500 " : "border-[#737373]"
-          } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+            errors.type_of_profile && isFormTouched.type_of_profile ? "border-red-500 " : "border-[#737373]"
+          } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg border-gray-300 block w-full p-2.5`}
         >
           <option className="text-lg font-bold" value="">
             Select profile type
@@ -435,7 +459,7 @@ const RegisterForm3 = React.memo(({ setImageData }) => {
               </option>
             ))}
         </select>
-        {errors?.type_of_profile && (
+        {errors?.type_of_profile && isFormTouched.type_of_profile && (
           <p className="mt-1 text-sm text-red-500 font-bold text-left">
             {errors?.type_of_profile?.message}
           </p>
@@ -457,8 +481,12 @@ const RegisterForm3 = React.memo(({ setImageData }) => {
           render={({ field: { onChange, onBlur, value, ref } }) => (
             <select
               {...{ ref, value, onChange, onBlur }}
+              onChange={(e) => {
+                onChange(e);
+                handleFieldTouch("country");
+              }}
               className={`bg-gray-50 border-2 ${
-                errors?.country ? "border-red-500 " : "border-[#737373]"
+                errors?.country && isFormTouched.country ? "border-red-500 " : "border-[#737373]"
               }  p-2 border border-gray-300 rounded-md w-full`}
             >
               <option className="text-lg font-bold" value="">
@@ -476,7 +504,7 @@ const RegisterForm3 = React.memo(({ setImageData }) => {
             </select>
           )}
         />
-        {errors?.country && (
+        {errors?.country &&  isFormTouched.country &&(
           <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
             {errors?.country?.message}
           </span>
@@ -506,8 +534,8 @@ const RegisterForm3 = React.memo(({ setImageData }) => {
                           className={`p-2 border ${
                             fieldState.error
                               ? "border-red-500"
-                              : "border-gray-300"
-                          } rounded-md w-full`}
+                              : "border-[#737373]"
+                          } rounded-md w-full bg-gray-50 border-2 border-[#D1D5DB]`}
                           {...field}
                         />
                       </div>

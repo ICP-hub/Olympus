@@ -168,11 +168,11 @@ function DashboardHomeNavbar() {
       </div>
 
       <div className="flex items-center space-x-4">
-        <RollingComponent
+        {/* <RollingComponent
           isToggled={isToggled}
           toggle={handleToggleChange}
           image={currentImage}
-        />
+        /> */}
 
         <img
           src={dashboard.dashboardhomenavbar.logoImages.bellicon.Bellicon}

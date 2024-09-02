@@ -18,11 +18,12 @@ export default function ProjectAssociationFilter({
   selectedTypeData,
   setActiveTabTypeData,
   activeTabData,
+  setSelectedType,
+  selectedType
 
 }) {
   const [show, setShow] = useState(open);
   const [rendered, setRendered] = useState(false);
-  const [selectedType, setSelectedType] = useState(null);
   const [association, setAssociation] = useState(null);
   const [status, setStatus] = useState(null);
   const actor = useSelector((currState) => currState.actors.actor);
@@ -160,18 +161,22 @@ export default function ProjectAssociationFilter({
           setSelectedTypeData(response.selectedStatus);
           setActiveTabTypeData(response.activeTab);
         } else if (selectedType.value === "FundRaised") {
-          result = await fetchRequestMoneyRaised(
+         const response =  fetchRequestMoneyRaised(
             status?.value,
             userCurrentRoleStatusActiveRole,
             actor,
             projectId
           );
+          result = await response.api_data; // Await the promise inside api_data
+          setActiveTabTypeData(response.activeTab);
         } else if (selectedType.value === "Document") {
-          result = await fetchRequestDocument(
+          const response =  fetchRequestDocument(
             status?.value,
             userCurrentRoleStatusActiveRole,
             actor
           );
+          result = await response.api_data; // Await the promise inside api_data
+          setActiveTabTypeData(response.activeTab);
         }
       } else if (userCurrentRoleStatusActiveRole === "mentor") {
         if (selectedType.value === "Associates") {
@@ -188,12 +193,14 @@ export default function ProjectAssociationFilter({
           setActiveTabTypeData(response.activeTab);
 
         } else if (selectedType.value === "CohortRequest") {
-          result = await fetchRequestCohort(
+          const response =  fetchRequestCohort(
             status?.value,
             userCurrentRoleStatusActiveRole,
             actor,
             userPrincipal
           );
+          result = await response.api_data; // Await the promise inside api_data
+          setActiveTabTypeData(response.activeTab);
         }
       } else if (userCurrentRoleStatusActiveRole === "vc") {
         if (selectedType.value === "Associates") {

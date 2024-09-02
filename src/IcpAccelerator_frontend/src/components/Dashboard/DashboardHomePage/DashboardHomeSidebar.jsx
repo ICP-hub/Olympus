@@ -306,6 +306,8 @@ function DashboardSidebar({ isOpen, onClose }) {
         {
           path: "/dashboard/mentor",
           icon: gridSvgIcon,
+          disabled: true, 
+          tooltip: "Coming soon",
           label: dashboardhomesidebar.sidebarSections.mentors.items.label1,
         },
         {
@@ -313,7 +315,7 @@ function DashboardSidebar({ isOpen, onClose }) {
           icon: plusSvgIcon,
           disabled: true, 
         tooltip: "Coming soon",
-          label: "Create new Mentor",
+          label: "Create new Service",
         },
       ],
       currentrole: "mentor",
@@ -344,6 +346,8 @@ function DashboardSidebar({ isOpen, onClose }) {
         {
           path: "/dashboard/investor",
           icon: gridSvgIcon,
+          disabled: true, 
+          tooltip: "Coming soon",
           label: dashboardhomesidebar.sidebarSections.investors.items.label1,
         },
         {
@@ -475,7 +479,7 @@ function DashboardSidebar({ isOpen, onClose }) {
                   }
                 />
               </li>
-              <li>
+              {/* <li>
                 <SidebarLink
                   path="/perks"
                   icon={staroutlineSvgIcon}
@@ -483,7 +487,7 @@ function DashboardSidebar({ isOpen, onClose }) {
                     dashboardhomesidebar.sidebarSections.discover.items.perks
                   }
                 />
-              </li>
+              </li> */}
             </ul>
           </div>
         </nav>

@@ -12,6 +12,7 @@ import MentorSignup3 from "./MentorSignUp1";
 import MentorSignup4 from "./MentorSignup2";
 import { validationSchema } from "./mentorValidation";
 import {useNavigate} from "react-router-dom"
+import { rolesHandlerRequest } from "../../StateManagement/Redux/Reducers/RoleReducer";
 // MAIN COMPONENT FOR MENTOR SIGNUP PROCESS
 const MentorSignupMain = ({ }) => {
   const dispatch = useDispatch(); // INITIALIZING DISPATCH FUNCTION TO TRIGGER ACTIONS
@@ -22,6 +23,7 @@ const navigate= useNavigate()
   const [modalOpen, setModalOpen] = useState(true); // STATE TO CONTROL MODAL VISIBILITY
   const [index, setIndex] = useState(0); // STATE TO TRACK CURRENT STEP OF THE FORM
   const [formData, setFormData] = useState({}); // STATE TO STORE FORM DATA
+  const [isfetchCall,setFetchCall]=useState(false)
 
   // INITIALIZE REACT HOOK FORM WITH YUP VALIDATION
   const methods = useForm({
@@ -125,13 +127,13 @@ const navigate= useNavigate()
           toast.error(result);
           setIsSubmitting(false)
           setModalOpen(false);
-          // window.location.reload();
+          setFetchCall(false);
           navigate("/dashboard/profile")
         } else {
           toast.success("Mentor registered successfully!");
           setIsSubmitting(false)
           setModalOpen(false);
-          // window.location.reload();
+          setFetchCall(true);
           navigate("/dashboard/profile")
         }
       } catch (error) {
@@ -143,7 +145,11 @@ const navigate= useNavigate()
       window.location.href = "/";
     }
   }
-  
+  useEffect(() => {
+    if(isfetchCall){
+    dispatch(rolesHandlerRequest());
+  }
+  }, [actor, dispatch,isfetchCall]);
 
   // RENDER COMPONENT
   return (
@@ -175,7 +181,7 @@ const navigate= useNavigate()
                     type="submit"
                     className="py-2 px-4 bg-blue-600 text-white rounded  border-2 border-[#B2CCFF]"
                   >
-                    {setIsSubmitting ? (
+                    {isSubmitting ? (
                       <ThreeDots
                         visible={true}
                         height="35"

@@ -21,6 +21,7 @@ import { formatFullDateFromBigInt } from "../Utils/formatter/formatDateFromBigIn
 import LinkIcon from "@mui/icons-material/Link";
 import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
 import parse from "html-react-parser";
+import NoData from "../NoDataCard/NoData";
 const Jobs = () => {
   const actor = useSelector((currState) => currState.actors.actor);
 
@@ -306,7 +307,9 @@ const refresh = () => {
               })}
                </InfiniteScroll>
             ): (
-              <div>No Data Available</div>
+              <div className="flex items-center justify-center">
+              <NoData message={'No Jobs Data Available'}/>
+              </div>
             )}
           </div>
 
