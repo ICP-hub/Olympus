@@ -66,8 +66,8 @@ const RegionalHubModal = ({ onClose }) => {
         };
         reader.readAsDataURL(compressedFile);
 
-        const byteArray = new Uint8Array(await compressedFile.arrayBuffer()); // Convert compressed image to Uint8Array
-        setImageData(byteArray); // Set image data to be sent to backend
+        const byteArray = new Uint8Array(await compressedFile.arrayBuffer()); 
+        setImageData(byteArray); 
 
       } catch (error) {
         setError("flag", {
