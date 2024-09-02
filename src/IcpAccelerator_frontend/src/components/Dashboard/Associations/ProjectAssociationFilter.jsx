@@ -167,6 +167,7 @@ export default function ProjectAssociationFilter({
             actor,
             projectId
           );
+          console.log('response',response)
           result = await response.api_data; // Await the promise inside api_data
           setActiveTabTypeData(response.activeTab);
         } else if (selectedType.value === "Document") {

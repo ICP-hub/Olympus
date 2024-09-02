@@ -11,6 +11,20 @@ export const validationSchema = yup.object().shape({
     hub_owner: yup.string().when("icp_hub_or_spoke", (val, schema) =>
       val && val[0] === "true" ? schema.required("ICP Hub selection is required") : schema
     ),
+    area_of_expertise: yup
+    .string()
+    .required("Selecting a category is required")
+    .test(
+      "at-least-one",
+      "You must select at least one category",
+      (value) => value && value.split(", ").length > 0
+    ),
+    reason_for_joining: yup
+    .string()
+    .test("is-non-empty", "Selecting a reason is required", (value) =>
+      /\S/.test(value)
+    )
+    .required("Selecting a reason is required"),
     mentor_website_url: yup
     .string()
       .nullable(true)
@@ -22,16 +36,17 @@ export const validationSchema = yup.object().shape({
         (value) => !value || yup.string().url().isValidSync(value)
       ),
 
-    years_of_mentoring: yup
-    .number()
-    .min(0, "Must be a non-negative number")
-    .required(" Fund is required")
-    .typeError("You must enter a number")
-    .test(
-      "not-negative-zero",
-      "Negative zero (-0) is not allowed",
-      (value) => Object.is(value, -0) === false
-    ),
+      years_of_mentoring: yup
+      .number()
+      .min(0, "Must be a non-negative number")
+      .max(100, "Must be 100 or less") // Add this line to set the maximum limit
+      .required("Fund is required")
+      .typeError("You must enter a number")
+      .test(
+        "not-negative-zero",
+        "Negative zero (-0) is not allowed",
+        (value) => Object.is(value, -0) === false
+      ),
     
       links: yup.array().of(
         yup.object().shape({
