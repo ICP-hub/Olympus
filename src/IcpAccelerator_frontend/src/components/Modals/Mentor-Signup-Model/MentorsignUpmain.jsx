@@ -123,27 +123,27 @@ const navigate= useNavigate()
         };
   
         try {
-          // const result = await actor.register_mentor(mentorData);
-          // console.log("result", result); // Log backend response
-          // if (
-          //   result.startsWith("You are not allowed to get this role because you already have the Project role.") ||
-          //   result.startsWith("You are not eligible for this role because you have 2 or more roles") ||
-          //   result.startsWith("You had got your request declined earlier") ||
-          //   result.startsWith("You are a Mentor Already") ||
-          //   result.startsWith("Profile image is already uploaded")
-          // ) {
-          //   toast.error(result);
-          //   setIsSubmitting(false);
-          //   setModalOpen(false);
-          //   setFetchCall(false);
-          //   navigate("/dashboard/profile");
-          // } else {
-          //   toast.success("Mentor registered successfully!");
-          //   setIsSubmitting(false);
-          //   setModalOpen(false);
-          //   setFetchCall(true);
-          //   navigate("/dashboard/profile");
-          // }
+          const result = await actor.register_mentor(mentorData);
+          console.log("result", result); // Log backend response
+          if (
+            result.startsWith("You are not allowed to get this role because you already have the Project role.") ||
+            result.startsWith("You are not eligible for this role because you have 2 or more roles") ||
+            result.startsWith("You had got your request declined earlier") ||
+            result.startsWith("You are a Mentor Already") ||
+            result.startsWith("Profile image is already uploaded")
+          ) {
+            toast.error(result);
+            setIsSubmitting(false);
+            setModalOpen(false);
+            setFetchCall(false);
+            navigate("/dashboard/profile");
+          } else {
+            toast.success("Mentor registered successfully!");
+            setIsSubmitting(false);
+            setModalOpen(false);
+            setFetchCall(true);
+            navigate("/dashboard/profile");
+          }
         } catch (error) {
           toast.error(error.message);
           console.error("Error sending data to the backend:", error);
