@@ -119,9 +119,9 @@ dispatch(investorRegisteredHandlerRequest());      dispatch(mentorRegisteredHand
     (currState) => currState.currentRoleStatus.loading
   );
 
-  if (loading) {
-    return <Loader />
-  }
+  // if (loading) {
+  //   return <Loader />
+  // }
   return (
     <>
     

@@ -226,8 +226,8 @@ const UsersSection = () => {
       </h1>
       <Tabs tabs={tabs} currentTab={currentTab} onTabChange={handleTabChange} />
 
-      <div className="flex">
-        <div className="pr-6">
+      <div className="flex justify-between">
+        <div className="pr-6 w-[60%]">
           <div className="pr-6">
             {currentTab === "Users" && (
               <DiscoverUser onUserCountChange={setUsersCount} />
@@ -243,14 +243,14 @@ const UsersSection = () => {
             )}
           </div>
         </div>
-        <div className="max-w-[320px] w-[320px]">
+        <div className="w-[35%]">
           <div className="bg-white py-6 rounded-lg shadow-sm sticky top-0">
             <h2 className="text-lg font-semibold mb-4">Filters</h2>
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Role
               </label>
-              <select className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+              <select onChange={(e)=>handleTabChange(e.target.value)} className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                 <option>Select role</option>
                 <option value="Users">Users</option>
                 <option value="Projects">Projects</option>

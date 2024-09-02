@@ -13,6 +13,7 @@ import AddAMentorRequestModal from "../../models/AddAMentorRequestModal";
 import { Principal } from "@dfinity/principal";
 import DiscoverInvestorPage from "../Dashboard/DashboardHomePage/DiscoverInvestor/DiscoverInvestorPage";
 import RatingModal from "../Common/RatingModal";
+import NoData from "../NoDataCard/NoData";
 
 const DiscoverInvestor = ({onInvestorCountChange }) => {
   const actor = useSelector((currState) => currState.actors.actor);
@@ -30,6 +31,8 @@ const DiscoverInvestor = ({onInvestorCountChange }) => {
   const [userRatingDetail,setUserRatingDetail]=useState(null)
   const [hasMore, setHasMore] = useState(true);
   const [isFetching, setIsFetching] = useState(false);
+  const [currentPrincipal, setCurrentPrincipal] = useState([]);
+
   const isAuthenticated = useSelector(
     (currState) => currState.internet.isAuthenticated
   );
@@ -231,9 +234,10 @@ const DiscoverInvestor = ({onInvestorCountChange }) => {
     console.log("passed principle", principal);
   };
 
-  const handleRating=(ratings)=>{
+  const handleRating=(ratings,principalId)=>{
     setShowRatingModal(true)
     setUserRatingDetail(ratings)
+    setCurrentPrincipal(principalId);
   }
   console.log("userRatingDetail =>",userRatingDetail)
 
@@ -309,7 +313,7 @@ const DiscoverInvestor = ({onInvestorCountChange }) => {
                     />
                   </div>
                 </div>
-                <div onClick={() => handleRating(user)} className="absolute cursor-pointer bottom-0 right-[6px] flex items-center bg-gray-100 p-1">
+                <div onClick={() => handleRating(user,principle_id)} className="absolute cursor-pointer bottom-0 right-[6px] flex items-center bg-gray-100 p-1">
                   <Star className="text-yellow-400 w-4 h-4" />
                   <span className="text-sm font-medium">5.0</span>
                 </div>
@@ -376,7 +380,7 @@ const DiscoverInvestor = ({onInvestorCountChange }) => {
         })}
         </InfiniteScroll>
       ) : (
-        <div>No Data Available</div>
+        <div><NoData message={"No Investor Present Yet"} /></div>
       )}
       {isAddInvestorModalOpen && (
         <AddAMentorRequestModal
@@ -399,6 +403,7 @@ const DiscoverInvestor = ({onInvestorCountChange }) => {
           showRating={showRatingModal}
           setShowRatingModal={setShowRatingModal}
           userRatingDetail={userRatingDetail}
+          cardPrincipal={currentPrincipal} 
         />
       )}
     </div>

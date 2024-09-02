@@ -11,6 +11,7 @@ import RatingCard from "../Common/RatingCard";
 import RatingReview from "../Common/RatingReview";
 import RatingModal from "../Common/RatingModal";
 import InfiniteScroll from "react-infinite-scroll-component";
+import NoData from "../NoDataCard/NoData";
 const DiscoverUser = ({ onUserCountChange }) => {
   const actor = useSelector((currState) => currState.actors.actor);
   const [allUserData, setAllUserData] = useState([]);
@@ -273,7 +274,7 @@ const DiscoverUser = ({ onUserCountChange }) => {
             })}
           </InfiniteScroll>
         ) : (
-          <div>No Data Available</div>
+          <div><NoData message={"No User Listed Yet"} /></div>
         )}
       </div>
       {showRatingModal && (

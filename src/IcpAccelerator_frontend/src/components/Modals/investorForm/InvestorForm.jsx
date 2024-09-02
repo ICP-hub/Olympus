@@ -15,6 +15,7 @@ import { allHubHandlerRequest } from "../../StateManagement/Redux/Reducers/All_I
 import { validationSchema } from "./investorvalidation";
 
 const InvestorForm = ({ isOpen }) => {
+  const navigate= useNavigate()
   // STATE TO CONTROL MODAL OPEN/CLOSE
   const [modalOpen, setModalOpen] = useState(isOpen || true);
   // FETCH COUNTRIES LIST
@@ -27,6 +28,7 @@ const InvestorForm = ({ isOpen }) => {
   const [formData, setFormData] = useState({});
   console.log("STATE SE AAYA HUA DATA",formData); 
   // INITIALIZE REACT HOOK FORM WITH VALIDATION SCHEMA
+  const [isSubmitting,setIsSubmitting]=useState(false)
   const {
     register,
     handleSubmit,
@@ -38,7 +40,7 @@ const InvestorForm = ({ isOpen }) => {
     watch,
     control,
     trigger,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm({
     resolver: yupResolver(validationSchema),
     mode: "all",
@@ -97,6 +99,7 @@ const InvestorForm = ({ isOpen }) => {
     const data = { ...formData, ...getValues() }; // MERGE FINAL FORM DATA
     console.log("SPREAD OPERATOR SE DATA AAYA", data)
     console.log(data.investor_portfolio_link);
+    setIsSubmitting(true)
     if (actor) {
       const investorData = {
         name_of_fund: data?.investor_fund_name,
@@ -169,12 +172,14 @@ const InvestorForm = ({ isOpen }) => {
             result.startsWith("Profile image is already uploaded")
           ) {
             toast.error(result); // SHOW ERROR TOAST WITH RETURNED MESSAGE
+            setIsSubmitting(false)
             setModalOpen(false);
-            window.location.reload();
+            navigate("/dashboard/profile")
           } else {
             toast.success("Investor registered successfully!"); // SHOW SUCCESS MESSAGE
             setModalOpen(false);
-            window.location.reload();
+           setIsSubmitting(false)
+            navigate("/dashboard/profile")
           }
         });
       } catch (error) {
@@ -242,7 +247,7 @@ const InvestorForm = ({ isOpen }) => {
                     watch,
                     control,
                     trigger,
-                    formState: { errors, isSubmitting },
+                    formState: { errors },
                   }}
                 >
                   <form

@@ -88,7 +88,7 @@ const InvestorModal3 = () => {
           Fund Name <span className="text-[red] ml-1">*</span>
         </label>
         <input
-          {...register("investor_fund_name")}
+          {...register("investor_fund_name",{ required: "This field is required" })}
           name="investor_fund_name" // REGISTERING THE INPUT
           type="text" // SPECIFYING INPUT TYPE AS TEXT
           placeholder="Enter your fund name" // PLACEHOLDER TEXT

@@ -13,6 +13,7 @@ const ProjectCard = () => {
   const [isopen, setModalOpen] = useState(false);
   const [cardData, setCardData] = useState([]);
   const actor = useSelector((currState) => currState.actors.actor);
+  const navigate = useNavigate();
   const handleOpenModal = () => {
     setModalOpen(!isopen);
   };
@@ -20,7 +21,7 @@ const ProjectCard = () => {
   const location = useLocation();
 
   const principal = useSelector((currState) => currState.internet.principal);
-  useEffect(() => {
+
     const fetchProjectData = async () => {
       try {
         const convertedPrincipal = await Principal.fromText(principal);
@@ -34,9 +35,12 @@ const ProjectCard = () => {
       }
     };
 
+
+  useEffect(() => {
     fetchProjectData();
   }, [actor]);
-  const navigate = useNavigate();
+
+
 
   const handleNavigation = () => {
     const projectId =
