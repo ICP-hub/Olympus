@@ -227,7 +227,7 @@ const UsersSection = () => {
       <Tabs tabs={tabs} currentTab={currentTab} onTabChange={handleTabChange} />
 
       <div className="flex justify-between">
-        <div className="pr-6 w-[60%]">
+        <div className="pr-6 ">
           <div className="pr-6">
             {currentTab === "Users" && (
               <DiscoverUser onUserCountChange={setUsersCount} />

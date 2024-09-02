@@ -60,7 +60,6 @@ pub async fn update_project_private_docs(project_id: String, new_docs: Docs, sta
 
 #[update(guard = "combined_guard")]
 pub async fn send_private_docs_access_request(project_id: String) -> String {
-    //sender
     let caller = caller();
 
     let has_pending_request = read_state(|state| {
@@ -68,7 +67,6 @@ pub async fn send_private_docs_access_request(project_id: String) -> String {
             .private_docs_access_request
             .get(&StoredPrincipal(caller))
         {
-            // Iterate through the Vec<AccessRequest> to find a matching and pending project_id request
             request_vec
                 .0
                 .iter()
@@ -84,11 +82,10 @@ pub async fn send_private_docs_access_request(project_id: String) -> String {
 
     let user_data: Result<UserInformation, &str> = get_user_information();
 
-    // Assuming the existence of get_user_info() which might fail hence the unwrap_or_else pattern
     let user_data = user_data.unwrap_or_else(|_| panic!("Failed to get user data"));
 
     let access_request = AccessRequest {
-        sender: caller.clone(), // Assuming caller() gives us Principal
+        sender: caller.clone(), 
         name: user_data.full_name,
         image: user_data.profile_picture.expect("Profile picture not found"),
         project_id: project_id.clone(),
@@ -96,16 +93,13 @@ pub async fn send_private_docs_access_request(project_id: String) -> String {
         status: "pending".to_string(),
     };
 
-    // Add request to the MONEY_ACCESS_REQUESTS hashmap
     mutate_state(|state| {
         if let Some(mut request_vec) = state
             .private_docs_access_request
             .get(&StoredPrincipal(caller))
         {
-            // If the caller already has requests, append the new one
             request_vec.0.push(access_request.clone());
         } else {
-            // If the caller doesn't have any requests yet, create a new vector
             state.private_docs_access_request.insert(
                 StoredPrincipal(caller.clone()),
                 Candid(vec![access_request.clone()]),
@@ -113,10 +107,9 @@ pub async fn send_private_docs_access_request(project_id: String) -> String {
         }
     });
 
-    // Create and send a notification for the request
     let notification_to_send = ProjectNotification {
-        notification_type: ProjectNotificationType::AccessRequest(access_request.clone()), // Cloned to satisfy borrow checker
-        timestamp: time(), // Assuming the existence of time() that returns u64 timestamp
+        notification_type: ProjectNotificationType::AccessRequest(access_request.clone()), 
+        timestamp: time(), 
     };
 
     mutate_state(|state| {
@@ -154,16 +147,20 @@ pub async fn approve_private_docs_access_request(
 
     // Update the status in MONEY_ACCESS_REQUESTS
     mutate_state(|state| {
-        if let Some(mut request_vec) = state
-            .private_docs_access_request
-            .get(&StoredPrincipal(sender_id))
-        {
-            for request in request_vec.0.iter_mut() {
+        if let Some(request_vec) = state.private_docs_access_request.remove(&StoredPrincipal(sender_id)) {
+            let mut modified = false;
+            let updated_request_vec = request_vec.0.into_iter().map(|mut request| {
                 if request.project_id == project_id && request.status == "pending" {
                     request.status = "approved".to_string();
-                    request_found_and_updated = true;
-                    break;
+                    modified = true;
                 }
+                request
+            }).collect::<Vec<_>>();
+
+            // Reinsert the updated vector back into the state map
+            state.private_docs_access_request.insert(StoredPrincipal(sender_id), Candid(updated_request_vec));
+            if modified {
+                request_found_and_updated = true;
             }
         }
     });
@@ -174,20 +171,31 @@ pub async fn approve_private_docs_access_request(
 
     // Update the status in PROJECT_ACCESS_NOTIFICATIONS
     mutate_state(|state| {
-        if let Some(mut notification_vec) = state.project_access_notifications.get(&project_id) {
-            for notification in notification_vec.0.iter_mut() {
-                match &mut notification.notification_type {
-                    ProjectNotificationType::AccessRequest(access_request)
-                        if access_request.sender == sender_id
-                            && access_request.status == "pending"
-                            && access_request.request_type == "private_docs_access" =>
-                    {
-                        access_request.status = "approved".to_string();
-                        break; // Exit after finding and updating the first matching request
-                    }
-                    _ => {} // Do nothing for other cases or variants
+    // Retrieve a copy of the notification vector for modification by removing it first
+        if let Some(notification_vec) = state.project_access_notifications.remove(&project_id) {
+            let mut updated = false;
+            let mut updated_notification_vec = Vec::new();
+
+            for mut notification in notification_vec.0 {
+                // Directly extract access_request from the notification
+                let access_request = match &mut notification.notification_type {
+                    ProjectNotificationType::AccessRequest(access_request) => access_request,
+                };
+
+                // Check and update the access request if it matches the criteria
+                if access_request.sender == sender_id
+                    && access_request.status == "pending"
+                    && access_request.request_type == "private_docs_access" {
+                    access_request.status = "approved".to_string();
+                    updated = true;
                 }
+
+                updated_notification_vec.push(notification);
+                if updated { break; }  // Stop processing once the first match is updated
             }
+
+            // Reinsert the modified vector back into the state
+            state.project_access_notifications.insert(project_id.clone(), Candid(updated_notification_vec));
         }
     });
 
@@ -203,17 +211,16 @@ pub fn decline_private_docs_access_request(project_id: String, sender_id: Princi
 
     // Update the status in PRIVATE_DOCS_ACCESS_REQUESTS
     mutate_state(|state| {
-        if let Some(mut request_vec) = state
-            .private_docs_access_request
-            .get(&StoredPrincipal(sender_id))
-        {
-            for request in request_vec.0.iter_mut() {
+        if let Some(request_vec) = state.private_docs_access_request.remove(&StoredPrincipal(sender_id)) {
+            let updated_request_vec = request_vec.0.into_iter().map(|mut request| {
                 if request.project_id == project_id && request.status == "pending" {
                     request.status = "declined".to_string();
                     request_found_and_updated = true;
-                    break;
                 }
-            }
+                request
+            }).collect::<Vec<_>>();
+
+            state.private_docs_access_request.insert(StoredPrincipal(sender_id), Candid(updated_request_vec));
         }
     });
 
@@ -221,27 +228,28 @@ pub fn decline_private_docs_access_request(project_id: String, sender_id: Princi
         return "Request not found or already processed.".to_string();
     }
 
-    // Assuming you also track notifications for private docs requests
     mutate_state(|state| {
-        if let Some(mut notification_vec) = state.project_access_notifications.get(&project_id) {
-            for notification in notification_vec.0.iter_mut() {
+        if let Some(notification_vec) = state.project_access_notifications.remove(&project_id) {
+            let updated_notification_vec = notification_vec.0.into_iter().map(|mut notification| {
                 match &mut notification.notification_type {
-                    ProjectNotificationType::AccessRequest(access_request)
-                        if access_request.sender == sender_id
-                            && access_request.status == "pending"
-                            && access_request.request_type == "private_docs_access" =>
-                    {
-                        access_request.status = "declined".to_string();
-                        break;
-                    }
-                    _ => {} // Do nothing for other cases or variants
+                    ProjectNotificationType::AccessRequest(access_request) if access_request.sender == sender_id
+                        && access_request.status == "pending"
+                        && access_request.request_type == "private_docs_access" => {
+                            access_request.status = "declined".to_string();
+                        },
+                    _ => {}
                 }
-            }
+                notification
+            }).collect::<Vec<_>>();
+
+            // Reinsert the modified vector back into the state map
+            state.project_access_notifications.insert(project_id, Candid(updated_notification_vec));
         }
     });
 
     "Private docs access request declined successfully.".to_string()
 }
+
 
 #[query(guard = "combined_guard")]
 pub fn get_all_pending_docs_access_requests() -> Vec<ProjectNotification> {

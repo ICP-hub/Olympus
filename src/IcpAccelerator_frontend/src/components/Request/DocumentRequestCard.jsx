@@ -97,9 +97,9 @@ console.log('activeTabData Docs',activeTabData)
           {activeTabData === "pending" ? (
             <span className="font-semibold">{timestampAgo(timestamp)}</span>
           ) : activeTabData === "approved" ? (
-            <span className="font-semibold">asdd</span>
+            <span className="font-semibold">{timestampAgo(timestamp)}</span>
           ) : activeTabData === "declined" ? (
-            <span className="font-semibold">add</span>
+            <span className="font-semibold">{timestampAgo(timestamp)}</span>
           ) : null}
         </span>
       </div>
