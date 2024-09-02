@@ -16,7 +16,7 @@ import { allHubHandlerRequest } from "../StateManagement/Redux/Reducers/All_IcpH
 import { uint8ArrayToBase64 } from "../../../../admin_frontend/src/components/Utils/AdminData/saga_function/blobImageToUrl";
 import editp from "../../../assets/Logo/edit.png";
 import { ThreeDots } from "react-loader-spinner";
-
+import {Principal} from "@dfinity/principal"
 const InvestorDetail = () => {
   const navigate = useNavigate();
   const { countries } = useCountries();
@@ -34,7 +34,8 @@ const InvestorDetail = () => {
   const investorFullData = useSelector(
     (currState) => currState.investorData.data[0]
   );
-
+const principal= useSelector((currState)=>currState.internet.principal)
+const principalId=principal.fromText(principal)
   const userCurrentRoleStatusActiveRole = useSelector(
     (currState) => currState.currentRoleStatus.activeRole
   );
@@ -596,7 +597,7 @@ const InvestorDetail = () => {
     if (actor) {
       (async () => {
         if (userCurrentRoleStatusActiveRole === "vc") {
-          const result = await actor.get_vc_info();
+          const result = await actor.get_vc_info(principalId);
           if (result) {
             setImageData(result?.[0]?.user_data?.profile_picture?.[0] ?? null);
             setValue(

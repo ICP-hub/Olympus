@@ -29,22 +29,35 @@ import { founderRegisteredHandlerRequest } from "../../StateManagement/Redux/Red
 import { Principal } from "@dfinity/principal";
 import Tooltip from '@mui/material/Tooltip';
 
+// const Toggle = ({ isChecked, onToggle }) => (
+//   <label className="relative h-4 w-8 cursor-pointer">
+//     <input
+//       className="peer sr-only"
+//       type="checkbox"
+//       checked={isChecked}
+//       onChange={onToggle}
+//     />
+//     <span className="absolute inset-0 m-auto h-2 rounded-full bg-stone-400"></span>
+//     <span
+//       className="absolute inset-y-0 start-0 m-auto w-4 h-4 rounded-full bg-stone-600 transition-all peer-checked:start-6 peer-checked:[&amp;_>_*]:scale-0"
+//     >
+//       <span className="absolute inset-0 m-auto w-2 h-2 rounded-full bg-stone-300 transition"></span>
+//     </span>
+//   </label>
+// );
 const Toggle = ({ isChecked, onToggle }) => (
-  <label className="relative h-4 w-8 cursor-pointer">
+  <label className="inline-flex items-center cursor-pointer">
     <input
-      className="peer sr-only"
       type="checkbox"
+      className="sr-only peer"
       checked={isChecked}
       onChange={onToggle}
     />
-    <span className="absolute inset-0 m-auto h-2 rounded-full bg-stone-400"></span>
-    <span
-      className="absolute inset-y-0 start-0 m-auto w-4 h-4 rounded-full bg-stone-600 transition-all peer-checked:start-6 peer-checked:[&amp;_>_*]:scale-0"
-    >
-      <span className="absolute inset-0 m-auto w-2 h-2 rounded-full bg-stone-300 transition"></span>
-    </span>
+    <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer  peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
   </label>
 );
+
+
 function DashboardSidebar({ isOpen, onClose }) {
   const { dashboardhomesidebar } = dashboard;
   const [hasNavigated, setHasNavigated] = useState(false);
