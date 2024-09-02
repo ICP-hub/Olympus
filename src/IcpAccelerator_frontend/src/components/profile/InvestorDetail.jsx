@@ -16,7 +16,10 @@ import { allHubHandlerRequest } from "../StateManagement/Redux/Reducers/All_IcpH
 import { uint8ArrayToBase64 } from "../../../../admin_frontend/src/components/Utils/AdminData/saga_function/blobImageToUrl";
 import editp from "../../../assets/Logo/edit.png";
 import { ThreeDots } from "react-loader-spinner";
+
 import {Principal} from "@dfinity/principal"
+
+
 const InvestorDetail = () => {
   const navigate = useNavigate();
   const { countries } = useCountries();
@@ -34,8 +37,10 @@ const InvestorDetail = () => {
   const investorFullData = useSelector(
     (currState) => currState.investorData.data[0]
   );
-const principal= useSelector((currState)=>currState.internet.principal)
-const principalId=principal.fromText(principal)
+  const principal = useSelector((currState) => currState.internet.principal);
+  const principalId=Principal.fromText(principal)
+console.log("principal in investordetail",principal)
+
   const userCurrentRoleStatusActiveRole = useSelector(
     (currState) => currState.currentRoleStatus.activeRole
   );
@@ -1106,7 +1111,7 @@ const principalId=principal.fromText(principal)
                 investor_type[0].split(", ").map((type, index) => (
                   <span
                     key={index}
-                    className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1"
+                    className="border-2 border-gray-500 min-w-[80px] truncate text-center rounded-full text-gray-700 text-xs px-2 py-1"
                   >
                     {type}
                   </span>
@@ -1390,7 +1395,7 @@ const principalId=principal.fromText(principal)
               project_on_multichain[0].split(", ").map((projects, index) => (
                 <span
                   key={index}
-                  className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1"
+                  className="border-2 border-gray-500 min-w-[80px] truncate text-center rounded-full text-gray-700 text-xs px-2 py-1"
                 >
                   {projects}
                 </span>
@@ -1509,7 +1514,7 @@ const principalId=principal.fromText(principal)
                 category_of_investment.split(", ").map((category, index) => (
                   <span
                     key={index}
-                    className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1"
+                    className="border-2 border-gray-500 text-center min-w-[80px] truncate rounded-full text-gray-700 text-xs px-2 py-1"
                   >
                     {category}
                   </span>
@@ -1667,7 +1672,7 @@ const principalId=principal.fromText(principal)
               stage[0].split(", ").map((value, index) => (
                 <span
                   key={index}
-                  className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1"
+                  className="border-2 text-center min-w-[80px] truncate border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1"
                 >
                   {value}
                 </span>
@@ -1788,7 +1793,7 @@ const principalId=principal.fromText(principal)
                 range_of_check_size[0].split(", ").map((range, index) => (
                   <span
                     key={index}
-                    className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1"
+                    className="border-2 text-center min-w-[80px] truncate border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1"
                   >
                     {range}
                   </span>
