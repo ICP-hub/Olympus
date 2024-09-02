@@ -24,11 +24,11 @@ const EventReg2 = ({ formData, singleEventData }) => {
     if (formData) {
       setValue(
         "area",
-        singleEventData?.country === "global" ? "global" : "country"
+        singleEventData?.country === "Global" ? "Global" : "country"
       );
       setSelectArea(
-        singleEventData?.country === "global"
-          ? "global"
+        singleEventData?.country === "Global"
+          ? "Global"
           : singleEventData?.country
       );
       setValue("country", singleEventData?.country ?? "");
@@ -122,7 +122,7 @@ const EventReg2 = ({ formData, singleEventData }) => {
         } text-gray-900 placeholder-gray-500  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
         >
           <option value="">Select Area</option>
-          <option value="global">Global</option>
+          <option value="Global">Global</option>
           <option value="country">Country</option>
         </select>
       </div>

@@ -288,8 +288,9 @@ const DiscoverMentor = ({onMentorCountChange}) => {
                         ""
                       )}
                     </div>
-                    <div className="mb-2">
-                      {activeRole && (
+                    <div className="bg-[#ECFDF3] border-[#ABEFC6] border text-[#067647] rounded-md text-xs px-3 py-1 mr-2 mb-2 w-[4.7rem]">
+MENTOR
+                      {/* {activeRole && (
                         <span
                           className={`inline-block ${
                             tagColors[activeRole.name] ||
@@ -298,7 +299,8 @@ const DiscoverMentor = ({onMentorCountChange}) => {
                         >
                           {activeRole.name}
                         </span>
-                      )}
+                      )} */}
+
                     </div>
                     <div className="border-t border-gray-200 my-3 mb-2 line-clamp-1 ">{email}</div>
 

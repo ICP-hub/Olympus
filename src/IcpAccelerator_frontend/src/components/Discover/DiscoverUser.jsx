@@ -116,7 +116,7 @@ const DiscoverUser = ({ onUserCountChange }) => {
     TALENT: "bg-[#ECFDF3] border-[#ABEFC6] border text-[#067647] rounded-md",
   };
 
-  const tags = ["OLYMPIAN", "FOUNDER", "TALENT", "INVESTER", "PROJECT"];
+  const tags = ["OLYMPIAN", "FOUNDER", "TALENT", "INVESTOR", "PROJECT"];
   const getRandomTags = () => {
     const shuffledTags = tags.sort(() => 0.5 - Math.random());
     return shuffledTags.slice(0, 2);
@@ -230,8 +230,9 @@ const DiscoverUser = ({ onUserCountChange }) => {
                         </div>
                         {/* <FavoriteBorder className="text-gray-400 cursor-pointer" /> */}
                       </div>
-                      <div className="">
-                        {randomTags?.map((tag, index) => (
+                      <div className="bg-[#fff0eb] border-[#f35454] border text-[#090907] rounded-md text-xs px-3 py-1 mr-2 mb-2 w-[3.4rem]">
+USER
+                        {/* {randomTags?.map((tag, index) => (
                           <span
                             key={index}
                             className={`inline-block ${
@@ -240,7 +241,7 @@ const DiscoverUser = ({ onUserCountChange }) => {
                           >
                             {tag}
                           </span>
-                        ))}
+                        ))} */}
                       </div>
                       <div className="border-t border-gray-200 my-1"></div>
                       {/* <p className="font-medium mb-2"> {area_of_interest}</p> */}
