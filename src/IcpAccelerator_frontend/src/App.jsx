@@ -18,12 +18,10 @@ import { multiChainHandlerRequest } from "./components/StateManagement/Redux/Red
 // import Header from "./component/Layout/Header/Header";
 import AppRoutes from "./AppRoutes";
 import ConnectWallet from "./models/ConnectWallet";
-import Loader from "./component/Loader/Loader";
-import Footer from "./components/Footer/Footer";
-import Navbar from "./components/Layout/Header/Navbar";
 import WarningMessage from "./ScreenWarning";
 import { founderRegisteredHandlerRequest } from "./components/StateManagement/Redux/Reducers/founderRegisteredData";
 import { investorRegisteredHandlerRequest } from "./components/StateManagement/Redux/Reducers/investorRegisteredData";
+import Loader from "./components/Loader/Loader";
 
 const App = () => {
   const actor = useSelector((currState) => currState.actors.actor);

@@ -2,7 +2,7 @@ import React, { useEffect, useState,useRef } from "react";
 import {
   closeModalSvg,
   walletModalSvg,
-} from "../component/Utils/Data/SvgData";
+} from "../components/Utils/Data/SvgData";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../components/StateManagement/useContext/useAuth";

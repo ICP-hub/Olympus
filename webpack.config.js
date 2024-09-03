@@ -12,8 +12,8 @@ module.exports = (env) => {
   const frontendDirectory = env.frontend || "IcpAccelerator_frontend";  // Default to 'IcpAccelerator_frontend' if env.frontend is not set
   const frontendEntry = path.join("src", frontendDirectory, "src", "index.html");
 
-  console.log("Entry Path:", frontendEntry);
-  console.log("Resolved Entry Path:", path.resolve(__dirname, frontendEntry));
+  // console.log("Entry Path:", frontendEntry);
+  // console.log("Resolved Entry Path:", path.resolve(__dirname, frontendEntry));
 
   return {
     target: "web",

@@ -4,7 +4,7 @@ import WorkOutlineOutlinedIcon from '@mui/icons-material/WorkOutlineOutlined';
 import JobRegister1 from '../../Modals/JobModal/JobRegister1';
 import { useSelector } from 'react-redux';
 import { IcpAccelerator_backend } from '../../../../../declarations/IcpAccelerator_backend/index';
-import useFormatDateFromBigInt from "../../../component/hooks/useFormatDateFromBigInt";
+import useFormatDateFromBigInt from "../../../components/hooks/useFormatDateFromBigInt";
 import { formatFullDateFromBigInt } from "../../Utils/formatter/formatDateFromBigInt";
 import NewEvent from '../DashboardEvents/NewEvent';
 import NewJob from './LatestJob';

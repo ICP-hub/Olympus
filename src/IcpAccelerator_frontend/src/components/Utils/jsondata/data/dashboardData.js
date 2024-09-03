@@ -8,8 +8,8 @@ import df_small_logo from "../../../../../assets/Logo/NavbarSmallLogo.png";
 import Bellicon from "../../../../../assets/Logo/Bellicon.png";
 import olympuslogo from "../../../../../assets/Logo/topLogo.png";
 import df_bigLogo from "../../../../../assets/Logo/bigLogo.png";
-import { afterCopySvg } from "../../../../component/Utils/Data/SvgData";
-import { beforeCopySvg } from "../../../../component/Utils/Data/SvgData";
+import { afterCopySvg } from "../../../../components/Utils/Data/SvgData";
+import { beforeCopySvg } from "../../../../components/Utils/Data/SvgData";
 import {
   briefcaseSvgIcon,
   calenderSvgIcon,

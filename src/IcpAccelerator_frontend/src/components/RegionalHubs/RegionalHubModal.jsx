@@ -3,7 +3,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import * as Yup from 'yup';
 import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
-import CompressedImage from "../../component/ImageCompressed/CompressedImage"; 
+import CompressedImage from "../../components/ImageCompressed/CompressedImage"; 
 import toast, { Toaster } from "react-hot-toast";
 import { useSelector, useDispatch } from "react-redux";
 

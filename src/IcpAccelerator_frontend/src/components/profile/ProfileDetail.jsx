@@ -10,7 +10,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useCountries } from "react-countries";
 import { useSelector } from "react-redux";
 import { LinkedIn, GitHub, Telegram, Language } from "@mui/icons-material";
-import MentorEdit from "../../component/Mentors/MentorEdit";
+import MentorEdit from "../../components/Profile/MentorEdit"
 import { FaEdit, FaPlus } from "react-icons/fa";
 import { Principal } from "@dfinity/principal";
 import { ThreeDots } from "react-loader-spinner";
