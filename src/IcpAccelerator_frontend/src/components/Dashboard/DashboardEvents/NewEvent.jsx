@@ -121,13 +121,13 @@ const NewEvent = ({ event }) => {
                                 </div>
 
                                 <div className="flex justify-between items-center">
-                                    <div className="flex items-center gap-2 w-full relative">
+                                    <div className="flex items-center gap-4 w-full relative">
                                         <div className="max-w-[160px] absolute top-1 left-1 bg-white p-2 rounded-[8px]">
                                             <p className="text-sm font-normal">{event.start_date}</p>
                                             <div>
-                <p className="rounded-md inline-block text-sm font-semibold ">
+                {/* <p className="rounded-md inline-block text-sm font-semibold ">
                   {event.start_date}
-                </p>
+                </p> */}
                 <p className="text-sm text-gray-600">Start at 15:00 GMT+4</p>
               </div>
                                         </div>
@@ -139,7 +139,7 @@ const NewEvent = ({ event }) => {
                                                 className="w-[240px] h-[172px] rounded-lg mr-4 object-cover object-center"
                                             />
                                         </div>
-                                        <div className='w-2/3'>
+                                        <div className=''>
                                             <p className="bg-white font-medium border-2 border-[#CDD5DF] text-[#364152] w-[86px] px-2 py-1 rounded-full text-sm -mt-3">
                                                 Workshop
                                             </p>

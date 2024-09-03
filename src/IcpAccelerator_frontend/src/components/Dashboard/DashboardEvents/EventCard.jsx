@@ -8,24 +8,26 @@ import parse from "html-react-parser";
 import images from "../../../../assets/images/bg.png";
 import { formatFullDateFromSimpleDate } from "../../Utils/formatter/formatDateFromBigInt";
 import NoData from "../../NoDataCard/NoData";
-const EventCard = () => {
-  const actor = useSelector((currState) => currState.actors.actor);
-  const [noData, setNoData] = useState(null);
-  const [allLiveEventsData, setAllLiveEventsData] = useState([]);
 
+const EventCard = ({ selectedEventType }) => {
+  const actor = useSelector((currState) => currState.actors.actor);
+  const [noData, setNoData] = useState(false);
+  const [allLiveEventsData, setAllLiveEventsData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [countData, setCountData] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-  const [cohortids, setCohortIds] = useState([]);
+  const [cohortIds, setCohortIds] = useState([]);
 
-  console.log("cohort Id...........", allLiveEventsData);
+  const navigate = useNavigate();
 
-  const cohortId = allLiveEventsData[0]?.cohort_id;
+  const handleClick = (cohort_id) => {
+    navigate("/dashboard/single-event", { state: { cohort_id } });
+  };
 
   useEffect(() => {
     let isMounted = true;
-
+  
     const getAllLiveEvents = async (caller, page) => {
       setIsLoading(true);
       try {
@@ -33,59 +35,66 @@ const EventCard = () => {
           page_size: itemsPerPage,
           page,
         });
-        console.log("DATA FROM API IS ", result);
-
+  
+        console.log("API Response:", result);
+  
         if (isMounted) {
-          if (!result || result.length === 0) {
-            setNoData(true);
-            setIsLoading(false);
-            setAllLiveEventsData([]);
-            setCountData(0);
-          } else {
-            setNoData(false);
-            setIsLoading(false);
-            setAllLiveEventsData(result.data);
-            setCountData(result.total_count);
+          let filteredEvents = [];
+  
+          // Adjusted logic to map the correct event data
+          switch (selectedEventType) {
+            case 'Ongoing':
+              filteredEvents = result.present_cohorts ?? [];
+              break;
+            case 'Upcoming':
+              filteredEvents = result.upcoming_cohorts ?? [];
+              break;
+            case 'Past':
+              filteredEvents = result.past_cohorts ?? [];
+              break;
+            case 'All':
+            default:
+              filteredEvents = result.data ?? [];
+              break;
           }
+  
+          setAllLiveEventsData(filteredEvents);
+          setCountData(filteredEvents.length);
+          setNoData(filteredEvents.length === 0);
         }
       } catch (error) {
         if (isMounted) {
-          setNoData(true);
-          setIsLoading(false);
-          setCountData(0);
           setAllLiveEventsData([]);
-          console.error("Error in get_all_cohort", error);
+          setCountData(0);
+          setNoData(true);
+          console.error("Error in get_all_cohorts:", error);
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
         }
       }
     };
-
+  
     if (actor) {
       getAllLiveEvents(actor, currentPage);
     } else {
       getAllLiveEvents(IcpAccelerator_backend, currentPage);
     }
-
+  
     return () => {
       isMounted = false;
     };
-  }, [actor, currentPage, itemsPerPage]);
+  }, [actor, currentPage, itemsPerPage, selectedEventType]);
+  
+  
 
   useEffect(() => {
-    if (allLiveEventsData && allLiveEventsData.length > 0) {
-      const cohortIdsArray = allLiveEventsData.map(
-        (eventData) => eventData.cohort_id
-      );
+    if (allLiveEventsData?.length > 0) {
+      const cohortIdsArray = allLiveEventsData.map((eventData) => eventData.cohort_id);
       setCohortIds(cohortIdsArray);
     }
   }, [allLiveEventsData]);
-
-  console.log("allliveevents", allLiveEventsData);
-  const navigate = useNavigate();
-
-  const handleClick = (cohort_id) => {
-    navigate("/dashboard/single-event", { state: { cohort_id } });
-  };
-  //registerHandler
 
   return (
     <div>
@@ -94,19 +103,10 @@ const EventCard = () => {
       ) : allLiveEventsData.length > 0 ? (
         <div>
           {allLiveEventsData.map((data, index) => {
-            console.log("banner before", data.cohort.cohort_banner[0]);
             const image = data?.cohort?.cohort_banner[0]
               ? uint8ArrayToBase64(data?.cohort?.cohort_banner[0])
-              : [];
+              : images;
             const name = data?.cohort?.title ?? "No Title...";
-            console.log("banner after", image);
-
-            // const launch_date = data?.cohort?.cohort_launch_date
-            //   ? new Date(data?.cohort?.cohort_launch_date).toLocaleDateString()
-            //   : "";
-            // const end_date = data?.cohort?.cohort_end_date
-            //   ? new Date(data?.cohort?.cohort_end_date).toLocaleDateString()
-            //   : "";
             const launch_date = data?.cohort?.cohort_launch_date
               ? new Date(data.cohort.cohort_launch_date).toLocaleDateString(
                   "en-US",
@@ -116,7 +116,6 @@ const EventCard = () => {
                   }
                 )
               : "";
-
             const end_date = data?.cohort?.cohort_end_date
               ? new Date(data.cohort.cohort_end_date).toLocaleDateString(
                   "en-US",
@@ -135,10 +134,6 @@ const EventCard = () => {
             const start_date = data?.cohort?.start_date ?? "";
             const funding = data?.cohort?.funding_amount ?? "";
             const country = data?.cohort?.country ?? "";
-
-            console.log("cohort Id...........///////////", cohortids);
-            console.log("country", country);
-            console.log("funding", funding);
 
             return (
               <div
@@ -165,9 +160,9 @@ const EventCard = () => {
                     </div>
                     <div className="w-2/3">
                       <div>
-                        <p className="bg-white font-medium border-2 borer-[#CDD5DF] text-[#364152] w-[86px] px-2 py-1 rounded-full text-sm">
-                          Workshop
-                        </p>
+                        <div className="bg-[#c8eaef] border-[#45b0c1] border text-[#090907] text-xs px-2 py-1 rounded-full w-[70px]">
+                          COHORT
+                        </div>
                         <h3 className="text-lg font-bold mt-2">{name}</h3>
                         <p className="text-sm text-gray-500 mb-4 overflow-hidden text-ellipsis max-h-12 line-clamp-2 mt-2">
                           {parse(desc)}
@@ -203,7 +198,9 @@ const EventCard = () => {
           })}
         </div>
       ) : (
-        <div className="flex justify-center items-center"><NoData message={"No Cohort Available"}/></div>
+        <div className="flex justify-center items-center">
+          <NoData message={"No Cohort Available"} />
+        </div>
       )}
     </div>
   );

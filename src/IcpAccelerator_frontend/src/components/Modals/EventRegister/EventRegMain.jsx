@@ -121,7 +121,7 @@ const EventRegMain = ({
 
       const eventData = {
         title: data.title,
-        country: data.area,
+        country: data.area === 'Global'? data.area :data.country,
         funding_amount: data.funding_amount,
         funding_type: data.funding_type,
         description: data.description,
@@ -153,7 +153,7 @@ const EventRegMain = ({
         cohort_banner: imageData ? [imageData] : [],
         host_name: organiserName ? [organiserName] : [], // Example placeholder for host name
       };
-
+console.log('eventdata',eventData)
       try {
         setIsSubmiting(true);
         let result;
@@ -212,7 +212,7 @@ const EventRegMain = ({
             </button>
           </div>
           <h2 className="text-xs text-[#364152] mb-3">Step {index + 1} of 4</h2>
-          <div className="max-h-[90vh] overflow-y-auto">
+          <div className="">
             {/* FORM PROVIDER TO PASS DOWN FORM METHODS */}
             <FormProvider {...methods}>
               <form onSubmit={handleSubmit(onSubmitHandler, onErrorHandler)}>

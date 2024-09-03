@@ -311,7 +311,7 @@ const RegisterForm3 = React.memo(({ setImageData }) => {
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700 mb-2">
           Why do you want to join this platform ?{" "}
-          <span className="text-[#155EEF]">*</span>
+          <span className="text-[red] ml-1">*</span>
         </label>
         <ReactSelect
                     isMulti
@@ -357,7 +357,7 @@ const RegisterForm3 = React.memo(({ setImageData }) => {
 
       <div className="mb-4">
         <label htmlFor="bio" className="block text-sm font-medium text-gray-700">
-          About <span className="text-[#155EEF]">*</span>
+          About <span className="text-[red] ml-1">*</span>
         </label>
         <textarea
           {...register("bio", { required: "This field is required" })}
@@ -383,7 +383,7 @@ const RegisterForm3 = React.memo(({ setImageData }) => {
           htmlFor="domains_interested_in"
           className="block text-sm font-medium text-gray-700 mb-2"
         >
-          Interests <span className="text-[#155EEF]">*</span>
+          Interests <span className="text-[red] ml-1">*</span>
         </label>
         <ReactSelect
                     isMulti
@@ -433,7 +433,7 @@ const RegisterForm3 = React.memo(({ setImageData }) => {
           htmlFor="type_of_profile"
           className="block text-sm font-medium text-gray-700 mb-2"
         >
-          Type of Profile<span className="text-[#155EEF]">*</span>
+          Type of Profile<span className="text-[red] ml-1">*</span>
         </label>
         <select
           {...register("type_of_profile", { required: "You must select at least one option" })}
@@ -471,7 +471,7 @@ const RegisterForm3 = React.memo(({ setImageData }) => {
           htmlFor="country"
           className="block text-sm font-medium text-gray-700 mb-2"
         >
-          Location <span className="text-[#155EEF]">*</span>
+          Location <span className="text-[red] ml-1">*</span>
         </label>
         <Controller
           name="country"
@@ -562,13 +562,15 @@ const RegisterForm3 = React.memo(({ setImageData }) => {
             </div>
           ))}
 
-          <button
-            type="button"
-            onClick={() => append({ link: "" })}
-            className="flex items-center p-1 text-[#155EEF]"
-          >
-            <FaPlus className="mr-1" /> Add Another Link
-          </button>
+{fields.length < 10 && (
+      <button
+        type="button"
+        onClick={() => append({ links: "" })}
+        className="flex items-center p-1 text-[#155EEF]"
+      >
+        <FaPlus className="mr-1" /> Add Another Link
+      </button>
+    )}
         </div>
       </div>
     </div>

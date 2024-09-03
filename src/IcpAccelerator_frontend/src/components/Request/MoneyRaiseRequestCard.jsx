@@ -52,7 +52,7 @@ const MoneyRaiseRequestCard = ({user,index,activeTabData}) => {
             // navigate(0);
           }
         } catch (error) {
-          console.error("Error processing document request action:", error);
+          console.error("Error processing money request action:", error);
           toast.error("An error occurred during processing.");
         }
       };
@@ -80,8 +80,8 @@ const MoneyRaiseRequestCard = ({user,index,activeTabData}) => {
         </div>
   
         <div className="absolute bottom-0 right-[6px] flex items-center bg-gray-100 p-1">
-          <Star className="text-yellow-400 w-4 h-4" />
-          <span className="text-sm font-medium">9</span>
+          {/* <Star className="text-yellow-400 w-4 h-4" />
+          <span className="text-sm font-medium">9</span> */}
         </div>
       </div>
     </div>
@@ -96,9 +96,9 @@ const MoneyRaiseRequestCard = ({user,index,activeTabData}) => {
             {activeTabData === "pending" ? (
               <span className="font-semibold">{timestampAgo(timestamp)}</span>
             ) : activeTabData === "approved" ? (
-              <span className="font-semibold">asdd</span>
+              <span className="font-semibold">{timestampAgo(timestamp)}</span>
             ) : activeTabData === "declined" ? (
-              <span className="font-semibold">add</span>
+              <span className="font-semibold">{timestampAgo(timestamp)}</span>
             ) : null}
           </span>
         </div>

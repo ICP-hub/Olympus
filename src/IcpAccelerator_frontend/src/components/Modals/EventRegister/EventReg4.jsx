@@ -29,6 +29,7 @@ const EventReg4 = ({ }) => {
 
   return (
     <>
+    <div className="max-h-[70vh] overflow-y-auto">
       <div className="mb-2">
         {/* LABEL FOR PROJECT DESCRIPTION */}
         <label className="block text-sm font-medium mb-1">
@@ -56,6 +57,7 @@ const EventReg4 = ({ }) => {
             {errors?.description?.message}
           </span>
         )}
+      </div>
       </div>
     </>
   );

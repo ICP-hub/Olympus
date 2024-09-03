@@ -22,6 +22,8 @@ import EventRequestCard from "./EventRequestCard";
 import EventRequestStatus from "./EventRequestStatus";
 import Tabs from "../../Common/Tabs/Tabs";
 import Attendees from "./Attendees";
+import { Tooltip } from "react-tooltip";
+
 
 const FAQItem = ({ question, answer }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -74,17 +76,12 @@ const FAQ = () => {
 };
 
 const EventDetails = () => {
-  const [currentTab, setCurrentTab] = useState("Summary");
-  const tabs = [
-    { label: "Summary", value: "Summary" },
-    { label: "Request", value: "Request" },
-    { label: "Announcements", value: "Announcements" },
-    { label: "Attendees", value: "Attendees" },
-    { label: "Reviews", value: "Reviews" },
-  ];
-  const handleTabChange = (tab) => {
-    setCurrentTab(tab);
-  };
+  const userCurrentRoleStatusActiveRole = useSelector(
+    (currState) => currState.currentRoleStatus.activeRole
+  );
+  const principal = useSelector(
+    (currState) => currState.internet.principal
+  );
   const location = useLocation();
   const { cohort_id } = location.state || {};
   const [cohortData, setCohortData] = useState(null);
@@ -95,19 +92,33 @@ const EventDetails = () => {
     minutes: 0,
     seconds: 0,
   });
-  const [difference, setDifference] = useState(null); // Add this state
+  const [difference, setDifference] = useState(null);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  // console.log("............./.........../cohortData",cohortData)
-  const userCurrentRoleStatusActiveRole = useSelector(
-    (currState) => currState.currentRoleStatus.activeRole
-  );
-  //const userCurrentRoleStatusActiveRole = "vc";
+  const [currentTab, setCurrentTab] = useState("Summary");
+  const cohortCreator = cohortData?.cohort_creator.toText() === principal;
+const cohortCreatorProfile=cohortData?.cohort_creator_data?.profile_picture[0] ? uint8ArrayToBase64(cohortData?.cohort_creator_data?.profile_picture[0])
+: []
+const tabs = [
+  { label: "Summary", value: "Summary" },
+  ...(userCurrentRoleStatusActiveRole !== "user"
+    ? [
+        ...(cohortCreator ? [{ label: "Request", value: "Request" }] : []),
+        { label: "Announcements", value: "Announcements" },
+        { label: "Attendees", value: "Attendees" },
+        { label: "Reviews", value: "Reviews" },
+      ]
+    : []),
+];
+  const handleTabChange = (tab) => {
+    setCurrentTab(tab);
+  };
+  
+
+
+
   useEffect(() => {
     const fetchCohortData = async () => {
-      console.log("Actor:", actor);
-      console.log("Cohort ID:", cohort_id);
-
       if (actor && cohort_id) {
         try {
           const result = await actor.get_cohort(cohort_id);
@@ -162,9 +173,7 @@ const EventDetails = () => {
   if (!cohortData) {
     return <div>Loading...</div>;
   }
-
-  console.log('cohortData',cohortData)
-
+console.log('cohortData',cohortData)
   const {
     cohort_banner,
     cohort_end_date,
@@ -182,7 +191,7 @@ const EventDetails = () => {
     tags,
     title,
   } = cohortData.cohort;
-console.log("jai ho tags",email)
+
   const Seats = Number(no_of_seats);
   const bannerImage =
     cohort_banner && cohort_banner.length > 0
@@ -202,67 +211,6 @@ console.log("jai ho tags",email)
     </button>
   );
 
-  //   const TabContent = () => {
-  //     switch (activeTab) {
-  //       case 'summary':
-  //         return (
-  //           <div>
-  //             {/* <h2 className="text-2xl font-semibold mb-2">About</h2>
-  //             <ul className="list-disc pl-5 text-gray-700">
-  //               <li>
-  //                 A tortor laoreet at magna nibh. Bibendum augue neque
-  //                 malesuada aliquam venenatis.
-  //               </li>
-  //               <li>Feugiat nulla pellentesque eu augue dignissim.</li>
-  //               <li>
-  //                 Diam gravida turpis fermentum ut est. Vulputate platea non
-  //                 ac elit massa.
-  //               </li>
-  //             </ul>
-  //             <div className="mt-6">
-  //               <h2 className="text-2xl font-semibold mb-2">Topics covered</h2>
-  //               <p className="text-gray-700">
-  //                 Est quis ornare proin quisque lacinia ac tincidunt massa
-  //               </p>
-  //               <p className="text-gray-700 mt-2">
-  //                 Est malesuada ac elit gravida vel aliquam nec. Arcu velit
-  //                 netusque convallis quam feugiat non viverra massa fringilla.
-  //               </p>
-  //             </div>
-  //             <hr className="border-gray-300 mt-4 mb-4" /> */}
-
-  //             <div className="mt-4">
-  //       <h2 className="text-2xl font-semibold mb-2">Description</h2>
-  //       {/* <div className="text-gray-700">{parse(description)}</div> */}
-  //       <div className="relative text-gray-700 overflow-hidden max-h-[10rem] hover:max-h-none transition-all duration-300 ease-in-out group">
-  //   <div
-  //     className="overflow-hidden text-ellipsis line-clamp-10"
-  //   >
-  //     { parse(description) }
-
-  //   </div>
-  //   <div
-  //     className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-white to-transparent pointer-events-none"
-  //   ></div>
-  // </div>
-  //       <h2 className="text-2xl font-semibold mt-2">FAQ</h2>
-  //       <FAQ />
-  //     </div>
-  //           </div>
-  //         );
-  //       case 'announcements':
-  //         return <NoDataFound message="No active announcements found" />;
-  //       case 'attendees':
-  //         return <NoDataFound message="No active attendes found" />;
-  //       case 'reviews':
-  //         return <NoDataFound message="No active reviews found" />;
-  //         case 'request':
-  //           return <EventRequestStatus/>;
-  //       default:
-  //         return null;
-  //     }
-  //   };
-  //Register Modal
   const registerHandler = async () => {
     setIsSubmitting(true);
     if (actor) {
@@ -273,68 +221,57 @@ console.log("jai ho tags",email)
 
       // if (deadline < today) {
       //   setIsSubmitting(false);
-      //   // setIsModalOpen(true);
       // } else {
-      try {
-        let cohort_id = cohortData?.cohort_id;
-        if (userCurrentRoleStatusActiveRole === "project") {
-          await actor
-            .apply_for_a_cohort_as_a_project(cohort_id)
-            .then((result) => {
-              setIsSubmitting(false);
-              if (
-                result &&
-                result.includes(`Request Has Been Sent To Cohort Creator`)
-              ) {
-                toast.success(result);
-                // window.location.href = "/";
-              } else {
-                toast.error(result);
-              }
-            });
-        } else if (userCurrentRoleStatusActiveRole === "vc") {
-          await actor
-            .apply_for_a_cohort_as_a_investor(cohort_id)
-            .then((result) => {
-              console.log("result in investor", result);
-
-              setIsSubmitting(false);
-              if (result) {
-                toast.success(result);
-                // window.location.href = "/";
-              } else {
-                toast.error(result);
-              }
-            });
-        } else if (userCurrentRoleStatusActiveRole === "mentor") {
-          await actor
-            .apply_for_a_cohort_as_a_mentor(cohort_id)
-            .then((result) => {
-              console.log("result in mentor", result);
-
-              setIsSubmitting(false);
-              if (result) {
-                toast.success(result);
-                // window.location.href = "/";
-              } else {
-                toast.error(result);
-              }
-            });
+        try {
+          let cohort_id = cohortData?.cohort_id;
+          if (userCurrentRoleStatusActiveRole === "project") {
+            await actor
+              .apply_for_a_cohort_as_a_project(cohort_id)
+              .then((result) => {
+                setIsSubmitting(false);
+                if (
+                  result &&
+                  result.includes(`Request Has Been Sent To Cohort Creator`)
+                ) {
+                  toast.success(result);
+                } else {
+                  toast.error(result);
+                }
+              });
+          } else if (userCurrentRoleStatusActiveRole === "vc") {
+            await actor
+              .apply_for_a_cohort_as_a_investor(cohort_id)
+              .then((result) => {
+                setIsSubmitting(false);
+                if (result) {
+                  toast.success(result);
+                } else {
+                  toast.error(result);
+                }
+              });
+          } else if (userCurrentRoleStatusActiveRole === "mentor") {
+            await actor
+              .apply_for_a_cohort_as_a_mentor(cohort_id)
+              .then((result) => {
+                setIsSubmitting(false);
+                if (result) {
+                  toast.success(result);
+                } else {
+                  toast.error(result);
+                }
+              });
+          }
+        } catch (error) {
+          setIsSubmitting(false);
+          toast.error(error);
+          console.error("Error sending data to the backend:", error);
         }
-      } catch (error) {
-        setIsSubmitting(false);
-        toast.error(error);
-        console.error("Error sending data to the backend:", error);
-      }
       // }
     } else {
       setIsSubmitting(false);
       toast.error("Please signup with internet identity first");
       window.location.href = "/";
     }
-  };
-  const closeModal = () => {
-    setIsModalOpen(false);
   };
 
   const getButtonText = (role) => {
@@ -345,11 +282,12 @@ console.log("jai ho tags",email)
         return "Join as Investor";
       case "mentor":
         return "Join as Mentor";
+      case "user":
+        return "You can't join ";
       default:
         return "Join";
     }
   };
-  // console.log("current role",userCurrentRoleStatusActiveRole);
 
   return (
     <div className="flex flex-col">
@@ -402,46 +340,27 @@ console.log("jai ho tags",email)
               </div>
             </div>
 
-            {/* <button className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-300 mb-2 text-sm "
-             onClick={registerHandler}>
-              Register{" "}
-              <ArrowOutwardOutlinedIcon className="ml-1" fontSize="small" />
-               {isSubmitting ? (
-                          <button className="uppercase w-full bg-[#3505B2] text-white  px-6  rounded-md  items-center font-extrabold text-xl sxxs:text-sm">
-                            <ThreeDots
-                              visible={true}
-                              height="24"
-                              width="24"
-                              color="#FFFFFF"
-                              radius="9"
-                              ariaLabel="three-dots-loading"
-                              wrapperStyle={{}}
-                              wrapperClassName=""
-                            />
-                          </button>
-                        ) : (
-                          getButtonText(userCurrentRoleStatusActiveRole)
-                        )}
-            </button> */}
-            <button
-              className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-300 mb-2 text-sm"
-              onClick={registerHandler}
-            >
-              {isSubmitting ? (
-                <ThreeDots
-                  visible={true}
-                  height="24"
-                  width="24"
-                  color="#FFFFFF"
-                  radius="9"
-                  ariaLabel="three-dots-loading"
-                  wrapperStyle={{}}
-                  wrapperClassName=""
-                />
-              ) : (
-                getButtonText(userCurrentRoleStatusActiveRole)
-              )}
-            </button>
+            {userCurrentRoleStatusActiveRole !== "user" && (
+              <button
+                className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-300 mb-2 text-sm"
+                onClick={registerHandler}
+              >
+                {isSubmitting ? (
+                  <ThreeDots
+                    visible={true}
+                    height="24"
+                    width="24"
+                    color="#FFFFFF"
+                    radius="9"
+                    ariaLabel="three-dots-loading"
+                    wrapperStyle={{}}
+                    wrapperClassName=""
+                  />
+                ) : (
+                  getButtonText(userCurrentRoleStatusActiveRole)
+                )}
+              </button>
+            )}
 
             <button className="w-full border border-[#CDD5DF] bg-white text-gray-700 py-2 px-4 rounded-md hover:bg-gray-200 transition duration-300 mb-2 text-sm">
               Contact organiser
@@ -453,7 +372,7 @@ console.log("jai ho tags",email)
           </div>
 
           <div className="p-4">
-            <div className="mb-4">
+            <div className="mb-4 hover:bg-[#e4e3e2b1] cursor-not-allowed opacity-50">
               <h3 className="text-[12px] font-medium text-[#697586] mb-2">
                 GUEST
               </h3>
@@ -468,24 +387,29 @@ console.log("jai ho tags",email)
                 ))}
               </div>
             </div>
-
+            <Tooltip
+                            id="registerTip"
+                            place="top"
+                            effect="solid"
+                            className="rounded-full z-10"
+                          >
+                            Comming Soon
+                          </Tooltip>
             <div className="space-y-3 text-sm">
               <div>
                 <span className="text-[#697586] text-[12px] block mb-2">
                   EVENT CATEGORY
                 </span>
                 <div className="flex flex-wrap gap-2">
-                {tags
-  ?.split(',')
-  .map((interest, index) => (
-    <span
-      key={index}
-      className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1"
-    >
-      {interest.trim()}
-    </span>
-  ))}
-  </div>
+                  {tags?.split(",").map((interest, index) => (
+                    <span
+                      key={index}
+                      className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1"
+                    >
+                      {interest.trim()}
+                    </span>
+                  ))}
+                </div>
               </div>
               <div>
                 <span className="text-[#697586] text-[12px] block mb-1">
@@ -556,32 +480,18 @@ console.log("jai ho tags",email)
                 <span className="text-[#697586] text-[12px] block mb-1">
                   FUNDING TYPE
                 </span>
-                
+
                 <div className="flex flex-wrap gap-2">
-                {funding_type
-  ?.split(',')
-  .map((interest, index) => (
-    <span
-      key={index}
-      className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1"
-    >
-      {interest.trim()}
-    </span>
-  ))}
-  </div>
-                {/* <div>
-                <span className="text-[#697586] text-[12px] block mb-1">
-                  END DATE
-                </span>
-                <div className="flex items-center">
-                  <img
-                    src={StartDateCalender}
-                    alt="End Date"
-                    className="w-4 h-4 text-gray-400 mr-2"
-                  />
-                  <span className="text-gray-700">{cohort_end_date}</span>
+                  {funding_type?.split(",").map((interest, index) => (
+                    <span
+                      key={index}
+                      className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1"
+                    >
+                      {interest.trim()}
+                    </span>
+                  ))}
                 </div>
-              </div> */}
+               
               </div>
               <div>
                 <span className="text-[#697586] text-[12px] block mb-1">
@@ -627,23 +537,12 @@ console.log("jai ho tags",email)
               <span>{funding_amount}</span>
             </div>
 
-            {/* <div className="mt-4">
-              <div className="border-b border-gray-300 mb-4">
-                <TabButton name="summary" label="Summary" />
-                <TabButton name="announcements" label="Announcements" />
-                <TabButton name="attendees" label="Attendees" />
-                <TabButton name="reviews" label="Reviews" />
-                <TabButton name="request" label="Request" />
-              </div>
-              <TabContent />
-              
-            </div> */}
             <Tabs
               tabs={tabs}
               currentTab={currentTab}
               onTabChange={handleTabChange}
             />
-            <div className=" pr-6">
+            <div className="pr-6">
               {currentTab === "Summary" && (
                 <>
                   <div>
@@ -651,7 +550,6 @@ console.log("jai ho tags",email)
                       <h2 className="text-2xl font-semibold mb-2">
                         Description
                       </h2>
-                      {/* <div className="text-gray-700">{parse(description)}</div> */}
                       <div className="relative text-gray-700 overflow-hidden max-h-[10rem] hover:max-h-none transition-all duration-300 ease-in-out group">
                         <div className="overflow-hidden text-ellipsis line-clamp-10">
                           {parse(description)}
@@ -664,16 +562,37 @@ console.log("jai ho tags",email)
                   </div>
                 </>
               )}
-              {currentTab === "Announcements" && (
-                <NoDataFound message="No active announcements found" />
-              )}
-              {currentTab === "Attendees" && (
-                <Attendees cohortData={cohortData} />
-              )}
-              {currentTab === "Request" && <EventRequestCard />}
-              {currentTab === "Reviews" && (
-                <NoDataFound message="No active reviews found" />
-              )}
+             {currentTab === "Attendees" && (
+    userCurrentRoleStatusActiveRole !== "user" ? (
+      <Attendees cohortData={cohortData} />
+    ) : (
+      <NoDataFound message="You do not have access to view this tab." />
+    )
+  )}
+  
+  {currentTab === "Announcements" && (
+    userCurrentRoleStatusActiveRole !== "user" ? (
+      <NoDataFound message="No active announcements found" />
+    ) : (
+      <NoDataFound message="You do not have access to view this tab." />
+    )
+  )}
+  
+  {currentTab === "Request" && (
+    userCurrentRoleStatusActiveRole !== "user" ? (
+      <EventRequestCard />
+    ) : (
+      <NoDataFound message="You do not have access to view this tab." />
+    )
+  )}
+  
+  {currentTab === "Reviews" && (
+    userCurrentRoleStatusActiveRole !== "user" ? (
+      <NoDataFound message="No active reviews found" />
+    ) : (
+      <NoDataFound message="You do not have access to view this tab." />
+    )
+  )}
             </div>
           </div>
         </div>

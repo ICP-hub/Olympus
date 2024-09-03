@@ -8,8 +8,8 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useSelector, useDispatch } from "react-redux";
 import toast, { Toaster } from "react-hot-toast";
 import { allHubHandlerRequest } from "../../StateManagement/Redux/Reducers/All_IcpHubReducer";
-import MentorSignup3 from "./MentorSignUp1";
-import MentorSignup4 from "./MentorSignup2";
+import MentorSignup1 from "./MentorSignUp1";
+import MentorSignup2 from "./MentorSignup2";
 import { validationSchema } from "./mentorValidation";
 import {useNavigate} from "react-router-dom"
 import { rolesHandlerRequest } from "../../StateManagement/Redux/Reducers/RoleReducer";
@@ -32,6 +32,7 @@ const navigate= useNavigate()
   });
   
   const { handleSubmit, trigger, formState: {  }, getValues } = methods; // DESTRUCTURING USEFORM METHODS
+  
 
   // OBJECT TO STORE FIELDS BASED ON CURRENT FORM STEP
   const formFields = {
@@ -41,14 +42,14 @@ const navigate= useNavigate()
 
   // FUNCTION TO HANDLE NAVIGATING TO NEXT STEP
   const handleNext = async () => {
-    const isValid = await trigger(formFields[index]); // TRIGGER VALIDATION FOR CURRENT STEP
-
+    const isValid = await trigger(formFields[index], { shouldValidate: true }); // Ensure validation is triggered
+  
     if (isValid) {
       setFormData((prevData) => ({
         ...prevData,
-        ...getValues(), // MERGE CURRENT FORM DATA WITH PREVIOUS DATA
+        ...getValues(), // Merge current form data with previous data
       }));
-      setIndex((prevIndex) => prevIndex + 1); // MOVE TO NEXT STEP
+      setIndex((prevIndex) => prevIndex + 1); // Move to next step
     }
   };
 
@@ -63,11 +64,11 @@ const navigate= useNavigate()
   const renderComponent = () => {
     switch (index) {
       case 0:
-        return <MentorSignup3 formData={formData} setFormData={setFormData} />; // RENDER STEP 1 COMPONENT
+        return <MentorSignup1 formData={formData} setFormData={setFormData} />; // RENDER STEP 1 COMPONENT
       case 1:
-        return <MentorSignup4 formData={formData} setFormData={setFormData} />; // RENDER STEP 2 COMPONENT
+        return <MentorSignup2 formData={formData} setFormData={setFormData} />; // RENDER STEP 2 COMPONENT
       default:
-        return <MentorSignup3 />; // DEFAULT TO STEP 1 COMPONENT
+        return null; // DEFAULT TO STEP 1 COMPONENT
     }
   };
 
@@ -83,68 +84,76 @@ const navigate= useNavigate()
   };
 
   // FUNCTION TO HANDLE FORM SUBMISSION SUCCESS
-  const onSubmitHandler = async (data) => {
-    console.log("Form data on submit:", data); // LOG SUBMITTED FORM DATA
-    setIsSubmitting(true)
-    const multichainNames = data.multi_chain === "true"
-  ? Array.isArray(data.multi_chain_names) && data.multi_chain_names.length > 0
-    ? data.multi_chain_names.map(name => name.trim())
-    : null
-  : null;
-  const area_of_expertise = Array.isArray(data.area_of_expertise)
-  ? data.area_of_expertise
-  : typeof data.area_of_expertise === "string"
-  ? data.area_of_expertise.split(",").map(item => item.trim())
-  : [];
-    if (actor) {
-      const mentorData = {
-        preferred_icp_hub: data.preferred_icp_hub ? [data.preferred_icp_hub] : null,
-        icp_hub_or_spoke: data.icp_hub_or_spoke === "true",
-        hub_owner: data.icp_hub_or_spoke === "true" && data.hub_owner ? [data.hub_owner] : ['N/A'],
-        category_of_mentoring_service: data.category_of_mentoring_service,
-        years_of_mentoring: data.years_of_mentoring.toString(),
-        links: data?.links
-        ? [data.links.map((val) => ({ link: val?.link ? [val.link] : [] }))] 
-        : [],
-        multichain: multichainNames?[multichainNames]:[],
-        website: data.mentor_website_url ? [data.mentor_website_url] : [],
-        existing_icp_mentor: false,
-        existing_icp_project_porfolio: data.existing_icp_project_porfolio ? [data.existing_icp_project_porfolio] : [],
-        area_of_expertise: area_of_expertise ? area_of_expertise : [],
-        reason_for_joining: data.reason_for_joining ? [data.reason_for_joining] : [],
-      };
-   
-      try {
-        const result = await actor.register_mentor(mentorData);
-        console.log('result', result); // LOG BACKEND RESPONSE
-        if (
-          result.startsWith("You are not allowed to get this role because you already have the Project role.") ||
-          result.startsWith("You are not eligible for this role because you have 2 or more roles") ||
-          result.startsWith("You had got your request declined earlier") ||
-          result.startsWith("You are a Mentor Already") ||
-          result.startsWith("Profile image is already uploaded")
-        ) {
-          toast.error(result);
-          setIsSubmitting(false)
-          setModalOpen(false);
-          setFetchCall(false);
-          navigate("/dashboard/profile")
-        } else {
-          toast.success("Mentor registered successfully!");
-          setIsSubmitting(false)
-          setModalOpen(false);
-          setFetchCall(true);
-          navigate("/dashboard/profile")
+  const onSubmitHandler = async () => {
+    const isValid = await trigger(formFields[index], { shouldValidate: true }); // Ensure validation is triggered
+    if (isValid) {
+      const data = { ...formData, ...getValues() };
+  
+      console.log("Form data on submit:", data); // Log submitted form data
+      setIsSubmitting(true);
+      const multichainNames =
+        data.multi_chain === "true"
+          ? Array.isArray(data.multi_chain_names) &&
+            data.multi_chain_names.length > 0
+            ? data.multi_chain_names.map((name) => name.trim())
+            : null
+          : null;
+      const area_of_expertise = Array.isArray(data.area_of_expertise)
+        ? data.area_of_expertise
+        : typeof data.area_of_expertise === "string"
+        ? data.area_of_expertise.split(",").map((item) => item.trim())
+        : [];
+  
+      if (actor) {
+        const mentorData = {
+          preferred_icp_hub: data.preferred_icp_hub ? [data.preferred_icp_hub] : null,
+          icp_hub_or_spoke: data.icp_hub_or_spoke === "true",
+          hub_owner: data.icp_hub_or_spoke === "true" && data.hub_owner ? [data.hub_owner] : ["N/A"],
+          category_of_mentoring_service: data.category_of_mentoring_service,
+          years_of_mentoring: data.years_of_mentoring.toString(),
+          links: data?.links
+            ? [data.links.map((val) => ({ link: val?.link ? [val.link] : [] }))]
+            : [],
+          multichain: multichainNames ? [multichainNames] : [],
+          website: data.mentor_website_url ? [data.mentor_website_url] : [],
+          existing_icp_mentor: false,
+          existing_icp_project_porfolio: data.existing_icp_project_porfolio ? [data.existing_icp_project_porfolio] : [],
+          area_of_expertise: area_of_expertise ? area_of_expertise : [],
+          reason_for_joining: data.reason_for_joining ? [data.reason_for_joining] : [],
+        };
+  
+        try {
+          const result = await actor.register_mentor(mentorData);
+          console.log("result", result); // Log backend response
+          if (
+            result.startsWith("You are not allowed to get this role because you already have the Project role.") ||
+            result.startsWith("You are not eligible for this role because you have 2 or more roles") ||
+            result.startsWith("You had got your request declined earlier") ||
+            result.startsWith("You are a Mentor Already") ||
+            result.startsWith("Profile image is already uploaded")
+          ) {
+            toast.error(result);
+            setIsSubmitting(false);
+            setModalOpen(false);
+            setFetchCall(false);
+            navigate("/dashboard/profile");
+          } else {
+            toast.success("Mentor registered successfully!");
+            setIsSubmitting(false);
+            setModalOpen(false);
+            setFetchCall(true);
+            navigate("/dashboard/profile");
+          }
+        } catch (error) {
+          toast.error(error.message);
+          console.error("Error sending data to the backend:", error);
         }
-      } catch (error) {
-        toast.error(error.message);
-        console.error("Error sending data to the backend:", error);
+      } else {
+        toast.error("Please signup with internet identity first");
+        window.location.href = "/";
       }
-    } else {
-      toast.error("Please signup with internet identity first");
-      window.location.href = "/";
     }
-  }
+  };
   useEffect(() => {
     if(isfetchCall){
     dispatch(rolesHandlerRequest());
@@ -178,7 +187,8 @@ const navigate= useNavigate()
                 )}
                 {index === 1 ? (
                   <button
-                    type="submit"
+                    type="button"
+                    onClick={onSubmitHandler}
                     className="py-2 px-4 bg-blue-600 text-white rounded  border-2 border-[#B2CCFF]"
                   >
                     {isSubmitting ? (

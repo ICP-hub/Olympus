@@ -83,7 +83,7 @@ const Mentormodal5 = ({ isOpen, onClose }) => {
                 <h2 className="text-2xl font-bold mb-4">Pricing</h2>
 
                 <div className="mb-4">
-                    <label className="block text-sm text-[#364152] font-medium mb-1">Pricing Type<span className="text-[#155EEF]">*</span></label>
+                    <label className="block text-sm text-[#364152] font-medium mb-1">Pricing Type<span className="text-[red] ml-1">*</span></label>
                     <Select
                         options={PricingtypeOptions}
                         value={pricingCategories}
@@ -95,7 +95,7 @@ const Mentormodal5 = ({ isOpen, onClose }) => {
                     />
                 </div>
                 <div className='mb-4'>
-                    <label className="block text-sm text-[#364152] font-medium mb-1">Price<span className="text-[#155EEF]">*</span></label>
+                    <label className="block text-sm text-[#364152] font-medium mb-1">Price<span className="text-[red] ml-1">*</span></label>
                     <div className="relative w-[30%]">
                         <input
                             type="text"
@@ -147,7 +147,7 @@ const Mentormodal5 = ({ isOpen, onClose }) => {
                         placeholder="Add Relevant Currency"
                     />
                 </div>
-                <div className='mb-4'><label className="block text-sm text-[#364152] font-medium mb-1">Contact method<span className="text-[#155EEF]">*</span></label>
+                <div className='mb-4'><label className="block text-sm text-[#364152] font-medium mb-1">Contact method<span className="text-[red] ml-1">*</span></label>
 
                     <Select
                         options={ContacttypeOptions}

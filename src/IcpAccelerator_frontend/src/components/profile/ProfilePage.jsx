@@ -39,7 +39,7 @@ const ProfilePage = () => {
   const tabs = {
     user: ["roles", "rating"],
     project: ["roles", "project", "rating", "association-req", "job", "announcement"],
-    mentor: ["roles", "rating", "cohort", "event-req", "association-req", "announcement"],
+    mentor: ["roles", "rating", "cohort", "job", "association-req", "announcement"],
     vc: ["roles", "rating", "job", "announcement", "association-req"],
   };
 

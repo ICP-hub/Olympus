@@ -25,7 +25,7 @@ import {
 const MentorSignup2 = ({formData}) => {
   // EXTRACT NECESSARY FUNCTIONS FROM useFormContext HOOK
   const { register, formState: { errors }, watch, control,   setValue, 
-  clearErrors,   } = useFormContext();
+  clearErrors, setError  } = useFormContext({mode:'all'});
 //Reason to join
 const [reasonOfJoiningOptions, setReasonOfJoiningOptions] = useState([
   { value: "listing_and_promotion", label: "Project listing and promotion" },
@@ -38,6 +38,16 @@ const [reasonOfJoiningOptions, setReasonOfJoiningOptions] = useState([
   },
   { value: "Jobs", label: "Jobs" },
 ]);
+const [isFormTouched, setIsFormTouched] = useState({
+  years_of_mentoring: false,
+});
+
+const handleFieldTouch = (fieldName) => {
+  setIsFormTouched((prevState) => ({
+    ...prevState,
+    [fieldName]: true,
+  }));
+};
   // RETRIEVE ALL ICP HUBS FROM REDUX STATE
   const getAllIcpHubs = useSelector((currState) => currState.hubs.allHubs);
 
@@ -71,6 +81,53 @@ const [reasonOfJoiningOptions, setReasonOfJoiningOptions] = useState([
       return <LanguageIcon />;
     }
   };
+  const getReactSelectStyles = (error) => ({
+    menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+    control: (provided, state) => ({
+      ...provided,
+      paddingBlock: "2px",
+      borderRadius: "8px",
+      borderColor: error ? "#ef4444" : state.isFocused ? "#737373" : "#D1D5DB",
+      border: error
+        ? "2px solid #ef4444"
+        : "2px solid #D1D5DA",
+      backgroundColor: "rgb(249 250 251)",
+      "&::placeholder": {
+        color:  "currentColor",
+      },
+      display: "flex",
+      overflowX: "auto",
+      maxHeight: "43px",
+      "&::-webkit-scrollbar": {
+        display: "none",
+      },
+    }),
+    valueContainer: (provided) => ({
+      ...provided,
+      overflow: "scroll",
+      maxHeight: "40px",
+      scrollbarWidth: "none",
+    }),
+    placeholder: (provided, state) => ({
+      ...provided,
+      color:  "rgb(107 114 128)",
+      whiteSpace: "nowrap",
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+    }),
+    multiValue: (provided) => ({
+      ...provided,
+      display: "inline-flex",
+      alignItems: "center",
+      backgroundColor: "white",
+      border: "2px solid #E3E3E3",
+    }),
+    multiValueRemove: (provided) => ({
+      ...provided,
+      display: "inline-flex",
+      alignItems: "center",
+    }),
+  });
 
   useEffect(() => {
     if (formData) {
@@ -140,57 +197,7 @@ const [reasonOfJoiningOptions, setReasonOfJoiningOptions] = useState([
           isMulti
           menuPortalTarget={document.body}
           menuPosition={"fixed"}
-          styles={{
-            menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-            control: (provided, state) => ({
-              ...provided,
-              paddingBlock: "2px",
-              borderRadius: "8px",
-              border: errors.reason_for_joining
-                ? "2px solid #737373"
-                : "2px solid #737373",
-              backgroundColor: "rgb(249 250 251)",
-              "&::placeholder": {
-                color: errors.reason_for_joining
-                  ? "#ef4444"
-                  : "currentColor",
-              },
-              display: "flex",
-              overflowX: "auto",
-              maxHeight: "43px",
-              "&::-webkit-scrollbar": {
-                display: "none",
-              },
-            }),
-            valueContainer: (provided, state) => ({
-              ...provided,
-              overflow: "scroll",
-              maxHeight: "40px",
-              scrollbarWidth: "none",
-            }),
-            placeholder: (provided, state) => ({
-              ...provided,
-              color: errors.reason_for_joining
-                ? "#ef4444"
-                : "rgb(107 114 128)",
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-            }),
-            multiValue: (provided) => ({
-              ...provided,
-              display: "inline-flex",
-              alignItems: "center",
-
-              backgroundColor: "white",
-              border: "2px solid #E3E3E3",
-            }),
-            multiValueRemove: (provided) => ({
-              ...provided,
-              display: "inline-flex",
-              alignItems: "center",
-            }),
-          }}
+          styles={getReactSelectStyles(errors.reason_for_joining )}
           value={reasonOfJoiningSelectedOptions}
           options={reasonOfJoiningOptions}
           classNamePrefix="select"
@@ -232,57 +239,7 @@ const [reasonOfJoiningOptions, setReasonOfJoiningOptions] = useState([
           isMulti
           menuPortalTarget={document.body}
           menuPosition={"fixed"}
-          styles={{
-            menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-            control: (provided, state) => ({
-              ...provided,
-              paddingBlock: "2px",
-              borderRadius: "8px",
-              border: errors.area_of_expertise
-                ? "2px solid #ef4444"
-                : "2px solid #737373",
-              backgroundColor: "rgb(249 250 251)",
-              "&::placeholder": {
-                color: errors.area_of_expertise
-                  ? "#ef4444"
-                  : "currentColor",
-              },
-              display: "flex",
-              overflowX: "auto",
-              maxHeight: "43px",
-              "&::-webkit-scrollbar": {
-                display: "none",
-              },
-            }),
-            valueContainer: (provided, state) => ({
-              ...provided,
-              overflow: "scroll",
-              maxHeight: "40px",
-              scrollbarWidth: "none",
-            }),
-            placeholder: (provided, state) => ({
-              ...provided,
-              color: errors.area_of_expertise
-                ? "#ef4444"
-                : "rgb(107 114 128)",
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-            }),
-            multiValue: (provided) => ({
-              ...provided,
-              display: "inline-flex",
-              alignItems: "center",
-              backgroundColor: "white",
-              border: "1px solid gray",
-              borderRadius: "5px",
-            }),
-            multiValueRemove: (provided) => ({
-              ...provided,
-              display: "inline-flex",
-              alignItems: "center",
-            }),
-          }}
+          styles={getReactSelectStyles(errors.area_of_expertise )}
           value={areaof_focus_SelectedOptions}
           options={projectOptions}
           classNamePrefix="select"
@@ -384,10 +341,13 @@ const [reasonOfJoiningOptions, setReasonOfJoiningOptions] = useState([
         <input
           type="number"
           {...register("years_of_mentoring", { valueAsNumber: true })}
-          className={`bg-gray-50 border rounded-md shadow-sm ${errors.years_of_mentoring ? "border-red-500" : "border-[#CDD5DF]"} text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+          className={`bg-gray-50 border-2 rounded-md shadow-sm ${errors.years_of_mentoring ? "border-red-500" : "border-[#CDD5DF]"} text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
           placeholder="Enter your mentoring experience years"
           min={0}
-          onWheel={(e) => e.target.blur()} // PREVENTS SCROLLING
+          onChange={(e) => {
+            register("years_of_mentoring").onChange(e);
+            handleFieldTouch("years_of_mentoring");
+          }}
         />
         {errors.years_of_mentoring && (
           <span className="mt-1 text-sm text-red-500 font-bold">
@@ -398,64 +358,61 @@ const [reasonOfJoiningOptions, setReasonOfJoiningOptions] = useState([
 
       {/* DYNAMIC LINKS INPUT FIELD */}
       <div className="mb-2">
-        <label className="block mb-1">
-          Links
-        </label>
-        <div className="relative">
-          {fields.map((item, index) => (
-            <div key={item.id} className="flex flex-col ">
-            <div className="flex items-center mb-2  pb-1">
-            <Controller
-              name={`links[${index}].link`}
-              control={control}
-              render={({ field, fieldState }) => (
-                <div className="flex items-center w-full">
-                  <div className="flex items-center space-x-2 w-full">
-                    <div className="flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full">
-                      {field.value && getLogo(field.value)}
-                    </div>
-                    <input
-                      type="text"
-                      placeholder="Enter your social media URL"
-                      className={`p-2 border ${
-                        fieldState.error
-                          ? "border-red-500"
-                          : "border-gray-300"
-                      } rounded-md w-full`}
-                      {...field}
-                    />
+  <label className="block mb-1">Links</label>
+  <div className="relative">
+    {fields.map((item, index) => (
+      <div key={item.id} className="flex flex-col">
+        <div className="flex items-center mb-2 pb-1">
+          <Controller
+            name={`links[${index}].link`}
+            control={control}
+            render={({ field, fieldState }) => (
+              <div className="flex items-center w-full">
+                <div className="flex items-center space-x-2 w-full">
+                  <div className="flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full">
+                    {field.value && getLogo(field.value)}
                   </div>
+                  <input
+                    type="text"
+                    placeholder="Enter your social media URL"
+                    className={`p-2 border ${
+                      fieldState.error ? "border-red-500" : "border-gray-300"
+                    } rounded-md w-full`}
+                    {...field}
+                  />
                 </div>
-              )}
-            />
-            <button
-              type="button"
-              onClick={() => remove(index)}
-              className="ml-2 text-red-500 hover:text-red-700"
-            >
-              <FaTrash />
-            </button>
-            </div>
-            <div className="mb-4 border-b pb-2">
-              {errors.links &&
-                errors.links[index] &&
-                errors.links[index].link && (
-                  <span className="mt-1 text-sm text-red-500 font-bold">
-                    {errors.links[index].link.message}
-                  </span>
-                )}
-            </div>
-          </div>
-          ))}
+              </div>
+            )}
+          />
           <button
             type="button"
-            onClick={() => append({ links: "" })}
-            className="flex items-center p-1 text-[#155EEF]"
+            onClick={() => remove(index)}
+            className="ml-2 text-red-500 hover:text-red-700"
           >
-            <FaPlus className="mr-1" /> Add Another Link
+            <FaTrash />
           </button>
         </div>
+        <div className="mb-4 border-b pb-2">
+          {errors.links && errors.links[index] && errors.links[index].link && (
+            <span className="mt-1 text-sm text-red-500 font-bold">
+              {errors.links[index].link.message}
+            </span>
+          )}
+        </div>
       </div>
+    ))}
+    {fields.length < 10 && (
+      <button
+        type="button"
+        onClick={() => append({ links: "" })}
+        className="flex items-center p-1 text-[#155EEF]"
+      >
+        <FaPlus className="mr-1" /> Add Another Link
+      </button>
+    )}
+  </div>
+</div>
+
 
       {/* TOASTER FOR NOTIFICATIONS */}
       <Toaster />

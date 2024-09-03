@@ -111,32 +111,24 @@ const RegionalHubModal = ({ onClose }) => {
     }
   };
 
-//   const onSubmit = (data) => {
-//     // Include the processed image data in the form data
-//     const submissionData = {
-//       ...data,
-//       flag: imageData, // Attach the Uint8Array logo
-//     };
-    
-//     console.log(submissionData); // Here you would normally send the data to the backend
-//     onClose(); // Close the modal after submission
-//   };
+
 const onSubmit = async (data) => {
 
     setIsSubmitting(true);
     console.log("On Submit k andr aagya")
     try {
       console.log('TRY A ANDR AAGYA')
+      console.log("HUB KA DESCRIPTION", );
      
       const argument = {
        
         flag: imageData ? [imageData] : [],
-        description: data.jobDescription ? [data.description] : [],
+        description: data.description ? [data.description] : [],
         name: data.name ? [data.name] : [],
         
         
         links: data?.links
-          ? [data.links.map((val) => ({ links: val?.links ? [val.links] : [] }))]
+          ? [data.links.map((val) => ({ links: val?.link ? [val.link] : [] }))]
           : [],
         
         // project_id: projectuid,
@@ -165,13 +157,14 @@ const onSubmit = async (data) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div className="bg-white rounded-lg overflow-hidden shadow-lg w-[500px]">
-        <div className="flex justify-end mr-4 mt-4">
+        <div className="flex justify-end mr-4 mt-1">
           <button className='text-3xl text-[#121926]' onClick={onClose}>&times;</button>
         </div>
-        <div className="p-6">
-          <h1 className="text-3xl text-[#121926] font-bold mb-4">Add a Hub</h1>
+        <div className="p-6 pt-0">
+          <h1 className="text-3xl text-[#121926] font-bold mb-2">Add a Hub</h1>
 
           <form onSubmit={handleSubmit(onSubmit)}>
+            <div className='max-h-[70vh] overflow-y-auto'>
             {/* Image Upload */}
             <div className="mb-2">
               <label className="block text-sm font-medium mb-1">
@@ -190,7 +183,7 @@ const onSubmit = async (data) => {
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
-                      stroke-width="1.5"
+                      strokeWidth="1.5"
                       stroke="currentColor"
                       className="size-11"
                     >
@@ -295,7 +288,7 @@ const onSubmit = async (data) => {
                     <Controller
                       name={`links[${index}].link`}
                       control={control}
-                      defaultValue={item.link || ""}
+                      // defaultValue={item.link || ""}
                       render={({ field, fieldState }) => (
                         <div className="flex items-center w-full">
                           <div className="flex items-center space-x-2 w-full">
@@ -303,11 +296,12 @@ const onSubmit = async (data) => {
                               {field.value && getLogo(field.value)}
                             </div>
                             <input
-                              {...field}
+                              
                               type="text"
                               placeholder="Enter your social media URL"
                               className={`p-2 border ${fieldState.error ? "border-red-500" : "border-gray-300"} rounded-md w-full`}
-                            />
+                           
+                           {...field}   />
                           </div>
                           {fieldState.error && (
                             <span className="ml-2 text-red-500 text-sm">{fieldState.error.message}</span>
@@ -333,9 +327,10 @@ const onSubmit = async (data) => {
                 </button>
               </div>
             </div>
-
+         
+</div>
             {/* Submit Button */}
-            <div className="mt-6">
+            <div className="mt-2">
               <button
                 type="submit"
                 className="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"

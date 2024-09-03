@@ -402,7 +402,9 @@ export const validationSchema = yup
       .url("Invalid url"),
 
     token_economics: yup.string().nullable(true).optional().url("Invalid url"),
-    links: yup.array().of(
+    links:  yup
+    .array()
+    .of(
       yup.object().shape({
         link: yup
           .string()
@@ -451,7 +453,9 @@ export const validationSchema = yup
           .nullable(true)
           .optional(),
       })
-    ),
+    )
+    .max(10, "You can only add up to 10 links") // Restrict the array to a maximum of 10 links
+    .optional(),
   })
   .required();
 
