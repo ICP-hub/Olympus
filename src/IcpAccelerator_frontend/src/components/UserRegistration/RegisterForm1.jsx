@@ -46,7 +46,7 @@ const RegisterForm1 = React.memo(() => {
               htmlFor="full_name"
               className=" font-semibold block text-[#121926]"
             >
-              Full Name <span className="text-[#155EEF]">*</span>
+              Full Name <span className="text-[red] ml-1">*</span>
             </label>
             <input
               type="text"
@@ -68,7 +68,7 @@ const RegisterForm1 = React.memo(() => {
 
               htmlFor="openchat_user_name"
               className="block font-semibold text-[#121926]">
-              Username <span className="text-[#155EEF]">*</span>
+              Username  
             </label>
             <div className="flex items-center border-2 border-gray-300 mt-1 rounded-md">
               <span className="p-2 bg-white text-gray-600 rounded-l-md border-r-2 border-gray-300">@</span>

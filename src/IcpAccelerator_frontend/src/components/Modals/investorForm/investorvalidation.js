@@ -46,7 +46,7 @@ export const validationSchema = yup
     investor_portfolio_link: yup
       .string()
       .nullable(true)
-      .optional()
+      .required("Portfolio link is required")
       .matches(/^[a-zA-Z0-9@.\/:\-]*$/, "Portfolio Link should be valid")
       .test(
         "is-url-valid",

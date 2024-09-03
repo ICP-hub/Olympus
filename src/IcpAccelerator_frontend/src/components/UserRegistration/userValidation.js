@@ -16,20 +16,22 @@ export const validationSchema = yup
       .min(3, "Full name must be at least 3 characters long")
       .max(30, "Full name cannot be more than 30 characters long")
       .required("Full name is required"),
+
       email: yup
-      .string()
-      .trim("Email should not have leading or trailing spaces")
-      .required("Email is required")
-      .matches(
-        /^[a-z0-9]+(?:\.[a-z0-9]+)*@[a-z0-9]+\.[a-z]{2,}(?:\.[a-z]{2,})?$/,
-        "Invalid Email format"
-      )
-      .test("no-special-chars", "Email should not contain special characters", (value) => {
-        return /^[^@]*@[a-z0-9]+\.[a-z]{2,}(?:\.[a-z]{2,})?$/.test(value);
-      })
-      .test("single-at", "Email should contain only one '@'", (value) => {
-        return (value.match(/@/g) || []).length === 1;
-      }),
+  .string()
+  .trim("Email should not have leading or trailing spaces")
+  .required("Email is required")
+  .matches(
+    /^[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*@[a-zA-Z0-9]+\.[a-zA-Z]{2,}(?:\.[a-zA-Z]{2,})?$/,
+    "Invalid Email format"
+  )
+  .test("no-special-chars", "Email should not contain special characters", (value) => {
+    return /^[^@]*@[a-zA-Z0-9]+\.[a-zA-Z]{2,}(?:\.[a-zA-Z]{2,})?$/.test(value);
+  })
+  .test("single-at", "Email should contain only one '@'", (value) => {
+    return (value.match(/@/g) || []).length === 1;
+  }),
+
     links: yup
       .array()
       .of(
@@ -93,7 +95,7 @@ export const validationSchema = yup
         "Username must be between 5 and 20 characters",
         (value) => {
           const isValidLength = value.length >= 5 && value.length <= 20;
-          const isValidFormat = /^[a-zA-Z0-9_@]+$/.test(value); // Allows letters, numbers, underscores, and '@'
+          const isValidFormat = /^[a-zA-Z0-9_@-]+$/.test(value); // Allows letters, numbers, underscores, and '@'
           const noSpaces = !/\s/.test(value);
           return isValidLength && isValidFormat && noSpaces;
         }
