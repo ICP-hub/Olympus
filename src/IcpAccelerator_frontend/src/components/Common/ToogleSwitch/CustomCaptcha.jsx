@@ -31,7 +31,7 @@ const CustomCaptcha = ({ text, isCaptchaLoading }) => {
           const y1 = Math.random() * 60;
           const x2 = Math.random() * 200;
           const y2 = Math.random() * 60;
-          return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#000" stroke-width="2" />`;
+          return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#000" strokeWidth="2" />`;
         })
         .join("");
 

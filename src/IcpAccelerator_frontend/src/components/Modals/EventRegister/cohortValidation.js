@@ -28,6 +28,17 @@ export const validationSchema = yup.object({
       "no-leading-spaces",
       "Description should not have leading spaces",
       (value) => !value || value.trimStart() === value
+    )
+    .test(
+      "maxWords",
+      "Description must not exceed 1000 words",
+      (value) =>
+        !value || value.trim().split(/\s+/).filter(Boolean).length <= 1000
+    )
+    .test(
+      "maxChars",
+      "Description must not exceed 5000 characters",
+      (value) => !value || value.length <= 5000
     ),
 
   cohort_launch_date: yup
@@ -64,6 +75,15 @@ export const validationSchema = yup.object({
   eligibility: yup
     .string()
     .typeError("You must enter eligibility")
+    .matches(
+      /^[A-Za-z0-9\s]+$/,
+      "Cohort Title can only contain letters, numbers, and spaces"
+    )
+    .test(
+      "no-leading-space",
+      "Cohort Title should not start with a space",
+      (value) => value && value[0] !== " "
+    )
     .required("Eligibility is required"),
 
   no_of_seats: yup
