@@ -43,7 +43,9 @@ const DiscoverFundingCard = ({ title, value, imageSrc, isPrivate }) => {
 
 const DiscoverMoneyRaising = ({ data ,projectId}) => {
   const actor = useSelector((currState) => currState.actors.actor);
-
+  const userCurrentRoleStatusActiveRole = useSelector(
+    (currState) => currState.currentRoleStatus.activeRole
+  );
   const sendMoneyRaisingRequest = async () => {
     if (!projectId) {
       // setDocuments([]);
@@ -71,10 +73,12 @@ const DiscoverMoneyRaising = ({ data ,projectId}) => {
 
     return (
         <div className="flex flex-col">
+          {userCurrentRoleStatusActiveRole === 'user' ?'':
+          data &&
         <button className="bg-blue-600 text-white px-4 py-2 rounded-lg mb-4 w-1/4 self-end"
         onClick={sendMoneyRaisingRequest}>
           Request Access
-        </button>
+        </button>}
       
         <div className="space-y-4">
           <DiscoverFundingCard
