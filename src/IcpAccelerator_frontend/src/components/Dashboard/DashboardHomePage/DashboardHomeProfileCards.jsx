@@ -174,9 +174,11 @@ function DashboardHomeProfileCards(percentage) {
                 fontSize="small"
               />
             </div>
-            <button className="text-blue-500 font-normal">
+            <Link
+              to="/dashboard/profile"
+              className="text-blue-500 font-normal">
               View details &gt;
-            </button>
+            </Link>
           </div>
           {/* <div className="border border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center">
             <svg
@@ -234,14 +236,14 @@ function DashboardHomeProfileCards(percentage) {
           </div>
         </div>
       </div>
-    
+    {userRoles === 'project' &&
       <div className="bg-white rounded-lg shadow-sm p-6 mt-8">
         <div className="flex justify-between items-center m-2 p-2">
           <h2 className="text-xl font-semibold">Projects</h2>
-          <a className="text-sm font-normal cursor-pointer" onClick={() => handleChange("project")}>All projects</a>
+          <a className="text-sm font-normal cursor-pointer" onClick={() => handleChange("project")}>View all projects</a>
         </div>
          <DashboardProjectCard/>
-      </div>
+      </div>}
       <div className="bg-white w-full rounded-lg shadow-sm  mt-8">
         <DashboardProfileView />
       </div>
