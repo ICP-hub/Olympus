@@ -417,11 +417,11 @@ function DashboardHomeNavbar() {
           className="h-[30px] w-[30px] rounded-full"
         />
 
-        <img
+        {/* <img
           src={dashboard.dashboardhomenavbar.logoImages.bellicon.Bellicon}
           className="w-[14.57px] h-[16.67px] cursor-pointer hidden md:block"
           alt="Notification Bell"
-        />
+        /> */}
         <img
           src={dashboard.dashboardhomenavbar.logoImages.df_small_logo.df_small_logo}
           alt="User"

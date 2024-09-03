@@ -204,9 +204,9 @@ console.log("principal in investordetail",principal)
   // form submit handler func
 
   const onSubmitHandler = async (data) => {
-    const updatedSocialLinks = Object.entries(socialLinks).map(([key, value]) => ({
-      link: value ? [value] : [],
-    }));
+    const updatedSocialLinks = Object.entries(socialLinks).map(([key, urls]) => {
+      return urls.map(url => ({ link: url ? [url] : [] }));
+  }).flat();
     console.log("Form data being sent to backend: ", data);
     if (actor) {
       const investorData = {
@@ -234,7 +234,9 @@ console.log("principal in investordetail",principal)
         reason_for_joining: [],
         average_check_size: 0,
         money_invested: [parseInt(0)],
-        links: [updatedSocialLinks], 
+        // links: [updatedSocialLinks], 
+        links: updatedSocialLinks.length > 0 ? [updatedSocialLinks] : [],
+        // links: updatedSocialLinks.map(linkObj => ({ link: linkObj.link[0] ? [linkObj.link[0]] : [] })), 
         number_of_portfolio_companies: 0,
         assets_under_management: [""],
         type_of_investment: data?.type_of_investment || "",
@@ -1841,8 +1843,9 @@ console.log("principal in investordetail",principal)
             {isEditingLink[uniqueKey] && (
               <input
                 type="text"
-                {...register(`social_links[${key}][${index}]`)}
-                value={url}
+                {...register(`socialLinks.${key}.${index}`, {
+                  value: url,
+                })}
                 onChange={(e) => handleLinkChange(e, key, index)}
                 className="border p-1 rounded w-full ml-2 transition-all duration-300 ease-in-out transform"
               />
@@ -1852,6 +1855,7 @@ console.log("principal in investordetail",principal)
       });
     })}
 </div>
+
 
 
 

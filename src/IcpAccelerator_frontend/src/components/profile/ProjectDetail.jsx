@@ -83,7 +83,7 @@ const ProjectDetail = () => {
     (currState) => currState.internet.isAuthenticated
   );
   const projectId = projectFullData?.[0]?.[0]?.uid;
-
+console.log("id aa",projectFullData?.[0]?.[0]?.uid)
   const {
     register,
     handleSubmit,
@@ -173,6 +173,17 @@ const ProjectDetail = () => {
     const updatedSocialLinks = Object.entries(socialLinks).map(([key, value]) => ({
       link: value ? [value] : [],
     }));
+    // Convert project_area_of_focus array to a comma-separated string
+    let projectAreaOfFocusString = '';
+  if (Array.isArray(data.project_area_of_focus)) {
+    projectAreaOfFocusString = data.project_area_of_focus.map(option => option.value.replace(/\"/g, '')).join(", ");
+  } else if (typeof data.project_area_of_focus === "string") {
+    projectAreaOfFocusString = data.project_area_of_focus;
+  }
+  
+    const reasonToJoinString = Array.isArray(data.reason_to_join_incubator)
+    ? data.reason_to_join_incubator.map((option) => option.value).join(", ")
+    : data.reason_to_join_incubator;
     if (actor) {
       const projectData = {
         project_cover: coverData ? [coverData] : [],
@@ -224,30 +235,6 @@ const ProjectDetail = () => {
         money_raising: [data?.money_raising === "true" ? true : false],
         money_raised: [
           {
-            // icp_grants: [
-            //   data?.money_raised_till_now === "true" && data?.icp_grants
-            //     ? data?.icp_grants.toString()
-            //     : "",
-            // ],
-            // investors: [
-            //   data?.money_raised_till_now === "true" && data?.investors
-            //     ? data?.investors.toString()
-            //     : "",
-            // ],
-            // raised_from_other_ecosystem: [
-            //   data?.money_raised_till_now === "true" && data?.raised_from_other_ecosystem
-            //     ? data?.raised_from_other_ecosystem.toString()
-            //     : "",
-            // ],
-            // sns: [
-            //   data?.money_raising === "true" && data?.valuation
-            //     ? data?.valuation.toString()
-            //     : "",
-            // ],
-            // target_amount:
-            //   data?.money_raising === "true" && data?.target_amount
-            //     ? [Number(data.target_amount)]
-            //     : [],
             icp_grants: data.icp_grants ? data.icp_grants.toString() : null, // Convert to string or null
             investors: data?.investors ? data?.investors.toString() : null, // Convert to string or null
             raised_from_other_ecosystem: data.raised_from_other_ecosystem ? data.raised_from_other_ecosystem.toString() : null, // Convert to string or null
@@ -257,9 +244,6 @@ const ProjectDetail = () => {
           },
         ],
         promotional_video: [data?.promotional_video ?? ""],
-        // links: data?.links
-        //   ? [data.links.map((val) => ({ link: val?.link ? [val.link] : [] }))]
-        //   : [],
           links: [updatedSocialLinks], 
         token_economics: [data?.token_economics ?? ""],
         long_term_goals: [data?.white_paper ?? ""],
@@ -270,10 +254,8 @@ const ProjectDetail = () => {
         upload_private_documents: [
           data?.upload_private_documents === "true" ? true : false,
         ],
-        project_area_of_focus: data?.project_area_of_focus
-        .map((focus) => focus.value)
-        .join(", "), 
-        reason_to_join_incubator: data?.reason_to_join_incubator.join(", "),
+        project_area_of_focus: projectAreaOfFocusString, // Pass as a simple string
+      reason_to_join_incubator: reasonToJoinString ?? "",
         vc_assigned: [],
         mentors_assigned: [],
         project_team: [],
@@ -304,11 +286,23 @@ const ProjectDetail = () => {
     setIsLinkBeingEdited(false);
   };
 
-  const onErrorHandler = (val) => {
-    toast.error("Empty fields or invalid values, please recheck the form");
-  };
+  // const onErrorHandler = (errors) => {
+  //   console.error("Form validation errors: ", errors);
+  //   toast.error("Empty fields or invalid values, please recheck the form");
+  // };
+  const onErrorHandler = (errors) => {
+    console.error("Form validation errors: ", errors);
 
+    // Loop through all errors and display each in a toast
+    Object.values(errors).forEach((error) => {
+      toast.error(error.message, {
+        position: "top-right",
+        duration: 5000,
+      });
+    });
+  };
   const setProjectValuesHandler = (val) => {
+    console.log("icp prefer",  val[0]?.[0]?.params.preferred_icp_hub?.[0])
     if (val) {
       setLogoPreview(
         val?.project_logo?.[0] instanceof Uint8Array
@@ -769,12 +763,12 @@ const ProjectDetail = () => {
       <div className="px-1">
         <form onSubmit={handleSubmit(onSubmitHandler, onErrorHandler)}>
           {/* Preferred ICP Hub */}
-          <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3 mb-2">
+       {/* Reason for Joining This Platform */}
+<div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3 mb-2">
   <div className="flex justify-between items-center">
-  <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start mb-2">
-          Reason for joining this platform {" "}
-         
-        </label>
+    <label className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start mb-2">
+      Reason for joining this platform
+    </label>
     <img
       src={editp}
       className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
@@ -784,96 +778,90 @@ const ProjectDetail = () => {
   </div>
   {editMode.reason_to_join_incubator ? (
     <div>
-     <ReactSelect
-  isMulti
-  menuPortalTarget={document.body}
-  menuPosition={"fixed"}
-  styles={{
-    menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-    control: (provided, state) => ({
-      ...provided,
-      paddingBlock: "2px",
-      borderRadius: "8px",
-      border: errors.reason_to_join_incubator
-        ? "2px solid #737373"
-        : "2px solid #737373",
-      backgroundColor: "rgb(249 250 251)",
-      display: "flex",
-      overflowX: "auto",
-      maxHeight: "43px",
-    }),
-    valueContainer: (provided) => ({
-      ...provided,
-      overflow: "scroll",
-      maxHeight: "40px",
-      scrollbarWidth: "none",
-    }),
-    placeholder: (provided) => ({
-      ...provided,
-      color: errors.reason_to_join_incubator ? "#ef4444" : "rgb(107 114 128)",
-      whiteSpace: "nowrap",
-      overflow: "hidden",
-      textOverflow: "ellipsis",
-    }),
-    multiValue: (provided) => ({
-      ...provided,
-      display: "inline-flex",
-      alignItems: "center",
-      backgroundColor: "white",
-      border: "2px solid #E3E3E3",
-    }),
-    multiValueRemove: (provided) => ({
-      ...provided,
-      display: "inline-flex",
-      alignItems: "center",
-    }),
-  }}
-  value={reasonOfJoiningSelectedOptions}
-  options={reasonOfJoiningOptions}
-  classNamePrefix="select"
-  className="basic-multi-select w-full text-start"
-  placeholder="Select your reasons to join this platform"
-  name="reason_to_join_incubator"
-  onChange={(selectedOptions) => {
-    setReasonOfJoiningSelectedOptions(selectedOptions);
-    clearErrors("reason_to_join_incubator");
-    setValue(
-      "reason_to_join_incubator",
-      selectedOptions.map((option) => option.value),
-      { shouldValidate: true }
-    );
-  }}
-/>
-
-        {errors.reason_to_join_incubator && (
-          <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-            {errors.reason_to_join_incubator.message}
-          </span>
-        )}
+      <ReactSelect
+        isMulti
+        menuPortalTarget={document.body}
+        menuPosition={"fixed"}
+        styles={{
+          menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+          control: (provided) => ({
+            ...provided,
+            paddingBlock: "2px",
+            borderRadius: "8px",
+            border: errors.reason_to_join_incubator
+              ? "2px solid #ef4444"
+              : "2px solid #737373",
+            backgroundColor: "rgb(249 250 251)",
+            display: "flex",
+            overflowX: "auto",
+            maxHeight: "43px",
+          }),
+          valueContainer: (provided) => ({
+            ...provided,
+            overflow: "scroll",
+            maxHeight: "40px",
+            scrollbarWidth: "none",
+          }),
+          placeholder: (provided) => ({
+            ...provided,
+            color: errors.reason_to_join_incubator
+              ? "#ef4444"
+              : "rgb(107 114 128)",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }),
+          multiValue: (provided) => ({
+            ...provided,
+            display: "inline-flex",
+            alignItems: "center",
+            backgroundColor: "white",
+            border: "2px solid #E3E3E3",
+          }),
+          multiValueRemove: (provided) => ({
+            ...provided,
+            display: "inline-flex",
+            alignItems: "center",
+          }),
+        }}
+        value={reasonOfJoiningSelectedOptions}
+        options={reasonOfJoiningOptions}
+        classNamePrefix="select"
+        className="basic-multi-select w-full text-start"
+        placeholder="Select your reasons to join this platform"
+        name="reason_to_join_incubator"
+        onChange={(selectedOptions) => {
+          setReasonOfJoiningSelectedOptions(selectedOptions);
+          clearErrors("reason_to_join_incubator");
+          setValue(
+            "reason_to_join_incubator",
+            selectedOptions.map((option) => option.value).join(", "),
+            { shouldValidate: true }
+          );
+        }}
+      />
+      {errors.reason_to_join_incubator && (
+        <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+          {errors.reason_to_join_incubator.message}
+        </span>
+      )}
     </div>
   ) : (
-    // <div className="flex justify-between items-center cursor-pointer py-1">
-    //   <span className="mr-2 text-sm">
-    //     {/* {typeof preferred_icp_hub === 'string' ? preferred_icp_hub : ''} */}
-    //     {reason_to_join_incubator}
-    //   </span>
-    // </div>
     <div className="flex flex-wrap gap-2">
-    {(reason_to_join_incubator) &&
-      (reason_to_join_incubator)
+      {(reason_to_join_incubator || "")
         .split(", ")
-        .map((focus, index) => (
+        .map((reason, index) => (
           <span
             key={index}
             className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1"
           >
-            {focus}
+            {reason}
           </span>
         ))}
-  </div>
-   
+    </div>
   )}
 </div>
+
 
           
           <div className="group relative hover:bg-gray-100 rounded-lg p-2 px-3 mb-2">
@@ -892,7 +880,6 @@ const ProjectDetail = () => {
     <div>
       <select
         {...register("preferred_icp_hub")}
-        defaultValue={getValues("preferred_icp_hub")}
         className={`bg-gray-50 border-2 ${
           errors.preferred_icp_hub ? "border-red-500 " : "border-[#737373]"
         } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}

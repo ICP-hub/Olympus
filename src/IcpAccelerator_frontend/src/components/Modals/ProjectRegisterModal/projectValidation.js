@@ -319,15 +319,30 @@ export const validationSchema = yup
     //     /\S/.test(value)
     //   )
     //   .required(" selection is required"),
+    // reason_to_join_incubator: yup
+    // .string()
+    // .required("Selecting a reason is required")
+    // .test(
+    //   "at-least-one",
+    //   "You must select at least one reason",
+    //   (value) => value && value.split(", ").length > 0
+    // ),
     reason_to_join_incubator: yup
     .string()
+    .transform((value) => {
+      // If the value is an array, join the elements into a string
+      if (Array.isArray(value)) {
+        return value.map((item) => item.value).join(", ");
+      }
+      return value;
+    })
     .required("Selecting a reason is required")
     .test(
       "at-least-one",
       "You must select at least one reason",
       (value) => value && value.split(", ").length > 0
     ),
-
+  
     // project_area_of_focus: yup
     //   .string()
     //   .test("is-non-empty", "Select of at least one is required", (value) =>
