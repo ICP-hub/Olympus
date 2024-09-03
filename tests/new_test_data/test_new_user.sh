@@ -4,7 +4,7 @@ set -e
 
 # Number of mentors you want to register
 NUM_MENTORS=20
-START_NUM=1
+START_NUM=11
 echo "Creating User Identities..."
 
 CANISTER=$(dfx canister id IcpAccelerator_backend)

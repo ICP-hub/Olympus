@@ -121,8 +121,6 @@ pub fn get_project_details_for_mentor_and_investor(
         long_term_goals: project_details.params.long_term_goals,
         target_market: project_details.params.target_market,
         self_rating_of_project: project_details.params.self_rating_of_project,
-        mentors_assigned: project_details.params.mentors_assigned,
-        vc_assigned: project_details.params.vc_assigned,
         project_website: project_details.params.project_website,
         links: project_details.params.links,
         upload_private_documents: project_details.params.upload_private_documents,
@@ -166,8 +164,6 @@ pub fn get_project_public_information_using_id(project_id: String) -> ProjectPub
         long_term_goals: project_details.params.long_term_goals,
         target_market: project_details.params.target_market,
         self_rating_of_project: project_details.params.self_rating_of_project,
-        mentors_assigned: project_details.params.mentors_assigned,
-        vc_assigned: project_details.params.vc_assigned,
         project_website: project_details.params.project_website,
         links: project_details.params.links,
         upload_private_documents: project_details.params.upload_private_documents,
@@ -322,17 +318,17 @@ pub fn filter_projects(criteria: FilterCriteria) -> Vec<ProjectInfo> {
                 //         })
                 // });
 
-                let vc_match = criteria.vc_name.as_ref().map_or(true, |vc_name| {
-                    project_internal
-                        .params
-                        .vc_assigned
-                        .as_ref()
-                        .map_or(false, |vcs| {
-                            vcs.iter().any(|vc| vc.name_of_fund.contains(vc_name))
-                        })
-                });
+                // let vc_match = criteria.vc_name.as_ref().map_or(true, |vc_name| {
+                //     project_internal
+                //         .params
+                //         .vc_assigned
+                //         .as_ref()
+                //         .map_or(false, |vcs| {
+                //             vcs.iter().any(|vc| vc.name_of_fund.contains(vc_name))
+                //         })
+                // });
 
-                rating_match && focus_match && vc_match
+                rating_match && focus_match 
             })
             .map(|project_internal| project_internal.params.clone())
             .collect()
@@ -362,8 +358,6 @@ pub fn get_project_info_for_user(project_id: String) -> Option<ProjectInfoForUse
                     dapp_link: project_internal.params.dapp_link.clone(),
                     weekly_active_users: project_internal.params.weekly_active_users.clone(),
                     date_of_joining: Some(project_internal.creation_date),
-                    mentor_associated: project_internal.params.mentors_assigned.clone(),
-                    vc_associated: project_internal.params.vc_assigned.clone(),
                     team_member_info: project_internal.params.project_team.clone(),
                     links: project_internal.params.links.clone(),
                     live_link_of_project: project_internal.params.dapp_link.clone(),
