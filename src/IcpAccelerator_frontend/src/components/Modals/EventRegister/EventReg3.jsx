@@ -188,6 +188,53 @@ const setRubricEligibilitySelectedOptionsHandler = (val) => {
   );
 };
 
+const getReactSelectStyles = (error) => ({
+  menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+  control: (provided, state) => ({
+    ...provided,
+    paddingBlock: "2px",
+    borderRadius: "8px",
+    borderColor: error ? "#ef4444" : state.isFocused ? "#737373" : "#D1D5DB",
+    border: error
+      ? "2px solid #ef4444"
+      : "2px solid #D1D5DA",
+    backgroundColor: "rgb(249 250 251)",
+    "&::placeholder": {
+      color:  "currentColor",
+    },
+    display: "flex",
+    overflowX: "auto",
+    maxHeight: "43px",
+    "&::-webkit-scrollbar": {
+      display: "none",
+    },
+  }),
+  valueContainer: (provided) => ({
+    ...provided,
+    overflow: "scroll",
+    maxHeight: "40px",
+    scrollbarWidth: "none",
+  }),
+  placeholder: (provided, state) => ({
+    ...provided,
+    color:  "rgb(107 114 128)",
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+  }),
+  multiValue: (provided) => ({
+    ...provided,
+    display: "inline-flex",
+    alignItems: "center",
+    backgroundColor: "white",
+    border: "2px solid #E3E3E3",
+  }),
+  multiValueRemove: (provided) => ({
+    ...provided,
+    display: "inline-flex",
+    alignItems: "center",
+  }),
+});
   const [inputType, setInputType] = useState("date");
 
   const handleFocus = (field) => {
@@ -209,63 +256,13 @@ const setRubricEligibilitySelectedOptionsHandler = (val) => {
           htmlFor="rubric_eligibility"
           className="block text-sm font-medium mb-1"
         >
-          Level on rubric required for eligibility{" "}
-          <span className="text-red-500">*</span>
+          Level on rubric required for eligibility
         </label>
         <ReactSelect
           isMulti
           menuPortalTarget={document.body}
           menuPosition={"fixed"}
-          styles={{
-            menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-            control: (provided, state) => ({
-              ...provided,
-              paddingBlock: "2px",
-              borderRadius: "8px",
-              border: errors.rubric_eligibility
-                ? "1px solid #ef4444"
-                : "1px solid #737373",
-              backgroundColor: "rgb(249 250 251)",
-              "&::placeholder": {
-                color: errors.rubric_eligibility
-                  ? "#ef4444"
-                  : "currentColor",
-              },
-              display: "flex",
-              overflowX: "auto",
-              maxHeight: "43px",
-              "&::-webkit-scrollbar": {
-                display: "none",
-              },
-            }),
-            valueContainer: (provided, state) => ({
-              ...provided,
-              overflow: "scroll",
-              maxHeight: "40px",
-              scrollbarWidth: "none",
-            }),
-            placeholder: (provided, state) => ({
-              ...provided,
-              color: errors.rubric_eligibility
-                ? "#ef4444"
-                : "rgb(107 114 128)",
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-            }),
-            multiValue: (provided) => ({
-              ...provided,
-              display: "inline-flex",
-              alignItems: "center",
-              backgroundColor: "white",
-              border: "2px solid #CDD5DF",
-            }),
-            multiValueRemove: (provided) => ({
-              ...provided,
-              display: "inline-flex",
-              alignItems: "center",
-            }),
-          }}
+          styles={getReactSelectStyles(errors?.rubric_eligibility)}
           value={rubricEligibilitySelectedOptions}
           options={rubricEligibilityOptions}
           classNamePrefix="select"
@@ -275,7 +272,6 @@ const setRubricEligibilitySelectedOptionsHandler = (val) => {
           onChange={(selectedOptions) => {
             if (selectedOptions && selectedOptions.length > 0) {
               setRubricEligibilitySelectedOptions(selectedOptions);
-              clearErrors("rubric_eleligibilityigibility");
               setValue(
                 "eligibility",
                 selectedOptions
@@ -285,13 +281,6 @@ const setRubricEligibilitySelectedOptionsHandler = (val) => {
               );
             } else {
               setRubricEligibilitySelectedOptions([]);
-              setValue("rubric_eligibility", "", {
-                shouldValidate: true,
-              });
-              setError("rubric_eligibility", {
-                type: "required",
-                message: "Selecting a rubric eligibility is required",
-              });
             }
           }}
         />
@@ -312,52 +301,7 @@ const setRubricEligibilitySelectedOptionsHandler = (val) => {
           isMulti
           menuPortalTarget={document.body}
           menuPosition={"fixed"}
-          styles={{
-            menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-            control: (provided, state) => ({
-              ...provided,
-              paddingBlock: "2px",
-              borderRadius: "8px",
-              border: errors.tags
-                ? "1px solid #ef4444"
-                : "1px solid #737373",
-              backgroundColor: "rgb(249 250 251)",
-              "&::placeholder": {
-                color: errors.tags ? "#ef4444" : "currentColor",
-              },
-              display: "flex",
-              overflowX: "auto",
-              maxHeight: "43px",
-              "&::-webkit-scrollbar": {
-                display: "none",
-              },
-            }),
-            valueContainer: (provided, state) => ({
-              ...provided,
-              overflow: "scroll",
-              maxHeight: "40px",
-              scrollbarWidth: "none",
-            }),
-            placeholder: (provided, state) => ({
-              ...provided,
-              color: errors.tags ? "#ef4444" : "rgb(107 114 128)",
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-            }),
-            multiValue: (provided) => ({
-              ...provided,
-              display: "inline-flex",
-              alignItems: "center",
-              backgroundColor: "white",
-              border: "2px solid #CDD5DF",
-            }),
-            multiValueRemove: (provided) => ({
-              ...provided,
-              display: "inline-flex",
-              alignItems: "center",
-            }),
-          }}
+          styles={getReactSelectStyles(errors?.tags)}
           value={interestedDomainsSelectedOptions}
           options={interestedDomainsOptions}
           classNamePrefix="select"
@@ -402,56 +346,7 @@ const setRubricEligibilitySelectedOptionsHandler = (val) => {
           isMulti
           menuPortalTarget={document.body}
           menuPosition={"fixed"}
-          styles={{
-            menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-            control: (provided, state) => ({
-              ...provided,
-              paddingBlock: "2px",
-              borderRadius: "8px",
-              border: errors.funding_type
-                ? "1px solid #ef4444"
-                : "1px solid #737373",
-              backgroundColor: "rgb(249 250 251)",
-              "&::placeholder": {
-                color: errors.funding_type
-                  ? "#ef4444"
-                  : "currentColor",
-              },
-              display: "flex",
-              overflowX: "auto",
-              maxHeight: "43px",
-              "&::-webkit-scrollbar": {
-                display: "none",
-              },
-            }),
-            valueContainer: (provided, state) => ({
-              ...provided,
-              overflow: "scroll",
-              maxHeight: "40px",
-              scrollbarWidth: "none",
-            }),
-            placeholder: (provided, state) => ({
-              ...provided,
-              color: errors.funding_type
-                ? "#ef4444"
-                : "rgb(107 114 128)",
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-            }),
-            multiValue: (provided) => ({
-              ...provided,
-              display: "inline-flex",
-              alignItems: "center",
-              backgroundColor: "white",
-              border: "2px solid #CDD5DF",
-            }),
-            multiValueRemove: (provided) => ({
-              ...provided,
-              display: "inline-flex",
-              alignItems: "center",
-            }),
-          }}
+          styles={getReactSelectStyles(errors?.funding_type)}
           value={interestedFundingTypeSelectedOptions}
           options={interestedFundingTypeOptions}
           classNamePrefix="select"
@@ -559,13 +454,15 @@ const setRubricEligibilitySelectedOptionsHandler = (val) => {
               </button>
             </div>
           ))}
-          <button
-            type="button"
-            onClick={() => append({ contact_links: "" })}
-            className="flex items-center p-1 text-[#155EEF]"
-          >
-            <FaPlus className="mr-1" /> Add Another Link
-          </button>
+         {fields.length < 10 && (
+      <button
+        type="button"
+        onClick={() => append({ links: "" })}
+        className="flex items-center p-1 text-[#155EEF]"
+      >
+        <FaPlus className="mr-1" /> Add Another Link
+      </button>
+    )}
         </div>
       </div>
       </div>

@@ -10,19 +10,7 @@ const EventReg1 = ({ formData, setFormData, imageData, setImageData, editMode ,s
   const [imagePreview, setImagePreview] = useState(null);
 
   const { register, formState: { errors }, control, setValue, clearErrors, setError, trigger } = useFormContext();
-
- useEffect(() => {
-  if (formData?.image) {
-    if (editMode === true) {
-      setImagePreview(formData);
-    } else {
-      setImagePreview(URL.createObjectURL(formData?.image));
-    }
-    setImageData(formData?.image);
-  } else if (singleEventData?.cohort_banner) {
-    setImagePreview(singleEventData?.cohort_banner); // If in edit mode, set the banner image from singleEventData
-  }
-}, [formData, singleEventData, editMode]);
+ 
 
 
   const [inputType, setInputType] = useState("date");
@@ -40,6 +28,16 @@ const EventReg1 = ({ formData, setFormData, imageData, setImageData, editMode ,s
   };
 
   const imageCreationFunc = async (file) => {
+    const maxFileSize = 10 * 1024 * 1024; // 10MB in bytes
+
+    if (file.size > maxFileSize) {
+      setError("cohort_banner", {
+        type: "manual",
+        message: "File size exceeds the 10MB limit.",
+      });
+      return;
+    }
+
     const result = await trigger("cohort_banner");
     if (result) {
       try {
@@ -71,6 +69,32 @@ const EventReg1 = ({ formData, setFormData, imageData, setImageData, editMode ,s
     setImagePreview(null);
   };
 
+  useEffect(() => {
+    if (formData?.image) {
+      const imageFile = formData?.image;
+
+      if (imageFile.size > 10 * 1024 * 1024) { // Check file size during update
+        setError("cohort_banner", {
+          type: "manual",
+          message: "File size exceeds the 10MB limit.",
+        });
+        return; // Early return to prevent further processing
+      }
+
+      if (editMode === true) {
+        setImagePreview(URL.createObjectURL(imageFile)); // Preview the new image
+      } else {
+        setImagePreview(URL.createObjectURL(imageFile));
+      }
+      imageCreationFunc(imageFile);
+    } else if (singleEventData?.cohort_banner) {
+      setImagePreview(singleEventData?.cohort_banner); // If in edit mode, set the banner image from singleEventData
+    }
+  }, [formData, singleEventData, editMode]);
+
+  useEffect(() => {
+    trigger("cohort_banner");  // Trigger validation on initial render
+  }, []);
   return (
     <>
       <div>
