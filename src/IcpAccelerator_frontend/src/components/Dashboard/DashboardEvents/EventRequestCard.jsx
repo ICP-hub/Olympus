@@ -372,14 +372,15 @@ const EventRequestCard = () => {
                       {appliedType === "pending" && event.status === "pending" && (
                         <>
                           <button
-className="mr-2 mb-2 border border-[#097647] bg-[#EBFDF3] text-[#097647] px-3 py-1 rounded-full"                            onClick={() => handleAction("Approve", index)}
+className="mr-2 mb-2 border border-[#097647] bg-[#EBFDF3] text-[#097647] px-3 py-1 rounded-full"                          
+  // onClick={() => handleAction("Approve", index)}
                             disabled={loadingIndexes[index] === "Approve"}
                           >
                             Accept
                             {loadingIndexes[index] === "Approve" && (
                               <ThreeDots
                               visible={true}
-                              height="15"
+                              height="10"
                               width="20"
                               color="#FFFFFF"
                               radius="8"
@@ -391,7 +392,7 @@ className="mr-2 mb-2 border border-[#097647] bg-[#EBFDF3] text-[#097647] px-3 py
                           </button>
                           <button
                     className="mr-2 mb-2 border border-[#C11574] bg-[#FDF2FA] text-[#C11574] px-3 py-1 rounded-full"
-                    onClick={() => handleAction("Reject", index)}
+                    // onClick={() => handleAction("Reject", index)}
                             disabled={loadingIndexes[index] === "Reject"}
                           >
                             Reject

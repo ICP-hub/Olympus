@@ -345,6 +345,8 @@ console.log("jai ho tags",email)
         return "Join as Investor";
       case "mentor":
         return "Join as Mentor";
+      case "user":
+        return "You can't join "
       default:
         return "Join";
     }
@@ -423,7 +425,7 @@ console.log("jai ho tags",email)
                           getButtonText(userCurrentRoleStatusActiveRole)
                         )}
             </button> */}
-            <button
+            {/* <button
               className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-300 mb-2 text-sm"
               onClick={registerHandler}
             >
@@ -441,7 +443,28 @@ console.log("jai ho tags",email)
               ) : (
                 getButtonText(userCurrentRoleStatusActiveRole)
               )}
-            </button>
+            </button> */}
+            {userCurrentRoleStatusActiveRole !== 'user' && (
+  <button
+    className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-300 mb-2 text-sm"
+    onClick={registerHandler}
+  >
+    {isSubmitting ? (
+      <ThreeDots
+        visible={true}
+        height="24"
+        width="24"
+        color="#FFFFFF"
+        radius="9"
+        ariaLabel="three-dots-loading"
+        wrapperStyle={{}}
+        wrapperClassName=""
+      />
+    ) : (
+      getButtonText(userCurrentRoleStatusActiveRole)
+    )}
+  </button>
+)}
 
             <button className="w-full border border-[#CDD5DF] bg-white text-gray-700 py-2 px-4 rounded-md hover:bg-gray-200 transition duration-300 mb-2 text-sm">
               Contact organiser
@@ -643,7 +666,7 @@ console.log("jai ho tags",email)
               currentTab={currentTab}
               onTabChange={handleTabChange}
             />
-            <div className=" pr-6">
+            {/* <div className=" pr-6">
               {currentTab === "Summary" && (
                 <>
                   <div>
@@ -651,7 +674,7 @@ console.log("jai ho tags",email)
                       <h2 className="text-2xl font-semibold mb-2">
                         Description
                       </h2>
-                      {/* <div className="text-gray-700">{parse(description)}</div> */}
+                     
                       <div className="relative text-gray-700 overflow-hidden max-h-[10rem] hover:max-h-none transition-all duration-300 ease-in-out group">
                         <div className="overflow-hidden text-ellipsis line-clamp-10">
                           {parse(description)}
@@ -674,7 +697,43 @@ console.log("jai ho tags",email)
               {currentTab === "Reviews" && (
                 <NoDataFound message="No active reviews found" />
               )}
+            </div> */}
+            <div className="pr-6">
+  {currentTab === "Summary" && (
+    <>
+      <div>
+        <div className="mt-4">
+          <h2 className="text-2xl font-semibold mb-2">Description</h2>
+          <div className="relative text-gray-700 overflow-hidden max-h-[10rem] hover:max-h-none transition-all duration-300 ease-in-out group">
+            <div className="overflow-hidden text-ellipsis line-clamp-10">
+              {parse(description)}
             </div>
+            <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-white to-transparent pointer-events-none"></div>
+          </div>
+          <h2 className="text-2xl font-semibold mt-2">FAQ</h2>
+          <FAQ />
+        </div>
+      </div>
+    </>
+  )}
+    {currentTab === "Attendees" && (
+        <Attendees cohortData={cohortData} />
+      )}
+  
+  {userCurrentRoleStatusActiveRole !== "user" && (
+    <>
+      {currentTab === "Announcements" && (
+        <NoDataFound message="No active announcements found" />
+      )}
+    
+      {currentTab === "Request" && <EventRequestCard />}
+      {currentTab === "Reviews" && (
+        <NoDataFound message="No active reviews found" />
+      )}
+    </>
+  )}
+</div>
+
           </div>
         </div>
       </div>
