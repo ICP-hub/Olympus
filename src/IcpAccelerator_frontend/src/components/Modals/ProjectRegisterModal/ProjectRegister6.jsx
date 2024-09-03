@@ -12,6 +12,7 @@ const ProjectRegister6 = ({formData}) => {
     formState: { errors }, // Extract form errors
     control,   
     setValue, 
+    setError,
     clearErrors,         // Extract control for managing form state
   } = useFormContext();
 
@@ -318,7 +319,7 @@ const ProjectRegister6 = ({formData}) => {
 
       {/* Display an error message if the project description field has an error */}
       {errors?.project_description && (
-        <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+        <span className="mt-[4.25rem] text-sm text-red-500 font-bold flex justify-start">
           {errors?.project_description?.message}  
         </span>
       )}

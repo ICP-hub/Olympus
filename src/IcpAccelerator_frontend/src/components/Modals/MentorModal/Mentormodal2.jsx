@@ -58,7 +58,7 @@ const Mentormodal2 = ({ isOpen, onClose }) => {
 
 
                 <div className="mb-4">
-                    <label className="block text-sm text-[#364152] font-medium mb-1">Service category <span className="text-[#155EEF]">*</span></label>
+                    <label className="block text-sm text-[#364152] font-medium mb-1">Service category <span className="text-[red] ml-1">*</span></label>
                     <Select
 
                         options={ServiceOptions}

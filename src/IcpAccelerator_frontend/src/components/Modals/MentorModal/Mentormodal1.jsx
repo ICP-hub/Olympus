@@ -102,7 +102,7 @@ const Mentormodal1 = ({ isOpen, onClose }) => {
                 <p className="text-[#697586] mb-4">Tell others a bit about your founding expertise. You can update it later.</p>
                 <form>
                     <div className="mb-2 relative">
-                        <label className="block text-sm text-[#364152] font-medium mb-1">Primary expertise <span className="text-[#155EEF]">*</span></label>
+                        <label className="block text-sm text-[#364152] font-medium mb-1">Primary expertise <span className="text-[red] ml-1">*</span></label>
                         <Select
                             options={ExpertiseOptions}
                             value={primaryExpertise}
@@ -118,7 +118,7 @@ const Mentormodal1 = ({ isOpen, onClose }) => {
                         <button className="text-[#004EEB] text-sm" type="button">Add secondary expertise</button>
                     </div>
                     <div className="mb-2 relative w-[40%]">
-                        <label className="block text-sm text-[#364152] font-medium mb-1">Years of experience <span className="text-[#155EEF]">*</span></label>
+                        <label className="block text-sm text-[#364152] font-medium mb-1">Years of experience <span className="text-[red] ml-1">*</span></label>
 
                         <Select
 
@@ -134,7 +134,7 @@ const Mentormodal1 = ({ isOpen, onClose }) => {
 
                     </div>
                     <div className="mb-2">
-                        <label className="block text-sm font-medium mb-1 text-[#364152]">Relevant categories <span className="text-[#155EEF]">*</span></label>
+                        <label className="block text-sm font-medium mb-1 text-[#364152]">Relevant categories <span className="text-[red] ml-1">*</span></label>
                         <Select
                             isMulti
                             options={categoryOptions}
