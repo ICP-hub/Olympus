@@ -763,19 +763,23 @@ const AnnouncementCard = () => {
               {/* <h2 className="text-gray-900 text-xl font-bold mb-3">
                 {ann_name}
               </h2> */}
-              <div className="flex items-center mb-4 space-x-4">
-                <img
-                  src={ann_project_logo}
-                  alt="pic"
-                  className="h-12 w-12 rounded-full border border-gray-300"
-                />
-                <div className="flex flex-col gap-1">
-                  <h2 className="text-lg font-semibold">{ann_name}</h2>
-                  <h3 className="text-gray-600 text-sm font-normal">
-                    {ann_desc}
-                  </h3>
-                </div>
-              </div>
+              <div className="flex items-start p-2 border border-1 mb-4 space-x-4">
+  <div className="flex-shrink-0 self-center">
+    <img
+      src={ann_project_logo}
+      alt="pic"
+      className="h-12 w-12 rounded-full border border-gray-300"
+    />
+  </div>
+  <div className="flex flex-col gap-1 overflow-hidden">
+    <h2 className="text-lg font-semibold line-clamp-1 hover:line-clamp-2">
+      {ann_name}
+    </h2>
+    <h3 className="text-gray-600 text-sm font-normal line-clamp-5 ">
+      {ann_desc}
+    </h3>
+  </div>
+</div>
               {/* <div className="text-gray-500 leading-relaxed">
                 <p>{ann_desc}</p>
               </div> */}

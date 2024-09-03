@@ -10,7 +10,7 @@ import ProfileImage from "../../../assets/Logo/ProfileImage.png";
 import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
 import RemoveCircleOutlineOutlinedIcon from "@mui/icons-material/RemoveCircleOutlineOutlined";
 import { useNavigate } from "react-router-dom";
-// import RoleProfileCard from "./RoleProfileCard";
+// import RoleProfileCard from "./RoleProfileCard"; 
 
 import {
   animatedLeftSvgIcon,
@@ -25,8 +25,9 @@ import {
   setCurrentActiveRole,
   setCurrentRoleStatus,
 } from "../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
-import RoleProfileCard from "./RoleProfileCard";
+// import RoleProfileCard from "./RoleProfileCard";
 import ProfileRoleNoDataCard from "../Common/ProfileRoleNoDataCard";
+import RoleProfileCard from "./RoleProfileCard";
 
 
 const FAQItem = ({ question, answer }) => {
@@ -320,8 +321,8 @@ const mergedData = mergeData(userCurrentRoleStatus, roledata);
         );
         cardsShown++;
         elements.push(
-          <div className="bg-[#EEF2F6] shadow-md rounded-lg p-6 w-3/4 h-60 flex flex-col items-center text-center relative" key="mentor-vc-default-card">
-            <div className="p-3 flex justify-center mt-5">
+          <div className=" border-2 rounded-lg p-6 w-3/4 h-60 flex flex-col items-center text-center relative" key="mentor-vc-default-card">
+            <div className="p-3 flex justify-center">
               <AvatarGroup max={4}>
                 <Avatar alt="Mentor" src={mentor} />
                 <Avatar alt="user" src={user} />
@@ -329,7 +330,7 @@ const mergedData = mergeData(userCurrentRoleStatus, roledata);
                 <Avatar alt="project" src={project} />
               </AvatarGroup>
             </div>
-            <div className="mt-5 px-5">
+            <div className=" px-5">
               <p className="max-w-[250px]">{roles.description1}</p>
             </div>
             <div className="my-2 px-5 flex items-center">
@@ -356,8 +357,8 @@ const mergedData = mergeData(userCurrentRoleStatus, roledata);
         );
         cardsShown++;
         elements.push(
-          <div className="bg-[#EEF2F6] shadow-md rounded-lg p-6 w-3/4 h-60 flex flex-col items-center text-center relative" key="vc-approved-card">
-            <div className="p-3 flex justify-center mt-5">
+          <div className=" border-2 rounded-lg p-6 w-3/4 h-60 flex flex-col items-center text-center relative" key="vc-approved-card">
+            <div className="p-3 flex justify-center ">
               <AvatarGroup max={4}>
                 <Avatar alt="Mentor" src={mentor} />
                 <Avatar alt="user" src={user} />
@@ -365,7 +366,7 @@ const mergedData = mergeData(userCurrentRoleStatus, roledata);
                 <Avatar alt="project" src={project} />
               </AvatarGroup>
             </div>
-            <div className="mt-5 px-5">
+            <div className=" px-5">
               <p className="max-w-[250px]">{roles.description1}</p>
             </div>
             <div className="my-2 px-5 flex items-center">

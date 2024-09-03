@@ -10,6 +10,7 @@ const EventReg2 = ({ formData, singleEventData }) => {
     formState: { errors },
     setValue,
     watch,
+    trigger, // Import the trigger method
   } = useFormContext();
   const { countries } = useCountries();
   const [inputType, setInputType] = useState("date");
@@ -19,20 +20,15 @@ const EventReg2 = ({ formData, singleEventData }) => {
   // Watch the value of the 'area' field
   const selectedArea = watch("area");
 
-  console.log("formData", formData);
   useEffect(() => {
-    if (formData) {
-      setValue(
-        "area",
-        singleEventData?.country === "Global" ? "Global" : "country"
-      );
-      setSelectArea(
-        singleEventData?.country === "Global"
-          ? "Global"
-          : singleEventData?.country
-      );
-      setValue("country", singleEventData?.country ?? "");
-      setSelectCountry(singleEventData?.country);
+    if (formData || singleEventData) {
+      const areaValue = singleEventData?.country ? "country" : "Global";
+      setValue("area", areaValue);
+      setSelectArea(areaValue);
+
+      const countryValue = singleEventData?.country || "";
+      setValue("country", countryValue);
+      setSelectCountry(countryValue);
     }
   }, [formData, singleEventData, setValue]);
 
@@ -47,9 +43,31 @@ const EventReg2 = ({ formData, singleEventData }) => {
       setInputType(field.onBlur);
     }
   };
-  useEffect(() => {
-    setValue("area", formData.area || singleEventData?.area || "");
-  }, [formData.area, singleEventData?.area, setValue]);
+
+  const handleAreaChange = async (e) => {
+    const areaValue = e.target.value;
+    setSelectArea(areaValue);
+    setValue("area", areaValue);
+
+    if (areaValue === "Global") {
+      setSelectCountry("");
+      setValue("country", "");
+    }
+
+    // Trigger validation for the country field when the area field changes
+    if (areaValue === "country") {
+      await trigger("country");
+    }
+  };
+
+  const handleCountryChange = async(e) => {
+    const countryValue = e.target.value;
+    setSelectCountry(countryValue);
+    setValue("country", countryValue);
+
+    // Trigger validation when the country field changes
+    await trigger("country");
+  };
 
   return (
     <>
@@ -70,7 +88,7 @@ const EventReg2 = ({ formData, singleEventData }) => {
               <textarea
                 name={field.name}
                 id={field.id}
-                {...register(field.name)}
+                {...register(field.name, { required: `${field.label} is required` })}
                 className={`border border-[#CDD5DF] rounded-md shadow-sm 
                   ${
                     errors[field.name]
@@ -86,7 +104,7 @@ const EventReg2 = ({ formData, singleEventData }) => {
                 type={field.id === "date_of_birth" ? inputType : field.type}
                 name={field.name}
                 id={field.id}
-                {...register(field.name)}
+                {...register(field.name, { required: `${field.label} is required` })}
                 className={`border border-[#CDD5DF] rounded-md shadow-sm 
                   ${
                     errors[field.name]
@@ -108,13 +126,13 @@ const EventReg2 = ({ formData, singleEventData }) => {
       </div>
       <div className="mb-2">
         <label htmlFor="area" className="block text-sm font-medium mb-1">
-          Select area <span className="text-red-500">*</span>
+          Select area 
         </label>
         <select
           name="area"
           id="area"
           {...register("area")}
-          onChange={(e) => setSelectArea(e.target.value)}
+          onChange={handleAreaChange}
           value={selectArea}
           className={`border border-[#CDD5DF] rounded-md shadow-sm 
         ${
@@ -125,17 +143,22 @@ const EventReg2 = ({ formData, singleEventData }) => {
           <option value="Global">Global</option>
           <option value="country">Country</option>
         </select>
+        {errors.area && (
+          <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+            {errors.area.message}
+          </span>
+        )}
       </div>
       {selectedArea === "country" && (
         <div className="relative z-0 group mb-6">
           <label htmlFor="country" className="block text-sm font-medium mb-1">
-            Select Country <span className="text-red-500">*</span>
+            Select Country 
           </label>
           <select
             name="country"
             id="country"
             {...register("country")}
-            onChange={(e) => setSelectCountry(e.target.value)}
+            onChange={handleCountryChange}
             value={selectCountry}
             className={`bg-gray-50 border-2 ${
               errors.country ? "border-red-500" : "border-[#737373]"
@@ -154,6 +177,11 @@ const EventReg2 = ({ formData, singleEventData }) => {
               </option>
             ))}
           </select>
+          {errors.country && (
+            <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+              {errors.country.message}
+            </span>
+          )}
         </div>
       )}
 
