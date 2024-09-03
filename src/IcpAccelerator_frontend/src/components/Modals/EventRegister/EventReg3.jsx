@@ -393,7 +393,7 @@ const getReactSelectStyles = (error) => ({
         <select
           name="funding_amount"
           id="funding_amount"
-          {...register("funding_amount")}
+          {...register("funding_amount", { required: "Funding Amount is required" })}
           className={`bg-gray-50 border ${errors.funding_amount
             ? "border-red-500"
             : "border-[#737373]"
