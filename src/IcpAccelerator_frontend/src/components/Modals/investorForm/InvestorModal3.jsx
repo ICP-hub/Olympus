@@ -59,8 +59,8 @@ const InvestorModal3 = () => {
       {/* PORTFOLIO LINK INPUT */}
       <div className="mb-2">
         <label className="block mb-1">
-          Portfolio Link
-        </label>
+          Portfolio Link <span className="text-[red] ml-1">*</span>
+        </label> 
         <input
           type="text"
           {...register("investor_portfolio_link", {

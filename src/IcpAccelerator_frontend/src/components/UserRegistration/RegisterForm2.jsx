@@ -21,7 +21,7 @@ const RegisterForm2 = React.memo(() => {
               htmlFor="email"
               className=" font-semibold block text-[#121926]"
             >
-              Email <span className="text-[#155EEF]">*</span>
+              Email <span className="text-[red] ml-1">*</span>
             </label>
             <div className="relative">
               <input
