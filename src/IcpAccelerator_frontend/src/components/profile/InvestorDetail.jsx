@@ -13,7 +13,6 @@ import ReactSelect from "react-select";
 import { LinkedIn, GitHub, Telegram, Language } from "@mui/icons-material";
 import CompressedImage from "../ImageCompressed/CompressedImage";
 import { allHubHandlerRequest } from "../StateManagement/Redux/Reducers/All_IcpHubReducer";
-import { uint8ArrayToBase64 } from "../../../../admin_frontend/src/components/Utils/AdminData/saga_function/blobImageToUrl";
 import editp from "../../../assets/Logo/edit.png";
 import { ThreeDots } from "react-loader-spinner";
 

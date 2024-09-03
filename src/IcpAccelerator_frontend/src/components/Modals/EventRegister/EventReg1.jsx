@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { formFields1 } from "./EventFormData";
 import { useFormContext, Controller } from "react-hook-form";
-import CompressedImage from "../../../component/ImageCompressed/CompressedImage";
+import CompressedImage from "../../../components/ImageCompressed/CompressedImage";
 
 const EventReg1 = ({ formData, setFormData, imageData, setImageData, editMode ,singleEventData}) => {
 

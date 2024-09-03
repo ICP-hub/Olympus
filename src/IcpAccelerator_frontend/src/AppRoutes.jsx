@@ -1,17 +1,15 @@
 import React, { lazy, Suspense, } from "react";
 import { Routes, Route, } from "react-router-dom";
-
-import Loader from "./component/Loader/Loader";
 import Breadcrumbs from "./components/Layout/Breadcrumbs/BreadCrumbs";
 import Home from "./components/Home/Home";
 import MainLayout from "./components/Layout/MainLayout";
 import { useAuth } from "./components/StateManagement/useContext/useAuth";
 import toast, { Toaster } from "react-hot-toast";
 import UserRegistration from "./components/UserRegistration/UserRegistration";
+import Loader from "./components/Loader/Loader";
 // import DashboardHomePage from "./components/Dashboard/DashboardHomePage/DashboardHomePage";
 const DashboardHomePage = lazy(() => import("./components/Dashboard/DashboardHomePage/DashboardHomePage"));
-const UserProfile = lazy(() => import("./component/UserProfile/UserProfile"));
-const Error404 = lazy(() => import("./component/Error404/Error404"));
+const Error404 = lazy(() => import("./components/Error404/Error404"));
 
 const AppRoutes = () => {
   const { isAuthenticated } = useAuth();

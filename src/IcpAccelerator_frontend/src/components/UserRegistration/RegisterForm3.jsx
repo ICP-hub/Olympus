@@ -20,7 +20,7 @@ import {
   FaPlus,
   FaTrash,
 } from "react-icons/fa";
-import CompressedImage from "../../component/ImageCompressed/CompressedImage";
+import CompressedImage from "../../components/ImageCompressed/CompressedImage";
 import { LanguageIcon } from "./DefaultLink";
 
 const RegisterForm3 = React.memo(({ setImageData }) => {

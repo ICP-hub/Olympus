@@ -1,10 +1,10 @@
 import React from 'react'
-import NoDataCard from '../../../../component/Mentors/Event/MentorAssociatedNoDataCard'
+import NoDataCard from '../../../NoDataCard/NoData'
 
 const DiscoverInvestorDetail = () => {
   return (
     <div className=''>
-      <NoDataCard/>
+      <NoDataCard message={'No Data Available'}/>
     </div>
   )
 }
