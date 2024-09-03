@@ -204,26 +204,32 @@ pub fn accept_offer_from_mentor_to_project(offer_id: String, response_message: S
                 }
 
                 if let Some(mentor_profile) = state.mentor_storage.get(&StoredPrincipal(offer.sender_principal)) {
-                    if let Some(mut projects) = state.project_storage.get(&StoredPrincipal(caller_principal)) {
-                        if let Some(proj_index) = projects.0.iter_mut().position(|p| p.uid == project_id) {
-                            let project = &mut projects.0[proj_index];
-                            if project.params.mentors_assigned.is_none() {
-                                project.params.mentors_assigned = Some(Vec::new());
-                            }
+                    if let Some(user_info) = state.user_storage.get(&StoredPrincipal(offer.sender_principal)) {
+                        if let Some(mut projects) = state.project_storage.get(&StoredPrincipal(caller_principal)) {
+                            if let Some(proj_index) = projects.0.iter_mut().position(|p| p.uid == project_id) {
+                                let project = &mut projects.0[proj_index];
+                                if project.params.mentors_assigned.is_none() {
+                                    project.params.mentors_assigned = Some(Vec::new());
+                                }
 
-                            let mentors_assigned = project.params.mentors_assigned.as_mut().unwrap();
-                            if !mentors_assigned.contains(&mentor_profile.0.profile) {
-                                mentors_assigned.push(mentor_profile.0.profile.clone());
-                                ic_cdk::println!("Mentor added to project's assigned mentor list");
-                            }
+                                let mentors_assigned = project.params.mentors_assigned.as_mut().unwrap();
+                                let mentor_tuple = (mentor_profile.0.profile.clone(), user_info.0.clone());
 
-                            state.project_storage.insert(StoredPrincipal(caller_principal), projects.clone());
-                        } else {
-                            // ic_cdk::println!("No project found with ID '{}' to update", project_id);
+                                if !mentors_assigned.iter().any(|item| item.0 == mentor_tuple.0 && item.1 == mentor_tuple.1) {
+                                    mentors_assigned.push(mentor_tuple);
+                                    ic_cdk::println!("Mentor added to project's assigned mentor list with user info");
+                                }
+
+                                state.project_storage.insert(StoredPrincipal(caller_principal), projects.clone());
+                            } else {
+                                ic_cdk::println!("No project found with ID '{}' to update", project_id);
+                            }
                         }
+                    } else {
+                        ic_cdk::println!("No user information found for mentor with principal: {}", offer.sender_principal);
                     }
                 } else {
-                    // ic_cdk::println!("No mentor profile found for principal: {}", offer.sender_principal);
+                    ic_cdk::println!("No mentor profile found for mentor with principal: {}", offer.sender_principal);
                 }
             } else {
                 // ic_cdk::println!("Offer with ID '{}' not found in offers list for project '{}'", offer_id, project_id);

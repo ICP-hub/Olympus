@@ -167,16 +167,25 @@ pub fn accept_offer_from_project_to_investor(offer_id: String, response_message:
                         if project.params.vc_assigned.is_none() {
                             project.params.vc_assigned = Some(Vec::new());
                         }
+
                         if let Some(investor_profile) = state.vc_storage.get(&StoredPrincipal(investor_id)) {
-                            let vc_assigned = project.params.vc_assigned.as_mut().unwrap();
-                            if !vc_assigned.contains(&investor_profile.0.params) {
-                                vc_assigned.push(investor_profile.0.params.clone());
+                            if let Some(user_info) = state.user_storage.get(&StoredPrincipal(investor_id)) {
+                                let vc_assigned = project.params.vc_assigned.as_mut().unwrap();
+                                let vc_tuple = (investor_profile.0.params.clone(), user_info.0.clone());
+
+                                if !vc_assigned.iter().any(|item| item.0 == vc_tuple.0 && item.1 == vc_tuple.1) {
+                                    vc_assigned.push(vc_tuple);
+                                }
+                            } else {
+                                ic_cdk::println!("No user information found for VC with principal: {}", investor_id);
                             }
+                        } else {
+                            ic_cdk::println!("No VC profile found for investor with principal: {}", investor_id);
                         }
-                        // Commit changes to the project storage
                         state.project_storage.insert(StoredPrincipal(sender_principal), projects.clone());
                     }
                 }
+
 
                 if let Some(mut sent_status_vector) = state.offers_offered_by_me.get(&project_id) {
                     if let Some(pos) = sent_status_vector.0.iter_mut().position(|o| o.offer_id == offer_id) {
