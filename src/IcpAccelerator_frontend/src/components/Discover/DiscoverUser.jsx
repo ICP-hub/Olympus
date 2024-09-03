@@ -17,7 +17,7 @@ const DiscoverUser = ({ onUserCountChange }) => {
   const [allUserData, setAllUserData] = useState([]);
   const [hasMore, setHasMore] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
-  const itemsPerPage = 20;
+  const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
   const [showRatingModal, setShowRatingModal] = useState(false);
   const [userRatingDetail, setUserRatingDetail] = useState(null);
