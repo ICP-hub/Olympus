@@ -219,9 +219,9 @@ console.log('cohortData',cohortData)
         formatFullDateFromSimpleDate(cohortData?.cohort?.deadline)
       );
 
-      if (deadline < today) {
-        setIsSubmitting(false);
-      } else {
+      // if (deadline < today) {
+      //   setIsSubmitting(false);
+      // } else {
         try {
           let cohort_id = cohortData?.cohort_id;
           if (userCurrentRoleStatusActiveRole === "project") {
@@ -266,7 +266,7 @@ console.log('cohortData',cohortData)
           toast.error(error);
           console.error("Error sending data to the backend:", error);
         }
-      }
+      // }
     } else {
       setIsSubmitting(false);
       toast.error("Please signup with internet identity first");
