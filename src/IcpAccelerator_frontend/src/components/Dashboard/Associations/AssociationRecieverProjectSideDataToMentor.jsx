@@ -264,7 +264,7 @@ const AssociationRecieverProjectSideDataToMentor = ({
              >
                Self Decline
              </button>
-           ) : selectedTypeData === "to-mentor" ? (
+           ) : selectedTypeData === "from-mentor" ? (
              <>
                {/* Handle Mentor Reject */}
                <button
