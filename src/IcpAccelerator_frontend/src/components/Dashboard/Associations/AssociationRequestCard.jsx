@@ -311,7 +311,7 @@ const AssociationRequestCard = () => {
                     index={index}
                     activeTabData={activeTabData}
                   />
-                ) : userCurrentRoleStatusActiveRole === "mentor" &&
+                ) : userCurrentRoleStatusActiveRole === "mentor" || userCurrentRoleStatusActiveRole === "project" || userCurrentRoleStatusActiveRole === "vc" &&
                   selectedType.value === "CohortRequest" ? (
                   <CohortRequestCard
                     user={user}
