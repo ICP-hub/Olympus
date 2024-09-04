@@ -1,48 +1,43 @@
-import React, { useEffect, useState,useRef } from "react";
+	import React, { useEffect, useRef } from "react";
 import {
   closeModalSvg,
   walletModalSvg,
 } from "../components/Utils/Data/SvgData";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../components/StateManagement/useContext/useAuth";
 
 const ConnectWallet = ({ isModalOpen, onClose }) => {
-  const [navigationTriggered, setNavigationTriggered] = useState(false);
   const isAuthenticated = useSelector(
     (currState) => currState.internet.isAuthenticated
   );
-  const userFullData = useSelector((currState) => currState.userData.data?.Ok);
+  const userFullData = useSelector((currState) => currState.userData.data.Ok);
   const { login } = useAuth();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const modalRef = useRef(null);
-    const navigate = useNavigate();
 
+  // useEffect(() => {
+  //   // if (isAuthenticated) {
+  //     onClose();
+  //     navigate("/");
+  //   // }
+  // }, []);
   useEffect(() => {
-    // Only trigger navigation if the modal is closed and navigation hasn't been triggered yet
-    if (
-      !isModalOpen &&
-      !navigationTriggered &&
-      isAuthenticated !== undefined &&
-      userFullData !== undefined
-    ) {
-      if (isAuthenticated) {
-        if (userFullData) {
-          navigate("/dashboard");
-        } else {
-          navigate("/register-user");
-        }
+    if (isAuthenticated) {
+      if (userFullData) {
+        navigate("/dashboard"); 
       } else {
-        navigate("/");
+        navigate("register-user");
       }
-
-      setNavigationTriggered(true); // Ensure navigation only triggers once
-      onClose(); // Close the modal after navigation
+      onClose();
     }
-  }, [isAuthenticated, userFullData, navigate, onClose, isModalOpen, navigationTriggered]);
-
+    else{
+       navigate("/");
+    }
+  }, [isAuthenticated, userFullData]);
   const loginHandler = async (val) => {
     await login(val);
-    onClose(); // Close the modal after login
   };
 
   const handleClickOutside = (event) => {
@@ -58,14 +53,16 @@ const ConnectWallet = ({ isModalOpen, onClose }) => {
       document.removeEventListener("mousedown", handleClickOutside);
     }
 
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+return () => {
+  document.removeEventListener("mousedown", handleClickOutside);
+};
   }, [isModalOpen]);
 
-  return isModalOpen ? (
+  return (
     <>
-      <div className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm z-50"></div>
+      {isModalOpen && !isAuthenticated ? (
+        <>
+          <div className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm z-50"></div>
           <div className="overflow-y-auto overflow-x-hidden top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full fixed flex">
             <div
               className="relative p-4 w-full max-w-md max-h-full"
@@ -97,8 +94,12 @@ const ConnectWallet = ({ isModalOpen, onClose }) => {
               </div>
             </div>
           </div>
+        </>
+      ) : (
+        ""
+      )}
     </>
-  ) : null;
+  );
 };
 
 export default ConnectWallet;

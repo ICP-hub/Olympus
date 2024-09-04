@@ -18,6 +18,8 @@ import { FaArrowRotateLeft } from "react-icons/fa6";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import {useNavigate} from "react-router-dom"
+
+
 const UserRegistration = () => {
   const [index, setIndex] = useState(0);
   const [imageData, setImageData] = useState(null);
@@ -33,11 +35,12 @@ const UserRegistration = () => {
   const [iscaptchaSuccess, setCaptchaSuccess] = useState(false);
   const [isCaptchaLoading, setIsCaptchaLoading] = useState(false);
   const [cooldown, setCooldown] = useState(0);
- const navigate=useNavigate() 
   const [isInitialSubmit, setIsInitialSubmit] = useState(false);  // Track if the initial submission has happened
+  const [isCaptchaFilled, setIsCaptchaFilled] = useState(false); // New state to track if captcha input is filled
 
   const captchaRef = useRef(null); // Ref for captcha input field
 
+  // Existing useForm methods here
   const methods = useForm({
     resolver: yupResolver(validationSchema),
     mode: "all",
@@ -54,6 +57,7 @@ const UserRegistration = () => {
       image: null,
     },
   });
+
   const { handleSubmit, trigger, getValues, formState, watch, resetField } = methods;
   const { errors } = formState;
 
@@ -81,7 +85,7 @@ const UserRegistration = () => {
   };
 
   const handleBack = () => {
-    if (index > 0) {
+    if (index > 0 && !isInitialSubmit) { // Hide back button if initial submission is done
       setIndex((prevIndex) => prevIndex - 1);
     }
   };
@@ -111,7 +115,7 @@ const UserRegistration = () => {
       try {
         const result = await actor.generate_captcha_with_id();
         if (result) {
-          console.log('result',result);
+          console.log('result', result);
           setCaptcha(result);
           setCaptchaSuccess(true);
           startCooldown();
@@ -134,7 +138,8 @@ const UserRegistration = () => {
       const result = await actor.generate_captcha_with_id();
       if (result) {
         setCaptcha(result);
-        resetField("captcha"); // Clear the captcha input field
+        captchaRef.current.value = ""; // Clear the captcha input field
+        setCaptchaError("");
         startCooldown(); // Restart the cooldown timer after refreshing
       }
     } catch (error) {
@@ -154,18 +159,19 @@ const UserRegistration = () => {
   }, [watch, setGetAllData]);
 
   const onSubmitHandler = async () => {
-    setIsInitialSubmit(true); // Set that initial submission has happened
     const data = { ...formData, ...getValues() };
     setFormData(data);
     setCaptchaVisible(true);
+    setIsInitialSubmit(true); // Set that initial submission has happened
+
   };
 
   const onFinalSubmit = async () => {
     const data = { ...formData, ...getValues() };
-    console.log('data',data);
+
     // Get the value of the captcha input using useRef
     const captchaInputValue = captchaRef.current.value;
-    console.log('captchaInputValue',captchaInputValue);
+
     // Validate captcha manually
     if (!captchaInputValue) {
       setCaptchaError("Captcha is required. Please enter the captcha.");
@@ -200,13 +206,16 @@ const UserRegistration = () => {
       };
 
       try {
-        await actor.register_user(captcha[0],captchaInputValue,userData).then((result) => {
+        await actor.register_user(captcha[0], captchaInputValue, userData).then((result) => {
           if (result.Ok) {
+            if (result.Ok .includes('User registered successfully with ID')){
+              toast.success("User registered successfully!");
+            }
+            else{
             toast.success(result.Ok); // Assuming 'Ok' contains the success message
             setIsSubmititng(false);
             window.location.href = "/dashboard";
-
-            //  navigate("/dashboard")
+            }
           } else if (result.Err) {
             toast.error(result.Err); // Assuming 'Err' contains the error message
             setIsSubmititng(false);
@@ -218,13 +227,11 @@ const UserRegistration = () => {
         toast.error(error.message);
         setIsSubmititng(false);
         console.error("Error sending data to the backend:", error);
-        navigate("/")
       } finally {
         setIsSubmititng(false);
       }
     } else {
       toast.error("Please signup with internet identity first");
-      navigate("/")
     }
   };
 
@@ -232,7 +239,6 @@ const UserRegistration = () => {
     console.log("error", val);
   };
 
-  
   return (
     <>
       <FormProvider {...methods}>
@@ -282,10 +288,11 @@ const UserRegistration = () => {
                               isCaptchaLoading={isCaptchaLoading}
                             />
                           </div>
+                          {iscaptchaSuccess &&
                           <div className="ml-2 flex items-center">
                             <button
                               id="refresh-icon"
-                              className={`${rotating ? "animate-spin" : ""}`}
+                              className=''
                               onClick={refreshCaptcha}
                               disabled={cooldown > 0}
                             >
@@ -296,7 +303,7 @@ const UserRegistration = () => {
                                 (Retry After {cooldown}s)
                               </span>
                             )}
-                          </div>
+                          </div>}
                         </div>
 
                         {iscaptchaSuccess && (
@@ -306,6 +313,7 @@ const UserRegistration = () => {
                               type="text"
                               placeholder="Enter captcha"
                               className="border border-gray-300 rounded p-2 w-full"
+                              onChange={() => setIsCaptchaFilled(true)} // Update state when input changes
                             />
                             {captchaError && (
                               <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
@@ -322,6 +330,7 @@ const UserRegistration = () => {
                         type="button"
                         className="py-2 px-4 text-gray-600 rounded hover:text-black border-gray-300 border-2"
                         onClick={handleBack}
+                        style={{ visibility: isInitialSubmit ? 'hidden' : 'visible' }} // Hide back button after initial submit
                         disabled={index === 0 || isInitialSubmit} // Disable back button after initial submission
                       >
                         <ArrowBackIcon fontSize="medium" className="mr-2" />
@@ -331,8 +340,9 @@ const UserRegistration = () => {
                       {captchaVisible ? (
                         <button
                           type="button"
-                          className="py-2 px-4 bg-[#D1E0FF] text-white rounded hover:bg-blue-600 border-2 border-[#B2CCFF] flex items-center"
+                          className="py-2 px-4 disabled:bg-[#D1E0FF] text-white rounded bg-blue-600 border-2 border-[#B2CCFF] flex items-center"
                           onClick={onFinalSubmit}
+                          disabled={!isCaptchaFilled} // Disable submit until captcha is filled
                         >
                           {isSubmitting ? (
                             <ThreeDots
@@ -345,7 +355,7 @@ const UserRegistration = () => {
                               wrapperStyle={{}}
                             />
                           ) : (
-                            "Final Submit"
+                            "Submit"
                           )}
                         </button>
                       ) : (
@@ -369,7 +379,7 @@ const UserRegistration = () => {
                                   wrapperStyle={{}}
                                 />
                               ) : (
-                                "Submit"
+                                "Next"
                               )}
                             </button>
                           ) : (
