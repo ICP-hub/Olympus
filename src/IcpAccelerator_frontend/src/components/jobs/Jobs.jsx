@@ -15,8 +15,8 @@ import {
   lenseSvgIcon,
   locationSvgIcon,
 } from "../Utils/Data/SvgData";
-import useFormatDateFromBigInt from "../../component/hooks/useFormatDateFromBigInt";
-import NoDataCard from "../../component/Mentors/Event/MentorAssociatedNoDataCard";
+import useFormatDateFromBigInt from "../../components/hooks/useFormatDateFromBigInt";
+
 import { formatFullDateFromBigInt } from "../Utils/formatter/formatDateFromBigInt";
 import LinkIcon from "@mui/icons-material/Link";
 import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";

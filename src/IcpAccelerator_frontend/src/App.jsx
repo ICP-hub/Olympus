@@ -7,30 +7,31 @@ import { mentorRegisteredHandlerRequest } from "./components/StateManagement/Red
 import { useAuth } from "./components/StateManagement/useContext/useAuth";
 import { areaOfExpertiseHandlerRequest } from "./components/StateManagement/Redux/Reducers/getAreaOfExpertise";
 import { typeOfProfileSliceHandlerRequest } from "./components/StateManagement/Redux/Reducers/getTypeOfProfile";
-import { getCurrentRoleStatusFailureHandler, setCurrentActiveRole, setCurrentRoleStatus } from "./components/StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
+import {
+  getCurrentRoleStatusFailureHandler,
+  setCurrentActiveRole,
+  setCurrentRoleStatus,
+} from "./components/StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
 import { userRegisteredHandlerRequest } from "./components/StateManagement/Redux/Reducers/userRegisteredData";
 import { multiChainHandlerRequest } from "./components/StateManagement/Redux/Reducers/getMultiChainList";
 // import NewHeader from "./component/Layout/Header/NewHeader";
 // import Header from "./component/Layout/Header/Header";
 import AppRoutes from "./AppRoutes";
 import ConnectWallet from "./models/ConnectWallet";
-import Loader from "./component/Loader/Loader";
-import Footer from "./components/Footer/Footer";
-import Navbar from "./components/Layout/Header/Navbar";
 import WarningMessage from "./ScreenWarning";
 import { founderRegisteredHandlerRequest } from "./components/StateManagement/Redux/Reducers/founderRegisteredData";
 import { investorRegisteredHandlerRequest } from "./components/StateManagement/Redux/Reducers/investorRegisteredData";
+import Loader from "./components/Loader/Loader";
 
 const App = () => {
   const actor = useSelector((currState) => currState.actors.actor);
   const identity = useSelector((currState) => currState.internet.identity);
-  const isAuthenticated = useSelector((currState) => currState.internet.isAuthenticated);
+  const isAuthenticated = useSelector(
+    (currState) => currState.internet.isAuthenticated
+  );
   const { reloadLogin } = useAuth();
   const [isModalOpen, setModalOpen] = useState(false);
   const dispatch = useDispatch();
-
-
-
 
   function getNameOfCurrentStatus(rolesStatusArray) {
     const currentStatus = rolesStatusArray.find(
@@ -41,25 +42,33 @@ const App = () => {
 
   function formatFullDateFromBigInt(bigIntDate) {
     const date = new Date(Number(bigIntDate / 1000000n));
-    const dateString = date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+    const dateString = date.toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    });
     return `${dateString}`;
   }
 
   function cloneArrayWithModifiedValues(arr) {
-    return arr.map(obj => {
+    return arr.map((obj) => {
       const modifiedObj = {};
 
-      Object.keys(obj).forEach(key => {
+      Object.keys(obj).forEach((key) => {
         if (Array.isArray(obj[key]) && obj[key].length > 0) {
-          if (key === 'approved_on' || key === "rejected_on" || key === "requested_on") {
+          if (
+            key === "approved_on" ||
+            key === "rejected_on" ||
+            key === "requested_on"
+          ) {
             // const date = new Date(Number(obj[key][0])).toLocaleDateString('en-US');
             const date = formatFullDateFromBigInt(obj[key][0]);
             modifiedObj[key] = date; // Convert bigint to string date
           } else {
-            modifiedObj[key] = obj[key][0]; 
+            modifiedObj[key] = obj[key][0];
           }
         } else {
-          modifiedObj[key] = obj[key]; 
+          modifiedObj[key] = obj[key];
         }
       });
 
@@ -67,17 +76,20 @@ const App = () => {
     });
   }
 
-
   const initialApi = async () => {
     try {
       const currentRoleArray = await actor.get_role_status();
       if (currentRoleArray && currentRoleArray.length !== 0) {
         const currentActiveRole = getNameOfCurrentStatus(currentRoleArray);
-        dispatch(setCurrentRoleStatus(cloneArrayWithModifiedValues(currentRoleArray)));
+        dispatch(
+          setCurrentRoleStatus(cloneArrayWithModifiedValues(currentRoleArray))
+        );
         dispatch(setCurrentActiveRole(currentActiveRole));
       } else {
         dispatch(
-          getCurrentRoleStatusFailureHandler("error-in-fetching-role-at-dashboard")
+          getCurrentRoleStatusFailureHandler(
+            "error-in-fetching-role-at-dashboard"
+          )
         );
         dispatch(setCurrentActiveRole(null));
       }
@@ -86,7 +98,6 @@ const App = () => {
       dispatch(setCurrentActiveRole(null));
     }
   };
-
 
   useEffect(() => {
     if (actor) {
@@ -101,7 +112,6 @@ const App = () => {
     }
   }, [actor, isAuthenticated, identity, dispatch]);
 
-
   useEffect(() => {
     if (isAuthenticated && identity) {
       dispatch(handleActorRequest());
@@ -110,8 +120,8 @@ const App = () => {
       dispatch(typeOfProfileSliceHandlerRequest());
       dispatch(userRegisteredHandlerRequest());
       dispatch(founderRegisteredHandlerRequest());
-dispatch(investorRegisteredHandlerRequest());      dispatch(mentorRegisteredHandlerRequest());
-
+      dispatch(investorRegisteredHandlerRequest());
+      dispatch(mentorRegisteredHandlerRequest());
     }
   }, [isAuthenticated, identity, dispatch]);
 
@@ -124,7 +134,6 @@ dispatch(investorRegisteredHandlerRequest());      dispatch(mentorRegisteredHand
   // }
   return (
     <>
-    
       <WarningMessage />
       <div className="bg-gray-100">
         <div className="container-lg mx-auto">

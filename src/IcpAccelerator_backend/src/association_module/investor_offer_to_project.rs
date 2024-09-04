@@ -213,13 +213,14 @@ pub fn accept_offer_from_investor_to_project(
                             }
                             
                             if let Some(capitalist) = state.vc_storage.get(&StoredPrincipal(sender_principal)) {
-                                let vc_assigned = project.params.vc_assigned.as_mut().unwrap();
-                                if !vc_assigned.contains(&capitalist.0.params) {
-                                    vc_assigned.push(capitalist.0.params.clone());
+                                if let Some(user_info) = state.user_storage.get(&StoredPrincipal(sender_principal)) {
+                                    let vc_assigned = project.params.vc_assigned.as_mut().unwrap();
+                                    let vc_tuple = (capitalist.0.params.clone(), user_info.0.clone());
+                                    if !vc_assigned.iter().any(|item| item.0 == vc_tuple.0 && item.1 == vc_tuple.1) {
+                                        vc_assigned.push(vc_tuple);
+                                    }
+                                    state.project_storage.insert(StoredPrincipal(caller()), projects.clone());
                                 }
-
-                                // Immediate commit to state
-                                state.project_storage.insert(StoredPrincipal(caller()), projects.clone());
                             }
                         }
                     }

@@ -214,21 +214,27 @@ pub fn accept_offer_from_project_to_mentor(offer_id: String, response_message: S
                             project.params.mentors_assigned = Some(Vec::new());
                         }
 
-                        if let Some(mentor_profile) = state.mentor_storage.get(&stored_mentor_id_copy) {
+                        if let (Some(mentor_profile), Some(user_info)) = (
+                            state.mentor_storage.get(&stored_mentor_id_copy),
+                            state.user_storage.get(&stored_mentor_id_copy)
+                        ) {
                             let mentors_assigned = project.params.mentors_assigned.as_mut().unwrap();
-                            if !mentors_assigned.contains(&mentor_profile.0.profile) {
-                                mentors_assigned.push(mentor_profile.0.profile.clone());
-                                ic_cdk::println!("Added mentor to project. Mentor_id: {:?}", stored_mentor_id);
+                            let mentor_tuple = (mentor_profile.0.profile.clone(), user_info.0.clone());
+
+                            if !mentors_assigned.iter().any(|item| item.0 == mentor_tuple.0 && item.1 == mentor_tuple.1) {
+                                mentors_assigned.push(mentor_tuple);
+                                ic_cdk::println!("Added mentor to project. Mentor_id: {:?}", stored_mentor_id_copy);
                             }
                         } else {
-                            ic_cdk::println!("No mentor profile found for mentor_id: {:?}", stored_mentor_id_copy);
+                            ic_cdk::println!("No mentor profile or user information found for mentor_id: {:?}", stored_mentor_id_copy);
                         }
 
                         state.project_storage.insert(StoredPrincipal(sender_principal), projects.clone());
                     } else {
                         ic_cdk::println!("Project with id: {} not found in project storage.", project_id);
                     }
-                } else {
+                }
+                else {
                     ic_cdk::println!("No projects found for sender_principal: {:?}", sender_principal);
                 }
             } else {

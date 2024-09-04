@@ -3,8 +3,8 @@
 set -e
 
 # remove ids
-NUM_MENTORS=5
-START=1
+NUM_MENTORS=4
+START=3
 
 # Get the default identity
 DEFAULT_IDENTITY=$(dfx identity whoami)
