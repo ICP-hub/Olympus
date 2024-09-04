@@ -17,10 +17,10 @@ import Avatar from "@mui/material/Avatar";
 
 const EventRequestCard = () => {
   const [filterOpen, setFilterOpen] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState("all");
-  const [selectedType, setSelectedType] = useState("all");
-  const [appliedCategory, setAppliedCategory] = useState("all");
-  const [appliedType, setAppliedType] = useState("all");
+  const [selectedCategory, setSelectedCategory] = useState("project_data");
+  const [selectedType, setSelectedType] = useState("pending");
+  const [appliedCategory, setAppliedCategory] = useState("project_data");
+  const [appliedType, setAppliedType] = useState("pending");
   const [events, setEvents] = useState([]);
   const [loadingIndexes, setLoadingIndexes] = useState({});
   const [selectedUserData, setSelectedUserData] = useState(null);
@@ -32,6 +32,7 @@ const EventRequestCard = () => {
     setFilterOpen(!filterOpen);
   };
 
+  console.log('appliedType',appliedType)
   const handleApply = () => {
     setAppliedCategory(selectedCategory);
     setAppliedType(selectedType);
@@ -222,7 +223,7 @@ const EventRequestCard = () => {
                   value={selectedType}
                   className="block w-full bg-white border border-gray-300 rounded-md shadow-sm focus:border-gray-400 focus:ring focus:ring-opacity-50 px-3 py-2"
                 >
-                  <option value="all">All</option>
+                  {/* <option value="all">All</option> */}
                   <option value="pending">Pending</option>
                   <option value="approved">Accepted</option>
                   <option value="declined">Rejected</option>
@@ -367,7 +368,7 @@ const EventRequestCard = () => {
                           <>
                             <button
                               className="mr-2 mb-2 border border-[#097647] bg-[#EBFDF3] text-[#097647] px-3 py-1 rounded-full"
-                              // onClick={() => handleAction("Approve", index)}
+                              onClick={() => handleAction("Approve", index)}
                               disabled={loadingIndexes[index] === "Approve"}
                             >
                               Accept
@@ -386,7 +387,7 @@ const EventRequestCard = () => {
                             </button>
                             <button
                               className="mr-2 mb-2 border border-[#C11574] bg-[#FDF2FA] text-[#C11574] px-3 py-1 rounded-full"
-                              // onClick={() => handleAction("Reject", index)}
+                              onClick={() => handleAction("Reject", index)}
                               disabled={loadingIndexes[index] === "Reject"}
                             >
                               Reject

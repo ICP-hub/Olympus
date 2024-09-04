@@ -210,6 +210,8 @@ const UserRegistration = () => {
           if (result.Ok) {
             if (result.Ok .includes('User registered successfully with ID')){
               toast.success("User registered successfully!");
+              setIsSubmititng(false);
+              window.location.href = "/dashboard";
             }
             else{
             toast.success(result.Ok); // Assuming 'Ok' contains the success message
