@@ -23,6 +23,7 @@ import {
   FaPlus,
   FaTrash,
 } from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6";
 import { LanguageIcon } from '../UserRegistration/DefaultLink';
 
 // Validation schema using Yup
@@ -104,6 +105,7 @@ const RegionalHubModal = ({ onClose }) => {
         "snapchat.com": <FaSnapchat className={`text-yellow-400 ${size}`} />,
         "whatsapp.com": <FaWhatsapp className={`text-green-600 ${size}`} />,
         "medium.com": <FaMedium className={`text-black ${size}`} />,
+        "x.com": <FaXTwitter className={`text-black ${size}`} />,
       };
       return icons[domain] || <LanguageIcon />;
     } catch (error) {

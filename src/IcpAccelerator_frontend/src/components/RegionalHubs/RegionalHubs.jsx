@@ -182,7 +182,7 @@ import {
   FaWhatsapp,
   FaMedium,
 } from "react-icons/fa";
-
+import { FaXTwitter } from "react-icons/fa6";
 const DiscoverRegionalHubs = () => {
   const actor = useSelector((currState) => currState.actors.actor);
   const [allHubsData, setAllHubsData] = useState([]);
@@ -206,6 +206,7 @@ const DiscoverRegionalHubs = () => {
         "snapchat.com": <FaSnapchat className={`text-yellow-400 ${size}`} />,
         "whatsapp.com": <FaWhatsapp className={`text-green-600 ${size}`} />,
         "medium.com": <FaMedium className={`text-black ${size}`} />,
+        "x.com": <FaXTwitter className={`text-black ${size}`} />,
       };
       return icons[domain] || <LanguageIcon />;
     } catch (error) {
