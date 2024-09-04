@@ -52,6 +52,8 @@ export default function ProjectAssociationFilter({
         { value: "Associates", label: "Associates" },
         { value: "FundRaised", label: "Fund Raised" },
         { value: "Document", label: "Document" },
+        { value: "CohortRequest", label: "Cohort Request" },
+
       ];
     } else if (userCurrentRoleStatusActiveRole === "mentor") {
       return [
@@ -59,7 +61,10 @@ export default function ProjectAssociationFilter({
         { value: "CohortRequest", label: "Cohort Request" },
       ];
     } else if (userCurrentRoleStatusActiveRole === "vc") {
-      return [{ value: "Associates", label: "Associates" }];
+      return [{ value: "Associates", label: "Associates" },
+        { value: "CohortRequest", label: "Cohort Request" },
+
+      ];
     } else {
       return [];
     }
@@ -179,6 +184,16 @@ export default function ProjectAssociationFilter({
           result = await response.api_data; // Await the promise inside api_data
           setActiveTabTypeData(response.activeTab);
         }
+        else if (selectedType.value === "CohortRequest") {
+          const response =  fetchRequestCohort(
+            status?.value,
+            userCurrentRoleStatusActiveRole,
+            actor,
+            userPrincipal
+          );
+          result = await response.api_data; // Await the promise inside api_data
+          setActiveTabTypeData(response.activeTab);
+        }
       } else if (userCurrentRoleStatusActiveRole === "mentor") {
         if (selectedType.value === "Associates") {
           const response = fetchRequestAssociation(
@@ -217,6 +232,16 @@ export default function ProjectAssociationFilter({
           setSelectedTypeData(response.selectedStatus);
           setActiveTabTypeData(response.activeTab)
 
+        }
+        else if (selectedType.value === "CohortRequest") {
+          const response =  fetchRequestCohort(
+            status?.value,
+            userCurrentRoleStatusActiveRole,
+            actor,
+            userPrincipal
+          );
+          result = await response.api_data; // Await the promise inside api_data
+          setActiveTabTypeData(response.activeTab);
         }
       }
       console.log("data", result);
