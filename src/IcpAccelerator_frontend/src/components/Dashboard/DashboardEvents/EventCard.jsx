@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import InfiniteScroll from "react-infinite-scroll-component";
 import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
 import { useSelector } from "react-redux";
 import { IcpAccelerator_backend } from "../../../../../declarations/IcpAccelerator_backend/index";
@@ -6,7 +7,6 @@ import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 import { useNavigate } from "react-router-dom";
 import parse from "html-react-parser";
 import images from "../../../../assets/images/bg.png";
-import { formatFullDateFromSimpleDate } from "../../Utils/formatter/formatDateFromBigInt";
 import NoData from "../../NoDataCard/NoData";
 
 const EventCard = ({ selectedEventType }) => {
@@ -14,11 +14,10 @@ const EventCard = ({ selectedEventType }) => {
   const [noData, setNoData] = useState(false);
   const [allLiveEventsData, setAllLiveEventsData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [countData, setCountData] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-  const [cohortIds, setCohortIds] = useState([]);
-
+console.log("my cohort data lenght",allLiveEventsData.length)
   const navigate = useNavigate();
 
   const handleClick = (cohort_id) => {
@@ -26,82 +25,95 @@ const EventCard = ({ selectedEventType }) => {
   };
 
   useEffect(() => {
-    let isMounted = true;
-  
-    const getAllLiveEvents = async (caller, page) => {
-      setIsLoading(true);
-      try {
-        const result = await caller.get_all_cohorts({
-          page_size: itemsPerPage,
-          page,
-        });
-  
-        console.log("API Response:", result);
-  
-        if (isMounted) {
-          let filteredEvents = [];
-  
-          // Adjusted logic to map the correct event data
-          switch (selectedEventType) {
-            case 'Ongoing':
-              filteredEvents = result.present_cohorts ?? [];
-              break;
-            case 'Upcoming':
-              filteredEvents = result.upcoming_cohorts ?? [];
-              break;
-            case 'Past':
-              filteredEvents = result.past_cohorts ?? [];
-              break;
-            case 'All':
-            default:
-              filteredEvents = result.data ?? [];
-              break;
-          }
-  
-          setAllLiveEventsData(filteredEvents);
-          setCountData(filteredEvents.length);
-          setNoData(filteredEvents.length === 0);
-        }
-      } catch (error) {
-        if (isMounted) {
-          setAllLiveEventsData([]);
-          setCountData(0);
-          setNoData(true);
-          console.error("Error in get_all_cohorts:", error);
-        }
-      } finally {
-        if (isMounted) {
-          setIsLoading(false);
-        }
-      }
-    };
-  
-    if (actor) {
-      getAllLiveEvents(actor, currentPage);
-    } else {
-      getAllLiveEvents(IcpAccelerator_backend, currentPage);
-    }
-  
-    return () => {
-      isMounted = false;
-    };
-  }, [actor, currentPage, itemsPerPage, selectedEventType]);
-  
-  
+    fetchEvents(currentPage);
+  }, [actor, currentPage, selectedEventType]);
 
-  useEffect(() => {
-    if (allLiveEventsData?.length > 0) {
-      const cohortIdsArray = allLiveEventsData.map((eventData) => eventData.cohort_id);
-      setCohortIds(cohortIdsArray);
+  const fetchEvents = async () => {
+    setIsLoading(true);
+    try {
+      const result = await (actor || IcpAccelerator_backend).get_all_cohorts({
+        page_size: itemsPerPage,
+        page:currentPage,
+      });
+
+      let filteredEvents = [];
+      switch (selectedEventType) {
+        case "Ongoing":
+          filteredEvents = result.present_cohorts ?? [];
+          break;
+        case "Upcoming":
+          filteredEvents = result.upcoming_cohorts ?? [];
+          break;
+        case "Past":
+          filteredEvents = result.past_cohorts ?? [];
+          break;
+        case "All":
+        default:
+          filteredEvents = result.data ?? [];
+          break;
+      }
+
+      if (filteredEvents.length > 0) {
+        setAllLiveEventsData((prevEvents) => [
+          ...prevEvents,
+          ...filteredEvents,
+        ]);
+      } else {
+        setHasMore(false);
+      }
+      setNoData(filteredEvents.length === 0);
+    } catch (error) {
+      console.error("Error in get_all_cohorts:", error);
+      setNoData(true);
+      setHasMore(false);
+    } finally {
+      setIsLoading(false);
     }
-  }, [allLiveEventsData]);
+  };
+
+  const loadMore = () => {
+    if (!isLoading && hasMore) {
+      setCurrentPage((prevPage) => {
+        const newPage = prevPage + 1;
+        fetchEvents(actor, newPage); // Fetch data for the next page
+        return newPage;
+      });
+    }
+  };
+  const refresh = () => {
+    if (actor) {
+      fetchEvents(actor, 1); // Fetch the data starting from the first page
+    }
+  };
+  // const loadMore = () => {
+  //   if (hasMore && !isLoading) {
+  //     setCurrentPage((prevPage) => prevPage + 1);
+  //   }
+  // };
 
   return (
     <div>
-      {isLoading ? (
-        <div>Loading...</div>
-      ) : allLiveEventsData.length > 0 ? (
-        <div>
+      {allLiveEventsData.length > 0 ? (
+             <InfiniteScroll
+            dataLength={allLiveEventsData.length}
+            next={loadMore}
+            hasMore={hasMore}
+            loader={<h4>Loading more...</h4>}
+            endMessage={<p>No more data available</p>}
+            refreshFunction={refresh}
+            pullDownToRefresh
+            pullDownToRefreshThreshold={50}
+            pullDownToRefreshContent={
+              <h3 style={{ textAlign: "center" }}>
+                &#8595; Pull down to refresh
+              </h3>
+            }
+            releaseToRefreshContent={
+              <h3 style={{ textAlign: "center" }}>
+                &#8593; Release to refresh
+              </h3>
+            }
+          >
           {allLiveEventsData.map((data, index) => {
             const image = data?.cohort?.cohort_banner[0]
               ? uint8ArrayToBase64(data?.cohort?.cohort_banner[0])
@@ -125,15 +137,9 @@ const EventCard = ({ selectedEventType }) => {
                   }
                 )
               : "";
-            const deadline = data?.cohort?.deadline
-              ? new Date(data?.cohort?.deadline).toLocaleDateString()
-              : "";
             const desc = data?.cohort?.description ?? "";
-            const tags = data?.cohort?.tags ?? [];
-            const seats = data?.cohort?.no_of_seats ?? 0;
-            const start_date = data?.cohort?.start_date ?? "";
-            const funding = data?.cohort?.funding_amount ?? "";
             const country = data?.cohort?.country ?? "";
+            const funding = data?.cohort?.funding_amount ?? "";
 
             return (
               <div
@@ -148,7 +154,7 @@ const EventCard = ({ selectedEventType }) => {
                         {launch_date} – {end_date}
                       </p>
                       <p className="text-sm font-normal">
-                        Start at: {start_date}
+                        Start at: {new Date(data?.cohort?.start_date).toLocaleDateString("en-US")}
                       </p>
                     </div>
                     <div className="w-[240px] h-[172px]">
@@ -179,16 +185,6 @@ const EventCard = ({ selectedEventType }) => {
                         <span className="text-sm text-[#121926]">
                           ${funding}
                         </span>
-                        <div className="flex -space-x-1">
-                          {data?.cohort?.attendees?.map((attendee, index) => (
-                            <img
-                              key={index}
-                              src={attendee}
-                              alt="attendee"
-                              className="w-6 h-6 rounded-full border-2 border-white"
-                            />
-                          ))}
-                        </div>
                       </div>
                     </div>
                   </div>
@@ -196,10 +192,10 @@ const EventCard = ({ selectedEventType }) => {
               </div>
             );
           })}
-        </div>
+        </InfiniteScroll>
       ) : (
         <div className="flex justify-center items-center">
-          <NoData message={"No Cohort Available"} />
+          {isLoading ? <div>Loading...</div> : <NoData message={"No Cohort Available"} />}
         </div>
       )}
     </div>
