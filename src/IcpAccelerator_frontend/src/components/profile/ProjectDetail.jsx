@@ -175,11 +175,13 @@ console.log("id aa",projectFullData?.[0]?.[0]?.uid)
     }));
     // Convert project_area_of_focus array to a comma-separated string
     let projectAreaOfFocusString = '';
-  if (Array.isArray(data.project_area_of_focus)) {
-    projectAreaOfFocusString = data.project_area_of_focus.map(option => option.value.replace(/\"/g, '')).join(", ");
-  } else if (typeof data.project_area_of_focus === "string") {
-    projectAreaOfFocusString = data.project_area_of_focus;
-  }
+    if (Array.isArray(data.project_area_of_focus)) {
+        projectAreaOfFocusString = data.project_area_of_focus
+            .map(option => option.value.replace(/\"/g, ''))  // Ensure no extra quotes
+            .join(", ");
+    } else if (typeof data.project_area_of_focus === "string") {
+        projectAreaOfFocusString = data.project_area_of_focus;
+    }
   
     const reasonToJoinString = Array.isArray(data.reason_to_join_incubator)
     ? data.reason_to_join_incubator.map((option) => option.value).join(", ")
