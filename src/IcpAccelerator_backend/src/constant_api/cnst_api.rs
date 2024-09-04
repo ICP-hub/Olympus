@@ -34,6 +34,7 @@ pub fn get_multichain_list() -> Vec<String> {
         "Ethereum".to_string(),
         "Polygon".to_string(),
         "Arbitrum".to_string(),
+        "Ripple".to_string(),
         "Optimism".to_string(),
         "Base".to_string(),
         "zkSync".to_string(),
@@ -67,6 +68,15 @@ pub fn get_multichain_list() -> Vec<String> {
         "Evmos".to_string(),
         "Osmosis".to_string(),
         "Nordek".to_string(),
+        "TRON".to_string(),
+        "EOS".to_string(),
+        "TON".to_string(),
+        "ZKSync Era".to_string(),
+        "NEAR".to_string(),
+        "Blast".to_string(),
+        "Immutable X".to_string(),
+        "WAX".to_string(),
+        "Tezos".to_string(),
     ];
     chains
 }
