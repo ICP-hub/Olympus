@@ -482,7 +482,7 @@ PROJECT
         })}
           </InfiniteScroll>
       ) : (
-        <div><NoData message={"No Projects Posted Yet"} /></div>
+        <div className="flex justify-center"><NoData message={"No Projects Posted Yet"} /></div>
       )}
       {showRatingModal && (
         <RatingModal

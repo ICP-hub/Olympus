@@ -328,7 +328,7 @@ MENTOR
             })}
           </InfiniteScroll>
         ) : (
-          <div><NoData message={"No Mentor Present Yet"} /></div>
+          <div className="flex justify-center"><NoData message={"No Mentor Present Yet"} /></div>
         )}
         {showRatingModal && (
         <RatingModal

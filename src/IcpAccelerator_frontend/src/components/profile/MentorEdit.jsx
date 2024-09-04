@@ -27,6 +27,13 @@ const MentorEdit = () => {
   const typeOfProfile = useSelector(
     (currState) => currState.profileTypes.profiles
   );
+
+
+  useEffect(() => {
+    if (actor && isAuthenticated) {
+      dispatch(mentorRegisteredHandlerRequest());
+    }
+  }, [dispatch, isAuthenticated, actor]);
   const [reasonOfJoiningOptions] = useState([
     { value: "listing_and_promotion", label: "Project listing and promotion" },
     { value: "Funding", label: "Funding" },
@@ -38,15 +45,9 @@ const MentorEdit = () => {
     },
     { value: "Jobs", label: "Jobs" },
   ]);
+  
   const [reasonOfJoiningSelectedOptions, setReasonOfJoiningSelectedOptions] =
     useState([]);
-
-  useEffect(() => {
-    if (actor && isAuthenticated) {
-      dispatch(mentorRegisteredHandlerRequest());
-    }
-  }, [dispatch, isAuthenticated, actor]);
-
   const validationSchema = yup.object().shape({
     preferred_icp_hub: yup.string().required("ICP Hub selection is required"),
     multi_chain: yup.string().required("Required").oneOf(["true", "false"], "Invalid value"),
@@ -162,28 +163,6 @@ const MentorEdit = () => {
     categoryOfMentoringServiceSelectedOptions,
     setCategoryOfMentoringServiceSelectedOptions,
   ] = useState([]);
-  // const defaultValues = {
-  //   preferred_icp_hub: mentorFullData?.profile?.preferred_icp_hub ?? "",
-  //   multi_chain: mentorFullData?.profile?.multi_chain ?? null,
-  //   multichain: mentorFullData?.profile?.multichain?.join(", "),
-  //   category_of_mentoring_service:
-  //     mentorFullData[0].profile?.category_of_mentoring_service ?? "",
-
-  //   icp_hub_or_spoke: mentorFullData[0].profile?.icp_hub_or_spoke ?? null,
-  //   hub_owner: mentorFullData[0].profile?.hub_owner ?? "",
-  //   years_of_mentoring: mentorFullData[0].profile?.years_of_mentoring ?? 0,
-  //   website: mentorFullData[0].profile?.website?.[0] ?? "",
-  //   reason_for_joining: mentorFullData[0].profile?.reason_for_joining?.[0],
-  //   preferred_icp_hub:
-  //     mentorFullData[0].profile?.preferred_icp_hub?.[0] ?? " chiku sangwan",
-  //   multichain: mentorFullData[0].profile?.multichain?.[0] ?? "",
-  //   area_of_expertise: mentorFullData[0].profile?.area_of_expertise ?? "",
-  //   // multichain: mentorFullData[0].profile?.multichain?.join(", ") ?? "",
-  //   links: mentorFullData[0].profile?.links ?? "",
-  //   existing_icp_project_porfolio:
-  //     mentorFullData[0].profile?.existing_icp_project_porfolio ?? "",
-  // };
-  // console.log("defalult values", defaultValues);
 
   const {
     register,
@@ -220,56 +199,7 @@ const MentorEdit = () => {
     setEdit({ ...edit, [field]: true });
   };
 
-  // const handleSave = async () => {
-  //   if (Object.keys(errors).length === 0) {
-  //     try {
-  //       const linksValue = getValues("links");
-  //       const mentorData = {
-  //         preferred_icp_hub: getValues("preferred_icp_hub")
-  //           ? [getValues("preferred_icp_hub")]
-  //           : null,
-  //         // multi_chain: getValues("multi_chain") === "Yes" ? "Yes" : null,
-  //         multichain: getValues("multichain")
-  //           ? getValues("multichain").split(", ")
-  //           : null,
-  //         category_of_mentoring_service:
-  //           getValues("category_of_mentoring_service") || null,
-  //         icp_hub_or_spoke: getValues("icp_hub_or_spoke") === "Yes",
-  //         hub_owner: getValues("hub_owner") ? [getValues("hub_owner")] : null,
-  //         years_of_mentoring: getValues("years_of_mentoring") || null,
-  //         mentor_linkedin_url: getValues("mentor_linkedin_url") || null,
-  //         website: getValues("website") ? [getValues("website")] : null,
-  //         reason_for_joining: getValues("reason_for_joining")
-  //           ? [getValues("reason_for_joining")]
-  //           : null,
-  //         links: linksValue?.links
-  //           ? [
-  //               linksValue.links.map((val) => ({
-  //                 link: val?.link ? [val.link] : [],
-  //               })),
-  //             ] // PREPARE LINKS DATA
-  //           : [],
-  //         existing_icp_mentor: false,
-  //         area_of_expertise: getValues("area_of_expertise") || null,
-  //         existing_icp_project_porfolio:
-  //           getValues("existing_icp_project_porfolio") || null,
-  //       };
 
-  //       console.log("mentorData:", mentorData);
-
-  //       const result = await actor.update_mentor(mentorData);
-  //       if (result && result.includes("approval request is sent")) {
-  //         toast.success("Approval request is sent");
-  //         window.location.href = "/";
-  //       } else {
-  //         toast.error(result);
-  //       }
-  //     } catch (error) {
-  //       toast.error("Error updating mentor data");
-  //       console.error("Error:", error);
-  //     }
-  //   }
-  // };
   const { fields, append, remove } = useFieldArray({
     name: "links",
     control,
@@ -322,12 +252,6 @@ const MentorEdit = () => {
         : typeof data.area_of_expertise === "string"
             ? data.area_of_expertise.split(",").map(item => item.trim())
             : [];
-            const reason_for_joining = Array.isArray(data.reasons_to_join_platform) && data.reasons_to_join_platform.length > 0
-            ? data.reasons_to_join_platform
-            : typeof data.reasons_to_join_platform === "string" && data.reasons_to_join_platform.trim() !== ""
-                ? data.reasons_to_join_platform.split(",").map(item => item.trim())
-                : mentorFullData[0]?.profile?.reason_for_joining || [];
-    
     const mentorData = {
         preferred_icp_hub: [data?.preferred_icp_hub || ""],
         icp_hub_or_spoke: data?.icp_hub_or_spoke === "true" ? true : false,
@@ -346,8 +270,9 @@ const MentorEdit = () => {
         area_of_expertise: area_of_expertise ? area_of_expertise : [],
         links: updatedSocialLinks.length > 0 ? [updatedSocialLinks] : [],
 
-        // Ensure reason_for_joining is always sent, either with a value or as None (empty array)
-        reason_for_joining: reason_for_joining.length > 0 ? reason_for_joining : [],
+        reason_for_joining: data.reasons_to_join_platform
+    ? [data.reasons_to_join_platform]
+    : [],
     };
 
     console.log("my submit mentorData on submit", mentorData);
@@ -373,18 +298,17 @@ const MentorEdit = () => {
 
 
 
-
+const setReasonOfJoiningSelectedOptionsHandler = (val) => {
+  setReasonOfJoiningSelectedOptions(
+    val && Array.isArray(val)
+      ? val.map((reason) => ({ value: reason, label: reason }))
+      : []
+  );
+};
   // set mentor values handler
   const setMentorValuesHandler = (val) => {
     console.log("mera mentor data aa gya in val",val)
     if (val) {
-      setValue("country", val?.user_data?.country ?? "");
-      setValue("domains_interested_in", val?.user_data?.area_of_interest ?? "");
-      setInterestedDomainsSelectedOptionsHandler(
-        val?.user_data?.area_of_interest ?? null
-      );
-      // setImagePreview(val?.user_data?.profile_picture?.[0] ?? "");
-
       setValue(
         "type_of_profile",
         val[0]?.profile?.type_of_profile?.[0]
@@ -393,11 +317,12 @@ const MentorEdit = () => {
       );
       setValue(
         "reasons_to_join_platform",
-        val[0]?.profile?.reason_to_join
-          ? val[0]?.profile?.reason_to_join.join(", ")
+        val[0]?.profile?.reason_for_joining?.length
+          ? val[0]?.profile?.reason_for_joining.join(", ")
           : ""
       );
-      setReasonOfJoiningSelectedOptionsHandler(val?.user_data?.reason_to_join);
+      setReasonOfJoiningSelectedOptionsHandler(val[0]?.profile?.reason_for_joining);
+
       setValue("area_of_expertise", val[0]?.profile?.area_of_expertise?.[0] ?? "");
       setValue(
         "category_of_mentoring_service",
@@ -510,14 +435,7 @@ const MentorEdit = () => {
     );
   };
 
-  // default reasons set function
-  const setReasonOfJoiningSelectedOptionsHandler = (val) => {
-    setReasonOfJoiningSelectedOptions(
-      val && val.length > 0 && val[0].length > 0
-        ? val[0].map((reason) => ({ value: reason, label: reason }))
-        : []
-    );
-  };
+
   const setCategoryOfMentoringServiceSelectedOptionsHandler = (val) => {
     setCategoryOfMentoringServiceSelectedOptions(
       val
@@ -930,89 +848,54 @@ console.log("mentor full data ...../",mentorFullData)
             REASON FOR JOINING THIS PLATFORM
           </label>
           {edit.reason_for_joining ? (
-            <ReactSelect
-              isMulti
-              menuPortalTarget={document.body}
-              menuPosition={"fixed"}
-              styles={{
-                menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-                control: (provided, state) => ({
-                  ...provided,
-                  paddingBlock: "2px",
-                  borderRadius: "8px",
-                  border: errors.reasons_to_join_platform
-                    ? "2px solid #ef4444"
-                    : "2px solid #737373",
-                  backgroundColor: "rgb(249 250 251)",
-                  "&::placeholder": {
-                    color: errors.reasons_to_join_platform
-                      ? "#ef4444"
-                      : "currentColor",
-                  },
-                  display: "flex",
-                  overflowX: "auto",
-                  maxHeight: "43px",
-                  "&::-webkit-scrollbar": {
-                    display: "none",
-                  },
-                }),
-                valueContainer: (provided, state) => ({
-                  ...provided,
-                  overflow: "scroll",
-                  maxHeight: "40px",
-                  scrollbarWidth: "none",
-                }),
-                placeholder: (provided, state) => ({
-                  ...provided,
-                  color: errors.reasons_to_join_platform
-                    ? "#ef4444"
-                    : "rgb(107 114 128)",
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                }),
-                multiValue: (provided) => ({
-                  ...provided,
-                  display: "inline-flex",
-                  alignItems: "center",
-                }),
-                multiValueRemove: (provided) => ({
-                  ...provided,
-                  display: "inline-flex",
-                  alignItems: "center",
-                }),
-              }}
-              value={reasonOfJoiningSelectedOptions}
-              options={reasonOfJoiningOptions}
-              classNamePrefix="select"
-              className="basic-multi-select w-full text-start"
-              placeholder="Select your reasons to join this platform"
-              name="reasons_to_join_platform"
-              onChange={(selectedOptions) => {
-                if (selectedOptions && selectedOptions.length > 0) {
-                  setReasonOfJoiningSelectedOptions(selectedOptions);
-                  clearErrors("reasons_to_join_platform");
-                  setValue(
-                    "reasons_to_join_platform",
-                    selectedOptions.map((option) => option.value).join(", "),
-                    { shouldValidate: true }
-                  );
-                } else {
-                  setReasonOfJoiningSelectedOptions([]);
-                  setValue("reasons_to_join_platform", "", {
-                    shouldValidate: true,
-                  });
-                  setError("reasons_to_join_platform", {
-                    type: "required",
-                    message: "Selecting a reason is required",
-                  });
-                }
-              }}
-            />
+             <ReactSelect
+             isMulti
+             menuPortalTarget={document.body}
+             menuPosition={"fixed"}
+             styles={{
+               menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+               control: (provided, state) => ({
+                 ...provided,
+                 paddingBlock: "2px",
+                 borderRadius: "8px",
+                 border: errors.reasons_to_join_platform
+                   ? "2px solid #ef4444"
+                   : "2px solid #737373",
+                 backgroundColor: "rgb(249 250 251)",
+               }),
+             }}
+             value={reasonOfJoiningSelectedOptions}
+             options={reasonOfJoiningOptions}
+             classNamePrefix="select"
+             className="basic-multi-select w-full text-start"
+             placeholder="Select your reasons to join this platform"
+             name="reasons_to_join_platform"
+             onChange={(selectedOptions) => {
+              if (selectedOptions && selectedOptions.length > 0) {
+                setReasonOfJoiningSelectedOptions(selectedOptions);
+                clearErrors("reasons_to_join_platform");
+                setValue(
+                  "reasons_to_join_platform",
+                  selectedOptions.map((option) => option.value).join(", "),
+                  { shouldValidate: true }
+                );
+              } else {
+                setReasonOfJoiningSelectedOptions([]);
+                setValue("reasons_to_join_platform", "", {
+                  shouldValidate: true,
+                });
+                setError("reasons_to_join_platform", {
+                  type: "required",
+                  message: "Selecting a reason is required",
+                });
+              }
+            }}
+            
+           />
           ) : (
             <div className="flex flex-wrap gap-2 cursor-pointer py-1">
             {reasons_to_join_platform && Array.isArray(reasons_to_join_platform) && reasons_to_join_platform.length > 0 &&
-              reasons_to_join_platform.map((reason, index) => (
+              reasons_to_join_platform[0].split(', ').map((reason, index) => (
                 <span
                   key={index}
                   className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1"
@@ -1021,6 +904,7 @@ console.log("mentor full data ...../",mentorFullData)
                 </span>
               ))}
           </div>
+          
           
           )}
         </div>

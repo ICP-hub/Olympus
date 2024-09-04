@@ -343,7 +343,7 @@ const DiscoverInvestor = ({onInvestorCountChange }) => {
         })}
         </InfiniteScroll>
       ) : (
-        <div><NoData message={"No Investor Present Yet"} /></div>
+        <div className="flex justify-center"><NoData message={"No Investor Present Yet"} /></div>
       )}
       {isAddInvestorModalOpen && (
         <AddAMentorRequestModal
