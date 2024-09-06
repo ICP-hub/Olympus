@@ -30,6 +30,7 @@ import { LanguageIcon } from '../UserRegistration/DefaultLink';
 const validationSchema = Yup.object().shape({
   name: Yup.string().required('Project name is required'),
   flag: Yup.mixed().required('Banner image is required'),
+  website_link: Yup.mixed().required('Website Link is required'),
   description: Yup.string().required('Description is required').max(300, 'Description cannot exceed 300 characters'),
 });
 
@@ -115,7 +116,7 @@ const RegionalHubModal = ({ onClose }) => {
 
 
 const onSubmit = async (data) => {
-
+  console.log("On Submit k andr aagya",data)
     setIsSubmitting(true);
     console.log("On Submit k andr aagya")
     try {
@@ -127,8 +128,7 @@ const onSubmit = async (data) => {
         flag: imageData ? [imageData] : [],
         description: data.description ? [data.description] : [],
         name: data.name ? [data.name] : [],
-        
-        
+        website:data.website? [data.website] : [],
         links: data?.links
           ? [data.links.map((val) => ({ links: val?.link ? [val.link] : [] }))]
           : [],
@@ -260,7 +260,23 @@ const onSubmit = async (data) => {
                 </span>
               )}
             </div>
-            
+            {/* website link Input */}
+            <div className="mb-2">
+              <label className="block mb-1">
+                Website Link<span className="text-red-500">*</span>
+              </label>
+              <input
+                {...register("website")}
+                className={`border ${errors.website ? "border-red-500" : "border-[#737373]"} rounded-md shadow-sm text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                placeholder="Enter  website"
+                rows="4"
+              />
+              {errors.website && (
+                <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                  {errors.website?.message}
+                </span>
+              )}
+            </div>
             {/* Description Input */}
             <div className="mb-2">
               <label className="block mb-1">
