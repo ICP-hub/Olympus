@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState ,useEffect} from "react";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import ProjectRegister1 from "./ProjectRegister1";
 import ProjectRegister2 from "./ProjectRegister2";
@@ -9,7 +9,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
 import { useForm, FormProvider } from "react-hook-form";
 import toast, { Toaster } from "react-hot-toast";
-import { useSelector } from "react-redux";
+import { useSelector,useDispatch } from "react-redux";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { ThreeDots } from "react-loader-spinner";
 import { validationSchema } from "./projectValidation";
@@ -23,7 +23,8 @@ const ProjectRegisterMain = ({ isopen }) => {
   const [formData, setFormData] = useState({}); // STORES ACCUMULATED FORM DATA
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  const [isfetchCall,setFetchCall]=useState(false)
+  const dispatch = useDispatch(); 
   // INITIALIZE REACT HOOK FORM WITH VALIDATION SCHEMA
   const methods = useForm({
     resolver: yupResolver(validationSchema),
@@ -241,12 +242,16 @@ const ProjectRegisterMain = ({ isopen }) => {
           toast.error(result); // Show error toast with the returned message
           setModalOpen(false);
           setIsSubmitting(false);
-          navigate("/dashboard/profile");
+          setFetchCall(true);
+          // window.location.pathname = "/dashboard/profile"
+          navigate("/dashboard");
         } else {
           toast.success("Project registered successfully!"); // Show success message
           setModalOpen(false);
           setIsSubmitting(false);
-          navigate("/dashboard/profile");
+          setFetchCall(true);
+          // window.location.pathname = "/dashboard/profile"
+          navigate("/dashboard");
         }
       } catch (error) {
         console.log(error.message);
@@ -259,6 +264,11 @@ const ProjectRegisterMain = ({ isopen }) => {
     }
   };
 
+  useEffect(() => {
+    if(isfetchCall){
+    dispatch(rolesHandlerRequest());
+  }
+  }, [actor, dispatch,isfetchCall]);
   return (
     <>
       <div

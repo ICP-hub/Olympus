@@ -129,8 +129,8 @@ const JobRegister1 = ({ modalOpen, setModalOpen }) => {
 //     }
 //   };
 const projectFullData = useSelector((currState) => currState.projectData.data);
-const projectuid=projectFullData[0][0]?.uid
-console.log("projectFullData", projectuid)
+// const projectuid=projectFullData[0][0]?.uid
+// console.log("projectFullData", projectuid)
 const onSubmit = async (data) => {
 
   setIsSubmitting(true);

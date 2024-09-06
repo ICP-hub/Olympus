@@ -136,13 +136,15 @@ const navigate= useNavigate()
             setIsSubmitting(false);
             setModalOpen(false);
             setFetchCall(false);
-            navigate("/dashboard/profile");
+            //  window.location.href = "/dashboard"
+            navigate("/dashboard")
           } else {
             toast.success("Mentor registered successfully!");
             setIsSubmitting(false);
             setModalOpen(false);
             setFetchCall(true);
-            navigate("/dashboard/profile");
+            // window.location.href = "/dashboard"
+            navigate("/dashboard")
           }
         } catch (error) {
           toast.error(error.message);

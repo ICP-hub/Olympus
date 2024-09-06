@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 
 import ControlPointIcon from "@mui/icons-material/ControlPoint";
 import { useFormContext, Controller } from "react-hook-form";
-import CompressedImage from "../../../component/ImageCompressed/CompressedImage";
+import CompressedImage from "../../../components/ImageCompressed/CompressedImage";
 
 import { useCountries } from "react-countries";
 

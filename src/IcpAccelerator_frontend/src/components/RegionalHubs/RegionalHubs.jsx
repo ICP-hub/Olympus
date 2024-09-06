@@ -182,7 +182,8 @@ import {
   FaWhatsapp,
   FaMedium,
 } from "react-icons/fa";
-
+import { FaXTwitter } from "react-icons/fa6";
+import { MdArrowOutward } from "react-icons/md";
 const DiscoverRegionalHubs = () => {
   const actor = useSelector((currState) => currState.actors.actor);
   const [allHubsData, setAllHubsData] = useState([]);
@@ -206,6 +207,7 @@ const DiscoverRegionalHubs = () => {
         "snapchat.com": <FaSnapchat className={`text-yellow-400 ${size}`} />,
         "whatsapp.com": <FaWhatsapp className={`text-green-600 ${size}`} />,
         "medium.com": <FaMedium className={`text-black ${size}`} />,
+        "x.com": <FaXTwitter className={`text-black ${size}`} />,
       };
       return icons[domain] || <LanguageIcon />;
     } catch (error) {
@@ -311,13 +313,13 @@ const DiscoverRegionalHubs = () => {
                       );
                     })}
                 </div>
-                <div className="mt-3">
+                <div className="mt-3 text-center ">
                   <a
-                    // href={}
+                    href={website}
                     target="_blank"
-                    className="bg-[#155EEF] shadow-[0px_1px_2px_0px_#1018280D,0px_-2px_0px_0px_#1018280D_inset,0px_0px_0px_1px_#1018282E_inset] block border-2 border-white text-white py-[10px] px-4 rounded-[4px] text-sm font-medium hover:bg-blue-700 my-4"
+                    className="bg-[#155EEF] flex items-center justify-center shadow-[0px_1px_2px_0px_#1018280D,0px_-2px_0px_0px_#1018280D_inset,0px_0px_0px_1px_#1018282E_inset]  border-2 border-white text-white py-[10px] px-4 rounded-[4px] text-sm font-medium hover:bg-blue-700 my-4"
                   >
-                    Join this Hub
+                    Join <span className="px-2 flex items-center">{name}<MdArrowOutward className="text-base font-bold"/></span> 
                   </a>
                 </div>
 

@@ -5,7 +5,7 @@ export default function fetchRequestCohort(activeTab, role, actor, principal) {
 
     if (activeTab) {
         let api_data = null;
-        if (role === 'mentor') {
+        if (role === 'mentor' || role ==='project' ||role ==='vc') {
             switch (activeTab) {
                 case 'pending':
                     api_data = actor.get_my_pending_enrollment_requests(principal);

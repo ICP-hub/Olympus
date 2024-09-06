@@ -4,8 +4,8 @@
 set -e
 
 # Number of mentors/cohorts you want to register (ensure this matches the number of existing identities)
-NUM_MENTORS=5
-START=1
+NUM_MENTORS=20
+START=11
 echo "Using existing User Identities to Register as Mentors..."
 CANISTER=$(dfx canister id IcpAccelerator_backend)
 echo "Canister ID: $CANISTER"
@@ -80,20 +80,4 @@ for i in $(seq $START $NUM_MENTORS); do
     echo "Posting cohort data: $cohort_data"
     output=$(dfx canister call $CANISTER create_cohort "$cohort_data")
     echo "Output from creating cohort: $output"
-
-    # Extract the cohort_id from the output
-    response=$(dfx --identity "$identity_name" canister call $CANISTER get_my_pending_cohort_creation_requests '()' | sed 's/[()]//g' | tr -d '[:space:]')
-    cohort_id=$(echo "$response" | grep -oP 'cohort_id="\K[^"]+')
-    echo "the cohort id is $cohort_id"
-
-    # Perform another action using the extracted cohort_id
-    if [ ! -z "$cohort_id" ]; then
-        echo "Accepting Creation Request with Cohort ID: $cohort_id"
-        acceptance_output=$(dfx canister call $CANISTER accept_cohort_creation_request "(\"$cohort_id\")")
-        echo "Output from accepting creation request: $acceptance_output"
-    else
-        echo "Failed to extract Cohort ID"
-    fi
-
-   
 done

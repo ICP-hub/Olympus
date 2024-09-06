@@ -3,7 +3,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import * as Yup from 'yup';
 import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
-import CompressedImage from "../../component/ImageCompressed/CompressedImage"; 
+import CompressedImage from "../../components/ImageCompressed/CompressedImage"; 
 import toast, { Toaster } from "react-hot-toast";
 import { useSelector, useDispatch } from "react-redux";
 
@@ -23,12 +23,14 @@ import {
   FaPlus,
   FaTrash,
 } from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6";
 import { LanguageIcon } from '../UserRegistration/DefaultLink';
 
 // Validation schema using Yup
 const validationSchema = Yup.object().shape({
   name: Yup.string().required('Project name is required'),
   flag: Yup.mixed().required('Banner image is required'),
+  website_link: Yup.mixed().required('Website Link is required'),
   description: Yup.string().required('Description is required').max(300, 'Description cannot exceed 300 characters'),
 });
 
@@ -104,6 +106,7 @@ const RegionalHubModal = ({ onClose }) => {
         "snapchat.com": <FaSnapchat className={`text-yellow-400 ${size}`} />,
         "whatsapp.com": <FaWhatsapp className={`text-green-600 ${size}`} />,
         "medium.com": <FaMedium className={`text-black ${size}`} />,
+        "x.com": <FaXTwitter className={`text-black ${size}`} />,
       };
       return icons[domain] || <LanguageIcon />;
     } catch (error) {
@@ -113,7 +116,7 @@ const RegionalHubModal = ({ onClose }) => {
 
 
 const onSubmit = async (data) => {
-
+  console.log("On Submit k andr aagya",data)
     setIsSubmitting(true);
     console.log("On Submit k andr aagya")
     try {
@@ -125,8 +128,7 @@ const onSubmit = async (data) => {
         flag: imageData ? [imageData] : [],
         description: data.description ? [data.description] : [],
         name: data.name ? [data.name] : [],
-        
-        
+        website:data.website? [data.website] : [],
         links: data?.links
           ? [data.links.map((val) => ({ links: val?.link ? [val.link] : [] }))]
           : [],
@@ -183,7 +185,7 @@ const onSubmit = async (data) => {
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
-                      stroke-width="1.5"
+                      strokeWidth="1.5"
                       stroke="currentColor"
                       className="size-11"
                     >
@@ -258,7 +260,23 @@ const onSubmit = async (data) => {
                 </span>
               )}
             </div>
-            
+            {/* website link Input */}
+            <div className="mb-2">
+              <label className="block mb-1">
+                Website Link<span className="text-red-500">*</span>
+              </label>
+              <input
+                {...register("website")}
+                className={`border ${errors.website ? "border-red-500" : "border-[#737373]"} rounded-md shadow-sm text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                placeholder="Enter  website"
+                rows="4"
+              />
+              {errors.website && (
+                <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                  {errors.website?.message}
+                </span>
+              )}
+            </div>
             {/* Description Input */}
             <div className="mb-2">
               <label className="block mb-1">

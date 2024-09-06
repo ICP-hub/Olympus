@@ -178,13 +178,13 @@ const InvestorForm = ({ isOpen }) => {
             setIsSubmitting(false)
             setModalOpen(false);
             setFetchCall(false)
-            navigate("/dashboard/profile")
+            navigate("/dashboard")
           } else {
             toast.success("Investor registered successfully!"); // SHOW SUCCESS MESSAGE
             setModalOpen(false);
            setIsSubmitting(false)
            setFetchCall(true)
-            navigate("/dashboard/profile")
+            navigate("/dashboard")
           }
         });
       } catch (error) {

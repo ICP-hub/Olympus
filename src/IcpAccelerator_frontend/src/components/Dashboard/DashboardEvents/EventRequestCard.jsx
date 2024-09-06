@@ -15,13 +15,12 @@ import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 import CloseIcon from "@mui/icons-material/Close";
 import Avatar from "@mui/material/Avatar";
 
-
 const EventRequestCard = () => {
   const [filterOpen, setFilterOpen] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState("all");
-  const [selectedType, setSelectedType] = useState("all");
-  const [appliedCategory, setAppliedCategory] = useState("all");
-  const [appliedType, setAppliedType] = useState("all");
+  const [selectedCategory, setSelectedCategory] = useState("project_data");
+  const [selectedType, setSelectedType] = useState("pending");
+  const [appliedCategory, setAppliedCategory] = useState("project_data");
+  const [appliedType, setAppliedType] = useState("pending");
   const [events, setEvents] = useState([]);
   const [loadingIndexes, setLoadingIndexes] = useState({});
   const [selectedUserData, setSelectedUserData] = useState(null);
@@ -33,6 +32,7 @@ const EventRequestCard = () => {
     setFilterOpen(!filterOpen);
   };
 
+  console.log('appliedType',appliedType)
   const handleApply = () => {
     setAppliedCategory(selectedCategory);
     setAppliedType(selectedType);
@@ -45,7 +45,7 @@ const EventRequestCard = () => {
     setSelectedUserData(userData);
     setOpenUserModal(true);
   };
-// console.log("data user ka ",selectedUserData);
+  // console.log("data user ka ",selectedUserData);
   const handleCloseModal = () => {
     setOpenUserModal(false);
     setSelectedUserData(null);
@@ -99,7 +99,8 @@ const EventRequestCard = () => {
     let event = events[index];
     let enroller_principal = event?.enroller_principal;
     let cohortId = event?.cohort_details?.cohort_id;
-    let cohort_creator_principal = event?.cohort_details?.cohort_creator_principal;
+    let cohort_creator_principal =
+      event?.cohort_details?.cohort_creator_principal;
 
     try {
       let result;
@@ -222,7 +223,7 @@ const EventRequestCard = () => {
                   value={selectedType}
                   className="block w-full bg-white border border-gray-300 rounded-md shadow-sm focus:border-gray-400 focus:ring focus:ring-opacity-50 px-3 py-2"
                 >
-                  <option value="all">All</option>
+                  {/* <option value="all">All</option> */}
                   <option value="pending">Pending</option>
                   <option value="approved">Accepted</option>
                   <option value="declined">Rejected</option>
@@ -257,20 +258,22 @@ const EventRequestCard = () => {
           const banner = event.cohort_details.cohort.cohort_banner[0]
             ? uint8ArrayToBase64(event.cohort_details.cohort.cohort_banner[0])
             : [];
-          const profileImageSrc =
-            event.enroller_data.user_data[0]?.params.profile_picture[0]
-              ? uint8ArrayToBase64(
-                  event.enroller_data.user_data[0]?.params.profile_picture[0]
-                )
-              : ProfileImage;
+          const profileImageSrc = event.enroller_data.user_data[0]?.params
+            .profile_picture[0]
+            ? uint8ArrayToBase64(
+                event.enroller_data.user_data[0]?.params.profile_picture[0]
+              )
+            : ProfileImage;
           const fullname = event.enroller_data.user_data[0]?.params.full_name;
           const username =
             event.enroller_data.user_data[0]?.params.openchat_username[0] || "";
           const location = event.enroller_data.user_data[0]?.params.country;
-          const interests = event.enroller_data.user_data[0]?.params.area_of_interest;
+          const interests =
+            event.enroller_data.user_data[0]?.params.area_of_interest;
           const about = event.enroller_data.user_data[0]?.params.bio;
           const email = event.enroller_data.user_data[0]?.params.email;
-          const reason = event.enroller_data.user_data[0]?.params.reason_to_join;
+          const reason =
+            event.enroller_data.user_data[0]?.params.reason_to_join;
 
           const userData = {
             profileImage: profileImageSrc,
@@ -317,15 +320,15 @@ const EventRequestCard = () => {
                   <div>
                     <h3 className="text-lg font-bold mt-2">{title}</h3>
                     <span className="flex py-2">
-                <Avatar
-                  alt="Mentor"
-                  src={profileImageSrc}
-                  className=" mr-2"
-                  sx={{ width: 24, height: 24 }}
-                />
-                <span className="text-gray-500">{fullname}</span>
-              </span>
-              <div className="border-t border-gray-200 mt-2"></div>
+                      <Avatar
+                        alt="Mentor"
+                        src={profileImageSrc}
+                        className=" mr-2"
+                        sx={{ width: 24, height: 24 }}
+                      />
+                      <span className="text-gray-500">{fullname}</span>
+                    </span>
+                    <div className="border-t border-gray-200 mt-2"></div>
                     <p
                       className="text-sm text-gray-500 overflow-hidden text-ellipsis break-all line-clamp-3 mt-2"
                       style={{ maxHeight: "3em", lineHeight: "1em" }}
@@ -333,85 +336,76 @@ const EventRequestCard = () => {
                       {parse(description)}
                     </p>
                     <div className="flex flex-wrap gap-3 items-center mt-2">
-
-                    <div className="flex items-center mt-2">
+                      <div className="flex items-center mt-2">
                         <img
                           src={PriceIcon}
                           alt="Funding Amount"
                           className="w-4 h-4 text-gray-400 mr-2"
                         />
                         <span className="text-gray-500">{fundingAmount}</span>
-                    </div>
-                    <span className="flex items-center mt-2 text-gray-700">
-                        <PlaceOutlinedIcon
-                          className=""
-                          fontSize="small"
-                        />
+                      </div>
+                      <span className="flex items-center mt-2 text-gray-700">
+                        <PlaceOutlinedIcon className="" fontSize="small" />
                         {country}
                       </span>
-                      </div>
+                    </div>
                     <div className="flex flex-wrap gap-3 items-center mt-2">
-                   
-                         <div className="flex flex-wrap gap-2">
-                {tags
-  ?.split(',')
-  .map((interest, index) => (
-    <span
-      key={index}
-      className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1"
-    >
-      {interest.trim()}
-    </span>
-  ))}
-  </div>
-                      
-                      
+                      <div className="flex flex-wrap gap-2">
+                        {tags?.split(",").map((interest, index) => (
+                          <span
+                            key={index}
+                            className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1"
+                          >
+                            {interest.trim()}
+                          </span>
+                        ))}
+                      </div>
                     </div>
 
                     <div className="flex py-2">
-                      {appliedType === "pending" && event.status === "pending" && (
-                        <>
-                          <button
-className="mr-2 mb-2 border border-[#097647] bg-[#EBFDF3] text-[#097647] px-3 py-1 rounded-full"                          
-  // onClick={() => handleAction("Approve", index)}
-                            disabled={loadingIndexes[index] === "Approve"}
-                          >
-                            Accept
-                            {loadingIndexes[index] === "Approve" && (
-                              <ThreeDots
-                              visible={true}
-                              height="10"
-                              width="20"
-                              color="#FFFFFF"
-                              radius="8"
-                              ariaLabel="three-dots-loading"
-                              wrapperStyle={{ }}
-                              wrapperclassName=""
-                              />
-                            )}
-                          </button>
-                          <button
-                    className="mr-2 mb-2 border border-[#C11574] bg-[#FDF2FA] text-[#C11574] px-3 py-1 rounded-full"
-                    // onClick={() => handleAction("Reject", index)}
-                            disabled={loadingIndexes[index] === "Reject"}
-                          >
-                            Reject
-                            {loadingIndexes[index] === "Reject" && (
-                              <ThreeDots
-                                visible={true}
-                                height="15"
-                                width="20"
-                                color="#FFFFFF"
-                                radius="8"
-                                ariaLabel="three-dots-loading"
-                                wrapperStyle={{ }}
-                                wrapperclassName=""
-                               
-                              />
-                            )}
-                          </button>
-                        </>
-                      )}
+                      {appliedType === "pending" &&
+                        event.status === "pending" && (
+                          <>
+                            <button
+                              className="mr-2 mb-2 border border-[#097647] bg-[#EBFDF3] text-[#097647] px-3 py-1 rounded-full"
+                              onClick={() => handleAction("Approve", index)}
+                              disabled={loadingIndexes[index] === "Approve"}
+                            >
+                              Accept
+                              {loadingIndexes[index] === "Approve" && (
+                                <ThreeDots
+                                  visible={true}
+                                  height="10"
+                                  width="20"
+                                  color="#FFFFFF"
+                                  radius="8"
+                                  ariaLabel="three-dots-loading"
+                                  wrapperStyle={{}}
+                                  wrapperclassName=""
+                                />
+                              )}
+                            </button>
+                            <button
+                              className="mr-2 mb-2 border border-[#C11574] bg-[#FDF2FA] text-[#C11574] px-3 py-1 rounded-full"
+                              onClick={() => handleAction("Reject", index)}
+                              disabled={loadingIndexes[index] === "Reject"}
+                            >
+                              Reject
+                              {loadingIndexes[index] === "Reject" && (
+                                <ThreeDots
+                                  visible={true}
+                                  height="15"
+                                  width="20"
+                                  color="#FFFFFF"
+                                  radius="8"
+                                  ariaLabel="three-dots-loading"
+                                  wrapperStyle={{}}
+                                  wrapperclassName=""
+                                />
+                              )}
+                            </button>
+                          </>
+                        )}
                       {appliedType === "approved" && (
                         <button className="bg-[#ECFDF3] border-2 border-[#ABEFC6] text-[#067647] rounded-lg px-2 py-1">
                           Approved

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import org from "../../../../../assets/images/Org.png";
 import uint8ArrayToBase64 from "../../../Utils/uint8ArrayToBase64";
 import { LanguageIcon } from "../../../UserRegistration/DefaultLink";
@@ -18,7 +18,8 @@ import {
   FaWhatsapp,
   FaMedium,
 } from "react-icons/fa";
-import parse from "html-react-parser";import Avatar from '@mui/material/Avatar';
+import parse from "html-react-parser";
+import Avatar from "@mui/material/Avatar";
 const DiscoverMentorDetail = (projectDetails) => {
   const projectDetail = projectDetails?.projectDetails;
   console.log("projectdetails ", projectDetail);
@@ -41,7 +42,6 @@ const DiscoverMentorDetail = (projectDetails) => {
   const dapp_link = projectDetail?.dapp_link?.[0] ?? "";
   const weekly_active_users = projectDetail?.weekly_active_users?.[0] ?? "";
   const revenue = projectDetail?.revenue?.[0] ?? "";
- 
 
   const project_area_of_focus = projectDetail?.project_area_of_focus;
   const multi_chain_names =
@@ -56,7 +56,47 @@ const DiscoverMentorDetail = (projectDetails) => {
   const promotional_video = projectDetail?.promotional_video?.[0] ?? "";
 
   const reason_to_join_incubator = projectDetail?.reason_to_join_incubator;
-  console.log("multi_chain_names",revenue);
+
+  // Initialize an array to hold the merged data
+  let mergedProfiles = [];
+  // Extract and merge mentor profiles
+  if (
+    projectDetail?.mentors_assigned &&
+    projectDetail.mentors_assigned[0]?.length > 0
+  ) {
+    projectDetail.mentors_assigned[0].forEach((mentorGroup) => {
+      mentorGroup.forEach((mentor) => {
+        console.log("mentor", mentor);
+        const profilePicture = mentor?.params?.profile_picture[0]
+          ? uint8ArrayToBase64(mentor?.params?.profile_picture[0])
+          : null; // Convert Uint8Array to Base64 if available
+
+        mergedProfiles.push({
+          profile_picture: profilePicture, // Store the Base64 encoded profile picture
+          role: "mentor", // Mark role as mentor
+        });
+      });
+    });
+  }
+
+  // Extract and merge VC profiles
+  if (projectDetail?.vc_assigned && projectDetail.vc_assigned[0]?.length > 0) {
+    projectDetail.vc_assigned[0].forEach((vcGroup) => {
+      vcGroup.forEach((vc) => {
+        console.log("vc", vc);
+        const profilePicture = vc?.params?.profile_picture[0]
+          ? uint8ArrayToBase64(vc?.params?.profile_picture[0])
+          : null; // Convert Uint8Array to Base64 if available
+
+        mergedProfiles.push({
+          profile_picture: profilePicture, // Store the Base64 encoded profile picture
+          role: "vc", // Mark role as VC
+        });
+      });
+    });
+  }
+
+  console.log("mergedProfiles", mergedProfiles);
 
   const projectlogo =
     projectDetail?.project_logo && projectDetail?.project_logo[0]
@@ -99,6 +139,29 @@ const DiscoverMentorDetail = (projectDetails) => {
     }
   };
 
+  const [hoveredIndex, setHoveredIndex] = useState(null);
+  const [activeIndex, setActiveIndex] = useState(null);
+
+  const handleMouseEnter = useCallback(
+    (index) => {
+      if (hoveredIndex !== index) {
+        setHoveredIndex(index);
+        setActiveIndex(index);
+      }
+    },
+    [hoveredIndex]
+  );
+
+  const handleMouseLeave = useCallback(() => {
+    setHoveredIndex(null);
+    setActiveIndex(null);
+  }, []);
+
+  const handleTransitionEnd = () => {
+    if (hoveredIndex === null) {
+      setActiveIndex(null);
+    }
+  };
   return (
     <div className="bg-white shadow-lg rounded-lg w-full max-w-sm">
       <div className="bg-slate-200 p-6">
@@ -130,44 +193,28 @@ const DiscoverMentorDetail = (projectDetails) => {
             className="w-full h-[#155EEF] bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 mb-6 flex items-center justify-center"
           >
             Get in touch
-            <ArrowOutwardOutlinedIcon  className="ml-1" fontSize="small" />
+            <ArrowOutwardOutlinedIcon className="ml-1" fontSize="small" />
           </a>
         </div>
       </div>
 
-      <div className="p-6 ">
-        <div className="">
-          {/* <h3 className="text-gray-600 text-sm font-medium">ASSOCIATIONS</h3> */}
-          <div className="flex items-center space-x-2">
-      {/* {associations.map((association, index) => ( */}
-        <div
-          // key={index}
-          // className="relative flex items-center transition-all duration-[600ms] ease-[cubic-bezier(0.25, 0.1, 0.25, 1)]"
-          // onMouseEnter={() => handleMouseEnter()}
-          // onMouseLeave={handleMouseLeave}
-          // onTransitionEnd={handleTransitionEnd}
-        >
-          {/* Name appears on hover */}
-          {/* <span
-            className={`absolute left-12 transition-all duration-[600ms] ease-[cubic-bezier(0.25, 0.1, 0.25, 1)] transform ${
-              activeIndex === index
-                ? 'translate-x-0 opacity-100 delay-[100ms]'
-                : '-translate-x-4 opacity-0'
-            }`} */}
-          {/* > */}
-            {/* {association.name}  */}
-          {/* </span> */}
-
-          {/* Main Avatar */}
-          {/* <Avatar */}
-            {/* // src={association.imgSrc} */}
-            {/* className={`h-12 w-12 rounded-full transition-transform duration-[600ms] ease-[cubic-bezier(0.25, 0.1, 0.25, 1)] hover:scale-105 ${ */}
-              {/* activeIndex === index ? 'mr-16 delay-[100ms]' : 'mr-0' */}
-            {/* }`} */}
-          {/* /> */}
-        </div>
-      {/* ))} */}
-    </div>
+  
+      <div className="p-6">
+        <h3 className="text-gray-600 text-sm font-medium">ASSOCIATIONS</h3>
+        <div className="flex items-center space-x-2">
+          {mergedProfiles.map((association, index) => (
+            <div key={index} className="relative">
+              {/* Profile Picture with Hover Effect */}
+              <Avatar
+                src={association?.profile_picture}
+                className="h-12 w-12 rounded-full transition-transform duration-500 ease-in-out hover:scale-105"
+              />
+              {/* Role shown on hover using CSS */}
+              <span className="absolute left-12 top-2 opacity-0 transform transition-all duration-500 ease-in-out hover:opacity-100 hover:translate-x-2">
+                {association?.role}
+              </span>
+            </div>
+          ))}
         </div>
         <div className="mt-4">
           <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">

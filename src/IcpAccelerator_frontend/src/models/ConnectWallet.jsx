@@ -1,8 +1,8 @@
-import React, { useEffect, useRef } from "react";
+	import React, { useEffect, useRef } from "react";
 import {
   closeModalSvg,
   walletModalSvg,
-} from "../component/Utils/Data/SvgData";
+} from "../components/Utils/Data/SvgData";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../components/StateManagement/useContext/useAuth";
@@ -53,9 +53,9 @@ const ConnectWallet = ({ isModalOpen, onClose }) => {
       document.removeEventListener("mousedown", handleClickOutside);
     }
 
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+return () => {
+  document.removeEventListener("mousedown", handleClickOutside);
+};
   }, [isModalOpen]);
 
   return (

@@ -20,11 +20,16 @@ import AssociationDetailsInvestorCard from "./AssociationDetailsInvestorCard";
 import NoData from "../../NoDataCard/NoData";
 import DocumentRequestCard from "../../Request/DocumentRequestCard";
 import MoneyRaiseRequestCard from "../../Request/MoneyRaiseRequestCard";
+import CohortRequestCard from "../../Request/CohortRequestCard";
 
 // Memoize AssociationDetailsCard and AssociationDetailsProjectCard
 const MemoizedAssociationDetailsMentorCard = React.memo(AssociationDetailsCard);
-const MemoizedAssociationDetailsProjectCard = React.memo(AssociationDetailsProjectCard);
-const MemoizedAssociationDetailsInvestorCard = React.memo(AssociationDetailsInvestorCard);
+const MemoizedAssociationDetailsProjectCard = React.memo(
+  AssociationDetailsProjectCard
+);
+const MemoizedAssociationDetailsInvestorCard = React.memo(
+  AssociationDetailsInvestorCard
+);
 
 const AssociationRequestCard = () => {
   const [selectedTypeData, setSelectedTypeData] = useState("");
@@ -64,7 +69,7 @@ const AssociationRequestCard = () => {
     setFilterOpen((prev) => !prev);
   }, []);
 
-  console.log('selectedType',selectedType)
+  console.log("selectedType", selectedType);
   useEffect(() => {
     // Set custom no data message based on role, active tab data, and selected type data
     if (associateData.length === 0) {
@@ -109,11 +114,15 @@ const AssociationRequestCard = () => {
           if (selectedTypeData === "to-mentor") {
             setNoDataMessage("No self-rejected requests sent to mentors.");
           } else if (selectedTypeData === "from-mentor") {
-            setNoDataMessage("No self-rejected requests received from mentors.");
+            setNoDataMessage(
+              "No self-rejected requests received from mentors."
+            );
           } else if (selectedTypeData === "to-investor") {
             setNoDataMessage("No self-rejected requests sent to investors.");
           } else if (selectedTypeData === "from-investor") {
-            setNoDataMessage("No self-rejected requests received from investors.");
+            setNoDataMessage(
+              "No self-rejected requests received from investors."
+            );
           } else {
             setNoDataMessage("No self-rejected requests available.");
           }
@@ -149,7 +158,9 @@ const AssociationRequestCard = () => {
           if (selectedTypeData === "to-project") {
             setNoDataMessage("No self-rejected requests sent to projects.");
           } else if (selectedTypeData === "from-project") {
-            setNoDataMessage("No self-rejected requests received from projects.");
+            setNoDataMessage(
+              "No self-rejected requests received from projects."
+            );
           } else {
             setNoDataMessage("No self-rejected requests available.");
           }
@@ -185,7 +196,9 @@ const AssociationRequestCard = () => {
           if (selectedTypeData === "to-project") {
             setNoDataMessage("No self-rejected requests sent to projects.");
           } else if (selectedTypeData === "from-project") {
-            setNoDataMessage("No self-rejected requests received from projects.");
+            setNoDataMessage(
+              "No self-rejected requests received from projects."
+            );
           } else {
             setNoDataMessage("No self-rejected requests available.");
           }
@@ -196,8 +209,12 @@ const AssociationRequestCard = () => {
         setNoDataMessage("No Data Available.");
       }
     }
-  }, [associateData, activeTabData, selectedTypeData, userCurrentRoleStatusActiveRole]);
-  
+  }, [
+    associateData,
+    activeTabData,
+    selectedTypeData,
+    userCurrentRoleStatusActiveRole,
+  ]);
 
   return (
     <div className="space-y-4 relative">
@@ -250,48 +267,64 @@ const AssociationRequestCard = () => {
       {associateData.length === 0 ? (
         <NoData message={noDataMessage} />
       ) : (
-        associateData.map((user, index) => (
-          console.log(user),
-          <div key={index}>
-            {selectedType.value ==='Associates'?
-            userCurrentRoleStatusActiveRole === "project" ? (
-              <MemoizedAssociationDetailsProjectCard
-                user={user}
-                index={index}
-                selectedTypeData={selectedTypeData}
-                activeTabData={activeTabData}
-              />
-            ) : userCurrentRoleStatusActiveRole === "mentor" ? (
-              <MemoizedAssociationDetailsMentorCard
-              user={user}
-              index={index}
-              selectedTypeData={selectedTypeData}
-              activeTabData={activeTabData}
-            />
-             
-            ) : userCurrentRoleStatusActiveRole === "vc" ? (
-              <MemoizedAssociationDetailsInvestorCard
-                user={user}
-                index={index}
-                selectedTypeData={selectedTypeData}
-                activeTabData={activeTabData}
-              />
-            ) : (
-              ""
-            ):selectedType.value ==='Document'?
-            <DocumentRequestCard
-            user={user}
-            index={index}
-            activeTabData={activeTabData}/>:
-            selectedType.value ==='FundRaised'?
-            <MoneyRaiseRequestCard
-            user={user}
-            index={index}
-            activeTabData={activeTabData}
-            />:''
-          }
-          </div>
-        ))
+        associateData.map(
+          (user, index) => (
+            console.log(user),
+            (
+              <div key={index}>
+                {selectedType.value === "Associates" ? (
+                  userCurrentRoleStatusActiveRole === "project" ? (
+                    <MemoizedAssociationDetailsProjectCard
+                      user={user}
+                      index={index}
+                      selectedTypeData={selectedTypeData}
+                      activeTabData={activeTabData}
+                    />
+                  ) : userCurrentRoleStatusActiveRole === "mentor" ? (
+                    <MemoizedAssociationDetailsMentorCard
+                      user={user}
+                      index={index}
+                      selectedTypeData={selectedTypeData}
+                      activeTabData={activeTabData}
+                    />
+                  ) : userCurrentRoleStatusActiveRole === "vc" ? (
+                    <MemoizedAssociationDetailsInvestorCard
+                      user={user}
+                      index={index}
+                      selectedTypeData={selectedTypeData}
+                      activeTabData={activeTabData}
+                    />
+                  ) : (
+                    ""
+                  )
+                ) : userCurrentRoleStatusActiveRole === "project" &&
+                  selectedType.value === "Document" ? (
+                  <DocumentRequestCard
+                    user={user}
+                    index={index}
+                    activeTabData={activeTabData}
+                  />
+                ) : userCurrentRoleStatusActiveRole === "project" &&
+                  selectedType.value === "FundRaised" ? (
+                  <MoneyRaiseRequestCard
+                    user={user}
+                    index={index}
+                    activeTabData={activeTabData}
+                  />
+                ) : userCurrentRoleStatusActiveRole === "mentor" || userCurrentRoleStatusActiveRole === "project" || userCurrentRoleStatusActiveRole === "vc" &&
+                  selectedType.value === "CohortRequest" ? (
+                  <CohortRequestCard
+                    user={user}
+                    index={index}
+                    activeTabData={activeTabData}
+                  />
+                ) : (
+                  ""
+                )}
+              </div>
+            )
+          )
+        )
       )}
 
       {filterOpen && (
@@ -315,4 +348,3 @@ const AssociationRequestCard = () => {
 };
 
 export default AssociationRequestCard;
-

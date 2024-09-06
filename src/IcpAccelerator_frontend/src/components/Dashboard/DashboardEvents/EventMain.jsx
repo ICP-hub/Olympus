@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 
 const EventMain = () => {
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
-
+const [selectedEventType,setSelectedEventType]= useState([]);
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bg-white">
       <h1 className="text-3xl font-bold  bg-opacity-95 -top-[0.6rem] sticky bg-white z-20 py-6">
@@ -18,13 +18,13 @@ const EventMain = () => {
           {/* {events.map((event, index) => ( */}
           <>
             {/* <Link to='/dashboard/single-event'> */}
-            <EventCard />
+            <EventCard selectedEventType={selectedEventType}/>
             {/* </Link> */}
           </>
           {/* ))} */}
         </div>
         <div className="w-full md:w-[30%]">
-          <Filters isOpen={isFiltersOpen} />
+          <Filters isOpen={isFiltersOpen} setSelectedEventType={setSelectedEventType}/>
         </div>
       </div>
       <div className="fixed bottom-4 right-4 md:hidden">

@@ -92,48 +92,7 @@ const DiscoverInvestor = ({onInvestorCountChange }) => {
   };
 
   console.log(".............Investor", allInvestorData);
-  // const getAllInvestor = async (caller, isMounted) => {
-  //   setIsSubmitting(true);
-  //   await caller
-  //     .list_all_vcs_with_pagination({
-  //       page_size: itemsPerPage,
-  //       page: currentPage,
-  //     })
-  //     .then((result) => {
-  //       if (isMounted) {
-  //         console.log("result-in-get-all-investor", result);
-  //         {
-  //           result?.data.map((val) => {
-  //             setSendprincipal(val[0]);
-  //           });
-  //         }
-  //         if (result && result.data) {
-  //           const InvestorData = result.data ? Object.values(result.data) : [];
-  //           const userData = result.user_data
-  //             ? Object.values(result.user_data)
-  //             : [];
-  //           setAllInvestorData(InvestorData);
-  //           setIsSubmitting(false);
-  //           setUserData(userData);
-  //         } else {
-  //           setAllInvestorData([]);
-  //           setIsSubmitting(false);
-  //           setUserData([]);
-  //           // Set to an empty array if no data
-  //         }
-  //         setIsLoading(false);
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       if (isMounted) {
-  //         setAllInvestorData([]);
-  //         setUserData([]);
-  //         setIsSubmitting(false);
-  //         setIsLoading(false);
-  //         console.log("error-in-get-all-investor", error);
-  //       }
-  //     });
-  // };
+  
 
   const getAllInvestor = async (caller) => {
     setIsFetching(true);
@@ -384,7 +343,7 @@ const DiscoverInvestor = ({onInvestorCountChange }) => {
         })}
         </InfiniteScroll>
       ) : (
-        <div><NoData message={"No Investor Present Yet"} /></div>
+        <div className="flex justify-center"><NoData message={"No Investor Present Yet"} /></div>
       )}
       {isAddInvestorModalOpen && (
         <AddAMentorRequestModal

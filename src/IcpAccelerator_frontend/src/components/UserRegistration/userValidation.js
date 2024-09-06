@@ -87,20 +87,19 @@ export const validationSchema = yup
       .max(10, "You can only add up to 10 links") // Restrict the array to a maximum of 10 links
       .optional(),
 
-    openchat_user_name: yup
+      openchat_user_name: yup
       .string()
       .required("Username is required")
       .test(
         "is-valid-username",
-        "Username must be between 5 and 20 characters",
+        "Username must be between 5 and 20 characters, contain no spaces, and only include letters, numbers, underscores, or '@'.",
         (value) => {
-          const isValidLength = value.length >= 5 && value.length <= 20;
-          const isValidFormat = /^[a-zA-Z0-9_@-]+$/.test(value); // Allows letters, numbers, underscores, and '@'
+          const isValidLength = value && value.length >= 5 && value.length <= 20;
+          const isValidFormat = /^[a-zA-Z0-9_@-]+$/.test(value); // Allows letters, numbers, underscores, '@', and '-'
           const noSpaces = !/\s/.test(value);
           return isValidLength && isValidFormat && noSpaces;
         }
-      )
-      ,
+      ),
     bio: yup
       .string()
       .required("This field is required")

@@ -10,7 +10,6 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useCountries } from "react-countries";
 import { useSelector } from "react-redux";
 import { LinkedIn, GitHub, Telegram, Language } from "@mui/icons-material";
-import MentorEdit from "../../component/Mentors/MentorEdit";
 import { FaEdit, FaPlus } from "react-icons/fa";
 import { Principal } from "@dfinity/principal";
 import { ThreeDots } from "react-loader-spinner";
@@ -38,6 +37,7 @@ import { LanguageIcon } from "../UserRegistration/DefaultLink";
 import InvestorDetail from "./InvestorDetail";
 import { validationSchema } from "./UserValidation";
 import ProjectDetail from "./ProjectDetail";
+import MentorEdit from "./MentorEdit";
 const ProfileDetail = () => {
   const navigate = useNavigate()
   const [isImageEditing, setIsImageEditing] = useState(false);
@@ -1156,10 +1156,15 @@ const ProfileDetail = () => {
                   </>
                 ) : (
                   <div className="flex flex-wrap gap-2">
-                    <span className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1">
-                      {area_of_interest}
-                    </span>
-                  </div>
+    {area_of_interest.split(', ').map((interest, index) => (
+      <span 
+        key={index} 
+        className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 break-words"
+      >
+        {interest}
+      </span>
+    ))}
+  </div>
                 )}
               </div>
               <div>

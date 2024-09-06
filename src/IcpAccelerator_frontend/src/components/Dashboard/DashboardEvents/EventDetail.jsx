@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState ,useRef} from "react";
 import eventbg from "../../../../assets/images/bg.png";
 import ProfileImage from "../../../../assets/Logo/ProfileImage.png";
 import GuestProfile1 from "../../../../assets/Logo/GuestProfile1.png";
@@ -75,7 +75,7 @@ const FAQ = () => {
   );
 };
 
-const EventDetails = () => {
+const EventDetails = React.memo(() => {
   const userCurrentRoleStatusActiveRole = useSelector(
     (currState) => currState.currentRoleStatus.activeRole
   );
@@ -138,15 +138,19 @@ const tabs = [
     fetchCohortData();
   }, [actor, cohort_id]);
 
+  const timeoutRef = useRef(null);
+
   useEffect(() => {
     if (cohortData) {
-      const intervalId = setInterval(() => {
+      const calculateRemainingTime = () => {
         calculateTimeLeft(cohortData.cohort.cohort_launch_date);
-      }, 1000);
-
-      return () => clearInterval(intervalId);
+        timeoutRef.current = setTimeout(calculateRemainingTime, 1000);
+      };
+      calculateRemainingTime(); // Initial call
+      return () => clearTimeout(timeoutRef.current);
     }
   }, [cohortData]);
+  
 
   const calculateTimeLeft = (cohortLaunchDate) => {
     const launchDate = new Date(cohortLaunchDate);
@@ -219,9 +223,9 @@ console.log('cohortData',cohortData)
         formatFullDateFromSimpleDate(cohortData?.cohort?.deadline)
       );
 
-      if (deadline < today) {
-        setIsSubmitting(false);
-      } else {
+      // if (deadline < today) {
+      //   setIsSubmitting(false);
+      // } else {
         try {
           let cohort_id = cohortData?.cohort_id;
           if (userCurrentRoleStatusActiveRole === "project") {
@@ -266,7 +270,7 @@ console.log('cohortData',cohortData)
           toast.error(error);
           console.error("Error sending data to the backend:", error);
         }
-      }
+      // }
     } else {
       setIsSubmitting(false);
       toast.error("Please signup with internet identity first");
@@ -600,6 +604,6 @@ console.log('cohortData',cohortData)
       <Toaster />
     </div>
   );
-};
+});
 
 export default EventDetails;

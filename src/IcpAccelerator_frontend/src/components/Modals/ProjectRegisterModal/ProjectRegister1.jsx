@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react"; // IMPORTING REACT HOOKS
 import ControlPointIcon from "@mui/icons-material/ControlPoint"; // IMPORTING ICON COMPONENT FROM MUI
 import { useFormContext, Controller } from "react-hook-form"; // IMPORTING FUNCTIONS AND CONTROLLER FROM REACT-HOOK-FORM
-import CompressedImage from "../../../component/ImageCompressed/CompressedImage"; // IMPORTING IMAGE COMPRESSION COMPONENT
+import CompressedImage from "../../../components/ImageCompressed/CompressedImage"; // IMPORTING IMAGE COMPRESSION COMPONENT
 import { useSelector, useDispatch } from "react-redux"; // IMPORTING REDUX HOOKS FOR STATE MANAGEMENT
 import { allHubHandlerRequest } from "../../StateManagement/Redux/Reducers/All_IcpHubReducer"; // IMPORTING REDUX ACTION FOR FETCHING ICP HUB DATA
 

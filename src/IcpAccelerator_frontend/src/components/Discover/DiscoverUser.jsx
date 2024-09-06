@@ -17,13 +17,16 @@ const DiscoverUser = ({ onUserCountChange }) => {
   const [allUserData, setAllUserData] = useState([]);
   const [hasMore, setHasMore] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
-  const itemsPerPage = 20;
+  const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
   const [showRatingModal, setShowRatingModal] = useState(false);
   const [userRatingDetail, setUserRatingDetail] = useState(null);
   const [isFetching, setIsFetching] = useState(false);
   const [currentPrincipal, setCurrentPrincipal] = useState([]);
+  const [totalUsersFetched, setTotalUsersFetched] = useState(0); 
   console.log(".............USERS", allUserData);
+  console.log(".............item per page", allUserData);
+  console.log(".............currentPage  page", currentPage);
   // const getAllUser = async (caller, isMounted) => {
   //   setIsFetching(true);
   //   await caller
@@ -53,58 +56,87 @@ const DiscoverUser = ({ onUserCountChange }) => {
   //     });
   // };
 
-  const getAllUser = async (caller) => {
-    setIsFetching(true);
-    try {
-      const result = await caller.list_all_users({
-        page_size: itemsPerPage,
-        page: currentPage,
-      });
 
-      if (result && result) {
-        // const userData = Object.values(result);
-        const userData = result;
-        if (userData.length === 0) {
-          setHasMore(false); // No more data to load
-        } else {
-          setAllUserData((prevData) => [...prevData, ...userData]);
-          onUserCountChange(userData.length > 0 ? userData.length : 0);
-          if (userData.length < itemsPerPage) {
-            setHasMore(false);
-          }
-        }
-      } else {
-        setHasMore(false);
+ // Fetching the list of users with pagination
+ const getAllUser = async (caller, page) => {
+  console.log(`Fetching data for page: ${page}`); // Debugging log
+  setIsFetching(true);
+  try {
+    const result = await caller.list_all_users({
+      page_size: itemsPerPage,
+      page:currentPage,
+    });
+
+    if (result && result.length > 0) {
+      console.log(`Fetched ${result.length} users for page ${page}`); // Debugging log
+      setAllUserData((prevData) => [...prevData, ...result]);
+      const newTotal = totalUsersFetched + result.length;
+      setTotalUsersFetched(newTotal);
+      onUserCountChange(newTotal);
+
+      if (result.length < itemsPerPage) {
+        setHasMore(false); // No more data to load
       }
-    } catch (error) {
-      console.error("error-in-get-all-user", error);
-      setHasMore(false);
-    } finally {
-      setIsFetching(false);
+    } else {
+      setHasMore(false); // Stop if no more data
     }
-  };
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    setHasMore(false);
+  } finally {
+    setIsFetching(false);
+  }
+};
+  // useEffect(() => {
+  //   if (actor && !isFetching && hasMore) {
+  //     getAllUser(actor, currentPage);
+  //   }
+  // }, [actor, currentPage]);
+  
+
+  // const loadMore = () => {
+  //   if (!isFetching && hasMore) {
+  //     setCurrentPage((prevPage) => {
+  //       const newPage = prevPage + 1;
+  //       getAllUser(actor, newPage); // Fetch data for the next page
+  //       return newPage;
+  //     });
+  //   }
+  // };
   useEffect(() => {
-    if (!isFetching && hasMore) {
+    if (!isFetching && hasMore) { // Only run if not already fetching
       if (actor) {
-        getAllUser(actor, currentPage);
-      } else {
-        getAllUser(IcpAccelerator_backend, currentPage);
+        console.log(`Current page: ${currentPage}`);
+        getAllUser(actor, currentPage); // Pass the current page to fetch data
       }
     }
-  }, [actor, currentPage]);
+  }, [actor, currentPage, hasMore]); // Re-fetch when these change
 
+  // Load more data when scrolling
   const loadMore = () => {
     if (!isFetching && hasMore) {
+      console.log(`Loading more... current page: ${currentPage}`); // Debugging log
       setCurrentPage((prevPage) => {
-        const newPage = prevPage + 1;
-        getAllUser(actor, newPage); // Fetch data for the next page
-        return newPage;
+        const nextPage = prevPage + 1;
+        console.log(`Incrementing page to: ${nextPage}`); // Debugging log
+        return nextPage;
       });
     }
   };
+  
+  // const refresh = () => {
+  //   if (actor) {
+  //     getAllUser(actor, 1); 
+  //   }
+  // };
   const refresh = () => {
+    console.log("Refreshing data..."); // Debugging log
+    setAllUserData([]); // Clear the current data
+    setCurrentPage(1); // Reset to the first page
+    setTotalUsersFetched(0); 
+    setHasMore(true); 
     if (actor) {
-      getAllUser(actor, 1); // Fetch the data starting from the first page
+      getAllUser(actor, 1); 
     }
   };
   /////////////////////////
@@ -275,7 +307,7 @@ USER
             })}
           </InfiniteScroll>
         ) : (
-          <div><NoData message={"No User Listed Yet"} /></div>
+          <div className="flex justify-center"><NoData message={"No User Listed Yet"} /></div>
         )}
       </div>
       {showRatingModal && (

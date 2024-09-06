@@ -15,8 +15,8 @@ import {
   lenseSvgIcon,
   locationSvgIcon,
 } from "../Utils/Data/SvgData";
-import useFormatDateFromBigInt from "../../component/hooks/useFormatDateFromBigInt";
-import NoDataCard from "../../component/Mentors/Event/MentorAssociatedNoDataCard";
+import useFormatDateFromBigInt from "../../components/hooks/useFormatDateFromBigInt";
+
 import { formatFullDateFromBigInt } from "../Utils/formatter/formatDateFromBigInt";
 import LinkIcon from "@mui/icons-material/Link";
 import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
@@ -276,7 +276,7 @@ const refresh = () => {
                         </div>
                       </div>
                       <div className="flex flex-col gap-3">
-                        <p className="">{parse(job_description)} </p>
+                        <p className="text-gray-600  overflow-hidden text-ellipsis max-h-12 line-clamp-2">{parse(job_description)} </p>
                         <div className="flex gap-5 items-center">
                           <div className="flex items-center gap-2">
                             {" "}
