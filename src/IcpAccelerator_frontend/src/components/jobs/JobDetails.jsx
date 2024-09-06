@@ -115,8 +115,9 @@ let timestamp = jobDetails?.timestamp
                         <div className="border rounded-lg p-3 w-[65%] overflow-y-auto h-[84vh] ">
                             <div className=''>
                                 <div className=''>
-                                <p className=''>{parse(description)}
-                                </p>
+                                <div className='break-words whitespace-normal'>
+                                    {parse(description)}
+                                </div>
                                     {/* <p className=''>Sweatcoin is a London-based and well-funded scale-up with a team of 100+ and the mission to make the world more physically active. Our iOS and Android apps have more than 150M installs, 15M+ active users, more than 500 commercial partners and confirmed by the independent academic research ability to make our users up to 20% more active.
                                     </p>
                                     <p className=''> If you are interested in solving complex problems, then we are looking forward to seeing you be a part of our team!.

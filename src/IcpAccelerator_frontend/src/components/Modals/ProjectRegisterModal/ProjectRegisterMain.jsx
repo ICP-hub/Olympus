@@ -243,15 +243,15 @@ const ProjectRegisterMain = ({ isopen }) => {
           setModalOpen(false);
           setIsSubmitting(false);
           setFetchCall(true);
-          window.location.pathname = "/dashboard/profile"
-          // navigate("/dashboard/profile");
+          // window.location.pathname = "/dashboard/profile"
+          navigate("/dashboard");
         } else {
           toast.success("Project registered successfully!"); // Show success message
           setModalOpen(false);
           setIsSubmitting(false);
           setFetchCall(true);
-          window.location.pathname = "/dashboard/profile"
-          // navigate("/dashboard/profile");
+          // window.location.pathname = "/dashboard/profile"
+          navigate("/dashboard");
         }
       } catch (error) {
         console.log(error.message);
