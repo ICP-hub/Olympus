@@ -52,7 +52,7 @@ const DiscoverMentorPage = ({ openDetail, setOpenDetail, projectDetails ,project
         <div className="container h-[calc(100%-50px)] ml-2 pb-8 overflow-y-auto">
           <div className="flex justify-evenly px-[1%]">
             <div className="border h-fit rounded-lg w-[30%]">
-              <DiscoverMentorDetail projectDetails={projectDetails} />
+              <DiscoverMentorDetail projectDetails={projectDetails} userData={userData} />
             </div>
 
             <div className="p-3 w-[65%]">
