@@ -31,6 +31,7 @@ import {
   FaMedium,
   FaTrash,
 } from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6";
 import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
 import CompressedImage from "../ImageCompressed/CompressedImage";
 import { LanguageIcon } from "../UserRegistration/DefaultLink";
@@ -103,22 +104,64 @@ const ProfileDetail = () => {
     }));
   };
 
-  const getIconForLink = (url) => {
-    console.log("URL being checked:", url); // Add this line for debugging
-    if (url.includes("linkedin.com")) {
-      console.log("LinkedIn detected");
-      return LinkedIn;
-    } else if (url.includes("github.com")) {
-      console.log("GitHub detected");
-      return GitHub;
-    } else if (url.includes("t.me") || url.includes("telegram")) {
-      console.log("Telegram detected");
-      return Telegram;
-    } else {
-      console.log("Generic link detected");
-      return Language;
-    }
-  };
+  // const getIconForLink = (url) => {
+  //   console.log("URL being checked:", url); 
+  //   if (url.includes("linkedin.com")) {
+  //     console.log("LinkedIn detected");
+  //     return LinkedIn;
+  //   } else if (url.includes("github.com")) {
+  //     console.log("GitHub detected");
+  //     return GitHub;
+  //   } else if (url.includes("t.me") || url.includes("telegram")) {
+  //     console.log("Telegram detected");
+  //     return Telegram;
+  //   } else {
+  //     console.log("Generic link detected");
+  //     return Language;
+  //   }
+  // };
+const getIconForLink = (url) => {
+  console.log("URL being checked:", url); 
+  if (url.includes("linkedin.com")) {
+    console.log("LinkedIn detected");
+    return LinkedIn;
+  } else if (url.includes("github.com")) {
+    console.log("GitHub detected");
+    return GitHub;
+  } else if (url.includes("t.me") || url.includes("telegram")) {
+    console.log("Telegram detected");
+    return Telegram;
+  } else if (url.includes("youtube.com")) {
+    console.log("YouTube detected");
+    return FaYoutube;
+  } else if (url.includes("facebook.com")) {
+    console.log("Facebook detected");
+    return FaFacebook;
+  } else if (url.includes("google.com")) {
+    console.log("Google detected");
+    return FaGoogle;
+  } else if (url.includes("instagram.com")) {
+    console.log("Instagram detected");
+    return FaInstagram;
+  } else if (url.includes("reddit.com")) {
+    console.log("Reddit detected");
+    return FaReddit;
+  } else if (url.includes("snapchat.com")) {
+    console.log("Snapchat detected");
+    return FaSnapchat;
+  } else if (url.includes("whatsapp.com")) {
+    console.log("WhatsApp detected");
+    return FaWhatsapp;
+  } else if (url.includes("medium.com")) {
+    console.log("Medium detected");
+    return FaMedium;
+  } else if (url.includes("twitter.com") || url.includes("x.com")) {
+    return FaXTwitter; 
+  } else {
+    console.log("Generic link detected");
+    return Language;
+  }
+};
 
   const {
     register,
@@ -241,7 +284,7 @@ const ProfileDetail = () => {
         toast.success("User profile updated successfully");
         setTimeout(() => {
           // window.location.reload();
-          navigate("/dashboard/profile")
+          navigate("/dashboard")
         }, 500);
       } else {
         console.log("Error:", result);
@@ -252,7 +295,7 @@ const ProfileDetail = () => {
       toast.error("Failed to update profile");
     }
     setIsLinkBeingEdited(false);
-    setIsEditingLink(false)
+    setIsEditingLink({})
   };
 
   const handleCancel = () => {
@@ -269,28 +312,38 @@ const ProfileDetail = () => {
     setIsEditingLink(false)
   };
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      const isAnyFieldEditing = Object.values({
-        ...isEditing,
-        ...isEditingLink,
-      }).some((value) => value);
+ useEffect(() => {
+  const handleClickOutside = (event) => {
+    const isAnyFieldEditing = Object.values({
+      ...isEditing,
+      ...isEditingLink,
+    }).some((value) => value);
 
-      if (
-        isAnyFieldEditing &&
-        containerRef.current &&
-        !containerRef.current.contains(event.target)
-      ) {
-        handleSave();
-        setIsEditingLink({});
-      }
-    };
+    if (
+      isAnyFieldEditing &&
+      containerRef.current &&
+      !containerRef.current.contains(event.target)
+    ) {
+      // Trigger validation manually before saving
+      trigger().then((isValid) => {
+        if (isValid) {
+          handleSubmit(handleSave, onErrorHandler)();
+        } else {
+          toast.error("Form contains errors, please correct them before saving.");
+        }
+      });
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [isEditing, isEditingLink]);
+      // Close the editing state
+      setIsEditingLink({});
+    }
+  };
+
+  document.addEventListener("mousedown", handleClickOutside);
+  return () => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  };
+}, [isEditing, isEditingLink, trigger, handleSubmit]);
+
 
   const [activeTab, setActiveTab] = useState("general");
 
@@ -317,57 +370,112 @@ const ProfileDetail = () => {
   };
 
 
-  const setValuesHandler = (val) => {
+  // const setValuesHandler = (val) => {
     
-    if (val) {
-      setValue("full_name", val?.full_name ?? "");
-      setValue("email", val?.email?.[0] ?? "");
-      setValue("openchat_user_name", val?.openchat_username?.[0] ?? "");
-      setValue("bio", val?.bio?.[0] ?? "");
-      setValue("country", val?.country ?? "");
-      setValue("domains_interested_in", val?.area_of_interest ?? "");
-      setInterestedDomainsSelectedOptionsHandler(val?.area_of_interest ?? null);
-      setImagePreview(val?.profile_picture?.[0] ?? "");
-      setValue("type_of_profile", val?.type_of_profile?.[0]);
-      setValue(
-        "reasons_to_join_platform",
-        val?.reason_to_join ? val?.reason_to_join.join(", ") : ""
-      );
-      setReasonOfJoiningSelectedOptionsHandler(val?.reason_to_join);
-      console.log("mere link aa gye ", val?.social_links);
-      // Set social links
-      if (val?.social_links?.length) {
-        const links = {};
+  //   if (val) {
+  //     setValue("full_name", val?.full_name ?? "");
+  //     setValue("email", val?.email?.[0] ?? "");
+  //     setValue("openchat_user_name", val?.openchat_username?.[0] ?? "");
+  //     setValue("bio", val?.bio?.[0] ?? "");
+  //     setValue("country", val?.country ?? "");
+  //     setValue("domains_interested_in", val?.area_of_interest ?? "");
+  //     setInterestedDomainsSelectedOptionsHandler(val?.area_of_interest ?? null);
+  //     setImagePreview(val?.profile_picture?.[0] ?? "");
+  //     setValue("type_of_profile", val?.type_of_profile?.[0]);
+  //     setValue(
+  //       "reasons_to_join_platform",
+  //       val?.reason_to_join ? val?.reason_to_join.join(", ") : ""
+  //     );
+  //     setReasonOfJoiningSelectedOptionsHandler(val?.reason_to_join);
+  //     console.log("mere link aa gye ", val?.social_links);
+  //     // Set social links
+  //     if (val?.social_links?.length) {
+  //       const links = {};
   
-        val.social_links.forEach((linkArray) => {
-          linkArray.forEach((linkData) => {
-            const url = linkData.link[0];
-            console.log("Found URL: ", url);
+  //       val.social_links.forEach((linkArray) => {
+  //         linkArray.forEach((linkData) => {
+  //           const url = linkData.link[0];
+  //           console.log("Found URL: ", url);
   
-            if (url && typeof url === "string") {
-              if (url.includes("linkedin.com")) {
+  //           if (url && typeof url === "string") {
+  //             if (url.includes("linkedin.com")) {
+  //               links["LinkedIn"] = url;
+  //             } else if (url.includes("github.com")) {
+  //               links["GitHub"] = url;
+  //             } else if (url.includes("t.me") || url.includes("telegram")) {
+  //               links["Telegram"] = url;
+  //             } else {
+  //               // Use the domain as the key to avoid overwriting
+  //               const domainKey = new URL(url).hostname.replace("www.", "");
+  //               links[domainKey] = url;
+  //             }
+  //           }
+  //         });
+  //       });
+  
+  //       console.log("Final links object:", links);
+  //       setSocialLinks(links);
+  //     } else {
+  //       console.log("No social_links array or it's empty");
+  //       setSocialLinks({});
+  //     }
+  //   }
+  // };
+const setValuesHandler = (val) => {
+  if (val) {
+    setValue("full_name", val?.full_name ?? "");
+    setValue("email", val?.email?.[0] ?? "");
+    setValue("openchat_user_name", val?.openchat_username?.[0] ?? "");
+    setValue("bio", val?.bio?.[0] ?? "");
+    setValue("country", val?.country ?? "");
+    setValue("domains_interested_in", val?.area_of_interest ?? "");
+    setInterestedDomainsSelectedOptionsHandler(val?.area_of_interest ?? null);
+    setImagePreview(val?.profile_picture?.[0] ?? "");
+    setValue("type_of_profile", val?.type_of_profile?.[0]);
+    setValue(
+      "reasons_to_join_platform",
+      val?.reason_to_join ? val.reason_to_join.join(", ") : ""
+    );
+    setReasonOfJoiningSelectedOptionsHandler(val?.reason_to_join);
+
+    // Set social links
+    if (val?.social_links?.length) {
+      const links = {};
+
+      val.social_links.forEach((linkArray) => {
+        linkArray.forEach((linkData) => {
+          const url = linkData.link[0];
+          console.log("Found URL: ", url);
+
+          if (url && typeof url === "string") {
+            try {
+              const parsedUrl = new URL(url);
+              const hostname = parsedUrl.hostname.replace("www.", "");
+              if (hostname.includes("linkedin.com")) {
                 links["LinkedIn"] = url;
-              } else if (url.includes("github.com")) {
+              } else if (hostname.includes("github.com")) {
                 links["GitHub"] = url;
-              } else if (url.includes("t.me") || url.includes("telegram")) {
+              } else if (hostname.includes("t.me") || hostname.includes("telegram")) {
                 links["Telegram"] = url;
               } else {
                 // Use the domain as the key to avoid overwriting
-                const domainKey = new URL(url).hostname.replace("www.", "");
-                links[domainKey] = url;
+                links[hostname] = url;
               }
+            } catch (error) {
+              console.error("Invalid URL:", url, error);
             }
-          });
+          }
         });
-  
-        console.log("Final links object:", links);
-        setSocialLinks(links);
-      } else {
-        console.log("No social_links array or it's empty");
-        setSocialLinks({});
-      }
+      });
+
+      console.log("Final links object:", links);
+      setSocialLinks(links);
+    } else {
+      console.log("No social_links array or it's empty");
+      setSocialLinks({});
     }
-  };
+  }
+};
 
   const onErrorHandler = (val) => {
     console.log("Validation errors:", val); // Add this to log validation errors
