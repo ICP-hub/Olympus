@@ -15,7 +15,7 @@ import DiscoverMentorMain from "../Dashboard/DashboardHomePage/discoverMentor/Di
 import RatingModal from "../Common/RatingModal";
 import NoData from "../NoDataCard/NoData";
 
-const DiscoverMentor = ({onMentorCountChange}) => {
+const DiscoverMentor = ({ onMentorCountChange }) => {
   const actor = useSelector((currState) => currState.actors.actor);
   const isAuthenticated = useSelector(
     (currState) => currState.internet.isAuthenticated
@@ -33,7 +33,7 @@ const DiscoverMentor = ({onMentorCountChange}) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [mentorId, setMentorId] = useState(null);
   const [showRatingModal, setShowRatingModal] = useState(false);
-  const [userRatingDetail,setUserRatingDetail]=useState(null)
+  const [userRatingDetail, setUserRatingDetail] = useState(null);
   const [currentPrincipal, setCurrentPrincipal] = useState([]);
   const [activeTab, setActiveTab] = useState("Users"); // Default active tab
 
@@ -76,7 +76,7 @@ const DiscoverMentor = ({onMentorCountChange}) => {
         } else {
           setMentorData((prevData) => {
             const newData = [...prevData, ...mentorData];
-            onMentorCountChange(newData.length>0?newData.length:0); // Update count using the length of the data array
+            onMentorCountChange(newData.length > 0 ? newData.length : 0); // Update count using the length of the data array
             return newData;
           });
           setUserData((prevData) => [...prevData, ...userData]);
@@ -181,12 +181,12 @@ const DiscoverMentor = ({onMentorCountChange}) => {
     console.log("passed principle", principal);
   };
 
-  const handleRating=(ratings,principalId)=>{
-    setShowRatingModal(true)
-    setUserRatingDetail(ratings)
+  const handleRating = (ratings, principalId) => {
+    setShowRatingModal(true);
+    setUserRatingDetail(ratings);
     setCurrentPrincipal(principalId);
-  }
-  console.log("userRatingDetail =>",userRatingDetail)
+  };
+  console.log("userRatingDetail =>", userRatingDetail);
 
   return (
     <>
@@ -258,10 +258,13 @@ const DiscoverMentor = ({onMentorCountChange}) => {
                         />
                       </div>
                     </div>
-                    <div  onClick={() => handleRating(user,principle_id)} className="absolute bottom-0 right-[6px] flex items-center bg-gray-100 p-1">
-                        <Star className="text-yellow-400 w-4 h-4" />
-                        <span className="text-sm font-medium">5.0</span>
-                      </div>
+                    <div
+                      onClick={() => handleRating(user, principle_id)}
+                      className="absolute bottom-0 right-[6px] flex items-center bg-gray-100 p-1"
+                    >
+                      <Star className="text-yellow-400 w-4 h-4" />
+                      <span className="text-sm font-medium">5.0</span>
+                    </div>
                   </div>
                   <div className="flex-grow ml-[25px] w-[544px]">
                     <div className="flex justify-between items-start mb-2">
@@ -289,7 +292,7 @@ const DiscoverMentor = ({onMentorCountChange}) => {
                       )}
                     </div>
                     <div className="bg-[#ECFDF3] border-[#ABEFC6] border text-[#067647] rounded-md text-xs px-3 py-1 mr-2 mb-2 w-[4.7rem]">
-MENTOR
+                      MENTOR
                       {/* {activeRole && (
                         <span
                           className={`inline-block ${
@@ -300,22 +303,23 @@ MENTOR
                           {activeRole.name}
                         </span>
                       )} */}
-
                     </div>
-                    <div className="border-t border-gray-200 my-3 mb-2 line-clamp-1 ">{email}</div>
+                    <div className="border-t border-gray-200 my-3 mb-2 line-clamp-1 ">
+                      {email}
+                    </div>
 
                     <p className="text-gray-600 mb-2 line-clamp-3">{bio}</p>
                     <div className="flex items-center text-sm text-gray-500 flex-wrap gap-1">
-                    <div className="flex overflow-x-auto space-x-2">
-  {randomSkills.map((skill, index) => (
-    <span
-      key={index}
-      className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-3 py-1 bg-gray-100"
-    >
-      {skill}
-    </span>
-  ))}
-</div>
+                      <div className="flex overflow-x-auto space-x-2">
+                        {randomSkills.map((skill, index) => (
+                          <span
+                            key={index}
+                            className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-3 py-1 bg-gray-100"
+                          >
+                            {skill}
+                          </span>
+                        ))}
+                      </div>
 
                       <span className="mr-2  flex text-[#121926] items-center py-1">
                         <PlaceOutlinedIcon className="text-[#364152] mr-1 w-4 h-4" />
@@ -328,16 +332,18 @@ MENTOR
             })}
           </InfiniteScroll>
         ) : (
-          <div className="flex justify-center"><NoData message={"No Mentor Present Yet"} /></div>
+          <div className="flex justify-center">
+            <NoData message={"No Mentor Present Yet"} />
+          </div>
         )}
         {showRatingModal && (
-        <RatingModal
-          showRating={showRatingModal}
-          setShowRatingModal={setShowRatingModal}
-          userRatingDetail={userRatingDetail}
-          cardPrincipal={currentPrincipal}
-        />
-      )}
+          <RatingModal
+            showRating={showRatingModal}
+            setShowRatingModal={setShowRatingModal}
+            userRatingDetail={userRatingDetail}
+            cardPrincipal={currentPrincipal}
+          />
+        )}
         {isAddMentorModalOpen && (
           <AddAMentorRequestModal
             title={"Associate Mentor"}
