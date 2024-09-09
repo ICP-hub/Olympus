@@ -17,6 +17,8 @@ import editp from "../../../assets/Logo/edit.png";
 import { ThreeDots } from "react-loader-spinner";
 
 import {Principal} from "@dfinity/principal"
+import getReactSelectStyles from "../Utils/navigationHelper/getReactSelectStyles";
+import { validationSchema } from "../Modals/investorForm/investorvalidation";
 
 
 const InvestorDetail = () => {
@@ -98,105 +100,6 @@ console.log("principal in investordetail",principal)
   const [investStageRangeSelectedOptions, setInvestStageRangeSelectedOptions] =
     useState([]);
 
-  const validationSchema = yup
-    .object()
-    .shape({
-      investor_registered: yup
-        .string()
-        .required("Required")
-        .oneOf(["true", "false"], "Invalid value"),
-      registered_country: yup
-        .string()
-        .when("investor_registered", (val, schema) =>
-          val === "true"
-            ? schema.required("Registered country name required")
-            : schema
-        ),
-      // preferred_icp_hub: yup.string().required("ICP Hub selection is required"),
-      preferred_icp_hub: yup.string(),
-      existing_icp_investor: yup
-        .string()
-        .required("Required")
-        .oneOf(["true", "false"], "Invalid value"),
-      investment_type: yup
-        .string()
-        .when("existing_icp_investor", (val, schema) =>
-          val === "true"
-            ? schema
-                .test(
-                  "is-non-empty",
-                  "At least one investment type required",
-                  (value) => value?.length > 0
-                )
-                .required("At least one investment type required")
-            : schema
-        ),
-      investor_portfolio_link: yup
-        .string()
-        .nullable(true)
-        .url("Invalid URL")
-        .required("Portfolio URL is required"),
-      name_of_fund: yup
-        .string()
-        // .required("Fund name is required")  // Validation for fund name
-        .test("is-non-empty", "Fund name is required", (value) =>
-          /\S/.test(value)
-        ),
-      investor_fund_size: yup
-        .number()
-        .optional()
-        .nullable(true)
-        .typeError("You must enter a number")
-        .positive("Must be a positive number"),
-      invested_in_multi_chain: yup
-        .string()
-        .required("Required")
-        .oneOf(["true", "false"], "Invalid value"),
-      invested_in_multi_chain: yup
-        .string()
-        .required("Required")
-        .oneOf(["true", "false"], "Invalid value"),
-      invested_in_multi_chain_names: yup
-        .string()
-        .when("invested_in_multi_chain", (val, schema) =>
-          val === "true"
-            ? schema.required("Selecting a Multichain is required")
-            : schema
-        ),
-      investment_categories: yup
-        .string()
-        .test("is-non-empty", "Selecting a category is required", (value) =>
-          /\S/.test(value)
-        )
-        .required("Selecting a category is required"),
-      investor_website_url: yup
-        .string()
-        .nullable(true)
-        .optional()
-        .url("Invalid URL"),
-      // investor_linkedin_url: yup
-      //   .string()
-      //   .required("LinkedIn URL is required")
-      //   .url("Invalid URL"),
-      investment_stage: yup
-        .string()
-        .test("is-non-empty", "Investment stage is required", (value) =>
-          /\S/.test(value)
-        )
-        .required("Investment stage is required"),
-      investment_stage_range: yup
-        .string()
-        .when("investment_stage", (val, schema) =>
-          val && val !== "we do not currently invest"
-            ? schema
-                .test("is-non-empty", "At least one range required", (value) =>
-                  /\S/.test(value)
-                )
-                .required("At least one range required")
-            : schema
-        ),
-    })
-    .required();
 
     const [showbtn,setShowbtn]=useState(true)
 
@@ -1029,54 +932,7 @@ console.log("principal in investordetail",principal)
                 isMulti
                 menuPortalTarget={document.body}
                 menuPosition={"fixed"}
-                styles={{
-                  menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-                  control: (provided, state) => ({
-                    ...provided,
-                    paddingBlock: "2px",
-                    borderRadius: "8px",
-                    border: errors.investment_type
-                      ? "2px solid #ef4444"
-                      : "2px solid #737373",
-                    backgroundColor: "rgb(249 250 251)",
-                    "&::placeholder": {
-                      color: errors.investment_type
-                        ? "#ef4444"
-                        : "currentColor",
-                    },
-                    display: "flex",
-                    overflowX: "auto",
-                    maxHeight: "43px",
-                    "&::-webkit-scrollbar": {
-                      display: "none",
-                    },
-                  }),
-                  valueContainer: (provided, state) => ({
-                    ...provided,
-                    overflow: "scroll",
-                    maxHeight: "40px",
-                    scrollbarWidth: "none",
-                  }),
-                  placeholder: (provided, state) => ({
-                    ...provided,
-                    color: errors.investment_type
-                      ? "#ef4444"
-                      : "rgb(107 114 128)",
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                  }),
-                  multiValue: (provided) => ({
-                    ...provided,
-                    display: "inline-flex",
-                    alignItems: "center",
-                  }),
-                  multiValueRemove: (provided) => ({
-                    ...provided,
-                    display: "inline-flex",
-                    alignItems: "center",
-                  }),
-                }}
+                styles={getReactSelectStyles(errors?.investment_type)}
                 value={typeOfInvestSelectedOptions}
                 options={typeOfInvestOptions}
                 classNamePrefix="select"
@@ -1308,54 +1164,7 @@ console.log("principal in investordetail",principal)
               isMulti
               menuPortalTarget={document.body}
               menuPosition={"fixed"}
-              styles={{
-                menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-                control: (provided, state) => ({
-                  ...provided,
-                  paddingBlock: "2px",
-                  borderRadius: "8px",
-                  border: errors.invested_in_multi_chain_names
-                    ? "2px solid #ef4444"
-                    : "2px solid #737373",
-                  backgroundColor: "rgb(249 250 251)",
-                  "&::placeholder": {
-                    color: errors.invested_in_multi_chain_names
-                      ? "#ef4444"
-                      : "currentColor",
-                  },
-                  display: "flex",
-                  overflowX: "auto",
-                  maxHeight: "43px",
-                  "&::-webkit-scrollbar": {
-                    display: "none",
-                  },
-                }),
-                valueContainer: (provided, state) => ({
-                  ...provided,
-                  overflow: "scroll",
-                  maxHeight: "40px",
-                  scrollbarWidth: "none",
-                }),
-                placeholder: (provided, state) => ({
-                  ...provided,
-                  color: errors.invested_in_multi_chain_names
-                    ? "#ef4444"
-                    : "rgb(107 114 128)",
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                }),
-                multiValue: (provided) => ({
-                  ...provided,
-                  display: "inline-flex",
-                  alignItems: "center",
-                }),
-                multiValueRemove: (provided) => ({
-                  ...provided,
-                  display: "inline-flex",
-                  alignItems: "center",
-                }),
-              }}
+              styles={getReactSelectStyles(errors?.invested_in_multi_chain_names)}
               value={investedInMultiChainSelectedOptions}
               options={investedInmultiChainOptions}
               classNamePrefix="select"
@@ -1431,54 +1240,7 @@ console.log("principal in investordetail",principal)
                 isMulti
                 menuPortalTarget={document.body}
                 menuPosition={"fixed"}
-                styles={{
-                  menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-                  control: (provided, state) => ({
-                    ...provided,
-                    paddingBlock: "2px",
-                    borderRadius: "8px",
-                    border: errors.investment_categories
-                      ? "2px solid #ef4444"
-                      : "2px solid #737373",
-                    backgroundColor: "rgb(249 250 251)",
-                    "&::placeholder": {
-                      color: errors.investment_categories
-                        ? "#ef4444"
-                        : "currentColor",
-                    },
-                    display: "flex",
-                    overflowX: "auto",
-                    maxHeight: "43px",
-                    "&::-webkit-scrollbar": {
-                      display: "none",
-                    },
-                  }),
-                  valueContainer: (provided, state) => ({
-                    ...provided,
-                    overflow: "scroll",
-                    maxHeight: "40px",
-                    scrollbarWidth: "none",
-                  }),
-                  placeholder: (provided, state) => ({
-                    ...provided,
-                    color: errors.investment_categories
-                      ? "#ef4444"
-                      : "rgb(107 114 128)",
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                  }),
-                  multiValue: (provided) => ({
-                    ...provided,
-                    display: "inline-flex",
-                    alignItems: "center",
-                  }),
-                  multiValueRemove: (provided) => ({
-                    ...provided,
-                    display: "inline-flex",
-                    alignItems: "center",
-                  }),
-                }}
+                styles={getReactSelectStyles(errors?.investment_categories)}
                 value={investmentCategoriesSelectedOptions}
                 options={investmentCategoriesOptions}
                 classNamePrefix="select"
@@ -1584,54 +1346,7 @@ console.log("principal in investordetail",principal)
                 isMulti
                 menuPortalTarget={document.body}
                 menuPosition={"fixed"}
-                styles={{
-                  menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-                  control: (provided, state) => ({
-                    ...provided,
-                    paddingBlock: "2px",
-                    borderRadius: "8px",
-                    border: errors.investment_stage
-                      ? "2px solid #ef4444"
-                      : "2px solid #737373",
-                    backgroundColor: "rgb(249 250 251)",
-                    "&::placeholder": {
-                      color: errors.investment_stage
-                        ? "#ef4444"
-                        : "currentColor",
-                    },
-                    display: "flex",
-                    overflowX: "auto",
-                    maxHeight: "43px",
-                    "&::-webkit-scrollbar": {
-                      display: "none",
-                    },
-                  }),
-                  valueContainer: (provided, state) => ({
-                    ...provided,
-                    overflow: "scroll",
-                    maxHeight: "40px",
-                    scrollbarWidth: "none",
-                  }),
-                  placeholder: (provided, state) => ({
-                    ...provided,
-                    color: errors.investment_stage
-                      ? "#ef4444"
-                      : "rgb(107 114 128)",
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                  }),
-                  multiValue: (provided) => ({
-                    ...provided,
-                    display: "inline-flex",
-                    alignItems: "center",
-                  }),
-                  multiValueRemove: (provided) => ({
-                    ...provided,
-                    display: "inline-flex",
-                    alignItems: "center",
-                  }),
-                }}
+                styles={getReactSelectStyles(errors?.investment_stage)}
                 value={investStageSelectedOptions}
                 options={investStageOptions}
                 classNamePrefix="select"
@@ -1705,54 +1420,7 @@ console.log("principal in investordetail",principal)
                 isMulti
                 menuPortalTarget={document.body}
                 menuPosition={"fixed"}
-                styles={{
-                  menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-                  control: (provided, state) => ({
-                    ...provided,
-                    paddingBlock: "2px",
-                    borderRadius: "8px",
-                    border: errors.investment_stage_range
-                      ? "2px solid #ef4444"
-                      : "2px solid #737373",
-                    backgroundColor: "rgb(249 250 251)",
-                    "&::placeholder": {
-                      color: errors.investment_stage_range
-                        ? "#ef4444"
-                        : "currentColor",
-                    },
-                    display: "flex",
-                    overflowX: "auto",
-                    maxHeight: "43px",
-                    "&::-webkit-scrollbar": {
-                      display: "none",
-                    },
-                  }),
-                  valueContainer: (provided, state) => ({
-                    ...provided,
-                    overflow: "scroll",
-                    maxHeight: "40px",
-                    scrollbarWidth: "none",
-                  }),
-                  placeholder: (provided, state) => ({
-                    ...provided,
-                    color: errors.investment_stage_range
-                      ? "#ef4444"
-                      : "rgb(107 114 128)",
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                  }),
-                  multiValue: (provided) => ({
-                    ...provided,
-                    display: "inline-flex",
-                    alignItems: "center",
-                  }),
-                  multiValueRemove: (provided) => ({
-                    ...provided,
-                    display: "inline-flex",
-                    alignItems: "center",
-                  }),
-                }}
+                styles={getReactSelectStyles(errors?.investment_stage_range)}
                 value={investStageRangeSelectedOptions}
                 options={investStageRangeOptions}
                 classNamePrefix="select"

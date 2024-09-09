@@ -2,25 +2,14 @@ import React, { useState, useEffect } from "react";
 import Select from "react-select";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { LanguageIcon } from "../../UserRegistration/DefaultLink";
 import { useFormContext, useFieldArray, Controller } from "react-hook-form";
 
 import {
-  FaLinkedin,
-  FaTwitter,
-  FaGithub,
-  FaTelegram,
-  FaFacebook,
-  FaInstagram,
-  FaYoutube,
-  FaReddit,
-  FaTiktok,
-  FaSnapchat,
-  FaWhatsapp,
-  FaMedium,
   FaPlus,
   FaTrash,
 } from "react-icons/fa";
+import getSocialLogo from "../../Utils/navigationHelper/getSocialLogo";
+import getReactSelectStyles from "../../Utils/navigationHelper/getReactSelectStyles";
 
 // COMPONENT DEFINITION FOR THE INVESTOR MODAL
 const InvestorModal2 = ({ formData }) => {
@@ -49,30 +38,6 @@ const InvestorModal2 = ({ formData }) => {
     name: "links",
   });
 
-  // FUNCTION TO DETERMINE AND RETURN THE APPROPRIATE LOGO BASED ON THE URL
-  const getLogo = (url) => {
-    try {
-      const domain = new URL(url).hostname.split(".").slice(-2).join(".");
-      const size = "size-8"; // SIZE FOR ICONS
-      const icons = {
-        "linkedin.com": <FaLinkedin className={`text-blue-600 ${size}`} />,
-        "twitter.com": <FaTwitter className={`text-blue-400 ${size}`} />,
-        "github.com": <FaGithub className={`text-gray-700 ${size}`} />,
-        "telegram.com": <FaTelegram className={`text-blue-400 ${size}`} />,
-        "facebook.com": <FaFacebook className={`text-blue-400 ${size}`} />,
-        "instagram.com": <FaInstagram className={`text-pink-950 ${size}`} />,
-        "youtube.com": <FaYoutube className={`text-red-600 ${size}`} />,
-        "reddit.com": <FaReddit className={`text-orange-500 ${size}`} />,
-        "tiktok.com": <FaTiktok className={`text-black ${size}`} />,
-        "snapchat.com": <FaSnapchat className={`text-yellow-400 ${size}`} />,
-        "whatsapp.com": <FaWhatsapp className={`text-green-600 ${size}`} />,
-        "medium.com": <FaMedium className={`text-black ${size}`} />,
-      };
-      return icons[domain] || <LanguageIcon />; // RETURNING CORRESPONDING ICON OR DEFAULT ICON
-    } catch (error) {
-      return <LanguageIcon />; // RETURNING DEFAULT ICON IN CASE OF ERROR
-    }
-  };
 
   // USE EFFECT TO SET INVESTMENT CATEGORIES OPTIONS BASED ON AREA OF EXPERTISE DATA
   useEffect(() => {
@@ -226,49 +191,7 @@ const InvestorModal2 = ({ formData }) => {
           isMulti
           menuPortalTarget={document.body}
           menuPosition={"fixed"}
-          styles={{
-            menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-            control: (provided) => ({
-              ...provided,
-              paddingBlock: "2px",
-              borderRadius: "8px",
-              border: errors.investment_categories
-                ? "2px solid #ef4444"
-                : "2px solid #737373",
-                backgroundColor: "rgb(249 250 251)",
-                display: "flex",
-                overflowX: "auto",
-                maxHeight: "43px",
-                "&::-webkit-scrollbar": { display: "none" },
-              }),
-              valueContainer: (provided) => ({
-                ...provided,
-                overflow: "scroll",
-                maxHeight: "40px",
-                scrollbarWidth: "none",
-              }),
-              placeholder: (provided) => ({
-                ...provided,
-              color: errors.investment_categories
-                ? "#ef4444"
-                : "rgb(107 114 128)",
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-              }),
-              multiValue: (provided) => ({
-                ...provided,
-                display: "inline-flex",
-                alignItems: "center",
-                backgroundColor: "white",
-                border: "2px solid #CDD5DF",
-              }),
-              multiValueRemove: (provided) => ({
-                ...provided,
-                display: "inline-flex",
-                alignItems: "center",
-              }),
-            }}
+          styles={getReactSelectStyles(errors?.investment_categories)}
           value={investmentCategoriesSelectedOptions}
           options={investmentCategoriesOptions}
           classNamePrefix="select"
@@ -314,52 +237,7 @@ const InvestorModal2 = ({ formData }) => {
           isMulti
           menuPortalTarget={document.body}
           menuPosition={"fixed"}
-          styles={{
-            menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-            control: (provided, state) => ({
-              ...provided,
-              paddingBlock: "2px",
-              borderRadius: "8px",
-              border: errors.investment_stage
-                ? "2px solid #ef4444"
-                : "2px solid #737373",
-              backgroundColor: "rgb(249 250 251)",
-              "&::placeholder": {
-                color: errors.investment_stage ? "#ef4444" : "currentColor",
-              },
-              display: "flex",
-              overflowX: "auto",
-              maxHeight: "43px",
-              "&::-webkit-scrollbar": {
-                display: "none",
-              },
-            }),
-            valueContainer: (provided, state) => ({
-              ...provided,
-              overflow: "scroll",
-              maxHeight: "40px",
-              scrollbarWidth: "none",
-            }),
-            placeholder: (provided, state) => ({
-              ...provided,
-              color: errors.investment_stage ? "#ef4444" : "rgb(107 114 128)",
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-            }),
-            multiValue: (provided) => ({
-              ...provided,
-              display: "inline-flex",
-              alignItems: "center",
-              backgroundColor: "white",
-              border: "2px solid #CDD5DF",
-            }),
-            multiValueRemove: (provided) => ({
-              ...provided,
-              display: "inline-flex",
-              alignItems: "center",
-            }),
-          }}
+          styles={getReactSelectStyles(errors?.investment_stage)}
           value={investStageSelectedOptions}
           options={investStageOptions}
           classNamePrefix="select"
@@ -405,56 +283,7 @@ const InvestorModal2 = ({ formData }) => {
           isMulti
           menuPortalTarget={document.body}
           menuPosition={"fixed"}
-          styles={{
-            menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-            control: (provided, state) => ({
-              ...provided,
-              paddingBlock: "2px",
-              borderRadius: "8px",
-              border: errors.investment_stage_range
-                ? "2px solid #ef4444"
-                : "2px solid #737373",
-              backgroundColor: "rgb(249 250 251)",
-              "&::placeholder": {
-                color: errors.investment_stage_range
-                  ? "#ef4444"
-                  : "currentColor",
-              },
-              display: "flex",
-              overflowX: "auto",
-              maxHeight: "43px",
-              "&::-webkit-scrollbar": {
-                display: "none",
-              },
-            }),
-            valueContainer: (provided, state) => ({
-              ...provided,
-              overflow: "scroll",
-              maxHeight: "40px",
-              scrollbarWidth: "none",
-            }),
-            placeholder: (provided, state) => ({
-              ...provided,
-              color: errors.investment_stage_range
-                ? "#ef4444"
-                : "rgb(107 114 128)",
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-              }),
-              multiValue: (provided) => ({
-                ...provided,
-                display: "inline-flex",
-                alignItems: "center",
-                backgroundColor: "white",
-                border: "2px solid #CDD5DF",
-              }),
-              multiValueRemove: (provided) => ({
-                ...provided,
-                display: "inline-flex",
-                alignItems: "center",
-              }),
-            }}
+          styles={getReactSelectStyles(errors?.investment_stage_range)}
           value={investStageRangeSelectedOptions}
           options={investStageRangeOptions}
           classNamePrefix="select"
@@ -525,7 +354,7 @@ const InvestorModal2 = ({ formData }) => {
                  <div className="flex items-center w-full">
                    <div className="flex items-center space-x-2 w-full">
                      <div className="flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full">
-                       {field.value && getLogo(field.value)}
+                       {field.value && getSocialLogo(field.value)}
                      </div>
                      <input
                        type="text"

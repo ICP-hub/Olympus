@@ -3,6 +3,7 @@ import Select from "react-select";
 import { useFormContext } from "react-hook-form";
 import { useSelector } from "react-redux";
 import { CiWarning } from "react-icons/ci";
+import getReactSelectStyles from "../../Utils/navigationHelper/getReactSelectStyles";
 
 // COMPONENT TO HANDLE THE THIRD STEP OF PROJECT REGISTRATION FORM
 const ProjectRegister3 = ({ formData }) => {
@@ -113,54 +114,7 @@ const ProjectRegister3 = ({ formData }) => {
             menuPortalTarget={document.body}
             menuPosition={"fixed"}
             defaultValue=""
-            styles={{
-              menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-              control: (provided) => ({
-                ...provided,
-                paddingBlock: "2px",
-                borderRadius: "8px",
-                border: errors.multi_chain_names
-                  ? "2px solid #ef4444"
-                  : "2px solid #737373",
-                backgroundColor: "rgb(249 250 251)",
-                "&::placeholder": {
-                  color: errors.multi_chain_names ? "#ef4444" : "currentColor",
-                },
-                display: "flex",
-                overflowX: "auto",
-                maxHeight: "43px",
-                "&::-webkit-scrollbar": {
-                  display: "none",
-                },
-              }),
-              valueContainer: (provided) => ({
-                ...provided,
-                overflow: "scroll",
-                maxHeight: "40px",
-                scrollbarWidth: "none",
-              }),
-              placeholder: (provided) => ({
-                ...provided,
-                color: errors.multi_chain_names
-                  ? "#ef4444"
-                  : "rgb(107 114 128)",
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-              }),
-              multiValue: (provided) => ({
-                ...provided,
-                display: "inline-flex",
-                alignItems: "center",
-                backgroundColor: "white",
-                border: "2px solid #CDD5DF",
-              }),
-              multiValueRemove: (provided) => ({
-                ...provided,
-                display: "inline-flex",
-                alignItems: "center",
-              }),
-            }}
+            styles={getReactSelectStyles(errors?.multi_chain_names)}
             value={multiChainSelectedOptions}
             options={multiChainOptions}
             classNamePrefix="select"

@@ -4,6 +4,7 @@ import Select from "react-select";
 import { useFormContext } from "react-hook-form";
 import { useSelector } from "react-redux";
 import toast, { Toaster } from "react-hot-toast";
+import getReactSelectStyles from "../../Utils/navigationHelper/getReactSelectStyles";
 
 // MENTOR SIGNUP FORM COMPONENT
 const MentorSignup1 = ({ formData }) => {
@@ -143,45 +144,7 @@ const MentorSignup1 = ({ formData }) => {
             isMulti
             menuPortalTarget={document.body}
             menuPosition={"fixed"}
-            styles={{
-              menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-              control: (provided) => ({
-                ...provided,
-                paddingBlock: "2px",
-                borderRadius: "8px",
-                border: errors.multi_chain_names ? "1px solid #ef4444" : "1px solid #CDD5DF",
-                backgroundColor: "rgb(249 250 251)",
-                display: "flex",
-                overflowX: "auto",
-                maxHeight: "43px",
-                "&::-webkit-scrollbar": { display: "none" },
-              }),
-              valueContainer: (provided) => ({
-                ...provided,
-                overflow: "scroll",
-                maxHeight: "40px",
-                scrollbarWidth: "none",
-              }),
-              placeholder: (provided) => ({
-                ...provided,
-                color: errors.multi_chain_names ? "#ef4444" : "rgb(107 114 128)",
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-              }),
-              multiValue: (provided) => ({
-                ...provided,
-                display: "inline-flex",
-                alignItems: "center",
-                backgroundColor: "white",
-                border: "2px solid #CDD5DF",
-              }),
-              multiValueRemove: (provided) => ({
-                ...provided,
-                display: "inline-flex",
-                alignItems: "center",
-              }),
-            }}
+            styles={getReactSelectStyles(errors.multi_chain_names )}
             value={multiChainSelectedOptions}
             options={multiChainOptions}
             classNamePrefix="select"
@@ -220,45 +183,7 @@ const MentorSignup1 = ({ formData }) => {
           isMulti
           menuPortalTarget={document.body}
           menuPosition={"fixed"}
-          styles={{
-            menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-            control: (provided) => ({
-              ...provided,
-              paddingBlock: "2px",
-              borderRadius: "8px",
-              border: errors.category_of_mentoring_service ? "1px solid #ef4444" : "1px solid #CDD5DF",
-              backgroundColor: "rgb(249 250 251)",
-              display: "flex",
-              overflowX: "auto",
-              maxHeight: "43px",
-              "&::-webkit-scrollbar": { display: "none" },
-            }),
-            valueContainer: (provided) => ({
-              ...provided,
-              overflow: "scroll",
-              maxHeight: "40px",
-              scrollbarWidth: "none",
-            }),
-            placeholder: (provided) => ({
-              ...provided,
-              color: errors.category_of_mentoring_service ? "#ef4444" : "rgb(107 114 128)",
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-            }),
-            multiValue: (provided) => ({
-              ...provided,
-              display: "inline-flex",
-              alignItems: "center",
-              backgroundColor: "white",
-              border: "2px solid #CDD5DF",
-            }),
-            multiValueRemove: (provided) => ({
-              ...provided,
-              display: "inline-flex",
-              alignItems: "center",
-            }),
-          }}
+          styles={getReactSelectStyles(errors.category_of_mentoring_service)}
           value={categoryOfMentoringServiceSelectedOptions}
           options={categoryOfMentoringServiceOptions}
           classNamePrefix="select"

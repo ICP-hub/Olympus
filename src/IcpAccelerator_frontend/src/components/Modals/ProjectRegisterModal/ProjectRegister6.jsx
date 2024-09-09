@@ -5,6 +5,7 @@ import "react-quill/dist/quill.snow.css"; // Import the Quill stylesheet
 import { useSelector } from "react-redux";
 import Select from "react-select";
 import ReactSelect from "react-select";
+import getReactSelectStyles from "../../Utils/navigationHelper/getReactSelectStyles";
 // Component for Project Registration Form Step 6
 const ProjectRegister6 = ({formData}) => {
   // Destructure form state and control from useFormContext hook
@@ -116,57 +117,7 @@ const ProjectRegister6 = ({formData}) => {
           isMulti
           menuPortalTarget={document.body}
           menuPosition={"fixed"}
-          styles={{
-            menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-            control: (provided, state) => ({
-              ...provided,
-              paddingBlock: "2px",
-              borderRadius: "8px",
-              border: errors.reason_to_join_incubator
-                ? "2px solid #737373"
-                : "2px solid #737373",
-              backgroundColor: "rgb(249 250 251)",
-              "&::placeholder": {
-                color: errors.reason_to_join_incubator
-                  ? "#ef4444"
-                  : "currentColor",
-              },
-              display: "flex",
-              overflowX: "auto",
-              maxHeight: "43px",
-              "&::-webkit-scrollbar": {
-                display: "none",
-              },
-            }),
-            valueContainer: (provided, state) => ({
-              ...provided,
-              overflow: "scroll",
-              maxHeight: "40px",
-              scrollbarWidth: "none",
-            }),
-            placeholder: (provided, state) => ({
-              ...provided,
-              color: errors.reason_to_join_incubator
-                ? "#ef4444"
-                : "rgb(107 114 128)",
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-            }),
-            multiValue: (provided) => ({
-              ...provided,
-              display: "inline-flex",
-              alignItems: "center",
-
-              backgroundColor: "white",
-              border: "2px solid #E3E3E3",
-            }),
-            multiValueRemove: (provided) => ({
-              ...provided,
-              display: "inline-flex",
-              alignItems: "center",
-            }),
-          }}
+          styles={getReactSelectStyles(errors?.reason_to_join_incubator)}
           value={reasonOfJoiningSelectedOptions}
           options={reasonOfJoiningOptions}
           classNamePrefix="select"
@@ -176,7 +127,6 @@ const ProjectRegister6 = ({formData}) => {
           onChange={(selectedOptions) => {
             if (selectedOptions && selectedOptions.length > 0) {
               setReasonOfJoiningSelectedOptions(selectedOptions);
-              // clearErrors("reason_to_join_incubator");
               setValue(
                 "reason_to_join_incubator",
                 selectedOptions.map((option) => option.value).join(", "),
@@ -184,13 +134,6 @@ const ProjectRegister6 = ({formData}) => {
               );
             } else {
               setReasonOfJoiningSelectedOptions([]);
-              // setValue("reason_to_join_incubator", "", {
-              //   shouldValidate: true,
-              // });
-              // setError("reason_to_join_incubator", {
-              //   type: "required",
-              //   message: "Selecting a reason is required",
-              // });
             }
           }}
         />
@@ -209,57 +152,7 @@ const ProjectRegister6 = ({formData}) => {
           menuPortalTarget={document.body}
           menuPosition={"fixed"}
          
-          styles={{
-            menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-            control: (provided, state) => ({
-              ...provided,
-              paddingBlock: "2px",
-              borderRadius: "8px",
-              border: errors.project_area_of_focus
-                ? "2px solid #737373"
-                : "2px solid #737373",
-              backgroundColor: "rgb(249 250 251)",
-              "&::placeholder": {
-                color: errors.project_area_of_focus
-                  ? "#ef4444"
-                  : "currentColor",
-              },
-              display: "flex",
-              overflowX: "auto",
-              maxHeight: "43px",
-              "&::-webkit-scrollbar": {
-                display: "none",
-              },
-            }),
-            valueContainer: (provided, state) => ({
-              ...provided,
-              overflow: "scroll",
-              maxHeight: "40px",
-              scrollbarWidth: "none",
-            }),
-            placeholder: (provided, state) => ({
-              ...provided,
-              color: errors.project_area_of_focus
-                ? "#ef4444"
-                : "rgb(107 114 128)",
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-            }),
-            multiValue: (provided) => ({
-              ...provided,
-              display: "inline-flex",
-              alignItems: "center",
-
-              backgroundColor: "white",
-              border: "2px solid #E3E3E3",
-            }),
-            multiValueRemove: (provided) => ({
-              ...provided,
-              display: "inline-flex",
-              alignItems: "center",
-            }),
-          }}
+          styles={getReactSelectStyles(errors?.project_area_of_focus)}
           value={areaof_focus_SelectedOptions}
           options={projectOptions}
           classNamePrefix="select"
@@ -269,7 +162,6 @@ const ProjectRegister6 = ({formData}) => {
           onChange={(selectedOptions) => {
             if (selectedOptions && selectedOptions.length > 0) {
               setproject_area_of_focusSelectedOptions(selectedOptions);
-              // clearErrors("project_area_of_focus");
               setValue(
                 "project_area_of_focus",
                 selectedOptions.map((option) => option.value).join(", "),
@@ -277,13 +169,7 @@ const ProjectRegister6 = ({formData}) => {
               );
             } else {
               setproject_area_of_focusSelectedOptions([]);
-              // setValue("project_area_of_focus", "", {
-              //   shouldValidate: true,
-              // });
-              // setError("project_area_of_focus", {
-              //   type: "required",
-              //   message: "Selecting a category is required",
-              // });
+            
             }
           }}
         />

@@ -73,7 +73,7 @@ const NewEvent = ({ event }) => {
     }, [actor, principal]);
 
     const handleClick = (cohort_id) => {
-        navigate('/dashboard/single-event', { state: { cohort_id } });
+        navigate(`/dashboard/single-event/${ cohort_id }`);
     };
 
     const handleEditClick = (event) => {
