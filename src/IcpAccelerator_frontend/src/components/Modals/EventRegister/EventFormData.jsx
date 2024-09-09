@@ -23,8 +23,7 @@ export const formFields1 = [
  
 ];
 export const formFields2 = [
- 
-  ///////////////
+
   {
     id: "deadline",
     type: "date",

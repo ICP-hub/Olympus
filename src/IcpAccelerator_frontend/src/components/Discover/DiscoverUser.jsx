@@ -58,27 +58,40 @@ const DiscoverUser = ({ onUserCountChange }) => {
 
 
  // Fetching the list of users with pagination
- const getAllUser = async (caller, page) => {
-  console.log(`Fetching data for page: ${page}`); // Debugging log
+ const getAllUser = async (caller, page, isRefresh = false) => {
+  console.log(`Fetching data for page: ${page}`);
   setIsFetching(true);
+
   try {
     const result = await caller.list_all_users({
       page_size: itemsPerPage,
-      page:currentPage,
+      page: page,
     });
+    console.log('result', result);
+    console.log('result.length', result.length);
 
     if (result && result.length > 0) {
-      console.log(`Fetched ${result.length} users for page ${page}`); // Debugging log
-      setAllUserData((prevData) => [...prevData, ...result]);
-      const newTotal = totalUsersFetched + result.length;
+      console.log(`Fetched ${result.length} users for page ${page}`);
+
+      // Append data to existing state without duplication
+      setAllUserData((prevData) =>
+        isRefresh ? result : [...new Set([...prevData, ...result])]
+      );
+
+      const newTotal = isRefresh ? result.length : totalUsersFetched + result.length;
+      console.log('newTotal', newTotal);
       setTotalUsersFetched(newTotal);
       onUserCountChange(newTotal);
 
+      // If fetched data is less than itemsPerPage, assume no more data
       if (result.length < itemsPerPage) {
-        setHasMore(false); // No more data to load
+        setHasMore(false);
+      } else {
+        setCurrentPage((prevPage) => prevPage + 1);
       }
     } else {
-      setHasMore(false); // Stop if no more data
+      // If no data is returned, stop loading
+      setHasMore(false);
     }
   } catch (error) {
     console.error("Error fetching users:", error);
@@ -87,6 +100,7 @@ const DiscoverUser = ({ onUserCountChange }) => {
     setIsFetching(false);
   }
 };
+
   // useEffect(() => {
   //   if (actor && !isFetching && hasMore) {
   //     getAllUser(actor, currentPage);
@@ -104,25 +118,21 @@ const DiscoverUser = ({ onUserCountChange }) => {
   //   }
   // };
   useEffect(() => {
-    if (!isFetching && hasMore) { // Only run if not already fetching
+    if (!isFetching && hasMore) {
       if (actor) {
         console.log(`Current page: ${currentPage}`);
-        getAllUser(actor, currentPage); // Pass the current page to fetch data
+        getAllUser(actor, currentPage); // Fetch data
       }
     }
-  }, [actor, currentPage, hasMore]); // Re-fetch when these change
-
+  }, [actor, currentPage, hasMore]);
   // Load more data when scrolling
   const loadMore = () => {
     if (!isFetching && hasMore) {
-      console.log(`Loading more... current page: ${currentPage}`); // Debugging log
-      setCurrentPage((prevPage) => {
-        const nextPage = prevPage + 1;
-        console.log(`Incrementing page to: ${nextPage}`); // Debugging log
-        return nextPage;
-      });
+      console.log(`Loading more... current page: ${currentPage}`);
+      getAllUser(actor, currentPage); // Fetch next set of data
     }
   };
+  
   
   // const refresh = () => {
   //   if (actor) {
@@ -130,13 +140,15 @@ const DiscoverUser = ({ onUserCountChange }) => {
   //   }
   // };
   const refresh = () => {
-    console.log("Refreshing data..."); // Debugging log
-    setAllUserData([]); // Clear the current data
+    console.log("Refreshing data...");
+    setAllUserData([]); // Clear current data
     setCurrentPage(1); // Reset to the first page
-    setTotalUsersFetched(0); 
-    setHasMore(true); 
+    setTotalUsersFetched(0); // Reset the total count before fetching new data
+    setHasMore(true); // Reset "has more" flag
+  
+    // Fetch data for the first page again
     if (actor) {
-      getAllUser(actor, 1); 
+      getAllUser(actor, 1, true); // Pass a flag to indicate it's a refresh
     }
   };
   /////////////////////////
@@ -190,7 +202,7 @@ const DiscoverUser = ({ onUserCountChange }) => {
             next={loadMore}
             hasMore={hasMore}
             loader={<h4>Loading more...</h4>}
-            endMessage={<p>No more data available</p>}
+            endMessage={<p className="flex justify-center">No more data available</p>}
             refreshFunction={refresh}
             pullDownToRefresh
             pullDownToRefreshThreshold={50}

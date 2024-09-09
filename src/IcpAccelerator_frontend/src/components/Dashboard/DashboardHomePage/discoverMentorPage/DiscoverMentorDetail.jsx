@@ -1,28 +1,12 @@
 import React, { useState, useCallback } from "react";
-import org from "../../../../../assets/images/Org.png";
 import uint8ArrayToBase64 from "../../../Utils/uint8ArrayToBase64";
-import { LanguageIcon } from "../../../UserRegistration/DefaultLink";
 import ArrowOutwardOutlinedIcon from "@mui/icons-material/ArrowOutwardOutlined";
 import VerifiedIcon from "@mui/icons-material/Verified";
 import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
-
-import {
-  FaLinkedin,
-  FaTwitter,
-  FaGithub,
-  FaTelegram,
-  FaFacebook,
-  FaInstagram,
-  FaYoutube,
-  FaReddit,
-  FaTiktok,
-  FaSnapchat,
-  FaWhatsapp,
-  FaMedium,
-} from "react-icons/fa";
 import parse from "html-react-parser";
 import Avatar from "@mui/material/Avatar";
 import UserDetail from "../UserDetail";
+import getSocialLogo from "../../../Utils/navigationHelper/getSocialLogo";
 const DiscoverMentorDetail = ({ projectDetails, userData }) => {
   const projectDetail = projectDetails;
   console.log("projectdetails ", projectDetail);
@@ -119,29 +103,7 @@ const DiscoverMentorDetail = ({ projectDetails, userData }) => {
     Telegram: false,
   });
 
-  const getLogo = (url) => {
-    try {
-      const domain = new URL(url).hostname.split(".").slice(-2).join(".");
-      const size = "text-2xl"; // Adjust size as needed
-      const icons = {
-        "linkedin.com": <FaLinkedin className={`text-blue-600 ${size}`} />,
-        "twitter.com": <FaTwitter className={`text-blue-400 ${size}`} />,
-        "github.com": <FaGithub className={`text-gray-700 ${size}`} />,
-        "telegram.com": <FaTelegram className={`text-blue-400 ${size}`} />,
-        "facebook.com": <FaFacebook className={`text-blue-400 ${size}`} />,
-        "instagram.com": <FaInstagram className={`text-pink-950 ${size}`} />,
-        "youtube.com": <FaYoutube className={`text-red-600 ${size}`} />,
-        "reddit.com": <FaReddit className={`text-orange-500 ${size}`} />,
-        "tiktok.com": <FaTiktok className={`text-black ${size}`} />,
-        "snapchat.com": <FaSnapchat className={`text-yellow-400 ${size}`} />,
-        "whatsapp.com": <FaWhatsapp className={`text-green-600 ${size}`} />,
-        "medium.com": <FaMedium className={`text-black ${size}`} />,
-      };
-      return icons[domain] || <LanguageIcon />;
-    } catch (error) {
-      return <LanguageIcon />;
-    }
-  };
+
 
   const [hoveredIndex, setHoveredIndex] = useState(null);
   const [activeIndex, setActiveIndex] = useState(null);
@@ -330,7 +292,7 @@ const DiscoverMentorDetail = ({ projectDetails, userData }) => {
               <div className="flex gap-3">
                 {userData?.social_links[0]?.map((linkObj, i) => {
                   const link = linkObj.link[0]; // Assuming the link is in this format
-                  const icon = getLogo(link);
+                  const icon = getSocialLogo(link);
                   return (
                     <a
                       key={i}
@@ -513,7 +475,7 @@ const DiscoverMentorDetail = ({ projectDetails, userData }) => {
                 LINKS
               </h3>
               {links?.link.map((alllink, i) => {
-                const icon = getLogo(alllink);
+                const icon = getSocialLogo(alllink);
                 return (
                   <div key={i} className="flex items-center space-x-2">
                     {icon ? <a href={`${alllink}`}>{icon}</a> : ""}

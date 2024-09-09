@@ -161,59 +161,18 @@
 
 // export default DiscoverRegionalHubs;
 import React, { useEffect, useState } from "react";
-import { FaTelegramPlane, FaDiscord } from "react-icons/fa";
-import XIcon from "@mui/icons-material/Close";
 import { useSelector } from "react-redux";
 import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
 import RegionalHubModal from "./RegionalHubModal";
 import NoData from "../NoDataCard/NoData";
-import { LanguageIcon } from "../UserRegistration/DefaultLink";
-import {
-  FaLinkedin,
-  FaTwitter,
-  FaGithub,
-  FaTelegram,
-  FaFacebook,
-  FaInstagram,
-  FaYoutube,
-  FaReddit,
-  FaTiktok,
-  FaSnapchat,
-  FaWhatsapp,
-  FaMedium,
-} from "react-icons/fa";
-import { FaXTwitter } from "react-icons/fa6";
 import { MdArrowOutward } from "react-icons/md";
+import getSocialLogo from "../Utils/navigationHelper/getSocialLogo";
 const DiscoverRegionalHubs = () => {
   const actor = useSelector((currState) => currState.actors.actor);
   const [allHubsData, setAllHubsData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const getLogo = (url) => {
-    try {
-      const domain = new URL(url).hostname.split(".").slice(-2).join(".");
-      const size = "text-2xl";
-      const icons = {
-        "linkedin.com": <FaLinkedin className={`text-blue-600 ${size}`} />,
-        "twitter.com": <FaTwitter className={`text-blue-400 ${size}`} />,
-        "github.com": <FaGithub className={`text-gray-700 ${size}`} />,
-        "telegram.com": <FaTelegram className={`text-blue-400 ${size}`} />,
-        "facebook.com": <FaFacebook className={`text-blue-400 ${size}`} />,
-        "instagram.com": <FaInstagram className={`text-pink-950 ${size}`} />,
-        "youtube.com": <FaYoutube className={`text-red-600 ${size}`} />,
-        "reddit.com": <FaReddit className={`text-orange-500 ${size}`} />,
-        "tiktok.com": <FaTiktok className={`text-black ${size}`} />,
-        "snapchat.com": <FaSnapchat className={`text-yellow-400 ${size}`} />,
-        "whatsapp.com": <FaWhatsapp className={`text-green-600 ${size}`} />,
-        "medium.com": <FaMedium className={`text-black ${size}`} />,
-        "x.com": <FaXTwitter className={`text-black ${size}`} />,
-      };
-      return icons[domain] || <LanguageIcon />;
-    } catch (error) {
-      return <LanguageIcon />;
-    }
-  };
 
   const getAllHubs = async (caller, isMounted) => {
     try {
@@ -299,7 +258,7 @@ const DiscoverRegionalHubs = () => {
                     hub?.params?.links[0]?.map((linkObj, i) => {
                       const link = linkObj?.links?.[0];
                       if (!link) return null;
-                      const icon = getLogo(link);
+                      const icon = getSocialLogo(link);
                       return (
                         <a
                           key={i}

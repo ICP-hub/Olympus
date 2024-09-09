@@ -4,21 +4,7 @@ import VerifiedIcon from "@mui/icons-material/Verified";
 import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
 import ArrowOutwardOutlinedIcon from "@mui/icons-material/ArrowOutwardOutlined";
 import uint8ArrayToBase64 from "../../../Utils/uint8ArrayToBase64";
-import { LanguageIcon } from "../../../UserRegistration/DefaultLink";
-import {
-  FaLinkedin,
-  FaTwitter,
-  FaGithub,
-  FaTelegram,
-  FaFacebook,
-  FaInstagram,
-  FaYoutube,
-  FaReddit,
-  FaTiktok,
-  FaSnapchat,
-  FaWhatsapp,
-  FaMedium,
-} from "react-icons/fa";
+import getSocialLogo from "../../../Utils/navigationHelper/getSocialLogo";
 
 const DiscoverMentorProfile = ({ mentorData }) => {
   const mentorProfile = mentorData?.[0];
@@ -42,29 +28,7 @@ const DiscoverMentorProfile = ({ mentorData }) => {
   let links = mentorEvent?.params?.social_links[0];
   console.log("Links ", links);
 
-  const getLogo = (url) => {
-    try {
-      const domain = new URL(url).hostname.split(".").slice(-2).join(".");
-      const size = "text-2xl"; // Adjust size as needed
-      const icons = {
-        "linkedin.com": <FaLinkedin className={`text-blue-600 ${size}`} />,
-        "twitter.com": <FaTwitter className={`text-blue-400 ${size}`} />,
-        "github.com": <FaGithub className={`text-gray-700 ${size}`} />,
-        "telegram.com": <FaTelegram className={`text-blue-400 ${size}`} />,
-        "facebook.com": <FaFacebook className={`text-blue-400 ${size}`} />,
-        "instagram.com": <FaInstagram className={`text-pink-950 ${size}`} />,
-        "youtube.com": <FaYoutube className={`text-red-600 ${size}`} />,
-        "reddit.com": <FaReddit className={`text-orange-500 ${size}`} />,
-        "tiktok.com": <FaTiktok className={`text-black ${size}`} />,
-        "snapchat.com": <FaSnapchat className={`text-yellow-400 ${size}`} />,
-        "whatsapp.com": <FaWhatsapp className={`text-green-600 ${size}`} />,
-        "medium.com": <FaMedium className={`text-black ${size}`} />,
-      };
-      return icons[domain] || <LanguageIcon />;
-    } catch (error) {
-      return <LanguageIcon />;
-    }
-  };
+
 
   const [activeTab, setActiveTab] = useState("general");
 
@@ -238,7 +202,7 @@ const DiscoverMentorProfile = ({ mentorData }) => {
               {/* <div>
               <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase ">LINKS</h3>
               {links?.link.map((alllink,i)=>{
-               const icon = getLogo(alllink);
+               const icon = getSocialLogo(alllink);
                return (
                 <div key={i} className="flex items-center space-x-2">
                   {icon ? (
@@ -259,7 +223,7 @@ const DiscoverMentorProfile = ({ mentorData }) => {
                 <div className="flex flex-wrap gap-2">
                   {links?.map((linkObj, i) =>
                     linkObj.link?.map((link, index) => {
-                      const icon = getLogo(link);
+                      const icon = getSocialLogo(link);
                       return (
                         <a
                           key={index}
@@ -393,7 +357,7 @@ const DiscoverMentorProfile = ({ mentorData }) => {
               {/* <div>
               <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase ">LINKS</h3>
               {links?.link.map((alllink,i)=>{
-               const icon = getLogo(alllink);
+               const icon = getSocialLogo(alllink);
                return (
                 <div key={i} className="flex items-center space-x-2">
                   {icon ? (
@@ -414,7 +378,7 @@ const DiscoverMentorProfile = ({ mentorData }) => {
                 <div className="flex flex-wrap gap-2">
                   {mentorProfile?.profile?.links[0]?.map((linkObj, i) =>
                     linkObj.link?.map((link, index) => {
-                      const icon = getLogo(link);
+                      const icon = getSocialLogo(link);
                       return (
                         <a
                           key={index}

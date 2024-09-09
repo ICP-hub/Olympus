@@ -21,7 +21,7 @@ console.log("my cohort data lenght",allLiveEventsData.length)
   const navigate = useNavigate();
 
   const handleClick = (cohort_id) => {
-    navigate("/dashboard/single-event", { state: { cohort_id } });
+    navigate(`/dashboard/single-event/${cohort_id}`);
   };
 
   useEffect(() => {

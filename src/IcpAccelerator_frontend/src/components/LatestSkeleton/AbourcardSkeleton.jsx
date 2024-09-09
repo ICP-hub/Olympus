@@ -4,22 +4,8 @@ import { useNavigate } from "react-router-dom";
 import "react-loading-skeleton/dist/skeleton.css";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import MailOutlinedIcon from "@mui/icons-material/MailOutlined";
-import { LanguageIcon } from "../UserRegistration/DefaultLink";
-import {
-  FaLinkedin,
-  FaTwitter,
-  FaGithub,
-  FaTelegram,
-  FaFacebook,
-  FaInstagram,
-  FaYoutube,
-  FaReddit,
-  FaTiktok,
-  FaSnapchat,
-  FaWhatsapp,
-  FaMedium,
-} from "react-icons/fa";
 import { useFormContext, useFieldArray } from "react-hook-form";
+import getSocialLogo from "../Utils/navigationHelper/getSocialLogo";
 
 export const AboutcardSkeleton = (getAllData) => {
   const { control } = useFormContext();
@@ -28,29 +14,7 @@ export const AboutcardSkeleton = (getAllData) => {
     name: "links",
   });
 
-  const getLogo = (url) => {
-    try {
-      const domain = new URL(url).hostname.split(".").slice(-2).join(".");
-      const size = "text-2xl"; // Adjust size as needed
-      const icons = {
-        "linkedin.com": <FaLinkedin className={`text-blue-600 ${size}`} />,
-        "twitter.com": <FaTwitter className={`text-blue-400 ${size}`} />,
-        "github.com": <FaGithub className={`text-gray-700 ${size}`} />,
-        "telegram.com": <FaTelegram className={`text-blue-400 ${size}`} />,
-        "facebook.com": <FaFacebook className={`text-blue-400 ${size}`} />,
-        "instagram.com": <FaInstagram className={`text-pink-950 ${size}`} />,
-        "youtube.com": <FaYoutube className={`text-red-600 ${size}`} />,
-        "reddit.com": <FaReddit className={`text-orange-500 ${size}`} />,
-        "tiktok.com": <FaTiktok className={`text-black ${size}`} />,
-        "snapchat.com": <FaSnapchat className={`text-yellow-400 ${size}`} />,
-        "whatsapp.com": <FaWhatsapp className={`text-green-600 ${size}`} />,
-        "medium.com": <FaMedium className={`text-black ${size}`} />,
-      };
-      return icons[domain] || <LanguageIcon />;
-    } catch (error) {
-      return <LanguageIcon />;
-    }
-  };
+
 
   const navigate = useNavigate();
   console.log("getvalues", getAllData);
@@ -155,7 +119,7 @@ export const AboutcardSkeleton = (getAllData) => {
                 )}
               </div>
               <label className="block mt-3 font-medium text-gray-600">
-                Reason to join platform
+                Reason To Join Platform
               </label>
              <div className="w-[24rem] overflow-x-auto ">
              {getAllData?.getAllData?.reasons_to_join_platform ? (
@@ -231,7 +195,7 @@ export const AboutcardSkeleton = (getAllData) => {
                 <div className="flex gap-3">
                   {getAllData?.getAllData?.links ? (
                     getAllData?.getAllData?.links?.slice(0, 3).map((link, i) => {
-                      const icon = getLogo(link.link);
+                      const icon = getSocialLogo(link.link);
                       return (
                         <div key={i} className="flex items-cente overflow-x-auto space-x-2">
                           {icon ? (

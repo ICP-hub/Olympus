@@ -7,6 +7,26 @@ export const shareSvgIcon = (
     <path d="M17.3261 10.5062C17.5296 10.3318 17.6313 10.2446 17.6686 10.1409C17.7013 10.0498 17.7013 9.9502 17.6686 9.85914C17.6313 9.75539 17.5296 9.6682 17.3261 9.49383L10.2672 3.44331C9.917 3.14315 9.74191 2.99306 9.59367 2.98939C9.46483 2.98619 9.34177 3.04279 9.26035 3.14269C9.16667 3.25764 9.16667 3.48825 9.16667 3.94948V7.52886C7.38777 7.84007 5.75966 8.74146 4.54976 10.0949C3.23069 11.5704 2.50103 13.48 2.5 15.4591V15.9691C3.37445 14.9157 4.46626 14.0638 5.70063 13.4716C6.78891 12.9495 7.96535 12.6403 9.16667 12.5588V16.0505C9.16667 16.5117 9.16667 16.7424 9.26035 16.8573C9.34177 16.9572 9.46483 17.0138 9.59367 17.0106C9.74191 17.0069 9.917 16.8569 10.2672 16.5567L17.3261 10.5062Z" stroke="#364152" strokeWidth="1.66667" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 )
+export const LanguageIcon = (
+  <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="feather feather-globe"
+  >
+      <circle cx="12" cy="12" r="10"></circle>
+      <line x1="2" y1="12" x2="22" y2="12"></line>
+      <path d="M12 2a15.3 15.3 0 0 1 4 10.9c0 4.8-1.7 8.7-4 10.9"></path>
+      <path d="M12 2C9.7 2 7 5.9 7 10.9c0 4.8 1.7 8.7 4 10.9"></path>
+  </svg>
+);
+
 export const Foldericon = (
   <svg width="154" height="64" viewBox="0 0 154 64" fill="none" xmlns="http://www.w3.org/2000/svg">
   <mask id="path-1-inside-1_1002_24444" fill="white">

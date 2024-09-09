@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from "react";
-import ProfileImages from "../../../assets/Logo/ProfileImage.png";
 import edit from "../../../assets/Logo/edit.png";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import VerifiedIcon from "@mui/icons-material/Verified";
@@ -9,36 +8,18 @@ import toast, { Toaster } from "react-hot-toast";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useCountries } from "react-countries";
 import { useSelector } from "react-redux";
-import { LinkedIn, GitHub, Telegram, Language } from "@mui/icons-material";
 import { FaEdit, FaPlus } from "react-icons/fa";
 import { Principal } from "@dfinity/principal";
 import { ThreeDots } from "react-loader-spinner";
 import ReactSelect from "react-select";
 import {useNavigate} from "react-router-dom"
 import images from "../../../assets/images/coverImage.jpg";
-import {
-  FaLinkedin,
-  FaTwitter,
-  FaGithub,
-  FaTelegram,
-  FaFacebook,
-  FaInstagram,
-  FaYoutube,
-  FaReddit,
-  FaTiktok,
-  FaSnapchat,
-  FaWhatsapp,
-  FaMedium,
-  FaTrash,
-} from "react-icons/fa";
-import { FaXTwitter } from "react-icons/fa6";
-import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
 import CompressedImage from "../ImageCompressed/CompressedImage";
-import { LanguageIcon } from "../UserRegistration/DefaultLink";
 import InvestorDetail from "./InvestorDetail";
-import { validationSchema } from "./UserValidation";
 import ProjectDetail from "./ProjectDetail";
 import MentorEdit from "./MentorEdit";
+import { validationSchema } from "../UserRegistration/userValidation";
+import getSocialLogo from "../Utils/navigationHelper/getSocialLogo";
 const ProfileDetail = () => {
   const navigate = useNavigate()
   const [isImageEditing, setIsImageEditing] = useState(false);
@@ -103,65 +84,6 @@ const ProfileDetail = () => {
       [link]: e.target.value,
     }));
   };
-
-  // const getIconForLink = (url) => {
-  //   console.log("URL being checked:", url); 
-  //   if (url.includes("linkedin.com")) {
-  //     console.log("LinkedIn detected");
-  //     return LinkedIn;
-  //   } else if (url.includes("github.com")) {
-  //     console.log("GitHub detected");
-  //     return GitHub;
-  //   } else if (url.includes("t.me") || url.includes("telegram")) {
-  //     console.log("Telegram detected");
-  //     return Telegram;
-  //   } else {
-  //     console.log("Generic link detected");
-  //     return Language;
-  //   }
-  // };
-const getIconForLink = (url) => {
-  console.log("URL being checked:", url); 
-  if (url.includes("linkedin.com")) {
-    console.log("LinkedIn detected");
-    return LinkedIn;
-  } else if (url.includes("github.com")) {
-    console.log("GitHub detected");
-    return GitHub;
-  } else if (url.includes("t.me") || url.includes("telegram")) {
-    console.log("Telegram detected");
-    return Telegram;
-  } else if (url.includes("youtube.com")) {
-    console.log("YouTube detected");
-    return FaYoutube;
-  } else if (url.includes("facebook.com")) {
-    console.log("Facebook detected");
-    return FaFacebook;
-  } else if (url.includes("google.com")) {
-    console.log("Google detected");
-    return FaGoogle;
-  } else if (url.includes("instagram.com")) {
-    console.log("Instagram detected");
-    return FaInstagram;
-  } else if (url.includes("reddit.com")) {
-    console.log("Reddit detected");
-    return FaReddit;
-  } else if (url.includes("snapchat.com")) {
-    console.log("Snapchat detected");
-    return FaSnapchat;
-  } else if (url.includes("whatsapp.com")) {
-    console.log("WhatsApp detected");
-    return FaWhatsapp;
-  } else if (url.includes("medium.com")) {
-    console.log("Medium detected");
-    return FaMedium;
-  } else if (url.includes("twitter.com") || url.includes("x.com")) {
-    return FaXTwitter; 
-  } else {
-    console.log("Generic link detected");
-    return Language;
-  }
-};
 
   const {
     register,
@@ -591,9 +513,9 @@ const setValuesHandler = (val) => {
 
           <div className="flex items-center justify-center mb-1">
             <VerifiedIcon className="text-blue-500 mr-1" fontSize="small" />
-            <h2 className="text-xl font-semibold">{full_name}</h2>
+            <h2 className="text-xl font-semibold truncate break-all">{full_name}</h2>
           </div>
-          <p className="text-gray-600 text-center mb-4">{openchat_username}</p>
+          <p className="text-gray-600 text-center mb-4 truncate break-all">{openchat_username}</p>
           <button
             type="button"
             className="w-full h-[#155EEF] bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 mb-6 flex items-center justify-center"
@@ -689,9 +611,9 @@ const setValuesHandler = (val) => {
 
           <div className="flex items-center justify-center mb-1">
             <VerifiedIcon className="text-blue-500 mr-1" fontSize="small" />
-            <h2 className="text-xl font-semibold">{full_name}</h2>
+            <h2 className="text-xl font-semibold truncate break-all">{full_name}</h2>
           </div>
-          <p className="text-gray-600 text-center mb-4">{openchat_username}</p>
+          <p className="text-gray-600 text-center mb-4 truncate break-all">{openchat_username}</p>
           <button
             type="button"
             className="w-full h-[#155EEF] bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 mb-6 flex items-center justify-center"
@@ -738,9 +660,9 @@ const setValuesHandler = (val) => {
 
           <div className="flex items-center justify-center mb-1">
             <VerifiedIcon className="text-blue-500 mr-1" fontSize="small" />
-            <h2 className="text-xl font-semibold">{full_name}</h2>
+            <h2 className="text-xl font-semibold truncate break-all">{full_name}</h2>
           </div>
-          <p className="text-gray-600 text-center mb-4">{openchat_username}</p>
+          <p className="text-gray-600 text-center mb-4 truncate break-all">{openchat_username}</p>
           <button
             type="button"
             className="w-full h-[#155EEF] bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 mb-6 flex items-center justify-center"
@@ -784,12 +706,12 @@ const setValuesHandler = (val) => {
         {/* General Tab Content */}
         {activeTab === "general" && (
           <form onSubmit={handleSubmit(handleSave, onErrorHandler)}>
-            <div className="px-1">
+            <div className="px-1 py-4">
               {/* full name  */}
               <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-2 px-3">
                 <div className="flex justify-between">
                   <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
-                    full_name
+                    full name
                   </h3>
                   <div>
                     <button
@@ -811,7 +733,7 @@ const setValuesHandler = (val) => {
                                                   errors?.full_name
                                                     ? "border-red-500"
                                                     : "border-[#737373]"
-                                                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                                                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1`}
                       placeholder="Enter your full name"
                     />
 
@@ -823,11 +745,8 @@ const setValuesHandler = (val) => {
                   </>
                 ) : (
                   <div className="flex items-center">
-                    <p className="mr-2 text-sm">{full_name}</p>
-                    <VerifiedIcon
-                      className="text-blue-500 mr-2 w-2 h-2"
-                      fontSize="small"
-                    />
+                    <p className="mr-2 text-sm truncate">{full_name}</p>
+                    
                   </div>
                 )}
               </div>
@@ -857,7 +776,7 @@ const setValuesHandler = (val) => {
                                                   errors?.openchat_user_name
                                                     ? "border-red-500 "
                                                     : "border-[#737373]"
-                                                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                                                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1`}
                       placeholder="Enter your openchat username"
                     />
                     {errors?.openchat_user_name && (
@@ -868,7 +787,7 @@ const setValuesHandler = (val) => {
                   </>
                 ) : (
                   <div className="flex items-center">
-                    <p className="mr-2 text-sm">{openchat_username}</p>
+                    <p className="mr-2 text-sm truncate break-all">{openchat_username}</p>
                   </div>
                 )}
               </div>
@@ -898,7 +817,7 @@ const setValuesHandler = (val) => {
                                                   errors?.email
                                                     ? "border-red-500"
                                                     : "border-[#737373]"
-                                                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                                                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1`}
                       placeholder="Enter your email"
                     />
                     {errors?.email && (
@@ -909,7 +828,7 @@ const setValuesHandler = (val) => {
                   </>
                 ) : (
                   <div className="flex items-center">
-                    <p className="mr-2 text-sm">{email}</p>
+                    <p className="mr-2 text-sm truncate break-all">{email}</p>
                     <VerifiedIcon
                       className="text-blue-500 mr-2 w-2 h-2"
                       fontSize="small"
@@ -941,12 +860,12 @@ const setValuesHandler = (val) => {
                     {...register("bio")}
                     className={`bg-gray-50 border-2 ${
                       errors?.bio ? "border-red-500 " : "border-[#737373]"
-                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1`}
                     placeholder="Enter your bio"
                     rows={1}
                   ></textarea>
                 ) : (
-                  <p className="text-sm">{bio}</p>
+                  <p className="text-sm truncate break-all">{bio}</p>
                 )}
               </div>
 
@@ -971,7 +890,7 @@ const setValuesHandler = (val) => {
                     {...register("country")}
                     className={`bg-gray-50 border-2 ${
                       errors.country ? "border-red-500 " : "border-[#737373]"
-                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1`}
                   >
                     <option className="text-lg font-bold" value="">
                       Select your country
@@ -992,7 +911,7 @@ const setValuesHandler = (val) => {
                       className="text-gray-500 mr-1"
                       fontSize="small"
                     />
-                    <p className="text-sm">{country}</p>
+                    <p className="text-sm truncate break-all">{country}</p>
                   </div>
                 )}
               </div>
@@ -1019,7 +938,7 @@ const setValuesHandler = (val) => {
                       errors.type_of_profile
                         ? "border-red-500 "
                         : "border-[#737373]"
-                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1`}
                   >
                     <option className="text-lg font-normal" value="">
                       Select profile type
@@ -1039,7 +958,7 @@ const setValuesHandler = (val) => {
                   </select>
                 ) : (
                   <div className="flex items-center">
-                    <p className="text-sm">{type_of_profile}</p>
+                    <p className="text-smtruncate break-all ">{type_of_profile}</p>
                   </div>
                 )}
               </div>
@@ -1081,7 +1000,7 @@ const setValuesHandler = (val) => {
                         },
                         display: "flex",
                         overflowX: "auto",
-                        maxHeight: "43px",
+                        maxHeight: "25px",
                         "&::-webkit-scrollbar": {
                           display: "none",
                         },
@@ -1142,7 +1061,7 @@ const setValuesHandler = (val) => {
                     }}
                   />
                 ) : (
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex gap-2 overflow-x-auto">
                     {(userFullData?.reason_to_join || [])
                       .flat()
                       .map((reason, index) => (
@@ -1263,7 +1182,7 @@ const setValuesHandler = (val) => {
                     )}
                   </>
                 ) : (
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex gap-2 overflow-x-auto">
     {area_of_interest.split(', ').map((interest, index) => (
       <span 
         key={index} 
@@ -1277,51 +1196,81 @@ const setValuesHandler = (val) => {
               </div>
               <div>
                 <h3 className="mb-2 text-xs text-gray-500 px-3">LINKS</h3>
-                <div className="flex items-center gap-5 px-3">
-                  {/* Display existing links */}
-                  {console.log("Display existing links ", socialLinks)}
-                  {socialLinks &&
-                    Object.keys(socialLinks).map((key, index) => {
-                      const url = socialLinks[key];
-                      if (!url) {
-                        return null;
-                      }
+                <div className="flex  flex-col items-center gap-5 px-3">
+        {/* Display existing links */}
+        {console.log("Display existing links ", socialLinks)}
+        {socialLinks &&
+          Object.keys(socialLinks).map((key, index) => {
+            const url = socialLinks[key];
+            if (!url) {
+              return null;
+            }
 
-                      const Icon = getIconForLink(url);
-                      return (
-                        <div
-                          className="group relative flex items-center"
-                          key={index}
-                        >
-                          <a
-                            href={url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center"
-                          >
-                            <Icon className="text-gray-400 hover:text-gray-600 cursor-pointer transform transition-all duration-300 hover:scale-110" />
-                          </a>
-                          <button
-                            type="button"
-                            className="absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 ease-in-out transform opacity-0 group-hover:opacity-100 group-hover:translate-x-6 h-10 w-7"
-                            onClick={() => handleLinkEditToggle(key)}
-                          >
-                            <img src={edit} alt="edit" />
-                          </button>
-                          {isEditingLink[key] && (
-                            <div className="flex flex-col w-full">
-                              <input
-                                type="text"
-                                value={url}
-                                onChange={(e) => handleLinkChange(e, key)}
-                                className="border p-2 rounded-md w-full"
-                                placeholder="Enter your social media URL"
-                              />
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
+            const Icon = getSocialLogo(url);
+            return (
+              <div className="group relative flex items-center" key={index}>
+                <a
+                  href={url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center"
+                >
+                  <Icon className="text-gray-400 hover:text-gray-600 cursor-pointer transform transition-all duration-300 hover:scale-110" />
+                </a>
+                <button
+                  type="button"
+                  className="absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 ease-in-out transform opacity-0 group-hover:opacity-100 group-hover:translate-x-6 h-10 w-7"
+                  onClick={() => handleLinkEditToggle(key)}
+                >
+                  <img src={edit} alt="edit" />
+                </button>
+                {isEditingLink[key] && (
+                  <div className="flex flex-col w-full">
+                    <input
+                      type="text"
+                      value={url}
+                      onChange={(e) => handleLinkChange(e, key)}
+                      className="border p-2 rounded-md w-full"
+                      placeholder="Enter your social media URL"
+                    />
+                  </div>
+                )}
+              </div>
+            );
+          })}
+
+        {/* New links input managed by react-hook-form */}
+        {fields.map((field, index) => (
+          <div key={field.id} className="flex items-center space-x-3">
+            <input
+              type="text"
+              {...register(`links.${index}.url`)}
+              placeholder="Enter your social media URL"
+              className="border p-2 rounded-md w-full"
+            />
+            <button
+              type="button"
+              className="text-red-500"
+              onClick={() => remove(index)}
+            >
+              Remove
+            </button>
+          </div>
+        ))}
+
+        {/* Add new link button */}
+        <button
+          type="button"
+          className="p-2 bg-blue-500 text-white rounded-md"
+          onClick={() => append({ url: "" })}
+        >
+          Add Another Link
+        </button>
+
+      {/* Submit button */}
+      <button type="submit" className="mt-3 p-2 bg-green-500 text-white rounded-md">
+        Save Links
+      </button>
                 </div>
 
                 {/* Save/Cancel Section */}

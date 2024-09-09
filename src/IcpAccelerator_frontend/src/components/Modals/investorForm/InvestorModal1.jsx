@@ -3,6 +3,7 @@ import ReactSelect from "react-select";
 import Select from "react-select";
 import { useFormContext } from "react-hook-form";
 import { useSelector } from "react-redux";
+import getReactSelectStyles from "../../Utils/navigationHelper/getReactSelectStyles";
 
 const InvestorModal1 = ({ formData }) => {
   // DESTRUCTURING HOOKS AND METHODS FROM useFormContext
@@ -196,50 +197,7 @@ const InvestorModal1 = ({ formData }) => {
             isMulti
             menuPortalTarget={document.body}
             menuPosition={"fixed"}
-            styles={{
-              menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-              control: (provided, state) => ({
-                ...provided,
-                paddingBlock: "2px",
-                borderRadius: "8px",
-                border: errors.investment_type
-                  ? "2px solid #ef4444"
-                  : "2px solid #737373",
-                backgroundColor: "rgb(249 250 251)",
-                display: "flex",
-                overflowX: "auto",
-                maxHeight: "43px",
-                "&::-webkit-scrollbar": {
-                  display: "none",
-                },
-              }),
-              valueContainer: (provided, state) => ({
-                ...provided,
-                overflow: "scroll",
-                maxHeight: "40px",
-                scrollbarWidth: "none",
-              }),
-              placeholder: (provided, state) => ({
-                ...provided,
-                color: errors.investment_type ? "#ef4444" : "rgb(107 114 128)",
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-              }),
-              multiValue: (provided) => ({
-                ...provided,
-                display: "inline-flex",
-                alignItems: "center",
-                backgroundColor: "white",
-                border: "1px solid gray",
-                borderRadius: "5px",
-              }),
-              multiValueRemove: (provided) => ({
-                ...provided,
-                display: "inline-flex",
-                alignItems: "center",
-              }),
-            }}
+            styles={getReactSelectStyles(errors?.investment_type)}
             value={typeOfInvestSelectedOptions}
             options={typeOfInvestOptions}
             classNamePrefix="select"
@@ -309,46 +267,7 @@ const InvestorModal1 = ({ formData }) => {
             isMulti
             menuPortalTarget={document.body}
             menuPosition={"fixed"}
-            styles={{
-              menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-              control: (provided) => ({
-                ...provided,
-                paddingBlock: "2px",
-                borderRadius: "8px",
-                border: errors.multi_chain_names ? "1px solid #ef4444" : "1px solid #CDD5DF",
-                backgroundColor: "rgb(249 250 251)",
-                display: "flex",
-                overflowX: "auto",
-                maxHeight: "43px",
-                "&::-webkit-scrollbar": { display: "none" },
-              }),
-              valueContainer: (provided) => ({
-                ...provided,
-                overflow: "scroll",
-                maxHeight: "40px",
-                scrollbarWidth: "none",
-              }),
-              placeholder: (provided) => ({
-                ...provided,
-                color: errors.invested_in_multi_chain_names ? "#ef4444" : "rgb(107 114 128)",
-                 
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-              }),
-              multiValue: (provided) => ({
-                ...provided,
-                display: "inline-flex",
-                alignItems: "center",
-                backgroundColor: "white",
-                border: "2px solid #CDD5DF",
-              }),
-              multiValueRemove: (provided) => ({
-                ...provided,
-                display: "inline-flex",
-                alignItems: "center",
-              }),
-            }}
+            styles={getReactSelectStyles(errors?.invested_in_multi_chain_names)}
             value={investedInMultiChainSelectedOptions}
             options={multiChainOptions}
             classNamePrefix="select"

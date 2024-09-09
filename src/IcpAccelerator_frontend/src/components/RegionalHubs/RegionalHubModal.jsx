@@ -6,25 +6,11 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import CompressedImage from "../../components/ImageCompressed/CompressedImage"; 
 import toast, { Toaster } from "react-hot-toast";
 import { useSelector, useDispatch } from "react-redux";
-
 import {
-  FaLinkedin,
-  FaTwitter,
-  FaGithub,
-  FaTelegram,
-  FaFacebook,
-  FaInstagram,
-  FaYoutube,
-  FaReddit,
-  FaTiktok,
-  FaSnapchat,
-  FaWhatsapp,
-  FaMedium,
   FaPlus,
   FaTrash,
 } from "react-icons/fa";
-import { FaXTwitter } from "react-icons/fa6";
-import { LanguageIcon } from '../UserRegistration/DefaultLink';
+import getSocialLogo from '../Utils/navigationHelper/getSocialLogo';
 
 // Validation schema using Yup
 const validationSchema = Yup.object().shape({
@@ -88,32 +74,6 @@ const RegionalHubModal = ({ onClose }) => {
     setImagePreview(null);
     setImageData(null); // Clear image data when the image is cleared
   };
-
-  const getLogo = (url) => {
-    try {
-      const domain = new URL(url).hostname.split(".").slice(-2).join(".");
-      const size = "size-8";
-      const icons = {
-        "linkedin.com": <FaLinkedin className={`text-blue-600 ${size}`} />,
-        "twitter.com": <FaTwitter className={`text-blue-400 ${size}`} />,
-        "github.com": <FaGithub className={`text-gray-700 ${size}`} />,
-        "telegram.com": <FaTelegram className={`text-blue-400 ${size}`} />,
-        "facebook.com": <FaFacebook className={`text-blue-400 ${size}`} />,
-        "instagram.com": <FaInstagram className={`text-pink-950 ${size}`} />,
-        "youtube.com": <FaYoutube className={`text-red-600 ${size}`} />,
-        "reddit.com": <FaReddit className={`text-orange-500 ${size}`} />,
-        "tiktok.com": <FaTiktok className={`text-black ${size}`} />,
-        "snapchat.com": <FaSnapchat className={`text-yellow-400 ${size}`} />,
-        "whatsapp.com": <FaWhatsapp className={`text-green-600 ${size}`} />,
-        "medium.com": <FaMedium className={`text-black ${size}`} />,
-        "x.com": <FaXTwitter className={`text-black ${size}`} />,
-      };
-      return icons[domain] || <LanguageIcon />;
-    } catch (error) {
-      return <LanguageIcon />;
-    }
-  };
-
 
 const onSubmit = async (data) => {
   console.log("On Submit k andr aagya",data)
@@ -311,7 +271,7 @@ const onSubmit = async (data) => {
                         <div className="flex items-center w-full">
                           <div className="flex items-center space-x-2 w-full">
                             <div className="flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full">
-                              {field.value && getLogo(field.value)}
+                              {field.value && getSocialLogo(field.value)}
                             </div>
                             <input
                               
