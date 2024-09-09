@@ -206,7 +206,7 @@ export const homepagedata={
                   "titleClass": "text-3xl font-custom text-[#121926] pb-2",
                   "description": "Commodo ut non aliquam nunc nulla velit et vulputate turpis. Erat rhoncus tristique ullamcorper sit.",
                   "descriptionClass": "pb-6 text-xs font-normal text-[#4B5565]",
-                  "tags": ["#Onboarding", "#Comms", "#Knowledge base"]
+                  "tags": ["#Onboarding", "#Comms", "#Knowledge "]
                 }
               },
               "card3": {
@@ -219,7 +219,7 @@ export const homepagedata={
                   "titleClass": "text-3xl font-custom text-[#121926] pb-2",
                   "description": "Commodo ut non aliquam nunc nulla velit et vulputate turpis. Erat rhoncus tristique ullamcorper sit.",
                   "descriptionClass": "pb-6 text-xs font-normal text-[#4B5565]",
-                  "tags": ["#Onboarding", "#Comms", "#Knowledge base"]
+                  "tags": ["#Onboarding", "#Comms", "#Knowledge "]
                 }
               },
               "card4": {
@@ -260,7 +260,7 @@ export const homepagedata={
                   "titleClass": "text-3xl font-custom text-[#121926] pb-2",
                   "description": "Commodo ut non aliquam nunc nulla velit et vulputate turpis. Erat rhoncus tristique ullamcorper sit.",
                   "descriptionClass": "pb-6 text-xs font-normal text-[#4B5565]",
-                  "tags": ["#Onboarding", "#Comms", "#Knowledge base"]
+                  "tags": ["#Onboarding", "#Comms", "#Knowledge "]
                 }
               },
               "card7": {

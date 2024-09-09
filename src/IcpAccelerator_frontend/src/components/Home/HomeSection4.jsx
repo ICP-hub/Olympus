@@ -31,9 +31,9 @@ function HomeSection4() {
 
           <div className="flex flex-col gap-5">
             {/* 1st flex card start  */}
-            <div className="flex gap-6 mx-12">
+            <div className=" flex flex-col dlg:flex-row gap-6 mx-12">
               {/* left card  */}
-              <div className="basis-[946px] flex rounded-lg shadow-lg overflow-hidden bg-[#EEF2F6]">
+              <div className="dlg:basis-[946px] flex flex-col sm5:flex-row rounded-lg shadow-lg overflow-hidden bg-[#EEF2F6]">
                 <div className="">
                   <img
                     src={homepagesection4.card1.imageSrc.sec41}
@@ -42,7 +42,7 @@ function HomeSection4() {
                   />
                 </div>
                 <div className="px-5">
-                  <div className="max-w-[379px] h-full flex flex-col justify-between py-4">
+                  <div className="max-w-[379px] h-full flex flex-col sm5:justify-between py-4">
                     <div>
                       <h1 className="text-3xl font-custom text-[#121926] pb-2">
                       {homepagesection4.card1.content.title}
@@ -54,7 +54,7 @@ function HomeSection4() {
                       {homepagesection4.card1.content.description2}
                       </p>
                     </div>
-                    <div className="flex space-x-2 ">
+                    <div className="flex gap-1 flex-wrap">
                       <span className="bg-white text-xs font-normal text-[#364152] px-3 py-1 rounded-md border-2">
                       {homepagesection4.card1.content.tags[0]}
                       </span>
@@ -79,7 +79,7 @@ function HomeSection4() {
                     {homepagesection4.card2.content.description}
                     </p>
                   </div>
-                  <div className=" h-full  py-4 ">
+                  <div className="h-[200px] dlg:h-full  py-4 ">
                     <div
                       className="h-full"
                       style={{
@@ -91,7 +91,7 @@ function HomeSection4() {
                         marginTop: "-43px",
                       }}
                     ></div>
-                    <div className="flex space-x-2 px-5">
+                    <div className="flex gap-1 px-5 ">
                       <span className="bg-white text-xs font-normal text-[#364152] px-3 py-1 rounded-md border-2">
                       {homepagesection4.card2.content.tags[0]}
                       </span>
@@ -107,7 +107,7 @@ function HomeSection4() {
               </div>
             </div>
             {/* 2nd  flex card start  */}
-            <div className="flex gap-6 mx-12 ">
+            <div className="flex flex-col dlg:flex-row gap-6 mx-12 ">
               {/* left card  */}
               <div className=" rounded-lg shadow-lg overflow-hidden bg-[#FFFACD] ">
                 <div className=" h-full flex flex-col justify-between  py-4 ">
@@ -119,7 +119,7 @@ function HomeSection4() {
                     {homepagesection4.card3.content.description}
                     </p>
                   </div>
-                  <div className=" h-full  py-4 ">
+                  <div className=" h-[200px] dlg:h-full  py-4 ">
                     <div
                       className="h-full"
                       style={{
@@ -131,7 +131,7 @@ function HomeSection4() {
                         marginTop: "-43px",
                       }}
                     ></div>
-                    <div className="flex space-x-2 px-5">
+                    <div className="flex gap-1 px-5">
                       <span className="bg-white text-xs font-normal text-[#364152] px-3 py-1 rounded-md border-2">
                       {homepagesection4.card3.content.tags[0]}
                       </span>
@@ -147,7 +147,7 @@ function HomeSection4() {
               </div>
 
               {/* right card  */}
-              <div className="basis-[946px] flex rounded-lg shadow-lg overflow-hidden bg-[#FFF4ED]">
+              <div className="dlg:basis-[946px] flex rounded-lg shadow-lg overflow-hidden bg-[#FFF4ED]">
                 <div className="">
                   <img
                     src={homepagesection4.card4.imageSrc.hubs}
@@ -156,7 +156,7 @@ function HomeSection4() {
                   />
                 </div>
                 <div className="px-5">
-                  <div className="max-w-[379px] h-full flex flex-col justify-between py-4">
+                  <div className="max-w-[379px] h-full flex flex-col sm5:justify-between py-4">
                     <div>
                       <h1 className="text-3xl font-custom text-[#121926] pb-2">
                       {homepagesection4.card4.content.title}
@@ -168,7 +168,7 @@ function HomeSection4() {
                       {homepagesection4.card4.content.description2}
                       </p>
                     </div>
-                    <div className="flex space-x-2 ">
+                    <div className="flex gap-1 ">
                       <span className="bg-white text-xs font-normal text-[#364152] px-3 py-1 rounded-md border-2">
                       {homepagesection4.card4.content.tags[0]}
                       </span>
@@ -184,9 +184,9 @@ function HomeSection4() {
               </div>
             </div>
             {/* 3rd flex card start  */}
-            <div className="flex gap-6 mx-12">
+            <div className="flex flex-col dlg:flex-row gap-6 mx-12">
               {/* left card  */}
-              <div className="basis-[946px] flex rounded-lg shadow-lg overflow-hidden bg-[#FDF4FF]">
+              <div className="dlg:basis-[946px] flex rounded-lg shadow-lg overflow-hidden bg-[#FDF4FF]">
                 <div className="">
                   <img
                     src={homepagesection4.card5.imageSrc.hubs}
@@ -195,7 +195,7 @@ function HomeSection4() {
                   />
                 </div>
                 <div className="px-5">
-                  <div className="max-w-[379px] h-full flex flex-col justify-between py-4">
+                  <div className="max-w-[379px] h-full flex flex-col sm5:justify-between py-4">
                     <div>
                       <h1 className="text-3xl font-custom text-[#121926] pb-2">
                       {homepagesection4.card5.content.title}
@@ -207,7 +207,7 @@ function HomeSection4() {
                       {homepagesection4.card5.content.description2}
                       </p>
                     </div>
-                    <div className="flex space-x-2 ">
+                    <div className="flex gap-1 ">
                       <span className="bg-white text-xs font-normal text-[#364152] px-3 py-1 rounded-md border-2">
                       {homepagesection4.card5.content.tags[0]}
                       </span>
@@ -232,7 +232,7 @@ function HomeSection4() {
                     {homepagesection4.card6.content.description}
                     </p>
                   </div>
-                  <div className=" h-full  py-4 ">
+                  <div className=" h-[200px] dlg:h-full  py-4 ">
                     <div
                       className="h-full"
                       style={{
@@ -244,7 +244,7 @@ function HomeSection4() {
                         marginTop: "-43px",
                       }}
                     ></div>
-                    <div className="flex space-x-2 px-5">
+                    <div className="flex gap-1 px-5">
                       <span className="bg-white text-xs font-normal text-[#364152] px-3 py-1 rounded-md border-2">
                       {homepagesection4.card6.content.tags[0]}
                       </span>
@@ -282,7 +282,7 @@ function HomeSection4() {
                       overflow: "visible",
                     }}
                   >
-                    <div className="flex space-x-2 px-5">
+                    <div className="flex gap-1 px-5">
                       <span className="bg-white text-xs font-normal text-[#364152] px-3 py-1 rounded-md border-2">
                       {homepagesection4.card7.content.tags[0]}
                       </span>
@@ -313,7 +313,7 @@ function HomeSection4() {
                       overflow: "visible",
                     }}
                   >
-                    <div className="flex space-x-2 px-5">
+                    <div className="flex gap-1 px-5">
                       <span className="bg-white text-xs font-normal text-[#364152] px-3 py-1 rounded-md border-2">
                       {homepagesection4.card8.content.tags[0]}
                       </span>
@@ -344,7 +344,7 @@ function HomeSection4() {
                       height: "150px",
                     }}
                   >
-                    <div className="flex space-x-2 px-5">
+                    <div className="flex gap-1 px-5">
                       <span className="bg-white text-xs font-md text-[#364152] px-3 py-1 rounded-md border-2">
                       {homepagesection4.card9.content.tags[0]}
                       </span>
