@@ -9,7 +9,7 @@ import sec47 from '../../../assets/images/sec47.png'
 import sec48 from '../../../assets/images/sec48.png'
 import sec49 from '../../../assets/images/sec49.png'
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import "./home.css"
+// import "./home.css"
 import { homepagedata } from "../Utils/jsondata/data/homepageData";
 
 
@@ -31,10 +31,10 @@ function HomeSection4() {
 
           <div className="flex flex-col gap-5">
             {/* 1st flex card start  */}
-            <div className=" flex flex-col dlg:flex-row gap-6 mx-12">
+            <div className=" flex flex-col dlg:flex-row gap-6 mx-1 md:mx-12">
               {/* left card  */}
               <div className="dlg:basis-[946px] flex flex-col sm5:flex-row rounded-lg shadow-lg overflow-hidden bg-[#EEF2F6]">
-                <div className="">
+                <div className="flex justify-center sm5:flex-none">
                   <img
                     src={homepagesection4.card1.imageSrc.sec41}
                     alt=""
@@ -71,6 +71,21 @@ function HomeSection4() {
               {/* right card  */}
               <div className=" rounded-lg shadow-lg overflow-hidden bg-[#FCE7F6] ">
                 <div className=" h-full flex flex-col justify-between  py-4 ">
+                   {/* mobile screen image  */}
+                   <div className=" h-[227px]  block sm5:hidden    ">
+                    <div
+                      className="h-full  sm4:w-[393px] "
+                      style={{
+                        backgroundImage: `url(${homepagesection4.card3.imageSrc.sec42})`,
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
+                        // width: "393px",
+                        marginBottom: "31px",
+                        marginTop: "-43px",
+                      }}
+                    ></div>
+                   
+                  </div>
                   <div className="h-fit px-5">
                     <h1 className="text-3xl font-custom text-[#121926] pb-2">
                     {homepagesection4.card2.content.title}
@@ -79,9 +94,9 @@ function HomeSection4() {
                     {homepagesection4.card2.content.description}
                     </p>
                   </div>
-                  <div className="h-[200px] dlg:h-full  py-4 ">
+                  <div className="sm5:h-[200px] h-0  dlg:h-full  py-4 ">
                     <div
-                      className="h-full"
+                      className="h-full hidden sm5:block"
                       style={{
                         backgroundImage: `url(${homepagesection4.card2.imageSrc.sec42})`,
                         backgroundSize: "cover",
@@ -91,7 +106,7 @@ function HomeSection4() {
                         marginTop: "-43px",
                       }}
                     ></div>
-                    <div className="flex gap-1 px-5 ">
+                    <div className="flex gap-1 flex-wrap ">
                       <span className="bg-white text-xs font-normal text-[#364152] px-3 py-1 rounded-md border-2">
                       {homepagesection4.card2.content.tags[0]}
                       </span>
@@ -107,10 +122,25 @@ function HomeSection4() {
               </div>
             </div>
             {/* 2nd  flex card start  */}
-            <div className="flex flex-col dlg:flex-row gap-6 mx-12 ">
+            <div className="flex flex-col dlg:flex-row gap-6 mx-1 md:mx-12 ">
               {/* left card  */}
               <div className=" rounded-lg shadow-lg overflow-hidden bg-[#FFFACD] ">
                 <div className=" h-full flex flex-col justify-between  py-4 ">
+                  {/* mobile screen image  */}
+                   <div className=" h-[227px]  block sm5:hidden    ">
+                    <div
+                      className="h-full sm4:w-[393px] "
+                      style={{
+                        backgroundImage: `url(${homepagesection4.card3.imageSrc.sec42})`,
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
+                        // width: "393px",
+                        marginBottom: "31px",
+                        marginTop: "-43px",
+                      }}
+                    ></div>
+                   
+                  </div>
                   <div className="h-fit px-5">
                     <h1 className="text-3xl font-custom text-[#121926] pb-2">
                     {homepagesection4.card3.content.title}
@@ -119,9 +149,10 @@ function HomeSection4() {
                     {homepagesection4.card3.content.description}
                     </p>
                   </div>
-                  <div className=" h-[200px] dlg:h-full  py-4 ">
+                  {/* laptop screen image  */}
+                  <div className=" sm5:h-[200px] h-0  dlg:h-full  py-4 ">
                     <div
-                      className="h-full"
+                      className="h-full hidden sm5:block"
                       style={{
                         backgroundImage: `url(${homepagesection4.card3.imageSrc.sec42})`,
                         backgroundSize: "cover",
@@ -131,7 +162,7 @@ function HomeSection4() {
                         marginTop: "-43px",
                       }}
                     ></div>
-                    <div className="flex gap-1 px-5">
+                    <div className="flex gap-1 flex-wrap">
                       <span className="bg-white text-xs font-normal text-[#364152] px-3 py-1 rounded-md border-2">
                       {homepagesection4.card3.content.tags[0]}
                       </span>
@@ -147,8 +178,8 @@ function HomeSection4() {
               </div>
 
               {/* right card  */}
-              <div className="dlg:basis-[946px] flex rounded-lg shadow-lg overflow-hidden bg-[#FFF4ED]">
-                <div className="">
+              <div className="dlg:basis-[946px] flex flex-col sm5:flex-row rounded-lg shadow-lg overflow-hidden bg-[#FFF4ED]">
+                <div className="flex justify-center sm5:flex-none">
                   <img
                     src={homepagesection4.card4.imageSrc.hubs}
                     alt=""
@@ -168,7 +199,7 @@ function HomeSection4() {
                       {homepagesection4.card4.content.description2}
                       </p>
                     </div>
-                    <div className="flex gap-1 ">
+                    <div className="flex gap-1 flex-wrap">
                       <span className="bg-white text-xs font-normal text-[#364152] px-3 py-1 rounded-md border-2">
                       {homepagesection4.card4.content.tags[0]}
                       </span>
@@ -184,10 +215,10 @@ function HomeSection4() {
               </div>
             </div>
             {/* 3rd flex card start  */}
-            <div className="flex flex-col dlg:flex-row gap-6 mx-12">
+            <div className="flex flex-col dlg:flex-row gap-6 mx-1 md:mx-12">
               {/* left card  */}
-              <div className="dlg:basis-[946px] flex rounded-lg shadow-lg overflow-hidden bg-[#FDF4FF]">
-                <div className="">
+              <div className="dlg:basis-[946px] flex flex-col sm5:flex-row rounded-lg shadow-lg overflow-hidden bg-[#FDF4FF]">
+                <div className="flex justify-center sm5:flex-none">
                   <img
                     src={homepagesection4.card5.imageSrc.hubs}
                     alt=""
@@ -207,7 +238,7 @@ function HomeSection4() {
                       {homepagesection4.card5.content.description2}
                       </p>
                     </div>
-                    <div className="flex gap-1 ">
+                    <div className="flex gap-1 flex-wrap">
                       <span className="bg-white text-xs font-normal text-[#364152] px-3 py-1 rounded-md border-2">
                       {homepagesection4.card5.content.tags[0]}
                       </span>
@@ -224,6 +255,21 @@ function HomeSection4() {
               {/* right card  */}
               <div className=" rounded-lg shadow-lg overflow-hidden bg-[#F3FEE7] ">
                 <div className=" h-full flex flex-col justify-between  py-4 ">
+                   {/* mobile screen image  */}
+                   <div className=" h-[227px]  block sm5:hidden    ">
+                    <div
+                      className="h-full sm4:w-[393px] "
+                      style={{
+                        backgroundImage: `url(${homepagesection4.card3.imageSrc.sec42})`,
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
+                        // width: "393px",
+                        marginBottom: "31px",
+                        marginTop: "-43px",
+                      }}
+                    ></div>
+                   
+                  </div>
                   <div className="h-fit px-5">
                     <h1 className="text-3xl font-custom text-[#121926] pb-2">
                     {homepagesection4.card6.content.title}
@@ -232,9 +278,9 @@ function HomeSection4() {
                     {homepagesection4.card6.content.description}
                     </p>
                   </div>
-                  <div className=" h-[200px] dlg:h-full  py-4 ">
+                  <div className=" sm5:h-[200px] h-0  dlg:h-full  py-4 ">
                     <div
-                      className="h-full"
+                      className="h-full hidden sm5:block"
                       style={{
                         backgroundImage: `url(${homepagesection4.card6.imageSrc.sec42})`,
                         backgroundSize: "cover",
@@ -244,7 +290,7 @@ function HomeSection4() {
                         marginTop: "-43px",
                       }}
                     ></div>
-                    <div className="flex gap-1 px-5">
+                    <div className="flex gap-1 flex-wrap">
                       <span className="bg-white text-xs font-normal text-[#364152] px-3 py-1 rounded-md border-2">
                       {homepagesection4.card6.content.tags[0]}
                       </span>
@@ -260,7 +306,7 @@ function HomeSection4() {
               </div>
             </div>
             {/* 4rth  flex card start  */}
-            <div className="grid md:grid-col-3 sm:grid-col-2 lg:grid-cols-3 gap-6 mx-12">
+            <div className="grid md:grid-col-3 sm:grid-col-2 lg:grid-cols-3 gap-6 mx-1 md:mx-12">
               {/* left card  */}
               <div className=" rounded-lg shadow-lg overflow-hidden bg-[#EFF4FF] ">
                 <div className=" h-full flex flex-col justify-between  pt-4 ">
@@ -282,7 +328,7 @@ function HomeSection4() {
                       overflow: "visible",
                     }}
                   >
-                    <div className="flex gap-1 px-5">
+                    <div className="flex gap-1 flex-wrap">
                       <span className="bg-white text-xs font-normal text-[#364152] px-3 py-1 rounded-md border-2">
                       {homepagesection4.card7.content.tags[0]}
                       </span>
@@ -313,7 +359,7 @@ function HomeSection4() {
                       overflow: "visible",
                     }}
                   >
-                    <div className="flex gap-1 px-5">
+                    <div className="flex gap-1 flex-wrap">
                       <span className="bg-white text-xs font-normal text-[#364152] px-3 py-1 rounded-md border-2">
                       {homepagesection4.card8.content.tags[0]}
                       </span>
@@ -344,7 +390,7 @@ function HomeSection4() {
                       height: "150px",
                     }}
                   >
-                    <div className="flex gap-1 px-5">
+                    <div className="flex gap-1 flex-wrap">
                       <span className="bg-white text-xs font-md text-[#364152] px-3 py-1 rounded-md border-2">
                       {homepagesection4.card9.content.tags[0]}
                       </span>
@@ -357,8 +403,8 @@ function HomeSection4() {
               </div>
             </div>
           </div>
-          <div className="mt-10 text-center">
-            <button className="bg-blue-500 text-white px-6 py-3 rounded-[4px]  border-2">
+          <div className="mt-10 text-center px-[2.9rem]">
+            <button className="bg-blue-500 text-white px-6 py-3 rounded-[4px]  border-2 w-full md:w-auto">
             {homepagesection4.button.text}
               <homepagesection4.arrowForwardIcon.ArrowForwardIcon className="ml-1" />
             </button>
