@@ -16,12 +16,6 @@ export default function Home() {
   };
   return (
     <>
-
-
-
-
-
-
       <HeroSection />
       <Section2 />
       <HomeSection3 />

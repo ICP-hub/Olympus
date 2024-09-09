@@ -36,7 +36,7 @@ const Navbar = ({ setModalOpen }) => {
     return (
         <>
             <nav className=' h-20 flex items-center bg-[#FEF5EE] '>
-                <div className='container mx-auto h-11 flex items-center justify-between '>
+                <div className='container mx-auto dlg:mx-[6rem] h-11 flex items-center justify-between '>
                     <div className=''>
                         <Link to='/'> <img src={navbar.logo.logo} alt='Olympus' className='cursor-pointer' /></Link>
                     </div>
