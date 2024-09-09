@@ -3,24 +3,24 @@ import React, { useEffect, useState } from 'react';
 const WarningMessage = () => {
   const [showWarning, setShowWarning] = useState(false);
 
-  useEffect(() => {
-    const checkScreenSize = () => {
-      const laptopScreenWidth = 1024;
-      // const mobileScreenWidth = 768;
-      const screenWidth = window.innerWidth;
-      // >= mobileScreenWidth && screenWidth
-      if (screenWidth  < laptopScreenWidth) {
-        setShowWarning(true);
-      } else {
-        setShowWarning(false);
-      }
-    };
+  // useEffect(() => {
+  //   const checkScreenSize = () => {
+  //     const laptopScreenWidth = 1024;
+  //     // const mobileScreenWidth = 768;
+  //     const screenWidth = window.innerWidth;
+  //     // >= mobileScreenWidth && screenWidth
+  //     if (screenWidth  < laptopScreenWidth) {
+  //       setShowWarning(true);
+  //     } else {
+  //       setShowWarning(false);
+  //     }
+  //   };
 
-    checkScreenSize();
-    window.addEventListener('resize', checkScreenSize);
+  //   checkScreenSize();
+  //   window.addEventListener('resize', checkScreenSize);
 
-    return () => window.removeEventListener('resize', checkScreenSize);
-  }, []);
+  //   return () => window.removeEventListener('resize', checkScreenSize);
+  // }, []);
 
   if (!showWarning) return null;
 
