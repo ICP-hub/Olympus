@@ -255,13 +255,13 @@ const NewJob = ({ latestJobs }) => {
               : "";
 
             return (
-      
               <>
-                <div key={card.job_id || index} className="flex flex-col gap-3 my-8">
+                <div
+                  key={card.job_id || index}
+                  className="flex flex-col gap-3 my-8"
+                >
                   <div className="flex justify-between">
-                    <div
-                      className="flex flex-col gap-3  "
-                    >
+                    <div className="flex flex-col gap-3  ">
                       <p className="text-gray-400">{job_post_time} </p>
                       <h3 className="text-xl font-bold">{job_name} </h3>
                       <p className="flex items-center">
@@ -279,7 +279,6 @@ const NewJob = ({ latestJobs }) => {
                       </p>
                     </div>
                     <div className="flex  gap-4 items-center">
-                    
                       <img
                         src={editp}
                         className=" text-gray-500 hover:underline text-xs h-4 w-4 cursor-pointer"
@@ -293,9 +292,11 @@ const NewJob = ({ latestJobs }) => {
                     </div>
                   </div>
                   <div className="flex flex-col gap-3">
-                    <p className="text-gray-600  overflow-hidden text-ellipsis max-h-12 line-clamp-2">{parse(job_description)} </p>
-                    <div className="flex gap-5 items-center">
-                      <div className="flex items-center gap-2">
+                    <p className="text-gray-600  overflow-hidden text-ellipsis max-h-12 line-clamp-2">
+                      {parse(job_description)}{" "}
+                    </p>
+                    <div className="flex gap-5 items-center flex-wrap">
+                      <div className="flex items-center gap-2 ">
                         {" "}
                         {lenseSvgIcon} <span className="">{job_category}</span>{" "}
                       </div>

@@ -119,7 +119,7 @@ function DashboardHomeProfileCards(percentage) {
 
   return (
     <>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6 p-6">
+      <div className="grid grid-cols-1 dlg:grid-cols-2 lgx:grid-cols-3 gap-6 mt-6 p-6">
         {/* Main profile card */}
         <div className="bg-white rounded-lg shadow-sm p-6 border">
           <div className="flex justify-between items-center mb-4">
@@ -174,10 +174,8 @@ function DashboardHomeProfileCards(percentage) {
                 fontSize="small"
               />
             </div>
-            <Link
-              to="/dashboard/profile"
-              className="text-blue-500 font-normal">
-              View details &gt;
+            <Link to="/dashboard/profile" className="text-blue-500 font-normal flex ">
+              <span className="lgx:hidden dxl0:block block pr-1">View</span> Details &gt;
             </Link>
           </div>
           {/* <div className="border border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center">
@@ -236,14 +234,20 @@ function DashboardHomeProfileCards(percentage) {
           </div>
         </div>
       </div>
-    {userRoles === 'project' &&
-      <div className="bg-white rounded-lg shadow-sm p-6 mt-8">
-        <div className="flex justify-between items-center m-2 p-2">
-          <h2 className="text-xl font-semibold">Projects</h2>
-          <a className="text-sm font-normal cursor-pointer" onClick={() => handleChange("project")}>View all projects</a>
+      {userRoles === "project" && (
+        <div className="bg-white rounded-lg shadow-sm p-6 mt-8">
+          <div className="flex justify-between items-center m-2 p-2">
+            <h2 className="text-xl font-semibold">Projects</h2>
+            <a
+              className="text-sm font-normal cursor-pointer"
+              onClick={() => handleChange("project")}
+            >
+              View all projects
+            </a>
+          </div>
+          <DashboardProjectCard />
         </div>
-         <DashboardProjectCard/>
-      </div>}
+      )}
       <div className="bg-white w-full rounded-lg shadow-sm  mt-8">
         <DashboardProfileView />
       </div>

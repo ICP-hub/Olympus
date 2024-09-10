@@ -11,11 +11,11 @@ const NewDocument = ({ cardData }) => {
     return docs.map((doc, index) => (
       <div
         key={index}
-        className={`relative flex items-center p-4 rounded-lg mb-4 shadow-md bg-white transition-all duration-300 `}
+        className={`relative flex flex-col sm5:flex-row items-center p-4 rounded-lg mb-4 shadow-md bg-white transition-all duration-300 `}
       >
         {/* Image Section with Background */}
-        <div className="bg-gray-100 w-[180px] px-10 py-4 rounded-lg flex-shrink-0 text-center">
-          <div className="ml-4 flex-grow transition-all duration-300">
+        <div className="bg-gray-100 w-full sm5:w-[180px] px-10 py-4 rounded-lg flex-shrink-0 text-center mb-2 sm5:mb-0">
+          <div className="ml-4 flex-grow transition-all duration-300 ">
             <img
               src={Filetype}
               alt="Document Thumbnail"
@@ -25,7 +25,7 @@ const NewDocument = ({ cardData }) => {
               href={doc?.link}
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-blue-800 mt-2 block overflow-hidden text-ellipsis whitespace-nowrap text-sm"
+              className="hover:text-blue-800 mt-2 sm5:block overflow-hidden text-ellipsis whitespace-nowrap text-sm"
               style={{ maxWidth: "100px" }}
             >
               {doc?.link || "No link provided"}
