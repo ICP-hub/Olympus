@@ -564,12 +564,13 @@ const UserRegistration = () => {
     }
   };
 
+
   useEffect(() => {
-    const subscription = watch((value) => {
-      setGetAllData(value);
-    });
-    return () => subscription.unsubscribe();
-  }, [watch, setGetAllData]);
+        const subscription = watch((value) => {
+          setGetAllData(value);
+        });
+        return () => subscription.unsubscribe();
+      }, [watch, setGetAllData]);
 
   const onSubmitHandler = async () => {
     const data = { ...formData, ...getValues() };
@@ -673,7 +674,7 @@ const UserRegistration = () => {
                 >
                   {index === 0 && <RegisterForm1 />}
                   {index === 1 && <RegisterForm2 />}
-                  {index === 2 && <RegisterForm3 setImageData={setImageData} />}
+                  {index === 2 && (<RegisterForm3 setImageData={setImageData} />)}
 
                   {captchaVisible && index === 2 && (
                     <div className="mt-4">
