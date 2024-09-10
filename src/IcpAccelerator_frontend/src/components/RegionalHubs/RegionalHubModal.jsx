@@ -211,7 +211,7 @@ const onSubmit = async (data) => {
               <input
                 type="text"
                 {...register("name")}
-                className={`border ${errors.name ? "border-red-500" : "border-[#737373]"} rounded-md shadow-sm text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                className={`border ${errors.name ? "border-red-500" : "border-[#737373]"} shadow-sm text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                 placeholder="Enter your Project name"
               />
               {errors.name && (
@@ -227,7 +227,7 @@ const onSubmit = async (data) => {
               </label>
               <input
                 {...register("website")}
-                className={`border ${errors.website ? "border-red-500" : "border-[#737373]"} rounded-md shadow-sm text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                className={`border ${errors.website ? "border-red-500" : "border-[#737373]"} shadow-sm text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                 placeholder="Enter  website"
                 rows="4"
               />
@@ -244,7 +244,7 @@ const onSubmit = async (data) => {
               </label>
               <textarea
                 {...register("description")}
-                className={`border ${errors.description ? "border-red-500" : "border-[#737373]"} rounded-md shadow-sm text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                className={`border ${errors.description ? "border-red-500" : "border-[#737373]"} shadow-sm text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                 placeholder="Enter a brief description"
                 rows="4"
               />
