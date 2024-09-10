@@ -654,23 +654,23 @@ const UserRegistration = () => {
   return (
     <>
       <FormProvider {...methods}>
-        <div className="bg-[#FFF4ED] px-[5%] min-h-screen flex lg:flex-row items-center justify-center gap-[5%] overflow-hidden">
-          <div className="h-[90vh] w-full  flex items-center justify-center rounded-xl lg:max-w-[50%]">
-            <div className="bg-white shadow-xl w-full rounded-2xl flex max-w-6xl">
-              <div className="flex-1 w-full  p-4 h-[90vh] overflow-y-scroll">
+        <div className="bg-[#FFF4ED] px-[5%] min-h-screen flex lg:flex-row items-center justify-center gap-[5%] ">
+          <div className="lg:h-[95vh] py-6 w-full  flex items-center justify-center rounded-xl lg:max-w-[50%] ">
+            <div className="bg-white shadow-xl w-full rounded-2xl  flex max-w-6xl">
+              <div className="flex-1 w-full  p-[5%] lg:h-[95vh]  ">
                 <img
                   src={Layer1}
                   alt="logo"
                   className=" text-start w-1/3 lg:w-1/3"
                   loading="lazy"
                 />
-                <h2 className="text-[#364152] px-4 text-sm font-semibold mb-2 mt-8 text-start md:text-left">
+                <h2 className="text-[#364152] px-4 mb-3 text-sm font-semibold mt-8 text-start md:text-left">
                   Step {index + 1} of 3
                 </h2>
-
-                <form
+               <div className="overflow-hidden max-h-[75vh] overflow-y-scroll">
+               <form
                   onSubmit={handleSubmit(onSubmitHandler, onErrorHandler)}
-                  className="space-y-6 w-full md:max-w-[90%] "
+                  className="space-y-6 w-full "
                 >
                   {index === 0 && <RegisterForm1 />}
                   {index === 1 && <RegisterForm2 />}
@@ -734,17 +734,17 @@ const UserRegistration = () => {
                     </div>
                   )}
 
-                  <div className="flex px-4 justify-between mt-8">
+                  <div className="flex px-4 mb-4 justify-between mt-8">
                     <button
                       type="button"
-                      className="py-2 px-2 text-sm sm:text-sm md:text-base text-gray-600 rounded hover:text-black border-gray-300 border-2"
+                      className="py-2 px-2 pr-3 text-sm sm:text-sm md:text-base text-gray-600 rounded hover:text-black border-gray-300 border-2"
                       onClick={handleBack}
                       style={{
                         visibility: isInitialSubmit ? "hidden" : "visible",
                       }}
                       disabled={index === 0 || isInitialSubmit}
                     >
-                      <ArrowBackIcon fontSize="small" className="mr-2 " />
+                      <ArrowBackIcon fontSize="small" className="mr-1 " />
                       Back
                     </button>
 
@@ -807,10 +807,13 @@ const UserRegistration = () => {
                     )}
                   </div>
                 </form>
+               </div>
+                
+                
               </div>
             </div>
           </div>
-          <div className="hidden h-[90vh]  w-1/2 justify-center lg:flex lg:max-w-[50%] ">
+          <div className="hidden max-h-[95vh]  w-1/2 justify-center lg:flex lg:max-w-[50%] ">
             <AboutcardSkeleton getAllData={getAllData} />
           </div>
         </div>
