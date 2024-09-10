@@ -1,65 +1,15 @@
-import React, { useState, useRef, useEffect } from "react";
-// import ProfileImage from "../../../../../assets/Logo/ProfileImage.png";
-import edit from "../../../../../assets/Logo/edit.png";
-import awtar from "../../../../../assets/images/icons/_Avatar.png";
+import React, { useEffect } from "react";
 import VerifiedIcon from "@mui/icons-material/Verified";
 import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
 import ArrowOutwardOutlinedIcon from "@mui/icons-material/ArrowOutwardOutlined";
-import Select from "react-select";
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
-import { useCountries } from "react-countries";
-import { useSelector } from "react-redux";
 import uint8ArrayToBase64 from "../../../Utils/uint8ArrayToBase64";
-import { LanguageIcon } from "../../../UserRegistration/DefaultLink";
-
-
-
-import {
-  FaLinkedin,
-  FaTwitter,
-  FaGithub,
-  FaTelegram,
-  FaFacebook,
-  FaInstagram,
-  FaYoutube,
-  FaReddit,
-  FaTiktok,
-  FaSnapchat,
-  FaWhatsapp,
-  FaMedium,
-} from "react-icons/fa";
-
-import { LinkedIn, GitHub, Telegram } from "@mui/icons-material";
 import CloseIcon from "@mui/icons-material/Close";
+import getSocialLogo from "../../../Utils/navigationHelper/getSocialLogo";
 
 const DiscoverUserModal = ({ openDetail, setOpenDetail, userData }) => {
   console.log("user data =>", userData);
 
-  const getLogo = (url) => {
-    try {
-      const domain = new URL(url).hostname.split(".").slice(-2).join(".");
-      const size = "text-2xl"; // Adjust size as needed
-      const icons = {
-        "linkedin.com": <FaLinkedin className={`text-blue-600 ${size}`} />,
-        "twitter.com": <FaTwitter className={`text-blue-400 ${size}`} />,
-        "github.com": <FaGithub className={`text-gray-700 ${size}`} />,
-        "telegram.com": <FaTelegram className={`text-blue-400 ${size}`} />,
-        "facebook.com": <FaFacebook className={`text-blue-400 ${size}`} />,
-        "instagram.com": <FaInstagram className={`text-pink-950 ${size}`} />,
-        "youtube.com": <FaYoutube className={`text-red-600 ${size}`} />,
-        "reddit.com": <FaReddit className={`text-orange-500 ${size}`} />,
-        "tiktok.com": <FaTiktok className={`text-black ${size}`} />,
-        "snapchat.com": <FaSnapchat className={`text-yellow-400 ${size}`} />,
-        "whatsapp.com": <FaWhatsapp className={`text-green-600 ${size}`} />,
-        "medium.com": <FaMedium className={`text-black ${size}`} />,
-      };
-      return icons[domain] || <LanguageIcon />;
-    } catch (error) {
-      return <LanguageIcon />;
-    }
-  };
+
 
   useEffect(() => {
     if (openDetail) {
@@ -250,7 +200,7 @@ const DiscoverUserModal = ({ openDetail, setOpenDetail, userData }) => {
                         <div className="flex gap-3">
                         {userData?.social_links[0]?.map((linkObj, i) => {
                                 const link = linkObj.link[0]; // Assuming the link is in this format
-                                const icon = getLogo(link);
+                                const icon = getSocialLogo(link);
                                 return (
                                   <a
                                     key={i}

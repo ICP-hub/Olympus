@@ -4,6 +4,7 @@ import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
 import { useSelector } from 'react-redux';
 import uint8ArrayToBase64 from '../../../Utils/uint8ArrayToBase64';
 import parse from "html-react-parser";
+import NoData from '../../../NoDataCard/NoData';
 
 const DiscoverMentorEvent = ({ principal }) => {
   const [mentorEvents, setMentorEvents] = useState([]);
@@ -55,7 +56,7 @@ const DiscoverMentorEvent = ({ principal }) => {
     <div className="">
       <h2 className="text-lg font-semibold text-gray-800 mb-4">Events</h2>
       {mentorEvents.length === 0 ? (
-        <p>No events available for this mentor.</p>
+        <p><NoData message={"No Events posted Yet"} /></p>
       ) : (
         mentorEvents.map((event, index) => (
           <div key={index} className="relative ml-3 mb-4 bg-white shadow-md border rounded-lg p-4">

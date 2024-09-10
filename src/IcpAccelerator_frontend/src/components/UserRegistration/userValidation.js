@@ -14,7 +14,7 @@ export const validationSchema = yup
         (value) => value && value[0] !== " " // Ensure no leading space
       )
       .min(3, "Full name must be at least 3 characters long")
-      .max(30, "Full name cannot be more than 30 characters long")
+      .max(50, "Full name cannot be more than 50 characters long")
       .required("Full name is required"),
 
       email: yup
@@ -25,13 +25,26 @@ export const validationSchema = yup
     /^[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*@[a-zA-Z0-9]+\.[a-zA-Z]{2,}(?:\.[a-zA-Z]{2,})?$/,
     "Invalid Email format"
   )
-  .test("no-special-chars", "Email should not contain special characters", (value) => {
-    return /^[^@]*@[a-zA-Z0-9]+\.[a-zA-Z]{2,}(?:\.[a-zA-Z]{2,})?$/.test(value);
+  .test("local-part-length", "Email local part should be between 6 and 30 characters", (value) => {
+    if (!value) return true; // Prevent running the logic if value is undefined
+    const [localPart] = value.split("@");
+    return localPart.length >= 6 && localPart.length <= 30;
+  })
+  .test("no-special-chars", "Email should not contain special characters in the local part", (value) => {
+    if (!value) return true;
+    const [localPart] = value.split("@");
+    return /^[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*$/.test(localPart);
   })
   .test("single-at", "Email should contain only one '@'", (value) => {
+    if (!value) return true;
     return (value.match(/@/g) || []).length === 1;
+  })
+  .test("dots-in-domain", "Email should contain 1 or 2 dots in the domain", (value) => {
+    if (!value) return true;
+    const domain = value.split("@")[1];
+    const dotCount = (domain.match(/\./g) || []).length;
+    return dotCount >= 1 && dotCount <= 2;
   }),
-
     links: yup
       .array()
       .of(

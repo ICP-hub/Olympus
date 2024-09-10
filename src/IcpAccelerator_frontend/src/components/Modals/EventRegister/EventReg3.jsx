@@ -2,23 +2,12 @@ import React, { useState, useEffect } from "react";
 import ReactSelect from "react-select";
 import { useFormContext, useFieldArray, Controller } from "react-hook-form";
 import { useSelector } from "react-redux";
-import { LanguageIcon } from "../../UserRegistration/DefaultLink";
 import {
-  FaLinkedin,
-  FaTwitter,
-  FaGithub,
-  FaTelegram,
-  FaFacebook,
-  FaInstagram,
-  FaYoutube,
-  FaReddit,
-  FaTiktok,
-  FaSnapchat,
-  FaWhatsapp,
-  FaMedium,
   FaPlus,
   FaTrash,
 } from "react-icons/fa";
+import getSocialLogo from "../../Utils/navigationHelper/getSocialLogo";
+import getReactSelectStyles from "../../Utils/navigationHelper/getReactSelectStyles";
 const EventReg3 = ({formData,singleEventData}) => {
   console.log('formData',formData)
 
@@ -31,32 +20,6 @@ const EventReg3 = ({formData,singleEventData}) => {
     control,
     name: "contact_links",
   });
-
-  
-  // FUNCTION TO DETERMINE AND RETURN THE APPROPRIATE LOGO BASED ON THE URL
-  const getLogo = (url) => {
-    try {
-      const domain = new URL(url).hostname.split(".").slice(-2).join(".");
-      const size = "size-8";
-      const icons = {
-        "linkedin.com": <FaLinkedin className={`text-blue-600 ${size}`} />,
-        "twitter.com": <FaTwitter className={`text-blue-400 ${size}`} />,
-        "github.com": <FaGithub className={`text-gray-700 ${size}`} />,
-        "telegram.com": <FaTelegram className={`text-blue-400 ${size}`} />,
-        "facebook.com": <FaFacebook className={`text-blue-400 ${size}`} />,
-        "instagram.com": <FaInstagram className={`text-pink-950 ${size}`} />,
-        "youtube.com": <FaYoutube className={`text-red-600 ${size}`} />,
-        "reddit.com": <FaReddit className={`text-orange-500 ${size}`} />,
-        "tiktok.com": <FaTiktok className={`text-black ${size}`} />,
-        "snapchat.com": <FaSnapchat className={`text-yellow-400 ${size}`} />,
-        "whatsapp.com": <FaWhatsapp className={`text-green-600 ${size}`} />,
-        "medium.com": <FaMedium className={`text-black ${size}`} />,
-      };
-      return icons[domain] || <LanguageIcon />;
-    } catch (error) {
-      return <LanguageIcon />;
-    }
-  };
 
   const [rubricEligibilityOptions, setRubricEligibilityOptions] = useState([
     {
@@ -188,53 +151,7 @@ const setRubricEligibilitySelectedOptionsHandler = (val) => {
   );
 };
 
-const getReactSelectStyles = (error) => ({
-  menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-  control: (provided, state) => ({
-    ...provided,
-    paddingBlock: "2px",
-    borderRadius: "8px",
-    borderColor: error ? "#ef4444" : state.isFocused ? "#737373" : "#D1D5DB",
-    border: error
-      ? "2px solid #ef4444"
-      : "2px solid #D1D5DA",
-    backgroundColor: "rgb(249 250 251)",
-    "&::placeholder": {
-      color:  "currentColor",
-    },
-    display: "flex",
-    overflowX: "auto",
-    maxHeight: "43px",
-    "&::-webkit-scrollbar": {
-      display: "none",
-    },
-  }),
-  valueContainer: (provided) => ({
-    ...provided,
-    overflow: "scroll",
-    maxHeight: "40px",
-    scrollbarWidth: "none",
-  }),
-  placeholder: (provided, state) => ({
-    ...provided,
-    color:  "rgb(107 114 128)",
-    whiteSpace: "nowrap",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-  }),
-  multiValue: (provided) => ({
-    ...provided,
-    display: "inline-flex",
-    alignItems: "center",
-    backgroundColor: "white",
-    border: "2px solid #E3E3E3",
-  }),
-  multiValueRemove: (provided) => ({
-    ...provided,
-    display: "inline-flex",
-    alignItems: "center",
-  }),
-});
+
   const [inputType, setInputType] = useState("date");
 
   const handleFocus = (field) => {
@@ -267,7 +184,7 @@ const getReactSelectStyles = (error) => ({
           options={rubricEligibilityOptions}
           classNamePrefix="select"
           className="basic-multi-select w-full text-start"
-          placeholder="Select a tag"
+          placeholder="Select a Rubric Level"
           name="eligibility"
           onChange={(selectedOptions) => {
             if (selectedOptions && selectedOptions.length > 0) {
@@ -306,7 +223,7 @@ const getReactSelectStyles = (error) => ({
           options={interestedDomainsOptions}
           classNamePrefix="select"
           className="basic-multi-select w-full text-start"
-          placeholder="Select a Rubric Level"
+          placeholder="Select a Tag"
           name="tags"
           onChange={(selectedOptions) => {
             if (selectedOptions && selectedOptions.length > 0) {
@@ -432,7 +349,7 @@ const getReactSelectStyles = (error) => ({
                   <div className="flex items-center w-full">
                     <div className="flex items-center space-x-2 w-full">
                       <div className="flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full">
-                        {field.value && getLogo(field.value)}
+                        {field.value && getSocialLogo(field.value)}
                       </div>
                       <input
                         {...register("contact_links")}

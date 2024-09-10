@@ -13,24 +13,8 @@ import { toast, Toaster } from "react-hot-toast";
 import { LinkedIn, GitHub, Telegram, Language } from "@mui/icons-material";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import {
-  FaLinkedin,
-  FaTwitter,
-  FaGithub,
-  FaTelegram,
-  FaFacebook,
-  FaInstagram,
-  FaYoutube,
-  FaReddit,
-  FaTiktok,
-  FaSnapchat,
-  FaWhatsapp,
-  FaMedium,
-  FaPlus,
-  FaTrash,
-} from "react-icons/fa";
-import { validationSchema } from "../Modals/ProjectRegisterModal/projectValidation";
 import { founderRegisteredHandlerRequest } from "../StateManagement/Redux/Reducers/founderRegisteredData";
+import getReactSelectStyles from "../Utils/navigationHelper/getReactSelectStyles";
 
 const ProjectDetail = () => {
   const actor = useSelector((currState) => currState.actors.actor);
@@ -97,7 +81,7 @@ console.log("id aa",projectFullData?.[0]?.[0]?.uid)
     trigger,
     formState: { errors, isSubmitting },
   } = useForm({
-    resolver: yupResolver(validationSchema),
+    resolver: yupResolver(va),
     mode: "all",
     defaultValues: {
       upload_public_documents: false,
@@ -784,48 +768,7 @@ console.log("id aa",projectFullData?.[0]?.[0]?.uid)
         isMulti
         menuPortalTarget={document.body}
         menuPosition={"fixed"}
-        styles={{
-          menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-          control: (provided) => ({
-            ...provided,
-            paddingBlock: "2px",
-            borderRadius: "8px",
-            border: errors.reason_to_join_incubator
-              ? "2px solid #ef4444"
-              : "2px solid #737373",
-            backgroundColor: "rgb(249 250 251)",
-            display: "flex",
-            overflowX: "auto",
-            maxHeight: "43px",
-          }),
-          valueContainer: (provided) => ({
-            ...provided,
-            overflow: "scroll",
-            maxHeight: "40px",
-            scrollbarWidth: "none",
-          }),
-          placeholder: (provided) => ({
-            ...provided,
-            color: errors.reason_to_join_incubator
-              ? "#ef4444"
-              : "rgb(107 114 128)",
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-          }),
-          multiValue: (provided) => ({
-            ...provided,
-            display: "inline-flex",
-            alignItems: "center",
-            backgroundColor: "white",
-            border: "2px solid #E3E3E3",
-          }),
-          multiValueRemove: (provided) => ({
-            ...provided,
-            display: "inline-flex",
-            alignItems: "center",
-          }),
-        }}
+        styles={getReactSelectStyles(errors?.reason_to_join_incubator)}
         value={reasonOfJoiningSelectedOptions}
         options={reasonOfJoiningOptions}
         classNamePrefix="select"
@@ -1298,54 +1241,7 @@ console.log("id aa",projectFullData?.[0]?.[0]?.uid)
                       isMulti
                       menuPortalTarget={document.body}
                       menuPosition={"fixed"}
-                      styles={{
-                        menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-                        control: (provided, state) => ({
-                          ...provided,
-                          paddingBlock: "2px",
-                          borderRadius: "8px",
-                          border: errors.multi_chain_names
-                            ? "2px solid #ef4444"
-                            : "2px solid #737373",
-                          backgroundColor: "rgb(249 250 251)",
-                          "&::placeholder": {
-                            color: errors.multi_chain_names
-                              ? "#ef4444"
-                              : "currentColor",
-                          },
-                          display: "flex",
-                          overflowX: "auto",
-                          maxHeight: "43px",
-                          "&::-webkit-scrollbar": {
-                            display: "none",
-                          },
-                        }),
-                        valueContainer: (provided, state) => ({
-                          ...provided,
-                          overflow: "scroll",
-                          maxHeight: "40px",
-                          scrollbarWidth: "none",
-                        }),
-                        placeholder: (provided, state) => ({
-                          ...provided,
-                          color: errors.multi_chain_names
-                            ? "#ef4444"
-                            : "rgb(107 114 128)",
-                          whiteSpace: "nowrap",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                        }),
-                        multiValue: (provided) => ({
-                          ...provided,
-                          display: "inline-flex",
-                          alignItems: "center",
-                        }),
-                        multiValueRemove: (provided) => ({
-                          ...provided,
-                          display: "inline-flex",
-                          alignItems: "center",
-                        }),
-                      }}
+                      styles={getReactSelectStyles(errors?.multi_chain_names)}
                       value={multiChainSelectedOptions}
                       options={multiChainOptions}
                       classNamePrefix="select"
@@ -1909,54 +1805,7 @@ console.log("id aa",projectFullData?.[0]?.[0]?.uid)
              isMulti
              menuPortalTarget={document.body}
              menuPosition={"fixed"}
-             styles={{
-               menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-               control: (provided, state) => ({
-                 ...provided,
-                 paddingBlock: "2px",
-                 borderRadius: "8px",
-                 border: errors.project_area_of_focus
-                   ? "2px solid #ef4444"
-                   : "2px solid #737373",
-                 backgroundColor: "rgb(249 250 251)",
-                 "&::placeholder": {
-                   color: errors.project_area_of_focus
-                     ? "#ef4444"
-                     : "currentColor",
-                 },
-                 display: "flex",
-                 overflowX: "auto",
-                 maxHeight: "43px",
-                 "&::-webkit-scrollbar": {
-                   display: "none",
-                 },
-               }),
-               valueContainer: (provided, state) => ({
-                 ...provided,
-                 overflow: "scroll",
-                 maxHeight: "40px",
-                 scrollbarWidth: "none",
-               }),
-               placeholder: (provided, state) => ({
-                 ...provided,
-                 color: errors.project_area_of_focus
-                   ? "#ef4444"
-                   : "rgb(107 114 128)",
-                 whiteSpace: "nowrap",
-                 overflow: "hidden",
-                 textOverflow: "ellipsis",
-               }),
-               multiValue: (provided) => ({
-                 ...provided,
-                 display: "inline-flex",
-                 alignItems: "center",
-               }),
-               multiValueRemove: (provided) => ({
-                 ...provided,
-                 display: "inline-flex",
-                 alignItems: "center",
-               }),
-             }}
+             styles={getReactSelectStyles(errors?.project_area_of_focus)}
              value={interestedDomainsSelectedOptions}
              options={interestedDomainsOptions}
              classNamePrefix="select"

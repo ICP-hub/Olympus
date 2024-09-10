@@ -10,6 +10,7 @@ import editp from "../../../assets/Logo/edit.png";
 import { mentorRegisteredHandlerRequest } from "../StateManagement/Redux/Reducers/mentorRegisteredData";
 import { allHubHandlerRequest } from "../../components/StateManagement/Redux/Reducers/All_IcpHubReducer";
 import { ThreeDots } from "react-loader-spinner";
+import getReactSelectStyles from "../Utils/navigationHelper/getReactSelectStyles";
 const MentorEdit = () => {
   const dispatch = useDispatch();
   const actor = useSelector((currState) => currState.actors.actor);
@@ -624,54 +625,7 @@ console.log("mentor full data ...../",mentorFullData)
   isMulti
   menuPortalTarget={document.body}
   menuPosition={"fixed"}
-  styles={{
-    menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-    control: (provided, state) => ({
-      ...provided,
-      paddingBlock: "2px",
-      borderRadius: "8px",
-      border: errors.multi_chain_names
-        ? "2px solid #ef4444"
-        : "2px solid #737373",
-      backgroundColor: "rgb(249 250 251)",
-      "&::placeholder": {
-        color: errors.multi_chain_names
-          ? "#ef4444"
-          : "currentColor",
-      },
-      display: "flex",
-      overflowX: "auto",
-      maxHeight: "43px",
-      "&::-webkit-scrollbar": {
-        display: "none",
-      },
-    }),
-    valueContainer: (provided, state) => ({
-      ...provided,
-      overflow: "scroll",
-      maxHeight: "40px",
-      scrollbarWidth: "none",
-    }),
-    placeholder: (provided, state) => ({
-      ...provided,
-      color: errors.multi_chain_names
-        ? "#ef4444"
-        : "rgb(107 114 128)",
-      whiteSpace: "nowrap",
-      overflow: "hidden",
-      textOverflow: "ellipsis",
-    }),
-    multiValue: (provided) => ({
-      ...provided,
-      display: "inline-flex",
-      alignItems: "center",
-    }),
-    multiValueRemove: (provided) => ({
-      ...provided,
-      display: "inline-flex",
-      alignItems: "center",
-    }),
-  }}
+  styles={getReactSelectStyles(errors?.multi_chain_names)}
   value={multiChainSelectedOptions}
   options={multiChainOptions}
   classNamePrefix="select"
@@ -742,54 +696,7 @@ console.log("mentor full data ...../",mentorFullData)
               isMulti
               menuPortalTarget={document.body}
               menuPosition={"fixed"}
-              styles={{
-                menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-                control: (provided, state) => ({
-                  ...provided,
-                  paddingBlock: "2px",
-                  borderRadius: "8px",
-                  border: errors.category_of_mentoring_service
-                    ? "2px solid #ef4444"
-                    : "2px solid #737373",
-                  backgroundColor: "rgb(249 250 251)",
-                  "&::placeholder": {
-                    color: errors.category_of_mentoring_service
-                      ? "#ef4444"
-                      : "currentColor",
-                  },
-                  display: "flex",
-                  overflowX: "auto",
-                  maxHeight: "43px",
-                  "&::-webkit-scrollbar": {
-                    display: "none",
-                  },
-                }),
-                valueContainer: (provided, state) => ({
-                  ...provided,
-                  overflow: "scroll",
-                  maxHeight: "40px",
-                  scrollbarWidth: "none",
-                }),
-                placeholder: (provided, state) => ({
-                  ...provided,
-                  color: errors.category_of_mentoring_service
-                    ? "#ef4444"
-                    : "rgb(107 114 128)",
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                }),
-                multiValue: (provided) => ({
-                  ...provided,
-                  display: "inline-flex",
-                  alignItems: "center",
-                }),
-                multiValueRemove: (provided) => ({
-                  ...provided,
-                  display: "inline-flex",
-                  alignItems: "center",
-                }),
-              }}
+              styles={getReactSelectStyles(errors?.category_of_mentoring_service)}
               value={categoryOfMentoringServiceSelectedOptions}
               options={categoryOfMentoringServiceOptions}
               classNamePrefix="select"
@@ -852,18 +759,7 @@ console.log("mentor full data ...../",mentorFullData)
              isMulti
              menuPortalTarget={document.body}
              menuPosition={"fixed"}
-             styles={{
-               menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-               control: (provided, state) => ({
-                 ...provided,
-                 paddingBlock: "2px",
-                 borderRadius: "8px",
-                 border: errors.reasons_to_join_platform
-                   ? "2px solid #ef4444"
-                   : "2px solid #737373",
-                 backgroundColor: "rgb(249 250 251)",
-               }),
-             }}
+             styles={getReactSelectStyles(errors?.reasons_to_join_platform)}
              value={reasonOfJoiningSelectedOptions}
              options={reasonOfJoiningOptions}
              classNamePrefix="select"

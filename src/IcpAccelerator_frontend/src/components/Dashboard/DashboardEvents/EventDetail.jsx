@@ -9,7 +9,7 @@ import PriceIcon from "../../../../assets/Logo/PriceIcon.png";
 import ArrowOutwardOutlinedIcon from "@mui/icons-material/ArrowOutwardOutlined";
 import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
 import RemoveCircleOutlineOutlinedIcon from "@mui/icons-material/RemoveCircleOutlineOutlined";
-import { useLocation } from "react-router-dom";
+import {useParams} from "react-router-dom";
 import { useSelector } from "react-redux";
 import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 import parse from "html-react-parser";
@@ -75,15 +75,16 @@ const FAQ = () => {
   );
 };
 
-const EventDetails = React.memo(() => {
+const EventDetails = () => {
   const userCurrentRoleStatusActiveRole = useSelector(
     (currState) => currState.currentRoleStatus.activeRole
   );
   const principal = useSelector(
     (currState) => currState.internet.principal
   );
-  const location = useLocation();
-  const { cohort_id } = location.state || {};
+  const { id } = useParams();
+  const cohort_id = id;
+
   const [cohortData, setCohortData] = useState(null);
   const actor = useSelector((currState) => currState.actors.actor);
   const [timeLeft, setTimeLeft] = useState({
@@ -122,6 +123,7 @@ const tabs = [
       if (actor && cohort_id) {
         try {
           const result = await actor.get_cohort(cohort_id);
+          console.log('result',result)
           if (result && Object.keys(result).length > 0) {
             setCohortData(result);
             calculateTimeLeft(result.cohort.cohort_launch_date);
@@ -604,6 +606,6 @@ console.log('cohortData',cohortData)
       <Toaster />
     </div>
   );
-});
+};
 
 export default EventDetails;

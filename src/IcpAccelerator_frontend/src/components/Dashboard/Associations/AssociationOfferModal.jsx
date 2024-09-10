@@ -3,53 +3,13 @@ import VerifiedIcon from "@mui/icons-material/Verified";
 import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
 import ArrowOutwardOutlinedIcon from "@mui/icons-material/ArrowOutwardOutlined";
 import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
-
-// import { LanguageIcon } from "../UserRegistration/DefaultLink";
-import {
-  FaLinkedin,
-  FaTwitter,
-  FaGithub,
-  FaTelegram,
-  FaFacebook,
-  FaInstagram,
-  FaYoutube,
-  FaReddit,
-  FaTiktok,
-  FaSnapchat,
-  FaWhatsapp,
-  FaMedium,
-} from "react-icons/fa";
-
-import { LinkedIn, GitHub, Telegram } from "@mui/icons-material";
 import CloseIcon from "@mui/icons-material/Close";
-import { LanguageIcon } from "../../UserRegistration/DefaultLink";
+import getSocialLogo from "../../Utils/navigationHelper/getSocialLogo";
 
 const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
   console.log("user data =>", user);
 
-  const getLogo = (url) => {
-    try {
-      const domain = new URL(url).hostname.split(".").slice(-2).join(".");
-      const size = "text-2xl"; // Adjust size as needed
-      const icons = {
-        "linkedin.com": <FaLinkedin className={`text-blue-600 ${size}`} />,
-        "twitter.com": <FaTwitter className={`text-blue-400 ${size}`} />,
-        "github.com": <FaGithub className={`text-gray-700 ${size}`} />,
-        "telegram.com": <FaTelegram className={`text-blue-400 ${size}`} />,
-        "facebook.com": <FaFacebook className={`text-blue-400 ${size}`} />,
-        "instagram.com": <FaInstagram className={`text-pink-950 ${size}`} />,
-        "youtube.com": <FaYoutube className={`text-red-600 ${size}`} />,
-        "reddit.com": <FaReddit className={`text-orange-500 ${size}`} />,
-        "tiktok.com": <FaTiktok className={`text-black ${size}`} />,
-        "snapchat.com": <FaSnapchat className={`text-yellow-400 ${size}`} />,
-        "whatsapp.com": <FaWhatsapp className={`text-green-600 ${size}`} />,
-        "medium.com": <FaMedium className={`text-black ${size}`} />,
-      };
-      return icons[domain] || "";
-    } catch (error) {
-      return <LanguageIcon />;
-    }
-  };
+ 
 
   useEffect(() => {
     if (openDetail) {
@@ -355,7 +315,7 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
                         <div className="flex gap-3">
                           {userSocialLinks
                             ? userSocialLinks?.map((link, i) => {
-                                const icon = getLogo(link);
+                                const icon = getSocialLogo(link);
                                 return (
                                   <div
                                     key={i}

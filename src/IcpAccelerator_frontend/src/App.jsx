@@ -134,7 +134,7 @@ const App = () => {
   // }
   return (
     <>
-      <WarningMessage />
+      {/* <WarningMessage /> */}
       <div className="bg-gray-100">
         <div className="container-lg mx-auto">
           <ConnectWallet
