@@ -140,7 +140,7 @@ function TestimonialSection() {
         </Swiper>
         <div>
           <div
-            className="absolute top-[100%] md:top-[70%] left-[33px] md:left-[500px] transform -translate-y-1/2 z-10"
+            className="absolute top-[100%] dlg:top-[70%] left-[33px] dlg:left-[430px] transform -translate-y-1/2 z-10"
             ref={prevRef}
           >
             <ArrowButton
@@ -150,7 +150,7 @@ function TestimonialSection() {
             />
           </div>
           <div
-            className="absolute top-[100%] md:top-[70%] left-[100px] md:left-[215px] transform -translate-y-1/2 z-10"
+            className="absolute top-[100%] dlg:top-[70%] left-[100px] dlg:left-[500px] transform -translate-y-1/2 z-10"
             ref={nextRef}
           >
             <ArrowButton
