@@ -7,16 +7,8 @@ import MailOutlinedIcon from "@mui/icons-material/MailOutlined";
 import { useFormContext, useFieldArray } from "react-hook-form";
 import getSocialLogo from "../Utils/navigationHelper/getSocialLogo";
 
-export const AboutcardSkeleton = (getAllData) => {
-  const { control } = useFormContext();
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: "links",
-  });
-
-
-
-  const navigate = useNavigate();
+ const AboutcardSkeleton = ({getAllData}) => {
+ 
   console.log("getvalues", getAllData);
   console.log("getAllData?.getAllData?.links =>",getAllData?.getAllData?.links)
 
