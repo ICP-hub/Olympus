@@ -1196,82 +1196,77 @@ const setValuesHandler = (val) => {
               </div>
               <div>
                 <h3 className="mb-2 text-xs text-gray-500 px-3">LINKS</h3>
-                <div className="flex  flex-col items-center gap-5 px-3">
-        {/* Display existing links */}
-        {console.log("Display existing links ", socialLinks)}
-        {socialLinks &&
-          Object.keys(socialLinks).map((key, index) => {
-            const url = socialLinks[key];
-            if (!url) {
-              return null;
-            }
+              <div className="flex flex-col items-center gap-5 px-3">
+  {console.log("Display existing links ", socialLinks)}
+  {socialLinks &&
+    Object.keys(socialLinks).map((key, index) => {
+      const url = socialLinks[key];
+      if (!url) return null;
 
-            const Icon = getSocialLogo(url);
-            return (
-              <div className="group relative flex items-center" key={index}>
-                <a
-                  href={url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center"
-                >
-                  <Icon className="text-gray-400 hover:text-gray-600 cursor-pointer transform transition-all duration-300 hover:scale-110" />
-                </a>
-                <button
-                  type="button"
-                  className="absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 ease-in-out transform opacity-0 group-hover:opacity-100 group-hover:translate-x-6 h-10 w-7"
-                  onClick={() => handleLinkEditToggle(key)}
-                >
-                  <img src={edit} alt="edit" />
-                </button>
-                {isEditingLink[key] && (
-                  <div className="flex flex-col w-full">
-                    <input
-                      type="text"
-                      value={url}
-                      onChange={(e) => handleLinkChange(e, key)}
-                      className="border p-2 rounded-md w-full"
-                      placeholder="Enter your social media URL"
-                    />
-                  </div>
-                )}
-              </div>
-            );
-          })}
+      const Icon = getSocialLogo(url);
+      return (
+        <div className="group relative flex items-center" key={index}>
+          <a
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center"
+          >
+          {Icon}
+          </a>
+          <button
+            type="button"
+            className="absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 ease-in-out transform opacity-0 group-hover:opacity-100 group-hover:translate-x-6 h-10 w-7"
+            onClick={() => handleLinkEditToggle(key)}
+          >
+            <img src={edit} alt="edit" />
+          </button>
+          {isEditingLink[key] && (
+            <div className="flex flex-col w-full mt-2">
+              <input
+                type="text"
+                value={url}
+                onChange={(e) => handleLinkChange(e, key)}
+                className="border p-2 rounded-md w-full"
+                placeholder="Enter your social media URL"
+              />
+            </div>
+          )}
+        </div>
+      );
+    })}
 
-        {/* New links input managed by react-hook-form */}
-        {fields.map((field, index) => (
-          <div key={field.id} className="flex items-center space-x-3">
-            <input
-              type="text"
-              {...register(`links.${index}.url`)}
-              placeholder="Enter your social media URL"
-              className="border p-2 rounded-md w-full"
-            />
-            <button
-              type="button"
-              className="text-red-500"
-              onClick={() => remove(index)}
-            >
-              Remove
-            </button>
-          </div>
-        ))}
-
-        {/* Add new link button */}
-        <button
-          type="button"
-          className="p-2 bg-blue-500 text-white rounded-md"
-          onClick={() => append({ url: "" })}
-        >
-          Add Another Link
-        </button>
-
-      {/* Submit button */}
-      <button type="submit" className="mt-3 p-2 bg-green-500 text-white rounded-md">
-        Save Links
+  {fields.map((field, index) => (
+    <div key={field.id} className="flex items-center space-x-3">
+      <input
+        type="text"
+        {...register(`links.${index}.url`)}
+        placeholder="Enter your social media URL"
+        className="border p-2 rounded-md w-full"
+      />
+      <button
+        type="button"
+        className="text-red-500"
+        onClick={() => remove(index)}
+      >
+        Remove
       </button>
-                </div>
+    </div>
+  ))}
+
+  <button
+    type="button"
+    className="p-2 bg-blue-500 text-white rounded-md"
+    onClick={() => append({ url: "" })}
+  >
+    Add Another Link
+  </button>
+
+  <button type="submit" className="mt-3 p-2 bg-green-500 text-white rounded-md">
+    Save Links
+  </button>
+</div>
+
 
                 {/* Save/Cancel Section */}
                 {/* {Object.values(isEditing).some((value) => value) && ( */}

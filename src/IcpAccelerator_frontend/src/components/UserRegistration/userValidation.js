@@ -41,10 +41,15 @@ export const validationSchema = yup
   })
   .test("dots-in-domain", "Email should contain 1 or 2 dots in the domain", (value) => {
     if (!value) return true;
-    const domain = value.split("@")[1];
+    
+    const parts = value.split("@");
+    if (parts.length < 2) return false;  // If no "@" present or invalid email
+    
+    const domain = parts[1];
     const dotCount = (domain.match(/\./g) || []).length;
     return dotCount >= 1 && dotCount <= 2;
   }),
+  
     links: yup
       .array()
       .of(
