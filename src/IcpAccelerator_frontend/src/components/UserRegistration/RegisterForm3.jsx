@@ -4,7 +4,7 @@ import ReactSelect from "react-select";
 import { useSelector } from "react-redux";
 import { useCountries } from "react-countries";
 import { useFormContext, Controller, useFieldArray } from "react-hook-form";
-import { FaTrash } from "react-icons/fa";
+import { FaTrash ,FaPlus} from "react-icons/fa";
 import CompressedImage from "../../components/ImageCompressed/CompressedImage";
 import getSocialLogo from "../Utils/navigationHelper/getSocialLogo";
 import getReactSelectStyles from "../Utils/navigationHelper/getReactSelectStyles";

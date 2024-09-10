@@ -13,7 +13,7 @@ import {
   FaWhatsapp,
   FaMedium,
 } from 'react-icons/fa';
-import { LanguageIcon } from '../Data/SvgData';
+import LanguageIcon from '../Data/LanguageIcon';
 
 export const getSocialLogo = (url) => {
   try {
@@ -33,9 +33,9 @@ export const getSocialLogo = (url) => {
       'whatsapp.com': <FaWhatsapp className={`text-green-600 ${size}`} />,
       'medium.com': <FaMedium className={`text-black ${size}`} />,
     };
-    return icons[domain] || <LanguageIcon />;
+    return icons[domain] || <LanguageIcon/>;
   } catch (error) {
-    return <LanguageIcon />;
+    return<LanguageIcon/>;
   }
 };
 

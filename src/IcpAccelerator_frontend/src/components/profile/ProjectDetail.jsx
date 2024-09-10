@@ -1785,7 +1785,7 @@ console.log("id aa",projectFullData?.[0]?.[0]?.uid)
             </>
           )}
 
-          <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-2 px-3 mb-2">
+          <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-2 px-3 ">
             <div className="flex justify-between">
               <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
                 Interests
