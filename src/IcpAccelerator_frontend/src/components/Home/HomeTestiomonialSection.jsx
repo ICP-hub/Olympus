@@ -1,19 +1,25 @@
 // src/App.js
-import React, { useRef, useEffect } from 'react';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Pagination, Scrollbar, A11y, Autoplay } from 'swiper/modules';
+import React, { useRef, useEffect } from "react";
+import { Swiper, SwiperSlide } from "swiper/react";
+import {
+  Navigation,
+  Pagination,
+  Scrollbar,
+  A11y,
+  Autoplay,
+} from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
-import { useState } from 'react';
+import { useState } from "react";
 import { homepagedata } from "../Utils/jsondata/data/homepageData";
 
-
-
 const ArrowButton = ({ direction, onClick, visible }) => {
-  const isLeft = direction === 'left';
+  const isLeft = direction === "left";
   return (
     <button
-      className={`w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center focus:outline-none hover:bg-gray-100 transition-opacity duration-300 ${visible ? 'opacity-100' : 'opacity-0'}`}
+      className={`w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center focus:outline-none hover:bg-gray-100 transition-opacity duration-300 ${
+        visible ? "opacity-100" : "opacity-0"
+      }`}
       onClick={onClick}
     >
       <svg
@@ -34,8 +40,6 @@ const ArrowButton = ({ direction, onClick, visible }) => {
   );
 };
 
-
-
 function TestimonialSection() {
   const [buttonVisible, setButtonVisible] = useState(true);
   const prevRef = useRef(null);
@@ -44,7 +48,7 @@ function TestimonialSection() {
   const handleClick = (direction) => {
     setButtonVisible(false);
     setTimeout(() => {
-      if (direction === 'left') {
+      if (direction === "left") {
         prevRef.current.click();
       } else {
         nextRef.current.click();
@@ -55,8 +59,8 @@ function TestimonialSection() {
 
   useEffect(() => {
     if (prevRef.current && nextRef.current) {
-      prevRef.current.classList.add('swiper-button-prev');
-      nextRef.current.classList.add('swiper-button-next');
+      prevRef.current.classList.add("swiper-button-prev");
+      nextRef.current.classList.add("swiper-button-next");
     }
   }, []);
 
@@ -90,38 +94,71 @@ function TestimonialSection() {
         >
           {homepagedata.testimonials.map((testimonial, index) => (
             <SwiperSlide key={index}>
-              <div className="bg-white p-8 flex items-center mx-auto">
+              <div className="bg-white p-8 flex flex-col md:flex-row items-center mx-auto">
                 <div className="md:pr-8">
                   <div className="flex items-center mb-4">
                     <div className="flex items-center text-yellow-500">
                       {[...Array(5)].map((_, i) => (
-                        <svg key={i} className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                        <svg
+                          key={i}
+                          className="w-6 h-6"
+                          fill="currentColor"
+                          viewBox="0 0 24 24"
+                        >
                           <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
                         </svg>
                       ))}
                     </div>
                   </div>
-                  <p className="text-gray-800 text-lg mb-6">{testimonial.text}</p>
+                  <p className="text-gray-800 text-lg mb-6">
+                    {testimonial.text}
+                  </p>
                   <div className="flex items-center">
-                    <img className="w-10 h-10 rounded-full mr-4" src={testimonial.avatar.TestAvatar} alt={testimonial.name} />
+                    <img
+                      className="w-10 h-10 rounded-full mr-4"
+                      src={testimonial.avatar.TestAvatar}
+                      alt={testimonial.name}
+                    />
                     <div className="text-sm">
-                      <p className="text-gray-900 leading-none">{testimonial.name}</p>
+                      <p className="text-gray-900 leading-none">
+                        {testimonial.name}
+                      </p>
                       <p className="text-gray-600">{testimonial.title}</p>
                     </div>
                   </div>
                 </div>
-                <div className="mt-6 md:mt-0 md:pl-8">
-                  <img className="rounded-lg max-w-[300px]" src={testimonial.profile.TestimonialProfile} alt={testimonial.name} />
+                <div className="mt-6 md:mt-0 md:pl-8 hidden md:block">
+                  <img
+                    className="rounded-lg max-w-[300px]"
+                    src={testimonial.profile.TestimonialProfile}
+                    alt={testimonial.name}
+                  />
                 </div>
               </div>
             </SwiperSlide>
           ))}
         </Swiper>
-        <div className="absolute top-[70%] left-[500px] transform -translate-y-1/2 z-10" ref={prevRef}>
-          <ArrowButton direction="left" onClick={() => handleClick('left')} visible={buttonVisible} />
-        </div>
-        <div className="absolute top-[70%] right-[415px] transform -translate-y-1/2 z-10" ref={nextRef}>
-          <ArrowButton direction="right" onClick={() => handleClick('right')} visible={buttonVisible} />
+        <div>
+          <div
+            className="absolute top-[100%] dlg:top-[70%] left-[33px] dlg:left-[430px] transform -translate-y-1/2 z-10"
+            ref={prevRef}
+          >
+            <ArrowButton
+              direction="left"
+              onClick={() => handleClick("left")}
+              visible={buttonVisible}
+            />
+          </div>
+          <div
+            className="absolute top-[100%] dlg:top-[70%] left-[100px] dlg:left-[500px] transform -translate-y-1/2 z-10"
+            ref={nextRef}
+          >
+            <ArrowButton
+              direction="right"
+              onClick={() => handleClick("right")}
+              visible={buttonVisible}
+            />
+          </div>
         </div>
       </div>
     </div>

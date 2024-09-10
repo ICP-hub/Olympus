@@ -24,7 +24,7 @@ export default function Section2() {
           <div className="max-w-7xl w-full py-8 px-4 sm:px-6 lg:px-8  mx-auto">
             <div className="grid gap-4  dlg:grid-cols-2">
               <div className="py-6  bg-[#E0F2FE] rounded-3xl overflow-hidden">
-                <div className=" flex dxs:flex-col sm3:flex-row items-center mb-4">
+                <div className=" flex flex-col sm3:flex-row items-center mb-4">
                   <img
                     src={homepagesection2.card1.image.Founder}
                     alt="Founders"
@@ -50,7 +50,7 @@ export default function Section2() {
                 </div>
               </div>
               <div className="py-6 bg-[#FEF0C7] rounded-3xl overflow-hidden">
-                <div className="flex dxs:flex-col sm3:flex-row items-center mb-4">
+                <div className="flex flex-col sm3:flex-row items-center mb-4">
                   <img
                     src={homepagesection2.card2.image.Investor}
                     alt="Investors"
@@ -76,7 +76,7 @@ export default function Section2() {
                 </div>
               </div>
               <div className="py-6 bg-[#FDEAD7] rounded-3xl overflow-hidden">
-                <div className="flex dxs:flex-col sm3:flex-row items-center mb-4">
+                <div className="flex flex-col sm3:flex-row items-center mb-4">
                   <img
                     src={homepagesection2.card3.image.MentorsImage}
                     alt="Mentors"
@@ -102,7 +102,7 @@ export default function Section2() {
                 </div>
               </div>
               <div className="py-6 bg-[#CCFBEF] rounded-3xl overflow-hidden">
-                <div className="flex dxs:flex-col sm3:flex-row items-center mb-4">
+                <div className="flex flex-col sm3:flex-row items-center mb-4">
                   <img
                     src={homepagesection2.card4.image.Talents}
                     alt="Talent"
