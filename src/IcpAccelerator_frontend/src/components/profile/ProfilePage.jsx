@@ -13,9 +13,12 @@ import Role from './Role';
 import Announcement from './Announcement';
 import EventRequestStatus from '../Dashboard/DashboardEvents/EventRequestStatus';
 import RatingPage from './RatingPage';
+import { FaChevronDown, FaChevronUp } from 'react-icons/fa'; // Icons for dropdown
 
 const ProfilePage = () => {
   const [activeTab, setActiveTab] = useState("roles");
+  const [activeMobileTab, setActiveMobileTab] = useState(null); // Track active tab for mobile dropdown
+
   const { profilepage } = profile;
 
   const userCurrentRoleStatus = useSelector(
@@ -24,7 +27,6 @@ const ProfilePage = () => {
   const userRole = useSelector(
     (currState) => currState.currentRoleStatus.activeRole
   );
-  console.log("Define the tabs visibility based on user roles", userCurrentRoleStatus);
 
   // Function to get approved roles
   const getApprovedRoles = (rolesStatusArray) => {
@@ -43,156 +45,285 @@ const ProfilePage = () => {
     vc: ["roles", "rating", "job", "announcement", "association-req"],
   };
 
-  // Combine all the tabs for the approved roles
-  // const activeTabs = approvedRoles.reduce((acc, role) => {
-  //   return acc.concat(tabs[role] || []);
-  // }, ["roles", "rating"]);
   const activeTabs = tabs[userRole] || ["roles", "rating"];
-  // Remove duplicate tabs
   const uniqueActiveTabs = [...new Set(activeTabs)];
 
   const handleChange = (tab) => {
     setActiveTab(tab);
   };
 
-  return (
-    <div className="container mx-auto mb-5 bg-white">
-      <div className="flex justify-between items-center mx-[3%] h-11 bg-opacity-95 -top-[.60rem] p-10 px-0 sticky bg-white z-20">
-        <div className="">
-          <h2 className="text-2xl font-bold">{profilepage.profileText}</h2>
-        </div>
-        <div className="flex gap-4">
-          <button className="mr-2 text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-2 rounded-md shadow-sm border border-gray-200">
-            {profilepage.viewPublicProfileText}
-          </button>
-          <button className="flex items-center text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-2 rounded-md shadow-sm border border-gray-200">
-            {profilepage.shareText} <span>{shareSvgIcon}</span>
-          </button>
-        </div>
-      </div>
-      <div className="container flex justify-evenly">
-        <div className="w-[30%] ">
-          <ProfileDetail />
-        </div>
-        <div className="w-[60%] ">
-          <div className="overflow-x-auto text-nowrap flex justify-start border-b">
-            {uniqueActiveTabs.includes("roles") && (
-              <button
-                className={`px-4 py-2 focus:outline-none font-medium ${activeTab === "roles"
-                    ? "border-b-2 border-blue-500 text-blue-500 font-medium"
-                    : "text-gray-400"
-                  }`}
-                onClick={() => handleChange("roles")}
-              >
-                {profilepage.roleText}
-              </button>
-            )}
-            {uniqueActiveTabs.includes("project") && (
-              <button
-                className={`px-4 py-2 focus:outline-none font-medium ${activeTab === "project"
-                    ? "border-b-2 border-blue-500 text-blue-500 font-medium"
-                    : "text-gray-400"
-                  }`}
-                onClick={() => handleChange("project")}
-              >
-                Project
-              </button>
-            )}
-            {uniqueActiveTabs.includes("cohort") && (
-              <button
-                className={`px-4 py-2 focus:outline-none font-medium ${activeTab === "cohort"
-                    ? "border-b-2 border-blue-500 text-blue-500 font-medium"
-                    : "text-gray-400"
-                  }`}
-                onClick={() => handleChange("cohort")}
-              >
-                Cohort
-              </button>
-            )}
-            {uniqueActiveTabs.includes("job") && (
-              <button
-                className={`px-4 py-2 focus:outline-none font-medium ${activeTab === "job"
-                    ? "border-b-2 border-blue-500 text-blue-500 font-medium"
-                    : "text-gray-400"
-                  }`}
-                onClick={() => handleChange("job")}
-              >
-                Job
-              </button>
-            )}
-            {uniqueActiveTabs.includes("announcement") && (
-              <button
-                className={`px-4 py-2 focus:outline-none font-medium ${activeTab === "announcement"
-                    ? "border-b-2 border-blue-500 text-blue-500 font-medium"
-                    : "text-gray-400"
-                  }`}
-                onClick={() => handleChange("announcement")}
-              >
-                Announcement
-              </button>
-            )}
-            {uniqueActiveTabs.includes("association-req") && (
-              <button
-                className={`px-4 py-2 focus:outline-none font-medium ${activeTab === "association-req"
-                    ? "border-b-2 border-blue-500 text-blue-500 font-medium"
-                    : "text-gray-400"
-                  }`}
-                onClick={() => handleChange("association-req")}
-              >
-                Request
-              </button>
-            )}
-            {uniqueActiveTabs.includes("rating") && (
-              <button
-                className={`px-4 py-2 focus:outline-none font-medium ${activeTab === "rating"
-                    ? "border-b-2 border-blue-500 text-blue-500 font-medium"
-                    : "text-gray-400"
-                  }`}
-                onClick={() => handleChange("rating")}
-              >
-                {profilepage.ratingText}
-              </button>
-            )}
-          </div>
+  const handleMobileTabToggle = (tab) => {
+    setActiveMobileTab((prevTab) => (prevTab === tab ? null : tab));
+  };
 
-          <div className="w-full">
-            {activeTab === "roles" && <Role />}
+  return (
+   
+    <div className="container mx-auto mb-5 bg-white px-4 md:px-6 lg:px-8">
+  {/* Header Section */}
+  <div className="flex flex-col md:flex-row justify-between items-center mx-0 md:mx-[3%] p-5 md:h-11 bg-opacity-95 -top-[1.6rem] md:-top-[.60rem] md:p-10 px-0 sticky bg-white z-20">
+    <div>
+      <h2 className="text-2xl font-bold">{profilepage.profileText}</h2>
+    </div>
+    {/* <div className="flex    md:gap-4 w-full justify-between my-2 md:my-0"> */}
+    <div className="flex gap-2 md:gap-4 w-full justify-between md:justify-end my-2 md:my-0">
+
+      <button className="mr-2 text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-2 rounded-md shadow-sm border border-gray-200">
+        {profilepage.viewPublicProfileText}
+      </button>
+      <button className="flex items-center text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-2 rounded-md shadow-sm border border-gray-200">
+        {profilepage.shareText} <span>{shareSvgIcon}</span>
+      </button>
+    </div>
+    
+  </div>
+
+  {/* Profile and Content Sections */}
+  <div className="container flex flex-col lg:flex-row justify-evenly">
+    {/* Profile Details */}
+    <div className="w-full lg:w-[30%] mb-6 md:mb-0">
+      <ProfileDetail />
+    </div>
+
+    {/* Main Content with Tabs */}
+   <div className="w-full lg:w-[60%] flex flex-col">
+  {/* Tabs for Mobile */}
+  <div className="block md:hidden">
+    {uniqueActiveTabs.includes("roles") && (
+      <div className="border-b">
+        <button
+          className="flex justify-between items-center w-full px-2 py-3 text-left text-gray-800"
+          onClick={() => handleMobileTabToggle("roles")}
+        >
+          {profilepage.roleText}
+          {activeMobileTab === "roles" ? <FaChevronUp /> : <FaChevronDown />}
+        </button>
+        {activeMobileTab === "roles" && (
+          <div className="px-2 py-2">
+            <Role />
           </div>
-          <div className="w-full">
-            {activeTab === "project" && <ProjectCard />}
+        )}
+      </div>
+    )}
+
+    {uniqueActiveTabs.includes("project") && (
+      <div className="border-b">
+        <button
+          className="flex justify-between items-center w-full px-2 py-3 text-left text-gray-800"
+          onClick={() => handleMobileTabToggle("project")}
+        >
+          Project
+          {activeMobileTab === "project" ? <FaChevronUp /> : <FaChevronDown />}
+        </button>
+        {activeMobileTab === "project" && (
+          <div className="px-2 py-2">
+            <ProjectCard />
           </div>
-          <div className="w-full">
-            {activeTab === "association-req" && <AssociationRequestCard />}
+        )}
+      </div>
+    )}
+
+    {uniqueActiveTabs.includes("cohort") && (
+      <div className="border-b">
+        <button
+          className="flex justify-between items-center w-full px-2 py-3 text-left text-gray-800"
+          onClick={() => handleMobileTabToggle("cohort")}
+        >
+          Cohort
+          {activeMobileTab === "cohort" ? <FaChevronUp /> : <FaChevronDown />}
+        </button>
+        {activeMobileTab === "cohort" && (
+          <div className="px-2 py-2">
+            <NewEvent />
           </div>
-          <div className="w-full">
-          {activeTab === "cohort" && (
-              <>
-                {/* {!eventCreated ? (
-                  <EventSection />  // Render EventSection when no event is created
-                ) : (
-                  <NewEvent />  // Render NewEvent when an event is created
-                )} */}
-                <NewEvent/>
-              </>
-            )}
+        )}
+      </div>
+    )}
+
+    {uniqueActiveTabs.includes("job") && (
+      <div className="border-b">
+        <button
+          className="flex justify-between items-center w-full px-2 py-3 text-left text-gray-800"
+          onClick={() => handleMobileTabToggle("job")}
+        >
+          Job
+          {activeMobileTab === "job" ? <FaChevronUp /> : <FaChevronDown />}
+        </button>
+        {activeMobileTab === "job" && (
+          <div className="px-2 py-2">
+            <JobSection />
+            <FAQ />
           </div>
-          <div className="w-full">
-            {activeTab === "job" && (
-              <>
-                <JobSection />
-                <FAQ />
-              </>
-            )}
+        )}
+      </div>
+    )}
+
+    {uniqueActiveTabs.includes("announcement") && (
+      <div className="border-b">
+        <button
+          className="flex justify-between items-center w-full px-2 py-3 text-left text-gray-800"
+          onClick={() => handleMobileTabToggle("announcement")}
+        >
+          Announcement
+          {activeMobileTab === "announcement" ? <FaChevronUp /> : <FaChevronDown />}
+        </button>
+        {activeMobileTab === "announcement" && (
+          <div className="px-2 py-2">
+            <Announcement />
           </div>
-          <div className="w-full">
-            {activeTab === "announcement" && <Announcement />}
+        )}
+      </div>
+    )}
+
+    {uniqueActiveTabs.includes("association-req") && (
+      <div className="border-b">
+        <button
+          className="flex justify-between items-center w-full px-2 py-3 text-left text-gray-800"
+          onClick={() => handleMobileTabToggle("association-req")}
+        >
+          Request
+          {activeMobileTab === "association-req" ? <FaChevronUp /> : <FaChevronDown />}
+        </button>
+        {activeMobileTab === "association-req" && (
+          <div className="px-2 py-2">
+            <AssociationRequestCard />
           </div>
-          <div className="w-full">
-            {activeTab === "rating" && <RatingPage />}
+        )}
+      </div>
+    )}
+
+    {uniqueActiveTabs.includes("rating") && (
+      <div className="border-b">
+        <button
+          className="flex justify-between items-center w-full px-2 py-3 text-left text-gray-800"
+          onClick={() => handleMobileTabToggle("rating")}
+        >
+          {profilepage.ratingText}
+          {activeMobileTab === "rating" ? <FaChevronUp /> : <FaChevronDown />}
+        </button>
+        {activeMobileTab === "rating" && (
+          <div className="px-2 py-2">
+            <RatingPage />
           </div>
+        )}
+      </div>
+    )}
+  </div>
+
+
+      {/* Tabs for Desktop and Tablets */}
+      <div className="hidden md:block">
+        <div className="overflow-x-auto text-nowrap flex flex-col md:flex-row justify-start border-b">
+          {uniqueActiveTabs.includes("roles") && (
+            <button
+              className={`px-2 sm:px-4 py-1 sm:py-2 text-sm sm:text-base focus:outline-none font-medium ${activeTab === "roles"
+                ? "border-b-2 border-blue-500 text-blue-500 font-medium"
+                : "text-gray-400"
+              }`}
+              onClick={() => handleChange("roles")}
+            >
+              {profilepage.roleText}
+            </button>
+          )}
+          {uniqueActiveTabs.includes("project") && (
+            <button
+              className={`px-2 sm:px-4 py-1 sm:py-2 text-sm sm:text-base focus:outline-none font-medium ${activeTab === "project"
+                ? "border-b-2 border-blue-500 text-blue-500 font-medium"
+                : "text-gray-400"
+              }`}
+              onClick={() => handleChange("project")}
+            >
+              Project
+            </button>
+          )}
+          {uniqueActiveTabs.includes("cohort") && (
+            <button
+              className={`px-2 sm:px-4 py-1 sm:py-2 text-sm sm:text-base focus:outline-none font-medium ${activeTab === "cohort"
+                ? "border-b-2 border-blue-500 text-blue-500 font-medium"
+                : "text-gray-400"
+              }`}
+              onClick={() => handleChange("cohort")}
+            >
+              Cohort
+            </button>
+          )}
+          {uniqueActiveTabs.includes("job") && (
+            <button
+              className={`px-2 sm:px-4 py-1 sm:py-2 text-sm sm:text-base focus:outline-none font-medium ${activeTab === "job"
+                ? "border-b-2 border-blue-500 text-blue-500 font-medium"
+                : "text-gray-400"
+              }`}
+              onClick={() => handleChange("job")}
+            >
+              Job
+            </button>
+          )}
+          {uniqueActiveTabs.includes("announcement") && (
+            <button
+              className={`px-2 sm:px-4 py-1 sm:py-2 text-sm sm:text-base focus:outline-none font-medium ${activeTab === "announcement"
+                ? "border-b-2 border-blue-500 text-blue-500 font-medium"
+                : "text-gray-400"
+              }`}
+              onClick={() => handleChange("announcement")}
+            >
+              Announcement
+            </button>
+          )}
+          {uniqueActiveTabs.includes("association-req") && (
+            <button
+              className={`px-2 sm:px-4 py-1 sm:py-2 text-sm sm:text-base focus:outline-none font-medium ${activeTab === "association-req"
+                ? "border-b-2 border-blue-500 text-blue-500 font-medium"
+                : "text-gray-400"
+              }`}
+              onClick={() => handleChange("association-req")}
+            >
+              Request
+            </button>
+          )}
+          {uniqueActiveTabs.includes("rating") && (
+            <button
+              className={`px-2 sm:px-4 py-1 sm:py-2 text-sm sm:text-base focus:outline-none font-medium ${activeTab === "rating"
+                ? "border-b-2 border-blue-500 text-blue-500 font-medium"
+                : "text-gray-400"
+              }`}
+              onClick={() => handleChange("rating")}
+            >
+              {profilepage.ratingText}
+            </button>
+          )}
+        </div>
+
+        {/* Tab Content for Desktop */}
+        <div className="w-full">
+          {activeTab === "roles" && <Role />}
+        </div>
+        <div className="w-full">
+          {activeTab === "project" && <ProjectCard />}
+        </div>
+        <div className="w-full">
+          {activeTab === "association-req" && <AssociationRequestCard />}
+        </div>
+        <div className="w-full">
+          {activeTab === "cohort" && <NewEvent />}
+        </div>
+        <div className="w-full">
+          {activeTab === "job" && (
+            <>
+              <JobSection />
+              <FAQ />
+            </>
+          )}
+        </div>
+        <div className="w-full">
+          {activeTab === "announcement" && <Announcement />}
+        </div>
+        <div className="w-full">
+          {activeTab === "rating" && <RatingPage />}
         </div>
       </div>
     </div>
+  </div>
+</div>
+
   );
 };
 

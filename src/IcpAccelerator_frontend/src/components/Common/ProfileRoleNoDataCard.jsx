@@ -3,7 +3,7 @@ import founder from "../../../assets/Logo/founder.png";
 
 const ProfileRoleNoDataCard = () => {
   return (
-    <div className="w-3/4 h-60 p-6 bg-[#EEF2F6] rounded-xl shadow-lg text-center">
+    <div className="bg-[#EEF2F6] shadow-md rounded-lg p-6  w-[19.3rem] md:w-3/4 h-60 flex flex-col items-center text-center relative mb-6 md:mb-0">
       <div className="flex justify-center items-center">
       <div className="bg-gray-200 w-20 h-20 rounded-full mb-4 flex justify-center items-center">
                 <svg
