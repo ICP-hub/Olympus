@@ -168,7 +168,7 @@ const Attendees = () => {
             <div
               className={`transition-transform duration-300 ease-in-out transform ${
                 showMenu ? "translate-x-0" : "translate-x-full"
-              } mx-auto w-[25%] absolute right-0 top-0 z-10 bg-white h-screen flex flex-col`}
+              } mx-auto w-full md:w-[25%] absolute right-0 top-0 z-10 bg-white h-screen flex flex-col`}
             >
               <div className="p-5 flex justify-start">
                 <CloseIcon sx={{ cursor: "pointer" }} onClick={toggleMenu} />

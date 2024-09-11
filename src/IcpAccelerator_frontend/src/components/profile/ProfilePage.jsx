@@ -75,7 +75,9 @@ const ProfilePage = () => {
       {/* Header Section */}
       <div className="flex flex-col md:flex-row justify-between items-center mx-0 md:mx-[3%] p-5 md:h-11 bg-opacity-95 -top-[1.6rem] md:-top-[.60rem] md:p-10 px-0 sticky bg-white z-20">
         <div>
-          <h2 className="text-2xl font-bold">{profilepage.profileText}</h2>
+          <h2 className="text-2xl font-bold ">
+            {profilepage.profileText}
+            </h2>
         </div>
         {/* <div className="flex    md:gap-4 w-full justify-between my-2 md:my-0"> */}
         <div className="flex gap-2 md:gap-4 w-full justify-between md:justify-end my-2 md:my-0">

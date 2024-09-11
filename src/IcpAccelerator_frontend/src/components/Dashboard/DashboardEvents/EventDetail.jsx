@@ -23,6 +23,7 @@ import EventRequestStatus from "./EventRequestStatus";
 import Tabs from "../../Common/Tabs/Tabs";
 import Attendees from "./Attendees";
 import { Tooltip } from "react-tooltip";
+import { FaChevronRight, FaChevronLeft } from "react-icons/fa";
 
 
 const FAQItem = ({ question, answer }) => {
@@ -76,6 +77,7 @@ const FAQ = () => {
 };
 
 const EventDetails = () => {
+  const tabsContainerRef = useRef(null);
   const userCurrentRoleStatusActiveRole = useSelector(
     (currState) => currState.currentRoleStatus.activeRole
   );
@@ -84,7 +86,14 @@ const EventDetails = () => {
   );
   const { id } = useParams();
   const cohort_id = id;
-
+  const scrollTabs = (direction) => {
+    if (tabsContainerRef.current) {
+      tabsContainerRef.current.scrollBy({
+        left: direction === "left" ? -100 : 100, // Adjust scroll amount as needed
+        behavior: "smooth", // Smooth scroll
+      });
+    }
+  };
   const [cohortData, setCohortData] = useState(null);
   const actor = useSelector((currState) => currState.actors.actor);
   const [timeLeft, setTimeLeft] = useState({
@@ -298,7 +307,7 @@ console.log('cohortData',cohortData)
   return (
     <div className="flex flex-col">
       <div className="flex flex-col gap-10 md:flex-row">
-        <div className="w-[30%] bg-white rounded-lg shadow-md pt-4">
+        <div className="  w-full md:w-[30%] bg-white rounded-lg shadow-md pt-4">
           <div className="bg-gray-100 p-4">
             <div className="flex items-start mb-4">
               <img
@@ -316,35 +325,39 @@ console.log('cohortData',cohortData)
               </div>
             </div>
 
+            
             <div className="mb-3">
-              <h3 className="text-base font-medium mb-2 text-left">
-                Event starts in
-              </h3>
-              <div className="flex items-center justify-between">
-                {[
-                  { value: timeLeft.days, label: "Days" },
-                  { value: timeLeft.hours, label: "Hours" },
-                  { value: timeLeft.minutes, label: "Minutes" },
-                  { value: timeLeft.seconds, label: "Seconds" },
-                ].map((item, index) => (
-                  <React.Fragment key={item.label}>
-                    <div className="text-center">
-                      <div className="text-xl font-bold bg-white rounded-lg p-2 min-w-[48px]">
-                        {item.value}
-                      </div>
-                      <div className="text-xs text-gray-500 mt-1">
-                        {item.label}
-                      </div>
-                    </div>
-                    {index < 3 && (
-                      <div className="text-2xl font-bold mx-1 self-start mt-2">
-                        :
-                      </div>
-                    )}
-                  </React.Fragment>
-                ))}
-              </div>
-            </div>
+  <h3 className="text-sm md:text-base font-medium mb-2 text-left">
+    Event starts in
+  </h3>
+  <div className="flex items-center justify-between">
+    {[
+      { value: timeLeft.days, label: "Days" },
+      { value: timeLeft.hours, label: "Hours" },
+      { value: timeLeft.minutes, label: "Minutes" },
+      { value: timeLeft.seconds, label: "Seconds" },
+    ].map((item, index) => (
+      <React.Fragment key={item.label}>
+        <div className="text-center">
+          {/* Smaller box and text for mobile */}
+          <div className="text-base lgx:text-xl font-bold bg-white rounded-lg p-1 lgx:p-2 min-w-[35px] lgx:min-w-[48px]">
+            {item.value}
+          </div>
+          {/* Smaller label for mobile */}
+          <div className="text-[10px] lgx:text-sm text-gray-500 mt-1">
+            {item.label}
+          </div>
+        </div>
+        {index < 3 && (
+          <div className="text-lg lgx:text-2xl font-bold mx-1 self-start mt-2">
+            :
+          </div>
+        )}
+      </React.Fragment>
+    ))}
+  </div>
+</div>
+
 
             {userCurrentRoleStatusActiveRole !== "user" && (
               <button
@@ -516,14 +529,14 @@ console.log('cohortData',cohortData)
           </div>
         </div>
 
-        <div className="flex-1 ml-auto overflow-auto ">
+        <div className="flex-1 w-full overflow-auto ">
           <div className="p-4">
             <img
               src={bannerImage}
               alt="Event"
-              className="w-full rounded-lg h-[310px] object-cover"
+              className="w-full h-[200px] rounded-lg lgx:h-[310px] object-cover"
             />
-            <h1 className="text-3xl font-bold mt-4">{title}</h1>
+            <h1 className="text-xl md:text-3xl font-bold mt-4">{title}</h1>
             <div className="flex items-center mt-2 text-gray-600">
               <span className="mr-2">
                 <img
@@ -542,27 +555,28 @@ console.log('cohortData',cohortData)
               </span>
               <span>{funding_amount}</span>
             </div>
-
+<div className="w-full overflow-x-auto mt-4 md:mt-6">
             <Tabs
               tabs={tabs}
               currentTab={currentTab}
               onTabChange={handleTabChange}
             />
-            <div className="pr-6">
+            </div>
+            <div className="pr-0 md:pr-6">
               {currentTab === "Summary" && (
                 <>
                   <div>
                     <div className="mt-4">
-                      <h2 className="text-2xl font-semibold mb-2">
+                      <h2 className="text-lg md:text-2xl font-semibold mb-2">
                         Description
                       </h2>
-                      <div className="relative text-gray-700 overflow-hidden max-h-[10rem] hover:max-h-none transition-all duration-300 ease-in-out group">
-                        <div className="overflow-hidden text-ellipsis line-clamp-10">
+            <div className="relative text-gray-700 max-h-[10rem] md:max-h-none overflow-hidden group">
+                        <div className="overflow-hidden text-ellipsis line-clamp-5 md:line-clamp-10">
                           {parse(description)}
                         </div>
                         <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-white to-transparent pointer-events-none"></div>
                       </div>
-                      <h2 className="text-2xl font-semibold mt-2">FAQ</h2>
+                      <h2 className="text-lg md:text-2xl font-semibold mt-2">FAQ</h2>
                       <FAQ />
                     </div>
                   </div>
@@ -602,6 +616,8 @@ console.log('cohortData',cohortData)
             </div>
           </div>
         </div>
+     
+
       </div>
       <Toaster />
     </div>

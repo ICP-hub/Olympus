@@ -89,7 +89,7 @@ return (
     <>
         {modalOpen && (
             <div className={`fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50`}>
-                <div className="bg-white rounded-lg overflow-hidden shadow-lg w-[500px]">
+                <div className="bg-white rounded-lg overflow-hidden shadow-lg w-[500px] mx-4 md:mx-0">
                     <div className="flex justify-end mr-4">
                         <button className='text-3xl text-[#121926]' onClick={() => { onClose(); setModalOpen(false); }}>&times;</button>
                     </div>
