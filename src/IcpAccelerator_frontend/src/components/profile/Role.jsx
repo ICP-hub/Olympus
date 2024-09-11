@@ -266,7 +266,7 @@ const mergedData = mergeData(userCurrentRoleStatus, roledata);
         for (let i = 0; i < 2 && cardsShown < 2; i++) {
           elements.push(
             <div
-              className="border-2 rounded-lg text-center min-w-[220px] max-w-[350px] mb-6 md:mb-0 shadow-md"
+              className="border-2 rounded-lg text-center max-w-[350px] mb-6 md:mb-0 shadow-md"
               key={`default-custom-card-${i}`}
             >
               <div className="p-3 flex justify-center mt-5">
