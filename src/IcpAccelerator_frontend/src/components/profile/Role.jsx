@@ -215,13 +215,15 @@ const mergedData = mergeData(userCurrentRoleStatus, roledata);
               </button>
             </div>
             <div className="flex flex-col justify-center items-center mb-3">
-              <h2 className="font-bold text-lg">
+              <h2 className="font-bold text-lg line-clamp-1 break-all">
                 <span>
                   <VerifiedIcon sx={{ fontSize: "medium", color: "#155EEF" }} />
                 </span>
                 {userFullData?.full_name}
               </h2>
-              <p>{userFullData?.openchat_username[0]}</p>
+              <p className="line-clamp-1 break-all">
+                {userFullData?.openchat_username[0]}
+                </p>
             </div>
             <div className="flex justify-center items-center">
               <p className="font-normal">
@@ -280,7 +282,7 @@ const mergedData = mergeData(userCurrentRoleStatus, roledata);
               <div className="mt-5 px-5">
                 <p className="max-w-[250px]">{roles.description1}</p>
               </div>
-              <div className="my-5 px-5 flex items-center">
+              <div className="my-5 px-5 flex items-center w-full">
                 <button
                   onClick={() => setRoleModalOpen(!roleModalOpen)}
                   className="border flex gap-2 justify-center rounded-md bg-[#155EEF] p-2 font-medium w-full text-white"
@@ -334,7 +336,7 @@ const mergedData = mergeData(userCurrentRoleStatus, roledata);
             <div className=" px-5">
               <p className="max-w-[250px]">{roles.description1}</p>
             </div>
-            <div className="my-2 px-5 flex items-center">
+            <div className="my-2 px-5 flex items-center w-full">
               <button
                 onClick={() => setRoleModalOpen(!roleModalOpen)}
                 className="border flex gap-2 justify-center rounded-md bg-[#155EEF] p-2 font-medium w-full text-white"
@@ -370,7 +372,7 @@ const mergedData = mergeData(userCurrentRoleStatus, roledata);
             <div className=" px-5">
               <p className="max-w-[250px]">{roles.description1}</p>
             </div>
-            <div className="my-2 px-5 flex items-center">
+            <div className="my-2 px-5 flex items-center w-full">
               <button
                 onClick={() => setRoleModalOpen(!roleModalOpen)}
                 className="border flex gap-2 justify-center rounded-md bg-[#155EEF] p-2 font-medium w-full text-white"
