@@ -55,12 +55,12 @@ function DashboardHomeNavbar() {
   const currentImage = roleData[userCurrentRoleStatusActiveRole] || user;
 
   return (
-    <nav className="bg-[#FFF4ED] py-3 px-4 md:px-12 md:pl-1 flex items-center justify-between relative pb-8">
-      <button onClick={toggleMenu} className="lg:hidden">
+    <nav className="bg-[#FFF4ED] py-3 px-4 md:px-12 md:pl-1 flex items-center justify-end relative pb-8">
+      <button onClick={toggleMenu} className="lg:hidden absolute  right-2">
         <dashboard.dashboardhomenavbar.icons.menuIcon.Menu className="text-gray-600" />
       </button>
 
-      <div className="flex-grow mr-4 hidden md:block">
+      <div className="flex-grow mr-4 md:ml-4 lg:ml-0 hidden md:block">
         <div className="relative">
         <Tooltip title="Coming Soon" arrow>
           <input
@@ -77,7 +77,7 @@ function DashboardHomeNavbar() {
         </div>
       </div>
 
-      <div className="flex items-center space-x-4">
+      <div className="flex items-center space-x-4 mr-6 md:mr-0 ">
         {/* Display the current active role's image */}
         <img
           src={currentImage}
