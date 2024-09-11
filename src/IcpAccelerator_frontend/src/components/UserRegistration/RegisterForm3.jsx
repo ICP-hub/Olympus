@@ -4,7 +4,7 @@ import ReactSelect from "react-select";
 import { useSelector } from "react-redux";
 import { useCountries } from "react-countries";
 import { useFormContext, Controller, useFieldArray } from "react-hook-form";
-import { FaTrash ,FaPlus} from "react-icons/fa";
+import { FaTrash, FaPlus } from "react-icons/fa";
 import CompressedImage from "../../components/ImageCompressed/CompressedImage";
 import getSocialLogo from "../Utils/navigationHelper/getSocialLogo";
 import getReactSelectStyles from "../Utils/navigationHelper/getReactSelectStyles";
@@ -114,8 +114,6 @@ const RegisterForm3 = React.memo(({ setImageData }) => {
     name: "links",
   });
 
- 
-
   useEffect(() => {
     if (areaOfExpertise) {
       setInterestedDomainsOptions(
@@ -143,10 +141,10 @@ const RegisterForm3 = React.memo(({ setImageData }) => {
   }, [typeOfProfile]);
 
   return (
-    <div className="">
-      <h2 className="text-3xl font-bold mb-4">Tell about yourself</h2>
+    <div className="overflow-y-auto px-4">
+      <h2 className="text-xl sm1:text-2xl md:text-3xl font-bold mb-4">Tell about yourself</h2>
       <label className="block text-sm font-medium mb-2">Upload a photo</label>
-      <div className="flex gap-2 mb-3">
+      <div className="flex flex-wrap justify-center sm0:justify-start gap-2 mb-3">
         <div className="h-24 w-24 rounded-2xl border-2 border-dashed border-gray-300 items-center justify-center overflow-hidden flex">
           {imagePreview && !errors.image ? (
             <img
@@ -202,7 +200,7 @@ const RegisterForm3 = React.memo(({ setImageData }) => {
                   </label>
                   {imagePreview || errors.image ? (
                     <button
-                      className="font-medium px-4 py-1 cursor-pointer rounded border border-red-500 items-center text-md bg-transparent text-red-500  capitalize ml-1 sm0:ml-0"
+                      className="font-medium px-2 sm0:px-4 py-0.5 sm0:py-1 cursor-pointer rounded border border-red-500 items-center text-md bg-transparent text-red-500  capitalize ml-1 sm0:ml-0"
                       onClick={() => clearImageFunc("image")}
                     >
                       clear
@@ -221,281 +219,282 @@ const RegisterForm3 = React.memo(({ setImageData }) => {
           {errors?.image?.message}
         </div>
       )}
+      {/* <div className="h-[30vh] dxs:h-[35vh] xxs1:h-[40vh]  sm0:h-[45vh] md:max-h-[50vh] overflow-hidden overflow-y-scroll "> */}
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Why do you want to join this platform ?{" "}
+            <span className="text-[red] ml-1">*</span>
+          </label>
+          <ReactSelect
+            isMulti
+            menuPortalTarget={document.body}
+            menuPosition={"fixed"}
+            styles={getReactSelectStyles(errors?.reasons_to_join_platform)}
+            value={reasonOfJoiningSelectedOptions}
+            options={reasonOfJoiningOptions}
+            classNamePrefix="select"
+            className="basic-multi-select w-full text-start"
+            placeholder="Select your reasons to join this platform"
+            name="reasons_to_join_platform"
+            onChange={(selectedOptions) => {
+              if (selectedOptions && selectedOptions.length > 0) {
+                setReasonOfJoiningSelectedOptions(selectedOptions);
+                clearErrors("reasons_to_join_platform");
+                setValue(
+                  "reasons_to_join_platform",
+                  selectedOptions.map((option) => option.value).join(", "),
+                  { shouldValidate: true }
+                );
+              } else {
+                setReasonOfJoiningSelectedOptions([]);
+                setValue("reasons_to_join_platform", "", {
+                  shouldValidate: true,
+                });
+                setError("reasons_to_join_platform", {
+                  type: "required",
+                  message: "Selecting a reason is required",
+                });
+              }
+              handleFieldTouch("reasons_to_join_platform");
+            }}
+          />
+          {errors.reasons_to_join_platform &&
+            isFormTouched.reasons_to_join_platform && (
+              <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                {errors.reasons_to_join_platform.message}
+              </span>
+            )}
+        </div>
 
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Why do you want to join this platform ?{" "}
-          <span className="text-[red] ml-1">*</span>
-        </label>
-        <ReactSelect
-          isMulti
-          menuPortalTarget={document.body}
-          menuPosition={"fixed"}
-          styles={getReactSelectStyles(errors?.reasons_to_join_platform)}
-          value={reasonOfJoiningSelectedOptions}
-          options={reasonOfJoiningOptions}
-          classNamePrefix="select"
-          className="basic-multi-select w-full text-start"
-          placeholder="Select your reasons to join this platform"
-          name="reasons_to_join_platform"
-          onChange={(selectedOptions) => {
-            if (selectedOptions && selectedOptions.length > 0) {
-              setReasonOfJoiningSelectedOptions(selectedOptions);
-              clearErrors("reasons_to_join_platform");
-              setValue(
-                "reasons_to_join_platform",
-                selectedOptions.map((option) => option.value).join(", "),
-                { shouldValidate: true }
-              );
-            } else {
-              setReasonOfJoiningSelectedOptions([]);
-              setValue("reasons_to_join_platform", "", {
-                shouldValidate: true,
-              });
-              setError("reasons_to_join_platform", {
-                type: "required",
-                message: "Selecting a reason is required",
-              });
-            }
-            handleFieldTouch("reasons_to_join_platform");
-          }}
-        />
-        {errors.reasons_to_join_platform &&
-          isFormTouched.reasons_to_join_platform && (
+        <div className="mb-4">
+          <label
+            htmlFor="bio"
+            className="block text-sm font-medium text-gray-700"
+          >
+            About <span className="text-[red] ml-1">*</span>
+          </label>
+          <textarea
+            {...register("bio", { required: "This field is required" })}
+            className={`bg-gray-50 border-2 ${
+              errors?.bio && isFormTouched.bio
+                ? "border-red-500 "
+                : "border-[#737373]"
+            } mt-2 p-2 border border-gray-300 rounded-md w-full h-24`}
+            onChange={(e) => {
+              register("bio").onChange(e);
+              handleFieldTouch("bio");
+            }}
+            placeholder="Enter your bio"
+            rows={1}
+          ></textarea>
+          {errors?.bio && isFormTouched.bio && (
             <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-              {errors.reasons_to_join_platform.message}
+              {errors?.bio?.message}
             </span>
-          )}
-      </div>
-
-      <div className="mb-4">
-        <label
-          htmlFor="bio"
-          className="block text-sm font-medium text-gray-700"
-        >
-          About <span className="text-[red] ml-1">*</span>
-        </label>
-        <textarea
-          {...register("bio", { required: "This field is required" })}
-          className={`bg-gray-50 border-2 ${
-            errors?.bio && isFormTouched.bio
-              ? "border-red-500 "
-              : "border-[#737373]"
-          } mt-2 p-2 border border-gray-300 rounded-md w-full h-24`}
-          onChange={(e) => {
-            register("bio").onChange(e);
-            handleFieldTouch("bio");
-          }}
-          placeholder="Enter your bio"
-          rows={1}
-        ></textarea>
-        {errors?.bio && isFormTouched.bio && (
-          <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-            {errors?.bio?.message}
-          </span>
-        )}
-      </div>
-
-      <div className="mb-4">
-        <label
-          htmlFor="domains_interested_in"
-          className="block text-sm font-medium text-gray-700 mb-2"
-        >
-          Interests <span className="text-[red] ml-1">*</span>
-        </label>
-        <ReactSelect
-          isMulti
-          menuPortalTarget={document.body}
-          menuPosition={"fixed"}
-          styles={getReactSelectStyles(errors?.domains_interested_in)}
-          value={interestedDomainsSelectedOptions}
-          options={interestedDomainsOptions}
-          classNamePrefix="select"
-          className="basic-multi-select w-full text-start"
-          placeholder="Select domains you are interested in"
-          name="domains_interested_in"
-          onChange={(selectedOptions) => {
-            if (selectedOptions && selectedOptions.length > 0) {
-              setInterestedDomainsSelectedOptions(selectedOptions);
-              clearErrors("domains_interested_in");
-              setValue(
-                "domains_interested_in",
-                selectedOptions.map((option) => option.value).join(", "),
-                { shouldValidate: true }
-              );
-            } else {
-              setInterestedDomainsSelectedOptions([]);
-              setValue("domains_interested_in", "", {
-                shouldValidate: true,
-              });
-              setError("domains_interested_in", {
-                type: "required",
-                message: "Selecting an interest is required",
-              });
-            }
-            handleFieldTouch("domains_interested_in");
-          }}
-        />
-
-        {errors.domains_interested_in &&
-          isFormTouched.domains_interested_in && (
-            <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-              {errors.domains_interested_in.message}
-            </span>
-          )}
-      </div>
-
-      <div className="mb-4">
-        <label
-          htmlFor="type_of_profile"
-          className="block text-sm font-medium text-gray-700 mb-2"
-        >
-          Type of Profile<span className="text-[red] ml-1">*</span>
-        </label>
-        <select
-          {...register("type_of_profile", {
-            required: "You must select at least one option",
-          })}
-          onChange={(e) => {
-            register("type_of_profile").onChange(e);
-            handleFieldTouch("type_of_profile");
-          }}
-          className={`bg-gray-50 border-2 ${
-            errors.type_of_profile && isFormTouched.type_of_profile
-              ? "border-red-500 "
-              : "border-[#737373]"
-          } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg border-gray-300 block w-full p-2.5`}
-        >
-          <option className="text-lg font-bold" value="">
-            Select profile type
-          </option>
-          {typeOfProfileOptions &&
-            typeOfProfileOptions.map((val, index) => (
-              <option
-                className="text-lg font-bold"
-                key={index}
-                value={val?.value}
-              >
-                {val?.label}
-              </option>
-            ))}
-        </select>
-        {errors?.type_of_profile && isFormTouched.type_of_profile && (
-          <p className="mt-1 text-sm text-red-500 font-bold text-left">
-            {errors?.type_of_profile?.message}
-          </p>
-        )}
-      </div>
-
-      <div className="mb-4">
-        <label
-          htmlFor="country"
-          className="block text-sm font-medium text-gray-700 mb-2"
-        >
-          Location <span className="text-[red] ml-1">*</span>
-        </label>
-        <Controller
-          name="country"
-          control={control}
-          defaultValue="" // Set the initial default value
-          rules={{ required: "You must select at least one option" }}
-          render={({ field: { onChange, onBlur, value, ref } }) => (
-            <select
-              {...{ ref, value, onChange, onBlur }}
-              onChange={(e) => {
-                onChange(e);
-                handleFieldTouch("country");
-              }}
-              className={`bg-gray-50 border-2 ${
-                errors?.country && isFormTouched.country
-                  ? "border-red-500 "
-                  : "border-[#737373]"
-              }  p-2 border border-gray-300 rounded-md w-full`}
-            >
-              <option className="text-lg font-bold" value="">
-                Select your country
-              </option>
-              {countries?.map((expert) => (
-                <option
-                  key={expert.name}
-                  value={expert.name}
-                  className="text-lg font-bold"
-                >
-                  {expert.name}
-                </option>
-              ))}
-            </select>
-          )}
-        />
-        {errors?.country && isFormTouched.country && (
-          <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-            {errors?.country?.message}
-          </span>
-        )}
-      </div>
-
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Links
-        </label>
-        <div className="relative">
-          {fields.map((item, index) => (
-            <div key={item.id} className="flex flex-col ">
-              <div className="flex items-center mb-2  pb-1">
-                <Controller
-                  name={`links[${index}].link`}
-                  control={control}
-                  render={({ field, fieldState }) => (
-                    <div className="flex items-center w-full">
-                      <div className="flex items-center space-x-2 w-full">
-                        <div className="flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full">
-                          {field.value && getSocialLogo(field.value)}
-                        </div>
-                        <input
-                          type="text"
-                          placeholder="Enter your social media URL"
-                          className={`p-2 border ${
-                            fieldState.error
-                              ? "border-red-500"
-                              : "border-[#737373]"
-                          } rounded-md w-full bg-gray-50 border-2 border-[#D1D5DB]`}
-                          {...field}
-                        />
-                      </div>
-                    </div>
-                  )}
-                />
-                <button
-                  type="button"
-                  onClick={() => remove(index)}
-                  className="ml-2 text-red-500 hover:text-red-700"
-                >
-                  <FaTrash />
-                </button>
-              </div>
-              <div className="mb-4 border-b pb-2">
-                {errors.links &&
-                  errors.links[index] &&
-                  errors.links[index].link && (
-                    <span className="mt-1 text-sm text-red-500 font-bold">
-                      {errors.links[index].link.message}
-                    </span>
-                  )}
-              </div>
-            </div>
-          ))}
-
-          {fields.length < 10 && (
-            <button
-              type="button"
-              onClick={() => append({ links: "" })}
-              className="flex items-center p-1 text-[#155EEF]"
-            >
-              <FaPlus className="mr-1" /> Add Another Link
-            </button>
           )}
         </div>
-      </div>
+
+        <div className="mb-4">
+          <label
+            htmlFor="domains_interested_in"
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
+            Interests <span className="text-[red] ml-1">*</span>
+          </label>
+          <ReactSelect
+            isMulti
+            menuPortalTarget={document.body}
+            menuPosition={"fixed"}
+            styles={getReactSelectStyles(errors?.domains_interested_in)}
+            value={interestedDomainsSelectedOptions}
+            options={interestedDomainsOptions}
+            classNamePrefix="select"
+            className="basic-multi-select w-full text-start"
+            placeholder="Select domains you are interested in"
+            name="domains_interested_in"
+            onChange={(selectedOptions) => {
+              if (selectedOptions && selectedOptions.length > 0) {
+                setInterestedDomainsSelectedOptions(selectedOptions);
+                clearErrors("domains_interested_in");
+                setValue(
+                  "domains_interested_in",
+                  selectedOptions.map((option) => option.value).join(", "),
+                  { shouldValidate: true }
+                );
+              } else {
+                setInterestedDomainsSelectedOptions([]);
+                setValue("domains_interested_in", "", {
+                  shouldValidate: true,
+                });
+                setError("domains_interested_in", {
+                  type: "required",
+                  message: "Selecting an interest is required",
+                });
+              }
+              handleFieldTouch("domains_interested_in");
+            }}
+          />
+
+          {errors.domains_interested_in &&
+            isFormTouched.domains_interested_in && (
+              <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                {errors.domains_interested_in.message}
+              </span>
+            )}
+        </div>
+
+        <div className="mb-4">
+          <label
+            htmlFor="type_of_profile"
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
+            Type of Profile<span className="text-[red] ml-1">*</span>
+          </label>
+          <select
+            {...register("type_of_profile", {
+              required: "You must select at least one option",
+            })}
+            onChange={(e) => {
+              register("type_of_profile").onChange(e);
+              handleFieldTouch("type_of_profile");
+            }}
+            className={`bg-gray-50 border-2 ${
+              errors.type_of_profile && isFormTouched.type_of_profile
+                ? "border-red-500 "
+                : "border-[#737373]"
+            } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg border-gray-300 block w-full p-2.5`}
+          >
+            <option className="text-lg font-bold" value="">
+              Select profile type
+            </option>
+            {typeOfProfileOptions &&
+              typeOfProfileOptions.map((val, index) => (
+                <option
+                  className="text-lg font-bold"
+                  key={index}
+                  value={val?.value}
+                >
+                  {val?.label}
+                </option>
+              ))}
+          </select>
+          {errors?.type_of_profile && isFormTouched.type_of_profile && (
+            <p className="mt-1 text-sm text-red-500 font-bold text-left">
+              {errors?.type_of_profile?.message}
+            </p>
+          )}
+        </div>
+
+        <div className="mb-4">
+          <label
+            htmlFor="country"
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
+            Location <span className="text-[red] ml-1">*</span>
+          </label>
+          <Controller
+            name="country"
+            control={control}
+            defaultValue="" // Set the initial default value
+            rules={{ required: "You must select at least one option" }}
+            render={({ field: { onChange, onBlur, value, ref } }) => (
+              <select
+                {...{ ref, value, onChange, onBlur }}
+                onChange={(e) => {
+                  onChange(e);
+                  handleFieldTouch("country");
+                }}
+                className={`bg-gray-50 border-2 ${
+                  errors?.country && isFormTouched.country
+                    ? "border-red-500 "
+                    : "border-[#737373]"
+                }  p-2 border border-gray-300 rounded-md w-full`}
+              >
+                <option className="text-lg font-bold" value="">
+                  Select your country
+                </option>
+                {countries?.map((expert) => (
+                  <option
+                    key={expert.name}
+                    value={expert.name}
+                    className="text-lg font-bold"
+                  >
+                    {expert.name}
+                  </option>
+                ))}
+              </select>
+            )}
+          />
+          {errors?.country && isFormTouched.country && (
+            <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+              {errors?.country?.message}
+            </span>
+          )}
+        </div>
+
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Links
+          </label>
+          <div className="relative">
+            {fields.map((item, index) => (
+              <div key={item.id} className="flex flex-col ">
+                <div className="flex items-center mb-2  pb-1">
+                  <Controller
+                    name={`links[${index}].link`}
+                    control={control}
+                    render={({ field, fieldState }) => (
+                      <div className="flex items-center w-full">
+                        <div className="flex items-center space-x-2 w-full">
+                          <div className="flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full">
+                            {field.value && getSocialLogo(field.value)}
+                          </div>
+                          <input
+                            type="text"
+                            placeholder="Enter your social media URL"
+                            className={`p-2 border ${
+                              fieldState.error
+                                ? "border-red-500"
+                                : "border-[#737373]"
+                            } rounded-md w-full bg-gray-50 border-2 border-[#D1D5DB]`}
+                            {...field}
+                          />
+                        </div>
+                      </div>
+                    )}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => remove(index)}
+                    className="ml-2 text-red-500 hover:text-red-700"
+                  >
+                    <FaTrash />
+                  </button>
+                </div>
+                <div className="mb-4 border-b pb-2">
+                  {errors.links &&
+                    errors.links[index] &&
+                    errors.links[index].link && (
+                      <span className="mt-1 text-sm text-red-500 font-bold">
+                        {errors.links[index].link.message}
+                      </span>
+                    )}
+                </div>
+              </div>
+            ))}
+
+            {fields.length < 10 && (
+              <button
+                type="button"
+                onClick={() => append({ links: "" })}
+                className="flex items-center p-1 text-[#155EEF]"
+              >
+                <FaPlus className="mr-1" /> Add Another Link
+              </button>
+            )}
+          </div>
+        </div>
+      {/* </div> */}
     </div>
   );
 });
