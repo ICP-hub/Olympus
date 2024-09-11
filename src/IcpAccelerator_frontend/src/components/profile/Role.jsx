@@ -194,8 +194,8 @@ const mergedData = mergeData(userCurrentRoleStatus, roledata);
     <>
       <div className="flex flex-col">
         <div className="flex justify-center items-center w-full mt-[2%]">
-          <div className="border-2 rounded-lg pb-5 text-center min-w-[280px] max-w-[350px]">
-            <div className="w-full bg-[#EEF2F6] rounded-l-xl rounded-r-full h-1.5 mb-4 dark:bg-[#EEF2F6]">
+        <div className="border-2 rounded-lg shadow-md md:shadow-none pb-5 text-center  min-w-[304px] md:min-w-[280px] max-w-[350px] mb-6 md:mb-0">
+        <div className="w-full bg-[#EEF2F6] rounded-l-xl rounded-r-full h-1.5 mb- dark:bg-[#EEF2F6]">
               <div className="relative h-1 bg-gray-200">
                 <div className="absolute left-0 top-0 h-full bg-green-500 w-1/3"></div>
               </div>
@@ -243,10 +243,10 @@ const mergedData = mergeData(userCurrentRoleStatus, roledata);
           </div>
         </div>
         {userCurrentRoleStatus && userCurrentRoleStatus.length > 0 && (
-    <div>{renderRoleSvgsOnce
+    <div className="hidden md:block">{renderRoleSvgsOnce
       (userCurrentRoleStatus)}</div>
   )}
- <div className="flex justify-around items-center gap-[12%]">
+ <div className="flex flex-col md:flex-row justify-around items-center gap-[12%]">
   {mergedData &&
     (() => {
       let cardsShown = 0; // Counter to keep track of the number of cards shown
@@ -266,7 +266,7 @@ const mergedData = mergeData(userCurrentRoleStatus, roledata);
         for (let i = 0; i < 2 && cardsShown < 2; i++) {
           elements.push(
             <div
-              className="border-2 rounded-lg text-center min-w-[220px] max-w-[350px]"
+              className="border-2 rounded-lg text-center min-w-[220px] max-w-[350px] mb-6 md:mb-0 shadow-md"
               key={`default-custom-card-${i}`}
             >
               <div className="p-3 flex justify-center mt-5">
@@ -321,7 +321,8 @@ const mergedData = mergeData(userCurrentRoleStatus, roledata);
         );
         cardsShown++;
         elements.push(
-          <div className=" border-2 rounded-lg p-6 w-3/4 h-60 flex flex-col items-center text-center relative" key="mentor-vc-default-card">
+          <div className=" md:w-3/4  p-6  h-60 flex flex-col items-center relative border-2 rounded-lg text-center w-[19.3rem] mb-6 md:mb-0 shadow-md" key="mentor-vc-default-card">
+
             <div className="p-3 flex justify-center">
               <AvatarGroup max={4}>
                 <Avatar alt="Mentor" src={mentor} />
@@ -357,7 +358,7 @@ const mergedData = mergeData(userCurrentRoleStatus, roledata);
         );
         cardsShown++;
         elements.push(
-          <div className=" border-2 rounded-lg p-6 w-3/4 h-60 flex flex-col items-center text-center relative" key="vc-approved-card">
+          <div className=" md:w-3/4  p-6  h-60 flex flex-col items-center relative border-2 rounded-lg text-center w-[19.3rem] mb-6 md:mb-0 shadow-md " key="vc-approved-card">
             <div className="p-3 flex justify-center ">
               <AvatarGroup max={4}>
                 <Avatar alt="Mentor" src={mentor} />
