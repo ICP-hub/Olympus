@@ -8,11 +8,11 @@ import JobSection from "../Dashboard/Project/JobSection";
 import FAQ from "../Dashboard/Project/Faq";
 import AssociationRequestCard from "../Dashboard/Associations/AssociationRequestCard";
 import EventRequestCard from "../Dashboard/DashboardEvents/EventRequestCard";
-import ProfileDetail from "./ProfileDetail";
-import Role from "./Role";
-import Announcement from "./Announcement";
+import ProfileDetail from  './ProfileDetail';
+import Role from './Role';
+import Announcement from  './Announcement';
 import EventRequestStatus from "../Dashboard/DashboardEvents/EventRequestStatus";
-import RatingPage from "./RatingPage";
+import RatingPage from  './RatingPage';
 import { FaChevronDown, FaChevronUp } from "react-icons/fa"; // Icons for dropdown
 
 const ProfilePage = () => {
@@ -98,9 +98,9 @@ const ProfilePage = () => {
         </div>
 
         {/* Main Content with Tabs */}
-        <div className="w-full lgx:w-[60%] flex flex-col">
+        <div className="w-full lgx:w-[60%] flex flex-col pt-12 lgx:pt-0">
           {/* Tabs for Mobile */}
-          <div className="block md:hidden">
+          <div className="block md:hidden bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden w-full mt-10 p-8">
             {uniqueActiveTabs.includes("roles") && (
               <div className="border-b">
                 <button
