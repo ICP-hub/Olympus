@@ -27,7 +27,7 @@ import {
 } from "../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
 // import RoleProfileCard from "./RoleProfileCard";
 import ProfileRoleNoDataCard from "../Common/ProfileRoleNoDataCard";
-import RoleProfileCard from "./RoleProfileCard";
+import RoleProfileCard from  './RoleProfileCard';
 
 
 const FAQItem = ({ question, answer }) => {
