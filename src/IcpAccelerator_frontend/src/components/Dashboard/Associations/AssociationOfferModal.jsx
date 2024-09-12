@@ -183,7 +183,7 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
     >
       {openDetail && user && (
         <div
-          className={`mx-auto w-[30%] absolute right-0 top-0 bg-white h-screen transform transition-transform duration-[4000ms] ease-[cubic-bezier(0.4, 0, 0.2, 1)] ${
+          className={`mx-auto w-[80%] sm:w-[50%] md:w-[45%] lg:w-[40%] lgx:w-[30%] absolute right-0 top-0 bg-white h-screen transform transition-transform duration-[4000ms] ease-[cubic-bezier(0.4, 0, 0.2, 1)] ${
             openDetail ? "translate-x-0" : "translate-x-full"
           } z-20`}
         >
@@ -251,7 +251,7 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
                         Email
                       </h3>
 
-                      <div className="flex items-center">
+                      <div className="flex items-center flex-wrap">
                         <p className="mr-2 text-sm">{userEmail}</p>
                         <VerifiedIcon
                           className="text-blue-500 mr-2 w-2 h-2"
