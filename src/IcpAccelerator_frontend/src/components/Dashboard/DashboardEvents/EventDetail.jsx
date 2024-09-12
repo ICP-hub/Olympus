@@ -24,7 +24,7 @@ import Tabs from "../../Common/Tabs/Tabs";
 import Attendees from "./Attendees";
 import { Tooltip } from "react-tooltip";
 import { FaChevronRight, FaChevronLeft } from "react-icons/fa";
-
+import { FaChevronDown, FaChevronUp } from "react-icons/fa"; 
 
 const FAQItem = ({ question, answer }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -94,6 +94,11 @@ const EventDetails = () => {
       });
     }
   };
+ const [showDetails, setShowDetails] = useState(false);
+
+ const handleToggle = () => {
+   setShowDetails(!showDetails);
+ };
   const [cohortData, setCohortData] = useState(null);
   const actor = useSelector((currState) => currState.actors.actor);
   const [timeLeft, setTimeLeft] = useState({
@@ -304,6 +309,7 @@ console.log('cohortData',cohortData)
     }
   };
 
+
   return (
     <div className="flex flex-col">
       <div className="flex flex-col gap-10 md:flex-row">
@@ -325,39 +331,37 @@ console.log('cohortData',cohortData)
               </div>
             </div>
 
-            
             <div className="mb-3">
-  <h3 className="text-sm md:text-base font-medium mb-2 text-left">
-    Event starts in
-  </h3>
-  <div className="flex items-center justify-between">
-    {[
-      { value: timeLeft.days, label: "Days" },
-      { value: timeLeft.hours, label: "Hours" },
-      { value: timeLeft.minutes, label: "Minutes" },
-      { value: timeLeft.seconds, label: "Seconds" },
-    ].map((item, index) => (
-      <React.Fragment key={item.label}>
-        <div className="text-center">
-          {/* Smaller box and text for mobile */}
-          <div className="text-base lgx:text-xl font-bold bg-white rounded-lg p-1 lgx:p-2 min-w-[35px] lgx:min-w-[48px]">
-            {item.value}
-          </div>
-          {/* Smaller label for mobile */}
-          <div className="text-[10px] lgx:text-sm text-gray-500 mt-1">
-            {item.label}
-          </div>
-        </div>
-        {index < 3 && (
-          <div className="text-lg lgx:text-2xl font-bold mx-1 self-start mt-2">
-            :
-          </div>
-        )}
-      </React.Fragment>
-    ))}
-  </div>
-</div>
-
+              <h3 className="text-sm md:text-base font-medium mb-2 text-left">
+                Event starts in
+              </h3>
+              <div className="flex items-center justify-between">
+                {[
+                  { value: timeLeft.days, label: "Days" },
+                  { value: timeLeft.hours, label: "Hours" },
+                  { value: timeLeft.minutes, label: "Minutes" },
+                  { value: timeLeft.seconds, label: "Seconds" },
+                ].map((item, index) => (
+                  <React.Fragment key={item.label}>
+                    <div className="text-center">
+                      {/* Smaller box and text for mobile */}
+                      <div className="text-base lgx:text-xl font-bold bg-white rounded-lg p-1 lgx:p-2 min-w-[35px] lgx:min-w-[48px]">
+                        {item.value}
+                      </div>
+                      {/* Smaller label for mobile */}
+                      <div className="text-[10px] lgx:text-sm text-gray-500 mt-1">
+                        {item.label}
+                      </div>
+                    </div>
+                    {index < 3 && (
+                      <div className="text-lg lgx:text-2xl font-bold mx-1 self-start mt-2">
+                        :
+                      </div>
+                    )}
+                  </React.Fragment>
+                ))}
+              </div>
+            </div>
 
             {userCurrentRoleStatusActiveRole !== "user" && (
               <button
@@ -390,7 +394,8 @@ console.log('cohortData',cohortData)
             </div>
           </div>
 
-          <div className="p-4">
+          {/* laptop screen  */}
+          <div className="p-4 hidden md:block">
             <div className="mb-4 hover:bg-[#e4e3e2b1] cursor-not-allowed opacity-50">
               <h3 className="text-[12px] font-medium text-[#697586] mb-2">
                 GUEST
@@ -407,13 +412,13 @@ console.log('cohortData',cohortData)
               </div>
             </div>
             <Tooltip
-                            id="registerTip"
-                            place="top"
-                            effect="solid"
-                            className="rounded-full z-10"
-                          >
-                            Comming Soon
-                          </Tooltip>
+              id="registerTip"
+              place="top"
+              effect="solid"
+              className="rounded-full z-10"
+            >
+              Comming Soon
+            </Tooltip>
             <div className="space-y-3 text-sm">
               <div>
                 <span className="text-[#697586] text-[12px] block mb-2">
@@ -510,7 +515,6 @@ console.log('cohortData',cohortData)
                     </span>
                   ))}
                 </div>
-               
               </div>
               <div>
                 <span className="text-[#697586] text-[12px] block mb-1">
@@ -527,6 +531,165 @@ console.log('cohortData',cohortData)
               </div>
             </div>
           </div>
+        </div>
+
+        {/* mobile screen  */}
+        {/* mobile screen  */}
+        <div className="p-6 bg-white md:hidden  rounded-lg shadow-sm border border-gray-200 overflow-hidden w-full">
+          {!showDetails ? (
+            <button
+              onClick={handleToggle}
+              className=" font-bold py-2 px-4 rounded w-full flex justify-center items-center "
+            >
+              Show details
+              <FaChevronDown className="ml-2" />
+            </button>
+          ) : (
+            <>
+              <div className="p-4">
+                <div className="mb-4 hover:bg-[#e4e3e2b1] cursor-not-allowed opacity-50">
+                  <h3 className="text-[12px] font-medium text-[#697586] mb-2">
+                    GUEST
+                  </h3>
+                  <div className="flex flex-wrap justify-start">
+                    {[...Array(11)].map((_, i) => (
+                      <img
+                        key={i}
+                        src={GuestProfile1}
+                        alt={`Guest ${i + 1}`}
+                        className="w-8 h-8 rounded-full mr-1 mb-1"
+                      />
+                    ))}
+                  </div>
+                </div>
+                <Tooltip
+                  id="registerTip"
+                  place="top"
+                  effect="solid"
+                  className="rounded-full z-10"
+                >
+                  Comming Soon
+                </Tooltip>
+                <div className="space-y-3 text-sm">
+                  <div>
+                    <span className="text-[#697586] text-[12px] block mb-2">
+                      EVENT CATEGORY
+                    </span>
+                    <div className="flex flex-wrap gap-2">
+                      {tags?.split(",").map((interest, index) => (
+                        <span
+                          key={index}
+                          className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1"
+                        >
+                          {interest.trim()}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <span className="text-[#697586] text-[12px] block mb-1">
+                      CAPACITY
+                    </span>
+                    <div className="flex items-center">
+                      <img
+                        src={CapacityGroupIcon}
+                        alt="Capacity"
+                        className="w-4 h-4 text-gray-400 mr-2"
+                      />
+                      <span className="text-gray-700">{Seats}</span>
+                    </div>
+                  </div>
+                  <div>
+                    <span className="text-[#697586] text-[12px] block mb-1">
+                      START DATE
+                    </span>
+                    <div className="flex items-center">
+                      <img
+                        src={StartDateCalender}
+                        alt="Start Date"
+                        className="w-4 h-4 text-gray-400 mr-2"
+                      />
+                      <span className="text-gray-700">{start_date}</span>
+                    </div>
+                  </div>
+                  <div>
+                    <span className="text-[#697586] text-[12px] block mb-1">
+                      END DATE
+                    </span>
+                    <div className="flex items-center">
+                      <img
+                        src={StartDateCalender}
+                        alt="End Date"
+                        className="w-4 h-4 text-gray-400 mr-2"
+                      />
+                      <span className="text-gray-700">{cohort_end_date}</span>
+                    </div>
+                  </div>
+                  <div>
+                    <span className="text-[#697586] text-[12px] block mb-1">
+                      COUNTRY
+                    </span>
+                    <div className="flex items-center">
+                      <PlaceOutlinedIcon
+                        className="text-gray-500 h-4 w-4 mr-2"
+                        fontSize="small"
+                      />
+
+                      <span className="text-gray-700">{country}</span>
+                    </div>
+                  </div>
+                  <div>
+                    <span className="text-[#697586] text-[12px] block mb-1">
+                      FUNDING AMOUNT
+                    </span>
+                    <div className="flex items-center">
+                      <img
+                        src={PriceIcon}
+                        alt="End Date"
+                        className="w-4 h-4 text-gray-400 mr-2"
+                      />
+                      <span className="text-gray-700">{funding_amount}</span>
+                    </div>
+                  </div>
+                  <div>
+                    <span className="text-[#697586] text-[12px] block mb-1">
+                      FUNDING TYPE
+                    </span>
+
+                    <div className="flex flex-wrap gap-2">
+                      {funding_type?.split(",").map((interest, index) => (
+                        <span
+                          key={index}
+                          className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1"
+                        >
+                          {interest.trim()}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <span className="text-[#697586] text-[12px] block mb-1">
+                      DEADLINE
+                    </span>
+                    <div className="flex items-center">
+                      <img
+                        src={StartDateCalender}
+                        alt="deadline"
+                        className="w-4 h-4 text-gray-400 mr-2"
+                      />
+                      <span className="text-gray-700">{deadline}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <button
+                onClick={handleToggle}
+                className="font-bold py-2 px-4 rounded w-full flex justify-center items-center mt-4 "
+              >
+                Hide details <FaChevronUp className="ml-2" />
+              </button>
+            </>
+          )}
         </div>
 
         <div className="flex-1 w-full overflow-auto ">
@@ -555,12 +718,12 @@ console.log('cohortData',cohortData)
               </span>
               <span>{funding_amount}</span>
             </div>
-<div className="w-full overflow-x-auto mt-4 md:mt-6">
-            <Tabs
-              tabs={tabs}
-              currentTab={currentTab}
-              onTabChange={handleTabChange}
-            />
+            <div className="w-full overflow-x-auto mt-4 md:mt-6">
+              <Tabs
+                tabs={tabs}
+                currentTab={currentTab}
+                onTabChange={handleTabChange}
+              />
             </div>
             <div className="pr-0 md:pr-6">
               {currentTab === "Summary" && (
@@ -570,54 +733,50 @@ console.log('cohortData',cohortData)
                       <h2 className="text-lg md:text-2xl font-semibold mb-2">
                         Description
                       </h2>
-            <div className="relative text-gray-700 max-h-[10rem] md:max-h-none overflow-hidden group">
+                      <div className="relative text-gray-700 max-h-[10rem] md:max-h-none overflow-hidden group">
                         <div className="overflow-hidden text-ellipsis line-clamp-5 md:line-clamp-10">
                           {parse(description)}
                         </div>
                         <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-white to-transparent pointer-events-none"></div>
                       </div>
-                      <h2 className="text-lg md:text-2xl font-semibold mt-2">FAQ</h2>
+                      <h2 className="text-lg md:text-2xl font-semibold mt-2">
+                        FAQ
+                      </h2>
                       <FAQ />
                     </div>
                   </div>
                 </>
               )}
-             {currentTab === "Attendees" && (
-    userCurrentRoleStatusActiveRole !== "user" ? (
-      <Attendees cohortData={cohortData} />
-    ) : (
-      <NoDataFound message="You do not have access to view this tab." />
-    )
-  )}
-  
-  {currentTab === "Announcements" && (
-    userCurrentRoleStatusActiveRole !== "user" ? (
-      <NoDataFound message="No active announcements found" />
-    ) : (
-      <NoDataFound message="You do not have access to view this tab." />
-    )
-  )}
-  
-  {currentTab === "Request" && (
-    userCurrentRoleStatusActiveRole !== "user" ? (
-      <EventRequestCard />
-    ) : (
-      <NoDataFound message="You do not have access to view this tab." />
-    )
-  )}
-  
-  {currentTab === "Reviews" && (
-    userCurrentRoleStatusActiveRole !== "user" ? (
-      <NoDataFound message="No active reviews found" />
-    ) : (
-      <NoDataFound message="You do not have access to view this tab." />
-    )
-  )}
+              {currentTab === "Attendees" &&
+                (userCurrentRoleStatusActiveRole !== "user" ? (
+                  <Attendees cohortData={cohortData} />
+                ) : (
+                  <NoDataFound message="You do not have access to view this tab." />
+                ))}
+
+              {currentTab === "Announcements" &&
+                (userCurrentRoleStatusActiveRole !== "user" ? (
+                  <NoDataFound message="No active announcements found" />
+                ) : (
+                  <NoDataFound message="You do not have access to view this tab." />
+                ))}
+
+              {currentTab === "Request" &&
+                (userCurrentRoleStatusActiveRole !== "user" ? (
+                  <EventRequestCard />
+                ) : (
+                  <NoDataFound message="You do not have access to view this tab." />
+                ))}
+
+              {currentTab === "Reviews" &&
+                (userCurrentRoleStatusActiveRole !== "user" ? (
+                  <NoDataFound message="No active reviews found" />
+                ) : (
+                  <NoDataFound message="You do not have access to view this tab." />
+                ))}
             </div>
           </div>
         </div>
-     
-
       </div>
       <Toaster />
     </div>
