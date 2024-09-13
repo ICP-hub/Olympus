@@ -9,6 +9,7 @@ import JobDetails from "./JobDetails";
 import awtar from "../../../assets/images/icons/_Avatar.png";
 import Select from 'react-select';
 import InfiniteScroll from "react-infinite-scroll-component";
+import TuneIcon from '@mui/icons-material/Tune';
 import {
   clockSvgIcon,
   coinStackedSvgIcon,
@@ -23,6 +24,7 @@ import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
 import parse from "html-react-parser";
 import Tooltip from "@mui/material/Tooltip"; 
 import NoData from "../NoDataCard/NoData";
+import JobFilterModal from "./JobFilterModal";
 const Jobs = () => {
   const actor = useSelector((currState) => currState.actors.actor);
 
@@ -187,16 +189,22 @@ const refresh = () => {
     const handleRoleChange = selectedOption => {
         setFilter({ ...filter, role: selectedOption.value });
     };
+
+    const [openDetail,setOpenDetail]=useState(false)
   return (
     <>
       <div className="container mx-auto bg-white">
-        <div className="flex mx-auto -top-10  sticky ">
+        <div className="flex justify-between mx-auto -top-10  sticky ">
           <h2 className="text-3xl font-bold p-5 bg-white w-full  bg-opacity-95 ">
             Jobs
           </h2>
+          <div className="flex justify-end pr-4 md1:hidden lg:flex lgx:hidden  mt-3 items-center bg-white w-full  bg-opacity-95 ">
+            <p onClick={()=>setOpenDetail(true)} className="text-lg border py-1.5 px-4 font-semibold">Filters <span className="ml-3"><TuneIcon /></span></p>
+            
+          </div>
         </div>
-        <div className="flex mx-auto justify-evenly">
-          <div className="mb-5 w-[65%] ">
+        <div className="flex mx-auto justify-evenly p-5">
+          <div className="mb-5 w-full md1:w-[65%] lg:w-full lgx:w-[65%] ">
             {latestJobs.length > 0 ? (
               <InfiniteScroll
               dataLength={latestJobs.length}
@@ -314,7 +322,7 @@ const refresh = () => {
             )}
           </div>
 
-          <div className="w-[30%]">
+          <div className="w-[30%] hidden md1:block lg:hidden lgx:block  ">
           <Tooltip title="Coming Soon">
             <div className="p-4 bg-white sticky top-0  max-w-sm">
               <h2 className="text-xl font-semibold mb-4">Filters</h2>
@@ -467,6 +475,7 @@ const refresh = () => {
           </div>
         </div>
       </div>
+      {openDetail && <JobFilterModal openDetail={openDetail} setOpenDetail={setOpenDetail}/>}
       {openJobUid && <JobDetails setOpen={closeJobDetails} uid={openJobUid} />}
     </>
   );

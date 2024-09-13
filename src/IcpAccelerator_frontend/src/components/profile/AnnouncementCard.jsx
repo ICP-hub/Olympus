@@ -731,17 +731,17 @@ const AnnouncementCard = () => {
           return (
             <div key={index} className="container mx-auto my-6 p-4 bg-white">
               <div className="flex justify-between items-center pb-1 mb-2">
-                <div className="text-gray-500 font-medium text-sm">
+                <div className="text-gray-500 font-medium text-xs sm0:text-sm">
                   {ann_time}
                 </div>
-                <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-1 sm0:space-x-3">
                   <div
                     onClick={() => handleOpenModal(card)}
                     className="rounded-full p-1"
                   >
                     <img
                       src={editp}
-                      className="h-5 w-5 hover:text-green-400 cursor-pointer"
+                      className="ss4:h-5 ss4:w-5 min-h-3 min-w-3 hover:text-green-400 cursor-pointer"
                       alt="edit"
                     />
                   </div>
@@ -765,10 +765,10 @@ const AnnouncementCard = () => {
                   />
                 </div>
                 <div className="flex flex-col gap-1 overflow-hidden">
-                  <h2 className="text-lg font-semibold break-all line-clamp-1 hover:line-clamp-2">
+                  <h2 className="text-lg font-semibold break-all line-clamp-1 ">
                     {ann_name}
                   </h2>
-                  <h3 className="text-gray-600 text-sm font-normal break-all line-clamp-2 hover:line-clamp-5">
+                  <h3 className="text-gray-600 text-sm font-normal break-all line-clamp-2 ">
                     {ann_desc}
                   </h3>
                 </div>

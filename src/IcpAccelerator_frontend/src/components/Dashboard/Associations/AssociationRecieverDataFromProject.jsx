@@ -309,10 +309,10 @@ const AssociationRecieverDataFromProject = ({
         />
       </div>
 
-      <div className="absolute bottom-0 right-[6px] flex items-center bg-gray-100 p-1">
+      {/* <div className="absolute bottom-0 right-[6px] flex items-center bg-gray-100 p-1">
         <Star className="text-yellow-400 w-4 h-4" />
         <span className="text-sm font-medium">9</span>
-      </div>
+      </div> */}
     </div>
   </div>
 
