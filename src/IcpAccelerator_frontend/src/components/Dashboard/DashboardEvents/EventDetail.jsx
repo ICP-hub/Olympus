@@ -735,7 +735,7 @@ console.log('cohortData',cohortData)
                         Description
                       </h2>
                       <div className="relative text-gray-700 max-h-[10rem] md:max-h-none overflow-hidden group">
-                        <div className="overflow-hidden text-ellipsis line-clamp-5 md:line-clamp-10">
+                        <div className="overflow-hidden text-ellipsis line-clamp-5 md:line-clamp-6 hover:line-clamp-none">
                           {parse(description)}
                         </div>
                         <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-white to-transparent pointer-events-none"></div>

@@ -147,8 +147,8 @@ console.log("my cohort data lenght",allLiveEventsData.length)
                 className="bg-white rounded-lg shadow p-4 mb-6"
                 onClick={() => handleClick(data.cohort_id)}
               >
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center gap-3 relative w-full">
+                {/* <div className="flex justify-between items-center">
+                  <div className="sm1:flex items-center gap-3 relative w-full">
                     <div className="max-w-[160px] absolute top-1 left-1 bg-white p-2 rounded-[8px]">
                       <p className="text-base font-bold">
                         {launch_date} – {end_date}
@@ -188,7 +188,47 @@ console.log("my cohort data lenght",allLiveEventsData.length)
                       </div>
                     </div>
                   </div>
-                </div>
+                </div> */}
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
+  <div className="relative w-full sm:flex items-start sm:items-center gap-3">
+    <div className="absolute top-1 left-1 bg-white p-2 rounded-lg max-w-[120px] sm:max-w-[160px]">
+      <p className="text-sm sm:text-base font-bold">
+        {launch_date} – {end_date}
+      </p>
+      <p className="text-xs sm:text-sm font-normal">
+        Start at: {new Date(data?.cohort?.start_date).toLocaleDateString("en-US")}
+      </p>
+    </div>
+    <div className="w-full sm:w-[240px] h-[140px] sm:h-[172px] flex-shrink-0">
+      <img
+        src={image}
+        alt={name}
+        className="w-full h-full rounded-lg object-cover object-center"
+      />
+    </div>
+    <div className="w-full sm:w-2/3 mt-4 sm:mt-0">
+      <div>
+        <div className="bg-[#c8eaef] border-[#45b0c1] border text-[#090907] text-xs px-2 py-1 rounded-full w-[70px]">
+          COHORT
+        </div>
+        <h3 className="text-lg font-bold mt-2">{name}</h3>
+        <p className="text-sm text-gray-500 mb-4 overflow-hidden text-ellipsis max-h-12 line-clamp-2 mt-2">
+          {parse(desc)}
+        </p>
+      </div>
+      <div className="flex gap-3 items-center mt-2 sm:mt-0">
+        <span className="text-sm text-[#121926] flex items-center">
+          <PlaceOutlinedIcon className="text-[#364152]" fontSize="small" />
+          {country}
+        </span>
+        <span className="text-sm text-[#121926]">
+          ${funding}
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
               </div>
             );
           })}

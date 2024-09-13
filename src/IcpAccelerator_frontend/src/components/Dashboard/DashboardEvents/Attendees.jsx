@@ -66,7 +66,11 @@ const AttendeesCard = ({ member }) => {
   );
 };
 
-const Attendees = () => {
+const Attendees = (cohortData) => {
+  console.log("cohort data 70",cohortData
+  )
+  console.log("cohort data 71",cohortData?.cohortData?.cohort_id
+  )
   const [showMenu, setShowMenu] = useState(false);
   const [selectedRole, setSelectedRole] = useState("");
   const [appliedRole, setAppliedRole] = useState("");
@@ -74,13 +78,18 @@ const Attendees = () => {
   const [noData, setNoData] = useState(null);
   const actor = useSelector((currState) => currState.actors.actor);
   const location = useLocation();
-  const { cohort_id } = location.state || {};
+  // const { cohort_id } = location.state || {};
+  const  cohortid  = cohortData?.cohortData?.cohort_id;
+
+  console.log(
+    "cohort id kya h 79 pe",cohortid
+  )
 
   useEffect(() => {
-    if (!cohort_id) {
+    if (!cohortid) {
       console.error("Cohort ID is undefined.");
     }
-  }, [cohort_id]);
+  }, [cohortid]);
 
   const toggleMenu = () => setShowMenu(!showMenu);
 
@@ -92,7 +101,7 @@ const Attendees = () => {
     setShowMenu(false);
     setAppliedRole(selectedRole);
 
-    if (!cohort_id) {
+    if (!cohortid) {
       toast.error("Cohort ID is not available.");
       return;
     }
@@ -102,11 +111,11 @@ const Attendees = () => {
       let result = null;
 
       if (selectedRole === "Project") {
-        result = await actor.get_projects_applied_for_cohort(cohort_id);
+        result = await actor.get_projects_applied_for_cohort(cohortid);
       } else if (selectedRole === "Mentor") {
-        result = await actor.get_mentors_applied_for_cohort(cohort_id);
+        result = await actor.get_mentors_applied_for_cohort(cohortid);
       } else if (selectedRole === "Investor") {
-        result = await actor.get_vcs_applied_for_cohort(cohort_id);
+        result = await actor.get_vcs_applied_for_cohort(cohortid);
       }
 
       if (result?.Ok && Array.isArray(result.Ok)) {

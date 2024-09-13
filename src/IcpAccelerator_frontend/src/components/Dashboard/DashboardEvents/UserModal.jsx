@@ -9,9 +9,13 @@ import EmailIcon from '@mui/icons-material/Email';
 const UserModal = ({ openDetail, setOpenDetail, userData }) => {
 
     return (
-        <div className={`w-full h-screen fixed inset-0 bg-black bg-opacity-30 backdrop-blur-xs z-50 transition-opacity duration-[4000ms] ease-in-out ${openDetail ? 'opacity-100 visible' : 'opacity-0 invisible'}`}>
-            {openDetail && userData && 
-            <div className={`mx-auto w-[30%] absolute right-0 top-0 bg-white h-screen transform transition-transform duration-[4000ms] ease-[cubic-bezier(0.4, 0, 0.2, 1)] ${openDetail ? 'translate-x-0' : 'translate-x-full'} z-20`}>
+<div
+  className={`w-full h-screen fixed inset-0 bg-black bg-opacity-30 backdrop-blur-xs z-50 ${
+    openDetail ? 'visible pointer-events-auto' : 'invisible pointer-events-none'
+  }`}
+>
+{openDetail && userData && 
+            <div className={`mx-auto w-full sm0:w-auto lg1:w-[30%] absolute right-0 top-0 bg-white h-screen transform transition-transform duration-[4000ms] ease-[cubic-bezier(0.4, 0, 0.2, 1)] ${openDetail ? 'translate-x-0' : 'translate-x-full'} z-20`}>
                 <div className='p-5 '>
                     <CloseIcon sx={{ cursor: "pointer" }} onClick={() => setOpenDetail(false)} />
                 </div>

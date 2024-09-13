@@ -145,7 +145,7 @@ const EventRequestCard = () => {
   return (
     <>
       
-      <div className="flex items-center justify-between  w-full  gap-6">
+      <div className="flex items-center justify-between  w-full  gap-6 mt-4">
 
 <div className="flex items-center border-2 border-gray-400 rounded-lg overflow-hidden flex-grow h-[50px]">
   <div className="flex items-center px-3 md:px-4">
@@ -455,13 +455,13 @@ const EventRequestCard = () => {
             // </div>
             <div
   key={index}
-  className="bg-white rounded-lg shadow p-4 mb-6 w-full max-w-[272px] md:max-w-full md:flex"
+  className="bg-white rounded-lg shadow p-4 mt-4  w-full  md:max-w-full md:flex"
 >
-  <div className="flex flex-col md:flex-row md:gap-4 items-start md:items-center">
+  <div className="flex flex-col md1:flex-row md1:gap-4 lg:flex-col lg1:flex-row items-start md1:items-center">
     {/* Image section */}
-    <div className="w-full md:w-[272px] h-[230px]">
+    <div className="w-full lgx:w-[272px] h-[230px]">
       <div
-        className="max-w-[230px] w-[230px] bg-gray-100 rounded-lg flex flex-col justify-between h-full relative overflow-hidden"
+        className="w-full lgx:max-w-[230px] lgx:min-w-[230px] bg-gray-100 rounded-lg flex flex-col justify-between h-full relative overflow-hidden"
         onClick={() => handleCardClick(userData)}
       >
         <div className="group">
@@ -497,7 +497,7 @@ const EventRequestCard = () => {
         <span className="text-sm text-gray-500">{fullname}</span>
       </span>
 
-      <div className="border-t border-gray-200 mt-2"></div>
+      <div className="border-t border-gray-200 "></div>
 
       {/* Description */}
       <p
