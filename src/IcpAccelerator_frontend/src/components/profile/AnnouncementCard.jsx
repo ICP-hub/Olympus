@@ -297,9 +297,6 @@
 
 // export default AnnouncementCard;
 
-
-
-
 // import React, { useState, useEffect } from "react";
 // import { useSelector } from "react-redux";
 // import toast from "react-hot-toast";
@@ -364,7 +361,6 @@
 //         } else {
 //           // Add new announcement
 //           const result = await actor.add_announcement(argument);
-          
 
 //           if (result && Object.keys(result).length > 0) {
 //             toast.success("Announcement added successfully");
@@ -580,18 +576,17 @@ const AnnouncementCard = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentAnnouncementData, setCurrentAnnouncementData] = useState(null);
 
-  
   const handleOpenModal = (card = null) => {
-    setCurrentAnnouncementData(card); 
-    setAnnouncementModalOpen(true); 
+    setCurrentAnnouncementData(card);
+    setAnnouncementModalOpen(true);
   };
 
   const handleCloseModal = () => {
-    setAnnouncementModalOpen(false); 
-    setCurrentAnnouncementData(null); 
+    setAnnouncementModalOpen(false);
+    setCurrentAnnouncementData(null);
   };
 
-  // Submit handler passed 
+  // Submit handler passed
   const handleAddOrUpdateAnnouncement = async (formData) => {
     setIsSubmitting(true);
 
@@ -608,7 +603,7 @@ const AnnouncementCard = () => {
             currentAnnouncementData.announcement_id,
             argument
           );
-          console.log("update function call hua h")
+          console.log("update function call hua h");
 
           if (result && result.includes("Announcement updated successfully")) {
             toast.success("Announcement updated successfully");
@@ -626,7 +621,7 @@ const AnnouncementCard = () => {
           }
         }
 
-        fetchLatestAnnouncement(); 
+        fetchLatestAnnouncement();
         handleCloseModal();
       } catch (error) {
         toast.error("Something went wrong");
@@ -636,16 +631,15 @@ const AnnouncementCard = () => {
     }
   };
 
- 
   const handleDelete = async (announcementId) => {
     setIsSubmitting(true);
     try {
       const result = await actor.delete_announcement_by_id(announcementId);
 
-      if (latestAnnouncementData.length >=0 ) {
+      if (latestAnnouncementData.length >= 0) {
         toast.success("Announcement deleted successfully");
-        fetchLatestAnnouncement(); 
-        handleCloseDeleteModal(); 
+        fetchLatestAnnouncement();
+        handleCloseDeleteModal();
       } else {
         throw new Error("Deletion failed");
       }
@@ -680,7 +674,6 @@ const AnnouncementCard = () => {
         } else {
           setLatestAnnouncementData(result);
           setNoData(false);
-          
         }
       })
       .catch((error) => {
@@ -696,15 +689,15 @@ const AnnouncementCard = () => {
     }
   }, [actor]);
 
-  console.log("latestAnnouncementData =>",latestAnnouncementData)
+  console.log("latestAnnouncementData =>", latestAnnouncementData);
 
   return (
     <div className="bg-white">
       {latestAnnouncementData.length > 0 && (
-        <div className="flex justify-between items-center sticky top-16 bg-white ">
-          <h1 className="text-xl font-bold p-3">Announcements</h1>
+        <div className="sm:flex sm:justify-end items-center sticky top-16 bg-white ">
+          {/* <h1 className="text-xl font-bold p-3">Announcements</h1> */}
           <button
-            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
+            className="hidden sm:block px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
             onClick={() => handleOpenModal(null)}
           >
             + Add new Announcement
@@ -732,7 +725,7 @@ const AnnouncementCard = () => {
             card?.announcement_data?.announcement_description ?? "";
           let ann_project_logo = card?.user_data[0]?.params?.profile_picture[0]
             ? uint8ArrayToBase64(card?.user_data[0]?.params?.profile_picture[0])
-            : '';
+            : "";
           let ann_project_name = card?.project_name ?? "";
           let ann_project_desc = card?.project_desc ?? "";
           return (
@@ -764,39 +757,49 @@ const AnnouncementCard = () => {
                 {ann_name}
               </h2> */}
               <div className="flex items-start p-2 border border-1 mb-4 space-x-4">
-  <div className="flex-shrink-0 self-center">
-    <img
-      src={ann_project_logo}
-      alt="pic"
-      className="h-12 w-12 rounded-full border border-gray-300"
-    />
-  </div>
-  <div className="flex flex-col gap-1 overflow-hidden">
-    <h2 className="text-lg font-semibold line-clamp-1 hover:line-clamp-2">
-      {ann_name}
-    </h2>
-    <h3 className="text-gray-600 text-sm font-normal line-clamp-5 ">
-      {ann_desc}
-    </h3>
-  </div>
-</div>
+                <div className="flex-shrink-0 self-center">
+                  <img
+                    src={ann_project_logo}
+                    alt="pic"
+                    className="h-12 w-12 rounded-full border border-gray-300"
+                  />
+                </div>
+                <div className="flex flex-col gap-1 overflow-hidden">
+                  <h2 className="text-lg font-semibold break-all line-clamp-1 hover:line-clamp-2">
+                    {ann_name}
+                  </h2>
+                  <h3 className="text-gray-600 text-sm font-normal break-all line-clamp-2 hover:line-clamp-5">
+                    {ann_desc}
+                  </h3>
+                </div>
+              </div>
               {/* <div className="text-gray-500 leading-relaxed">
                 <p>{ann_desc}</p>
               </div> */}
               <hr className="mt-4" />
+              
             </div>
+            
           );
         })
       )}
+      <div className="flex justify-center mt-4">
+              <button
+            className=" sm:hidden w-[80%] px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
+            onClick={() => handleOpenModal(null)}
+          >
+            + Add new Announcement
+          </button>
+              </div>
 
       {isAnnouncementModalOpen && (
         <AnnouncementModal
-          isOpen={isAnnouncementModalOpen} 
-          onClose={handleCloseModal} 
-          onSubmitHandler={handleAddOrUpdateAnnouncement} 
-          isSubmitting={isSubmitting} 
-          isUpdate={!!currentAnnouncementData} 
-          data={currentAnnouncementData} 
+          isOpen={isAnnouncementModalOpen}
+          onClose={handleCloseModal}
+          onSubmitHandler={handleAddOrUpdateAnnouncement}
+          isSubmitting={isSubmitting}
+          isUpdate={!!currentAnnouncementData}
+          data={currentAnnouncementData}
         />
       )}
       {isDeleteModalOpen && (
@@ -815,4 +818,3 @@ const AnnouncementCard = () => {
 };
 
 export default AnnouncementCard;
-
