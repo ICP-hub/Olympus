@@ -57,7 +57,7 @@ const FAQ = () => {
   const { roles } = profile;
 
   return (
-    <div className="mt-14 text-[#121926] text-[18px] font-medium border-gray-200">
+    <div className="mt-14 text-[#121926] text-[18px] font-medium border-gray-200  rounded-md p-1">
       {roles.faq.questions.map((item, index) => (
         <FAQItem key={index} question={item.question} answer={item.answer} />
       ))}

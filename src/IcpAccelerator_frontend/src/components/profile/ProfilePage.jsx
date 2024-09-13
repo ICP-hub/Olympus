@@ -73,7 +73,7 @@ const ProfilePage = () => {
   return (
     <div className="container mx-auto mb-5 bg-white px-4 md:px-6 lg:px-8">
       {/* Header Section */}
-      <div className="flex flex-col md:flex-row justify-between items-center mx-0 md:mx-[3%] p-5 md:h-11 bg-opacity-95 -top-[1.6rem] md:-top-[.60rem] md:p-10 px-0 sticky bg-white z-20">
+      <div className="flex flex-col md:flex-row justify-between md:items-center mx-0 md:mx-[3%] p-5 md:h-11 bg-opacity-95 -top-[1.6rem] md:-top-[.60rem] md:p-10 px-0 sticky bg-white z-20">
         <div>
           <h2 className="text-2xl font-bold ">
             {profilepage.profileText}
@@ -98,9 +98,9 @@ const ProfilePage = () => {
         </div>
 
         {/* Main Content with Tabs */}
-        <div className="w-full lgx:w-[60%] flex flex-col pt-12 lgx:pt-0">
+        <div className="w-full lgx:w-[60%] flex flex-col md:pt-12 lgx:pt-0">
           {/* Tabs for Mobile */}
-          <div className="block md:hidden bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden w-full mt-10 p-8">
+          <div className="block md:hidden bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden w-full mt-10 p-8 pt-2">
             {uniqueActiveTabs.includes("roles") && (
               <div className="border-b">
                 <button
