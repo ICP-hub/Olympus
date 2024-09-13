@@ -63,7 +63,13 @@ function DashboardSidebar({ isOpen, onClose }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [activeLink, setActiveLink] = useState(location.pathname);
-
+ const [show, setShow] = useState(isOpen); 
+ const handleClose = () => {
+   onClose(); 
+   setTimeout(() => {
+     setShow(false); 
+   }, 300);
+ };
   // Toggle State 
   const [toggleState, setToggleState] = useState({
     mentor: false,
@@ -425,7 +431,7 @@ const handleToggle = async (role) => {
             key={index}
             title={section.title}
             items={section.items}
-            currentrole={section.currentrole} // Pass currentrole to SidebarSection
+            currentrole={section.currentrole} 
           />
         ))}
       </div>
@@ -435,19 +441,20 @@ const handleToggle = async (role) => {
   return (
     <>
       {/* Overlay for mobile */}
-      {isOpen && (
+      {show && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
-          onClick={onClose}
+          className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-xs z-40 lg:hidden"
+          onClick={handleClose}
         ></div>
       )}
 
       {/* Sidebar */}
       <aside
         className={`
-        fixed top-0 left-0 z-50 bg-[#FFF4ED] w-64 h-screen overflow-y-auto flex flex-col transition-transform duration-300 ease-in-out transform
-        ${isOpen ? "translate-x-0" : "-translate-x-full"}
-        lg:relative lg:translate-x-0`}
+          fixed top-0 left-0 z-50 bg-[#FFF4ED] w-64 h-screen overflow-y-auto flex flex-col 
+          transform transition-transform duration-300 ease-in-out 
+          ${show ? "translate-x-0" : "-translate-x-full"}
+          lg:relative lg:translate-x-0`}
       >
         <div className="p-4 flex justify-between items-center">
           <img src={topLogo} alt="Olympus" className="h-8" />
@@ -505,15 +512,6 @@ const handleToggle = async (role) => {
                   }
                 />
               </li>
-              {/* <li>
-                <SidebarLink
-                  path="/perks"
-                  icon={staroutlineSvgIcon}
-                  label={
-                    dashboardhomesidebar.sidebarSections.discover.items.perks
-                  }
-                />
-              </li> */}
             </ul>
           </div>
         </nav>

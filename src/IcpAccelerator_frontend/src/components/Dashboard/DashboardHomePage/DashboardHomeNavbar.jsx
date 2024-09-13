@@ -11,6 +11,8 @@ import { changeHasSelectedRoleHandler } from "../../../components/StateManagemen
 import { useAuth } from "../../../components/StateManagement/useContext/useAuth";
 import toast from "react-hot-toast";
 import Tooltip from '@mui/material/Tooltip';
+import CloseIcon from "@mui/icons-material/Close";
+import DashboardSidebar from "./DashboardHomeSidebar";
 function DashboardHomeNavbar() {
   const principal = useSelector((currState) => currState.internet.principal);
   const userCurrentRoleStatusActiveRole = useSelector(
@@ -21,7 +23,7 @@ function DashboardHomeNavbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [customSvg, setCustomSvg] = useState(beforeCopySvg);
 
-  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
 
   const copyToClipboard = () => {
@@ -62,18 +64,18 @@ function DashboardHomeNavbar() {
 
       <div className="flex-grow mr-4 md:ml-4 lg:ml-0 hidden md:block">
         <div className="relative">
-        <Tooltip title="Coming Soon" arrow>
-          <input
-            type="text"
-            placeholder="Search people, projects, jobs, events"
-            className="w-[480px] h-[44px] py-2 pl-10 pr-4 rounded-md bg-white-100 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            disabled
-          />
-          <dashboard.dashboardhomenavbar.icons.searchOutlined.SearchOutlined
-            className="absolute left-3 text-gray-400"
-            style={{ top: "50%", transform: "translateY(-50%)" }}
-          />
-           </Tooltip>
+          <Tooltip title="Coming Soon" arrow>
+            <input
+              type="text"
+              placeholder="Search people, projects, jobs, events"
+              className="w-[480px] h-[44px] py-2 pl-10 pr-4 rounded-md bg-white-100 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              disabled
+            />
+            <dashboard.dashboardhomenavbar.icons.searchOutlined.SearchOutlined
+              className="absolute left-3 text-gray-400"
+              style={{ top: "50%", transform: "translateY(-50%)" }}
+            />
+          </Tooltip>
         </div>
       </div>
 
@@ -91,7 +93,9 @@ function DashboardHomeNavbar() {
           alt="Notification Bell"
         /> */}
         <img
-          src={dashboard.dashboardhomenavbar.logoImages.df_small_logo.df_small_logo}
+          src={
+            dashboard.dashboardhomenavbar.logoImages.df_small_logo.df_small_logo
+          }
           alt="User"
           className="h-[40px] w-[40px] rounded-full z-30 py-1 px-1"
           onClick={toggleDropdown}
@@ -124,7 +128,8 @@ function DashboardHomeNavbar() {
               </div>
               <div className="group flex items-center mt-4">
                 <div className="truncate w-32 overflow-hidden text-ellipsis group-hover:text-left">
-                  {dashboard.dashboardhomenavbar.navbarTexts.principalLabel}: {principal}
+                  {dashboard.dashboardhomenavbar.navbarTexts.principalLabel}:{" "}
+                  {principal}
                 </div>
                 <button
                   onClick={copyToClipboard}
@@ -147,95 +152,9 @@ function DashboardHomeNavbar() {
         )}
       </div>
 
-      {isMenuOpen && (
-        <div className="fixed inset-0 bg-gray-800 bg-opacity-75 z-50 lg:hidden">
-          <div className="bg-[#FFF4ED] h-full w-64 p-4 overflow-y-auto">
-            <div className="flex justify-between items-center mb-6">
-              <img
-                src={dashboard.dashboardhomenavbar.logoImages.olympuslogo.olympuslogo}
-                alt="Olympus"
-                className="h-8"
-              />
-              <button onClick={toggleMenu}>
-                <dashboardhomenavbar.icons.closeIcon.Close className="text-gray-600" />
-              </button>
-            </div>
-            <div className="mb-6 relative">
-              <input
-                type="text"
-                placeholder="Search"
-                className="w-full py-2 pl-10 pr-4 rounded-md bg-white-100 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <dashboardhomenavbar.icons.searchOutlined.SearchOutlined className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-            </div>
-            <nav>
-              <Link
-                to="/dashboard"
-                className="flex items-center px-4 py-2 text-gray-700 hover:bg-[#e4e3e2b1] rounded-lg mb-2"
-              >
-                {dashboard.dashboardhomenavbar.icons.dashboardIcon.homeSvgIcon}
-                <span className="ml-3">
-                  {dashboard.dashboardhomenavbar.menuTexts.dashboard}
-                </span>
-              </Link>
-              <Link
-                to="/profile"
-                className="flex items-center px-4 py-2 text-gray-700 hover:bg-[#e4e3e2b1] rounded-lg mb-2"
-              >
-                {dashboard.dashboardhomenavbar.icons.profileIcon.userCircleSvgIcon}
-                <span className="ml-3">
-                  {dashboard.dashboardhomenavbar.menuTexts.profile}
-                </span>
-              </Link>
-              <Link
-                to="/users"
-                className="flex items-center px-4 py-2 text-gray-700 hover:bg-[#e4e3e2b1] rounded-lg mb-2"
-              >
-                {dashboard.dashboardhomenavbar.icons.usersIcon.userSvgIcon}
-                <span className="ml-3">
-                  {dashboard.dashboardhomenavbar.menuTexts.users}
-                </span>
-              </Link>
-              <Link
-                to="/events"
-                className="flex items-center px-4 py-2 text-gray-700 hover:bg-[#e4e3e2b1] rounded-lg mb-2"
-              >
-                {dashboard.dashboardhomenavbar.icons.eventsIcon.calenderSvgIcon}
-                <span className="ml-3">
-                  {dashboard.dashboardhomenavbar.menuTexts.events}
-                </span>
-              </Link>
-              <Link
-                to="/regional-hubs"
-                className="flex items-center px-4 py-2 text-gray-700 hover:bg-[#e4e3e2b1] rounded-lg mb-2"
-              >
-                {dashboard.dashboardhomenavbar.icons.regionalHubsIcon.locationHubSvgIcon}
-                <span className="ml-3">
-                  {dashboard.dashboardhomenavbar.menuTexts.regionalHubs}
-                </span>
-              </Link>
-              <Link
-                to="/jobs"
-                className="flex items-center px-4 py-2 text-gray-700 hover:bg-[#e4e3e2b1] rounded-lg mb-2"
-              >
-                {dashboard.dashboardhomenavbar.icons.jobsIcon.briefcaseSvgIcon}
-                <span className="ml-3">
-                  {dashboard.dashboardhomenavbar.menuTexts.jobs}
-                </span>
-              </Link>
-              <Link
-                to="/perks"
-                className="flex items-center px-4 py-2 text-gray-700 hover:bg-[#e4e3e2b1] rounded-lg mb-2"
-              >
-                {dashboard.dashboardhomenavbar.icons.perksIcon.staroutlineSvgIcon}
-                <span className="ml-3">
-                  {dashboard.dashboardhomenavbar.menuTexts.perks}
-                </span>
-              </Link>
-            </nav>
-          </div>
-        </div>
-      )}
+      {isMenuOpen && 
+        <DashboardSidebar isOpen={isMenuOpen} onClose={toggleMenu} />
+      }
     </nav>
   );
 }
