@@ -723,6 +723,7 @@ console.log('cohortData',cohortData)
                 tabs={tabs}
                 currentTab={currentTab}
                 onTabChange={handleTabChange}
+                
               />
             </div>
             <div className="pr-0 md:pr-6">
