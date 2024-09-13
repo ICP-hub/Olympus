@@ -184,9 +184,9 @@ const AssociationRecieverDataToProject = ({
 
   // POST API HANDLER TO SELF-REJECT A REQUEST WHERE MENTOR APPROCHES PROJECT
   return (
-    <div className="p-6 w-[650px] rounded-lg shadow-sm flex">
-      <div className="w-[272px]">
-        <div className="max-w-[250px] w-[250px] bg-gray-100 rounded-lg flex flex-col justify-between h-full relative overflow-hidden cursor-pointer">
+    <div className="p-6 w-full flex flex-wrap md:flex-nowrap rounded-lg shadow-sm">
+      <div className="w-full flex justify-center md:w-[272px]">
+        <div className="min-w-[236px] w-full md:max-w-[250px] bg-gray-100 rounded-lg flex flex-col justify-between h-60 relative overflow-hidden cursor-pointer">
           <div
             className="absolute inset-0 flex items-center justify-center"
             onClick={() => setOpenDetail(true)}
@@ -198,15 +198,15 @@ const AssociationRecieverDataToProject = ({
             />
           </div>
 
-          <div className="absolute bottom-0 right-[6px] flex items-center bg-gray-100 p-1">
+          {/* <div className="absolute bottom-0 right-[6px] flex items-center bg-gray-100 p-1">
             <Star className="text-yellow-400 w-4 h-4" />
             <span className="text-sm font-medium">9</span>
-          </div>
+          </div> */}
         </div>
       </div>
 
-      <div className="flex-grow ml-[25px] w-[544px]">
-        <div className="flex justify-between items-start mb-2">
+      <div className="flex-grow mt-4 md:mt-0 ml-0 md:ml-[25px]  w-full">
+        <div className="flex w-full mt-2 flex-wrap md:flex-nowrap md:mt-0 lg:flex-wrap xl:flex-nowrap xl:mt-0 sm2:justify-between items-start mb-2">
           <div>
             <h3 className="text-xl font-bold">{projectName}</h3>
 

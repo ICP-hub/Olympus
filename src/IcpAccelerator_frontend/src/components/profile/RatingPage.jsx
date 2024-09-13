@@ -118,12 +118,12 @@ const RatingPage = () => {
       : "userpic";
 
   return (
-    <div className="p-6">
+    <div className="p-3 sm0:p-6">
       <div className="flex flex-col mt-6 items-center">
         <img
           src={userFullData?.profile_picture[0]}
           alt="Profile"
-          className="rounded-full w-28 h-28 mb-4"
+          className="rounded-full w-10 h-10 sm:w-16 sm:h-16 md:w-28 md:h-28 mb-4"
         />
         <h2 className="text-2xl font-bold">{userFullData.full_name} </h2>
         <p className="text-gray-500">{userFullData.openchat_username}</p>
@@ -208,7 +208,7 @@ const RatingPage = () => {
                 <img
                   src={profilepic}
                   alt="pic"
-                  className="rounded-full w-16 h-16 object-cover border border-gray-300"
+                  className="rounded-full w-8 h-8 xxs:w-12 xxs:h-12 sm0:w-12 sm0:h-12 sm:w-16 sm:h-16  object-cover border border-gray-300"
                 />
                 <div className="flex-grow">
                   <h2 className="text-base font-semibold text-gray-800 mb-1">
@@ -242,7 +242,7 @@ const RatingPage = () => {
                           key={index}
                           xmlns="http://www.w3.org/2000/svg"
                           viewBox="0 0 24 24"
-                          className="w-4 h-4 text-gray-400"
+                          className="xxs:w-4 xxs:h-4 w-3 h-3 text-gray-400"
                           fill="currentColor"
                         >
                           <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
@@ -251,8 +251,8 @@ const RatingPage = () => {
                     )}
                   </div>
 
-                  <div className="text-gray-600 text-xs">
-                    <p>{review.message}</p>
+                  <div className="text-gray-600 text-xs ">
+                    <p className="text-sm font-normal break-all line-clamp-2 ">{review.message}</p>
                   </div>
                 </div>
               </div>
