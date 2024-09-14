@@ -1,6 +1,5 @@
 import React, { useEffect, useState ,useRef} from "react";
 import eventbg from "../../../../assets/images/bg.png";
-import ProfileImage from "../../../../assets/Logo/ProfileImage.png";
 import GuestProfile1 from "../../../../assets/Logo/GuestProfile1.png";
 import CapacityGroupIcon from "../../../../assets/Logo/CapacityGroupIcon.png";
 import StartDateCalender from "../../../../assets/Logo/StartDateCalender.png";
@@ -20,11 +19,16 @@ import toast, { Toaster } from "react-hot-toast";
 import NoDataFound from "./NoDataFound";
 import EventRequestCard from "./EventRequestCard";
 import EventRequestStatus from "./EventRequestStatus";
-import Tabs from "../../Common/Tabs/Tabs";
+import Tabs from "../../Common/Tabs/Tabs";import {
+  ArrowBack,
+ 
+} from "@mui/icons-material";
 import Attendees from "./Attendees";
 import { Tooltip } from "react-tooltip";
 import { FaChevronRight, FaChevronLeft } from "react-icons/fa";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa"; 
+import { shareSvgIcon } from "../../Utils/Data/SvgData";
+
 
 const FAQItem = ({ question, answer }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -211,13 +215,17 @@ console.log('cohortData',cohortData)
     tags,
     title,
   } = cohortData.cohort;
-
+console.log("Line 214",cohortData.cohort_creator_data.profile_picture
+)
   const Seats = Number(no_of_seats);
   const bannerImage =
     cohort_banner && cohort_banner.length > 0
       ? uint8ArrayToBase64(cohort_banner[0])
       : [];
-
+const profileimage = cohortData.cohort_creator_data.profile_picture;
+const ProfileImage =  profileimage && profileimage.length > 0
+? uint8ArrayToBase64(profileimage[0])
+: [];
   const TabButton = ({ name, label }) => (
     <button
       className={`py-2 px-4 ${
@@ -312,12 +320,13 @@ console.log('cohortData',cohortData)
 
   return (
     <div className="flex flex-col">
-      <div className="flex flex-col gap-10 md:flex-row">
+      <div className="flex flex-col  gap-4 md:gap-10 md:flex-row">
         <div className="  w-full md:w-[30%] bg-white rounded-lg shadow-md pt-4">
           <div className="bg-gray-100 p-4">
             <div className="flex items-start mb-4">
               <img
                 src={ProfileImage}
+               
                 alt={host_name || "Host"}
                 className="w-14 h-14 rounded-full mr-3"
               />
@@ -535,7 +544,7 @@ console.log('cohortData',cohortData)
 
         {/* mobile screen  */}
         {/* mobile screen  */}
-        <div className="p-6 bg-white md:hidden  rounded-lg shadow-sm border border-gray-200 overflow-hidden w-full">
+        <div className=" bg-white md:hidden  rounded-lg shadow-sm border border-gray-200 overflow-hidden w-full">
           {!showDetails ? (
             <button
               onClick={handleToggle}
@@ -691,8 +700,19 @@ console.log('cohortData',cohortData)
             </>
           )}
         </div>
-
+       
         <div className="flex-1 w-full overflow-auto ">
+        <div className="flex   w-full justify-between  my-2 md:px-4 ">
+          <button className="mr-2 text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-2 rounded-md shadow-sm border border-gray-200">
+            {/* {profilepage.viewPublicProfileText} */}
+           <ArrowBack className="mr-1"/> Back to profile
+          </button>
+          <button className="flex items-center text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-2 rounded-md shadow-sm border border-gray-200">
+            {/* {profilepage.shareText}  */}
+            Share Cohort
+            <span className="ml-1">{shareSvgIcon }</span>
+          </button>
+        </div>
           <div className="p-4">
             <img
               src={bannerImage}

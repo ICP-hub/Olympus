@@ -72,6 +72,18 @@ const ProfilePage = () => {
 
   return (
     <div className="container mx-auto mb-5 bg-white px-4 md:px-6 lg:px-8">
+      <div className="flex gap-2 md:gap-4 w-full justify-between md:justify-end my-2 md:my-0">
+          <button className="mr-2 text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-2 rounded-md shadow-sm border border-gray-200">
+            {/* {profilepage.viewPublicProfileText} */}
+            Back to profile
+          </button>
+          <button className="flex items-center text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-2 rounded-md shadow-sm border border-gray-200">
+            {/* {profilepage.shareText} */}Share this
+             <span>{shareSvgIcon}
+
+            </span>
+          </button>
+        </div>
       {/* Header Section */}
       <div className="flex flex-col md:flex-row justify-between md:items-center mx-0 md:mx-[3%] p-5 md:h-11 bg-opacity-95 -top-[1.6rem] md:-top-[.60rem] md:p-10 px-0 sticky bg-white z-20">
         <div>
