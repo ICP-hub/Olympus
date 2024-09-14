@@ -320,6 +320,17 @@ const ProfileImage =  profileimage && profileimage.length > 0
 
   return (
     <div className="flex flex-col">
+       <div className="flex   w-full justify-between  my-2  ">
+          <button className="mr-2 text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-2 rounded-md shadow-sm border border-gray-200">
+            {/* {profilepage.viewPublicProfileText} */}
+           <ArrowBack className="mr-1"/> Back to profile
+          </button>
+          <button className="flex items-center md:mr-4 text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-2 rounded-md shadow-sm border border-gray-200">
+            {/* {profilepage.shareText}  */}
+            Share Cohort
+            <span className="ml-1">{shareSvgIcon }</span>
+          </button>
+        </div>
       <div className="flex flex-col  gap-4 md:gap-10 md:flex-row">
         <div className="  w-full md:w-[30%] bg-white rounded-lg shadow-md pt-4">
           <div className="bg-gray-100 p-4">
@@ -702,17 +713,7 @@ const ProfileImage =  profileimage && profileimage.length > 0
         </div>
        
         <div className="flex-1 w-full overflow-auto ">
-        <div className="flex   w-full justify-between  my-2 md:px-4 ">
-          <button className="mr-2 text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-2 rounded-md shadow-sm border border-gray-200">
-            {/* {profilepage.viewPublicProfileText} */}
-           <ArrowBack className="mr-1"/> Back to profile
-          </button>
-          <button className="flex items-center text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-2 rounded-md shadow-sm border border-gray-200">
-            {/* {profilepage.shareText}  */}
-            Share Cohort
-            <span className="ml-1">{shareSvgIcon }</span>
-          </button>
-        </div>
+       
           <div className="p-4">
             <img
               src={bannerImage}
