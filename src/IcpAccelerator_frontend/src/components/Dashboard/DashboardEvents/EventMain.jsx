@@ -80,9 +80,9 @@ const EventMain = () => {
         </button>
       </div>
 
-      <div className="flex flex-col md:flex-row">
+      <div className="flex flex-col md:flex-row ">
       
-        <div className="w-full md:w-[70%] pr-6">
+        <div className="w-full md:w-[70%] lg:w-full lgx:w-[70%] pr-6">
           
           {filteredEvents.length > 0 ? (
             filteredEvents.map((event) => (
@@ -94,13 +94,13 @@ const EventMain = () => {
         </div>
 
         {/* Desktop Filter Sidebar */}
-        <div className="hidden md:block md:w-[30%]">
+        <div className="hidden md:block lg:hidden lgx:block md:w-[30%]">
           <Filters setSelectedEventType={setSelectedEventType} />
         </div>
 
         {/* Mobile Filter Panel */}
         {isFiltersOpen && (
-          <div className="md:hidden fixed inset-0 z-30 p-6 overflow-hidden">
+          <div className="md:hidden lg:block lgx:hidden fixed inset-0 z-30 p-6 overflow-hidden">
            
             <div
               className="fixed inset-0 bg-black opacity-50 transition-opacity duration-300"
