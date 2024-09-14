@@ -274,7 +274,7 @@ const refresh = () => {
                           <a
                             href={job_link}
                             target="_blank"
-                            className="border rounded-md bg-[#155EEF] py-2 px-4 text-white text-center text-sm xxs:text-base"
+                            className="border rounded-md bg-[#155EEF] py-2 px-1 dxs:px-4 text-white text-center text-xs dxs:text-sm xxs:text-base"
                           >
                             Apply <span className="pl-1 text-white"></span>
                             <ArrowOutwardIcon
@@ -286,7 +286,7 @@ const refresh = () => {
                             className="hover:bg-slate-300 py-2 px-3 text-[#155EEF] font-medium flex"
                           >
                             view{" "}
-                            <span className="hidden xxs:block">details</span>
+                            <span className="hidden xxs:block pl-1">details</span>
                           </button>
                         </div>
                       </div>
