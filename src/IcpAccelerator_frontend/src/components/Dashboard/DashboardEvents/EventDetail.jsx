@@ -19,7 +19,8 @@ import toast, { Toaster } from "react-hot-toast";
 import NoDataFound from "./NoDataFound";
 import EventRequestCard from "./EventRequestCard";
 import EventRequestStatus from "./EventRequestStatus";
-import Tabs from "../../Common/Tabs/Tabs";import {
+import Tabs from "../../Common/Tabs/Tabs";
+import {
   ArrowBack,
  
 } from "@mui/icons-material";
@@ -28,6 +29,7 @@ import { Tooltip } from "react-tooltip";
 import { FaChevronRight, FaChevronLeft } from "react-icons/fa";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa"; 
 import { shareSvgIcon } from "../../Utils/Data/SvgData";
+import ShareModal from "./EventshareModel";
 
 
 const FAQItem = ({ question, answer }) => {
@@ -81,6 +83,7 @@ const FAQ = () => {
 };
 
 const EventDetails = () => {
+    const [isModalOpen, setIsModalOpen] = useState(false);
   const tabsContainerRef = useRef(null);
   const userCurrentRoleStatusActiveRole = useSelector(
     (currState) => currState.currentRoleStatus.activeRole
@@ -317,27 +320,29 @@ const ProfileImage =  profileimage && profileimage.length > 0
     }
   };
 
-
+ const shareUrl = `${window.location.origin}/dashboard/single-event${cohort_id}`;
   return (
     <div className="flex flex-col">
-       <div className="flex   w-full justify-between  my-2  ">
-          <button className="mr-2 text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-2 rounded-md shadow-sm border border-gray-200">
-            {/* {profilepage.viewPublicProfileText} */}
-           <ArrowBack className="mr-1"/> Back to profile
-          </button>
-          <button className="flex items-center md:mr-4 text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-2 rounded-md shadow-sm border border-gray-200">
-            {/* {profilepage.shareText}  */}
-            Share Cohort
-            <span className="ml-1">{shareSvgIcon }</span>
-          </button>
-        </div>
+      <div className="flex   w-full justify-between  my-2  ">
+        <button className="mr-2 text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-2 rounded-md shadow-sm border border-gray-200">
+          {/* {profilepage.viewPublicProfileText} */}
+          <ArrowBack className="mr-1" /> Back to profile
+        </button>
+        <button
+          className="flex items-center md:mr-4 text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-2 rounded-md shadow-sm border border-gray-200"
+          onClick={() => setIsModalOpen(true)}
+        >
+          {/* {profilepage.shareText}  */}
+          Share Cohort
+          <span className="ml-1">{shareSvgIcon}</span>
+        </button>
+      </div>
       <div className="flex flex-col  gap-4 md:gap-10 md:flex-row">
         <div className="  w-full md:w-[30%] bg-white rounded-lg shadow-md pt-4">
           <div className="bg-gray-100 p-4">
             <div className="flex items-start mb-4">
               <img
                 src={ProfileImage}
-               
                 alt={host_name || "Host"}
                 className="w-14 h-14 rounded-full mr-3"
               />
@@ -711,9 +716,8 @@ const ProfileImage =  profileimage && profileimage.length > 0
             </>
           )}
         </div>
-       
+
         <div className="flex-1 w-full overflow-auto ">
-       
           <div className="p-4">
             <img
               src={bannerImage}
@@ -744,7 +748,6 @@ const ProfileImage =  profileimage && profileimage.length > 0
                 tabs={tabs}
                 currentTab={currentTab}
                 onTabChange={handleTabChange}
-                
               />
             </div>
             <div className="pr-0 md:pr-6">
@@ -801,6 +804,9 @@ const ProfileImage =  profileimage && profileimage.length > 0
         </div>
       </div>
       <Toaster />
+      {isModalOpen && (
+        <ShareModal onClose={() => setIsModalOpen(false)} shareUrl={shareUrl} />
+      )}
     </div>
   );
 };

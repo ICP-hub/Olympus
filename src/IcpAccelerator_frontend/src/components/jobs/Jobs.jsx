@@ -251,8 +251,12 @@ const refresh = () => {
                           onClick={() => openJobDetails(card.job_id)}
                           className="flex flex-col gap-3  "
                         >
-                          <p className="text-gray-400">{job_post_time} </p>
-                          <h3 className="text-xl font-bold">{job_name} </h3>
+                          <p className="text-sm xxs:text-base text-gray-400">
+                            {job_post_time}{" "}
+                          </p>
+                          <h3 className="text-sm xxs:text-xl font-bold">
+                            {job_name}{" "}
+                          </h3>
                           <p className="flex items-center">
                             <span className="mr-3">
                               <img
@@ -261,14 +265,16 @@ const refresh = () => {
                                 alt="icon"
                               />
                             </span>
-                            <span>{job_name} </span>
+                            <span className="truncate break-all">
+                              {job_name}{" "}
+                            </span>
                           </p>
                         </div>
                         <div className="flex flex-col gap-4 items-center">
                           <a
                             href={job_link}
                             target="_blank"
-                            className="border rounded-md bg-[#155EEF] py-2 px-4 text-white text-center"
+                            className="border rounded-md bg-[#155EEF] py-2 px-4 text-white text-center text-sm xxs:text-base"
                           >
                             Apply <span className="pl-1 text-white"></span>
                             <ArrowOutwardIcon
@@ -277,15 +283,18 @@ const refresh = () => {
                           </a>
                           <button
                             onClick={() => openJobDetails(card.job_id)}
-                            className="hover:bg-slate-300 py-2 px-3 text-[#155EEF] font-medium "
+                            className="hover:bg-slate-300 py-2 px-3 text-[#155EEF] font-medium flex"
                           >
-                            view details
+                            view{" "}
+                            <span className="hidden xxs:block">details</span>
                           </button>
                         </div>
                       </div>
                       <div className="flex flex-col gap-3">
-                        <p className="text-gray-600  overflow-hidden text-ellipsis max-h-12 line-clamp-2">{parse(job_description)} </p>
-                        <div className="flex gap-5 items-center">
+                        <p className="text-gray-600  overflow-hidden text-ellipsis max-h-12 line-clamp-2">
+                          {parse(job_description)}{" "}
+                        </p>
+                        <div className="flex gap-5 items-center flex-wrap">
                           <div className="flex items-center gap-2">
                             {" "}
                             {lenseSvgIcon}{" "}
