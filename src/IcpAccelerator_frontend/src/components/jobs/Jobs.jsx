@@ -254,14 +254,14 @@ const refresh = () => {
                           <p className="text-sm xxs:text-base text-gray-400">
                             {job_post_time}{" "}
                           </p>
-                          <h3 className="text-sm xxs:text-xl font-bold">
+                          <h3 className="text-xl font-bold">
                             {job_name}{" "}
                           </h3>
                           <p className="flex items-center">
                             <span className="mr-3">
                               <img
                                 src={job_project_logo}
-                                className="w-8 h-8 rounded-full"
+                                className="w-8 h-8 rounded-lg"
                                 alt="icon"
                               />
                             </span>
@@ -270,24 +270,25 @@ const refresh = () => {
                             </span>
                           </p>
                         </div>
-                        <div className="flex flex-col gap-4 items-center">
-                          <a
-                            href={job_link}
-                            target="_blank"
-                            className="border rounded-md bg-[#155EEF] py-2 px-1 dxs:px-4 text-white text-center text-xs dxs:text-sm xxs:text-base"
-                          >
-                            Apply <span className="pl-1 text-white"></span>
-                            <ArrowOutwardIcon
-                              sx={{ marginTop: "-2px", fontSize: "medium" }}
-                            />
-                          </a>
-                          <button
-                            onClick={() => openJobDetails(card.job_id)}
-                            className="hover:bg-slate-300 py-2 px-3 text-[#155EEF] font-medium flex"
-                          >
-                            view{" "}
-                            <span className="hidden xxs:block pl-1">details</span>
-                          </button>
+                        <div className="hidden sm5:block">
+                          <div className="flex flex-col gap-4 items-center">
+                            <a
+                              href={job_link}
+                              target="_blank"
+                              className="border rounded-md bg-[#155EEF] py-2 px-1 dxs:px-4 text-white text-center text-xs dxs:text-sm xxs:text-base"
+                            >
+                              Apply <span className="pl-1 text-white"></span>
+                              <ArrowOutwardIcon
+                                sx={{ marginTop: "-2px", fontSize: "medium" }}
+                              />
+                            </a>
+                            <button
+                              onClick={() => openJobDetails(card.job_id)}
+                              className="hover:bg-slate-300 py-2 px-3 text-[#155EEF] font-medium flex"
+                            >
+                              view details
+                            </button>
+                          </div>
                         </div>
                       </div>
                       <div className="flex flex-col gap-3">
@@ -314,6 +315,26 @@ const refresh = () => {
                                 <LinkIcon />
                               </span>{" "}
                             </a>
+                          </div>
+                        </div>
+                        {/* Action Buttons */}
+                        <div className="sm5:hidden">
+                          {" "}
+                          <div className="flex justify-between w-full">
+                            <button className="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition w-full">
+                              Apply{" "}
+                              <span className="ml-2 material-icons">
+                                <ArrowOutwardIcon
+                                  sx={{ marginTop: "-2px", fontSize: "medium" }}
+                                />
+                              </span>
+                            </button>
+                            <button
+                              onClick={() => openJobDetails(card.job_id)}
+                              className="hover:bg-slate-300 py-2 px-3 text-[#155EEF] font-medium w-full"
+                            >
+                              view details
+                            </button>
                           </div>
                         </div>
                       </div>
