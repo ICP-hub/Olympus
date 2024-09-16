@@ -8,7 +8,7 @@ export default function HomeSection3() {
     <>
       <div className="bg-white pb-20 md:pb-40">
         <div className="container mx-auto">
-          <div className="max-w-6xl w-full px-4 sm:px-6 lg:px-8 mx-auto">
+          <div className="max-w-6xl w-full md:px-4 sm:px-6 lg:px-8 mx-auto">
             <div className="p-4 md:p-6">
             <p className="text-[#121926] text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium mb-5 leading-8 sm:leading-10 md:leading-[50px] lg:leading-[60px] max-w-4xl">
                 {homepagesection3.paragraph1.text}

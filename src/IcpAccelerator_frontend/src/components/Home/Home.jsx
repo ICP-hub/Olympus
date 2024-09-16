@@ -16,7 +16,7 @@ export default function Home() {
   };
   return (
     <>
-    {/* <div className='container mx-auto'> */}
+    <div className='w-full mx-auto'>
       <HeroSection />
       <Section2 />
       <HomeSection3 />
@@ -24,7 +24,7 @@ export default function Home() {
       <HomeSection5 />
       <TestimonialSection />
       <HomeSection6 />
-      {/* </div> */}
+      </div>
     </>
   )
 }

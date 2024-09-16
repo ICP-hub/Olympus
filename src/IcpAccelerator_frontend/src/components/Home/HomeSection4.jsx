@@ -17,7 +17,7 @@ import { homepagedata } from "../Utils/jsondata/data/homepageData";
 function HomeSection4() {
   const { homepagesection4 } = homepagedata;
   return (
-    <div className=" bg-[#FEF6EE] py-10 ">
+    <div className="bg-white md:bg-[#FEF6EE] py-10 ">
       <div className="container mx-auto">
         <div className="max-w-6xl w-full py-8 px-4 sm:px-6 lg:px-8  mx-auto bg-white rounded-lg">
           <section className="max-w-xl mx-auto">
@@ -45,24 +45,24 @@ function HomeSection4() {
                   <div className="max-w-[379px] h-full flex flex-col sm5:justify-between py-4">
                     <div>
                       <h1 className="text-3xl font-custom text-[#121926] pb-2">
-                      {homepagesection4.card1.content.title}
+                        {homepagesection4.card1.content.title}
                       </h1>
                       <p className="pb-6 text-xs font-normal text-[#4B5565]">
-                      {homepagesection4.card1.content.description}
+                        {homepagesection4.card1.content.description}
                       </p>
-                      <p className="text-xs font-normal text-[#4B5565]">
-                      {homepagesection4.card1.content.description2}
+                      <p className="text-xs font-normal text-[#4B5565] mb-2">
+                        {homepagesection4.card1.content.description2}
                       </p>
                     </div>
-                    <div className="flex gap-1 flex-wrap">
+                    <div className="flex gap-1 flex-wrap ">
                       <span className="bg-white text-xs font-normal text-[#364152] px-3 py-1 rounded-md border-2">
-                      {homepagesection4.card1.content.tags[0]}
+                        {homepagesection4.card1.content.tags[0]}
                       </span>
                       <span className="bg-white text-xs font-normal text-[#364152] px-3 py-1 rounded-md border-2">
-                      {homepagesection4.card1.content.tags[1]}
+                        {homepagesection4.card1.content.tags[1]}
                       </span>
                       <span className="bg-white text-xs font-normal text-[#364152] px-3 py-1 rounded-md border-2">
-                      {homepagesection4.card1.content.tags[2]}
+                        {homepagesection4.card1.content.tags[2]}
                       </span>
                     </div>
                   </div>
@@ -71,8 +71,8 @@ function HomeSection4() {
               {/* right card  */}
               <div className=" rounded-lg shadow-lg overflow-hidden bg-[#FCE7F6] ">
                 <div className=" h-full flex flex-col justify-between  py-4 ">
-                   {/* mobile screen image  */}
-                   <div className=" h-[227px]  block sm5:hidden    ">
+                  {/* mobile screen image  */}
+                  <div className=" h-[227px]  block sm5:hidden    ">
                     <div
                       className="h-full  sm4:w-[393px] "
                       style={{
@@ -84,17 +84,16 @@ function HomeSection4() {
                         marginTop: "-43px",
                       }}
                     ></div>
-                   
                   </div>
                   <div className="h-fit px-5">
                     <h1 className="text-3xl font-custom text-[#121926] pb-2">
-                    {homepagesection4.card2.content.title}
+                      {homepagesection4.card2.content.title}
                     </h1>
                     <p className="pb-6 text-xs font-normal text-[#4B5565]">
-                    {homepagesection4.card2.content.description}
+                      {homepagesection4.card2.content.description}
                     </p>
                   </div>
-                  <div className="sm5:h-[200px] h-0  dlg:h-full  py-4 ">
+                  <div className="sm5:min-h-[200px] h-0  dlg:h-full  py-4 my-3 ">
                     <div
                       className="h-full hidden sm5:block"
                       style={{
@@ -106,15 +105,15 @@ function HomeSection4() {
                         marginTop: "-43px",
                       }}
                     ></div>
-                    <div className="flex gap-1 flex-wrap ">
+                    <div className="flex gap-1 flex-wrap px-5">
                       <span className="bg-white text-xs font-normal text-[#364152] px-3 py-1 rounded-md border-2">
-                      {homepagesection4.card2.content.tags[0]}
+                        {homepagesection4.card2.content.tags[0]}
                       </span>
                       <span className="bg-white text-xs font-normal text-[#364152] px-3 py-1 rounded-md border-2">
-                      {homepagesection4.card2.content.tags[1]}
+                        {homepagesection4.card2.content.tags[1]}
                       </span>
                       <span className="bg-white text-xs font-normal text-[#364152] px-3 py-1 rounded-md border-2">
-                      {homepagesection4.card2.content.tags[2]}
+                        {homepagesection4.card2.content.tags[2]}
                       </span>
                     </div>
                   </div>
@@ -127,7 +126,7 @@ function HomeSection4() {
               <div className=" rounded-lg shadow-lg overflow-hidden bg-[#FFFACD] ">
                 <div className=" h-full flex flex-col justify-between  py-4 ">
                   {/* mobile screen image  */}
-                   <div className=" h-[227px]  block sm5:hidden    ">
+                  <div className=" h-[227px]  block sm5:hidden    ">
                     <div
                       className="h-full sm4:w-[393px] "
                       style={{
@@ -139,18 +138,17 @@ function HomeSection4() {
                         marginTop: "-43px",
                       }}
                     ></div>
-                   
                   </div>
                   <div className="h-fit px-5">
                     <h1 className="text-3xl font-custom text-[#121926] pb-2">
-                    {homepagesection4.card3.content.title}
+                      {homepagesection4.card3.content.title}
                     </h1>
                     <p className="pb-6 text-xs font-normal text-[#4B5565]">
-                    {homepagesection4.card3.content.description}
+                      {homepagesection4.card3.content.description}
                     </p>
                   </div>
                   {/* laptop screen image  */}
-                  <div className=" sm5:h-[200px] h-0  dlg:h-full  py-4 ">
+                  <div className=" sm5:min-h-[200px] h-0  dlg:h-full  py-4 my-3">
                     <div
                       className="h-full hidden sm5:block"
                       style={{
@@ -162,15 +160,15 @@ function HomeSection4() {
                         marginTop: "-43px",
                       }}
                     ></div>
-                    <div className="flex gap-1 flex-wrap">
+                    <div className="flex gap-1 flex-wrap px-5">
                       <span className="bg-white text-xs font-normal text-[#364152] px-3 py-1 rounded-md border-2">
-                      {homepagesection4.card3.content.tags[0]}
+                        {homepagesection4.card3.content.tags[0]}
                       </span>
                       <span className="bg-white text-xs font-normal text-[#364152] px-3 py-1 rounded-md border-2">
-                      {homepagesection4.card3.content.tags[1]}
+                        {homepagesection4.card3.content.tags[1]}
                       </span>
                       <span className="bg-white text-xs font-normal text-[#364152] px-3 py-1 rounded-md border-2">
-                      {homepagesection4.card3.content.tags[2]}
+                        {homepagesection4.card3.content.tags[2]}
                       </span>
                     </div>
                   </div>
@@ -190,24 +188,24 @@ function HomeSection4() {
                   <div className="max-w-[379px] h-full flex flex-col sm5:justify-between py-4">
                     <div>
                       <h1 className="text-3xl font-custom text-[#121926] pb-2">
-                      {homepagesection4.card4.content.title}
+                        {homepagesection4.card4.content.title}
                       </h1>
                       <p className="pb-6 text-xs font-normal text-[#4B5565]">
-                      {homepagesection4.card4.content.description}
+                        {homepagesection4.card4.content.description}
                       </p>
-                      <p className="text-xs font-normal text-[#4B5565]">
-                      {homepagesection4.card4.content.description2}
+                      <p className="text-xs font-normal text-[#4B5565] mb-2">
+                        {homepagesection4.card4.content.description2}
                       </p>
                     </div>
                     <div className="flex gap-1 flex-wrap">
                       <span className="bg-white text-xs font-normal text-[#364152] px-3 py-1 rounded-md border-2">
-                      {homepagesection4.card4.content.tags[0]}
+                        {homepagesection4.card4.content.tags[0]}
                       </span>
                       <span className="bg-white text-xs font-normal text-[#364152] px-3 py-1 rounded-md border-2">
-                      {homepagesection4.card4.content.tags[1]}
+                        {homepagesection4.card4.content.tags[1]}
                       </span>
                       <span className="bg-white text-xs font-normal text-[#364152] px-3 py-1 rounded-md border-2">
-                      {homepagesection4.card4.content.tags[2]}
+                        {homepagesection4.card4.content.tags[2]}
                       </span>
                     </div>
                   </div>
@@ -229,24 +227,24 @@ function HomeSection4() {
                   <div className="max-w-[379px] h-full flex flex-col sm5:justify-between py-4">
                     <div>
                       <h1 className="text-3xl font-custom text-[#121926] pb-2">
-                      {homepagesection4.card5.content.title}
+                        {homepagesection4.card5.content.title}
                       </h1>
                       <p className="pb-6 text-xs font-normal text-[#4B5565]">
-                      {homepagesection4.card5.content.description}
+                        {homepagesection4.card5.content.description}
                       </p>
-                      <p className="text-xs font-normal text-[#4B5565]">
-                      {homepagesection4.card5.content.description2}
+                      <p className="text-xs font-normal text-[#4B5565] mb-2">
+                        {homepagesection4.card5.content.description2}
                       </p>
                     </div>
                     <div className="flex gap-1 flex-wrap">
                       <span className="bg-white text-xs font-normal text-[#364152] px-3 py-1 rounded-md border-2">
-                      {homepagesection4.card5.content.tags[0]}
+                        {homepagesection4.card5.content.tags[0]}
                       </span>
                       <span className="bg-white text-xs font-normal text-[#364152] px-3 py-1 rounded-md border-2">
-                      {homepagesection4.card5.content.tags[1]}
+                        {homepagesection4.card5.content.tags[1]}
                       </span>
                       <span className="bg-white text-xs font-normal text-[#364152] px-3 py-1 rounded-md border-2">
-                      {homepagesection4.card5.content.tags[2]}
+                        {homepagesection4.card5.content.tags[2]}
                       </span>
                     </div>
                   </div>
@@ -255,8 +253,8 @@ function HomeSection4() {
               {/* right card  */}
               <div className=" rounded-lg shadow-lg overflow-hidden bg-[#F3FEE7] ">
                 <div className=" h-full flex flex-col justify-between  py-4 ">
-                   {/* mobile screen image  */}
-                   <div className=" h-[227px]  block sm5:hidden    ">
+                  {/* mobile screen image  */}
+                  <div className=" h-[227px]  block sm5:hidden    ">
                     <div
                       className="h-full sm4:w-[393px] "
                       style={{
@@ -268,17 +266,16 @@ function HomeSection4() {
                         marginTop: "-43px",
                       }}
                     ></div>
-                   
                   </div>
                   <div className="h-fit px-5">
                     <h1 className="text-3xl font-custom text-[#121926] pb-2">
-                    {homepagesection4.card6.content.title}
+                      {homepagesection4.card6.content.title}
                     </h1>
                     <p className="pb-6 text-xs font-normal text-[#4B5565]">
-                    {homepagesection4.card6.content.description}
+                      {homepagesection4.card6.content.description}
                     </p>
                   </div>
-                  <div className=" sm5:h-[200px] h-0  dlg:h-full  py-4 ">
+                  <div className=" sm5:min-h-[200px] h-0  dlg:h-full  py-4 my-3">
                     <div
                       className="h-full hidden sm5:block"
                       style={{
@@ -290,15 +287,15 @@ function HomeSection4() {
                         marginTop: "-43px",
                       }}
                     ></div>
-                    <div className="flex gap-1 flex-wrap">
+                    <div className="flex gap-1 flex-wrap px-5">
                       <span className="bg-white text-xs font-normal text-[#364152] px-3 py-1 rounded-md border-2">
-                      {homepagesection4.card6.content.tags[0]}
+                        {homepagesection4.card6.content.tags[0]}
                       </span>
                       <span className="bg-white text-xs font-normal text-[#364152] px-3 py-1 rounded-md border-2">
-                      {homepagesection4.card6.content.tags[1]}
+                        {homepagesection4.card6.content.tags[1]}
                       </span>
                       <span className="bg-white text-xs font-normal text-[#364152] px-3 py-1 rounded-md border-2">
-                      {homepagesection4.card6.content.tags[2]}
+                        {homepagesection4.card6.content.tags[2]}
                       </span>
                     </div>
                   </div>
@@ -312,14 +309,14 @@ function HomeSection4() {
                 <div className=" h-full flex flex-col justify-between  pt-4 ">
                   <div className="h-fit px-5">
                     <h1 className="text-3xl font-custom text-[#121926] pb-2">
-                    {homepagesection4.card7.content.title}
+                      {homepagesection4.card7.content.title}
                     </h1>
                     <p className="pb-6 text-xs font-normal text-[#4B5565]">
-                    {homepagesection4.card7.content.description}
+                      {homepagesection4.card7.content.description}
                     </p>
                   </div>
                   <div
-                    className=" h-full  py-4 flex items-end"
+                    className=" h-full  py-4 flex items-end px-5"
                     style={{
                       backgroundImage: `url(${homepagesection4.card7.imageSrc.sec47})`,
                       backgroundSize: "cover",
@@ -330,10 +327,10 @@ function HomeSection4() {
                   >
                     <div className="flex gap-1 flex-wrap">
                       <span className="bg-white text-xs font-normal text-[#364152] px-3 py-1 rounded-md border-2">
-                      {homepagesection4.card7.content.tags[0]}
+                        {homepagesection4.card7.content.tags[0]}
                       </span>
                       <span className="bg-white text-xs font-normal text-[#364152] px-3 py-1 rounded-md border-2">
-                      {homepagesection4.card7.content.tags[1]}
+                        {homepagesection4.card7.content.tags[1]}
                       </span>
                     </div>
                   </div>
@@ -343,14 +340,14 @@ function HomeSection4() {
                 <div className=" h-full flex flex-col justify-between  pt-4 ">
                   <div className="h-fit px-5">
                     <h1 className="text-3xl font-custom text-[#121926] pb-2">
-                    {homepagesection4.card8.content.title}
+                      {homepagesection4.card8.content.title}
                     </h1>
                     <p className="pb-6 text-xs font-normal text-[#4B5565]">
-                    {homepagesection4.card8.content.description}
+                      {homepagesection4.card8.content.description}
                     </p>
                   </div>
                   <div
-                    className=" h-full  py-4 flex items-end"
+                    className=" h-full  py-4 flex items-end px-5"
                     style={{
                       backgroundImage: `url(${homepagesection4.card8.imageSrc.sec48})`,
                       backgroundSize: "cover",
@@ -361,10 +358,10 @@ function HomeSection4() {
                   >
                     <div className="flex gap-1 flex-wrap">
                       <span className="bg-white text-xs font-normal text-[#364152] px-3 py-1 rounded-md border-2">
-                      {homepagesection4.card8.content.tags[0]}
+                        {homepagesection4.card8.content.tags[0]}
                       </span>
                       <span className="bg-white text-xs font-normal text-[#364152] px-3 py-1 rounded-md border-2">
-                      {homepagesection4.card8.content.tags[1]}
+                        {homepagesection4.card8.content.tags[1]}
                       </span>
                     </div>
                   </div>
@@ -374,14 +371,14 @@ function HomeSection4() {
                 <div className=" h-full flex flex-col justify-between  pt-4 ">
                   <div className="h-fit px-5">
                     <h1 className="text-3xl font-custom text-[#121926] pb-2">
-                    {homepagesection4.card9.content.title}
+                      {homepagesection4.card9.content.title}
                     </h1>
                     <p className="pb-6 text-xs font-normal text-[#4B5565]">
-                    {homepagesection4.card9.content.description}
+                      {homepagesection4.card9.content.description}
                     </p>
                   </div>
                   <div
-                    className=" h-full  py-4 flex items-end"
+                    className=" h-full  py-4 flex items-end px-5"
                     style={{
                       backgroundImage: `url(${homepagesection4.card9.imageSrc.sec49})`,
                       backgroundSize: "cover",
@@ -392,10 +389,10 @@ function HomeSection4() {
                   >
                     <div className="flex gap-1 flex-wrap">
                       <span className="bg-white text-xs font-md text-[#364152] px-3 py-1 rounded-md border-2">
-                      {homepagesection4.card9.content.tags[0]}
+                        {homepagesection4.card9.content.tags[0]}
                       </span>
                       <span className="bg-white text-xs font-md text-[#364152] px-3 py-1 rounded-md border-2">
-                      {homepagesection4.card9.content.tags[1]}
+                        {homepagesection4.card9.content.tags[1]}
                       </span>
                     </div>
                   </div>
@@ -403,9 +400,9 @@ function HomeSection4() {
               </div>
             </div>
           </div>
-          <div className="mt-10 text-center px-[2.9rem]">
+          <div className="mt-10 text-center ">
             <button className="bg-blue-500 text-white px-6 py-3 rounded-[4px]  border-2 w-full md:w-auto">
-            {homepagesection4.button.text}
+              {homepagesection4.button.text}
               <homepagesection4.arrowForwardIcon.ArrowForwardIcon className="ml-1" />
             </button>
           </div>

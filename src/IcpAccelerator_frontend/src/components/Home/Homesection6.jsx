@@ -22,10 +22,10 @@ const AccordionItem = ({ title, content, isOpen, onClick }) => {
   return (
     <div className="border-b border-gray-200">
       <button
-        className="w-full flex justify-between items-center p-4 focus:outline-none"
+        className="w-full flex justify-between items-start md:items-center p-4 focus:outline-none"
         onClick={onClick}
       >
-        <span className="text-[#4B5565] text-base font-medium">{title}</span>
+        <span className="text-[#4B5565] text-base font-medium text-left">{title}</span>
         <div className="transition-transform duration-300 ease-in-out">
           {isOpen ? (
             <RemoveCircleOutlineOutlinedIcon className="text-gray-500" />

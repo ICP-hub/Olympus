@@ -5,7 +5,7 @@ import MobileMenuDrawer from "./MobileMenuDrawer";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
 import { homepagedata } from "../../Utils/jsondata/data/homepageData";
-
+import logo from "../../../../assets/images/navlogo.png"
 const Navbar = ({ setModalOpen }) => {
   const { navbar } = homepagedata;
 
@@ -34,7 +34,7 @@ const Navbar = ({ setModalOpen }) => {
   };
   return (
     <>
-      <nav className=" h-20 flex items-center justify-center    py-10 ">
+      <nav className=" h-20 flex items-center justify-center bg-[#FEF6EE]   py-10 ">
         <div className="container  bg-[#FEF6EE]">
           <div className="max-w-7xl w-full mx-auto ">
             <div className="  flex items-center justify-between    py-8 px-4 sm:px-6 lg:px-8  ">
@@ -44,7 +44,12 @@ const Navbar = ({ setModalOpen }) => {
                   <img
                     src={navbar.logo.logo}
                     alt="Olympus"
-                    className="cursor-pointer"
+                    className="cursor-pointer hidden md:block"
+                  />
+                  <img
+                    src={logo}
+                    alt="Olympus"
+                    className="cursor-pointer md:hidden object-cover w-11"
                   />
                 </Link>
               </div>
