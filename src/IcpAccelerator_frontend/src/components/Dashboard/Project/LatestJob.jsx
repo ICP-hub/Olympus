@@ -15,6 +15,7 @@ import LinkIcon from "@mui/icons-material/Link";
 import { FaEye } from "react-icons/fa";
 import { Principal } from "@dfinity/principal";
 import { Folder } from '@mui/icons-material';
+import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import WorkOutlineOutlinedIcon from '@mui/icons-material/WorkOutlineOutlined';
 import {
   clockSvgIcon,
@@ -321,34 +322,35 @@ const NewJob = ({ latestJobs }) => {
                   className="flex flex-col gap-3 my-8"
                 >
                   <div className="flex justify-between">
-                    <div className="flex flex-col gap-3  ">
+                    <div className="flex flex-col gap-3 w-full ">
                       <p className="text-gray-400">{job_post_time} </p>
                       <h3 className="text-sm xxs:text-xl font-bold">
                         {job_name}{" "}
                       </h3>
-                      <p className="flex items-center">
-                        <span
-                          className="mr-3"
+                      <div className="flex gap-3 ">
+                        <div
+                          className="flex w-14"
                           onClick={() => openJobDetails(card.job_id)}
                         >
                           <img
                             src={job_project_logo}
-                            className="w-8 h-8 rounded-full"
+                            className="w-12 h-12 rounded-full"
                             alt="icon"
                           />
-                        </span>
-                        <span className="w-full">{fullname} </span>
-                      </p>
+                        </div>
+                        <div className="w-full text-lg font-medium">{fullname} </div>
+                      </div>
+                      
                     </div>
                     <div className="flex  gap-4 items-center">
                       <img
                         src={editp}
-                        className=" text-gray-500 hover:underline text-xs h-4 w-4 cursor-pointer"
+                        className=" text-gray-500 hover:underline text-xs h-4 w-4 sm:h-5 sm:w-5 cursor-pointer"
                         alt="edit"
                         onClick={() => handleJobsOpenModal(card)}
                       />
                       <span className="text-[16px] text-gray-500 cursor-pointer hover:text-red-700">
-                        <AiFillDelete
+                      <DeleteOutlinedIcon className="cursor-pointer hover:text-red-500"
                           onClick={() => handleOpenDeleteModal(card)}
                         />
                       </span>
