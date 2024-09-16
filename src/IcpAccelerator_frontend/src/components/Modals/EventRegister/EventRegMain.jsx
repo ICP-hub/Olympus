@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState ,useEffect} from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { ThreeDots } from "react-loader-spinner";
@@ -13,6 +13,7 @@ import { format } from "date-fns";
 import { useSelector } from "react-redux";
 import { validationSchema } from "./cohortValidation";
 import { useNavigate } from "react-router-dom";
+import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 
 const EventRegMain = ({
   modalOpen,
@@ -35,7 +36,7 @@ const EventRegMain = ({
   );
   const organiserName = mentorFullData[1]?.params?.full_name;
   const defaultValues = {
-    cohort_banner: singleEventData?.cohort_banner ?? "",
+    cohort_banner: singleEventData?.cohort_banner ?uint8ArrayToBase64(singleEventData?.cohort_banner) : "",
     cohort_end_date: singleEventData?.cohort_end_date ?? "",
     cohort_id: singleEventData?.cohort_id ?? "",
     cohort_launch_date: singleEventData?.cohort_launch_date ?? "",
@@ -63,6 +64,7 @@ const EventRegMain = ({
 
   // STATE TO STORE THE IMAGE DATA
   const [imageData, setImageData] = useState(null);
+
 
   // DESTRUCTURING METHODS FROM useForm HOOK
   const {

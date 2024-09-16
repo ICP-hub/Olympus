@@ -93,10 +93,11 @@ const navigate= useNavigate()
       setIsSubmitting(true);
       const multichainNames =
         data.multi_chain === "true"
-          ? Array.isArray(data.multi_chain_names) &&
-            data.multi_chain_names.length > 0
-            ? data.multi_chain_names.map((name) => name.trim())
-            : null
+          ?  Array.isArray(data.multi_chain_names)
+          ? data.multi_chain_names
+          : typeof data.multi_chain_names === "string"
+          ? data.multi_chain_names.split(",").map((item) => item.trim())
+          : []
           : null;
       const area_of_expertise = Array.isArray(data.area_of_expertise)
         ? data.area_of_expertise
@@ -121,7 +122,7 @@ const navigate= useNavigate()
           area_of_expertise: area_of_expertise ? area_of_expertise : [],
           reason_for_joining: data.reason_for_joining ? [data.reason_for_joining] : [],
         };
-  
+  console.log('mentorData',mentorData)
         try {
           const result = await actor.register_mentor(mentorData);
           console.log("result", result); // Log backend response
@@ -136,15 +137,15 @@ const navigate= useNavigate()
             setIsSubmitting(false);
             setModalOpen(false);
             setFetchCall(false);
-            //  window.location.href = "/dashboard"
-            navigate("/dashboard")
+              window.location.href = "/dashboard/profile"
+            // navigate("/dashboard")
           } else {
             toast.success("Mentor registered successfully!");
             setIsSubmitting(false);
             setModalOpen(false);
             setFetchCall(true);
-            // window.location.href = "/dashboard"
-            navigate("/dashboard")
+            window.location.href = "/dashboard/profile"
+            // navigate("/dashboard")
           }
         } catch (error) {
           toast.error(error.message);

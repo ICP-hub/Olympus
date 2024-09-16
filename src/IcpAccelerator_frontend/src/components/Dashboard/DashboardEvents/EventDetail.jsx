@@ -1,11 +1,8 @@
 import React, { useEffect, useState ,useRef} from "react";
-import eventbg from "../../../../assets/images/bg.png";
 import GuestProfile1 from "../../../../assets/Logo/GuestProfile1.png";
 import CapacityGroupIcon from "../../../../assets/Logo/CapacityGroupIcon.png";
 import StartDateCalender from "../../../../assets/Logo/StartDateCalender.png";
-import StartTimeClock from "../../../../assets/Logo/StartTimeClock.png";
 import PriceIcon from "../../../../assets/Logo/PriceIcon.png";
-import ArrowOutwardOutlinedIcon from "@mui/icons-material/ArrowOutwardOutlined";
 import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
 import RemoveCircleOutlineOutlinedIcon from "@mui/icons-material/RemoveCircleOutlineOutlined";
 import {useParams} from "react-router-dom";
@@ -18,15 +15,10 @@ import { ThreeDots } from "react-loader-spinner";
 import toast, { Toaster } from "react-hot-toast";
 import NoDataFound from "./NoDataFound";
 import EventRequestCard from "./EventRequestCard";
-import EventRequestStatus from "./EventRequestStatus";
 import Tabs from "../../Common/Tabs/Tabs";
-import {
-  ArrowBack,
- 
-} from "@mui/icons-material";
+import {ArrowBack,} from "@mui/icons-material";
 import Attendees from "./Attendees";
 import { Tooltip } from "react-tooltip";
-import { FaChevronRight, FaChevronLeft } from "react-icons/fa";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa"; 
 import { shareSvgIcon } from "../../Utils/Data/SvgData";
 import ShareModal from "./EventshareModel";

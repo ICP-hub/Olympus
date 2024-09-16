@@ -7,7 +7,7 @@ import NewEvent from "../Dashboard/DashboardEvents/NewEvent";
 import JobSection from "../Dashboard/Project/JobSection";
 import FAQ from "../Dashboard/Project/Faq";
 import AssociationRequestCard from "../Dashboard/Associations/AssociationRequestCard";
-import ProfileDetail from  './ProfileDetail';
+import ProfileDetail from  '../ProfileEdit/ProfileDetail';
 import Role from './Role';
 import Announcement from  './Announcement';
 import RatingPage from  './RatingPage';

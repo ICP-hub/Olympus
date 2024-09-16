@@ -1,27 +1,42 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import EditIcon from "@mui/icons-material/Edit";
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller ,useFieldArray} from "react-hook-form";
 import toast, { Toaster } from "react-hot-toast";
 import { useSelector, useDispatch } from "react-redux";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
 import { useCountries } from "react-countries";
 import Select from "react-select";
 import ReactSelect from "react-select";
 import { LinkedIn, GitHub, Telegram, Language } from "@mui/icons-material";
-import CompressedImage from "../ImageCompressed/CompressedImage";
 import { allHubHandlerRequest } from "../StateManagement/Redux/Reducers/All_IcpHubReducer";
 import editp from "../../../assets/Logo/edit.png";
 import { ThreeDots } from "react-loader-spinner";
-
+import { FaPlus, FaTrash, FaSave } from "react-icons/fa";
 import {Principal} from "@dfinity/principal"
 import getReactSelectStyles from "../Utils/navigationHelper/getReactSelectStyles";
 import { validationSchema } from "../Modals/investorForm/investorvalidation";
+import getSocialLogo from "../Utils/navigationHelper/getSocialLogo";
+import getPlatformFromHostname from "../Utils/navigationHelper/getPlatformFromHostname";
 
 
 const InvestorDetail = () => {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    clearErrors,
+    setValue,
+    getValues,
+    setError,
+    watch,
+    control,
+    trigger,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    resolver: yupResolver(validationSchema),
+    mode: "all",
+  });
   const navigate = useNavigate();
   const { countries } = useCountries();
   const dispatch = useDispatch();
@@ -104,81 +119,62 @@ console.log("principal in investordetail",principal)
     const [showbtn,setShowbtn]=useState(true)
 
   // form submit handler func
+  const [socialLinks, setSocialLinks] = useState({});
+  const [isEditingLink, setIsEditingLink] = useState({});
+  const [isLinkBeingEdited, setIsLinkBeingEdited] = useState(false);
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "links",
+  });
 
-  const onSubmitHandler = async (data) => {
-    const updatedSocialLinks = Object.entries(socialLinks).map(([key, urls]) => {
-      return urls.map(url => ({ link: url ? [url] : [] }));
-  }).flat();
-    console.log("Form data being sent to backend: ", data);
-    if (actor) {
-      const investorData = {
-        name_of_fund: data?.investor_fund_name,
-        fund_size: [Number(data?.investor_fund_size) || 0],
-        existing_icp_investor: data?.existing_icp_investor === "true",
-        investor_type: [data?.investment_type?.split(", ").join(", ")] || [],
-        project_on_multichain: 
-        data?.invested_in_multi_chain === "true"
-          ? [data?.invested_in_multi_chain_names?.split(", ").join(", ")]
-          : [],
-        category_of_investment: data?.investment_categories
-          ?.split(", ")
-          .join(", "),
-        preferred_icp_hub: data?.preferred_icp_hub,
-        portfolio_link: data?.investor_portfolio_link,
-        website_link: [data?.investor_website_url || ""],
-        registered: data?.investor_registered === "true",
-        registered_country: [data?.registered_country] || [],
-        // linkedin_link: data?.investor_linkedin_url,
-        stage: [data?.investment_stage?.split(", ").join(", ")] || [],
-        range_of_check_size: [data?.investment_stage_range?.split(", ").join(", ")] || [],
-        existing_icp_portfolio: [],
-        registered_under_any_hub: [true],
-        reason_for_joining: [],
-        average_check_size: 0,
-        money_invested: [parseInt(0)],
-        // links: [updatedSocialLinks], 
-        links: updatedSocialLinks.length > 0 ? [updatedSocialLinks] : [],
-        // links: updatedSocialLinks.map(linkObj => ({ link: linkObj.link[0] ? [linkObj.link[0]] : [] })), 
-        number_of_portfolio_companies: 0,
-        assets_under_management: [""],
-        type_of_investment: data?.type_of_investment || "",
-      };
-
-      console.log("Formatted investorData to send: ", investorData);
-
-      try {
-        if (userCurrentRoleStatusActiveRole === "vc") {
-          const result = await actor.update_venture_capitalist(investorData);
-          if (result?.includes("Profile updated successfully")) {
-            toast.success("Profile updated successfully");
-            navigate("/dashboard/profile")
-          } else {
-            toast.error(result);
-          }
-          
-        } else {
-          const result = await actor.register_venture_capitalist(investorData);
-          if (result?.includes("Profile updated successfully")) {
-            toast.success("Profile updated successfully");
-            window.location.href = "/";
-          } else {
-            toast.error("Something went wrong");
-          }
-        }
-      } catch (error) {
-        toast.error("Error sending data to backend");
-        console.error("Error:", error);
-      }
-    } else {
-      toast.error("Please sign up with Internet Identity first");
-      window.location.href = "/";
-    }
+  const handleSaveLink = (key) => {
+    setIsEditingLink((prev) => ({
+      ...prev,
+      [key]: false, // Exit editing mode for the saved link
+    }));
   };
+
+  // Handle adding new link from form field
+  const handleSaveNewLink = (data, index) => {
+    const linkKey = `custom-link-${Date.now()}-${index}`; // Generate unique key
+    setSocialLinks((prevLinks) => ({
+      ...prevLinks,
+      [linkKey]: data, // Add new link to socialLinks state
+    }));
+    remove(index); // Remove the field after saving
+  };
+
+  // Toggle the editing of individual links
+  const handleLinkEditToggle = (key) => {
+    setIsEditingLink((prev) => ({
+      ...prev,
+      [key]: !prev[key], // Toggle the edit state for each link
+    }));
+    setIsLinkBeingEdited(!isLinkBeingEdited);
+  };
+
+  // Handle changes to individual links
+  const handleLinkChange = (e, key) => {
+    setSocialLinks((prev) => ({
+      ...prev,
+      [key]: e.target.value, // Update the specific link's value
+    }));
+  };
+
+  // Handle deletion of existing links
+  const handleLinkDelete = (key) => {
+    setSocialLinks((prev) => {
+      const updatedLinks = { ...prev };
+      delete updatedLinks[key]; // Remove the link
+      return updatedLinks;
+    });
+  };
+ 
  
   
 
   const setInvestorValuesHandler = (val) => {
-    console.log("val==========>>>>>>>>>>>>>>>INVESTOR JI", val);
+    console.log('val',val)
     if (val) {
       setValue(
         "investor_registered",
@@ -193,10 +189,10 @@ console.log("principal in investordetail",principal)
         "registered_country",
         val?.[0].profile?.params?.registered_country[0] ?? ""
       );
-      // setValue(
-      //   "preferred_icp_hub",
-      //   val?.[0].profile?.params?.preferred_icp_hub ?? ""
-      // );
+      setValue(
+        "preferred_icp_hub",
+        val?.[0].profile?.params?.preferred_icp_hub ?? ""
+      );
       setValue(
         "preferred_icp_hub",
         val?.[0].profile?.params?.preferred_icp_hub || ""
@@ -225,10 +221,8 @@ console.log("principal in investordetail",principal)
         "investor_portfolio_link",
         val?.[0].profile?.params?.portfolio_link ?? ""
       );
-      // setValue("investor_fund_name", val?.name_of_fund ?? "");
       const fundName = val?.[0].profile?.params?.name_of_fund || "";
       setValue("investor_fund_name", fundName.trim() ? fundName : "");
-      // setValue("investor_fund_size", val?.fund_size?.[0] ?? "");
       const fundSize = Number(val?.[0].profile?.params?.fund_size?.[0]) || 0;
       setValue("investor_fund_size", fundSize > 0 ? fundSize : "");
       if (val?.[0].profile?.params?.project_on_multichain) {
@@ -254,10 +248,6 @@ console.log("principal in investordetail",principal)
         "investor_website_url",
         val?.[0].profile?.params?.website_link[0] ?? ""
       );
-      // setValue(
-      //   "investor_linkedin_url",
-      //   val?.[0].profile?.params?.linkedin_link ?? ""
-      // );
       setValue("investment_stage", val?.[0].profile?.params?.stage[0] ?? "");
       setValue(
         "number_of_portfolio_companies",
@@ -272,39 +262,25 @@ console.log("principal in investordetail",principal)
         val?.[0].profile?.params?.range_of_check_size
       );
       if (val) {
-        // Existing code for setting other values...
-    
         if (val[0].profile?.params.links?.length) {
           const links = {};
-    
-          val[0].profile?.params.links.forEach((linkArray) => {
-            linkArray.forEach((linkData) => {
-              const url = linkData.link[0];
-    
-              if (url && typeof url === "string") {
-                let domainKey;
-    
-                if (url.includes("linkedin.com")) {
-                  domainKey = "LinkedIn";
-                } else if (url.includes("github.com")) {
-                  domainKey = "GitHub";
-                } else if (url.includes("t.me") || url.includes("telegram")) {
-                  domainKey = "Telegram";
-                } else {
-                  domainKey = new URL(url).hostname.replace("www.", "");
+          val[0].profile?.params.links?.forEach((linkArray) => {
+            if (Array.isArray(linkArray)) {
+              linkArray.forEach((linkData) => {
+                const url = linkData.link?.[0];
+                if (url && typeof url === "string") {
+                  try {
+                    const parsedUrl = new URL(url);
+                    const hostname = parsedUrl.hostname.replace("www.", "");
+                    const platform = getPlatformFromHostname(hostname);
+                    links[platform] = url;
+                  } catch (error) {
+                    console.error("Invalid URL:", url, error);
+                  }
                 }
-    
-                // Initialize array for this domain if it doesn't exist
-                if (!links[domainKey]) {
-                  links[domainKey] = [];
-                }
-    
-                // Add the URL to the corresponding domain array
-                links[domainKey].push(url);
-              }
-            });
+              });
+            }
           });
-    
           setSocialLinks(links);
         } else {
           setSocialLinks({});
@@ -315,22 +291,7 @@ console.log("principal in investordetail",principal)
     }
   };
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    clearErrors,
-    setValue,
-    getValues,
-    setError,
-    watch,
-    control,
-    trigger,
-    formState: { errors, isSubmitting },
-  } = useForm({
-    resolver: yupResolver(validationSchema),
-    mode: "all",
-  });
+ 
 
   const registered = investorFullData[0]?.profile?.params?.registered;
   const registeredValue = registered ? "Yes" : "No";
@@ -350,28 +311,10 @@ console.log("principal in investordetail",principal)
     investorFullData[0]?.profile?.params?.category_of_investment;
   const name_of_fund = investorFullData[0]?.profile?.params?.name_of_fund;
   const website_link = investorFullData[0]?.profile?.params?.website_link;
-  // const investor_linkedin_url = investorFullData?.investor_linkedin_url;
   const stage = investorFullData[0]?.profile?.params?.stage;
   const range_of_check_size =
     investorFullData[0]?.profile?.params?.range_of_check_size;
 
-  const setInterestedDomainsSelectedOptionsHandler = (val) => {
-    setInterestedDomainsSelectedOptions(
-      val
-        ? val
-            .split(", ")
-            .map((interest) => ({ value: interest, label: interest }))
-        : []
-    );
-  };
-
-  const setReasonOfJoiningSelectedOptionsHandler = (val) => {
-    setReasonOfJoiningSelectedOptions(
-      val && val.length > 0 && val[0].length > 0
-        ? val[0].map((reason) => ({ value: reason, label: reason }))
-        : []
-    );
-  };
 
   const setTypeOfInvestSelectedOptionsHandler = (val) => {
     setTypeOfInvestSelectedOptions(
@@ -498,57 +441,7 @@ console.log("principal in investordetail",principal)
     }
   }, [actor]);
 
-  const handleInputChange = (e, field) => {
-    setValue(field, e.target.value, { shouldValidate: true });
-  };
 
-  useEffect(() => {
-    if (actor) {
-      (async () => {
-        if (userCurrentRoleStatusActiveRole === "vc") {
-          const result = await actor.get_vc_info(principalId);
-          if (result) {
-            setImageData(result?.[0]?.user_data?.profile_picture?.[0] ?? null);
-            setValue(
-              "type_of_profile",
-              result?.[0]?.user_data?.type_of_profile?.[0]
-                ? result?.[0]?.user_data?.type_of_profile?.[0]
-                : ""
-            );
-            setValue(
-              "preferred_icp_hub",
-              result?.[0]?.preferred_icp_hub
-                ? result?.[0]?.preferred_icp_hub
-                : ""
-            );
-          } else {
-            setImageData(null);
-            setValue("type_of_profile", "");
-            setValue("preferred_icp_hub", "");
-          }
-        } else if (
-          userCurrentRoleStatusActiveRole === null ||
-          userCurrentRoleStatusActiveRole === "user" ||
-          userCurrentRoleStatusActiveRole === "mentor" ||
-          userCurrentRoleStatusActiveRole === "project"
-        ) {
-          const result = await actor.get_user_information();
-          if (result) {
-            setImageData(result?.Ok?.profile_picture?.[0] ?? null);
-            setValue(
-              "type_of_profile",
-              result?.Ok?.type_of_profile?.[0]
-                ? result?.Ok?.type_of_profile?.[0]
-                : ""
-            );
-          } else {
-            setImageData(null);
-            setValue("type_of_profile", "");
-          }
-        }
-      })();
-    }
-  }, [actor]);
 
   useEffect(() => {
     if (actor) {
@@ -571,76 +464,11 @@ console.log("principal in investordetail",principal)
     }
   }, [actor]);
 
-  useEffect(() => {
-    if (actor) {
-      (async () => {
-        const result = await actor.get_user_information();
-        if (result) {
-          setImageData(result?.Ok?.profile_picture?.[0] ?? null);
-        } else {
-          setImageData(null);
-        }
-      })();
-    }
-  }, [actor]);
  
-  console.log("mere link aa rahe hai ", links);
-  const [socialLinks, setSocialLinks] = useState({});
-  const [isEditingLink, setIsEditingLink] = useState({});
-  const [isLinkBeingEdited, setIsLinkBeingEdited] = useState(false);
-
+ 
   
-  const handleLinkEditToggle = (linkKey) => {
-    setIsEditingLink((prev) => ({
-      ...prev,
-      [linkKey]: !prev[linkKey],
-    }));
-    setIsLinkBeingEdited(!isLinkBeingEdited);
-  };
-  
-  const handleLinkChange = (e, link) => {
-    setSocialLinks((prev) => ({
-      ...prev,
-      [link]: e.target.value,
-    }));
-  };
-  const getIconForLink = (url) => {
-    if (url.includes("linkedin.com")) {
-      return LinkedIn;
-    } else if (url.includes("github.com")) {
-      return GitHub;
-    } else if (url.includes("t.me") || url.includes("telegram")) {
-      return Telegram;
-    } else {
-      return Language;
-    }
-  };
-  const handleSave = () => {
-    // Validate form and update the main state
-    const isFormValid = Object.keys(errors).length === 0;
 
-    if (isFormValid) {
-      // setProfileData(tempData); // Update the main profile data state
-      setEdit({
-        registered: false,
-        registered_country: false,
-        preferred_icp_hub: false,
-        existing_icp_investor: false,
-        project_on_multichain: false,
-        portfolio_link: false,
-        name_of_fund: false,
-        invested_in_multi_chain:false,
-        fund_size: false,
-        category_of_investment: false,
-        website_link: false,
-        // linkedin_link: false,
-        stage: false,
-        range_of_check_size: false,
-      });
-    } else {
-      console.log("Validation failed:", errors);
-    }
-  };
+
   const handleCancel = () => {
     setEdit({
       registered: false,
@@ -672,7 +500,6 @@ console.log("principal in investordetail",principal)
     fund_size: false,
     category_of_investment: false,
     website_link: false,
-    // linkedin_link: false,
     stage: false,
     range_of_check_size: false,
   });
@@ -696,16 +523,12 @@ console.log("principal in investordetail",principal)
         fund_size: false,
         category_of_investment: false,
         website_link: false,
-        // linkedin_link: false,
         stage: false,
         range_of_check_size: false,
       });
     }
   };
-  console.log(
-    "fund size from backend",
-    investorFullData[0]?.profile?.params?.fund_size[0]
-  );
+ 
 
   useEffect(() => {
     if (investorFullData) {
@@ -723,6 +546,61 @@ console.log("principal in investordetail",principal)
     };
   }, []);
 
+  const onSubmitHandler = async (data) => {
+    const updatedSocialLinks = Object.entries(socialLinks).map(([key, url]) => ({
+      link: url ? [url] : [],
+    }));
+    console.log("Form data being sent to backend: ", data);
+    if (actor) {
+      const investorData = {
+        name_of_fund: data?.investor_fund_name,
+        fund_size: [Number(data?.investor_fund_size) || 0],
+        existing_icp_investor: data?.existing_icp_investor === "true",
+        investor_type: [data?.investment_type?.split(", ").join(", ")] || [],
+        project_on_multichain: 
+        data?.invested_in_multi_chain === "true"
+          ? [data?.invested_in_multi_chain_names?.split(", ").join(", ")]
+          : [],
+        category_of_investment: data?.investment_categories
+          ?.split(", ")
+          .join(", "),
+        preferred_icp_hub: data?.preferred_icp_hub,
+        portfolio_link: data?.investor_portfolio_link,
+        website_link: [data?.investor_website_url || ""],
+        registered: data?.investor_registered === "true",
+        registered_country: [data?.registered_country] || [],
+        stage: [data?.investment_stage?.split(", ").join(", ")] || [],
+        range_of_check_size: [data?.investment_stage_range?.split(", ").join(", ")] || [],
+        existing_icp_portfolio: [],
+        registered_under_any_hub: [true],
+        reason_for_joining: [],
+        average_check_size: 0,
+        money_invested: [parseInt(0)],
+        links: updatedSocialLinks.length > 0 ? [updatedSocialLinks] : [],
+        number_of_portfolio_companies: 0,
+        assets_under_management: [""],
+        type_of_investment: data?.type_of_investment || "",
+      };
+
+      console.log("Formatted investorData to send: ", investorData);
+
+      try {
+          const result = await actor.update_venture_capitalist(investorData);
+          if (result?.includes("Profile updated successfully")) {
+            toast.success("Profile updated successfully");
+            navigate("/dashboard/profile")
+          } else {
+            toast.error(result);
+          }
+      } catch (error) {
+        toast.error("Error sending data to backend");
+        console.error("Error:", error);
+      }
+    } else {
+      toast.error("Please sign up with Internet Identity first");
+      window.location.href = "/";
+    }
+  };
   const onErrorHandler = (val) => {
     console.log("Validation errors:", val);
     toast.error("Empty fields or invalid values, please recheck the form");
@@ -759,17 +637,18 @@ console.log("principal in investordetail",principal)
                   Yes
                 </option>
               </select>
-              {errors.investor_registered && (
+             
+            </div>
+          ) : (
+            <div className="flex justify-between items-center cursor-pointer py-1">
+              <span className="mr-2 text-sm truncate break-all">{registeredValue}</span>
+            </div>
+          )}
+           {errors.investor_registered && (
                 <p className="mt-1 text-sm text-red-500 font-bold text-left">
                   {errors.investor_registered.message}
                 </p>
               )}
-            </div>
-          ) : (
-            <div className="flex justify-between items-center cursor-pointer py-1">
-              <span className="mr-2 text-sm">{registeredValue}</span>
-            </div>
-          )}
         </div>
         {watch("investor_registered") === "true" && (
           <div className="group relative hover:bg-gray-100 rounded-lg my-3 p-2 px-3">
@@ -808,17 +687,18 @@ console.log("principal in investordetail",principal)
                   ))}
                 </select>
 
-                {errors.registered_country && (
+                
+              </div>
+            ) : (
+              <div className="flex justify-between items-center cursor-pointer py-1">
+                <span className="mr-2 text-sm truncate break-all">{registered_country}</span>
+              </div>
+            )}
+            {errors.registered_country && (
                   <p className="mt-1 text-sm text-red-500 font-bold text-left">
                     {errors.registered_country.message}
                   </p>
                 )}
-              </div>
-            ) : (
-              <div className="flex justify-between items-center cursor-pointer py-1">
-                <span className="mr-2 text-sm">{registered_country}</span>
-              </div>
-            )}
           </div>
         )}
 
@@ -857,17 +737,18 @@ console.log("principal in investordetail",principal)
                   </option>
                 ))}
               </select>
-              {errors.preferred_icp_hub && (
+             
+            </div>
+          ) : (
+            <div className="flex justify-between items-center cursor-pointer py-1">
+              <span className="mr-2 text-sm truncate break-all">{preferred_icp_hub}</span>
+            </div>
+          )}
+           {errors.preferred_icp_hub && (
                 <p className="mt-1 text-sm text-red-500 font-bold text-left">
                   {errors.preferred_icp_hub.message}
                 </p>
               )}
-            </div>
-          ) : (
-            <div className="flex justify-between items-center cursor-pointer py-1">
-              <span className="mr-2 text-sm">{preferred_icp_hub}</span>
-            </div>
-          )}
         </div>
 
         <div className="group relative hover:bg-gray-100 rounded-lg my-3 p-2 px-3">
@@ -899,19 +780,20 @@ console.log("principal in investordetail",principal)
                   Yes
                 </option>
               </select>
-              {errors.existing_icp_investor && (
-                <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                  {errors.existing_icp_investor.message}
-                </p>
-              )}
+             
             </div>
           ) : (
             <div className="flex justify-between items-center cursor-pointer py-1">
-              <span className="mr-2 text-sm">
+              <span className="mr-2 text-sm truncate break-all">
                 {getValues("existing_icp_investor") === "true" ? "Yes" : "No"}
               </span>
             </div>
           )}
+           {errors.existing_icp_investor && (
+                <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                  {errors.existing_icp_investor.message}
+                </p>
+              )}
         </div>
 
         {watch("existing_icp_investor") === "true" && (
@@ -1007,17 +889,18 @@ console.log("principal in investordetail",principal)
                 } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                 placeholder="Enter your portfolio url"
               />
-              {errors.investor_portfolio_link && (
+              
+            </div>
+          ) : (
+            <div className="flex justify-between items-center cursor-pointer py-1 ">
+              <span className="mr-2 text-sm truncate break-all">{portfolio_link}</span>
+            </div>
+          )}
+          {errors.investor_portfolio_link && (
                 <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
                   {errors.investor_portfolio_link.message}
                 </span>
               )}
-            </div>
-          ) : (
-            <div className="flex justify-between items-center cursor-pointer py-1 ">
-              <span className="mr-2 text-sm">{portfolio_link}</span>
-            </div>
-          )}
         </div>
 
         <div className="group relative hover:bg-gray-100 rounded-lg my-3 p-2 px-3">
@@ -1044,17 +927,18 @@ console.log("principal in investordetail",principal)
                 } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                 placeholder="Enter your fund name"
               />
-              {errors.investor_fund_name && (
+             
+            </div>
+          ) : (
+            <div className="flex justify-between items-center cursor-pointer py-1">
+              <span className="mr-2 text-sm truncate break-all">{name_of_fund}</span>
+            </div>
+          )}
+           {errors.investor_fund_name && (
                 <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
                   {errors.investor_fund_name.message}
                 </span>
               )}
-            </div>
-          ) : (
-            <div className="flex justify-between items-center cursor-pointer py-1">
-              <span className="mr-2 text-sm">{name_of_fund}</span>
-            </div>
-          )}
         </div>
 
         <div className="group relative hover:bg-gray-100 rounded-lg my-3 p-2 px-3">
@@ -1083,17 +967,18 @@ console.log("principal in investordetail",principal)
                 onWheel={(e) => e.target.blur()}
                 min={0}
               />
-              {errors.investor_fund_size && (
+             
+            </div>
+          ) : (
+            <div className="flex justify-between items-center cursor-pointer py-1">
+              <span className="mr-2 text-sm truncate break-all">{fund_size}</span>
+            </div>
+          )}
+           {errors.investor_fund_size && (
                 <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
                   {errors.investor_fund_size.message}
                 </span>
               )}
-            </div>
-          ) : (
-            <div className="flex justify-between items-center cursor-pointer py-1">
-              <span className="mr-2 text-sm">{fund_size}</span>
-            </div>
-          )}
         </div>
 
         <div className="group relative hover:bg-gray-100 rounded-lg my-3 p-2 px-3">
@@ -1129,18 +1014,19 @@ console.log("principal in investordetail",principal)
               Yes
             </option>
           </select>
-          {errors.invested_in_multi_chain && (
-            <p className="mt-1 text-sm text-red-500 font-bold text-left">
-              {errors.invested_in_multi_chain.message}
-            </p>
-          )}
+         
           </div> :
           <div className="flex justify-between items-center cursor-pointer py-1">
-          <span className="mr-2 text-sm">
+          <span className="mr-2 text-sm truncate break-all">
             {getValues("invested_in_multi_chain") === "true" ? "Yes" : "No"}
           </span>
         </div>
           }
+           {errors.invested_in_multi_chain && (
+            <p className="mt-1 text-sm text-red-500 font-bold text-left">
+              {errors.invested_in_multi_chain.message}
+            </p>
+          )}
         </div>
         {watch("invested_in_multi_chain") === "true" && 
           <div className="group relative hover:bg-gray-100 rounded-lg my-3 p-2 px-3">
@@ -1192,11 +1078,7 @@ console.log("principal in investordetail",principal)
                 }
               }}
             />
-            {errors.invested_in_multi_chain_names && (
-              <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                {errors.invested_in_multi_chain_names.message}
-              </p>
-            )}
+            
             </div> :
             
             <div className="flex overflow-hidden overflow-x-auto  gap-2 cursor-pointer py-1">
@@ -1214,6 +1096,11 @@ console.log("principal in investordetail",principal)
               <span className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1">
                 
               </span>
+            )}
+            {errors.invested_in_multi_chain_names && (
+              <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                {errors.invested_in_multi_chain_names.message}
+              </p>
             )}
           </div>
                }
@@ -1315,17 +1202,18 @@ console.log("principal in investordetail",principal)
                 } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w/full p-2.5`}
                 placeholder="Enter your website url"
               />
-              {errors.investor_website_url && (
+              
+            </div>
+          ) : (
+            <div className="flex justify-between items-center cursor-pointer py-1">
+              <span className="mr-2 text-sm truncate break-all">{website_link}</span>
+            </div>
+          )}
+          {errors.investor_website_url && (
                 <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
                   {errors.investor_website_url.message}
                 </span>
               )}
-            </div>
-          ) : (
-            <div className="flex justify-between items-center cursor-pointer py-1">
-              <span className="mr-2 text-sm">{website_link}</span>
-            </div>
-          )}
         </div>
 
         <div className="group relative hover:bg-gray-100 rounded-lg my-3 p-2 px-3">
@@ -1374,11 +1262,7 @@ console.log("principal in investordetail",principal)
                   }
                 }}
               />
-              {errors.investment_stage && (
-                <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                  {errors.investment_stage.message}
-                </p>
-              )}
+             
             </div>
           ) : (
             
@@ -1400,6 +1284,11 @@ console.log("principal in investordetail",principal)
             )}
           </div>
           )}
+           {errors.investment_stage && (
+                <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                  {errors.investment_stage.message}
+                </p>
+              )}
         </div>
 
         <div className="group relative hover:bg-gray-100 rounded-lg my-3 p-2 px-3">
@@ -1448,11 +1337,7 @@ console.log("principal in investordetail",principal)
                   }
                 }}
               />
-              {errors.investment_stage_range && (
-                <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                  {errors.investment_stage_range.message}
-                </p>
-              )}
+              
             </div>
           ) : (
             
@@ -1474,60 +1359,139 @@ console.log("principal in investordetail",principal)
               )}
             </div>
           )}
+          {errors.investment_stage_range && (
+                <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                  {errors.investment_stage_range.message}
+                </p>
+              )}
         </div>
-
-        <div className="flex items-center gap-6 px-3">
-  {/* Display existing links */}
-  {console.log("Display existing links ", socialLinks)}
-  {socialLinks &&
-    Object.keys(socialLinks).map((key) => {
-      const urls = socialLinks[key];
-      
-      if (!Array.isArray(urls) || urls.length === 0) {
-        return null; // Skip rendering if urls is not an array or is empty
-      }
-
-      return urls.map((url, index) => {
-        const uniqueKey = `${key}-${index}`;
-        const Icon = getIconForLink(url);
-        return (
-          <div className="group relative flex items-center" key={uniqueKey}>
-            <a
-              href={url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center"
-            >
-              <Icon className="text-gray-400 hover:text-gray-600 cursor-pointer transform transition-all duration-300 hover:scale-110" />
-            </a>
-            <button
-              type="button"
-              className="absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 ease-in-out transform opacity-0 group-hover:opacity-100 group-hover:translate-x-6 h-10 w-7"
-              onClick={() => handleLinkEditToggle(uniqueKey)}
-            >
-              <img src={editp} alt="edit" />
-            </button>
-            {isEditingLink[uniqueKey] && (
-              <input
-                type="text"
-                {...register(`socialLinks.${key}.${index}`, {
-                  value: url,
-                })}
-                onChange={(e) => handleLinkChange(e, key, index)}
-                className="border p-1 rounded w-full ml-2 transition-all duration-300 ease-in-out transform"
-              />
-            )}
-          </div>
-        );
-      });
-    })}
-</div>
-
-
-
-
-
-
+        <h3 className="mb-2 text-xs text-gray-500 px-3">LINKS</h3>
+        <div className="relative px-3">
+                  <div className="flex flex-wrap gap-5">
+                    {Object.keys(socialLinks)
+                      .filter((key) => socialLinks[key]) // Only show links with valid URLs
+                      .map((key, index) => {
+                        const url = socialLinks[key];
+                        const Icon = getSocialLogo(url); // Get the corresponding social icon
+                        return (
+                          <div
+                            className="group relative flex items-center mb-3"
+                            key={key}
+                          >
+                            {isEditingLink[key] ? (
+                              <div className="flex w-full">
+                                <div className="flex items-center w-full">
+                                  <div className="flex items-center space-x-2 w-full">
+                                    <div className="flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full">
+                                      {Icon} {/* Display the icon */}
+                                    </div>
+                                    <input
+                                      type="text"
+                                      value={url}
+                                      onChange={(e) => handleLinkChange(e, key)}
+                                      className="border p-2 rounded-md w-full"
+                                      placeholder="Enter your social media URL"
+                                    />
+                                  </div>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleSaveLink(key)} // Save the link
+                                    className="ml-2 text-green-500 hover:text-green-700"
+                                  >
+                                    <FaSave />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleLinkDelete(key)} // Delete the link
+                                    className="ml-2 text-red-500 hover:text-red-700"
+                                  >
+                                    <FaTrash />
+                                  </button>
+                                </div>
+                              </div>
+                            ) : (
+                              <>
+                                <a
+                                  href={url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="flex items-center"
+                                >
+                                  {Icon} {/* Display the icon */}
+                                </a>
+                                <button
+                                  type="button"
+                                  className="absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 ease-in-out transform opacity-0 group-hover:opacity-100 group-hover:translate-x-6 h-10 w-7"
+                                  onClick={() => handleLinkEditToggle(key)} // Toggle editing mode for this link
+                                >
+                                  <img src={editp} alt="edit" />
+                                </button>
+                              </>
+                            )}
+                          </div>
+                        );
+                      })}
+                  </div>
+                  {fields.map((item, index) => (
+                    <div key={item.id} className="flex flex-col">
+                      <div className="flex items-center mb-2 pb-1">
+                        <Controller
+                          name={`links[${index}].link`}
+                          control={control}
+                          render={({ field, fieldState }) => (
+                            <div className="flex items-center w-full">
+                              <div className="flex items-center space-x-2 w-full">
+                                <div className="flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full">
+                                  {field.value && getSocialLogo(field.value)}{" "}
+                                  {/* Display logo for new link */}
+                                </div>
+                                <input
+                                  type="text"
+                                  placeholder="Enter your social media URL"
+                                  className={`p-2 border ${
+                                    fieldState.error
+                                      ? "border-red-500"
+                                      : "border-[#737373]"
+                                  } rounded-md w-full bg-gray-50 border-2 border-[#D1D5DB]`}
+                                  {...field}
+                                />
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  handleSaveNewLink(field.value, index)
+                                } // Save the new link
+                                className="ml-2 text-green-500 hover:text-green-700"
+                              >
+                                <FaSave />
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => remove(index)} // Remove link field
+                                className="ml-2 text-red-500 hover:text-red-700"
+                              >
+                                <FaTrash />
+                              </button>
+                            </div>
+                          )}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                  {fields.length < 10 && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (fields.length < 10) {
+                          append({ link: "" });
+                        }
+                      }}
+                      className="flex items-center p-1 text-[#155EEF]"
+                    >
+                      <FaPlus className="mr-1" /> Add Another Link
+                    </button>
+                  )}
+                </div>
         {Object.values(edit).some((value) => value) && (
           showbtn && <div className="flex justify-end gap-4 mt-4">
             <button
