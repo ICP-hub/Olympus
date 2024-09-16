@@ -692,7 +692,7 @@ const AnnouncementCard = () => {
   console.log("latestAnnouncementData =>", latestAnnouncementData);
 
   return (
-    <div className="bg-white">
+    <div className="bg-white w-full">
       {latestAnnouncementData.length > 0 && (
         <div className="sm:flex sm:justify-end items-center sticky top-16 bg-white ">
           {/* <h1 className="text-xl font-bold p-3">Announcements</h1> */}
@@ -708,7 +708,7 @@ const AnnouncementCard = () => {
         <div>
           <NoCardData />
           <button
-            className="bg-[#155EEF] text-white px-4 py-2 rounded-md flex items-center justify-center mx-auto"
+            className="bg-[#155EEF] text-white px-2 md:px-4 py-2 rounded-md flex items-center justify-center mx-auto"
             onClick={() => handleOpenModal(null)}
           >
             <CampaignIcon className="mr-2" />
@@ -729,7 +729,7 @@ const AnnouncementCard = () => {
           let ann_project_name = card?.project_name ?? "";
           let ann_project_desc = card?.project_desc ?? "";
           return (
-            <div key={index} className="container mx-auto my-6 p-4 bg-white">
+            <div key={index} className="container mx-auto md:my-6 p-4 bg-white">
               <div className="flex justify-between items-center pb-1 mb-2">
                 <div className="text-gray-500 font-medium text-xs sm0:text-sm">
                   {ann_time}
@@ -741,7 +741,7 @@ const AnnouncementCard = () => {
                   >
                     <img
                       src={editp}
-                      className="ss4:h-5 ss4:w-5 min-h-3 min-w-3 hover:text-green-400 cursor-pointer"
+                      className="ss:h-5 ss:w-5 min-h-3 min-w-3 hover:text-green-400 cursor-pointer"
                       alt="edit"
                     />
                   </div>
@@ -756,12 +756,12 @@ const AnnouncementCard = () => {
               {/* <h2 className="text-gray-900 text-xl font-bold mb-3">
                 {ann_name}
               </h2> */}
-              <div className="flex items-start p-2 border border-1 mb-4 space-x-4">
+              <div className="flex w-full items-start p-2 border border-1 mb-4 space-x-4">
                 <div className="flex-shrink-0 self-center">
                   <img
                     src={ann_project_logo}
                     alt="pic"
-                    className="h-12 w-12 rounded-full border border-gray-300"
+                    className="h-8 w-8 sm0:h-10 sm0:w-10 sm:h-12 sm:w-12 rounded-full border border-gray-300"
                   />
                 </div>
                 <div className="flex flex-col gap-1 overflow-hidden">
@@ -783,14 +783,16 @@ const AnnouncementCard = () => {
           );
         })
       )}
-      <div className="flex justify-center mt-4">
-              <button
+      {latestAnnouncementData.length > 0 && (
+        <div className="flex justify-center mt-2">
+          <button
             className=" sm:hidden w-[80%] px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
             onClick={() => handleOpenModal(null)}
           >
             + Add new Announcement
           </button>
-              </div>
+        </div>
+      )}
 
       {isAnnouncementModalOpen && (
         <AnnouncementModal

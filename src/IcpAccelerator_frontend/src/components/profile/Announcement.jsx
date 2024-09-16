@@ -100,7 +100,7 @@ const Announcement = () => {
   };
 
   return (
-    <div className="p-6">
+    <div className="w-full">
       {/* <div className="flex justify-between items-center sticky top-16 bg-white ">
         <h1 className="text-xl font-bold p-3">Announcements </h1>
         <button
