@@ -83,7 +83,7 @@ const DashboardProfileView = () => {
   };
 
   return (
-    <div className="bg-white w-full rounded-xl shadow-lg py-5 px-8">
+    <div className="bg-white w-full rounded-xl shadow-lg p-6">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold text-gray-900">Profile views</h2>
 
@@ -104,7 +104,7 @@ const DashboardProfileView = () => {
         <div className="md:hidden relative">
           <button
             onClick={() => setDropdownOpen(!dropdownOpen)}
-            className="p-2 rounded-full hover:bg-gray-200 focus:outline-none"
+            className=" rounded-full hover:bg-gray-200 focus:outline-none"
           >
             <HiDotsVertical className="w-6 h-6 text-gray-600" />
           </button>

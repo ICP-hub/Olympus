@@ -27,7 +27,7 @@ const MainLayout = () => {
 
             <Navbar setModalOpen={setModalOpen}/>
            
-            <main className='container mx-auto'>
+            <main className=''>
          
             <ConnectWallet
             isModalOpen={isModalOpen}
