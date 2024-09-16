@@ -123,7 +123,7 @@ const RatingPage = () => {
         <img
           src={userFullData?.profile_picture[0]}
           alt="Profile"
-          className="rounded-full w-10 h-10 sm:w-16 sm:h-16 md:w-28 md:h-28 mb-4"
+          className="rounded-full w-16 h-16 sm:w-16 sm:h-16 md:w-28 md:h-28 mb-4"
         />
         <h2 className="text-2xl font-bold">{userFullData.full_name} </h2>
         <p className="text-gray-500">{userFullData.openchat_username}</p>

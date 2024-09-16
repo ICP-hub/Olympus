@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import {motion} from "framer-motion";
 
 const JobFilterModal = ({ openDetail, setOpenDetail }) => {
   const [occupation, setOccupation] = useState({
@@ -138,14 +139,28 @@ const JobFilterModal = ({ openDetail, setOpenDetail }) => {
     //     </div>
     //   </div>
     // </div>
-
-    <div className="md1:hidden lg:flex lgx:hidden lg:pr-[1%] transition-transform duration-300 ease-in-out transform translate-y-0 fixed inset-0 flex items-end justify-end bg-black bg-opacity-50">
-      <div className="bg-white rounded-t-3xl w-full lg:max-w-[75%] p-6 space-y-6 shadow-lg">
+    <motion.div
+    className="md1:hidden lg:flex lgx:hidden fixed inset-0 z-30 p-6 overflow-hidden"
+    initial={{ y: '100%' }}
+    animate={{ y: 0 }}
+    exit={{ y: '100%' }}
+    transition={{ duration: 0.5, ease: 'easeInOut' }}
+  >
+    
+    <div
+      className="fixed inset-0 bg-black opacity-50 transition-opacity duration-300"
+      // onClick={() => setOpenDetail(false)}
+    ></div>
+    <motion.div 
+     className="fixed bottom-0 w-full lg:w-[75%] dlg:w-[77%] lg1:w-[78%] dlg:ml-[2%] lg1:ml-[3%] right-0 bg-white z-40 p-6 rounded-t-3xl "
+    >
+      <div className="bg-white rounded-t-3xl w-full p-6 space-y-6 ">
         <div className="flex justify-between items-center">
           <h2 className="text-xl font-semibold">Filters</h2>
           <button
             onClick={() => setOpenDetail(false)}
             className="text-gray-600 text-4xl"
+            
           >
             &times;
           </button>
@@ -411,8 +426,8 @@ const JobFilterModal = ({ openDetail, setOpenDetail }) => {
           </div>
         </div>
       </div>
-    </div>
-
+    </motion.div>
+    </motion.div>
     
   );
 };
