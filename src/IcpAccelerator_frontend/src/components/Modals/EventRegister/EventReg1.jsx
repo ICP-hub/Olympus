@@ -4,10 +4,16 @@ import toast, { Toaster } from "react-hot-toast";
 import { formFields1 } from "./EventFormData";
 import { useFormContext, Controller } from "react-hook-form";
 import CompressedImage from "../../../components/ImageCompressed/CompressedImage";
+import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 
 const EventReg1 = ({ formData, setFormData, imageData, setImageData, editMode ,singleEventData}) => {
+  console.log('formData',formData)
+  console.log('singleEventData',singleEventData)
+  console.log('imageData',imageData)
 
   const [imagePreview, setImagePreview] = useState(null);
+  console.log('imagePreview',imagePreview)
+
 
   const { register, formState: { errors }, control, setValue, clearErrors, setError, trigger } = useFormContext();
  
@@ -28,16 +34,6 @@ const EventReg1 = ({ formData, setFormData, imageData, setImageData, editMode ,s
   };
 
   const imageCreationFunc = async (file) => {
-    const maxFileSize = 10 * 1024 * 1024; // 10MB in bytes
-
-    if (file.size > maxFileSize) {
-      setError("cohort_banner", {
-        type: "manual",
-        message: "File size exceeds the 10MB limit.",
-      });
-      return;
-    }
-
     const result = await trigger("cohort_banner");
     if (result) {
       try {
@@ -70,31 +66,16 @@ const EventReg1 = ({ formData, setFormData, imageData, setImageData, editMode ,s
   };
 
   useEffect(() => {
-    if (formData?.image) {
-      const imageFile = formData?.image;
-
-      if (imageFile.size > 10 * 1024 * 1024) { // Check file size during update
-        setError("cohort_banner", {
-          type: "manual",
-          message: "File size exceeds the 10MB limit.",
-        });
-        return; // Early return to prevent further processing
-      }
-
-      if (editMode === true) {
-        setImagePreview(URL.createObjectURL(imageFile)); // Preview the new image
-      } else {
-        setImagePreview(URL.createObjectURL(imageFile));
-      }
-      imageCreationFunc(imageFile);
-    } else if (singleEventData?.cohort_banner) {
-      setImagePreview(singleEventData?.cohort_banner); // If in edit mode, set the banner image from singleEventData
+    if (formData?.cohort_banner) {
+      const imageFile = formData?.cohort_banner;
+      // imageCreationFunc(imageFile);
+    } else if (singleEventData?.cohort_banner && editMode === true) {
+      setImagePreview(uint8ArrayToBase64(singleEventData?.cohort_banner)); // If in edit mode, set the banner image from singleEventData
+      setImageData(singleEventData?.cohort_banner)
     }
-  }, [formData, singleEventData, editMode]);
+  }, [formData, singleEventData,editMode]);
 
-  useEffect(() => {
-    trigger("cohort_banner");  // Trigger validation on initial render
-  }, []);
+
   return (
     <>
       <div>
@@ -110,7 +91,7 @@ const EventReg1 = ({ formData, setFormData, imageData, setImageData, editMode ,s
 
         <div className="flex gap-2 items-center">
           <div className="h-24 w-24 rounded-2xl border-2 border-dashed border-gray-300 items-center justify-center overflow-hidden flex">
-            {imagePreview && !errors.image ? (
+            {imagePreview && !errors.cohort_banner ? (
               <img
                 src={imagePreview}
                 alt="Profile"

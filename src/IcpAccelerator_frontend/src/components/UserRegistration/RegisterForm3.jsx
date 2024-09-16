@@ -229,7 +229,10 @@ const RegisterForm3 = React.memo(({ setImageData }) => {
             isMulti
             menuPortalTarget={document.body}
             menuPosition={"fixed"}
-            styles={getReactSelectStyles(errors?.reasons_to_join_platform)}
+            styles={getReactSelectStyles(errors?.reasons_to_join_platform
+              &&
+            isFormTouched.reasons_to_join_platform
+            )}
             value={reasonOfJoiningSelectedOptions}
             options={reasonOfJoiningOptions}
             classNamePrefix="select"
@@ -305,7 +308,8 @@ const RegisterForm3 = React.memo(({ setImageData }) => {
             isMulti
             menuPortalTarget={document.body}
             menuPosition={"fixed"}
-            styles={getReactSelectStyles(errors?.domains_interested_in)}
+            styles={getReactSelectStyles(errors?.domains_interested_in &&
+              isFormTouched.domains_interested_in)}
             value={interestedDomainsSelectedOptions}
             options={interestedDomainsOptions}
             classNamePrefix="select"

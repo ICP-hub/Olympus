@@ -29,7 +29,6 @@ const NewEvent = ({ event }) => {
             try {
                 const covertedPrincipal = Principal.fromText(principal);
                 const data = await actor.get_cohorts_by_principal(covertedPrincipal);
-
                 if (data && Array.isArray(data) && data.length > 0) {
                     const formattedEvents = data.map(cohort => {
                         if (!cohort || !cohort.cohort || !cohort.cohort.cohort_banner) {
@@ -38,9 +37,7 @@ const NewEvent = ({ event }) => {
 
                         return {
                             title: cohort.cohort.title,
-                            cohort_banner: cohort.cohort.cohort_banner[0]
-                                ? uint8ArrayToBase64(cohort.cohort.cohort_banner[0])
-                                : [],
+                            cohort_banner: cohort.cohort.cohort_banner[0],
                             cohort_launch_date: cohort.cohort.cohort_launch_date,
                             cohort_end_date: cohort.cohort.cohort_end_date,
                             start_date: cohort.cohort.start_date,
@@ -81,102 +78,6 @@ const NewEvent = ({ event }) => {
         setEditMode(true); // Set edit mode to true when editing a cohort
         setSelectedEvent(event);
     };
-
-    // return (
-    //     <>
-    //         {cohortEvents.length === 0 ? (
-    //             <EventSection />
-    //         ) : (
-    //             <>
-    //                 <div className="flex flex-col items-end mb-8 max-w-7xl pt-4">
-    //                     <button
-    //                         className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
-    //                         onClick={handleModalOpen}
-    //                     >
-    //                         + Add new Cohort
-    //                     </button>
-    //                 </div>
-    //                 <div className="max-w-7xl mx-auto bg-white">
-    //                     {cohortEvents.map((event, index) => (
-    //                         <div
-    //                             key={index}
-    //                             className="bg-white rounded-lg shadow p-4 mb-6 relative group" 
-    //                             onClick={() => handleClick(event.cohort_id)}
-    //                         >
-    //                             <div 
-    //                                 className="absolute top-4 right-4 flex justify-end" 
-    //                                 onClick={(e) => { 
-    //                                     e.stopPropagation(); 
-    //                                     handleEditClick(event);
-    //                                 }}>
-    //                                 <img
-    //                                     src={Edit}
-    //                                     onClick={(e) => { 
-    //                                         e.stopPropagation(); 
-    //                                         handleEditClick(event);
-    //                                     }}
-    //                                     className="h-6 w-6 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity z-50"
-    //                                     alt="edit"
-    //                                 />
-    //                             </div>
-
-    //                             <div className="flex justify-between items-center">
-    //                                 <div className="flex items-center gap-4 w-full relative">
-    //                                     <div className="max-w-[160px] absolute top-1 left-1 bg-white p-2 rounded-[8px]">
-    //                                         <p className="text-sm font-normal">{event.start_date}</p>
-    //                                         <div>
-              
-    //             <p className="text-sm text-gray-600">Start at 15:00 GMT+4</p>
-    //           </div>
-    //                                     </div>
-                                        
-    //                                     <div className="w-[240px] h-[172px]">
-    //                                         <img
-    //                                             src={event.cohort_banner}
-    //                                             alt="Event Background"
-    //                                             className="w-[240px] h-[172px] rounded-lg mr-4 object-cover object-center"
-    //                                         />
-    //                                     </div>
-    //                                     <div className='w-2/3'>
-    //                                         <p className="bg-white font-medium border-2 border-[#CDD5DF] text-[#364152] w-[86px] px-2 py-1 rounded-full text-sm -mt-3">
-    //                                             Workshop
-    //                                         </p>
-    //                                         <h3 className="text-lg font-bold mt-1">{event.title}</h3>
-    //                                         <p
-    //                                             className="text-sm text-gray-500 overflow-hidden text-ellipsis line-clamp-3 mt-2"
-    //                                             style={{ maxHeight: '3em', lineHeight: '1em' }}
-    //                                         >
-    //                                             {parse(event.description)}
-    //                                         </p>
-    //                                         <div className="flex gap-3 items-center mt-4">
-    //                                             <span className="text-sm text-[#121926]">
-    //                                                 <PlaceOutlinedIcon
-    //                                                     className="text-[#364152]"
-    //                                                     fontSize="small"
-    //                                                 />
-    //                                                 {event.country}
-    //                                             </span>
-    //                                             <span className="text-sm text-gray-500">${event.funding_amount}</span>
-    //                                         </div>
-    //                                     </div>
-    //                                 </div>
-    //                             </div>
-    //                         </div>
-    //                     ))}
-    //                 </div>
-    //             </>
-    //         )}
-    //         {modalOpen && (
-    //             <EventRegMain 
-    //                 modalOpen={modalOpen} 
-    //                 setModalOpen={setModalOpen} 
-    //                 editMode={editMode} 
-    //                 singleEventData={selectedEvent} 
-    //                 cohortId={selectedEvent?.cohort_id} // Pass the cohort_id here
-    //             />
-    //         )}
-    //     </>
-    // );
     return (
         <>
           {cohortEvents.length === 0 ? (
@@ -233,7 +134,7 @@ const NewEvent = ({ event }) => {
                         {/* Event image */}
                         <div className="w-full md:w-[240px] h-[172px]">
                           <img
-                            src={event.cohort_banner}
+                            src={event.cohort_banner ?uint8ArrayToBase64(event.cohort_banner):''}
                             alt="Event Background"
                             className="w-full md:w-[240px] h-[172px] rounded-lg object-cover object-center"
                           />

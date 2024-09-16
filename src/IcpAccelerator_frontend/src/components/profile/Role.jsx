@@ -112,38 +112,78 @@ const Role = () => {
   
   
 
-function mergeData(backendData, additionalData) {
-    return backendData?.map(item => {
+  function mergeData(backendData, additionalData) {
+    return backendData?.map((item, index) => {
         const additionalInfo = additionalData?.find(data => data?.name?.toLowerCase() === item?.name?.toLowerCase());
-        return additionalInfo ? { ...item, ...additionalInfo } : item;
+        return additionalInfo ? { ...item, ...additionalInfo, key: item.id || index } : { ...item, key: item.id || index };
     });
 }
+
 
 const mergedData = mergeData(userCurrentRoleStatus, roledata);
  console.log('mergedData',mergedData)
 
-  const getRoleSvg = (status, side) => {
-    const colors = {
-      mentor: { neon: "neon-red", text: "text-red-500" },
-      project: { neon: "neon-blue", text: "text-blue-500" },
-      investor: { neon: "neon-green", text: "text-green-500" },
-      user: { neon: "neon-yellow", text: "text-yellow-500" },
-      user: { neon: "neon-gray", text: "text-[#E3E8EF]" }
-    };
-  
-    const color = colors[status] || colors.user;
-  
-    const pathD = side === "left"
-      ? "M198 0V46.6316C198 59.8864 187.255 70.6316 174 70.6316H25C11.7452 70.6316 1 81.3768 1 94.6316V122"
-      : "M1 0V46.6316C1 59.8864 11.7452 70.6316 25 70.6316H189C202.255 70.6316 213 81.3768 213 94.6316V122";
-  
-    const svgClass = side === "left" && status !== "investor" && status !== "user"
-      ? `neon-effect ${color.neon} ${color.text}`
-      : side === "right" && status === "investor"
-      ? `neon-effect ${color.neon} ${color.text}`
-      : "neon-effect neon-gray text-[#E3E8EF]";
-  
-    return (
+ const getRoleSvg = (role, side) => {
+  console.log('role', role);
+
+  // Define the color scheme for each role
+  const colors = {
+    mentor: { neon: "neon-green", text: "text-green-500" },
+    project: { neon: "neon-blue", text: "text-blue-500" },
+    vc: { neon: "neon-yellow", text: "text-yellow-500" },
+    user: { neon: "neon-red", text: "text-red-500" },
+  };
+
+  // Default color is set to the user color
+  let color = colors.user;
+
+  // Set the color based on the role's approval status
+  if (role?.approval_status === "approved" && colors[role.name]) {
+    color = colors[role.name];
+  }
+
+  // Define the SVG path based on the side
+  const pathD = side === "left"
+    ? "M198 0V46.6316C198 59.8864 187.255 70.6316 174 70.6316H25C11.7452 70.6316 1 81.3768 1 94.6316V122"
+    : "M1 0V46.6316C1 59.8864 11.7452 70.6316 25 70.6316H189C202.255 70.6316 213 81.3768 213 94.6316V122";
+
+  // Apply the class based on the role approval status and side
+  const svgClass = role?.approval_status === "approved"
+    ? `neon-effect ${color.neon} ${color.text}`  // Approved roles get their respective colors
+    : "neon-effect neon-gray text-[#E3E8EF]";   // Default state is gray
+
+  // Inline animation style for the beam effect
+  const beamEffectStyle = {
+    strokeDasharray: "300",
+    strokeDashoffset: "0",
+    animation: "beamAnimation 2s ease-in-out infinite",
+  };
+
+  // Keyframes for the beam animation (inline style)
+  const keyframes = `
+    @keyframes beamAnimation {
+      0% {
+        stroke-dasharray: 0, 300;
+        stroke-dashoffset: 0;
+      }
+      50% {
+        stroke-dasharray: 150, 150;
+        stroke-dashoffset: -75;
+      }
+      100% {
+        stroke-dasharray: 300, 0;
+        stroke-dashoffset: -150;
+      }
+    }
+  `;
+
+  const greyBackgroundStyle = {
+    strokeDasharray: "300", // Length of the stroke, matching the path
+    strokeDashoffset: "0", // No offset, fully visible
+  };
+  return (
+    <>
+      <style>{keyframes}</style>
       <svg
         width="214"
         height="100"
@@ -152,44 +192,241 @@ const mergedData = mergeData(userCurrentRoleStatus, roledata);
         xmlns="http://www.w3.org/2000/svg"
         className={svgClass}
       >
+         <path
+          d={pathD}
+          stroke="#E3E8EF" // Static grey color
+          strokeWidth="2"
+          style={greyBackgroundStyle} // Static path
+        />
         <path
           d={pathD}
           className="stroke-current"
-          stroke={side === "left" ? (status === "user" ? "#E3E8EF" : "currentColor") : "#E3E8EF"}
+          stroke={role?.approval_status === "approved" ? "currentColor" : "#E3E8EF"}
           strokeWidth="2"
+          style={beamEffectStyle} // Apply inline animation style here
         />
       </svg>
-    );
-  };
+    </>
+  );
+};
+
+
+
   
   const renderRoleSvgsOnce = (roles) => {
     let leftSideRendered = false;
     let rightSideRendered = false;
   
+    const projectRole = roles.find((r) => r.name === "project");
+    const mentorRole = roles.find((r) => r.name === "mentor");
+    const vcRole = roles.find((r) => r.name === "vc");
+    const userRole = roles.find((r) => r.name === "user");
+  
     return (
       <div className="flex justify-center gap-4">
-        {roles.some(role => role.name === "mentor" || role.name === "project") && !leftSideRendered && (
-          <>
-            <div>{getRoleSvg(roles.find(role => role.name === "mentor" || role.name === "project").name, 'left')}</div>
-            <div>{getRoleSvg("user", 'right')}</div>
-            {leftSideRendered = true}
-          </>
-        )}
+        {/* Condition 1: When all roles have 'default' status */}
+        {projectRole?.approval_status === "default" &&
+          mentorRole?.approval_status === "default" &&
+          vcRole?.approval_status === "default" && !leftSideRendered && (
+            <>
+              <div>{getRoleSvg(userRole, "left")}</div>
+              <div>{getRoleSvg(userRole, "right")}</div>
+              {leftSideRendered = true}
+              {rightSideRendered = true}
+            </>
+          )}
   
-        {roles.some(role => role.name === "investor") && !rightSideRendered && (
-          <>
-            <div>{getRoleSvg("user", 'left')}</div>
-            <div>{getRoleSvg(roles.find(role => role.name === "investor").name, 'right')}</div>
-            {rightSideRendered = true}
-          </>
-        )}
+        {/* Condition 2: When project is approved and mentor and vc are default */}
+        {projectRole?.approval_status === "approved" &&
+          mentorRole?.approval_status === "default" &&
+          vcRole?.approval_status === "default" && !leftSideRendered && (
+            <>
+              <div>{getRoleSvg(projectRole, "left")}</div>
+              <div>{getRoleSvg(userRole, "right")}</div>
+              {leftSideRendered = true}
+              {rightSideRendered = true}
+            </>
+          )}
+  
+        {/* Condition 3: When mentor is approved and vc is default */}
+        {mentorRole?.approval_status === "approved" &&
+          vcRole?.approval_status === "default" && !leftSideRendered && (
+            <>
+              <div>{getRoleSvg(mentorRole, "left")}</div>
+              <div>{getRoleSvg(userRole, "right")}</div>
+              {leftSideRendered = true}
+              {rightSideRendered = true}
+            </>
+          )}
+  
+        {/* Condition 4: When vc is approved */}
+        {vcRole?.approval_status === "approved" && mentorRole?.approval_status === "default" && !rightSideRendered && (
+            <>
+              <div>{getRoleSvg("vc", "left")}</div>
+              <div>{getRoleSvg("user", "right")}</div>
+              {leftSideRendered = true}
+              {rightSideRendered = true}
+            </>
+          )}
+  
+        {/* Condition 5: When both mentor and vc are approved */}
+        {mentorRole?.approval_status === "approved" &&
+          vcRole?.approval_status === "approved" && !leftSideRendered && !rightSideRendered && (
+            <>
+              <div>{getRoleSvg(mentorRole, "left")}</div>
+              <div>{getRoleSvg(vcRole, "right")}</div>
+              {leftSideRendered = true}
+              {rightSideRendered = true}
+            </>
+          )}
       </div>
     );
   };
+  
  
+  const renderRoleCards = (mergedData) => {
+    let cardsShown = 0; // Counter to keep track of the number of cards shown
+    const projectRole = mergedData.find((r) => r.name === "project");
+    const mentorRole = mergedData.find((r) => r.name === "mentor");
+    const vcRole = mergedData.find((r) => r.name === "vc");
   
+    // Create an array to store the elements to be rendered
+    const elements = [];
   
-
+    // Condition 1: When all roles have 'default' status
+    if (
+      projectRole?.approval_status === "default" &&
+      mentorRole?.approval_status === "default" &&
+      vcRole?.approval_status === "default"
+    ) {
+      for (let i = 0; i < 2 && cardsShown < 2; i++) {
+        elements.push(
+          <div
+            className="border-2 rounded-lg text-center max-w-[350px] mb-6 md:mb-0 shadow-md"
+            key={`default-custom-card-${i}`}
+          >
+            <div className="p-3 flex justify-center mt-5">
+              <AvatarGroup max={4}>
+                <Avatar alt="Mentor" src={mentor} />
+                <Avatar alt="user" src={user} />
+                <Avatar alt="vc" src={vc} />
+                <Avatar alt="project" src={project} />
+              </AvatarGroup>
+            </div>
+            <div className="mt-5 px-5">
+              <p className="max-w-[250px]">{roles.description1}</p>
+            </div>
+            <div className="my-5 px-5 flex items-center w-full">
+              <button
+                onClick={() => setRoleModalOpen(!roleModalOpen)}
+                className="border flex gap-2 justify-center rounded-md bg-[#155EEF] p-2 font-medium w-full text-white"
+              >
+                <span>{userPlusIcon}</span>
+                {roles.addrole}
+              </button>
+            </div>
+          </div>
+        );
+        cardsShown++;
+      }
+    }
+  
+    // Condition 2: When project is approved and mentor and vc are default, show 'No Data' card
+    if (
+      projectRole?.approval_status === "approved" &&
+      mentorRole?.approval_status === "default" &&
+      vcRole?.approval_status === "default"
+    ) {
+      elements.push(
+        <RoleProfileCard key={projectRole.name} role={projectRole.name} image={projectRole.image} message={projectRole.message}/>
+      );
+      cardsShown++;
+      elements.push(
+        <ProfileRoleNoDataCard key="no-data-card"/>
+      );
+      cardsShown++;
+    }
+  
+    // Condition 3: When mentor is approved and vc is default
+    if (mentorRole?.approval_status === "approved" && vcRole?.approval_status === "default") {
+      elements.push(
+        <RoleProfileCard key={mentorRole.name} role={mentorRole.name} image={mentorRole.image} message={mentorRole.message}/>
+      );
+      cardsShown++;
+      elements.push(
+        <div className=" md:w-3/4  p-6  h-60 flex flex-col items-center relative border-2 rounded-lg text-center w-[19.3rem] mb-6 md:mb-0 shadow-md" key="mentor-vc-default-card">
+          <div className="p-3 flex justify-center">
+            <AvatarGroup max={4}>
+              <Avatar alt="Mentor" src={mentor} />
+              <Avatar alt="user" src={user} />
+              <Avatar alt="vc" src={vc} />
+              <Avatar alt="project" src={project} />
+            </AvatarGroup>
+          </div>
+          <div className=" px-5">
+            <p className="max-w-[250px]">{roles.description1}</p>
+          </div>
+          <div className="my-2 px-5 flex items-center w-full">
+            <button
+              onClick={() => setRoleModalOpen(!roleModalOpen)}
+              className="border flex gap-2 justify-center rounded-md bg-[#155EEF] p-2 font-medium w-full text-white"
+            >
+              <span>{userPlusIcon}</span>
+              {roles.addrole}
+            </button>
+          </div>
+        </div>
+      );
+      cardsShown++;
+    }
+  
+    // Condition 4: When vc is approved, show vc RoleProfileCard and the custom card
+    if (vcRole?.approval_status === "approved" && mentorRole?.approval_status === "default") {
+      elements.push(
+        <RoleProfileCard key={vcRole.name} role={vcRole.name} image={vcRole.image} message={vcRole.message}/>
+      );
+      cardsShown++;
+      elements.push(
+        <div className=" md:w-3/4  p-6  h-60 flex flex-col items-center relative border-2 rounded-lg text-center w-[19.3rem] mb-6 md:mb-0 shadow-md" key="vc-approved-card">
+          <div className="p-3 flex justify-center ">
+            <AvatarGroup max={4}>
+              <Avatar alt="Mentor" src={mentor} />
+              <Avatar alt="user" src={user} />
+              <Avatar alt="vc" src={vc} />
+              <Avatar alt="project" src={project} />
+            </AvatarGroup>
+          </div>
+          <div className=" px-5">
+            <p className="max-w-[250px]">{roles.description1}</p>
+          </div>
+          <div className="my-2 px-5 flex items-center w-full">
+            <button
+              onClick={() => setRoleModalOpen(!roleModalOpen)}
+              className="border flex gap-2 justify-center rounded-md bg-[#155EEF] p-2 font-medium w-full text-white"
+            >
+              <span>{userPlusIcon}</span>
+              {roles.addrole}
+            </button>
+          </div>
+        </div>
+      );
+      cardsShown++;
+    }
+  
+    // Condition 5: When both mentor and vc are approved, show both RoleProfileCards
+    if (mentorRole?.approval_status === "approved" && vcRole?.approval_status === "approved") {
+      elements.push(
+        <RoleProfileCard key={mentorRole.name} role={mentorRole.name} image={mentorRole.image} message={mentorRole.message}/>
+      );
+      elements.push(
+        <RoleProfileCard key={vcRole.name} role={vcRole.name} image={vcRole.image} message={vcRole.message}/>
+      );
+      cardsShown ++;
+    }
+  
+    return elements;
+  };
+  
   return (
     <>
       <div className="flex flex-col">
@@ -249,168 +486,8 @@ const mergedData = mergeData(userCurrentRoleStatus, roledata);
       (userCurrentRoleStatus)}</div>
   )}
  <div className="flex flex-col md:flex-row justify-around items-center gap-[12%]">
-  {mergedData &&
-    (() => {
-      let cardsShown = 0; // Counter to keep track of the number of cards shown
-      const projectRole = mergedData.find((r) => r.name === "project");
-      const mentorRole = mergedData.find((r) => r.name === "mentor");
-      const vcRole = mergedData.find((r) => r.name === "vc");
-
-      // Create an array to store the elements to be rendered
-      const elements = [];
-
-      // Condition 1: When all roles have 'default' status
-      if (
-        projectRole?.approval_status === "default" &&
-        mentorRole?.approval_status === "default" &&
-        vcRole?.approval_status === "default"
-      ) {
-        for (let i = 0; i < 2 && cardsShown < 2; i++) {
-          elements.push(
-            <div
-              className="border-2 rounded-lg text-center max-w-[350px] mb-6 md:mb-0 shadow-md"
-              key={`default-custom-card-${i}`}
-            >
-              <div className="p-3 flex justify-center mt-5">
-                <AvatarGroup max={4}>
-                  <Avatar alt="Mentor" src={mentor} />
-                  <Avatar alt="user" src={user} />
-                  <Avatar alt="vc" src={vc} />
-                  <Avatar alt="project" src={project} />
-                </AvatarGroup>
-              </div>
-              <div className="mt-5 px-5">
-                <p className="max-w-[250px]">{roles.description1}</p>
-              </div>
-              <div className="my-5 px-5 flex items-center w-full">
-                <button
-                  onClick={() => setRoleModalOpen(!roleModalOpen)}
-                  className="border flex gap-2 justify-center rounded-md bg-[#155EEF] p-2 font-medium w-full text-white"
-                >
-                  <span>{userPlusIcon}</span>
-                  {roles.addrole}
-                </button>
-              </div>
-            </div>
-          );
-          cardsShown++;
-        }
-      }
-
-      // Condition 2: When project is approved and mentor and vc are default, show 'No Data' card
-      if (
-        projectRole?.approval_status === "approved" &&
-        mentorRole?.approval_status === "default" &&
-        vcRole?.approval_status === "default"
-      ) {
-        elements.push(
-          <RoleProfileCard key={projectRole.name} role={projectRole.name} image={projectRole.image} message={projectRole.message}/>
-        );
-        cardsShown++;
-        elements.push(
-          <ProfileRoleNoDataCard/>
-        );
-        cardsShown++;
-      }
-
-      // Condition 3: When mentor is approved and vc is default
-      if (
-        mentorRole?.approval_status === "approved" &&
-        vcRole?.approval_status === "default"
-      ) {
-        elements.push(
-          <RoleProfileCard key={mentorRole.name} role={mentorRole.name} image={mentorRole.image} message={mentorRole.message}/>
-        );
-        cardsShown++;
-        elements.push(
-          <div className=" md:w-3/4  p-6  h-60 flex flex-col items-center relative border-2 rounded-lg text-center w-[19.3rem] mb-6 md:mb-0 shadow-md" key="mentor-vc-default-card">
-
-            <div className="p-3 flex justify-center">
-              <AvatarGroup max={4}>
-                <Avatar alt="Mentor" src={mentor} />
-                <Avatar alt="user" src={user} />
-                <Avatar alt="vc" src={vc} />
-                <Avatar alt="project" src={project} />
-              </AvatarGroup>
-            </div>
-            <div className=" px-5">
-              <p className="max-w-[250px]">{roles.description1}</p>
-            </div>
-            <div className="my-2 px-5 flex items-center w-full">
-              <button
-                onClick={() => setRoleModalOpen(!roleModalOpen)}
-                className="border flex gap-2 justify-center rounded-md bg-[#155EEF] p-2 font-medium w-full text-white"
-              >
-                <span>{userPlusIcon}</span>
-                {roles.addrole}
-              </button>
-            </div>
-          </div>
-        );
-        cardsShown++;
-      }
-
-      // Condition 4: When vc is approved, show vc RoleProfileCard and the custom card
-      if (
-        vcRole?.approval_status === "approved" &&
-        mentorRole?.approval_status === "default"
-      ) {
-        elements.push(
-          <RoleProfileCard key={vcRole.name} role={vcRole.name} image={vcRole.image} message={vcRole.message}/>
-        );
-        cardsShown++;
-        elements.push(
-          <div className=" md:w-3/4  p-6  h-60 flex flex-col items-center relative border-2 rounded-lg text-center w-[19.3rem] mb-6 md:mb-0 shadow-md " key="vc-approved-card">
-            <div className="p-3 flex justify-center ">
-              <AvatarGroup max={4}>
-                <Avatar alt="Mentor" src={mentor} />
-                <Avatar alt="user" src={user} />
-                <Avatar alt="vc" src={vc} />
-                <Avatar alt="project" src={project} />
-              </AvatarGroup>
-            </div>
-            <div className=" px-5">
-              <p className="max-w-[250px]">{roles.description1}</p>
-            </div>
-            <div className="my-2 px-5 flex items-center w-full">
-              <button
-                onClick={() => setRoleModalOpen(!roleModalOpen)}
-                className="border flex gap-2 justify-center rounded-md bg-[#155EEF] p-2 font-medium w-full text-white"
-              >
-                <span>{userPlusIcon}</span>
-                {roles.addrole}
-              </button>
-            </div>
-          </div>
-        );
-        cardsShown++;
-      }
-
-      // Condition 5: When both mentor and vc are approved, show both RoleProfileCards
-      if (
-        mentorRole?.approval_status === "approved" &&
-        vcRole?.approval_status === "approved"
-      ) {
-        elements.push(
-          <RoleProfileCard key={mentorRole.name} role={mentorRole.name} image={mentorRole.image} message={mentorRole.message}/>
-        );
-        elements.push(
-          <RoleProfileCard key={vcRole.name} role={vcRole.name} image={vcRole.image} message={vcRole.message}/>
-        );
-        cardsShown ++;
-      }
-      
-
-      return elements; // Return the array of elements to be rendered
-    })()}
-</div>
-
-
-
-
-
-
-
+    {mergedData && renderRoleCards(mergedData)}
+  </div>
         <FAQ />
       </div>
       {roleModalOpen && (
