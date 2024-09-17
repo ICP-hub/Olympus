@@ -316,7 +316,7 @@ const mergedData = mergeData(userCurrentRoleStatus, roledata);
             <div className="mt-5 px-5">
               <p className="">{roles.description1}</p>
             </div>
-            <div className="my-5 px-5 flex items-center w-full">
+            <div className=" my-0 dxs:my-5 px-5 flex items-center w-full">
               <button
                 onClick={() => setRoleModalOpen(!roleModalOpen)}
                 className="border flex gap-2 justify-center rounded-md bg-[#155EEF] p-2 font-medium w-full text-white"
