@@ -654,10 +654,10 @@ const UserRegistration = () => {
   return (
     <>
       <FormProvider {...methods}>
-        <div className="bg-[#FFF4ED] px-[5%] min-h-screen flex lg:flex-row items-center justify-center gap-[5%] ">
+        <div className="bg-[#FFF4ED] px-[5%] min-h-screen flex lg:flex-row items-center justify-center gap-[2%] ">
           <div className="lg:h-[95vh] py-6 w-full  flex items-center justify-center rounded-xl lg:max-w-[50%] ">
             <div className="bg-white shadow-xl w-full rounded-2xl  flex max-w-6xl">
-              <div className="flex-1 w-full  p-[5%] lg:h-[95vh]  ">
+              <div className="flex-1 w-full pb-8  p-[5%] lg:h-[95vh]  ">
                 <img
                   src={Layer1}
                   alt="logo"
@@ -677,7 +677,7 @@ const UserRegistration = () => {
                   {index === 2 && (<RegisterForm3 setImageData={setImageData} />)}
 
                   {captchaVisible && index === 2 && (
-                    <div className="mt-4">
+                    <div className="ml-4">
                       <FormControlLabel
                         required
                         control={
@@ -689,7 +689,7 @@ const UserRegistration = () => {
                         }
                         label="Verify that you are not a robot"
                       />
-                      <div className="flex flex-col md:flex-row items-center mt-2">
+                      <div className="flex flex-col md:flex-row px-4 items-center mt-2">
                         <div className="flex-1">
                           <CustomCaptcha
                             text={captcha[1]}
@@ -734,7 +734,7 @@ const UserRegistration = () => {
                     </div>
                   )}
 
-                  <div className="flex px-4 mb-4 justify-between mt-8">
+                  <div className="flex pb-2 px-4 mb-4 justify-between mt-8">
                     <button
                       type="button"
                       className="py-2 px-2 pr-3 text-sm sm:text-sm md:text-base text-gray-600 rounded hover:text-black border-gray-300 border-2"
@@ -751,7 +751,7 @@ const UserRegistration = () => {
                     {captchaVisible ? (
                       <button
                         type="button"
-                        className="py-2 px-2 md:px-4 text-sm sm:text-sm md:text-base disabled:bg-[#D1E0FF] text-white rounded bg-blue-600 border-2 border-[#B2CCFF] flex items-center"
+                        className="py-2 px-3 md:px-4 text-sm sm:text-sm md:text-base disabled:bg-[#D1E0FF] text-white rounded bg-blue-600 border-2 border-[#B2CCFF] flex items-center"
                         onClick={onFinalSubmit}
                         disabled={!isCaptchaFilled}
                       >
@@ -774,7 +774,7 @@ const UserRegistration = () => {
                         {index === 2 ? (
                           <button
                             type="submit"
-                            className="py-2 px-2 md:px-4 bg-[#D1E0FF] text-white rounded hover:bg-blue-600 border-2 border-[#B2CCFF] flex items-center"
+                            className="py-2 px-5 md:px-4 bg-[#D1E0FF] text-white rounded hover:bg-blue-600 border-2 border-[#B2CCFF] flex items-center"
                           >
                             {isSubmitting ? (
                               <ThreeDots

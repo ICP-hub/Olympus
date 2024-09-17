@@ -48,20 +48,20 @@ const DiscoverMentorMain = ({ openDetail, setOpenDetail, principal }) => {
   }, [actor, principal]);
 
   return (
-    <div className="w-full bg-fixed h-screen fixed inset-0 bg-black bg-opacity-30 backdrop-blur-xs z-50">
-      <div className="mx-auto w-[70%] absolute right-0 top-0 z-10 bg-white h-screen">
+    <div className="w-full bg-fixed lg1:h-screen fixed inset-0 bg-black bg-opacity-30 backdrop-blur-xs z-50">
+      <div className="mx-auto w-full sm:w-[70%] absolute right-0 top-0 z-10 bg-white h-screen">
         <div className="p-2 mb-2">
           <CloseIcon
             sx={{ cursor: "pointer" }}
             onClick={() => setOpenDetail(false)}
           />
         </div>
-        <div className="container h-full ml-2 pb-8">
-          <div className="flex justify-evenly h-full px-[1%]">
-            <div className="border rounded-lg w-[32%] overflow-y-auto h-full">
+        <div className="container mx-auto overflow-hidden overflow-y-scroll h-full pb-8">
+          <div className="flex flex-col gap-4 lg1:py-3 lg1:gap-0 lg1:flex-row w-full lg1:justify-evenly h-full px-[1%]">
+            <div className=" rounded-lg w-full lg1:overflow-y-scroll lg1:w-[32%] h-full">
               <DiscoverMentorProfile mentorData={allMentorData} />
             </div>
-            <div className="px-3 w-[63%] overflow-y-auto h-full">
+            <div className="px-3 py-4 lg1:py-0 w-full lg1:overflow-y-scroll lg1:w-[63%] h-full">
               <DiscoverMentorEvent mentorData={allMentorData} principal={principal} />
             </div>
           </div>

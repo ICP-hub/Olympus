@@ -53,13 +53,13 @@ const DiscoverMentorEvent = ({ principal }) => {
   }, [actor, principal]);
 
   return (
-    <div className="">
+    <div className="w-full mb-4 lg1:pb-2 pb-12">
       <h2 className="text-lg font-semibold text-gray-800 mb-4">Events</h2>
       {mentorEvents.length === 0 ? (
         <p><NoData message={"No Events posted Yet"} /></p>
       ) : (
         mentorEvents.map((event, index) => (
-          <div key={index} className="relative ml-3 mb-4 bg-white shadow-md border rounded-lg p-4">
+          <div key={index} className="relative mb-4 bg-white shadow-md border rounded-lg p-4">
             <div className="overflow-hidden rounded-lg">
               <img
                 src={event.cohort_banner}

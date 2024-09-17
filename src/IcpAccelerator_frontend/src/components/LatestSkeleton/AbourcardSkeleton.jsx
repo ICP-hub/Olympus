@@ -15,7 +15,7 @@ import getSocialLogo from "../Utils/navigationHelper/getSocialLogo";
 
   return (
     <SkeletonTheme baseColor="#e3e3e3" highlightColor="#c8c8c873">
-      <div className="w-full overflow-hidden h-[95vh] bg-gradient-to-r from-[#ECE9FE] to-[#FFFFFF] items-center justify-center rounded-r-2xl">
+      <div className="w-full overflow-hidden h-[95vh] bg-gradient-to-r from-[#ECE9FE] to-[#FFFFFF] items-center justify-center rounded-2xl">
         <div className="bg-white mx-auto h-[90vh] my-10 rounded-lg shadow-md w-[90%]">
           <div className="w-full bg-gray-200 rounded-full h-1.5 mb-4 dark:bg-gray-700">
             <div

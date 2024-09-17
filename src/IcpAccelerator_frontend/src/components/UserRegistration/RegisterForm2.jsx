@@ -10,13 +10,13 @@ const RegisterForm2 = React.memo(() => {
   return (
     <>
       <div className="overflow-y-auto px-4">
-        <div className="mb-6">
+        <div className="mb-4 sm:mb-6">
           <h1 className="text-xl sm1:text-2xl md:text-3xl font-bold  text-[#121926]">
             What's your email?
           </h1>
         </div>
         <div className="space-y-4">
-          <div className="flex flex-col justify-between gap-3">
+          <div className="flex flex-col justify-between sm:gap-3">
             <label
               htmlFor="email"
               className=" font-semibold block text-[#121926]"
