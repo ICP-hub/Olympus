@@ -15,7 +15,7 @@ import DiscoverInvestorPage from "../Dashboard/DashboardHomePage/DiscoverInvesto
 import RatingModal from "../Common/RatingModal";
 import NoData from "../NoDataCard/NoData";
 
-const DiscoverInvestor = ({onInvestorCountChange }) => {
+const DiscoverInvestor = ({ onInvestorCountChange }) => {
   const actor = useSelector((currState) => currState.actors.actor);
   const [allInvestorData, setAllInvestorData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -28,7 +28,7 @@ const DiscoverInvestor = ({onInvestorCountChange }) => {
   const [investorId, setInvestorId] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showRatingModal, setShowRatingModal] = useState(false);
-  const [userRatingDetail,setUserRatingDetail]=useState(null)
+  const [userRatingDetail, setUserRatingDetail] = useState(null);
   const [hasMore, setHasMore] = useState(true);
   const [isFetching, setIsFetching] = useState(false);
   const [currentPrincipal, setCurrentPrincipal] = useState([]);
@@ -91,221 +91,161 @@ const DiscoverInvestor = ({onInvestorCountChange }) => {
     }
   };
 
-  console.log(".............Investor", allInvestorData);
-  
 
-  const getAllInvestor = async (caller) => {
+  const getAllInvestor = async (caller, page, isRefresh = false) => {
     setIsFetching(true);
     try {
       const result = await caller.list_all_vcs_with_pagination({
         page_size: itemsPerPage,
-        page: currentPage,
+        page: page,
       });
-      {result?.data?.map(val=>{
-        setSendprincipal(val[0])
-      })}
-      console.log("result =>", result?.data);
-
-      if (result && result.data) {
-        const InvestorData = Object.values(result.data);
-        const userData = Object.values(result.user_data || {});
-
-        if (InvestorData.length === 0) {
-          setHasMore(false); // No more data to load
+      {
+        result?.data?.map((val) => {
+          setSendprincipal(val[0]);
+        });
+      }
+      const InvestorData = Object.values(result?.data || []);
+      if (InvestorData.length > 0) {
+        if (isRefresh) {
+          setAllInvestorData(InvestorData); 
+          onInvestorCountChange(InvestorData.length); 
         } else {
-          setAllInvestorData((prevData) => [...prevData, ...InvestorData]);
-          onInvestorCountChange(InvestorData.length>0?InvestorData.length:0)
-          setUserData((prevData) => [...prevData, ...userData]);
-
-          // If fewer items than expected are returned, stop further requests
-          if (InvestorData.length < itemsPerPage) {
-            setHasMore(false);
-          }
+          setAllInvestorData((prevData) => [...prevData, ...InvestorData] );
+          const newTotal =allInvestorData.length + InvestorData.length;
+          onInvestorCountChange(newTotal);
         }
+        if (InvestorData.length < itemsPerPage) {
+          setHasMore(false);
+        } 
       } else {
         setHasMore(false);
       }
     } catch (error) {
-      console.error("error-in-get-all-mentor", error);
+      console.error("error-in-get-all-investor", error);
       setHasMore(false);
     } finally {
       setIsFetching(false);
     }
   };
-  console.log("sendPrincipal", sendprincipal);
 
   useEffect(() => {
-    if (!isFetching && hasMore) {
-      if (actor) {
-        getAllInvestor(actor, currentPage);
-      } else {
-        getAllInvestor(IcpAccelerator_backend, currentPage);
-      }
+    if (!isFetching && hasMore &&actor) {
+        getAllInvestor(actor, currentPage); // Fetch data
     }
-  }, [actor, currentPage]);
+  }, [actor, currentPage, hasMore]);
+
   const loadMore = () => {
-    if (!isFetching && hasMore) {
-      setCurrentPage((prevPage) => {
-        const newPage = prevPage + 1;
-        getAllInvestor(actor, newPage); // Fetch data for the next page
-        return newPage;
-      });
+    if (!isFetching && hasMore ) {
+      const newPage = currentPage + 1;
+      setCurrentPage(newPage); // Increment the page number
+      getAllInvestor(actor, newPage); // Fetch next set of data
     }
-  };
-  const refresh = () => {
-    if (actor) {
-      getAllInvestor(actor, 1); // Fetch the data starting from the first page
-    }
-  };
-
-
-  /////////////////////////
-  const tagColors = {
-    // OLYMPIAN: "bg-[#F0F9FF] border-[#B9E6FE] border text-[#026AA2] rounded-md",
-    mentor: "bg-[#EEF4FF] border-[#C7D7FE] border text-[#3538CD] rounded-md",
-    project: "bg-[#F8FAFC] text-[#364152] border border-[#E3E8EF] rounded-md",
-    vc: "bg-[#FFFAEB] border-[#FEDF89] border text-[#B54708] rounded-md",
-    TALENT: "bg-[#ECFDF3] border-[#ABEFC6] border text-[#067647] rounded-md",
-  };
-
-  const tags = ["OLYMPIAN", "FOUNDER", "TALENT", "INVESTER", "PROJECT"];
-  const getRandomTags = () => {
-    const shuffledTags = tags.sort(() => 0.5 - Math.random());
-    return shuffledTags.slice(0, 2);
-  };
-
-  const skills = [
-    "Web3",
-    "Cryptography",
-    "MVP",
-    "Infrastructure",
-    "Web3",
-    "Cryptography",
-  ];
-  const getRandomskills = () => {
-    const shuffledTags = skills.sort(() => 0.5 - Math.random());
-    return shuffledTags.slice(0, 2);
   };
 
   const handleClick = (principal) => {
     setSendprincipal(principal);
     setOpenDetail(true);
-    console.log("passed principle", principal);
   };
 
-  const handleRating=(ratings,principalId)=>{
-    setShowRatingModal(true)
-    setUserRatingDetail(ratings)
+  const handleRating = (ratings, principalId) => {
+    setShowRatingModal(true);
+    setUserRatingDetail(ratings);
     setCurrentPrincipal(principalId);
-  }
-  console.log("userRatingDetail =>",userRatingDetail)
+  };
 
   return (
-    <div>
+    <div id="scrollableDiv" style={{ height: "80vh", overflowY: "auto" }}>
       {allInvestorData.length > 0 ? (
-         <InfiniteScroll
-         dataLength={allInvestorData.length}
-         next={loadMore}
-         hasMore={hasMore}
-         loader={<h4>Loading more...</h4>}
-         endMessage={<p>No more data available</p>}
-         refreshFunction={refresh}
-         pullDownToRefresh
-         pullDownToRefreshThreshold={50}
-         pullDownToRefreshContent={
-           <h3 style={{ textAlign: "center" }}>
-             &#8595; Pull down to refresh
-           </h3>
-         }
-         releaseToRefreshContent={
-           <h3 style={{ textAlign: "center" }}>
-             &#8593; Release to refresh
-           </h3>
-         }
-       >
-        {allInvestorData?.map((investorArray, index) => {
-          console.log("investorArray", investorArray);
-          const investor_id = investorArray[0]?.toText();
-          const investor = investorArray[1];
-          const user = investorArray[2];
+        <InfiniteScroll
+          dataLength={allInvestorData.length}
+          next={loadMore}
+          hasMore={hasMore}
+          loader={<h4>Loading more...</h4>}
+          endMessage={
+            <p className="flex justify-center">No more data available...</p>
+          }
+          scrollableTarget="scrollableDiv"
+        >
+          {allInvestorData?.map((investorArray, index) => {
+            const investor_id = investorArray[0]?.toText();
+            const investor = investorArray[1];
+            const user = investorArray[2];
+            let profile = user?.profile_picture[0]
+              ? uint8ArrayToBase64(user?.profile_picture[0])
+              : "../../../assets/Logo/CypherpunkLabLogo.png";
+            let full_name = user?.full_name;
+            let openchat_name = user?.openchat_username;
+            let country = user?.country;
+            let bio = user?.bio[0];
+            let email = user?.email[0];
+            const randomSkills = user?.area_of_interest
+              .split(",")
+              ?.map((skill) => skill.trim());
+            const activeRole = investor?.roles.find(
+              (role) => role.status === "approved"
+            );
 
-          console.log("000000000000000000000", investor);
-          console.log("111111111111111111111", user);
-          const randomTags = getRandomTags();
-          // const randomSkills = getRandomskills();
-          let profile = user?.profile_picture[0]
-            ? uint8ArrayToBase64(user?.profile_picture[0])
-            : "../../../assets/Logo/CypherpunkLabLogo.png";
-          let full_name = user?.full_name;
-          let openchat_name = user?.openchat_username;
-          let country = user?.country;
-          let bio = user?.bio[0];
-          let email = user?.email[0];
-          const randomSkills = user?.area_of_interest
-            .split(",")
-            ?.map((skill) => skill.trim());
-          const activeRole = investor?.roles.find(
-            (role) => role.status === "approved"
-          );
+            const principle_id = investorArray[0];
+            // console.log("principle", principle_id);
 
-          const principle_id = investorArray[0];
-          console.log("principle", principle_id);
-
-          return (
-            <div
-              className="p-6 w-[750px] rounded-lg shadow-sm mb-4 flex"
-              key={index}
-            >
-              <div className="w-[272px] relative">
-                <div
-                  onClick={() => handleClick(principle_id)}
-                  className="max-w-[250px] w-[250px] h-[254px] bg-gray-100 rounded-lg flex flex-col justify-between relative overflow-hidden"
-                >
+            return (
+              <div
+                className="p-6 w-[750px] rounded-lg shadow-sm mb-4 flex"
+                key={index}
+              >
+                <div className="w-[272px] relative">
                   <div
-                    className="absolute inset-0 flex items-center justify-center"
-                    onClick={handleClick}
+                    onClick={() => handleClick(principle_id)}
+                    className="max-w-[250px] w-[250px] h-[254px] bg-gray-100 rounded-lg flex flex-col justify-between relative overflow-hidden"
                   >
-                    <img
-                      src={profile} // Placeholder logo image
-                      alt={full_name ?? "investor"}
-                      className="w-24 h-24 rounded-full object-cover"
-                    />
-                  </div>
-                </div>
-                <div onClick={() => handleRating(user,principle_id)} className="absolute cursor-pointer bottom-0 right-[6px] flex items-center bg-gray-100 p-1">
-                  <Star className="text-yellow-400 w-4 h-4" />
-                  <span className="text-sm font-medium">5.0</span>
-                </div>
-              </div>
-
-              <div className="flex-grow ml-[25px] w-[544px]">
-                <div className="flex justify-between items-start mb-2">
-                  <div>
-                    <h3 className="text-xl font-bold">{full_name}</h3>
-                    <p className="text-gray-500">@{openchat_name}</p>
-                  </div>
-                  {userCurrentRoleStatusActiveRole === "project" ? (
-                    <button
-                      data-tooltip-id="registerTip"
-                      onClick={() => handleInvestorOpenModal(investor_id)}
+                    <div
+                      className="absolute inset-0 flex items-center justify-center"
+                      onClick={handleClick}
                     >
-                      <RiSendPlaneLine />
-                      <Tooltip
-                        id="registerTip"
-                        place="top"
-                        effect="solid"
-                        className="rounded-full z-10"
-                      >
-                        Send Association Request
-                      </Tooltip>
-                    </button>
-                  ) : (
-                    ""
-                  )}
+                      <img
+                        src={profile} // Placeholder logo image
+                        alt={full_name ?? "investor"}
+                        className="w-24 h-24 rounded-full object-cover"
+                      />
+                    </div>
+                  </div>
+                  <div
+                    onClick={() => handleRating(user, principle_id)}
+                    className="absolute cursor-pointer bottom-0 right-[6px] flex items-center bg-gray-100 p-1"
+                  >
+                    <Star className="text-yellow-400 w-4 h-4" />
+                    <span className="text-sm font-medium">5.0</span>
+                  </div>
                 </div>
-                <div className="bg-[#FFFAEB] border-[#f2c855] border text-[#090907] rounded-md text-xs px-3 py-1 mr-2 mb-2 w-[5.3rem]">
-                  INVESTOR
-                  {/* {activeRole && (
+
+                <div className="flex-grow ml-[25px] w-[544px]">
+                  <div className="flex justify-between items-start mb-2">
+                    <div>
+                      <h3 className="text-xl font-bold">{full_name}</h3>
+                      <p className="text-gray-500">@{openchat_name}</p>
+                    </div>
+                    {userCurrentRoleStatusActiveRole === "project" ? (
+                      <button
+                        data-tooltip-id="registerTip"
+                        onClick={() => handleInvestorOpenModal(investor_id)}
+                      >
+                        <RiSendPlaneLine />
+                        <Tooltip
+                          id="registerTip"
+                          place="top"
+                          effect="solid"
+                          className="rounded-full z-10"
+                        >
+                          Send Association Request
+                        </Tooltip>
+                      </button>
+                    ) : (
+                      ""
+                    )}
+                  </div>
+                  <div className="bg-[#FFFAEB] border-[#f2c855] border text-[#090907] rounded-md text-xs px-3 py-1 mr-2 mb-2 w-[5.3rem]">
+                    INVESTOR
+                    {/* {activeRole && (
                     <span
                       className={`inline-block ${
                         tagColors[activeRole.name] ||
@@ -315,35 +255,38 @@ const DiscoverInvestor = ({onInvestorCountChange }) => {
                       {activeRole.name}
                     </span>
                   )} */}
-                  
-                </div>
-                <div className="border-t border-gray-200 my-3 line-clamp-1">{email}</div>
-
-                <p className="text-gray-600 mb-2 line-clamp-3">{bio}</p>
-                <div className="flex items-center text-sm text-gray-500 flex-wrap gap-1">
-                    <div className="flex overflow-x-auto space-x-2">
-                  {randomSkills?.map((skill, index) => (
-                    <span
-                      key={index}
-                      className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-3 py-1 bg-gray-100"
-                    >
-                      {skill}
-                    </span>
-                  ))}
+                  </div>
+                  <div className="border-t border-gray-200 my-3 line-clamp-1">
+                    {email}
                   </div>
 
-                  <span className="mr-2  flex text-[#121926] items-center py-1">
-                  <PlaceOutlinedIcon className="text-[#364152] mr-1 w-4 h-4" />
-                    {country}
-                  </span>
+                  <p className="text-gray-600 mb-2 line-clamp-3">{bio}</p>
+                  <div className="flex items-center text-sm text-gray-500 flex-wrap gap-1">
+                    <div className="flex overflow-x-auto space-x-2">
+                      {randomSkills?.map((skill, index) => (
+                        <span
+                          key={index}
+                          className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-3 py-1 bg-gray-100"
+                        >
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
+
+                    <span className="mr-2  flex text-[#121926] items-center py-1">
+                      <PlaceOutlinedIcon className="text-[#364152] mr-1 w-4 h-4" />
+                      {country}
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
         </InfiniteScroll>
       ) : (
-        <div className="flex justify-center"><NoData message={"No Investor Present Yet"} /></div>
+        <div className="flex justify-center">
+          <NoData message={"No Investor Present Yet"} />
+        </div>
       )}
       {isAddInvestorModalOpen && (
         <AddAMentorRequestModal
@@ -366,7 +309,7 @@ const DiscoverInvestor = ({onInvestorCountChange }) => {
           showRating={showRatingModal}
           setShowRatingModal={setShowRatingModal}
           userRatingDetail={userRatingDetail}
-          cardPrincipal={currentPrincipal} 
+          cardPrincipal={currentPrincipal}
         />
       )}
     </div>

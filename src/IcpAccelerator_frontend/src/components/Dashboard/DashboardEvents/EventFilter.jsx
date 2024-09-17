@@ -2,7 +2,8 @@ import React, { useState, useRef } from 'react';
 import Select from 'react-select';
 import CalendarTodayOutlinedIcon from '@mui/icons-material/CalendarTodayOutlined';
 
-const Filters = ({ setSelectedEventType }) => {
+const Filters = ({ setSelectedEventType,selectedEventType }) => {
+  console.log('selectedEventType Filter ', selectedEventType);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const startDateRef = useRef();
@@ -58,6 +59,7 @@ const Filters = ({ setSelectedEventType }) => {
           <div className="relative">
             <Select
               options={eventTypeOptions}
+              value={eventTypeOptions.find(option => option.value === selectedEventType)}
               onChange={handleEventTypeChange}
               className="w-full"
               placeholder="Select event type"

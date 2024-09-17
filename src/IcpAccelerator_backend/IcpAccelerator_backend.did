@@ -293,14 +293,14 @@ type ProjectInfo = record {
   upload_private_documents : opt bool;
   weekly_active_users : opt nat64;
   project_description : opt text;
-  vc_assigned : opt vec VentureCapitalist;
+  vc_assigned : opt vec record { VentureCapitalist; UserInfoInternal };
   revenue : opt nat64;
   private_docs : opt vec Docs;
   token_economics : opt text;
   self_rating_of_project : float64;
   preferred_icp_hub : opt text;
   links : opt vec SocialLinks_2;
-  mentors_assigned : opt vec MentorProfile;
+  mentors_assigned : opt vec record { MentorProfile; UserInfoInternal };
   country_of_registration : opt text;
   target_market : opt text;
   long_term_goals : opt text;
@@ -322,7 +322,6 @@ type ProjectInfo = record {
 };
 type ProjectInfoForUser = record {
   dapp_link : opt text;
-  vc_associated : opt vec VentureCapitalist;
   area_of_focus : opt text;
   weekly_active_users : opt nat64;
   project_description : opt text;
@@ -330,7 +329,6 @@ type ProjectInfoForUser = record {
   team_member_info : opt vec TeamMember;
   date_of_joining : opt nat64;
   links : opt vec SocialLinks_2;
-  mentor_associated : opt vec MentorProfile;
   country_of_project : opt text;
   project_cover : opt blob;
   project_website : opt text;
@@ -360,12 +358,10 @@ type ProjectPublicInfo = record {
   reason_to_join_incubator : text;
   upload_private_documents : opt bool;
   project_description : opt text;
-  vc_assigned : opt vec VentureCapitalist;
   token_economics : opt text;
   self_rating_of_project : float64;
   preferred_icp_hub : opt text;
   links : opt vec SocialLinks_2;
-  mentors_assigned : opt vec MentorProfile;
   target_market : opt text;
   long_term_goals : opt text;
   project_area_of_focus : text;
