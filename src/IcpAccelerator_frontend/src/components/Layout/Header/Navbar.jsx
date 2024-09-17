@@ -49,7 +49,7 @@ const Navbar = ({ setModalOpen }) => {
                   <img
                     src={logo}
                     alt="Olympus"
-                    className="cursor-pointer md:hidden object-cover w-11"
+                    className="cursor-pointer md:hidden object-cover w-11 h-11"
                   />
                 </Link>
               </div>

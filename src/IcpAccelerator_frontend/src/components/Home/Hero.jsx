@@ -62,7 +62,7 @@ const HeroSection = () => {
           </div>
         </div>
       </div>
-      <div className="absolute inset-0 z-0">
+      <div className="absolute inset-0 z-0 hidden md:block">
         <SplineViewerComponent />
       </div>
       <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white to-transparent"></div>
