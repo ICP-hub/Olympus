@@ -3,7 +3,7 @@ import founder from "../../../assets/Logo/founder.png";
 
 const ProfileRoleNoDataCard = () => {
   return (
-    <div className="bg-[#EEF2F6] shadow-md rounded-lg p-6  w-[19.3rem] md:w-3/4 h-60 flex flex-col items-center text-center relative mb-6 md:mb-0">
+    <div className="bg-[#EEF2F6] shadow-md rounded-lg p-6  w-full md:w-3/4 h-60 flex flex-col items-center text-center relative mb-6 md:mb-0">
       <div className="flex justify-center items-center">
       <div className="bg-gray-200 w-20 h-20 rounded-full mb-4 flex justify-center items-center">
                 <svg
@@ -18,7 +18,7 @@ const ProfileRoleNoDataCard = () => {
       <div className="text-blue-600 bg-blue-100 rounded-full px-3 py-1 inline-block text-xs font-semibold mb-2">
         No Role
       </div>
-      <h3 className="text-gray-700 font-semibold ">
+      <h3 className="text-gray-700 font-semibold text-base lgx:text-sm dxl0:text-base ">
         You can't have any another role, You're registered as a Project
       </h3>
     </div>

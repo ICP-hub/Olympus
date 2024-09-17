@@ -44,7 +44,7 @@ import React, { useState } from 'react';
 import EventCard from './EventCard';
 import Filters from './EventFilter';
 import { FaSliders } from 'react-icons/fa6';
-
+import { motion } from 'framer-motion';
 const EventMain = () => {
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const [selectedEventType, setSelectedEventType] = useState('All');
@@ -69,8 +69,8 @@ const EventMain = () => {
         Discover events
       </h1>
 
-      {/* Filter button below the title on the left side for mobile */}
-      <div className="mb-4 md:hidden">
+      {/* Filter button  on the left side for mobile */}
+      <div className="mb-4 md:hidden  lg:block lgx:hidden">
         <button
           onClick={() => setIsFiltersOpen(!isFiltersOpen)}
           className="bg-white border border-gray-300 text-gray-800 py-2 px-4 rounded-md shadow-lg flex items-center"
@@ -98,39 +98,41 @@ const EventMain = () => {
           <Filters setSelectedEventType={setSelectedEventType} />
         </div>
 
-        {/* Mobile Filter Panel */}
-        {isFiltersOpen && (
-          <div className="md:hidden lg:block lgx:hidden fixed inset-0 z-30 p-6 overflow-hidden">
-           
-            <div
-              className="fixed inset-0 bg-black opacity-50 transition-opacity duration-300"
-              onClick={() => setIsFiltersOpen(false)}
-            ></div>
+{isFiltersOpen && (
+  <motion.div
+    className="block md:hidden lg:block lgx:hidden fixed inset-0 z-30 p-6 overflow-hidden"
+    initial={{ y: '100%' }}
+    animate={{ y: 0 }}
+    exit={{ y: '100%' }}
+    transition={{ duration: 0.5, ease: 'easeInOut' }}
+  >
+    {/* Background Overlay */}
+    <div
+      className="fixed inset-0 bg-black opacity-50 transition-opacity duration-300"
+      onClick={() => setIsFiltersOpen(false)}
+    ></div>
 
-            {/* Filter modal sliding from the bottom */}
-            <div
-              className={`fixed bottom-0 left-0 right-0 bg-white z-40 p-6 rounded-t-3xl shadow-lg transform transition-transform duration-1000 ease-in-out ${
-                isFiltersOpen ? 'translate-y-0' : 'translate-y-full'
-              }`}
-            >
-              <div className="flex justify-between items-center">
-                <h2 className="text-lg font-semibold">Filters</h2>
-                <button
-                  className="text-4xl text-gray-700"
-                  onClick={() => setIsFiltersOpen(false)}
-                >
-                  &times;
-                </button>
-              </div>
-              {/* Filters for Mobile */}
-              <Filters setSelectedEventType={setSelectedEventType} />
-            </div>
-          </div>
-        )}
+    {/* Filter modal sliding from the bottom */}
+    <motion.div
+      className="fixed bottom-0 left-0 lg:left-auto lg:w-[75%] dlg:w-[77%] lgx:w-full lgx:left-0 right-0 bg-white z-40 p-6 rounded-t-3xl shadow-lg"
+    >
+      <div className="flex justify-between items-center">
+        <h2 className="text-lg font-semibold">Filters</h2>
+        <button
+          className="text-4xl text-gray-700"
+          onClick={() => setIsFiltersOpen(false)}
+        >
+          &times;
+        </button>
+      </div>
+      {/* Filters for Mobile */}
+      <Filters setSelectedEventType={setSelectedEventType} />
+    </motion.div>
+  </motion.div>
+)}
       </div>
     </div>
   );
 };
 
 export default EventMain;
-

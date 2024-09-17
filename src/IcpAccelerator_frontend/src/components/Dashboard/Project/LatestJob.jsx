@@ -201,9 +201,9 @@ const NewJob = ({ latestJobs }) => {
       <div className="max-w-7xl mx-auto bg-white">
         {latestJob.length === 0 ? (
           <>
-            <div className="p-6">
+            <div className=" md:p-6">
               {/* Content */}
-              <div className="text-center py-12">
+              <div className="text-center py-4 md:py-12">
                 <div className="flex justify-center items-center">
                   <svg
                     width="154"

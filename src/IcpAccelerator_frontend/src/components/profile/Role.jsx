@@ -262,8 +262,8 @@ const mergedData = mergeData(userCurrentRoleStatus, roledata);
         {/* Condition 4: When vc is approved */}
         {vcRole?.approval_status === "approved" && mentorRole?.approval_status === "default" && !rightSideRendered && (
             <>
-              <div>{getRoleSvg("vc", "left")}</div>
-              <div>{getRoleSvg("user", "right")}</div>
+              <div>{getRoleSvg(vcRole, "left")}</div>
+              <div>{getRoleSvg(userRole, "right")}</div>
               {leftSideRendered = true}
               {rightSideRendered = true}
             </>
@@ -302,7 +302,7 @@ const mergedData = mergeData(userCurrentRoleStatus, roledata);
       for (let i = 0; i < 2 && cardsShown < 2; i++) {
         elements.push(
           <div
-            className="border-2 rounded-lg text-center max-w-[350px] mb-6 md:mb-0 shadow-md"
+            className="border-2 rounded-lg text-center  mb-6 md:mb-0 shadow-md w-full"
             key={`default-custom-card-${i}`}
           >
             <div className="p-3 flex justify-center mt-5">
@@ -314,7 +314,7 @@ const mergedData = mergeData(userCurrentRoleStatus, roledata);
               </AvatarGroup>
             </div>
             <div className="mt-5 px-5">
-              <p className="max-w-[250px]">{roles.description1}</p>
+              <p className="">{roles.description1}</p>
             </div>
             <div className="my-5 px-5 flex items-center w-full">
               <button
@@ -354,8 +354,8 @@ const mergedData = mergeData(userCurrentRoleStatus, roledata);
       );
       cardsShown++;
       elements.push(
-        <div className=" md:w-3/4  p-6  h-60 flex flex-col items-center relative border-2 rounded-lg text-center w-[19.3rem] mb-6 md:mb-0 shadow-md" key="mentor-vc-default-card">
-          <div className="p-3 flex justify-center">
+        <div className="  md:w-3/4  p-6  h-60 flex flex-col items-center relative border-2 rounded-lg text-center w-full mb-6 md:mb-0 shadow-md " key="mentor-vc-default-card">
+          <div className="py-3 px-3 lgx:px-0 dxl0:px-3 flex justify-center">
             <AvatarGroup max={4}>
               <Avatar alt="Mentor" src={mentor} />
               <Avatar alt="user" src={user} />
@@ -363,13 +363,13 @@ const mergedData = mergeData(userCurrentRoleStatus, roledata);
               <Avatar alt="project" src={project} />
             </AvatarGroup>
           </div>
-          <div className=" px-5">
-            <p className="max-w-[250px]">{roles.description1}</p>
+          <div className="  mt-4  text-[16px]">
+            <p className="">{roles.description1}</p>
           </div>
-          <div className="my-2 px-5 flex items-center w-full">
+          <div className="my-4  flex items-center w-full">
             <button
               onClick={() => setRoleModalOpen(!roleModalOpen)}
-              className="border flex gap-2 justify-center rounded-md bg-[#155EEF] p-2 font-medium w-full text-white"
+              className="border flex gap-2 justify-center rounded-md bg-[#155EEF] p-2  lgx:p-1 xl:p-2 lgx:font-normal dxl0:font-medium  font-medium w-full text-white"
             >
               <span>{userPlusIcon}</span>
               {roles.addrole}
@@ -387,8 +387,9 @@ const mergedData = mergeData(userCurrentRoleStatus, roledata);
       );
       cardsShown++;
       elements.push(
-        <div className=" md:w-3/4  p-6  h-60 flex flex-col items-center relative border-2 rounded-lg text-center w-[19.3rem] mb-6 md:mb-0 shadow-md" key="vc-approved-card">
-          <div className="p-3 flex justify-center ">
+       
+        <div className="  md:w-3/4  p-6  h-60 flex flex-col items-center relative border-2 rounded-lg text-center w-full mb-6 md:mb-0 shadow-md " key="vc-approved-card">
+          <div className="py-3 px-3 lgx:px-0 dxl0:px-3 flex justify-center">
             <AvatarGroup max={4}>
               <Avatar alt="Mentor" src={mentor} />
               <Avatar alt="user" src={user} />
@@ -396,13 +397,13 @@ const mergedData = mergeData(userCurrentRoleStatus, roledata);
               <Avatar alt="project" src={project} />
             </AvatarGroup>
           </div>
-          <div className=" px-5">
-            <p className="max-w-[250px]">{roles.description1}</p>
+          <div className="  mt-4  text-[16px]">
+            <p className="">{roles.description1}</p>
           </div>
-          <div className="my-2 px-5 flex items-center w-full">
+          <div className="my-4  flex items-center w-full">
             <button
               onClick={() => setRoleModalOpen(!roleModalOpen)}
-              className="border flex gap-2 justify-center rounded-md bg-[#155EEF] p-2 font-medium w-full text-white"
+              className="border flex gap-2 justify-center rounded-md bg-[#155EEF] p-2  lgx:p-1 xl:p-2 lgx:font-normal dxl0:font-medium  font-medium w-full text-white"
             >
               <span>{userPlusIcon}</span>
               {roles.addrole}
@@ -431,14 +432,14 @@ const mergedData = mergeData(userCurrentRoleStatus, roledata);
     <>
       <div className="flex flex-col">
         <div className="flex justify-center items-center w-full mt-[2%]">
-        <div className="border-2 rounded-lg shadow-md md:shadow-none pb-5 text-center  min-w-[304px] md:min-w-[280px] max-w-[350px] mb-6 md:mb-0">
+        <div className="border-2 rounded-lg shadow-md md:shadow-none pb-5 text-center   md:min-w-[280px] w-full md:max-w-[350px] mb-6 md:mb-0">
         <div className="w-full bg-[#EEF2F6] rounded-l-xl rounded-r-full h-1.5 mb- dark:bg-[#EEF2F6]">
               <div className="relative h-1 bg-gray-200">
                 <div className="absolute left-0 top-0 h-full bg-green-500 w-1/3"></div>
               </div>
             </div>
             <div className="flex justify-center">
-              <div className="bg-gray-200 rounded-full mb-4">
+              <div className="bg-gray-200 rounded-full mb-4 mt-2">
                 <img
                   src={userFullData?.profile_picture[0]}
                   alt="Profile"
