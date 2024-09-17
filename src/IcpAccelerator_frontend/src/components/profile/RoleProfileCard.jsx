@@ -3,7 +3,7 @@ import { MoreVert } from "@mui/icons-material";
 import founder from "../../../assets/Logo/founder.png";
 const RoleProfileCard = ({role,image,message}) => {
   return (
-    <div className="bg-[#EEF2F6] shadow-md rounded-lg p-6  w-[19.3rem] md:w-3/4 h-60 flex flex-col items-center text-center relative mb-6 md:mb-0">
+    <div className="bg-[#EEF2F6] shadow-md rounded-lg p-6  w-full md:w-3/4 h-60 flex flex-col items-center text-center relative mb-6 md:mb-0">
       <img
         src={image} 
         alt="Profile"

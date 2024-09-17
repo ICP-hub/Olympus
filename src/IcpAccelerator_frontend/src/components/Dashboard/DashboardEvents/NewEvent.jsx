@@ -103,8 +103,8 @@ const NewEvent = ({ event }) => {
                     onClick={() => handleClick(event.cohort_id)}
                   >
                     {/* Edit button */}
-                    <div 
-                      className="absolute top-4 right-4 flex justify-end" 
+                    <div className="absolute top-4 right-4 flex justify-end z-10"
+
                       onClick={(e) => { 
                         e.stopPropagation(); 
                         handleEditClick(event);
@@ -115,7 +115,7 @@ const NewEvent = ({ event }) => {
                           e.stopPropagation(); 
                           handleEditClick(event);
                         }}
-                        className="h-6 w-6 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity z-50"
+                        className="h-6 w-6 cursor-pointer opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity z-50"
                         alt="edit"
                       />
                     </div>

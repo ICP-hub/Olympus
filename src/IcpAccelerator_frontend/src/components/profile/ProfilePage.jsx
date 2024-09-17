@@ -103,7 +103,7 @@ const ProfilePage = () => {
           {/* Main Content with Tabs */}
           <div className="w-full lgx:w-[60%] flex flex-col md:pt-12 lgx:pt-0">
             {/* Tabs for Mobile */}
-            <div className="block md:hidden bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden w-full mt-10 p-8 pt-2">
+            <div className="block md:hidden bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden w-full mt-10 p-4 pt-2">
               {uniqueActiveTabs.includes("roles") && (
                 <div className="border-b">
                   <button

@@ -22,6 +22,7 @@ import { Tooltip } from "react-tooltip";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa"; 
 import { shareSvgIcon } from "../../Utils/Data/SvgData";
 import ShareModal from "./EventshareModel";
+import {useNavigate} from "react-router-dom"
 
 
 const FAQItem = ({ question, answer }) => {
@@ -75,6 +76,7 @@ const FAQ = () => {
 };
 
 const EventDetails = () => {
+  const navigate= useNavigate()
     const [isModalOpen, setIsModalOpen] = useState(false);
   const tabsContainerRef = useRef(null);
   const userCurrentRoleStatusActiveRole = useSelector(
@@ -316,10 +318,13 @@ const ProfileImage =  profileimage && profileimage.length > 0
   return (
     <div className="flex flex-col">
       <div className="flex   w-full justify-between  my-2  ">
-        <button className="mr-2 text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-2 rounded-md shadow-sm border border-gray-200">
-          {/* {profilepage.viewPublicProfileText} */}
-          <ArrowBack className="mr-1" /> Back to profile
-        </button>
+      <button
+        className="mr-2 text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-2 rounded-md shadow-sm border border-gray-200"
+        onClick={() => navigate(-1)} 
+      >
+        <ArrowBack className="mr-1" /> Back to profile
+      </button>
+
         <button
           className="flex items-center md:mr-4 text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-2 rounded-md shadow-sm border border-gray-200"
           onClick={() => setIsModalOpen(true)}
@@ -550,7 +555,7 @@ const ProfileImage =  profileimage && profileimage.length > 0
           </div>
         </div>
 
-        {/* mobile screen  */}
+    
         {/* mobile screen  */}
         <div className=" bg-white md:hidden  rounded-lg shadow-sm border border-gray-200 overflow-hidden w-full">
           {!showDetails ? (
@@ -710,9 +715,10 @@ const ProfileImage =  profileimage && profileimage.length > 0
         </div>
 
         <div className="flex-1 w-full overflow-auto ">
-          <div className="p-4">
+          <div className="py-2">
             <img
-              src={bannerImage}
+              src=
+              {bannerImage}
               alt="Event"
               className="w-full h-[200px] rounded-lg lgx:h-[310px] object-cover"
             />
