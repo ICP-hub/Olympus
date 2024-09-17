@@ -47,7 +47,7 @@ const DiscoverUserModal = ({ openDetail, setOpenDetail, userData }) => {
     >
       {openDetail && userData && (
         <div
-          className={`mx-auto w-[30%] absolute right-0 top-0 bg-white h-screen transform transition-transform duration-[4000ms] ease-[cubic-bezier(0.4, 0, 0.2, 1)] ${
+          className={`mx-auto w-full sm:w-[50%] dlg:w-[35%] lgx:w-[30%] absolute right-0 top-0 bg-white h-screen transform transition-transform duration-[4000ms] ease-[cubic-bezier(0.4, 0, 0.2, 1)] ${
             openDetail ? "translate-x-0" : "translate-x-full"
           } z-20`}
         >
@@ -57,10 +57,10 @@ const DiscoverUserModal = ({ openDetail, setOpenDetail, userData }) => {
               onClick={() => setOpenDetail(false)}
             />
           </div>
-          <div className="container  h-[calc(100%-50px)] ml-2 pb-8 overflow-y-auto">
+          <div className="container mx-auto flex justify-center  h-[calc(100%-50px)] pb-8 overflow-y-auto">
             <div className="flex justify-center p-6">
               <div className="container  bg-white rounded-lg shadow-sm y overflow-hidden w-full max-w-[400px]">
-                <div className="p-6 bg-gray-100">
+                <div className="flex flex-col w-full p-6 bg-gray-100">
                   <img
                     src={profilepic}
                     alt="Matt Bowers"
@@ -113,7 +113,7 @@ const DiscoverUserModal = ({ openDetail, setOpenDetail, userData }) => {
                           className="text-blue-500 mr-2 w-2 h-2"
                           fontSize="small"
                         />
-                        <span className="bg-[#F8FAFC] border border-[#E3E8EF] text-[#364152] px-2 py-0.5 rounded text-xs">
+                        <span className="hidden dxs:flex bg-[#F8FAFC] border border-[#E3E8EF] text-[#364152] px-2 py-0.5 rounded text-xs">
                           HIDDEN
                         </span>
                       </div>

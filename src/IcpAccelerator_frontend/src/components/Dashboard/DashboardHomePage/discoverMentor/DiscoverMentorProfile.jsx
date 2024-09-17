@@ -37,8 +37,8 @@ const DiscoverMentorProfile = ({ mentorData }) => {
   };
 
   return (
-    <div className="">
-      <div className="container bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden w-full max-w-[400px]">
+    <div className="w-full lg1:pb-3">
+      <div className="container bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden w-full lg1:max-w-[400px]">
         <div className="relative h-1 bg-gray-200">
           <div className="absolute left-0 top-0 h-full bg-green-500 w-1/3"></div>
         </div>

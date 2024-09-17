@@ -141,7 +141,7 @@ const RegisterForm1 = React.memo(() => {
         <h1 className="text-2xl sm:text-3xl md:text-3xl font-bold text-[#121926]">What is your name?</h1>
       </div>
       <div className="space-y-4">
-        <div className="flex flex-col justify-between gap-3">
+        <div className="flex flex-col justify-between sm:gap-3">
           <label htmlFor="full_name" className="font-semibold block text-[#121926]">
             Full Name <span className="text-[red] ml-1">*</span>
           </label>
@@ -158,7 +158,7 @@ const RegisterForm1 = React.memo(() => {
             </span>
           )}
         </div>
-        <div className="flex flex-col justify-between gap-3">
+        <div className="flex flex-col justify-between sm:gap-3">
           <label htmlFor="openchat_user_name" className="block font-semibold text-[#121926]">
             Username
           </label>
