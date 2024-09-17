@@ -85,7 +85,7 @@ const DashboardProfileView = () => {
   return (
     <div className="bg-white w-full rounded-xl shadow-lg p-6">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold text-gray-900">Profile views</h2>
+        <h2 className="ss2:text-xl font-semibold text-gray-900">Profile views</h2>
 
         {/* Buttons for tablet and larger screens */}
         <div className="hidden md:flex space-x-2">
@@ -101,12 +101,12 @@ const DashboardProfileView = () => {
         </div>
 
         {/* 3-Dot Icon for mobile screens */}
-        <div className="md:hidden relative">
+        <div className="md:hidden relative left-[5.04]">
           <button
             onClick={() => setDropdownOpen(!dropdownOpen)}
             className=" rounded-full hover:bg-gray-200 focus:outline-none"
           >
-            <HiDotsVertical className="w-6 h-6 text-gray-600" />
+            <HiDotsVertical className=" text-gray-600" />
           </button>
 
           {/* Custom dropdown menu */}
@@ -135,7 +135,7 @@ const DashboardProfileView = () => {
         </div>
       </div>
 
-      <div className="text-6xl font-bold text-gray-900">3</div>
+      <div className="text-4xl sm4:text-6xl font-bold text-gray-900">3</div>
       <div className="mt-6">
         <div className="h-28 w-full">
           <Line data={data} options={options} />
