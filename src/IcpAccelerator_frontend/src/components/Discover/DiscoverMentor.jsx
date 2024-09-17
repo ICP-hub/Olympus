@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { IcpAccelerator_backend } from "../../../../declarations/IcpAccelerator_backend/index";
 import { useDispatch, useSelector } from "react-redux";
 import { Star } from "@mui/icons-material";
 import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
@@ -20,9 +19,7 @@ const DiscoverMentor = ({ onMentorCountChange }) => {
   const isAuthenticated = useSelector(
     (currState) => currState.internet.isAuthenticated
   );
-  const [mentorCount, setMentorCount] = useState(0);
-  const [allMentorData, setMentorData] = useState([]);
-  const [userData, setUserData] = useState([]);
+  const [allMentorData, setAllMentorData] = useState([]);
   const [hasMore, setHasMore] = useState(true);
   const itemsPerPage = 10; // Updated to fetch 10 items per page
   const [currentPage, setCurrentPage] = useState(1);
@@ -35,14 +32,12 @@ const DiscoverMentor = ({ onMentorCountChange }) => {
   const [showRatingModal, setShowRatingModal] = useState(false);
   const [userRatingDetail, setUserRatingDetail] = useState(null);
   const [currentPrincipal, setCurrentPrincipal] = useState([]);
-  const [activeTab, setActiveTab] = useState("Users"); // Default active tab
 
   const dispatch = useDispatch();
   const userCurrentRoleStatusActiveRole = useSelector(
     (currState) => currState.currentRoleStatus.activeRole
   );
 
-  console.log("my mentor data ", allMentorData);
   const projectFullData = useSelector(
     (currState) => currState.projectData.data
   );
@@ -54,87 +49,58 @@ const DiscoverMentor = ({ onMentorCountChange }) => {
     }
   }, [isAuthenticated, dispatch]);
 
-  const getAllMentor = async (caller, page) => {
-    setIsFetching(true);
+  const getAllMentor = async (caller, page, isRefresh = false) => {
+    console.log(`Fetching data for page: ${page}`);
+    setIsFetching(true); // Set fetching state
+  
     try {
+      // Fetch data from the backend
       const result = await caller.get_all_mentors_with_pagination({
-        page_size: itemsPerPage,
-        page: page,
+        page_size: itemsPerPage, // Number of items per page
+        page: page, // Current page to fetch
       });
-
-      // {result?.data.map(val=>{
-      //   setSendprincipal(val[0])
-      // })}
-      console.log("result =>", result?.data);
-
       if (result && result.data) {
-        const mentorData = Object.values(result.data);
-        const userData = Object.values(result.user_data || {});
-
-        if (mentorData.length === 0) {
-          setHasMore(false); // No more data to load
+        const mentorData = Object.values(result.data); // Extract mentor data
+        if (isRefresh) {
+          console.log("Refresh mode: replacing mentor and user data");
+          setAllMentorData(mentorData); // Replace with refreshed mentor data
+          onMentorCountChange(mentorData.length); // Update mentor count
         } else {
-          setMentorData((prevData) => {
-            const newData = [...prevData, ...mentorData];
-            onMentorCountChange(newData.length > 0 ? newData.length : 0); // Update count using the length of the data array
-            return newData;
-          });
-          setUserData((prevData) => [...prevData, ...userData]);
-
-          // If fewer items than expected are returned, stop further requests
-          if (mentorData.length < itemsPerPage) {
-            setHasMore(false);
-          }
+          console.log("Appending mentor and user data");
+          setAllMentorData((prevData) => [...prevData, ...mentorData]); // Append new mentor data
+          const newTotal = allMentorData.length + mentorData.length; // Calculate new total
+          onMentorCountChange(newTotal); // Update total mentor count
+        }
+        if (mentorData.length < itemsPerPage) {
+          setHasMore(false); // If fetched data is less than itemsPerPage, stop further requests
         }
       } else {
-        setHasMore(false);
+        setHasMore(false); // If no data, stop further requests
       }
     } catch (error) {
-      console.error("error-in-get-all-mentor", error);
-      setHasMore(false);
+      console.error("Error fetching mentors:", error);
+      setHasMore(false); // Handle error and stop loading
     } finally {
-      setIsFetching(false);
+      setIsFetching(false); // Reset fetching state
     }
   };
-
-  console.log("send", sendprincipal);
-
+  
   useEffect(() => {
-    if (!isFetching && hasMore) {
-      if (actor) {
-        getAllMentor(actor, currentPage);
-      } else {
-        getAllMentor(IcpAccelerator_backend, currentPage);
-      }
+    if (!isFetching && hasMore && actor) {
+      console.log(`Current page: ${currentPage}`);
+      getAllMentor(actor, currentPage); // Fetch data for mentors
     }
-  }, [actor, currentPage]);
-
+  }, [actor, currentPage, hasMore]);
+  
+  // Load more mentor data when scrolling
   const loadMore = () => {
     if (!isFetching && hasMore) {
-      setCurrentPage((prevPage) => {
-        const newPage = prevPage + 1;
-        getAllMentor(actor, newPage); // Fetch data for the next page
-        return newPage;
-      });
+      const newPage = currentPage + 1;
+      setCurrentPage(newPage); // Increment the page number
+      getAllMentor(actor, newPage); // Fetch the next set of mentor data
     }
   };
-  const refresh = () => {
-    if (actor) {
-      getAllMentor(actor, 1); // Fetch the data starting from the first page
-    }
-  };
-  const tagColors = {
-    mentor: "bg-[#EEF4FF] border-[#C7D7FE] border text-[#3538CD] rounded-md",
-    project: "bg-[#F8FAFC] text-[#364152] border border-[#E3E8EF] rounded-md",
-    vc: "bg-[#FFFAEB] border-[#FEDF89] border text-[#B54708] rounded-md",
-    TALENT: "bg-[#ECFDF3] border-[#ABEFC6] border text-[#067647] rounded-md",
-  };
-
-  const tags = ["OLYMPIAN", "FOUNDER", "TALENT", "INVESTER", "PROJECT"];
-  const getRandomTags = () => {
-    const shuffledTags = tags.sort(() => 0.5 - Math.random());
-    return shuffledTags.slice(0, 2);
-  };
+  
 
   const handleMentorCloseModal = () => {
     setMentorId(null);
@@ -178,7 +144,6 @@ const DiscoverMentor = ({ onMentorCountChange }) => {
   const handleClick = (principal) => {
     setSendprincipal(principal);
     setOpenDetail(true);
-    console.log("passed principle", principal);
   };
 
   const handleRating = (ratings, principalId) => {
@@ -186,43 +151,24 @@ const DiscoverMentor = ({ onMentorCountChange }) => {
     setUserRatingDetail(ratings);
     setCurrentPrincipal(principalId);
   };
-  console.log("userRatingDetail =>", userRatingDetail);
+
 
   return (
     <>
-      <div>
+       <div id="scrollableDiv" style={{ height: "80vh", overflowY: "auto" }}>
         {allMentorData.length > 0 ? (
           <InfiniteScroll
             dataLength={allMentorData.length}
             next={loadMore}
             hasMore={hasMore}
             loader={<h4>Loading more...</h4>}
-            endMessage={<p>No more data available</p>}
-            refreshFunction={refresh}
-            pullDownToRefresh
-            pullDownToRefreshThreshold={50}
-            pullDownToRefreshContent={
-              <h3 style={{ textAlign: "center" }}>
-                &#8595; Pull down to refresh
-              </h3>
-            }
-            releaseToRefreshContent={
-              <h3 style={{ textAlign: "center" }}>
-                &#8593; Release to refresh
-              </h3>
-            }
+            endMessage={<p className="flex justify-center">No more data available...</p>}
+            scrollableTarget="scrollableDiv" 
           >
             {allMentorData?.map((mentorArray, index) => {
               const mentor_id = mentorArray[0]?.toText();
               const mentor = mentorArray[1];
               const user = mentorArray[2];
-
-              // if (!mentor || !user) {
-              //   return null;
-              // }
-              console.log("//data1//", mentor);
-              console.log("//data2//", user);
-              const randomTags = getRandomTags();
               let profile = user?.profile_picture[0]
                 ? uint8ArrayToBase64(user?.profile_picture[0])
                 : "../../../assets/Logo/CypherpunkLabLogo.png";
@@ -239,7 +185,6 @@ const DiscoverMentor = ({ onMentorCountChange }) => {
               );
 
               const principle_id = mentorArray[0];
-              console.log("principle", principle_id);
               return (
                 <div
                   className="p-6 w-[750px] rounded-lg shadow-sm mb-4 flex"
@@ -263,7 +208,7 @@ const DiscoverMentor = ({ onMentorCountChange }) => {
                       className="absolute bottom-0 right-[6px] flex items-center bg-gray-100 p-1"
                     >
                       <Star className="text-yellow-400 w-4 h-4" />
-                      <span className="text-sm font-medium">5.0</span>
+                      <span className="text-sm font-medium">Rate Us</span>
                     </div>
                   </div>
                   <div className="flex-grow ml-[25px] w-[544px]">

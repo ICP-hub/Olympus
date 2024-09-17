@@ -13,7 +13,7 @@ const EventCard = ({ selectedEventType }) => {
   const actor = useSelector((currState) => currState.actors.actor);
   const [noData, setNoData] = useState(false);
   const [allLiveEventsData, setAllLiveEventsData] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
@@ -24,18 +24,17 @@ console.log("my cohort data lenght",allLiveEventsData.length)
     navigate(`/dashboard/single-event/${cohort_id}`);
   };
 
-  useEffect(() => {
-    fetchEvents(currentPage);
-  }, [actor, currentPage, selectedEventType]);
+  console.log('selectedEventType',selectedEventType)
 
-  const fetchEvents = async () => {
-    setIsLoading(true);
+  
+  const fetchEvents = async (caller, page, isRefresh = false) => {
+    setIsLoading(true); // Start loading state
     try {
-      const result = await (actor || IcpAccelerator_backend).get_all_cohorts({
-        page_size: itemsPerPage,
-        page:currentPage,
+      const result = await caller.get_all_cohorts({
+        page_size: itemsPerPage, 
+        page: page,
       });
-
+  console.log('result: ', result)
       let filteredEvents = [];
       switch (selectedEventType) {
         case "Ongoing":
@@ -52,47 +51,51 @@ console.log("my cohort data lenght",allLiveEventsData.length)
           filteredEvents = result.data ?? [];
           break;
       }
-
+  
       if (filteredEvents.length > 0) {
-        setAllLiveEventsData((prevEvents) => [
-          ...prevEvents,
-          ...filteredEvents,
-        ]);
+        if (isRefresh) {
+          setAllLiveEventsData(filteredEvents); 
+        } else {
+          setAllLiveEventsData((prevEvents) => [
+            ...prevEvents,
+            ...filteredEvents,
+          ]);
+        }
+  
+        if (filteredEvents.length < itemsPerPage) {
+          setHasMore(false); // No more data to load
+        }
       } else {
         setHasMore(false);
       }
+  
       setNoData(filteredEvents.length === 0);
     } catch (error) {
       console.error("Error in get_all_cohorts:", error);
       setNoData(true);
       setHasMore(false);
     } finally {
-      setIsLoading(false);
+      setIsLoading(false); // End loading state
     }
   };
+  useEffect(() => {
+    if (!isLoading && hasMore && actor) {
+      console.log(`Current page: ${currentPage}`);
+      fetchEvents(actor, currentPage); // Fetch data
+    }
+  }, [actor, currentPage, hasMore,selectedEventType]);
 
   const loadMore = () => {
     if (!isLoading && hasMore) {
-      setCurrentPage((prevPage) => {
-        const newPage = prevPage + 1;
-        fetchEvents(actor, newPage); // Fetch data for the next page
-        return newPage;
-      });
+      const newPage = currentPage + 1;
+      setCurrentPage(newPage); // Increment the page number
+      fetchEvents(actor, newPage); // Fetch the next set of data
     }
   };
-  const refresh = () => {
-    if (actor) {
-      fetchEvents(actor, 1); // Fetch the data starting from the first page
-    }
-  };
-  // const loadMore = () => {
-  //   if (hasMore && !isLoading) {
-  //     setCurrentPage((prevPage) => prevPage + 1);
-  //   }
-  // };
+console.log('allLiveEventsData',allLiveEventsData)
 
   return (
-    <div>
+    <div id="scrollableDiv" style={{ height: "80vh", overflowY: "auto" }}>
       {allLiveEventsData.length > 0 ? (
              <InfiniteScroll
             dataLength={allLiveEventsData.length}
@@ -100,19 +103,7 @@ console.log("my cohort data lenght",allLiveEventsData.length)
             hasMore={hasMore}
             loader={<h4>Loading more...</h4>}
             endMessage={<p>No more data available</p>}
-            refreshFunction={refresh}
-            pullDownToRefresh
-            pullDownToRefreshThreshold={50}
-            pullDownToRefreshContent={
-              <h3 style={{ textAlign: "center" }}>
-                &#8595; Pull down to refresh
-              </h3>
-            }
-            releaseToRefreshContent={
-              <h3 style={{ textAlign: "center" }}>
-                &#8593; Release to refresh
-              </h3>
-            }
+            scrollableTarget="scrollableDiv" 
           >
           {allLiveEventsData.map((data, index) => {
             const image = data?.cohort?.cohort_banner[0]

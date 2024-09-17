@@ -148,74 +148,35 @@ const DiscoverProject = ({ onProjectCountChange }) => {
     }
   };
 
-  // const getAllProject = async (caller, isMounted) => {
-  //   await caller
-  //     .list_all_projects_with_pagination({
-  //       page_size: itemsPerPage,
-  //       page: currentPage,
-  //     })
-  //     .then((result) => {
-  //       if (isMounted) {
-  //         console.log("result-in-get-all-projects", result);
-  //         // setprincipal(result.data[0][0]);
-  //         // console.log("principal data ", result.data[0][0]);
-  //         if (result && result.data) {
-  //           const ProjectData = result.data ? Object.values(result.data) : [];
-  //           const userData = result.user_data
-  //             ? Object.values(result.user_data)
-  //             : [];
-  //           setAllProjectData(ProjectData);
-  //           setUserData(userData);
-  //         } else {
-  //           setAllProjectData([]);
-  //           setUserData([]);
-  //         }
-  //         setIsLoading(false);
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       if (isMounted) {
-  //         setAllProjectData([]);
-  //         setUserData([]);
-  //         setIsLoading(false);
-  //         console.log("error-in-get-all-projects", error);
-  //       }
-  //     });
-  // };
-
-  const getAllProject = async (caller) => {
+  const getAllProject = async (caller, page, isRefresh = false) => {
+    console.log(`Fetching projects for page: ${page}`);
     setIsFetching(true);
+
     try {
       const result = await caller.list_all_projects_with_pagination({
         page_size: itemsPerPage,
-        page: currentPage,
+        page: page,
       });
-      // setprincipal(result.data[0][0]);
-      // {result?.data.map(val=>{
-      //   setSendprincipal(val[0])
-      // })}
-      console.log("result =>", result?.data);
-
       if (result && result.data) {
         const ProjectData = Object.values(result.data);
-        const userData = Object.values(result.user_data || {});
-
-        if (ProjectData.length === 0) {
-          setHasMore(false); // No more data to load
+        if (isRefresh) {
+          console.log("Refresh", "true");
+          setAllProjectData(ProjectData); // Replace with refreshed data
+          onProjectCountChange(ProjectData.length); // Update user count
         } else {
+          console.log("Refresh", "false");
           setAllProjectData((prevData) => [...prevData, ...ProjectData]);
-          setUserData((prevData) => [...prevData, ...userData]);
-          onProjectCountChange(ProjectData.length > 0 ? ProjectData.length : 0);
-          // If fewer items than expected are returned, stop further requests
-          if (ProjectData.length < itemsPerPage) {
-            setHasMore(false);
-          }
+          const newTotal = allProjectData.length + ProjectData.length;
+          onProjectCountChange(newTotal);
+        }
+        if (ProjectData.length < itemsPerPage) {
+          setHasMore(false);
         }
       } else {
         setHasMore(false);
       }
     } catch (error) {
-      console.error("error-in-get-all-project", error);
+      console.error("Error fetching projects:", error);
       setHasMore(false);
     } finally {
       setIsFetching(false);
@@ -223,56 +184,19 @@ const DiscoverProject = ({ onProjectCountChange }) => {
   };
 
   useEffect(() => {
-    if (!isFetching && hasMore) {
-      if (actor) {
-        getAllProject(actor, currentPage);
-      } else {
-        getAllProject(IcpAccelerator_backend, currentPage);
-      }
+    if (!isFetching && hasMore && actor) {
+      getAllProject(actor, currentPage); // Fetch data
     }
-  }, [actor, currentPage]);
+  }, [actor, currentPage, hasMore]);
 
   const loadMore = () => {
     if (!isFetching && hasMore) {
-      setCurrentPage((prevPage) => {
-        const newPage = prevPage + 1;
-        getAllProject(actor, newPage); // Fetch data for the next page
-        return newPage;
-      });
+      const newPage = currentPage + 1;
+      setCurrentPage(newPage); 
+      getAllProject(actor, newPage);
     }
   };
-  const refresh = () => {
-    if (actor) {
-      getAllProject(actor, 1); // Fetch the data starting from the first page
-    }
-  };
-  /////////////////////////
-  const tagColors = {
-    // OLYMPIAN: "bg-[#F0F9FF] border-[#B9E6FE] border text-[#026AA2] rounded-md",
-    mentor: "bg-[#EEF4FF] border-[#C7D7FE] border text-[#3538CD] rounded-md",
-    project: "bg-[#F8FAFC] text-[#364152] border border-[#E3E8EF] rounded-md",
-    vc: "bg-[#FFFAEB] border-[#FEDF89] border text-[#B54708] rounded-md",
-    TALENT: "bg-[#ECFDF3] border-[#ABEFC6] border text-[#067647] rounded-md",
-  };
 
-  const tags = ["OLYMPIAN", "FOUNDER", "TALENT", "INVESTER", "PROJECT"];
-  const getRandomTags = () => {
-    const shuffledTags = tags.sort(() => 0.5 - Math.random());
-    return shuffledTags.slice(0, 2);
-  };
-
-  const skills = [
-    "Web3",
-    "Cryptography",
-    "MVP",
-    "Infrastructure",
-    "Web3",
-    "Cryptography",
-  ];
-  const getRandomskills = () => {
-    const shuffledTags = skills.sort(() => 0.5 - Math.random());
-    return shuffledTags.slice(0, 2);
-  };
   const [openDetail, setOpenDetail] = useState(false);
 
   const handleClick = (principal, user) => {
@@ -308,45 +232,31 @@ const DiscoverProject = ({ onProjectCountChange }) => {
     }
   }
   return (
-    <div>
+    <div id="scrollableDiv" style={{ height: "80vh", overflowY: "auto" }}>
       {allProjectData.length > 0 ? (
         <InfiniteScroll
           dataLength={allProjectData.length}
           next={loadMore}
           hasMore={hasMore}
           loader={<h4>Loading more...</h4>}
-          endMessage={<p>No more data available</p>}
-          refreshFunction={refresh}
-          pullDownToRefresh
-          pullDownToRefreshThreshold={50}
-          pullDownToRefreshContent={
-            <h3 style={{ textAlign: "center" }}>
-              &#8595; Pull down to refresh
-            </h3>
+          endMessage={
+            <p className="flex justify-center">No more data available...</p>
           }
-          releaseToRefreshContent={
-            <h3 style={{ textAlign: "center" }}>&#8593; Release to refresh</h3>
-          }
+          scrollableTarget="scrollableDiv"
         >
           {allProjectData?.map((projectArray, index) => {
-            console.log("projectArray", projectArray);
-            // const project_id = projectArray?.principal?.toText();
             const project_id = projectArray[1]?.params?.uid;
             const project = projectArray[1];
             const user = projectArray[2];
-            const randomTags = getRandomTags();
-            // const randomSkills = getRandomskills();
             let profile = user?.profile_picture[0]
               ? uint8ArrayToBase64(user?.profile_picture[0])
               : "../../../assets/Logo/CypherpunkLabLogo.png";
             const projectlogo = project.params.params.project_logo[0]
               ? uint8ArrayToBase64(project.params.params.project_logo[0])
               : CypherpunkLabLogo;
-            console.log("projectlogo", imagePreview);
             const projectname = project.params.params.project_name;
             const projectdescription =
               project.params.params.project_description[0];
-            // console.log(project_name)
             let full_name = user?.full_name;
             let openchat_name = user?.openchat_username[0] ?? "N/A";
             let country = user?.country;
@@ -360,8 +270,6 @@ const DiscoverProject = ({ onProjectCountChange }) => {
             );
 
             const principle_id = projectArray[0];
-            console.log("principle", principle_id);
-
             return (
               <div
                 className="p-6 w-[750px] rounded-lg shadow-sm mb-4 flex"
@@ -385,7 +293,7 @@ const DiscoverProject = ({ onProjectCountChange }) => {
                     className="absolute cursor-pointer bottom-0 right-[6px] flex items-center bg-gray-100 p-1"
                   >
                     <Star className="text-yellow-400 w-4 h-4" />
-                    <span className="text-sm font-medium">5.0</span>
+                    <span className="text-sm font-medium">Rate Us</span>
                   </div>
                 </div>
 
@@ -481,7 +389,7 @@ const DiscoverProject = ({ onProjectCountChange }) => {
           })}
         </InfiniteScroll>
       ) : (
-        <div className="flex justify-center">
+        <div className="flex justify-center items-center">
           <NoData message={"No Projects Posted Yet"} />
         </div>
       )}

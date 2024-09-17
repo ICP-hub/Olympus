@@ -36,75 +36,42 @@ const Jobs = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [openJobUid, setOpenJobUid] = useState(null);
   const [hasMore, setHasMore] = useState(true);
-  console.log("latestJobs", latestJobs);
-//   useEffect(() => {
-//     console.log("useEffect triggered, fetching latest jobs..."); // Check if useEffect is running
-//     let isMounted = true;
- 
-//     const fetchLatestJobs = async (caller) => {
-//        setIsLoading(true);
- 
-//        try {
-//           const result = await caller.get_all_jobs(currentPage, itemsPerPage);
-//           console.log("latestJobs aa raha This should print the result", result); // This should print the result
-//           if (isMounted) {
-//              if (result && result.length > 0) {
-//                 setLatestJobs(result);
-//                 setNoData(false);
-//              } else {
-//                 setNoData(true);
-//                 setLatestJobs([]);
-//              }
-//           }
-//        } catch (error) {
-//           console.error("Error fetching jobs:", error); // Log the error if it fails
-//           if (isMounted) {
-//              setNoData(true);
-//              setLatestJobs([]);
-//           }
-//        } finally {
-//           if (isMounted) {
-//              setIsLoading(false);
-//           }
-//        }
-//     };
- 
-//     if (actor) {
-//        fetchLatestJobs(actor);
-//     } else {
-//        fetchLatestJobs(IcpAccelerator_backend);
-//     }
- 
-//     return () => {
-//        isMounted = false;
-//     };
-//  }, [actor, currentPage]);
-console.log("Jobs after append:", latestJobs);
-const fetchLatestJobs = async (caller, page) => {
-  setIsLoading(true);
-  try {
-    const result = await caller.get_all_jobs(page, itemsPerPage);
-    console.log("Fetched jobs:", result); // Verify fetched jobs
-    
-    if (result && result.length > 0) {
-      setLatestJobs((prevJobs) => [...prevJobs, ...result]);  // Append new jobs
-      setNoData(false);
-    // Log the updated job list
-      if (result.length < itemsPerPage) {
-        setHasMore(false);  // No more data to load
+  const [totalJobs , setTotalJobs]=useState([]);
+
+
+  const fetchLatestJobs = async (caller, page, isRefresh = false) => {
+    setIsLoading(true); 
+    try {
+      const result = await caller.get_all_jobs(page, itemsPerPage); 
+      console.log("Fetched jobs:", result); 
+      
+      if (result && result.length > 0) {
+        if (isRefresh) {
+          console.log('Refresh', 'true');
+          setLatestJobs(result); 
+          setTotalJobs(result.length)
+
+        } else {
+          console.log('Refresh', 'false');
+          setLatestJobs((prevJobs) => [...prevJobs, ...result]); 
+          setTotalJobs(latestJobs.length+result.length)
+        }
+        if (result.length < itemsPerPage) {
+          setHasMore(false);
+        }
+      } else {
+        setNoData(true); 
+        setHasMore(false); 
       }
-    } else {
+    } catch (error) {
+      console.error("Error fetching jobs:", error);
       setNoData(true);
       setHasMore(false);
+    } finally {
+      setIsLoading(false); 
     }
-  } catch (error) {
-    console.error("Error fetching jobs:", error);
-    setNoData(true);
-    setHasMore(false);
-  } finally {
-    setIsLoading(false);
-  }
-};
+  };
+  
 
 
 useEffect(() => {
@@ -135,18 +102,12 @@ useEffect(() => {
 
 const loadMore = () => {
   if (!isLoading && hasMore) {
-    setCurrentPage((prevPage) => {
-      const newPage = prevPage + 1;
-      fetchLatestJobs(actor, newPage); // Fetch data for the next page
-      return newPage;
-    });
+    const newPage = currentPage + 1;
+    setCurrentPage(newPage); // Increment the page number
+    fetchLatestJobs(actor, newPage); // Fetch the next set of data
   }
 };
-const refresh = () => {
-  if (actor) {
-    fetchLatestJobs(actor, 1); // Fetch the data starting from the first page
-  }
-};
+
   const [filter, setFilter] = useState({
     role: "",
     fullTime: false,
@@ -177,7 +138,7 @@ const refresh = () => {
     setOpenJobUid(null);
   };
 
-
+console.log('totalJobs',totalJobs)
   const roleOptions = [
         { value: 'developer', label: 'Developer' },
         { value: 'designer', label: 'Designer' },
@@ -205,26 +166,16 @@ const refresh = () => {
         </div>
         <div className="flex mx-auto justify-evenly p-5">
           <div className="mb-5 w-full md1:w-[65%] lg:w-full lgx:w-[65%] ">
+   <div id="scrollableDiv" style={{ height: "100vh", overflowY: "auto" }}>
             {latestJobs.length > 0 ? (
               <InfiniteScroll
               dataLength={latestJobs.length}
               next={loadMore}
               hasMore={hasMore}
               loader={<h4>Loading more...</h4>}
-              endMessage={<p>No more data available</p>}
-              refreshFunction={refresh}
-              pullDownToRefresh
-              pullDownToRefreshThreshold={50}
-              pullDownToRefreshContent={
-                <h3 style={{ textAlign: "center" }}>
-                  &#8595; Pull down to refresh
-                </h3>
-              }
-              releaseToRefreshContent={
-                <h3 style={{ textAlign: "center" }}>
-                  &#8593; Release to refresh
-                </h3>
-              }
+              endMessage={<p className="flex justify-center">No more data available</p>}
+    scrollableTarget="scrollableDiv" 
+             
             >
               {latestJobs.map((card, index) => {
                 // console.log( " card?.job_poster.profile_picture",card?.job_poster?.profile_picture)
@@ -242,10 +193,10 @@ const refresh = () => {
                 let job_post_time = card?.timestamp
                   ? formatFullDateFromBigInt(card?.timestamp)
                   : "";
-                console.log("cardids", card.job_id);
+                // console.log("cardids", card.job_id);
                 return (
-                  <>
-                    <div key={index} className="flex flex-col gap-3 my-8">
+                  <div key={index} >
+                    <div className="flex flex-col gap-3 my-8">
                       <div className="flex justify-between">
                         <div
                           onClick={() => openJobDetails(card.job_id)}
@@ -341,7 +292,7 @@ const refresh = () => {
                     </div>
 
                     <hr />
-                  </>
+                    </div>
                 );
               })}
                </InfiniteScroll>
@@ -350,6 +301,7 @@ const refresh = () => {
               <NoData message={'No Jobs Data Available'}/>
               </div>
             )}
+          </div>
           </div>
 
           <div className="w-[30%] hidden md1:block lg:hidden lgx:block  ">
