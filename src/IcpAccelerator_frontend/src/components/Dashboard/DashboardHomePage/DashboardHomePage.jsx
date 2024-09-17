@@ -3,8 +3,8 @@ import DashboardHomeNavbar from './DashboardHomeNavbar'
 import DashboardHomeSidebar from './DashboardHomeSidebar'
 import DashboardHomeWelcomeSection from './DashboardHomeWelcomeSection'
 import { Routes, Route } from 'react-router-dom';
-import ProjectProfile from './ProjectProfile'
-import UserSection from './UserSection'
+import ProjectProfile from './ProjectProfile';
+
 import Jobs from '../../jobs/Jobs'
 import ProfilePage from '../../profile/ProfilePage'
 import EventMain from '../DashboardEvents/EventMain'
@@ -15,6 +15,7 @@ import WorkSectionDetailPage from './WorkSectionDetailPage'
 import EventDetails from '../DashboardEvents/EventDetail'
 import DocumentSection from '../Project/DocumentSection'
 import DiscoverRegionalHubs from '../../RegionalHubs/RegionalHubs'
+import UsersSection from '../../Discover/UserSection';
 
 
 
@@ -34,7 +35,7 @@ function DashboardHomePage() {
             <Route path="/" element={<DashboardHomeWelcomeSection  profileCompletion={"35"} />} />
             <Route path="/jobs" element={<Jobs />} />
             <Route path="/profile" element={<ProfilePage />} />
-            <Route path="/user" element={<UserSection />} />
+            <Route path="/user" element={<UsersSection />} />
             <Route path="/event" element={<EventMain />} />
             <Route path="/single-event" element={<EventDetails />} />
             <Route path="/project" element={<ProjectProfile />} />
