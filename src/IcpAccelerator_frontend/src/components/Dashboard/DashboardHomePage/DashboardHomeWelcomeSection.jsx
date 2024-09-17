@@ -241,12 +241,12 @@ const handleButtonClick = (action) => {
   }, [actor, dispatch, userCurrentRoleStatus, userCurrentRoleStatusActiveRole]);
   return (
     <>
-      <div className="bg-white rounded-lg p-6 mb-6 pt-1">
-        <h1 className="text-3xl font-bold mb-6 mt-6 pl-3">
+      <div className="bg-white rounded-lg lg:p-6 mb-6 pt-1">
+        <h1 className="text-sm sxs2:text-base ss3:text-xl xxs:text-2xl sm5:text-3xl font-bold mb-6 mt-6 pl-3 break-all truncate">
           {dashboardwelcomesection.welcome}, {userFullData?.full_name}!
         </h1>
         <div className="overflow-x-auto">
-          <div className="flex gap-6 my-1">
+          <div className="flex gap-6 my-1 ">
             {actionCards.map((card, index) => (
                 <Tooltip
                 key={index}
@@ -258,7 +258,7 @@ const handleButtonClick = (action) => {
                 className="bg-[#F8FAFC] rounded-lg p-4 relative flex flex-col  md:w-[330px] w-[280px] h-[226px] flex-shrink-0 shadow-lg"
               > */}
                 <div
-                  className={`bg-[#F8FAFC] rounded-lg p-4 relative flex flex-col md:w-[330px] w-[280px] h-[226px] flex-shrink-0 shadow-lg ${
+                  className={`bg-[#F8FAFC] rounded-lg p-4 relative flex flex-col w-[237px] md:w-[330px] ss2:w-[280px] h-[226px] flex-shrink-0 shadow-lg ${
                     card.disabled ? "cursor-not-allowed opacity-50" : ""
                   }`}
                 >

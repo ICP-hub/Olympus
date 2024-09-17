@@ -298,7 +298,6 @@ const NewJob = ({ latestJobs }) => {
           </>
         ) : (
           latestJob.map((card, index) => {
-          
             const fullname = card?.job_poster[0]?.full_name ?? "";
             const job_name = card?.job_data?.title ?? "";
             const job_category = card?.job_data?.category ?? "";
@@ -319,14 +318,31 @@ const NewJob = ({ latestJobs }) => {
               <>
                 <div
                   key={card.job_id || index}
-                  className="flex flex-col gap-3 my-8"
+                  className="flex flex-col gap-3 my-8 bg-white rounded-lg shadow p-4"
                 >
                   <div className="flex justify-between">
                     <div className="flex flex-col gap-3 w-full ">
                       <p className="text-gray-400">{job_post_time} </p>
-                      <h3 className="text-sm xxs:text-xl font-bold">
-                        {job_name}{" "}
-                      </h3>
+                      <div className="flex justify-between">
+                        <h3 className="text-sm xxs:text-xl font-bold break-all truncate">
+                          {job_name}{" "}
+                        </h3>
+                        <div className="flex  gap-4 items-center">
+                          <img
+                            src={editp}
+                            className=" text-gray-500 hover:underline text-xs h-[1.3rem]  sm:h-5 sm:w-5 cursor-pointer"
+                            alt="edit"
+                            onClick={() => handleJobsOpenModal(card)}
+                          />
+                          <span className="text-[16px] text-gray-500 cursor-pointer hover:text-red-700">
+                            <DeleteOutlinedIcon
+                              className="cursor-pointer hover:text-red-500"
+                              onClick={() => handleOpenDeleteModal(card)}
+                            />
+                          </span>
+                        </div>
+                      </div>
+
                       <div className="flex gap-3 ">
                         <div
                           className="flex w-14"
@@ -338,22 +354,10 @@ const NewJob = ({ latestJobs }) => {
                             alt="icon"
                           />
                         </div>
-                        <div className="w-full text-lg font-medium">{fullname} </div>
+                        <div className="w-full text-lg font-medium break-all truncate">
+                          {fullname}{" "}
+                        </div>
                       </div>
-                      
-                    </div>
-                    <div className="flex  gap-4 items-center">
-                      <img
-                        src={editp}
-                        className=" text-gray-500 hover:underline text-xs h-4 w-4 sm:h-5 sm:w-5 cursor-pointer"
-                        alt="edit"
-                        onClick={() => handleJobsOpenModal(card)}
-                      />
-                      <span className="text-[16px] text-gray-500 cursor-pointer hover:text-red-700">
-                      <DeleteOutlinedIcon className="cursor-pointer hover:text-red-500"
-                          onClick={() => handleOpenDeleteModal(card)}
-                        />
-                      </span>
                     </div>
                   </div>
                   <div className="flex flex-col gap-3">
@@ -382,17 +386,18 @@ const NewJob = ({ latestJobs }) => {
                     </div>
                   </div>
                 </div>
-                <button
-                  className="bg-blue-500 text-white  px-4 py-2 w-full sm4:hidden "
-                  onClick={handleModalOpen}
-                >
-                  + Add new Job
-                </button>
+
                 <hr />
               </>
             );
           })
         )}
+        <button
+          className="bg-blue-500 text-white  px-4 py-2 w-full sm4:hidden "
+          onClick={handleModalOpen}
+        >
+          + Add new Job
+        </button>
       </div>
       {isJobsModalOpen && (
         <JobUpdate

@@ -119,11 +119,11 @@ function DashboardHomeProfileCards(percentage) {
 
   return (
     <>
-      <div className="grid grid-cols-1 dlg:grid-cols-2 lgx:grid-cols-3 gap-6 mt-6 p-6">
+      <div className="grid grid-cols-1 dlg:grid-cols-2 lgx:grid-cols-3 gap-6 mt-6 lg:p-6">
         {/* Main profile card */}
         <div className="bg-white rounded-lg shadow-sm p-6 border">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-bold">Main profile</h2>
+            <h2 className="ss2:text-xl font-bold">Main profile</h2>
             <Link
               to="/dashboard/profile"
               className="text-blue-500 font-normal "
@@ -148,7 +148,7 @@ function DashboardHomeProfileCards(percentage) {
               <span className="inline-block bg-[#F0F9FF] border border-[#B9E6FE] text-[#026AA2] text-xs font-semibold px-2 py-1 rounded-md mb-2">
                 OLYMPIAN
               </span>
-              <h3 className="text-lg font-semibold flex items-center mb-1">
+              <h3 className="sm1:text-lg font-semibold flex items-center mb-1">
                 <span className="text-blue-500 ml-1">
                   <VerifiedIcon
                     className="text-blue-500 mr-1"
@@ -168,14 +168,18 @@ function DashboardHomeProfileCards(percentage) {
         <div className="bg-white rounded-lg shadow-sm p-6 border">
           <div className="flex justify-between items-center mb-4">
             <div className="flex items-center">
-              <h2 className="text-xl font-bold mr-2">Rating</h2>
+              <h2 className="ss2:text-xl font-bold mr-2">Rating</h2>
               <HelpOutlineOutlinedIcon
                 className="text-gray-400"
                 fontSize="small"
               />
             </div>
-            <Link to="/dashboard/profile" className="text-blue-500 font-normal flex ">
-              <span className="lgx:hidden dxl0:block block pr-1">View</span> Details &gt;
+            <Link
+              to="/dashboard/profile"
+              className="text-blue-500 font-normal flex "
+            >
+              <span className="sxxs:hidden dxs:block lgx:hidden dxl0:block block pr-1">View</span>{" "}
+              Details &gt;
             </Link>
           </div>
           {/* <div className="border border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center">
@@ -212,7 +216,7 @@ function DashboardHomeProfileCards(percentage) {
         <div className="bg-white rounded-lg shadow-sm p-6 border">
           <div className="flex justify-between items-center mb-4">
             <div className="flex items-center">
-              <h2 className="text-xl font-bold mr-2">Roles</h2>
+              <h2 className="ss2:text-xl font-bold mr-2">Roles</h2>
               <HelpOutlineOutlinedIcon
                 className="text-gray-400"
                 fontSize="small"
@@ -235,9 +239,9 @@ function DashboardHomeProfileCards(percentage) {
         </div>
       </div>
       {userRoles === "project" && (
-        <div className="bg-white rounded-lg shadow-sm p-6 mt-8">
+        <div className="bg-white rounded-lg shadow-sm lg:shadow-none lg:p-6 mt-8">
           <div className="flex justify-between items-center m-2 p-2">
-            <h2 className="text-xl font-semibold">Projects</h2>
+            <h2 className="ss2:text-xl font-semibold">Projects</h2>
             <a
               className="text-sm font-normal cursor-pointer"
               onClick={() => handleChange("project")}
@@ -248,7 +252,7 @@ function DashboardHomeProfileCards(percentage) {
           <DashboardProjectCard />
         </div>
       )}
-      <div className="bg-white w-full rounded-lg shadow-sm  mt-8 p-6">
+      <div className="bg-white w-full rounded-lg shadow-sm lg:shadow-none  mt-8 lg:p-6">
         <DashboardProfileView />
       </div>
     </>

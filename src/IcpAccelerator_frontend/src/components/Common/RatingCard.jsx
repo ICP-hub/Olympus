@@ -5,68 +5,15 @@ import { useSelector } from "react-redux";
 import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
 
 const RatingCard = ({  }) => {
-  const [rating, setRating] = useState(0);
   const [showReview, setShowReview] = useState(false);
   const [ratingCount, setRatingCount] = useState(0);
   const principal = useSelector((currState) => currState.internet.principal);
   const actor = useSelector((currState) => currState.actors.actor);
   const [ratingtosend, setRatingToSend] = useState(null);
-  const [ratingtosend1, setRatingToSend1] = useState({});
   const isMounted = useRef(true);
   const [isDataReady, setIsDataReady] = useState(false);
 
-  const handleRating = (index) => {
-    setRating(index + 1);
-    setShowReview(true);
-  };
 
-  // const getAllReview = async (caller) => {
-  //   try {
-  //     const convertedPrincipal = Principal.fromText(principal);
-  //     await caller.get_review_with_count(convertedPrincipal).then((result) => {
-  //       if (isMounted.current && result && result.Ok) {
-  //         console.log("REVIEW API SE COUNT AAGYA HAI", result.Ok?.[1]);
-  //         if (result) {
-  //           const fetchedReviews = result?.Ok || [];
-  //           console.log("FETCHED REVIEW FROM API", fetchedReviews);
-  //           console.log(
-  //             "FETCHED REVIEW FROM API KA ALG ALG DATA",
-  //             fetchedReviews?.[0]?.[0]
-  //           );
-  //           setRatingToSend(fetchedReviews?.[0]?.[0]);
-  //           setRatingCount(Number(result.Ok?.[1]));
-  //           setIsDataReady(true);
-  //           // const hasRated = fetchedReviews.some(
-  //           //   (review) =>
-  //           //     review.reviewer_principal.toString() === principal.toString()
-  //           // );
-  //           // setCurrentUserHasRated(hasRated);
-  //         } else {
-  //           setRating({});
-  //           setIsDataReady(false);
-  //           // setCurrentUserHasRated(false);
-  //         }
-  //       }
-  //     });
-  //   } catch (error) {
-  //     if (isMounted.current) {
-  //       setRating([]);
-  //       setIsDataReady(false);
-  //       // setCurrentUserHasRated(false);
-  //       console.log("error-in-get-all-user", error);
-  //     }
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   if (actor) {
-  //     getAllReview(actor);
-  //   }
-
-  //   return () => {
-  //     isMounted.current = false;
-  //   };
-  // }, [actor]);
 
   useEffect(() => {
     if (!actor) return;
@@ -92,11 +39,7 @@ const RatingCard = ({  }) => {
     };
   }, [actor, principal]);
 
-  // useEffect(() => {
-  //   if (Object.keys(ratingtosend).length > 0) {
-  //     setIsDataReady(true);
-  //   }
-  // }, [ratingtosend]);
+
 
   console.log("RATING CHILD ME JAANE K LIYE TAAYAR HAI", ratingtosend);
 
@@ -107,7 +50,7 @@ const RatingCard = ({  }) => {
           <span className="text-4xl font-bold text-black">
             {ratingtosend?.rating ? `${ratingtosend.rating}.0` : 0}
           </span>
-          <div className="flex gap-2 my-5">
+          <div className="flex ss1:gap-2 my-5">
             {[...Array(ratingtosend?.rating ? ratingtosend?.rating : 5)].map(
               (_, index) => (
                 <svg
