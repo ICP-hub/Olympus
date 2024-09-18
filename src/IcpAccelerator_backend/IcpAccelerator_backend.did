@@ -100,6 +100,7 @@ type IcpHubDetails = record {
   flag : opt blob;
   name : opt text;
   description : opt text;
+  website : opt text;
   links : opt vec Sociallinks;
 };
 type InviteRequest = record {
@@ -134,7 +135,7 @@ type LeaderboardEntryForRatings = record {
 };
 type ListAllIcpHubs = record {
   "principal" : principal;
-  params : IcpHubDetails;
+  params : vec IcpHubDetails;
 };
 type ListAllProjects = record {
   overall_average : opt float64;

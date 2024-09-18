@@ -185,7 +185,7 @@ const PENDING_MENTOR_CONFIRMATION_TO_REJOIN_MEMORY_ID: MemoryId = MemoryId::new(
 pub type AssetManager = StableCell<StoredPrincipal, VMem>;
 const ASSET_CANISTER_STORAGE_MEMORY_ID: MemoryId = MemoryId::new(45);
 
-pub type HubsData = StableBTreeMap<StoredPrincipal, Candid<IcpHubDetails>, VMem>;
+pub type HubsData = StableBTreeMap<StoredPrincipal, Candid<Vec<IcpHubDetails>>, VMem>;
 const HUBS_DATA_STORAGE_MEMORY_ID: MemoryId = MemoryId::new(46);
 
 pub type MentorsAppliedForCohort = StableBTreeMap<String, Candid<Vec<(MentorInternal, UserInformation)>>, VMem>;
