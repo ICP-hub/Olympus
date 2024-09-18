@@ -272,13 +272,13 @@ const DiscoverProject = ({ onProjectCountChange }) => {
             const principle_id = projectArray[0];
             return (
               <div
-                className="sm:p-6 my-10 sm:my-0 w-full sm:w-[750px] rounded-lg shadow-sm mb-4 flex flex-col sm:flex-row"
+                className="md:p-6 my-10 md:my-0 w-full md:w-[750px] rounded-lg shadow-sm mb-4 flex flex-col md:flex-row"
                 key={index}
               >
-                <div className="w-full sm:w-[272px] relative">
+                <div className="w-full md:w-[272px] relative">
                   <div
                     onClick={() => handleClick(principle_id, user)}
-                    className="w-full sm:max-w-[250px] sm:w-[250px] h-[254px] bg-gray-100 rounded-lg flex flex-col justify-between relative overflow-hidden"
+                    className="w-full md:max-w-[250px] md:w-[250px] h-[254px] bg-gray-100 rounded-lg flex flex-col justify-between relative overflow-hidden"
                   >
                     <div className="absolute inset-0 flex items-center justify-center">
                       <img
@@ -297,7 +297,7 @@ const DiscoverProject = ({ onProjectCountChange }) => {
                   </div>
                 </div>
 
-                <div className="flex-grow mt-5 sm:mt-0 sm:ml-[25px] w-full sm:w-[544px]">
+                <div className="flex-grow mt-5 md:mt-0 md:ml-[25px] w-full md:w-[544px]">
                   <div className="flex justify-between items-start mb-2">
                     <div>
                       <div>
