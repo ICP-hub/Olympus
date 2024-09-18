@@ -105,7 +105,7 @@ function DashboardHomeNavbar() {
             id="userDropdown"
             className="absolute divide-y divide-gray-100 rounded-lg shadow w-48 bg-gray-100 z-50 top-4 right-[3.2rem]"
           >
-            <div className="px-4 py-3 text-sm text-gray-900 text-black">
+            <div className="px-4 py-3 text-sm text-gray-900 ">
               <div className="flex flex-row justify-between w-full">
                 <button
                   onClick={toggleDropdown}
