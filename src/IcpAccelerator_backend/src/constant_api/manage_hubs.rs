@@ -5,7 +5,6 @@ use serde::{Deserialize, Serialize};
 use candid::{CandidType, Principal};
 use serde_bytes::ByteBuf;
 use crate::state_handler::*;
-use crate::guard::*;
 use ic_cdk::api::caller;
 use ic_cdk::api::call::call;
 
@@ -25,6 +24,7 @@ pub struct IcpHubDetails{
     pub flag: Option<Vec<u8>>,
     pub links: Option<Vec<Sociallinks>>,
     pub description: Option<String>,
+    pub website: Option<String>
 }
 
 pub async fn add_hubs_images(caller: Principal, mut data: IcpHubDetails)->IcpHubDetails{
@@ -70,48 +70,54 @@ pub async fn add_hubs_images(caller: Principal, mut data: IcpHubDetails)->IcpHub
 
 }
 
-#[update(guard="combined_guard")]
-pub async fn add_icp_hub_details(data: IcpHubDetails)->String{
+#[update]
+pub async fn add_icp_hub_details(data: IcpHubDetails) -> String {
     let caller = caller();
 
-    let data_to_store = add_hubs_images(caller, data.clone()).await;
+    let data_to_store = add_hubs_images(caller, data).await; 
 
-    // Insert or update the hub details in the state
+    let key = StoredPrincipal(caller);
+
     mutate_state(|state| {
-        state.hubs_data.insert(StoredPrincipal(caller), state_handler::Candid(data_to_store));
+        if let Some(mut existing_data) = state.hubs_data.get(&key) {
+            existing_data.0.push(data_to_store);  
+        } else {
+            state.hubs_data.insert(key, state_handler::Candid(vec![data_to_store]));
+        }
     });
 
     // Return success message
     "ICP Hub details added successfully.".to_string()
 }
 
+
+
+
 #[derive(CandidType, Deserialize, Clone, Debug)]
 pub struct ListAllIcpHubs {
     principal: Principal,
-    params: IcpHubDetails,
+    params: Vec<IcpHubDetails>, 
 }
 
 #[query]
 pub fn get_icp_hub_details() -> Vec<ListAllIcpHubs> {
-    // Retrieve and process the state
     let hubs_snapshot = read_state(|state| {
         state.hubs_data.iter().map(|(principal, details)| {
-            (principal, details.clone())  // Clone the data to use outside the state borrow
+            (principal.clone(), details.0.clone()) 
         }).collect::<Vec<_>>()
     });
 
     let mut list_all_hubs: Vec<ListAllIcpHubs> = Vec::new();
 
-    // Process the hubs outside of the state borrow
-    for (stored_principal, hub_details) in hubs_snapshot {
-        // Construct the result struct
+    for (stored_principal, hub_details_vec) in hubs_snapshot {
         let hub_struct = ListAllIcpHubs {
-            principal: stored_principal.0,
-            params: hub_details.0,
+            principal: stored_principal.0, 
+            params: hub_details_vec,       
         };
         list_all_hubs.push(hub_struct);
     }
 
     list_all_hubs
 }
+
 
