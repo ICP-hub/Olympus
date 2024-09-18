@@ -9,7 +9,7 @@ const EventMain = () => {
 
   console.log('selectedEventType Main',selectedEventType)
 
-  // Filter the events based on selectedEventType
+
 
 
   return (

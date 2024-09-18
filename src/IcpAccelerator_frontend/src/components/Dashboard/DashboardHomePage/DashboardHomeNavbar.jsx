@@ -57,7 +57,7 @@ function DashboardHomeNavbar() {
   const currentImage = roleData[userCurrentRoleStatusActiveRole] || user;
 
   return (
-    <nav className="bg-[#FFF4ED] py-3 px-4 md:px-12 md:pl-1 flex items-center justify-end relative pb-8">
+    <nav className="bg-[#FFF4ED] py-3 px-4 md:px-12 md:pl-1 flex items-center justify-end relative lg:pb-8">
       <button onClick={toggleMenu} className="lg:hidden absolute  right-2">
         <dashboard.dashboardhomenavbar.icons.menuIcon.Menu className="text-gray-600" />
       </button>

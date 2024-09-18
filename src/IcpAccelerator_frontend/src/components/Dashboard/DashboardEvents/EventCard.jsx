@@ -182,7 +182,7 @@ console.log('allLiveEventsData',allLiveEventsData)
                 </div> */}
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
   <div className="relative w-full sm:flex items-start sm:items-center gap-3">
-    <div className="absolute top-1 left-1 bg-white p-2 rounded-lg max-w-[120px] sm:max-w-[160px]">
+    <div className="absolute top-1 left-1 bg-white p-2 rounded-lg max-w-[122px] sm:max-w-[160px]">
       <p className="text-sm sm:text-base font-bold">
         {launch_date} – {end_date}
       </p>

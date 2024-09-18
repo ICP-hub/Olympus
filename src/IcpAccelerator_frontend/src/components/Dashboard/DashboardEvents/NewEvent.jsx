@@ -170,7 +170,7 @@ const NewEvent = ({ event }) => {
               </div>
               <div className="flex md:hidden flex-col  mb-8  w-full ">
           <button
-            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
+            className="px-4 py-2 font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
             onClick={handleModalOpen}
           >
             + Add new Cohort

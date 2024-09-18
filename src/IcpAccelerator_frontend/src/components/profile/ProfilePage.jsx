@@ -83,14 +83,14 @@ const ProfilePage = () => {
             </h2>
         </div>
         {/* <div className="flex    md:gap-4 w-full justify-between my-2 md:my-0"> */}
-        <div className="flex gap-2 md:gap-4 w-full justify-between md:justify-end my-2 md:my-0">
+        {/* <div className="flex gap-2 md:gap-4 w-full justify-between md:justify-end my-2 md:my-0">
           <button className="mr-2 text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-2 rounded-md shadow-sm border border-gray-200">
             {profilepage.viewPublicProfileText}
           </button>
           <button className="flex items-center text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-2 rounded-md shadow-sm border border-gray-200"  onClick={() => setIsModalOpen(true)}>
             {profilepage.shareText} <span>{shareSvgIcon}</span>
           </button>
-        </div>
+        </div> */}
       </div>
 
         {/* Profile and Content Sections */}
