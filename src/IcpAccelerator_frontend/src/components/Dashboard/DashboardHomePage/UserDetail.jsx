@@ -30,8 +30,8 @@ const UserDetail = (projectData) => {
   const type_of_profile = userData?.type_of_profile?.[0] ?? "Type of Profile";
 
   return (
-    <div className="">
-      <div className="container bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden w-full max-w-[400px]">
+    <div className="w-full lg1:mb-0 lg1:pb-3">
+      <div className="container bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden w-full lg1:max-w-[400px]">
         <div className="relative h-1 bg-gray-200">
           <div className="absolute left-0 top-0 h-full bg-green-500 w-1/3"></div>
         </div>
@@ -100,12 +100,15 @@ const UserDetail = (projectData) => {
                     Email
                   </h3>
                
-                <div className="flex items-center">
+                <div className="flex flex-wrap items-center">
                   <p className="mr-2 text-sm">{email}</p>
                   <VerifiedIcon
                     className="text-blue-500 mr-2 w-2 h-2"
                     fontSize="small"
                   />
+                  <span className="bg-[#F8FAFC] border border-[#E3E8EF] text-[#364152] px-2 py-0.5 rounded text-xs">
+                  HIDDEN
+                </span>
                 </div>
               </div>
 

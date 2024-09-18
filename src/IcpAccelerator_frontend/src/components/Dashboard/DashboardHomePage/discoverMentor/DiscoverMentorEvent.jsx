@@ -53,7 +53,7 @@ const DiscoverMentorEvent = ({ principal }) => {
   }, [actor, principal]);
 
   return (
-    <div className="w-full mb-4 lg1:pb-2 pb-12">
+    <div className="w-full mb-4 lg1:pb-2 pb-4">
       <h2 className="text-lg font-semibold text-gray-800 mb-4">Events</h2>
       {mentorEvents.length === 0 ? (
         <p><NoData message={"No Events posted Yet"} /></p>

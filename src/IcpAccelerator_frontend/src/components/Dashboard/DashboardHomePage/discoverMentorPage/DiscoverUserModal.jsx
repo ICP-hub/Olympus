@@ -47,7 +47,7 @@ const DiscoverUserModal = ({ openDetail, setOpenDetail, userData }) => {
     >
       {openDetail && userData && (
         <div
-          className={`mx-auto w-full sm:w-[50%] dlg:w-[35%] lgx:w-[30%] absolute right-0 top-0 bg-white h-screen transform transition-transform duration-[4000ms] ease-[cubic-bezier(0.4, 0, 0.2, 1)] ${
+          className={`mx-auto w-full pb-4  sm:w-[60%] lg:w-[40%] absolute right-0 top-0 bg-white h-screen transform transition-transform duration-[4000ms] ease-[cubic-bezier(0.4, 0, 0.2, 1)] ${
             openDetail ? "translate-x-0" : "translate-x-full"
           } z-20`}
         >
@@ -57,9 +57,9 @@ const DiscoverUserModal = ({ openDetail, setOpenDetail, userData }) => {
               onClick={() => setOpenDetail(false)}
             />
           </div>
-          <div className="container mx-auto flex justify-center  h-[calc(100%-50px)] pb-8 overflow-y-auto">
+          <div className="container mx-auto justify-center w-full h-full overflow-y-scroll pb-8 ">
             <div className="flex justify-center p-6">
-              <div className="container  bg-white rounded-lg shadow-sm y overflow-hidden w-full max-w-[400px]">
+              <div className="container border bg-white rounded-lg shadow-sm h-full overflow-y-scroll w-full ">
                 <div className="flex flex-col w-full p-6 bg-gray-100">
                   <img
                     src={profilepic}
@@ -107,13 +107,13 @@ const DiscoverUserModal = ({ openDetail, setOpenDetail, userData }) => {
                         Email
                       </h3>
 
-                      <div className="flex items-center">
+                      <div className="flex flex-wrap items-center">
                         <p className="mr-2 text-sm">{email}</p>
                         <VerifiedIcon
                           className="text-blue-500 mr-2 w-2 h-2"
                           fontSize="small"
                         />
-                        <span className="hidden dxs:flex bg-[#F8FAFC] border border-[#E3E8EF] text-[#364152] px-2 py-0.5 rounded text-xs">
+                        <span className=" dxs:flex bg-[#F8FAFC] border border-[#E3E8EF] text-[#364152] px-2 py-0.5 rounded text-xs">
                           HIDDEN
                         </span>
                       </div>
