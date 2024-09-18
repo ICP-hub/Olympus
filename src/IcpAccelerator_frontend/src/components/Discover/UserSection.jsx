@@ -188,7 +188,7 @@ const UsersSection = () => {
         />
       </div>
 
-      <div className="sm:flex justify-between">
+      <div className="md:flex lg:flex-none lgx:flex justify-between">
         <div className="flex-1">
           {currentTab === "Users" && (
             <DiscoverUser onUserCountChange={setUsersCount} />
@@ -203,7 +203,7 @@ const UsersSection = () => {
             <DiscoverInvestor onInvestorCountChange={setInvestorsCount} />
           )}
         </div>
-        <div className=" hidden sm:block w-[35%]">
+        <div className=" hidden md:block lg:hidden lgx:block lg: w-[35%]">
           <div className="bg-white py-6 rounded-lg shadow-sm sticky top-0">
             <h2 className="text-lg font-semibold mb-4">Filters</h2>
             <div className="mb-4">
