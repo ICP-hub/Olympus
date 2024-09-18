@@ -225,8 +225,10 @@ type OfferToProjectByInvestor = record {
   offer : text;
   reciever_data : opt record { ProjectInfoInternal; UserInfoInternal };
   accepted_at : nat64;
+  is_cohort_association : bool;
   declined_at : nat64;
   receiever_principal : principal;
+  cohort_data : opt CohortDetails;
   offer_id : text;
   response : text;
   sender_data : opt record { VentureCapitalist; UserInfoInternal };
@@ -439,7 +441,7 @@ type Result_12 = variant { Ok : record { vec Review; nat64 }; Err : text };
 type Result_13 = variant { Ok : vec Testimonial; Err : text };
 type Result_14 = variant { Ok : UserInformation; Err : text };
 type Result_15 = variant {
-  Ok : vec record { VentureCapitalistInternal; UserInfoInternal };
+  Ok : vec record { VentureCapitalistInternal; UserInfoInternal; principal };
   Err : text;
 };
 type Result_16 = variant { Ok; Err : text };
@@ -447,7 +449,7 @@ type Result_2 = variant { Ok : vec Docs; Err : CustomError };
 type Result_3 = variant { Ok : float64; Err : text };
 type Result_4 = variant { Ok : CanisterStatusResponse; Err : text };
 type Result_5 = variant {
-  Ok : vec record { MentorInternal; UserInfoInternal };
+  Ok : vec record { MentorInternal; UserInfoInternal; principal };
   Err : text;
 };
 type Result_6 = variant { Ok : InviteRequest; Err : text };
@@ -457,7 +459,7 @@ type Result_8 = variant {
   Err : text;
 };
 type Result_9 = variant {
-  Ok : vec record { ProjectInfoInternal; UserInfoInternal };
+  Ok : vec record { ProjectInfoInternal; UserInfoInternal; principal };
   Err : text;
 };
 type Review = record {
@@ -581,6 +583,8 @@ service : {
   calculate_average : (text) -> (RatingAverages) query;
   calculate_mentor_average_rating : (text) -> (Result_3) query;
   calculate_vc_average_rating : (text) -> (Result_3) query;
+  check_cohort_mebership : (principal, text) -> (bool) query;
+  check_principal_in_states : (principal) -> (bool) query;
   create_cohort : (Cohort) -> (Result);
   decline_money_access_request : (text, principal) -> (text);
   decline_offer_from_investor_to_project : (text, text, text) -> (text);
@@ -856,7 +860,7 @@ service : {
   send_money_access_request : (text) -> (text);
   send_offer_to_investor_by_project : (principal, text, text) -> (text);
   send_offer_to_mentor_from_project : (principal, text, text) -> (text);
-  send_offer_to_project_by_investor : (text, text) -> (text);
+  send_offer_to_project_by_investor : (text, text, bool, opt text) -> (text);
   send_offer_to_project_by_mentor : (text, text, principal) -> (text);
   send_private_docs_access_request : (text) -> (text);
   send_rejoin_invitation_to_mentor : (text, principal, text) -> (Result);

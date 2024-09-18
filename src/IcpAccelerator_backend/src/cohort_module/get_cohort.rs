@@ -184,9 +184,9 @@ pub fn get_no_of_individuals_applied_for_cohort_using_id(cohort_id: String) -> R
 #[query(guard = "combined_guard")]
 pub fn get_projects_applied_for_cohort(
     cohort_id: String,
-) -> Result<Vec<(ProjectInfoInternal, UserInfoInternal)>, String> {
-    let projects_in_cohort_with_users: Vec<(ProjectInfoInternal, UserInfoInternal)> = read_state(|state| {
-        let mut results : Vec<(ProjectInfoInternal, UserInfoInternal)> = Vec::new();
+) -> Result<Vec<(ProjectInfoInternal, UserInfoInternal, Principal)>, String> {
+    let projects_in_cohort_with_users: Vec<(ProjectInfoInternal, UserInfoInternal, Principal)> = read_state(|state| {
+        let mut results : Vec<(ProjectInfoInternal, UserInfoInternal, Principal)> = Vec::new();
 
         if let Some(candid_projects) = state.project_applied_for_cohort.get(&cohort_id) {
             for project in &candid_projects.0 {
@@ -194,7 +194,7 @@ pub fn get_projects_applied_for_cohort(
                     stored_project.0.iter().any(|stored| stored.uid == project.0.uid) 
                 }) {
                     if let Some(user_info) = state.user_storage.get(&principal) {
-                        results.push((project.0.clone(), user_info.0.clone()));
+                        results.push((project.0.clone(), user_info.0.clone(), principal.0));
                     }
                 }
             }
@@ -208,9 +208,9 @@ pub fn get_projects_applied_for_cohort(
 
 
 #[query(guard = "combined_guard")]
-pub fn get_mentors_applied_for_cohort(cohort_id: String) -> Result<Vec<(MentorInternal, UserInfoInternal)>, String> {
-    let mentors_in_cohort_with_users: Vec<(MentorInternal, UserInfoInternal)> = read_state(|state| {
-        let mut results : Vec<(MentorInternal, UserInfoInternal)> = Vec::new();
+pub fn get_mentors_applied_for_cohort(cohort_id: String) -> Result<Vec<(MentorInternal, UserInfoInternal, Principal)>, String> {
+    let mentors_in_cohort_with_users: Vec<(MentorInternal, UserInfoInternal, Principal)> = read_state(|state| {
+        let mut results : Vec<(MentorInternal, UserInfoInternal, Principal)> = Vec::new();
 
         if let Some(candid_mentors) = state.mentor_applied_for_cohort.get(&cohort_id) {
             for mentor in &candid_mentors.0 {
@@ -218,7 +218,7 @@ pub fn get_mentors_applied_for_cohort(cohort_id: String) -> Result<Vec<(MentorIn
                     stored_mentor.0.uid == mentor.0.uid 
                 }) {
                     if let Some(user_info) = state.user_storage.get(&principal) {
-                        results.push((mentor.0.clone(), user_info.0.clone()));
+                        results.push((mentor.0.clone(), user_info.0.clone(), principal.0));
                     }
                 }
             }
@@ -233,9 +233,9 @@ pub fn get_mentors_applied_for_cohort(cohort_id: String) -> Result<Vec<(MentorIn
 #[query(guard = "combined_guard")]
 pub fn get_vcs_applied_for_cohort(
     cohort_id: String,
-) -> Result<Vec<(VentureCapitalistInternal, UserInfoInternal)>, String> {
-    let vcs_in_cohort_with_users: Vec<(VentureCapitalistInternal, UserInfoInternal)> = read_state(|state| {
-        let mut results : Vec<(VentureCapitalistInternal, UserInfoInternal)> = Vec::new();
+) -> Result<Vec<(VentureCapitalistInternal, UserInfoInternal, Principal)>, String> {
+    let vcs_in_cohort_with_users: Vec<(VentureCapitalistInternal, UserInfoInternal, Principal)> = read_state(|state| {
+        let mut results : Vec<(VentureCapitalistInternal, UserInfoInternal, Principal)> = Vec::new();
 
         if let Some(candid_vcs) = state.vc_applied_for_cohort.get(&cohort_id) {
             for vc in &candid_vcs.0 {
@@ -243,7 +243,7 @@ pub fn get_vcs_applied_for_cohort(
                     stored_vc.0.uid == vc.0.uid 
                 }) {
                     if let Some(user_info) = state.user_storage.get(&principal) {
-                        results.push((vc.0.clone(), user_info.0.clone()));
+                        results.push((vc.0.clone(), user_info.0.clone(), principal.0));
                     }
                 }
             }
@@ -294,3 +294,56 @@ pub fn filter_cohorts(criteria: CohortFilterCriteria) -> Vec<CohortDetails> {
             .collect()
     })
 }
+
+#[query(guard = "combined_guard")]
+pub fn check_principal_in_states(principal_id: Principal) -> bool {
+    read_state(|state| {
+        let in_cohort = state.cohort_info.iter().any(|(_, cohort_data)| {
+            cohort_data.0.cohort_creator == principal_id
+        });
+
+        let in_project = state.project_storage.iter().any(|(proj_principal, _)| {
+            proj_principal.0 == principal_id
+        });
+
+        let in_mentor = state.mentor_storage.iter().any(|(ment_principal, _)| {
+            ment_principal.0 == principal_id
+        });
+
+        let in_vc = state.vc_storage.iter().any(|(vc_principal, _)| {
+            vc_principal.0 == principal_id
+        });
+
+        in_cohort || in_project || in_mentor || in_vc
+    })
+}
+
+#[query(guard = "combined_guard")]
+pub fn check_cohort_mebership(principal_id: Principal, cohort_id: String) -> bool {
+    let mentors_result = get_mentors_applied_for_cohort(cohort_id.clone());
+
+    let in_mentor = if let Ok(mentors) = mentors_result {
+        mentors.iter().any(|(_, _, ment_principal)| *ment_principal == principal_id)
+    } else {
+        false
+    };
+
+    let vcs_result = get_vcs_applied_for_cohort(cohort_id.clone());
+
+    let in_vc = if let Ok(vcs) = vcs_result {
+        vcs.iter().any(|(_, _, vc_principal)| *vc_principal == principal_id)
+    } else {
+        false
+    };
+
+    let projects_result = get_projects_applied_for_cohort(cohort_id);
+
+    let in_project = if let Ok(projects) = projects_result {
+        projects.iter().any(|(_, _, proj_principal)| *proj_principal == principal_id)
+    } else {
+        false
+    };
+
+    in_mentor || in_vc || in_project
+}
+
