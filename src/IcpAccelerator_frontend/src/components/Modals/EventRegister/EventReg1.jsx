@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { formFields1 } from "./EventFormData";
@@ -6,13 +5,20 @@ import { useFormContext, Controller } from "react-hook-form";
 import CompressedImage from "../../../components/ImageCompressed/CompressedImage";
 import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 
-const EventReg1 = ({ formData, setFormData, imageData, setImageData, editMode ,singleEventData}) => {
-  console.log('formData',formData)
-  console.log('singleEventData',singleEventData)
-  console.log('imageData',imageData)
+const EventReg1 = ({
+  formData,
+  setFormData,
+  imageData,
+  setImageData,
+  editMode,
+  singleEventData,
+}) => {
+  console.log("formData", formData);
+  console.log("singleEventData", singleEventData);
+  console.log("imageData", imageData);
 
   const [imagePreview, setImagePreview] = useState(null);
-  console.log('imagePreview',imagePreview)
+  console.log("imagePreview", imagePreview);
 
 
   const { register, formState: { errors }, control, setValue, clearErrors, setError, trigger } = useFormContext();
@@ -83,7 +89,6 @@ const EventReg1 = ({ formData, setFormData, imageData, setImageData, editMode ,s
           {editMode ? "Update Cohort" : "Create a New Cohort"}
         </h1>
       </div>
-      
       <div className="mb-2">
         <label className="block text-sm font-medium mb-1">
           Upload a logo<span className="text-red-500">*</span>
@@ -132,24 +137,38 @@ const EventReg1 = ({ formData, setFormData, imageData, setImageData, editMode ,s
                   }}
                   accept=".jpg, .jpeg, .png"
                 />
-                <label
-                  htmlFor="cohort_banner"
-                  className="p-2 border-2 border-blue-800 items-center sm:ml-6 rounded-md text-md bg-transparent text-blue-800 cursor-pointer font-semibold"
-                >
-                  {imagePreview && !errors.cohort_banner
-                    ? "Change banner picture"
-                    : "Upload banner picture"}
-                </label>
-                {imagePreview || errors.cohort_banner ? (
-                  <button
-                    className="p-2 border-2 border-red-500 ml-2 items-center rounded-md text-md bg-transparent text-red-500 cursor-pointer font-semibold capitalize"
-                    onClick={() => clearImageFunc("cohort_banner")}
+                <div className=" flex flex-col xxs:flex-row gap-2">
+                  <label
+                    htmlFor="cohort_banner"
+                    className=" p-1 sxs3:p-2 border-2 border-blue-800 items-center  rounded-md text-xs md:text-sm bg-transparent text-blue-800 cursor-pointer font-semibold"
                   >
-                    clear
-                  </button>
-                ) : (
-                  ""
-                )}
+                    {imagePreview && !errors.cohort_banner ? (
+                      <>
+                        <span className="xxs:hidden">Change banner</span>
+                        <span className="hidden xxs:inline">
+                          Change banner picture
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <span className="xxs:hidden">Upload banner</span>
+                        <span className="hidden xxs:inline">
+                          Upload banner picture
+                        </span>
+                      </>
+                    )}
+                  </label>
+                  {imagePreview || errors.cohort_banner ? (
+                    <button
+                      className="p-1 sxs3:p-2 border-2 border-red-500  items-center rounded-md text-xs md:text-sm transparent text-red-500 cursor-pointer font-semibold "
+                      onClick={() => clearImageFunc("cohort_banner")}
+                    >
+                      Clear
+                    </button>
+                  ) : (
+                    ""
+                  )}
+                </div>
               </>
             )}
           />
@@ -165,14 +184,12 @@ const EventReg1 = ({ formData, setFormData, imageData, setImageData, editMode ,s
       <div className="mb-2">
         {formFields1?.map((field) => (
           <div key={field.id} className="relative z-0 group mb-2">
-            <label
-              htmlFor={field.id}
-              className="text-sm font-medium mb-1 flex"
-            >
+            <label htmlFor={field.id} className="text-sm font-medium mb-1 flex">
               {field.label}{" "}
               <span
-                className={`${field.label === "Eligibility Cirteria" ? "hidden" : "flex"
-                  } text-red-500`}
+                className={`${
+                  field.label === "Eligibility Cirteria" ? "hidden" : "flex"
+                } text-red-500`}
               >
                 *
               </span>
@@ -184,9 +201,10 @@ const EventReg1 = ({ formData, setFormData, imageData, setImageData, editMode ,s
                 id={field.id}
                 {...register(field.name)}
                 className={`border border-[#CDD5DF] rounded-md shadow-sm 
-                  ${errors[field.name]
-                    ? "border-red-500 placeholder:text-red-500"
-                    : "border-[#737373]"
+                  ${
+                    errors[field.name]
+                      ? "border-red-500 placeholder:text-red-500"
+                      : "border-[#737373]"
                   } text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                 placeholder={field.placeholder}
                 onFocus={() => handleFocus(field)}
@@ -199,9 +217,10 @@ const EventReg1 = ({ formData, setFormData, imageData, setImageData, editMode ,s
                 id={field.id}
                 {...register(field.name)}
                 className={`border border-[#CDD5DF] rounded-md shadow-sm 
-                  ${errors[field.name]
-                    ? "border-red-500 placeholder:text-red-500"
-                    : "border-[#737373]"
+                  ${
+                    errors[field.name]
+                      ? "border-red-500 placeholder:text-red-500"
+                      : "border-[#737373]"
                   } text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                 placeholder={field.placeholder}
                 onFocus={() => handleFocus(field)}
@@ -224,4 +243,3 @@ const EventReg1 = ({ formData, setFormData, imageData, setImageData, editMode ,s
 };
 
 export default EventReg1;
-

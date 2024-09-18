@@ -203,7 +203,7 @@ console.log('eventdata',eventData)
           modalOpen ? "block" : "hidden"
         }`}
       >
-        <div className="bg-white rounded-lg shadow-lg w-[500px] p-6 pt-4 ">
+        <div className="bg-white rounded-lg shadow-lg w-[500px] p-6 pt-4 mx-4 md:mx-0 ">
           {/* CLOSE BUTTON */}
           <div className="flex justify-end mr-4">
             <button
@@ -291,7 +291,11 @@ console.log('eventdata',eventData)
                   ) : (
                     <button
                       type="button"
-                      className="py-2 px-4 bg-blue-600 text-white rounded  border-2 border-[#B2CCFF] flex items-center"
+                      // className="py-2 px-4 bg-blue-600 text-white rounded  border-2 border-[#B2CCFF] flex justify-center w-full md:w-auto md:items-center"
+                      // onClick={handleNext}
+                      className={` py-2 px-2 dxs:py-2 dxs:px-4  bg-blue-600 text-white rounded border-2 border-[#B2CCFF] flex justify-center ${
+                        index === 0 ? 'w-full' : 'w-auto'
+                      } md:items-center`}
                       onClick={handleNext}
                     >
                       Continue

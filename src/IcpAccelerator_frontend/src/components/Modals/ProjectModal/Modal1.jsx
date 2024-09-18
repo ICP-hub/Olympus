@@ -116,7 +116,7 @@ return (
                                         <div className="flex">
                                             <span className="ml-4">
                                                 <span className="font-semibold -mt-2 justify-start flex capitalize">{role.name ==='vc'?'investor':role.name}</span>
-                                                <span className="block text-gray-600 text-sm">{role.description}</span>
+                                                <span className="block text-gray-600 text-sm line-clamp-2 break-all">{role.description}</span>
                                             </span>
                                         </div>
                                     </div>
