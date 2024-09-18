@@ -118,15 +118,15 @@ const DiscoverMentorProfile = ({ mentorData }) => {
                     Email
                   </h3>
                 </div>
-                <div className="flex items-center">
+                <div className="flex flex-wrap items-center">
                   <p className="mr-2 text-sm">{email}</p>
                   <VerifiedIcon
                     className="text-blue-500 mr-2 w-2 h-2"
                     fontSize="small"
                   />
-                  {/* <span className="bg-[#F8FAFC] border border-[#E3E8EF] text-[#364152] px-2 py-0.5 rounded text-xs">
+                  <span className="bg-[#F8FAFC] border border-[#E3E8EF] text-[#364152] px-2 py-0.5 rounded text-xs">
                   HIDDEN
-                </span> */}
+                </span>
                 </div>
               </div>
 

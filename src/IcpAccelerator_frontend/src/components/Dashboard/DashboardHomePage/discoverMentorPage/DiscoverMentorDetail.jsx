@@ -136,7 +136,7 @@ const DiscoverMentorDetail = ({ projectDetails, userData }) => {
   };
 
   return (
-    <div className="bg-white shadow-lg rounded-lg w-full max-w-sm">
+    <div className="bg-white shadow-lg rounded-lg w-full lg1:pb-3 ">
       <div className="bg-slate-200 p-6">
         <div className="flex justify-center">
           <img

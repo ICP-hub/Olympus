@@ -56,12 +56,12 @@ const DiscoverMentorMain = ({ openDetail, setOpenDetail, principal }) => {
             onClick={() => setOpenDetail(false)}
           />
         </div>
-        <div className="container mx-auto overflow-hidden overflow-y-scroll h-full pb-8">
-          <div className="flex flex-col gap-4 lg1:py-3 lg1:gap-0 lg1:flex-row w-full lg1:justify-evenly h-full px-[1%]">
+        <div className="container mx-auto overflow-hidden overflow-y-scroll h-full px-[4%] sm:px-[2%] pb-8">
+          <div className="flex flex-col gap-4 lg1:py-3 lg1:gap-0 lg1:flex-row w-full lg1:justify-evenly  ">
             <div className=" rounded-lg w-full lg1:overflow-y-scroll lg1:w-[32%] h-full">
               <DiscoverMentorProfile mentorData={allMentorData} />
             </div>
-            <div className="px-3 py-4 lg1:py-0 w-full lg1:overflow-y-scroll lg1:w-[63%] h-full">
+            <div className="px-1 lg1:px-3 py-4 lg1:py-0 w-full lg1:overflow-y-scroll lg1:w-[63%] ">
               <DiscoverMentorEvent mentorData={allMentorData} principal={principal} />
             </div>
           </div>
