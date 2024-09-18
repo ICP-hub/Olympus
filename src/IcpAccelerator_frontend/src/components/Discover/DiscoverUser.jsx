@@ -114,8 +114,8 @@ const DiscoverUser = ({ onUserCountChange }) => {
         const principalId = principal;
 
         return (
-          <div className="md1:p-6 my-10 md1:my-0 w-full  rounded-lg shadow-sm mb-4 flex flex-col md1:flex-row" key={index}>
-            <div className=" w-full md1:w-[272px] relative">
+          <div className="md1:p-6 my-10 md1:my-0 w-full  rounded-lg shadow-sm mb-4 flex flex-col sm:flex-row" key={index}>
+            <div className=" w-full sm:w-[272px] relative">
               <div
                 onClick={() => handleClick(user)}
                 className="w-full md1:max-w-[250px] md1:w-[250px] h-[254px] bg-gray-100 rounded-lg flex flex-col justify-between overflow-hidden"
@@ -136,7 +136,7 @@ const DiscoverUser = ({ onUserCountChange }) => {
                 <span className="text-sm font-medium">Rate Us</span>
               </div>
             </div>
-            <div className="flex-grow mt-5 md1:mt-0 md1:ml-[25px] w-full">
+            <div className="flex-grow mt-5 md1:mt-0 sm:ml-[25px] w-full">
               <div className="flex justify-between items-start mb-2">
                 <div>
                   <h3 className="text-xl font-bold">{full_name}</h3>
