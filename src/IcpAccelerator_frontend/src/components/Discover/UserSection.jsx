@@ -175,42 +175,56 @@ const UsersSection = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bg-white">
-  <h1 className="text-3xl font-bold p-4 px-0 bg-opacity-95 sticky bg-white z-20 top-0">
-    Discover
-  </h1>
+      <h1 className="text-3xl font-bold p-4 px-0 bg-opacity-95 sticky bg-white z-20 top-0">
+        Discover
+      </h1>
 
-  {/* Tabs Section */}
-  <div className="sticky top-[4rem] bg-white z-10">
-    <Tabs tabs={tabs} currentTab={currentTab} onTabChange={handleTabChange} />
-  </div>
+      {/* Tabs Section */}
+      <div className="sticky top-[4rem] bg-white z-10">
+        <Tabs
+          tabs={tabs}
+          currentTab={currentTab}
+          onTabChange={handleTabChange}
+        />
+      </div>
 
-  <div className="flex justify-between">
-    <div className="flex-1">
-      {currentTab === "Users" && <DiscoverUser onUserCountChange={setUsersCount} />}
-      {currentTab === "Projects" && <DiscoverProject onProjectCountChange={setProjectsCount} />}
-      {currentTab === "Mentors" && <DiscoverMentor onMentorCountChange={setMentorsCount} />}
-      {currentTab === "Investors" && <DiscoverInvestor onInvestorCountChange={setInvestorsCount} />}
-    </div>
-    <div className="w-[35%]">
-      <div className="bg-white py-6 rounded-lg shadow-sm sticky top-0">
-        <h2 className="text-lg font-semibold mb-4">Filters</h2>
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
-          <select
-            onChange={(e) => handleTabChange(e.target.value)}
-            className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-          >
-            <option>Select role</option>
-            <option value="Users">Users</option>
-            <option value="Projects">Projects</option>
-            <option value="Mentors">Mentors</option>
-            <option value="Investors">Investors</option>
-          </select>
+      <div className="sm:flex justify-between">
+        <div className="flex-1">
+          {currentTab === "Users" && (
+            <DiscoverUser onUserCountChange={setUsersCount} />
+          )}
+          {currentTab === "Projects" && (
+            <DiscoverProject onProjectCountChange={setProjectsCount} />
+          )}
+          {currentTab === "Mentors" && (
+            <DiscoverMentor onMentorCountChange={setMentorsCount} />
+          )}
+          {currentTab === "Investors" && (
+            <DiscoverInvestor onInvestorCountChange={setInvestorsCount} />
+          )}
+        </div>
+        <div className=" hidden sm:block w-[35%]">
+          <div className="bg-white py-6 rounded-lg shadow-sm sticky top-0">
+            <h2 className="text-lg font-semibold mb-4">Filters</h2>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Role
+              </label>
+              <select
+                onChange={(e) => handleTabChange(e.target.value)}
+                className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option>Select role</option>
+                <option value="Users">Users</option>
+                <option value="Projects">Projects</option>
+                <option value="Mentors">Mentors</option>
+                <option value="Investors">Investors</option>
+              </select>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</div>
   );
 };
 

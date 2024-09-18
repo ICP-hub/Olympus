@@ -190,13 +190,13 @@ const DiscoverInvestor = ({ onInvestorCountChange }) => {
 
             return (
               <div
-                className="p-6 w-[750px] rounded-lg shadow-sm mb-4 flex"
+                className="sm:p-6 my-10 w-full  sm:w-[750px] rounded-lg shadow-sm mb-4 flex flex-col sm:flex-row"
                 key={index}
               >
-                <div className="w-[272px] relative">
+                <div className="w-full sm:w-[272px] relative">
                   <div
                     onClick={() => handleClick(principle_id)}
-                    className="max-w-[250px] w-[250px] h-[254px] bg-gray-100 rounded-lg flex flex-col justify-between relative overflow-hidden"
+                    className="w-full sm:max-w-[250px] sm:w-[250px] h-[254px] bg-gray-100 rounded-lg flex flex-col justify-between relative overflow-hidden"
                   >
                     <div
                       className="absolute inset-0 flex items-center justify-center"
@@ -218,7 +218,7 @@ const DiscoverInvestor = ({ onInvestorCountChange }) => {
                   </div>
                 </div>
 
-                <div className="flex-grow ml-[25px] w-[544px]">
+                <div className="flex-grow sm:ml-[25px] mt-5 sm:mt-0 w-full sm:w-[544px]">
                   <div className="flex justify-between items-start mb-2">
                     <div>
                       <h3 className="text-xl font-bold">{full_name}</h3>

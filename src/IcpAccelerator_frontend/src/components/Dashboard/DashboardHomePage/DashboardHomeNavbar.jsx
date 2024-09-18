@@ -19,13 +19,10 @@ function DashboardHomeNavbar() {
     (currState) => currState.currentRoleStatus.activeRole
   );
   const dispatch = useDispatch();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [customSvg, setCustomSvg] = useState(beforeCopySvg);
-
-   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
-
+const [isOpen, setIsOpen] = useState(false);
   const copyToClipboard = () => {
     navigator.clipboard.writeText(principal).then(
       () => {
@@ -58,7 +55,10 @@ function DashboardHomeNavbar() {
 
   return (
     <nav className="bg-[#FFF4ED] py-3 px-4 md:px-12 md:pl-1 flex items-center justify-end relative lg:pb-8">
-      <button onClick={toggleMenu} className="lg:hidden absolute  right-2">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="lg:hidden absolute  right-2"
+      >
         <dashboard.dashboardhomenavbar.icons.menuIcon.Menu className="text-gray-600" />
       </button>
 
@@ -152,9 +152,9 @@ function DashboardHomeNavbar() {
         )}
       </div>
 
-      {isMenuOpen && 
-        <DashboardSidebar isOpen={isMenuOpen} onClose={toggleMenu} />
-      }
+      {isOpen && (
+        <DashboardSidebar isOpen={isOpen} onClose={() => setIsOpen(false)} />
+      )}
     </nav>
   );
 }

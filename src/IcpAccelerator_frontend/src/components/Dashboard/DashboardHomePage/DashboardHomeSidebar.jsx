@@ -113,28 +113,6 @@ const handleToggle = async (role) => {
       setToggleState(JSON.parse(savedState));
     }
   }, []);
- //Handle  Toggle State 
-// const handleToggle = async (role) => {
-//   setToggleState((prevState) => {
-//     const newState = {
-//       mentor: role === "mentor" ? !prevState.mentor : false,
-//       vc: role === "vc" ? !prevState.vc : false,
-//       project: role === "project" ? !prevState.project : false,
-//     };
-//     localStorage.setItem("toggleState", JSON.stringify(newState));
-//     return newState; 
-//   });
-
-//   await clickEventHandler(role, "active");
-// };
-
-//get Toggle State from local storage 
-// useEffect(() => {
-//   const savedState = localStorage.getItem("toggleState");
-//   if (savedState) {
-//     setToggleState(JSON.parse(savedState)); 
-//   }
-// }, []);
 
 
 
@@ -149,6 +127,7 @@ const handleToggle = async (role) => {
     setActiveLink(path);
     navigate(path);
     setHasNavigated(false);
+     handleClose() 
   };
 
   const clickEventHandler = async (roleName, value) => {
@@ -290,15 +269,6 @@ const handleToggle = async (role) => {
     console.log("No roles approved or roles in default state");
   }
 
-
-  // const handleToggle = async (role) => {
-  //   setToggleState((prevState) => ({
-  //     mentor: role === "mentor" ? !prevState.mentor : false,
-  //     vc: role === "vc" ? !prevState.vc : false,
-  //     project: role === "project" ? !prevState.project : false,
-  //   }));
-  //   await clickEventHandler(role, "active");
-  // };
 
   
   const SidebarSection = ({ title, items, currentrole }) => (
@@ -517,69 +487,7 @@ const handleToggle = async (role) => {
           </div>
         </nav>
       </aside>
-               {/* <motion.aside
-      className={`
-        fixed top-0 left-0 z-50 bg-[#FFF4ED] w-64 h-screen overflow-y-auto flex flex-col 
-        transform transition-transform duration-300 ease-in-out
-        ${show ? 'translate-x-0' : '-translate-x-full'} 
-        lg:relative lg:translate-x-0 lg:transform-none
-      `}
-      initial={{ x: '-100%' }} // Start off-screen on smaller screens
-      animate={{ x: show ? 0 : '-100%' }} // Toggle visibility on smaller screens
-      transition={{ duration: 0.5, ease: 'easeInOut' }}
-    >
-      <div className="p-4 flex justify-between items-center">
-        <img src={topLogo} alt="Olympus" className="h-8" />
-        <button onClick={onClose} className="lg:hidden">
-          <CloseIcon className="text-gray-600" />
-        </button>
-      </div>
-      <nav className="flex-1 py-6">
-        <div className="px-2 mb-6">
-          <SidebarLink
-            path="/dashboard"
-            icon={homeSvgIcon}
-            label={dashboardhomesidebar.sidebarSections.dashboard.label}
-          />
-        </div>
-        {Sidebar()}
-        <div>
-          <h3 className="px-6 mb-2 text-xs font-semibold text-gray-500 uppercase">
-            DISCOVER
-          </h3>
-          <ul>
-            <li>
-              <SidebarLink
-                path="/dashboard/user"
-                icon={userSvgIcon}
-                label={dashboardhomesidebar.sidebarSections.discover.items.user}
-              />
-            </li>
-            <li>
-              <SidebarLink
-                path="/dashboard/event"
-                icon={calenderSvgIcon}
-                label={dashboardhomesidebar.sidebarSections.discover.items.events}
-              />
-            </li>
-            <li>
-              <SidebarLink
-                path="/dashboard/regional-hubs"
-                icon={locationHubSvgIcon}
-                label={dashboardhomesidebar.sidebarSections.discover.items.hub}
-              />
-            </li>
-            <li>
-              <SidebarLink
-                path="/dashboard/jobs"
-                icon={briefcaseSvgIcon}
-                label={dashboardhomesidebar.sidebarSections.discover.items.jobs}
-              />
-            </li>
-          </ul>
-        </div>
-      </nav>
-    </motion.aside> */}
+  
     </>
   );
 }
