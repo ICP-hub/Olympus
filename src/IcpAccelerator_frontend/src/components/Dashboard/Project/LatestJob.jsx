@@ -392,12 +392,15 @@ const NewJob = ({ latestJobs }) => {
             );
           })
         )}
-        <button
-          className="bg-blue-500 text-white  px-4 py-2 w-full sm4:hidden "
-          onClick={handleModalOpen}
-        >
-          + Add new Job
-        </button>
+
+        {!noData && latestJobs && latestJobs.length > 0 && (
+          <button
+            className="bg-blue-500 text-white  px-4 py-2 w-full sm4:hidden "
+            onClick={handleModalOpen}
+          >
+            + Add new Job
+          </button>
+        )}
       </div>
       {isJobsModalOpen && (
         <JobUpdate
