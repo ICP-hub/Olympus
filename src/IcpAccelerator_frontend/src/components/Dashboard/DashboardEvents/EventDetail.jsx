@@ -752,7 +752,7 @@ const ProfileImage =  profileimage && profileimage.length > 0
               {currentTab === "Summary" && (
                 <>
                   <div>
-                    <div className="mt-4">
+                    <div className="mt-4 mx-2">
                       <h2 className="text-lg md:text-2xl font-semibold mb-2">
                         Description
                       </h2>

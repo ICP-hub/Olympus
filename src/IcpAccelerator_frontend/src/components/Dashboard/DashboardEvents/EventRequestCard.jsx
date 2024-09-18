@@ -145,9 +145,9 @@ const EventRequestCard = () => {
   return (
     <>
       
-      <div className="flex items-center justify-between  w-full  gap-6 mt-4">
+      <div className="flex items-center justify-between  gap-6 mt-4 mx-2">
 
-<div className="flex items-center border-2 border-gray-400 rounded-lg overflow-hidden flex-grow h-[50px]">
+<div className="flex items-center border-2 border-gray-400 rounded-lg overflow-hidden flex-grow h-[38px] md:h-[50px]">
   <div className="flex items-center px-3 md:px-4">
     <svg
       className="h-5 w-5 text-gray-400"

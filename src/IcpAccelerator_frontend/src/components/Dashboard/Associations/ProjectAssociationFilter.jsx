@@ -269,12 +269,12 @@ export default function ProjectAssociationFilter({
       <div
         className={`transition-transform duration-300 ease-in-out transform ${
           show ? "translate-x-0" : "translate-x-full"
-        } mx-auto w-full md:w-[25%] absolute right-0 top-0 z-10 bg-white h-screen flex flex-col`}
+        } mx-auto w-full md:w-[35%] lg:w-[30%] absolute right-0 top-0 z-10 bg-white h-screen flex flex-col`}
       >
         <div className="p-5 mb-5 flex justify-start">
           <CloseIcon sx={{ cursor: "pointer" }} onClick={handleClose} />
         </div>
-        <div className="container p-5 flex-grow">
+        <div className="container p-5 flex-grow max-h-screen">
           <h3 className="mb-4 text-lg font-semibold">Filters</h3>
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2">
