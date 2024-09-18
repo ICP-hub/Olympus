@@ -114,11 +114,11 @@ const DiscoverUser = ({ onUserCountChange }) => {
         const principalId = principal;
 
         return (
-          <div className="md:p-6 my-10 md:my-0 w-full md:w-[750px] rounded-lg shadow-sm mb-4 flex flex-col md:flex-row" key={index}>
-            <div className=" w-full md:w-[272px] relative">
+          <div className="md1:p-6 my-10 md1:my-0 w-full  rounded-lg shadow-sm mb-4 flex flex-col md1:flex-row" key={index}>
+            <div className=" w-full md1:w-[272px] relative">
               <div
                 onClick={() => handleClick(user)}
-                className="w-full md:max-w-[250px] md:w-[250px] h-[254px] bg-gray-100 rounded-lg flex flex-col justify-between overflow-hidden"
+                className="w-full md1:max-w-[250px] md1:w-[250px] h-[254px] bg-gray-100 rounded-lg flex flex-col justify-between overflow-hidden"
               >
                 <div className="absolute inset-0 flex items-center justify-center">
                   <img
@@ -136,7 +136,7 @@ const DiscoverUser = ({ onUserCountChange }) => {
                 <span className="text-sm font-medium">Rate Us</span>
               </div>
             </div>
-            <div className="flex-grow mt-5 md:mt-0 md:ml-[25px] w-full md:w-[544px]">
+            <div className="flex-grow mt-5 md1:mt-0 md1:ml-[25px] w-full">
               <div className="flex justify-between items-start mb-2">
                 <div>
                   <h3 className="text-xl font-bold">{full_name}</h3>

@@ -174,7 +174,7 @@ const UsersSection = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bg-white">
+    <div className="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 bg-white">
       <h1 className="text-3xl font-bold p-4 px-0 bg-opacity-95 sticky bg-white z-20 top-0">
         Discover
       </h1>
@@ -188,8 +188,8 @@ const UsersSection = () => {
         />
       </div>
 
-      <div className="md:flex lg:flex-none lgx:flex justify-between">
-        <div className="flex-1">
+      <div className="md1:flex lg:flex-none lgx:flex justify-between w-full">
+        <div className="flex-1 w-[60%]">
           {currentTab === "Users" && (
             <DiscoverUser onUserCountChange={setUsersCount} />
           )}
@@ -203,8 +203,8 @@ const UsersSection = () => {
             <DiscoverInvestor onInvestorCountChange={setInvestorsCount} />
           )}
         </div>
-        <div className=" hidden md:block lg:hidden lgx:block lg: w-[35%]">
-          <div className="bg-white py-6 rounded-lg shadow-sm sticky top-0">
+        <div className=" hidden md1:block lg:hidden lgx:block w-[30%]">
+          <div className="bg-white p-6 rounded-lg shadow-sm sticky top-0">
             <h2 className="text-lg font-semibold mb-4">Filters</h2>
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-1">
