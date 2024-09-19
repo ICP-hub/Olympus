@@ -1,10 +1,7 @@
-
 import React from "react";
 import uint8ArrayToBase64 from "../../../Utils/uint8ArrayToBase64";
 import NoDataFound from "../../DashboardEvents/NoDataFound";
 import getSocialLogo from "../../../Utils/navigationHelper/getSocialLogo";
-
-
 
 const TeamCard = ({ member }) => {
   const profile = member?.profile_picture[0]
@@ -14,16 +11,16 @@ const TeamCard = ({ member }) => {
   let links = member?.social_links?.links?.[0];
 
   return (
-    <div className="flex gap-6 items-center p-4 bg-white shadow-lg border border-gray-200 rounded-xl mt-3  mb-4">
-     <div className="bg-gray-100 w-[100px] h-[100px] flex items-center justify-center">
-  <img
-    src={profile}
-    alt={member?.full_name}
-    className="w-[70px] h-[70px] rounded-full"
-    loading="lazy"
-    draggable={false}
-  />
-</div>
+    <div className="flex flex-col sm0:flex-row gap-6 sm0:items-center p-4 bg-white shadow-lg border border-gray-200 rounded-xl mt-3  mb-4">
+      <div className="bg-gray-100 w-full p-2 sm0:p-0 sm0:w-[100px] sm0:h-[100px] flex items-center justify-center">
+        <img
+          src={profile}
+          alt={member?.full_name}
+          className="sm0:w-[70px] sm0:h-[70px] w-[100px] h-[100px] rounded-full"
+          loading="lazy"
+          draggable={false}
+        />
+      </div>
 
       <div className="ml-4">
         <h4 className="text-base font-semibold">{member?.full_name}</h4>
@@ -55,7 +52,7 @@ const DiscoverTeam = ({ projectDetails }) => {
   return (
     <>
       {members.length > 0 ? (
-        <div className="p-6  rounded-xl mt-3 ">
+        <div className="md1:p-3 lg1:p-2 dxl1:p-6  rounded-xl mt-3 ">
           <div className="mx-auto">
             <div className="flex justify-end items-center mb-6">
               {/* <h2 className="text-xl font-semibold text-gray-900">Team</h2> */}
@@ -150,7 +147,7 @@ const DiscoverTeam = ({ projectDetails }) => {
         //     Any assets used in projects will live here.
         //   </p>
         // </div>
-        <NoDataFound message="No Team Member found"/>
+        <NoDataFound message="No Team Member found" />
       )}
     </>
   );
