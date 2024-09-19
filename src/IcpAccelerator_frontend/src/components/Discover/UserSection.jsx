@@ -12,6 +12,8 @@ import DiscoverProject from "./ProjectAlldata";
 import DiscoverUser from "./DiscoverUser";
 import DiscoverMentor from "./DiscoverMentor";
 import DiscoverInvestor from "./DiscoverInvestor";
+import { motion } from "framer-motion";
+import { FaSliders } from "react-icons/fa6";
 
 const UserCard = ({
   name,
@@ -105,7 +107,7 @@ const UserCard = ({
 
 const UsersSection = () => {
   const [currentTab, setCurrentTab] = useState("Users");
-
+  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   // Simulated counts for each category
   const [usersCount, setUsersCount] = useState(0);
   const [projectsCount, setProjectsCount] = useState(0);
@@ -173,23 +175,92 @@ const UsersSection = () => {
     setCurrentTab(tab);
   };
 
+  // return (
+  //   <div className="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 bg-white">
+  //     <h1 className="text-3xl font-bold p-4 px-0 bg-opacity-95 sticky bg-white z-20 top-0">
+  //       Discover
+  //     </h1>
+
+  //     {/* Tabs Section */}
+  //     <div className="sticky top-[4rem] bg-white z-10">
+  //       <Tabs
+  //         tabs={tabs}
+  //         currentTab={currentTab}
+  //         onTabChange={handleTabChange}
+  //       />
+  //     </div>
+
+  //     <div className="md1:flex lg:flex-none lgx:flex justify-between w-full">
+  //       <div className="flex-1 w-full md1:w-[60%] lg:w-full lgx:w-[60%]">
+  //         {currentTab === "Users" && (
+  //           <DiscoverUser onUserCountChange={setUsersCount} />
+  //         )}
+  //         {currentTab === "Projects" && (
+  //           <DiscoverProject onProjectCountChange={setProjectsCount} />
+  //         )}
+  //         {currentTab === "Mentors" && (
+  //           <DiscoverMentor onMentorCountChange={setMentorsCount} />
+  //         )}
+  //         {currentTab === "Investors" && (
+  //           <DiscoverInvestor onInvestorCountChange={setInvestorsCount} />
+  //         )}
+  //       </div>
+  //       <div className=" hidden md1:block lg:hidden lgx:block w-full md1:w-[30%] lg:w-full lgx:w-[30%]">
+  //         <div className="bg-white p-6 rounded-lg shadow-sm sticky top-0">
+  //           <h2 className="text-lg font-semibold mb-4">Filters</h2>
+  //           <div className="mb-4">
+  //             <label className="block text-sm font-medium text-gray-700 mb-1">
+  //               Role
+  //             </label>
+  //             <select
+  //               onChange={(e) => handleTabChange(e.target.value)}
+  //               className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+  //             >
+  //               <option>Select role</option>
+  //               <option value="Users">Users</option>
+  //               <option value="Projects">Projects</option>
+  //               <option value="Mentors">Mentors</option>
+  //               <option value="Investors">Investors</option>
+  //             </select>
+  //           </div>
+  //         </div>
+  //       </div>
+  //     </div>
+  //   </div>
+  // );
   return (
+    <>
     <div className="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 bg-white">
+      <div className="flex justify-between">
       <h1 className="text-3xl font-bold p-4 px-0 bg-opacity-95 sticky bg-white z-20 top-0">
         Discover
       </h1>
-
+      {/* Filter button for mobile */}
+      <div className=" block md1:hidden lg:block lgx:hidden ">
+          <button
+            onClick={() => setIsFiltersOpen(!isFiltersOpen)}
+            className="bg-white border border-gray-300 text-gray-800 py-2 px-4 rounded-md shadow-lg flex items-center my-4"
+          >
+            Filter
+            <FaSliders className="ml-2" />
+          </button>
+        </div>
+      </div>
+  
+  
       {/* Tabs Section */}
       <div className="sticky top-[4rem] bg-white z-10">
+       
+      </div>
+
+      <div className="md1:flex lg:flex-none lgx:flex justify-between w-full">
+        <div className="flex-1 w-full md1:w-[60%] lg:w-full lgx:w-[60%]">
         <Tabs
           tabs={tabs}
           currentTab={currentTab}
           onTabChange={handleTabChange}
         />
-      </div>
-
-      <div className="md1:flex lg:flex-none lgx:flex justify-between w-full">
-        <div className="flex-1 w-full md1:w-[60%] lg:w-full lgx:w-[60%]">
+        <div>
           {currentTab === "Users" && (
             <DiscoverUser onUserCountChange={setUsersCount} />
           )}
@@ -202,6 +273,7 @@ const UsersSection = () => {
           {currentTab === "Investors" && (
             <DiscoverInvestor onInvestorCountChange={setInvestorsCount} />
           )}
+        </div>
         </div>
         <div className=" hidden md1:block lg:hidden lgx:block w-full md1:w-[30%] lg:w-full lgx:w-[30%]">
           <div className="bg-white p-6 rounded-lg shadow-sm sticky top-0">
@@ -224,8 +296,54 @@ const UsersSection = () => {
           </div>
         </div>
       </div>
-    </div>
-  );
-};
-
+  {/* Mobile Filter Modal */}
+  {isFiltersOpen && (
+          <motion.div
+            className="fixed inset-0 z-30 p-6 overflow-hidden"
+            initial={{ y: '100%' }}
+            animate={{ y: 0 }}
+            exit={{ y: '100%' }}
+            transition={{ duration: 0.5, ease: 'easeInOut' }}
+          >
+            {/* Background Overlay */}
+            <div
+              className="fixed inset-0 bg-black opacity-50"
+              onClick={() => setIsFiltersOpen(false)}
+            ></div>
+  
+            {/* Filter modal sliding from the bottom */}
+            <motion.div
+      className="fixed bottom-0  min-h-[40vh] md:min-h-[40%] left-0 lg:left-auto lg:w-[75%] dlg:w-[77%] lgx:w-full lgx:left-0 right-0 bg-white z-40 p-6 rounded-t-3xl shadow-lg"
+      >
+              <div className="flex justify-between items-center">
+                <h2 className="text-lg font-semibold">Filters</h2>
+                <button
+                  className="text-4xl text-gray-700"
+                  onClick={() => setIsFiltersOpen(false)}
+                >
+                  &times;
+                </button>
+              </div>
+              {/* Filters for Mobile */}
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
+                <select
+                   onChange={(e) => handleTabChange(e.target.value)}
+                  className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option>Select role</option>
+                  <option value="Users">Users</option>
+                  <option value="Projects">Projects</option>
+                  <option value="Mentors">Mentors</option>
+                  <option value="Investors">Investors</option>
+                </select>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </div>
+    
+    </>
+    );
+  }
 export default UsersSection;

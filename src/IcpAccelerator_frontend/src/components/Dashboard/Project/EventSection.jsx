@@ -16,7 +16,7 @@ const EventSection = () => {
 
 
       {/* Content */}
-      <div className="text-center py-12">
+      <div className="text-center py-4 md:py-12">
         <div className='flex justify-center items-center'>
           <svg width="154" height="64" viewBox="0 0 154 64" fill="none" xmlns="http://www.w3.org/2000/svg">
             <mask id="path-1-inside-1_1002_24444" fill="white">

@@ -7,9 +7,10 @@ import { useSelector } from "react-redux";
 const NoCardData = ({  }) => {
 
   return (
-    <div className=" md:p-6">
+
+    <div className=" py-4 md:py-12">
       {/* Content */}
-      <div className="text-center pt-4">
+      <div className="text-center ">
         <div className="flex justify-center items-center">
           <svg
             width="154"
