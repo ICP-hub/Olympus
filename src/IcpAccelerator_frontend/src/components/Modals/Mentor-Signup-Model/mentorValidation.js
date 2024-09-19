@@ -19,20 +19,12 @@ export const validationSchema = yup.object().shape({
       "You must select at least one category",
       (value) => value && value.split(", ").length > 0
     ),
-    reason_for_joining: yup
+    reasons_to_join_platform: yup
     .string()
-    .transform((value) => {
-      if (Array.isArray(value)) {
-        return value.map((item) => item.value).join(", ");
-      }
-      return value;
-    })
-    .required("Selecting a reason is required")
-    .test(
-      "at-least-one",
-      "You must select at least one reason",
-      (value) => value && value.split(", ").length > 0
-    ),
+    .test("is-non-empty", "Selecting a reason is required", (value) =>
+      /\S/.test(value)
+    )
+    .required("Selecting a reason is required"),
     mentor_website_url: yup
     .string()
       .nullable(true)
