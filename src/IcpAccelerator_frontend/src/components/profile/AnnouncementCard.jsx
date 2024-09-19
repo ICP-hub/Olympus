@@ -744,6 +744,8 @@ const AnnouncementCard = () => {
                       src={editp}
                       className="ss:h-5 ss:w-5 min-h-3 min-w-3 hover:text-green-400 cursor-pointer"
                       alt="edit"
+                      loading="lazy"
+                      draggable={false}
                     />
                   </div>
                   <div
@@ -763,6 +765,8 @@ const AnnouncementCard = () => {
                     src={ann_project_logo}
                     alt="pic"
                     className="h-8 w-8 sm0:h-10 sm0:w-10 sm:h-12 sm:w-12 rounded-full border border-gray-300"
+                    loading="lazy"
+                    draggable={false}
                   />
                 </div>
                 <div className="flex flex-col gap-1 overflow-hidden">

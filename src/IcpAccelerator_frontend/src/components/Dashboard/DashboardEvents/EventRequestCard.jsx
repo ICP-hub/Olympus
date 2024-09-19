@@ -478,6 +478,8 @@ const EventRequestCard = () => {
               src={profileImageSrc}
               alt={title}
               className="w-20 h-20 md:w-24 md:h-24 rounded-full object-cover"
+              loading="lazy"
+              draggable={false}
             />
           </div>
         </div>
@@ -514,6 +516,8 @@ const EventRequestCard = () => {
             src={PriceIcon}
             alt="Funding Amount"
             className="w-4 h-4 text-gray-400 mr-2"
+            loading="lazy"
+            draggable={false}
           />
           <span className="text-sm text-gray-500">{fundingAmount}</span>
         </div>

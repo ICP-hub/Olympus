@@ -20,6 +20,8 @@ const TeamCard = ({ member }) => {
     src={profile}
     alt={member?.full_name}
     className="w-[70px] h-[70px] rounded-full"
+    loading="lazy"
+    draggable={false}
   />
 </div>
 

@@ -86,7 +86,9 @@ let timestamp = jobDetails?.timestamp
                 <div className="py-6 px-5 border rounded-t-lg bg-[#EEF2F6]">
                   <div className="flex gap-2 items-center">
                     <span className="">
-                      <img src={awtar} alt="icon" />
+                      <img src={awtar} alt="icon" 
+                         loading="lazy"
+                         draggable={false}/>
                     </span>
                     <p className="">{jobTitle}</p>
                   </div>

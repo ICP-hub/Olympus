@@ -14,6 +14,8 @@ const AttendeesCard = ({ member }) => {
           src={member.profile_picture}
           alt={member.full_name}
           className="w-full h-full rounded-full object-cover"
+          loading="lazy"
+          draggable={false}
         />
       </div>
 

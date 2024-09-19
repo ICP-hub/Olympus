@@ -59,6 +59,8 @@ const TeamMember = ({ cardData, onDelete }) => {
                         src={avatar}
                         alt={name}
                         className="w-10 h-10 rounded-full mr-4"
+                        loading="lazy"
+                        draggable={false}
                       />
                       <div class="ps-3">
                         <p className="font-medium text-[#121926]">{name}</p>

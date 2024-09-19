@@ -195,6 +195,8 @@ console.log('allLiveEventsData',allLiveEventsData)
         src={image}
         alt={name}
         className="w-full h-full rounded-lg object-cover object-center"
+        loading="lazy"
+        draggable={false}
       />
     </div>
     <div className="w-full sm:w-2/3 mt-4 sm:mt-0">

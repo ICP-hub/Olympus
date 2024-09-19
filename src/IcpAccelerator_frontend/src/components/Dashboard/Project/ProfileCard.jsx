@@ -86,6 +86,8 @@ function ProfileCard({ cardData }) {
                 src={projectLogo}
                 alt="Cypherpunk Labs"
                 className="w-full aspect-square object-cover rounded-lg"
+                loading="lazy"
+                draggable={false}
               />
             </div>
 
@@ -123,6 +125,8 @@ function ProfileCard({ cardData }) {
                   src={ProfileImage}
                   alt="Profile"
                   className="h-[40px] w-[40px] rounded-full"
+                  loading="lazy"
+                  draggable={false}
                 />
               </div>
             </div>

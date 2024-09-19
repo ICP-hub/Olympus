@@ -21,6 +21,8 @@ const DiscoverFundingCard = ({ title, value, imageSrc, isPrivate }) => {
                     src={imageSrc}
                     alt={`${title} Thumbnail`}
                     className={`w-[150px] h-[100px] object-cover rounded-lg transition-all duration-300 ${isPrivate ? 'blur-sm' : ''}`}
+                    loading="lazy"
+                    draggable={false}
                 />
             </div>
 

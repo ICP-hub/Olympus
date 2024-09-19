@@ -29,6 +29,8 @@ export default function HomeSection5() {
                   src={homepagesection5.image.src.man1}
                   alt="Statue"
                   className="rounded-lg"
+                  loading="lazy"
+                  draggable={false}
                 />
               </div>
               <div className="md:w-1/2 min ">
@@ -41,6 +43,8 @@ export default function HomeSection5() {
                         src={homepagesection5.step1.icon.CreateProfileIcon}
                         alt="createProfile Icon"
                         className="h-4 w-4"
+                        loading="lazy"
+                        draggable={false}
                       />
                     </span>
                     <div>
@@ -58,6 +62,8 @@ export default function HomeSection5() {
                         src={homepagesection5.step2.icon.DiscoverAndConnetIcon}
                         alt="DiscoverAndConnect Icon"
                         className="h-4 w-4"
+                        loading="lazy"
+                        draggable={false}
                       />
                     </span>
                     <div>
@@ -75,6 +81,8 @@ export default function HomeSection5() {
                         src={homepagesection5.step3.icon.CollaborateIcon}
                         alt="Collaboration Icon"
                         className="h-4 w-4"
+                        loading="lazy"
+                        draggable={false}
                       />
                     </span>
                     <div>
@@ -92,6 +100,8 @@ export default function HomeSection5() {
                         src={homepagesection5.step4.icon.AccelerateIcon}
                         alt="Accelerate Icon"
                         className="h-4 w-4"
+                        loading="lazy"
+                        draggable={false}
                       />
                     </span>
                     <div>

@@ -306,6 +306,8 @@ const AssociationRecieverDataFromProject = ({
           src={userProfilePicture}
           alt="projectLogo"
           className="w-24 h-24 rounded-full object-cover"
+          loading="lazy"
+          draggable={false}
         />
       </div>
 

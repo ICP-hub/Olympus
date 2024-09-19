@@ -173,7 +173,7 @@ console.log('totalJobs',totalJobs)
               next={loadMore}
               hasMore={hasMore}
               loader={<h4>Loading more...</h4>}
-              endMessage={<p className="flex justify-center">No more data available</p>}
+              endMessage={<p className="flex justify-center mt-4">No more data available...</p>}
     scrollableTarget="scrollableDiv" 
              
             >
@@ -214,6 +214,8 @@ console.log('totalJobs',totalJobs)
                                 src={job_project_logo}
                                 className="w-8 h-8 rounded-lg"
                                 alt="icon"
+                                loading="lazy"
+                                draggable={false}
                               />
                             </span>
                             <span className="truncate break-all">

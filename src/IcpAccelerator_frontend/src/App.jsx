@@ -30,7 +30,6 @@ const App = () => {
     (currState) => currState.internet.isAuthenticated
   );
   const { reloadLogin } = useAuth();
-  const [isModalOpen, setModalOpen] = useState(false);
   const dispatch = useDispatch();
 
   function getNameOfCurrentStatus(rolesStatusArray) {

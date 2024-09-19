@@ -97,6 +97,8 @@ const ProjectRegister1 = ({ formData,setFormData,logoData,setLogoData }) => { //
                 src={logoPreview}
                 alt="Logo"
                 className="h-full w-full object-cover"
+                loading="lazy"
+                draggable={false}
               />
               // DISPLAYING LOGO PREVIEW IF LOGO DATA EXISTS
             ) : (

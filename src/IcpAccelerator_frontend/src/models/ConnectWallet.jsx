@@ -6,6 +6,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../components/StateManagement/useContext/useAuth";
+import { userRegisteredHandlerRequest } from "../components/StateManagement/Redux/Reducers/userRegisteredData";
 
 const ConnectWallet = ({ isModalOpen, onClose }) => {
   const isAuthenticated = useSelector(
@@ -17,25 +18,30 @@ const ConnectWallet = ({ isModalOpen, onClose }) => {
   const navigate = useNavigate();
   const modalRef = useRef(null);
 
-  // useEffect(() => {
-  //   // if (isAuthenticated) {
-  //     onClose();
-  //     navigate("/");
-  //   // }
-  // }, []);
   useEffect(() => {
+    if (isAuthenticated){
+      dispatch(userRegisteredHandlerRequest());
+        }
+  }, [isAuthenticated,dispatch]);
+  useEffect(() => {
+    console.log("isAuthenticated:", isAuthenticated);
+    console.log("userFullData:", userFullData);
+  
     if (isAuthenticated) {
       if (userFullData) {
-        navigate("/dashboard"); 
+        console.log("Navigating to /dashboard");
+        navigate("/dashboard");
       } else {
-        navigate("register-user");
+        console.log("Navigating to /register-user");
+        navigate("/register-user");
       }
       onClose();
-    }
-    else{
-       navigate("/");
+    } else {
+      console.log("Navigating to home page");
+      navigate("/");
     }
   }, [isAuthenticated, userFullData]);
+  
   const loginHandler = async (val) => {
     await login(val);
   };

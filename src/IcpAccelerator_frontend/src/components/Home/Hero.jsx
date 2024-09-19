@@ -29,6 +29,8 @@ const HeroSection = () => {
                     src={homepagedata.section1.df_logo.df_logo}
                     alt="Backed by Dfinity"
                     className="h-6"
+                    loading="lazy"
+                    draggable={false}
                   />
                 </div>
                 <h1 className="text-[2.5rem] sm0:text-[3.5rem]  sm3:text-7xl font-bold text-[#121926] leading-tight mb-4">

@@ -39,6 +39,8 @@ function HomeSection4() {
                     src={homepagesection4.card1.imageSrc.sec41}
                     alt=""
                     className="py-4 object-cover object-center max-w-[241px] max-h-[407px]"
+                    loading="lazy"
+                    draggable={false}
                   />
                 </div>
                 <div className="px-5">
@@ -182,6 +184,8 @@ function HomeSection4() {
                     src={homepagesection4.card4.imageSrc.hubs}
                     alt=""
                     className="pt-4 object-cover object-center max-w-[241px] max-h-[324px]"
+                    loading="lazy"
+                    draggable={false}
                   />
                 </div>
                 <div className="px-5">
@@ -221,6 +225,8 @@ function HomeSection4() {
                     src={homepagesection4.card5.imageSrc.hubs}
                     alt=""
                     className="pt-4 object-cover object-center max-w-[241px] max-h-[324px]"
+                    loading="lazy"
+                    draggable={false}
                   />
                 </div>
                 <div className="px-5">

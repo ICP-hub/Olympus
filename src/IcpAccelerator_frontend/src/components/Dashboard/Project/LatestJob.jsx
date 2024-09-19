@@ -333,6 +333,8 @@ const NewJob = ({ latestJobs }) => {
                             className=" text-gray-500 hover:underline text-xs h-[1.3rem]  sm:h-5 sm:w-5 cursor-pointer"
                             alt="edit"
                             onClick={() => handleJobsOpenModal(card)}
+                            loading="lazy"
+                            draggable={false}
                           />
                           <span className="text-[16px] text-gray-500 cursor-pointer hover:text-red-700">
                             <DeleteOutlinedIcon
@@ -352,6 +354,8 @@ const NewJob = ({ latestJobs }) => {
                             src={job_project_logo}
                             className="w-12 h-12 rounded-full"
                             alt="icon"
+                            loading="lazy"
+                            draggable={false}
                           />
                         </div>
                         <div className="w-full text-lg font-medium break-all truncate">

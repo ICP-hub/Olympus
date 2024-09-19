@@ -40,7 +40,8 @@ const ProfileSection = ({
             className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
             onClick={() => handleEditToggle(field)}
           >
-            {isEditing ? "" : <img src={edit} alt="edit icon" />}
+            {isEditing ? "" : <img src={edit} alt="edit icon"    loading="lazy"
+                    draggable={false}/>}
           </button>
         </div>
       </div>

@@ -697,6 +697,8 @@ const ProjectDetail = () => {
                 className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
                 alt="edit"
                 onClick={() => handleEditClick("reason_to_join_incubator")}
+                loading="lazy"
+                draggable={false}
               />
             </div>
             {editMode.reason_to_join_incubator ? (
@@ -756,6 +758,8 @@ const ProjectDetail = () => {
                 className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
                 alt="edit"
                 onClick={() => handleEditClick("preferred_icp_hub")}
+                loading="lazy"
+                draggable={false}
               />
             </div>
             {editMode.preferred_icp_hub ? (
@@ -809,6 +813,8 @@ const ProjectDetail = () => {
                 className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
                 alt="edit"
                 onClick={() => handleEditClick("project_name")}
+                loading="lazy"
+                draggable={false}
               />
             </div>
             {editMode.project_name ? (
@@ -848,6 +854,8 @@ const ProjectDetail = () => {
                 className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
                 alt="edit"
                 onClick={handleOpenModal}
+                loading="lazy"
+                draggable={false}
               />
             </div>
             {!isModalOpen && 
@@ -871,6 +879,8 @@ const ProjectDetail = () => {
                 className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
                 alt="edit"
                 onClick={() => handleEditClick("project_elevator_pitch")}
+                loading="lazy"
+                draggable={false}
               />
             </div>
             {editMode.project_elevator_pitch ? (
@@ -910,6 +920,8 @@ const ProjectDetail = () => {
                 className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
                 alt="edit"
                 onClick={() => handleEditClick("project_website")}
+                loading="lazy"
+                draggable={false}
               />
             </div>
             {editMode.project_website ? (
@@ -949,6 +961,8 @@ const ProjectDetail = () => {
                 className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
                 alt="edit"
                 onClick={() => handleEditClick("is_your_project_registered")}
+                loading="lazy"
+                draggable={false}
               />
             </div>
             {editMode.is_your_project_registered ? (
@@ -998,6 +1012,8 @@ const ProjectDetail = () => {
                     className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
                     alt="edit"
                     onClick={() => handleEditClick("type_of_registration")}
+                    loading="lazy"
+                    draggable={false}
                   />
                 </div>
                 {editMode.type_of_registration ? (
@@ -1044,6 +1060,8 @@ const ProjectDetail = () => {
                     className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
                     alt="edit"
                     onClick={() => handleEditClick("country_of_registration")}
+                    loading="lazy"
+                    draggable={false}
                   />
                 </div>
                 {editMode.country_of_registration ? (
@@ -1099,6 +1117,8 @@ const ProjectDetail = () => {
                 onClick={() => {
                   handleEditClick("multi_chain");
                 }}
+                loading="lazy"
+                draggable={false}
               />
             </div>
             {editMode.multi_chain ? (
@@ -1144,6 +1164,8 @@ const ProjectDetail = () => {
                   className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
                   alt="edit"
                   onClick={() => handleEditClick("supports_multichain")}
+                  loading="lazy"
+                  draggable={false}
                 />
               </div>
               {editMode.supports_multichain ? (
@@ -1217,6 +1239,8 @@ const ProjectDetail = () => {
                 className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
                 alt="edit"
                 onClick={() => handleEditClick("live_on_icp_mainnet")}
+                loading="lazy"
+                draggable={false}
               />
             </div>
             {editMode.live_on_icp_mainnet ? (
@@ -1265,6 +1289,8 @@ const ProjectDetail = () => {
                     className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
                     alt="edit"
                     onClick={() => handleEditClick("dapp_link")}
+                    loading="lazy"
+                    draggable={false}
                   />
                 </div>
                 {editMode.dapp_link ? (
@@ -1304,6 +1330,8 @@ const ProjectDetail = () => {
                     className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
                     alt="edit"
                     onClick={() => handleEditClick("weekly_active_users")}
+                    loading="lazy"
+                    draggable={false}
                   />
                 </div>
                 {editMode.weekly_active_users ? (
@@ -1345,6 +1373,8 @@ const ProjectDetail = () => {
                     className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
                     alt="edit"
                     onClick={() => handleEditClick("revenue")}
+                    loading="lazy"
+                    draggable={false}
                   />
                 </div>
                 {editMode.revenue ? (
@@ -1387,7 +1417,8 @@ const ProjectDetail = () => {
                   className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
                   onClick={() => handleEditClick("project_area_of_focus")}
                 >
-                  <img src={editp} alt="edit" />
+                  <img src={editp} alt="edit"    loading="lazy"
+                    draggable={false}/>
                 </button>
               </div>
             </div>
@@ -1450,6 +1481,8 @@ const ProjectDetail = () => {
                 className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
                 alt="edit"
                 onClick={() => handleEditClick("promotional_video")}
+                loading="lazy"
+                draggable={false}
               />
             </div>
             {editMode.promotional_video ? (
@@ -1487,6 +1520,8 @@ const ProjectDetail = () => {
                 className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
                 alt="edit"
                 onClick={() => handleEditClick("token_economics")}
+                loading="lazy"
+                draggable={false}
               />
             </div>
             {editMode.token_economics ? (
@@ -1575,7 +1610,8 @@ const ProjectDetail = () => {
                             className="absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 ease-in-out transform opacity-0 group-hover:opacity-100 group-hover:translate-x-6 h-10 w-7"
                             onClick={() => handleLinkEditToggle(key)} // Toggle editing mode for this link
                           >
-                            <img src={editp} alt="edit" />
+                            <img src={editp} alt="edit"    loading="lazy"
+                    draggable={false}/>
                           </button>
                         </>
                       )}

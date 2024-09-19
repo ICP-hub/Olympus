@@ -31,6 +31,8 @@ import getSocialLogo from "../Utils/navigationHelper/getSocialLogo";
                     src={URL.createObjectURL(getAllData?.image)}
                     alt={`${getAllData?.full_name}`}
                     className="rounded-full size-28"
+                    loading="lazy"
+                    draggable={false}
                   />
                 ) : (
                   <div className="bg-gray-200 rounded-full p-4 mb-4">

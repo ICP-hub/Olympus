@@ -200,6 +200,8 @@ const DiscoverMentor = ({ onMentorCountChange }) => {
                           src={profile}
                           alt={full_name ?? "Mentor"}
                           className="w-24 h-24 rounded-full object-cover"
+                          loading="lazy"
+                          draggable={false}
                         />
                       </div>
                     </div>

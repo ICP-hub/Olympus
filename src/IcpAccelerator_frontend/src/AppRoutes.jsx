@@ -1,16 +1,12 @@
 import React, { lazy, Suspense, } from "react";
 import { Routes, Route, } from "react-router-dom";
-import Breadcrumbs from "./components/Layout/Breadcrumbs/BreadCrumbs";
 import Home from "./components/Home/Home";
 import MainLayout from "./components/Layout/MainLayout";
 import { useAuth } from "./components/StateManagement/useContext/useAuth";
-import toast, { Toaster } from "react-hot-toast";
-import UserRegistration from "./components/UserRegistration/UserRegistration";
 import Loader from "./components/Loader/Loader";
-// import DashboardHomePage from "./components/Dashboard/DashboardHomePage/DashboardHomePage";
 const DashboardHomePage = lazy(() => import("./components/Dashboard/DashboardHomePage/DashboardHomePage"));
 const Error404 = lazy(() => import("./components/Error404/Error404"));
-
+const UserRegistration = lazy(() => import("./components/UserRegistration/UserRegistration"));
 const AppRoutes = () => {
   const { isAuthenticated } = useAuth();
   const renderCommonRoutes = () => (
@@ -24,14 +20,9 @@ const AppRoutes = () => {
     </>
   );
   const authenticatedRoutes = [
-    // { path: "register-user", element: <UserRegistration /> },
     { path: "dashboard/*", element: <DashboardHomePage /> },
-
   ];
   return (
-    <>
-      {/* <Breadcrumbs authenticatedRoutes={authenticatedRoutes} /> */}
-      <div>
         <Suspense fallback={<Loader />}>
           <Routes>
             {renderCommonRoutes()}
@@ -41,9 +32,6 @@ const AppRoutes = () => {
               ))}
           </Routes>
         </Suspense>
-        <Toaster />
-      </div>
-    </>
   );
 };
 

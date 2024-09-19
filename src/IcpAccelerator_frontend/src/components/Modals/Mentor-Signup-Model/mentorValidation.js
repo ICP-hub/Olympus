@@ -21,10 +21,18 @@ export const validationSchema = yup.object().shape({
     ),
     reason_for_joining: yup
     .string()
-    .test("is-non-empty", "Selecting a reason is required", (value) =>
-      /\S/.test(value)
-    )
-    .required("Selecting a reason is required"),
+    .transform((value) => {
+      if (Array.isArray(value)) {
+        return value.map((item) => item.value).join(", ");
+      }
+      return value;
+    })
+    .required("Selecting a reason is required")
+    .test(
+      "at-least-one",
+      "You must select at least one reason",
+      (value) => value && value.split(", ").length > 0
+    ),
     mentor_website_url: yup
     .string()
       .nullable(true)

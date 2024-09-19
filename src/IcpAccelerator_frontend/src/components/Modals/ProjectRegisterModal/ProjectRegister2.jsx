@@ -99,6 +99,8 @@ const ProjectRegister2 = ({ formData,setFormData, coverData,setCoverData}) => {
                                 src={coverPreview}
                                 alt="cover"
                                 className="h-full w-full object-cover"
+                                loading="lazy"
+                                draggable={false}
                             />
                         ) : (
                             <svg

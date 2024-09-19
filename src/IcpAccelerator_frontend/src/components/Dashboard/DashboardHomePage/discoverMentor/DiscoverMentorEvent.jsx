@@ -65,6 +65,8 @@ const DiscoverMentorEvent = ({ principal }) => {
                 src={event.cohort_banner}
                 alt={event.title}
                 className="w-full h-[180px] object-cover"
+                loading="lazy"
+                draggable={false}
               />
             </div>
             <div className="p-2 flex bg-white rounded absolute top-6 left-6 z-10 justify-between items-start">

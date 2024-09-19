@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { yupResolver } from "@hookform/resolvers/yup";
 import ReactSelect from "react-select";
@@ -14,9 +15,9 @@ import { validationSchema } from "../Modals/Mentor-Signup-Model/mentorValidation
 import getPlatformFromHostname from "../Utils/navigationHelper/getPlatformFromHostname";
 import getSocialLogo from "../Utils/navigationHelper/getSocialLogo";
 
-
 const MentorEdit = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const actor = useSelector((currState) => currState.actors.actor);
   const getAllIcpHubs = useSelector((currState) => currState.hubs.allHubs);
   const multiChainNames = useSelector((currState) => currState.chains.chains);
@@ -179,53 +180,58 @@ const MentorEdit = () => {
   };
   const onSubmitHandler = async (data) => {
     console.log("my submit data on submit", data);
-  
-    const updatedSocialLinks = Object.entries(socialLinks).map(([key, url]) => ({
-      link: url ? [url] : [],
-    }));
-  
-    const multiChainNamesString = Array.isArray(data.multi_chain_names)
-    ? data.multi_chain_names.join(", ") // Join the array elements into a single string
-    : data.multi_chain_names; // If it's already a string, use it as is
 
-  // Convert `area_of_expertise` from array to string, if it's an array
-  const areaOfExpertiseString = Array.isArray(data.area_of_expertise)
-    ? data.area_of_expertise.join(", ") // Join the array elements into a single string
-    : data.area_of_expertise;
+    const updatedSocialLinks = Object.entries(socialLinks).map(
+      ([key, url]) => ({
+        link: url ? [url] : [],
+      })
+    );
 
     const mentorData = {
       preferred_icp_hub: [data?.preferred_icp_hub || ""],
       icp_hub_or_spoke: data?.icp_hub_or_spoke === "true",
       hub_owner: [
-        data?.icp_hub_or_spoke === "true" && data?.hub_owner ? data?.hub_owner : "",
+        data?.icp_hub_or_spoke === "true" && data?.hub_owner
+          ? data?.hub_owner
+          : "",
       ],
       category_of_mentoring_service: data?.category_of_mentoring_service,
       years_of_mentoring: data.years_of_mentoring.toString(),
       linkedin_link: data?.mentor_linkedin_url,
-      multichain: multiChainNamesString? multiChainNamesString : '',
+      multichain: Array.isArray(data.multi_chain_names)
+        ? data.multi_chain_names
+        : [],
       website: [data?.mentor_website_url || ""],
       existing_icp_mentor: false,
       existing_icp_project_porfolio: data.existing_icp_project_porfolio
         ? [data.existing_icp_project_porfolio]
         : [],
-      area_of_expertise: areaOfExpertiseString ? areaOfExpertiseString : '',
+      area_of_expertise: data.area_of_expertise
+        ? data.area_of_expertise
+        : [],
       links: updatedSocialLinks.length > 0 ? [updatedSocialLinks] : [],
-  
+
       reason_for_joining: data.reasons_to_join_platform
         ? [data.reasons_to_join_platform]
         : [],
     };
-  
+
     console.log("my submit mentorData on submit", mentorData);
-  
+
     try {
       const result = await actor.update_mentor(mentorData);
-      console.log("on submit mera result update data ja raha hai  ....", result);
+      console.log(
+        "on submit mera result update data ja raha hai  ....",
+        result
+      );
       if (result) {
         toast.success("Update successfully");
-        // window.location.href = "/";
+        dispatch(mentorRegisteredHandlerRequest());
+        navigate("/dashboard/profile");
       } else {
         toast.error(result);
+        dispatch(mentorRegisteredHandlerRequest());
+        navigate("/dashboard/profile");
       }
     } catch (error) {
       toast.error(error.message || "An unexpected error occurred");
@@ -234,7 +240,6 @@ const MentorEdit = () => {
     setEdit(false);
     setIsLinkBeingEdited(false);
   };
-  
 
   const setReasonOfJoiningSelectedOptionsHandler = (val) => {
     setReasonOfJoiningSelectedOptions(
@@ -262,12 +267,15 @@ const MentorEdit = () => {
       setReasonOfJoiningSelectedOptionsHandler(
         val[0]?.profile?.reason_for_joining
       );
-
       setValue(
         "area_of_expertise",
-        val[0]?.profile?.area_of_expertise ?? ""
+        val[0]?.profile?.area_of_expertise
+          ? val[0]?.profile?.area_of_expertise.join(", ")
+          : ""
       );
-      setInterestedDomainsSelectedOptionsHandler(  val[0]?.profile?.area_of_expertise ?? null);
+      setInterestedDomainsSelectedOptions(
+        val[0]?.profile?.area_of_expertise ?? null
+      );
       setValue(
         "category_of_mentoring_service",
         val[0]?.profile?.category_of_mentoring_service ?? ""
@@ -294,13 +302,20 @@ const MentorEdit = () => {
         val[0]?.profile?.hub_owner ? val[0]?.profile?.hub_owner?.[0] : ""
       );
       setValue("mentor_linkedin_url", val[0]?.profile?.linkedin_link ?? "");
-      setValue("multi_chain", val[0]?.profile?.multichain.length>0  ? 'true' : 'false');
+      setValue(
+        "multi_chain",
+        val[0]?.profile?.multichain.length > 0 ? "true" : "false"
+      );
 
       setValue(
         "multi_chain_names",
-        val[0]?.profile?.multichain?.[0] ? val[0]?.profile?.multichain?.[0] : ""
+        val[0]?.profile?.multichain?.[0]
+          ? val[0]?.profile?.multichain?.[0].join(", ")
+          : ""
       );
-      setMultiChainSelectedOptionsHandler(val[0]?.profile?.multichain?.[0] ?? null);
+      setMultiChainSelectedOptionsHandler(
+        val[0]?.profile?.multichain?.[0] ?? null
+      );
       setValue(
         "preferred_icp_hub",
         val[0]?.profile?.preferred_icp_hub
@@ -366,7 +381,7 @@ const MentorEdit = () => {
 
   // form error handler func
   const onErrorHandler = (val) => {
-    console.log('errors',val)
+    console.log("errors", val);
     toast.error("Empty fields or invalid values, please recheck the form");
   };
 
@@ -374,8 +389,9 @@ const MentorEdit = () => {
   const setInterestedDomainsSelectedOptionsHandler = (val) => {
     setInterestedDomainsSelectedOptions(
       val
-        ? val
-            .map((interest) => ({ value: interest.trim(), label: interest }))
+        ? val?.[0]
+            .split(", ")
+            .map((interset) => ({ value: interset, label: interset }))
         : []
     );
   };
@@ -383,18 +399,18 @@ const MentorEdit = () => {
   const setCategoryOfMentoringServiceSelectedOptionsHandler = (val) => {
     setCategoryOfMentoringServiceSelectedOptions(
       val
-        ? val.split(", ").map((reason) => ({ value: reason.trim(), label: reason }))
+        ? val
+            .split(", ")
+            .map((reason) => ({ value: reason.trim(), label: reason }))
         : []
     );
   };
   const setMultiChainSelectedOptionsHandler = (val) => {
-    if (val && val.length > 0 && typeof val[0] === "string") {
-      setMultiChainSelectedOptions(
-        val.map((chain) => ({ value: chain.trim(), label: chain }))
-      );
-    } else {
-      setMultiChainSelectedOptions([]);
-    }
+    setMultiChainSelectedOptions(
+      val
+        ? val?.[0].split(", ").map((chain) => ({ value: chain, label: chain }))
+        : []
+    );
   };
 
   useEffect(() => {
@@ -448,8 +464,7 @@ const MentorEdit = () => {
   // data
   const reasons_to_join_platform =
     mentorFullData[0]?.profile?.reason_for_joining ?? "";
-  const area_of_expertise =
-    mentorFullData[0]?.profile?.area_of_expertise?? "";
+  const area_of_expertise = mentorFullData[0]?.profile?.area_of_expertise ?? "";
   const category_of_mentoring_service =
     mentorFullData[0]?.profile?.category_of_mentoring_service ?? "";
   const existing_icp_mentor =
@@ -460,9 +475,9 @@ const MentorEdit = () => {
     ? "true"
     : "false";
   const hub_owner = mentorFullData[0]?.profile?.hub_owner?.[0] ?? "";
-  const multi_chain =mentorFullData[0]?.profile?.multichain.length>0 ? 'true' : 'false'
-  const multi_chain_names =
-    mentorFullData[0]?.profile?.multichain[0] ?? "";
+  const multi_chain =
+    mentorFullData[0]?.profile?.multichain.length > 0 ? "true" : "false";
+  const multi_chain_names = mentorFullData[0]?.profile?.multichain[0] ?? "";
   const preferred_icp_hub =
     mentorFullData[0]?.profile?.preferred_icp_hub?.[0] ?? "";
   const mentor_website_url = mentorFullData[0]?.profile?.website?.[0] ?? "";
@@ -470,7 +485,7 @@ const MentorEdit = () => {
     mentorFullData[0]?.profile?.years_of_mentoring ?? "";
   const multichain = multi_chain ? "Yes" : "No";
   const spoke = icp_hub_or_spoke ? "Yes" : "No";
-  console.log('domains_interested_in',area_of_expertise)
+  console.log("domains_interested_in", area_of_expertise);
   return (
     <div ref={editableRef} className="bg-white p-2 ">
       <form onSubmit={handleSubmit(onSubmitHandler, onErrorHandler)}>
@@ -481,6 +496,8 @@ const MentorEdit = () => {
               className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
               alt="edit"
               onClick={() => handleEditClick("preferred_icp_hub")}
+              loading="lazy"
+              draggable={false}
             />
           </div>
           <label className="block mb-2 text-xs font-semibold text-gray-500">
@@ -520,78 +537,74 @@ const MentorEdit = () => {
           )}
         </div>
         <div className="my-1 group relative hover:bg-gray-100 rounded-lg p-2 px-3">
-                <div className="flex justify-between">
-                  <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
-                    Area of Expertise
-                  </h3>
-                  <div>
-                    <button
-                      type="button"
-                      className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
-                      onClick={() => handleEditClick("area_of_expertise")}
-                    >
-                      {edit.area_of_expertise ? "" : <img src={editp} />}
-                    </button>
-                  </div>
-                </div>
-                {edit.area_of_expertise ? (
-                  <>
-                    <ReactSelect
-                      isMulti
-                      menuPortalTarget={document.body}
-                      menuPosition={"fixed"}
-                      styles={getReactSelectStyles(
-                        errors?.area_of_expertise
-                      )}
-                      value={interestedDomainsSelectedOptions}
-                      options={interestedDomainsOptions}
-                      classNamePrefix="select"
-                      className="basic-multi-select w-full text-start"
-                      placeholder="Select domains you are interested in"
-                      name="area_of_expertise"
-                      onChange={(selectedOptions) => {
-                        if (selectedOptions && selectedOptions.length > 0) {
-                          setInterestedDomainsSelectedOptions(selectedOptions);
-                          clearErrors("area_of_expertise");
-                          setValue(
-                            "area_of_expertise",
-                            selectedOptions
-                              .map((option) => option.value)
-                              .join(", "),
-                            { shouldValidate: true }
-                          );
-                        } else {
-                          setInterestedDomainsSelectedOptions([]);
-                          setValue("area_of_expertise", "", {
-                            shouldValidate: true,
-                          });
-                          setError("area_of_expertise", {
-                            type: "required",
-                            message: "Selecting an interest is required",
-                          });
-                        }
-                      }}
-                    />
-                    
-                  </>
-                ) : (
-                  <div className="flex gap-2 overflow-x-auto">
-                    {area_of_expertise.map((interest, index) => (
-                      <span
-                        key={index}
-                        className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 break-words"
-                      >
-                        {interest}
-                      </span>
-                    ))}
-                  </div>
-                )}
-                {errors.area_of_expertise && (
-                      <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-                        {errors.area_of_expertise.message}
-                      </span>
-                    )}
-              </div>
+          <div className="flex justify-between">
+            <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
+              Area of Expertise
+            </h3>
+            <div>
+              <button
+                type="button"
+                className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
+                onClick={() => handleEditClick("area_of_expertise")}
+              >
+                {edit.area_of_expertise ? "" : <img src={editp}    loading="lazy"
+                    draggable={false}/>}
+              </button>
+            </div>
+          </div>
+          {edit.area_of_expertise ? (
+            <>
+              <ReactSelect
+                isMulti
+                menuPortalTarget={document.body}
+                menuPosition={"fixed"}
+                styles={getReactSelectStyles(errors?.area_of_expertise)}
+                value={interestedDomainsSelectedOptions}
+                options={interestedDomainsOptions}
+                classNamePrefix="select"
+                className="basic-multi-select w-full text-start"
+                placeholder="Select domains you are interested in"
+                name="area_of_expertise"
+                onChange={(selectedOptions) => {
+                  if (selectedOptions && selectedOptions.length > 0) {
+                    setInterestedDomainsSelectedOptions(selectedOptions);
+                    clearErrors("area_of_expertise");
+                    setValue(
+                      "area_of_expertise",
+                      selectedOptions.map((option) => option.value).join(", "),
+                      { shouldValidate: true }
+                    );
+                  } else {
+                    setInterestedDomainsSelectedOptions([]);
+                    setValue("area_of_expertise", "", {
+                      shouldValidate: true,
+                    });
+                    setError("area_of_expertise", {
+                      type: "required",
+                      message: "Selecting an interest is required",
+                    });
+                  }
+                }}
+              />
+            </>
+          ) : (
+            <div className="flex gap-2 overflow-x-auto">
+              {area_of_expertise.map((interest, index) => (
+                <span
+                  key={index}
+                  className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 break-words"
+                >
+                  {interest}
+                </span>
+              ))}
+            </div>
+          )}
+          {errors.area_of_expertise && (
+            <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+              {errors.area_of_expertise.message}
+            </span>
+          )}
+        </div>
         <div className="my-1 relative group  hover:bg-gray-100 rounded-lg p-2 px-3">
           <div className="absolute right-1 top-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
             <img
@@ -599,6 +612,8 @@ const MentorEdit = () => {
               className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
               alt="edit"
               onClick={() => handleEditClick("multi_chain")}
+              loading="lazy"
+              draggable={false}
             />
           </div>
           <label className="block mb-1 text-xs font-semibold text-gray-500">
@@ -624,8 +639,10 @@ const MentorEdit = () => {
             </div>
           )}
           {errors.multi_chain && (
-          <p className="mt-1 text-sm text-red-500 font-bold text-left">{errors.multi_chain.message}</p>
-        )}
+            <p className="mt-1 text-sm text-red-500 font-bold text-left">
+              {errors.multi_chain.message}
+            </p>
+          )}
         </div>
 
         {watch("multi_chain") === "true" ? (
@@ -639,6 +656,8 @@ const MentorEdit = () => {
                 className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
                 alt="edit"
                 onClick={() => handleEditClick("multi_chain_names")}
+                loading="lazy"
+                draggable={false}
               />
             </div>
             {edit.multi_chain_names ? (
@@ -677,31 +696,29 @@ const MentorEdit = () => {
                     }
                   }}
                 />
-
-                
               </div>
             ) : (
               <div className="flex justify-between items-center cursor-pointer py-1">
                 <div className="flex gap-2 overflow-x-auto">
-                    {multi_chain_names.map((chain, index) => (
-                      <span
-                        key={index}
-                        className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 break-words"
-                      >
-                        {chain}
-                      </span>
-                    ))}
-                  </div>
+                  {multi_chain_names.map((chain, index) => (
+                    <span
+                      key={index}
+                      className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 break-words"
+                    >
+                      {chain}
+                    </span>
+                  ))}
+                </div>
               </div>
             )}
             {errors.multi_chain_names && (
-                  <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                    {errors.multi_chain_names.message}
-                  </p>
-                )}
+              <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                {errors.multi_chain_names.message}
+              </p>
+            )}
           </div>
         ) : (
-          ''
+          ""
         )}
 
         <div className="relative group hover:bg-gray-100 rounded-lg p-2 px-3">
@@ -711,6 +728,8 @@ const MentorEdit = () => {
               className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
               alt="edit"
               onClick={() => handleEditClick("category_of_mentoring_service")}
+              loading="lazy"
+              draggable={false}
             />
           </div>
           <label className="block mb-1 text-xs font-semibold text-gray-500">
@@ -752,24 +771,25 @@ const MentorEdit = () => {
               }}
             />
           ) : (
-
-              <div className="flex overflow-x-auto gap-2 cursor-pointer py-1">
-                {category_of_mentoring_service &&
-                  category_of_mentoring_service
-                    .split(", ")
-                    .map((service, index) => (
-                      <span
-                        key={index}
-                        className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1"
-                      >
-                        {service}
-                      </span>
-                    ))}
-              </div>
+            <div className="flex overflow-x-auto gap-2 cursor-pointer py-1">
+              {category_of_mentoring_service &&
+                category_of_mentoring_service
+                  .split(", ")
+                  .map((service, index) => (
+                    <span
+                      key={index}
+                      className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1"
+                    >
+                      {service}
+                    </span>
+                  ))}
+            </div>
           )}
-           {errors.category_of_mentoring_service && (
-          <p className="mt-1 text-sm text-red-500 font-bold text-left">{errors.category_of_mentoring_service.message}</p>
-        )}
+          {errors.category_of_mentoring_service && (
+            <p className="mt-1 text-sm text-red-500 font-bold text-left">
+              {errors.category_of_mentoring_service.message}
+            </p>
+          )}
         </div>
         <div className="relative group  hover:bg-gray-100 rounded-lg p-2 px-3">
           <div className="absolute right-2 top-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
@@ -778,46 +798,42 @@ const MentorEdit = () => {
               className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
               alt="edit"
               onClick={() => handleEditClick("reason_for_joining")}
+              loading="lazy"
+              draggable={false}
             />
           </div>
           <label className="block mb-1 text-xs font-semibold text-gray-500">
             REASON FOR JOINING THIS PLATFORM
           </label>
           {edit.reason_for_joining ? (
-            <ReactSelect
-              isMulti
-              menuPortalTarget={document.body}
-              menuPosition={"fixed"}
-              styles={getReactSelectStyles(errors?.reasons_to_join_platform && isFormTouched.reason_for_joining )}
-              value={reasonOfJoiningSelectedOptions}
-              options={reasonOfJoiningOptions}
-              classNamePrefix="select"
-              className="basic-multi-select w-full text-start"
-              placeholder="Select your reasons to join this platform"
-              name="reasons_to_join_platform"
-              onChange={(selectedOptions) => {
-                if (selectedOptions && selectedOptions.length > 0) {
+            <div>
+              <ReactSelect
+                isMulti
+                menuPortalTarget={document.body}
+                menuPosition={"fixed"}
+                styles={getReactSelectStyles(errors?.reason_for_joining)}
+                value={reasonOfJoiningSelectedOptions}
+                options={reasonOfJoiningOptions}
+                classNamePrefix="select"
+                className="basic-multi-select w-full text-start"
+                placeholder="Select your reasons to join this platform"
+                name="reason_for_joining"
+                onChange={(selectedOptions) => {
                   setReasonOfJoiningSelectedOptions(selectedOptions);
-                  clearErrors("reasons_to_join_platform");
+                  clearErrors("reason_for_joining");
                   setValue(
-                    "reasons_to_join_platform",
+                    "reason_for_joining",
                     selectedOptions.map((option) => option.value).join(", "),
                     { shouldValidate: true }
                   );
-                } else {
-                  setReasonOfJoiningSelectedOptions([]);
-                  setValue("reasons_to_join_platform", "", {
-                    shouldValidate: true,
-                  });
-                  // setError("reasons_to_join_platform", {
-                  //   type: "required",
-                  //   message: "Selecting a reason is required",
-                  // });
-                }
-              handleFieldTouch("reasons_to_join_platform");
-
-              }}
-            />
+                }}
+              />
+              {errors.reason_for_joining && (
+                <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                  {errors.reason_for_joining.message}
+                </span>
+              )}
+            </div>
           ) : (
             <div className="flex overflow-x-auto gap-2 cursor-pointer py-1">
               {reasons_to_join_platform &&
@@ -833,11 +849,11 @@ const MentorEdit = () => {
                 ))}
             </div>
           )}
-          {errors.reason_for_joining && isFormTouched.reason_for_joining &&(
-          <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-            {errors.reason_for_joining.message}
-          </span>
-        )}
+          {errors.reason_for_joining && (
+            <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+              {errors.reason_for_joining.message}
+            </span>
+          )}
         </div>
         <div className="my-1 relative group  hover:bg-gray-100 rounded-lg p-2 px-3">
           <div className="absolute right-2 top-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
@@ -846,6 +862,8 @@ const MentorEdit = () => {
               className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
               alt="edit"
               onClick={() => handleEditClick("icp_hub_or_spoke")}
+              loading="lazy"
+              draggable={false}
             />
           </div>
           <label className="block mb-1 text-xs font-semibold text-gray-500">
@@ -868,7 +886,6 @@ const MentorEdit = () => {
                   Yes
                 </option>
               </select>
-              
             </>
           ) : (
             <div className="flex justify-between items-center cursor-pointer p-1">
@@ -876,10 +893,10 @@ const MentorEdit = () => {
             </div>
           )}
           {errors.icp_hub_or_spoke && (
-                <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                  {errors.icp_hub_or_spoke.message}
-                </p>
-              )}
+            <p className="mt-1 text-sm text-red-500 font-bold text-left">
+              {errors.icp_hub_or_spoke.message}
+            </p>
+          )}
         </div>
 
         {watch("icp_hub_or_spoke") === "true" ? (
@@ -893,6 +910,8 @@ const MentorEdit = () => {
                 className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
                 alt="edit"
                 onClick={() => handleEditClick("hub_owner")}
+                loading="lazy"
+                draggable={false}
               />
             </div>
             {edit.hub_owner ? (
@@ -918,18 +937,17 @@ const MentorEdit = () => {
                     </option>
                   ))}
                 </select>
-               
               </div>
             ) : (
               <div className="flex justify-between items-center cursor-pointer py-1">
                 <span className="mr-2 text-sm">{hub_owner}</span>
               </div>
             )}
-             {errors.hub_owner && (
-                  <p className="mt-1 text-sm text-red-500 font-bold text-left">
-                    {errors.hub_owner.message}
-                  </p>
-                )}
+            {errors.hub_owner && (
+              <p className="mt-1 text-sm text-red-500 font-bold text-left">
+                {errors.hub_owner.message}
+              </p>
+            )}
           </div>
         ) : (
           <></>
@@ -942,6 +960,8 @@ const MentorEdit = () => {
               className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
               alt="edit"
               onClick={() => handleEditClick("website")}
+              loading="lazy"
+              draggable={false}
             />
           </div>
           <label className="block mb-1 text-xs font-semibold text-gray-500">
@@ -960,7 +980,6 @@ const MentorEdit = () => {
                                                 } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1`}
                 placeholder="Enter your website url"
               />
-              
             </>
           ) : (
             <div className="flex justify-between items-center cursor-pointer p-1 text-sm">
@@ -968,10 +987,10 @@ const MentorEdit = () => {
             </div>
           )}
           {errors?.mentor_website_url && (
-                <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-                  {errors?.mentor_website_url?.message}
-                </span>
-              )}
+            <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+              {errors?.mentor_website_url?.message}
+            </span>
+          )}
         </div>
 
         <div className="my-1 relative group  hover:bg-gray-100 rounded-lg p-2 px-3">
@@ -981,6 +1000,8 @@ const MentorEdit = () => {
               className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
               alt="edit"
               onClick={() => handleEditClick("years_of_mentoring")}
+              loading="lazy"
+              draggable={false}
             />
           </div>
           <label className="block mb-1 text-xs font-semibold text-gray-500">
@@ -1001,146 +1022,144 @@ const MentorEdit = () => {
                 onWheel={(e) => e.target.blur()}
                 min={0}
               />
-             
             </>
           ) : (
             <div className="flex justify-between items-center cursor-pointer p-1">
               <span>{years_of_mentoring}</span>
             </div>
           )}
-           {errors?.years_of_mentoring && (
-                <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-                  {errors?.years_of_mentoring?.message}
-                </span>
-              )}
+          {errors?.years_of_mentoring && (
+            <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+              {errors?.years_of_mentoring?.message}
+            </span>
+          )}
         </div>
         <h3 className="mb-2 text-xs text-gray-500 px-3">LINKS</h3>
         <div className="relative px-3">
-                  <div className="flex flex-wrap gap-5">
-                    {Object.keys(socialLinks)
-                      .filter((key) => socialLinks[key]) // Only show links with valid URLs
-                      .map((key, index) => {
-                        const url = socialLinks[key];
-                        const Icon = getSocialLogo(url); // Get the corresponding social icon
-                        return (
-                          <div
-                            className="group relative flex items-center mb-3"
-                            key={key}
-                          >
-                            {isEditingLink[key] ? (
-                              <div className="flex w-full">
-                                <div className="flex items-center w-full">
-                                  <div className="flex items-center space-x-2 w-full">
-                                    <div className="flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full">
-                                      {Icon} {/* Display the icon */}
-                                    </div>
-                                    <input
-                                      type="text"
-                                      value={url}
-                                      onChange={(e) => handleLinkChange(e, key)}
-                                      className="border p-2 rounded-md w-full"
-                                      placeholder="Enter your social media URL"
-                                    />
-                                  </div>
-                                  <button
-                                    type="button"
-                                    onClick={() => handleSaveLink(key)} // Save the link
-                                    className="ml-2 text-green-500 hover:text-green-700"
-                                  >
-                                    <FaSave />
-                                  </button>
-                                  <button
-                                    type="button"
-                                    onClick={() => handleLinkDelete(key)} // Delete the link
-                                    className="ml-2 text-red-500 hover:text-red-700"
-                                  >
-                                    <FaTrash />
-                                  </button>
-                                </div>
-                              </div>
-                            ) : (
-                              <>
-                                <a
-                                  href={url}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="flex items-center"
-                                >
-                                  {Icon} {/* Display the icon */}
-                                </a>
-                                <button
-                                  type="button"
-                                  className="absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 ease-in-out transform opacity-0 group-hover:opacity-100 group-hover:translate-x-6 h-10 w-7"
-                                  onClick={() => handleLinkEditToggle(key)} // Toggle editing mode for this link
-                                >
-                                  <img src={editp} alt="edit" />
-                                </button>
-                              </>
-                            )}
-                          </div>
-                        );
-                      })}
-                  </div>
-                  {fields.map((item, index) => (
-                    <div key={item.id} className="flex flex-col">
-                      <div className="flex items-center mb-2 pb-1">
-                        <Controller
-                          name={`links[${index}].link`}
-                          control={control}
-                          render={({ field, fieldState }) => (
-                            <div className="flex items-center w-full">
-                              <div className="flex items-center space-x-2 w-full">
-                                <div className="flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full">
-                                  {field.value && getSocialLogo(field.value)}{" "}
-                                  {/* Display logo for new link */}
-                                </div>
-                                <input
-                                  type="text"
-                                  placeholder="Enter your social media URL"
-                                  className={`p-2 border ${
-                                    fieldState.error
-                                      ? "border-red-500"
-                                      : "border-[#737373]"
-                                  } rounded-md w-full bg-gray-50 border-2 border-[#D1D5DB]`}
-                                  {...field}
-                                />
-                              </div>
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  handleSaveNewLink(field.value, index)
-                                } // Save the new link
-                                className="ml-2 text-green-500 hover:text-green-700"
-                              >
-                                <FaSave />
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => remove(index)} // Remove link field
-                                className="ml-2 text-red-500 hover:text-red-700"
-                              >
-                                <FaTrash />
-                              </button>
+          <div className="flex flex-wrap gap-5">
+            {Object.keys(socialLinks)
+              .filter((key) => socialLinks[key]) // Only show links with valid URLs
+              .map((key, index) => {
+                const url = socialLinks[key];
+                const Icon = getSocialLogo(url); // Get the corresponding social icon
+                return (
+                  <div
+                    className="group relative flex items-center mb-3"
+                    key={key}
+                  >
+                    {isEditingLink[key] ? (
+                      <div className="flex w-full">
+                        <div className="flex items-center w-full">
+                          <div className="flex items-center space-x-2 w-full">
+                            <div className="flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full">
+                              {Icon} {/* Display the icon */}
                             </div>
-                          )}
+                            <input
+                              type="text"
+                              value={url}
+                              onChange={(e) => handleLinkChange(e, key)}
+                              className="border p-2 rounded-md w-full"
+                              placeholder="Enter your social media URL"
+                            />
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => handleSaveLink(key)} // Save the link
+                            className="ml-2 text-green-500 hover:text-green-700"
+                          >
+                            <FaSave />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleLinkDelete(key)} // Delete the link
+                            className="ml-2 text-red-500 hover:text-red-700"
+                          >
+                            <FaTrash />
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        <a
+                          href={url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center"
+                        >
+                          {Icon} {/* Display the icon */}
+                        </a>
+                        <button
+                          type="button"
+                          className="absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 ease-in-out transform opacity-0 group-hover:opacity-100 group-hover:translate-x-6 h-10 w-7"
+                          onClick={() => handleLinkEditToggle(key)} // Toggle editing mode for this link
+                        >
+                          <img src={editp} alt="edit"    loading="lazy"
+                    draggable={false}/>
+                        </button>
+                      </>
+                    )}
+                  </div>
+                );
+              })}
+          </div>
+          {fields.map((item, index) => (
+            <div key={item.id} className="flex flex-col">
+              <div className="flex items-center mb-2 pb-1">
+                <Controller
+                  name={`links[${index}].link`}
+                  control={control}
+                  render={({ field, fieldState }) => (
+                    <div className="flex items-center w-full">
+                      <div className="flex items-center space-x-2 w-full">
+                        <div className="flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full">
+                          {field.value && getSocialLogo(field.value)}{" "}
+                          {/* Display logo for new link */}
+                        </div>
+                        <input
+                          type="text"
+                          placeholder="Enter your social media URL"
+                          className={`p-2 border ${
+                            fieldState.error
+                              ? "border-red-500"
+                              : "border-[#737373]"
+                          } rounded-md w-full bg-gray-50 border-2 border-[#D1D5DB]`}
+                          {...field}
                         />
                       </div>
+                      <button
+                        type="button"
+                        onClick={() => handleSaveNewLink(field.value, index)} // Save the new link
+                        className="ml-2 text-green-500 hover:text-green-700"
+                      >
+                        <FaSave />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => remove(index)} // Remove link field
+                        className="ml-2 text-red-500 hover:text-red-700"
+                      >
+                        <FaTrash />
+                      </button>
                     </div>
-                  ))}
-                  {fields.length < 10 && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (fields.length < 10) {
-                          append({ link: "" });
-                        }
-                      }}
-                      className="flex items-center p-1 text-[#155EEF]"
-                    >
-                      <FaPlus className="mr-1" /> Add Another Link
-                    </button>
                   )}
-                </div>
+                />
+              </div>
+            </div>
+          ))}
+          {fields.length < 10 && (
+            <button
+              type="button"
+              onClick={() => {
+                if (fields.length < 10) {
+                  append({ link: "" });
+                }
+              }}
+              className="flex items-center p-1 text-[#155EEF]"
+            >
+              <FaPlus className="mr-1" /> Add Another Link
+            </button>
+          )}
+        </div>
         {/* {Object.values(edit).some((value) => value) && ( */}
         {(Object.values(edit).some((value) => value) || isLinkBeingEdited) && (
           <div className="flex justify-end gap-4 mt-4">

@@ -143,6 +143,8 @@ function DashboardHomeProfileCards(percentage) {
                   src={userFullData?.profile_picture[0]}
                   alt="Profle Image"
                   className="w-24 h-24 rounded-full object-cover"
+                  loading="lazy"
+                  draggable={false}
                 />
               </div>
               <span className="inline-block bg-[#F0F9FF] border border-[#B9E6FE] text-[#026AA2] text-xs font-semibold px-2 py-1 rounded-md mb-2">
@@ -228,12 +230,14 @@ function DashboardHomeProfileCards(percentage) {
           </div>
           <div className="mt-2 h-35 flex justify-center items-center border border-dashed border-gray-300 rounded-lg p-6">
             <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
-              <img src={firstCardAvatar} className="text-gray-400 w-12 h-12" />
+              <img src={firstCardAvatar} className="text-gray-400 w-12 h-12"    loading="lazy"
+                    draggable={false}/>
             </div>
           </div>
           <div className="mt-8 h-35 flex justify-center items-center border border-dashed border-gray-300 rounded-lg p-6">
             <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
-              <img src={secondCardAvatar} className="text-gray-400 w-12 h-12" />
+              <img src={secondCardAvatar} className="text-gray-400 w-12 h-12"    loading="lazy"
+                    draggable={false}/>
             </div>
           </div>
         </div>

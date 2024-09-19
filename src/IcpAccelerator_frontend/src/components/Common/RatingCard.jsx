@@ -90,6 +90,8 @@ const RatingCard = ({  }) => {
                 src={uint8ArrayToBase64(ratingtosend?.profile_pic)}
                 alt="pic"
                 className="rounded-full w-16 h-16 object-cover border border-gray-300"
+                loading="lazy"
+                draggable={false}
               />
             ) : (
               ""

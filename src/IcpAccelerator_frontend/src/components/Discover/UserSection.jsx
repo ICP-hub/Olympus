@@ -47,6 +47,8 @@ const UserCard = ({
               src={avatar}
               alt={name}
               className="w-24 h-24 rounded-full object-cover"
+              loading="lazy"
+              draggable={false}
             />
           </div>
           {rating && (

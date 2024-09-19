@@ -206,6 +206,8 @@ const DiscoverInvestor = ({ onInvestorCountChange }) => {
                         src={profile} // Placeholder logo image
                         alt={full_name ?? "investor"}
                         className="w-24 h-24 rounded-full object-cover"
+                        loading="lazy"
+                        draggable={false}
                       />
                     </div>
                   </div>

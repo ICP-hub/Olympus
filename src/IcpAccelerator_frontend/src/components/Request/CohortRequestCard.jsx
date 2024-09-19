@@ -68,6 +68,8 @@ const CohortRequestCard = ({ user, index, activeTabData }) => {
                       src={profileImageSrc}
                       alt={title}
                       className="w-24 h-24 rounded-full object-cover"
+                      loading="lazy"
+                      draggable={false}
                     />
                   </div>
                 </div>
@@ -114,6 +116,8 @@ const CohortRequestCard = ({ user, index, activeTabData }) => {
                     src={PriceIcon}
                     alt="Funding Amount"
                     className="w-4 h-4 text-gray-400 mr-2"
+                    loading="lazy"
+                    draggable={false}
                   />
                   <span className="text-gray-500">{fundingAmount}</span>
                 </div>

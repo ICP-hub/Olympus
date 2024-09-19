@@ -663,6 +663,8 @@ const UserRegistration = () => {
                   alt="logo"
                   className=" text-start w-1/3 lg:w-1/3"
                   loading="lazy"
+                  draggable={false}
+
                 />
                 <h2 className="text-[#364152] px-4 mb-3 text-sm font-semibold mt-8 text-start md:text-left">
                   Step {index + 1} of 3

@@ -108,6 +108,8 @@ const ProjectCard = () => {
                       src={projectLogo}
                       alt={projectName ?? "ICP"}
                       className=" sm2:w-3/4 h-28 rounded-2xl border-4 border-[#FFFFFF] relative z-10"
+                      loading="lazy"
+                      draggable={false}
                     />
                   </div>
                   <div className="ml-4 w-full pt-4 sm2:pt-0 sm2:w-2/3 relative">
@@ -150,6 +152,8 @@ const ProjectCard = () => {
                       src={projectLogo}
                       alt={projectName ?? "ICP"}
                       className="w-12 h-12 rounded-lg"
+                      loading="lazy"
+                      draggable={false}
                     />
                     <div className="ml-4">
                       <h3 className="text-lg font-bold">

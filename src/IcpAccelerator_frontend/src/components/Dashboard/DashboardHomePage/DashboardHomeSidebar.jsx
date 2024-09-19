@@ -428,7 +428,8 @@ const handleToggle = async (role) => {
           lg:relative lg:translate-x-0`}
       >
         <div className="p-4 flex justify-between items-center">
-          <img src={topLogo} alt="Olympus" className="h-8" />
+          <img src={topLogo} alt="Olympus" className="h-8"    loading="lazy"
+                    draggable={false}/>
           <button onClick={onClose} className="lg:hidden">
             <CloseIcon className="text-gray-600" />
           </button>

@@ -94,6 +94,8 @@ const DashboardProjectCard = () => {
               src={projectLogo}
               alt={projectName ?? "ICP"}
               className=" sm5:w-3/4 h-28 w-1/2 ss2:w-auto rounded-2xl border-4 border-[#FFFFFF] relative z-10"
+              loading="lazy"
+              draggable={false}
             />
           </div>
           <div className="ml-4 w-full sm5:w-2/3 relative mt-6 sm5:mt-0">
@@ -131,7 +133,8 @@ const DashboardProjectCard = () => {
     <div className="bg-white rounded-lg shadow-sm p-6 mt-8">
     <div className="border border-dashed border-gray-300 p-6 ">
       <div className="flex  items-center justify-center h-full text-center">
-        <img src={Nodatafound} alt="" className="h-full " />
+        <img src={Nodatafound} alt="" className="h-full "    loading="lazy"
+                    draggable={false}/>
       </div>
     </div>
   </div>

@@ -7,7 +7,7 @@ import ArrowOutwardOutlinedIcon from "@mui/icons-material/ArrowOutwardOutlined";
 import toast, { Toaster } from "react-hot-toast";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useCountries } from "react-countries";
-import { useSelector } from "react-redux";
+import { useSelector,useDispatch } from "react-redux";
 import { FaEdit, FaPlus, FaSave, FaTrash } from "react-icons/fa";
 import { Principal } from "@dfinity/principal";
 import { ThreeDots } from "react-loader-spinner";
@@ -23,6 +23,8 @@ import getSocialLogo from "../Utils/navigationHelper/getSocialLogo";
 import getPlatformFromHostname from "../Utils/navigationHelper/getPlatformFromHostname";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa"; // Icons for dropdown
 import getReactSelectStyles from "../Utils/navigationHelper/getReactSelectStyles";
+import { userRegisteredHandlerRequest } from "../StateManagement/Redux/Reducers/userRegisteredData";
+
 
 const ProfileDetail = () => {
   const {
@@ -40,17 +42,21 @@ const ProfileDetail = () => {
   });
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const userCurrentRoleStatusActiveRole = useSelector(
     (currState) => currState.currentRoleStatus.activeRole
+  );
+  const isAuthenticated = useSelector(
+    (currState) => currState.internet.isAuthenticated
   );
   const [isImageEditing, setIsImageEditing] = useState(false);
   const principal = useSelector((currState) => currState.internet.principal);
   const { countries } = useCountries();
   const userFullData = useSelector((currState) => currState.userData.data.Ok);
-  console.log("User aa raha hai", userFullData);
+  // console.log("User aa raha hai", userFullData);
   const actor = useSelector((currState) => currState.actors.actor);
   const [imagePreview, setImagePreview] = useState(null);
-  console.log("......./image ......../", imagePreview);
+//  const [dispatchCompleted, setDispatchCompleted] = useState(false);
   const [imageData, setImageData] = useState(null);
   const [interestedDomainsOptions, setInterestedDomainsOptions] = useState([]);
   const [
@@ -71,6 +77,11 @@ const ProfileDetail = () => {
   const typeOfProfile = useSelector(
     (currState) => currState.profileTypes.profiles
   );
+  // useEffect(()=>{
+  //   if( isAuthenticated){
+  //     dispatch(userRegisteredHandlerRequest());
+  //   }
+  // },[isAuthenticated,dispatch])
   const [reasonOfJoiningSelectedOptions, setReasonOfJoiningSelectedOptions] =
     useState([]);
   const [typeOfProfileOptions, setTypeOfProfileOptions] = useState([]);
@@ -86,6 +97,7 @@ const ProfileDetail = () => {
       setTypeOfProfileOptions([]);
     }
   }, [typeOfProfile]);
+  
 
   const [socialLinks, setSocialLinks] = useState({});
   const [isEditingLink, setIsEditingLink] = useState({});
@@ -193,6 +205,13 @@ const ProfileDetail = () => {
       console.log("ERROR--imageCreationFunc-file", file);
     }
   };
+  // useEffect(() => {
+  //   console.log("dispatchCompleted value:", dispatchCompleted);
+  //   if (dispatchCompleted) {
+  //     console.log("Navigation triggered: /dashboard/profile");
+     
+  //   }
+  // }, [dispatchCompleted, navigate]);
 
   const handleSave = async (data) => {
     console.log("data", data);
@@ -218,13 +237,10 @@ const ProfileDetail = () => {
             .map((val) => val.trim()) || [""],
         ],
         profile_picture: imageData ? [imageData] : [],
-        //   social_links: Object.entries(socialLinks).map(([key, value]) => ({
-        //     link: value ? [value] : [],
-        // })),
         social_links: [updatedSocialLinks],
       };
 
-      console.log("Sending user_data to backend:", user_data); // Debugging line
+      // console.log("Sending user_data to backend:", user_data); // Debugging line
 
       const result = await actor.update_user_data(
         convertedPrincipal,
@@ -233,11 +249,12 @@ const ProfileDetail = () => {
       console.log("Sending user_data to backend using api:", result);
       if ("Ok" in result) {
         toast.success("User profile updated successfully");
-        setTimeout(() => {
-          window.location.href = "/dashboard/profile";
-        }, 500);
+      dispatch(userRegisteredHandlerRequest());
+      navigate("/dashboard/profile");
       } else {
         console.log("Error:", result);
+      dispatch(userRegisteredHandlerRequest());
+      navigate("/dashboard/profile");
         toast.error("Failed to update profile");
       }
     } catch (error) {
@@ -256,6 +273,7 @@ const ProfileDetail = () => {
       area_of_interest: false,
       country: false,
       reason_to_join: false,
+      links:false
     });
     // setTempData(profileData);
     setIsLinkBeingEdited(false);
@@ -321,6 +339,7 @@ const ProfileDetail = () => {
   };
 
   const setValuesHandler = (val) => {
+    console.log('val',val);
     if (val) {
       setValue("full_name", val?.full_name ?? "");
       setValue("email", val?.email?.[0] ?? "");
@@ -330,6 +349,7 @@ const ProfileDetail = () => {
       setValue("domains_interested_in", val?.area_of_interest ?? "");
       setInterestedDomainsSelectedOptionsHandler(val?.area_of_interest ?? null);
       setImagePreview(val?.profile_picture?.[0] ?? "");
+// setImageData(val?.profile_picture?.[0] ?? "")
       setValue("type_of_profile", val?.type_of_profile?.[0]);
       setValue(
         "reasons_to_join_platform",
@@ -370,19 +390,19 @@ const ProfileDetail = () => {
     console.log("Validation errors:", val); // Add this to log validation errors
     toast.error("Empty fields or invalid values, please recheck the form");
   };
-  const handleReasonToJoinChange = (selectedOptions) => {
-    const selectedValues = selectedOptions.map((option) => option.value);
+  // const handleReasonToJoinChange = (selectedOptions) => {
+  //   const selectedValues = selectedOptions.map((option) => option.value);
 
-    console.log("Selected Options:", selectedOptions); // Check what is being selected
-    console.log("Selected Values:", selectedValues); // Check the values
+  //   console.log("Selected Options:", selectedOptions); // Check what is being selected
+  //   console.log("Selected Values:", selectedValues); // Check the values
 
-    setReasonOfJoiningSelectedOptions(selectedOptions);
-    setValue("reason_to_join", selectedValues, { shouldValidate: true });
-    setReasonOfJoiningSelectedOptionsHandler((prev) => ({
-      ...prev,
-      reason_to_join: selectedValues,
-    }));
-  };
+  //   setReasonOfJoiningSelectedOptions(selectedOptions);
+  //   setValue("reason_to_join", selectedValues, { shouldValidate: true });
+  //   setReasonOfJoiningSelectedOptionsHandler((prev) => ({
+  //     ...prev,
+  //     reason_to_join: selectedValues,
+  //   }));
+  // };
 
   // default interests set function
   const setInterestedDomainsSelectedOptionsHandler = (val) => {
@@ -446,12 +466,16 @@ const ProfileDetail = () => {
                 src={imagePreview}
                 alt="Profile"
                 className="h-full w-full rounded-full object-cover"
+                loading="lazy"
+                draggable={false}
               />
             ) : (
               <img
                 src={ProfileImage}
                 alt={full_name}
                 className="w-full h-full rounded-full object-cover"
+                loading="lazy"
+                draggable={false}
               />
             )}
             <div className="absolute inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -515,6 +539,8 @@ const ProfileDetail = () => {
               src={ProfileImage}
               alt={full_name}
               className="w-full h-full rounded-full object-cover"
+              loading="lazy"
+              draggable={false}
             />
           </div>
           <div className="flex items-center justify-center mb-1">
@@ -549,6 +575,8 @@ const ProfileDetail = () => {
               src={ProfileImage}
               alt={full_name}
               className="w-full h-full rounded-full object-cover"
+              loading="lazy"
+              draggable={false}
             />
           </div>
 
@@ -580,7 +608,8 @@ const ProfileDetail = () => {
           }}
         >
           <div className="absolute top-0 right-0 p-2  cursor-pointer">
-            <img src={edit} className="size-4" />
+            <img src={edit} className="size-4"    loading="lazy"
+                    draggable={false}/>
             <input
               id="file-upload"
               type="file"
@@ -593,6 +622,8 @@ const ProfileDetail = () => {
               src={ProfileImage}
               alt={full_name}
               className="w-full h-full rounded-full object-cover"
+              loading="lazy"
+              draggable={false}
             />
             <div className="absolute inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300">
               <FaPlus className="text-white text-xl" />
@@ -688,7 +719,8 @@ const ProfileDetail = () => {
                           className="visible md:invisible md:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
                           onClick={() => handleEditToggle("full_name")}
                         >
-                          {isEditing.full_name ? "" : <img src={edit} />}
+                          {isEditing.full_name ? "" : <img src={edit}    loading="lazy"
+                    draggable={false}/>}
                         </button>
                       </div>
                     </div>
@@ -733,7 +765,8 @@ const ProfileDetail = () => {
                           {isEditing.openchat_user_name ? (
                             ""
                           ) : (
-                            <img src={edit} />
+                            <img src={edit}    loading="lazy"
+                            draggable={false}/>
                           )}
                         </button>
                       </div>
@@ -777,7 +810,8 @@ const ProfileDetail = () => {
                           className="visible md:invisible md:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
                           onClick={() => handleEditToggle("email")}
                         >
-                          {isEditing.email ? "" : <img src={edit} />}
+                          {isEditing.email ? "" : <img src={edit}    loading="lazy"
+                    draggable={false}/>}
                         </button>
                       </div>
                     </div>
@@ -827,7 +861,8 @@ const ProfileDetail = () => {
                           className="visible md:invisible md:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
                           onClick={() => handleEditToggle("bio")}
                         >
-                          {isEditing.bio ? "" : <img src={edit} />}
+                          {isEditing.bio ? "" : <img src={edit}    loading="lazy"
+                    draggable={false}/>}
                         </button>
                       </div>
                     </div>
@@ -857,7 +892,8 @@ const ProfileDetail = () => {
                           className="visible md:invisible md:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
                           onClick={() => handleEditToggle("country")}
                         >
-                          {isEditing.country ? "" : <img src={edit} />}
+                          {isEditing.country ? "" : <img src={edit}    loading="lazy"
+                    draggable={false}/>}
                         </button>
                       </div>
                     </div>
@@ -905,7 +941,8 @@ const ProfileDetail = () => {
                           className="visible md:invisible md:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
                           onClick={() => handleEditToggle("type_of_profile")}
                         >
-                          {isEditing.type_of_profile ? "" : <img src={edit} />}
+                          {isEditing.type_of_profile ? "" : <img src={edit}    loading="lazy"
+                    draggable={false}/>}
                         </button>
                       </div>
                     </div>
@@ -954,7 +991,8 @@ const ProfileDetail = () => {
                           className="visible md:invisible md:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
                           onClick={() => handleEditToggle("reason_to_join")}
                         >
-                          {isEditing.reason_to_join ? "" : <img src={edit} />}
+                          {isEditing.reason_to_join ? "" : <img src={edit}    loading="lazy"
+                    draggable={false}/>}
                         </button>
                       </div>
                     </div>
@@ -1023,7 +1061,8 @@ const ProfileDetail = () => {
                           className="visible md:invisible md:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
                           onClick={() => handleEditToggle("area_of_interest")}
                         >
-                          {isEditing.area_of_interest ? "" : <img src={edit} />}
+                          {isEditing.area_of_interest ? "" : <img src={edit}    loading="lazy"
+                    draggable={false}/>}
                         </button>
                       </div>
                     </div>
@@ -1150,7 +1189,8 @@ const ProfileDetail = () => {
                                       className="absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 translate-x-6 ease-in-out transform opacity-100 md:opacity-0 md:group-hover:opacity-100 md:group-hover:translate-x-6 h-10 w-7"
                                       onClick={() => handleLinkEditToggle(key)} // Toggle editing mode for this link
                                     >
-                                      <img src={edit} alt="edit" />
+                                      <img src={edit} alt="edit"    loading="lazy"
+                    draggable={false}/>
                                     </button>
                                   </>
                                 )}
@@ -1336,7 +1376,8 @@ const ProfileDetail = () => {
                       className="visible md:invisible md:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
                       onClick={() => handleEditToggle("full_name")}
                     >
-                      {isEditing.full_name ? "" : <img src={edit} />}
+                      {isEditing.full_name ? "" : <img src={edit}    loading="lazy"
+                    draggable={false}/>}
                     </button>
                   </div>
                 </div>
@@ -1378,7 +1419,8 @@ const ProfileDetail = () => {
                       className="visible md:invisible md:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
                       onClick={() => handleEditToggle("openchat_user_name")}
                     >
-                      {isEditing.openchat_user_name ? "" : <img src={edit} />}
+                      {isEditing.openchat_user_name ? "" : <img src={edit}    loading="lazy"
+                    draggable={false}/>}
                     </button>
                   </div>
                 </div>
@@ -1421,7 +1463,8 @@ const ProfileDetail = () => {
                       className="visible md:invisible md:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
                       onClick={() => handleEditToggle("email")}
                     >
-                      {isEditing.email ? "" : <img src={edit} />}
+                      {isEditing.email ? "" : <img src={edit}    loading="lazy"
+                    draggable={false}/>}
                     </button>
                   </div>
                 </div>
@@ -1469,7 +1512,8 @@ const ProfileDetail = () => {
                       className="visible md:invisible md:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
                       onClick={() => handleEditToggle("bio")}
                     >
-                      {isEditing.bio ? "" : <img src={edit} />}
+                      {isEditing.bio ? "" : <img src={edit}    loading="lazy"
+                    draggable={false}/>}
                     </button>
                   </div>
                 </div>
@@ -1499,7 +1543,8 @@ const ProfileDetail = () => {
                       className="visible md:invisible md:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
                       onClick={() => handleEditToggle("country")}
                     >
-                      {isEditing.country ? "" : <img src={edit} />}
+                      {isEditing.country ? "" : <img src={edit}    loading="lazy"
+                    draggable={false}/>}
                     </button>
                   </div>
                 </div>
@@ -1545,7 +1590,8 @@ const ProfileDetail = () => {
                       className="visible md:invisible md:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
                       onClick={() => handleEditToggle("type_of_profile")}
                     >
-                      {isEditing.type_of_profile ? "" : <img src={edit} />}
+                      {isEditing.type_of_profile ? "" : <img src={edit}    loading="lazy"
+                    draggable={false}/>}
                     </button>
                   </div>
                 </div>
@@ -1594,7 +1640,8 @@ const ProfileDetail = () => {
                       className="visible md:invisible md:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
                       onClick={() => handleEditToggle("reason_to_join")}
                     >
-                      {isEditing.reason_to_join ? "" : <img src={edit} />}
+                      {isEditing.reason_to_join ? "" : <img src={edit}    loading="lazy"
+                    draggable={false}/>}
                     </button>
                   </div>
                 </div>
@@ -1663,7 +1710,8 @@ const ProfileDetail = () => {
                       className="visible md:invisible md:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
                       onClick={() => handleEditToggle("area_of_interest")}
                     >
-                      {isEditing.area_of_interest ? "" : <img src={edit} />}
+                      {isEditing.area_of_interest ? "" : <img src={edit}    loading="lazy"
+                    draggable={false}/>}
                     </button>
                   </div>
                 </div>
@@ -1786,7 +1834,8 @@ const ProfileDetail = () => {
                                   className="absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 ease-in-out transform opacity-0 group-hover:opacity-100 group-hover:translate-x-6 h-10 w-7"
                                   onClick={() => handleLinkEditToggle(key)} // Toggle editing mode for this link
                                 >
-                                  <img src={edit} alt="edit" />
+                                  <img src={edit} alt="edit"   loading="lazy"
+                    draggable={false} />
                                 </button>
                               </>
                             )}

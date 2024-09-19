@@ -124,6 +124,8 @@ const RatingPage = () => {
           src={userFullData?.profile_picture[0]}
           alt="Profile"
           className="rounded-full w-16 h-16 sm:w-16 sm:h-16 md:w-28 md:h-28 mb-4"
+          loading="lazy"
+          draggable={false}
         />
         <h2 className="text-2xl font-bold">{userFullData.full_name} </h2>
         <p className="text-gray-500">{userFullData.openchat_username}</p>
@@ -209,6 +211,8 @@ const RatingPage = () => {
                   src={profilepic}
                   alt="pic"
                   className="rounded-full w-8 h-8 xxs:w-12 xxs:h-12 sm0:w-12 sm0:h-12 sm:w-16 sm:h-16  object-cover border border-gray-300"
+                  loading="lazy"
+                  draggable={false}
                 />
                 <div className="flex-grow">
                   <h2 className="text-base font-semibold text-gray-800 mb-1">

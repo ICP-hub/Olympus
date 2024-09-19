@@ -118,6 +118,8 @@ function TestimonialSection() {
                       className="w-10 h-10 rounded-full mr-4"
                       src={testimonial.avatar.TestAvatar}
                       alt={testimonial.name}
+                      loading="lazy"
+                      draggable={false}
                     />
                     <div className="text-sm">
                       <p className="text-gray-900 leading-none">
@@ -132,6 +134,8 @@ function TestimonialSection() {
                     className="rounded-lg max-w-[300px]"
                     src={testimonial.profile.TestimonialProfile}
                     alt={testimonial.name}
+                    loading="lazy"
+                    draggable={false}
                   />
                 </div>
               </div>

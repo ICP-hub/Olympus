@@ -618,6 +618,8 @@ console.log("principal in investordetail",principal)
               className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
               alt="edit"
               onClick={() => handleEditClick("registered")}
+              loading="lazy"
+              draggable={false}
             />
           </div>
           {edit.registered ? (
@@ -661,6 +663,8 @@ console.log("principal in investordetail",principal)
                 className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
                 alt="edit"
                 onClick={() => handleEditClick("registered_country")}
+                loading="lazy"
+                draggable={false}
               />
             </div>
             {edit.registered_country ? (
@@ -712,6 +716,8 @@ console.log("principal in investordetail",principal)
               className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
               alt="edit"
               onClick={() => handleEditClick("preferred_icp_hub")}
+              loading="lazy"
+              draggable={false}
             />
           </div>
           {edit.preferred_icp_hub ? (
@@ -761,6 +767,8 @@ console.log("principal in investordetail",principal)
               className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
               alt="edit"
               onClick={() => handleEditClick("existing_icp_investor")}
+              loading="lazy"
+              draggable={false}
             />
           </div>
           {edit.existing_icp_investor ? (
@@ -807,6 +815,8 @@ console.log("principal in investordetail",principal)
                 className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
                 alt="edit"
                 onClick={() => handleEditClick("investor_type")}
+                loading="lazy"
+                draggable={false}
               />
             </div>
             {edit.investor_type ? (
@@ -875,6 +885,8 @@ console.log("principal in investordetail",principal)
               className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
               alt="edit"
               onClick={() => handleEditClick("portfolio_link")}
+              loading="lazy"
+              draggable={false}
             />
           </div>
           {edit.portfolio_link ? (
@@ -913,6 +925,8 @@ console.log("principal in investordetail",principal)
               className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
               alt="edit"
               onClick={() => handleEditClick("name_of_fund")}
+              loading="lazy"
+              draggable={false}
             />
           </div>
           {edit.name_of_fund ? (
@@ -951,6 +965,8 @@ console.log("principal in investordetail",principal)
               className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
               alt="edit"
               onClick={() => handleEditClick("fund_size")}
+              loading="lazy"
+              draggable={false}
             />
           </div>
           {edit.fund_size ? (
@@ -995,6 +1011,8 @@ console.log("principal in investordetail",principal)
               className="absolute right-2 top-2 invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
               alt="edit"
               onClick={() => handleEditClick("invested_in_multi_chain")}
+              loading="lazy"
+              draggable={false}
             />
           </div>
           {edit.invested_in_multi_chain ? 
@@ -1042,6 +1060,8 @@ console.log("principal in investordetail",principal)
                 className="absolute right-2 top-2  invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
                 alt="edit"
                 onClick={() => handleEditClick("project_on_multichain")}
+                loading="lazy"
+                draggable={false}
               />
             </div>
             {edit.project_on_multichain ? 
@@ -1119,6 +1139,8 @@ console.log("principal in investordetail",principal)
               className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
               alt="edit"
               onClick={() => handleEditClick("category_of_investment")}
+              loading="lazy"
+              draggable={false}
             />
           </div>
           {edit.category_of_investment ? (
@@ -1188,6 +1210,8 @@ console.log("principal in investordetail",principal)
               className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
               alt="edit"
               onClick={() => handleEditClick("website_link")}
+              loading="lazy"
+              draggable={false}
             />
           </div>
           {edit.website_link ? (
@@ -1226,6 +1250,8 @@ console.log("principal in investordetail",principal)
               className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
               alt="edit"
               onClick={() => handleEditClick("stage")}
+              loading="lazy"
+              draggable={false}
             />
           </div>
           {edit.stage ? (
@@ -1301,6 +1327,8 @@ console.log("principal in investordetail",principal)
               className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
               alt="edit"
               onClick={() => handleEditClick("range_of_check_size")}
+              loading="lazy"
+              draggable={false}
             />
           </div>
           {edit.range_of_check_size ? (
@@ -1424,7 +1452,8 @@ console.log("principal in investordetail",principal)
                                   className="absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 ease-in-out transform opacity-0 group-hover:opacity-100 group-hover:translate-x-6 h-10 w-7"
                                   onClick={() => handleLinkEditToggle(key)} // Toggle editing mode for this link
                                 >
-                                  <img src={editp} alt="edit" />
+                                  <img src={editp} alt="edit"    loading="lazy"
+                    draggable={false}/>
                                 </button>
                               </>
                             )}

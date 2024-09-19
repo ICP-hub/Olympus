@@ -444,6 +444,8 @@ const mergedData = mergeData(userCurrentRoleStatus, roledata);
                   src={userFullData?.profile_picture[0]}
                   alt="Profile"
                   className="w-20 h-20 mx-auto rounded-full"
+                  loading="lazy"
+                  draggable={false}
                 />
               </div>
             </div>

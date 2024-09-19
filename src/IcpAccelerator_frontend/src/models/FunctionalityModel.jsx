@@ -23,7 +23,8 @@ function FunctionalityModel({
         </div>
         <div className="flex flex-col justify-center items-center p-8 ">
           <div className="center-text">
-            <img src={Animation} alt="image" className="md:w-1/2" />
+            <img src={Animation} alt="image" className="md:w-1/2"    loading="lazy"
+                    draggable={false}/>
             <p className="text-[#00227A] font-[600] leading-[20px]">{para}</p>
           </div>
           <div className="flex justify-center text-[15px] pt-[40px]">
