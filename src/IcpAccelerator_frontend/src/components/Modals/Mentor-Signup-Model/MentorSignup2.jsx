@@ -118,37 +118,37 @@ const handleFieldTouch = (fieldName) => {
           isMulti
           menuPortalTarget={document.body}
           menuPosition={"fixed"}
-          styles={getReactSelectStyles(errors.reason_for_joining )}
+          styles={getReactSelectStyles(errors.reasons_to_join_platform )}
           value={reasonOfJoiningSelectedOptions}
           options={reasonOfJoiningOptions}
           classNamePrefix="select"
           className="basic-multi-select w-full text-start"
           placeholder="Select your reasons to join this platform"
-          name="reason_for_joining"
+          name="reasons_to_join_platform"
           onChange={(selectedOptions) => {
             if (selectedOptions && selectedOptions.length > 0) {
               setReasonOfJoiningSelectedOptions(selectedOptions);
-              clearErrors("reason_for_joining");
+              clearErrors("reasons_to_join_platform");
               setValue(
-                "reason_for_joining",
+                "reasons_to_join_platform",
                 selectedOptions.map((option) => option.value).join(", "),
                 { shouldValidate: true }
               );
             } else {
               setReasonOfJoiningSelectedOptions([]);
-              setValue("reason_for_joining", "", {
+              setValue("reasons_to_join_platform", "", {
                 shouldValidate: true,
               });
-              setError("reason_for_joining", {
+              setError("reasons_to_join_platform", {
                 type: "required",
                 message: "Selecting a reason is required",
               });
             }
           }}
         />
-        {errors.reason_for_joining && (
+        {errors.reasons_to_join_platform && (
           <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-            {errors.reason_for_joining.message}
+            {errors.reasons_to_join_platform.message}
           </span>
         )}
       </div>

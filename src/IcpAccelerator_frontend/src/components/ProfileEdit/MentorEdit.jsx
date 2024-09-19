@@ -97,9 +97,9 @@ const MentorEdit = () => {
   } = useForm({
     resolver: yupResolver(validationSchema),
     mode: "all",
-    // defaultValues,
-  });
 
+  });
+  const reasonForJoining = watch("reasons_to_join_platform");
   const [isFormTouched, setIsFormTouched] = useState({
     reason_for_joining: false,
   });
@@ -119,9 +119,8 @@ const MentorEdit = () => {
     hub_owner: false,
     years_of_mentoring: false,
     website: false,
-    reason_for_joining: false,
+    reasons_to_join_platform: false,
     area_of_expertise: false,
-    reason_to_join: false,
   });
 
   const handleEditClick = (field) => {
@@ -178,6 +177,7 @@ const MentorEdit = () => {
       return updatedLinks;
     });
   };
+
   const onSubmitHandler = async (data) => {
     console.log("my submit data on submit", data);
 
@@ -197,7 +197,6 @@ const MentorEdit = () => {
       ],
       category_of_mentoring_service: data?.category_of_mentoring_service,
       years_of_mentoring: data.years_of_mentoring.toString(),
-      linkedin_link: data?.mentor_linkedin_url,
       multichain: Array.isArray(data.multi_chain_names)
         ? data.multi_chain_names
         : [],
@@ -206,9 +205,9 @@ const MentorEdit = () => {
       existing_icp_project_porfolio: data.existing_icp_project_porfolio
         ? [data.existing_icp_project_porfolio]
         : [],
-      area_of_expertise: data.area_of_expertise
+      area_of_expertise: Array.isArray(data.area_of_expertise)
         ? data.area_of_expertise
-        : [],
+        : [data.area_of_expertise || ""],
       links: updatedSocialLinks.length > 0 ? [updatedSocialLinks] : [],
 
       reason_for_joining: data.reasons_to_join_platform
@@ -269,11 +268,11 @@ const MentorEdit = () => {
       );
       setValue(
         "area_of_expertise",
-        val[0]?.profile?.area_of_expertise
-          ? val[0]?.profile?.area_of_expertise.join(", ")
+        val[0]?.profile?.area_of_expertise[0]
+          ? val[0]?.profile?.area_of_expertise[0]
           : ""
       );
-      setInterestedDomainsSelectedOptions(
+      setInterestedDomainsSelectedOptionsHandler(
         val[0]?.profile?.area_of_expertise ?? null
       );
       setValue(
@@ -291,12 +290,8 @@ const MentorEdit = () => {
         "existing_icp_project_porfolio",
         val[0]?.profile?.existing_icp_project_porfolio?.[0] ?? ""
       );
-      setValue("icp_hub_or_spoke", val[0]?.profile?.icp_hub_or_spoke ?? "");
-      if (val[0]?.profile?.icp_hub_or_spoke === true) {
-        setValue("icp_hub_or_spoke", "true");
-      } else {
-        setValue("icp_hub_or_spoke", "false");
-      }
+      setValue("icp_hub_or_spoke", val[0]?.profile?.icp_hub_or_spoke === true ? "true" : "false" );
+     
       setValue(
         "hub_owner",
         val[0]?.profile?.hub_owner ? val[0]?.profile?.hub_owner?.[0] : ""
@@ -472,8 +467,8 @@ const MentorEdit = () => {
   const existing_icp_project_porfolio =
     mentorFullData[0]?.profile?.existing_icp_project_porfolio?.[0] ?? "";
   const icp_hub_or_spoke = mentorFullData[0]?.profile?.icp_hub_or_spoke
-    ? "true"
-    : "false";
+    ? "Yes"
+    : "No";
   const hub_owner = mentorFullData[0]?.profile?.hub_owner?.[0] ?? "";
   const multi_chain =
     mentorFullData[0]?.profile?.multichain.length > 0 ? "true" : "false";
@@ -483,8 +478,7 @@ const MentorEdit = () => {
   const mentor_website_url = mentorFullData[0]?.profile?.website?.[0] ?? "";
   const years_of_mentoring =
     mentorFullData[0]?.profile?.years_of_mentoring ?? "";
-  const multichain = multi_chain ? "Yes" : "No";
-  const spoke = icp_hub_or_spoke ? "Yes" : "No";
+  const multichain = multi_chain  === true ? "Yes" : "No";
   console.log("domains_interested_in", area_of_expertise);
   return (
     <div ref={editableRef} className="bg-white p-2 ">
@@ -547,8 +541,11 @@ const MentorEdit = () => {
                 className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
                 onClick={() => handleEditClick("area_of_expertise")}
               >
-                {edit.area_of_expertise ? "" : <img src={editp}    loading="lazy"
-                    draggable={false}/>}
+                {edit.area_of_expertise ? (
+                  ""
+                ) : (
+                  <img src={editp} loading="lazy" draggable={false} />
+                )}
               </button>
             </div>
           </div>
@@ -589,7 +586,7 @@ const MentorEdit = () => {
             </>
           ) : (
             <div className="flex gap-2 overflow-x-auto">
-              {area_of_expertise.map((interest, index) => (
+              {area_of_expertise[0].split(",").map((interest, index) => (
                 <span
                   key={index}
                   className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 break-words"
@@ -797,7 +794,7 @@ const MentorEdit = () => {
               src={editp}
               className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
               alt="edit"
-              onClick={() => handleEditClick("reason_for_joining")}
+              onClick={() => handleEditClick("reasons_to_join_platform")}
               loading="lazy"
               draggable={false}
             />
@@ -805,34 +802,44 @@ const MentorEdit = () => {
           <label className="block mb-1 text-xs font-semibold text-gray-500">
             REASON FOR JOINING THIS PLATFORM
           </label>
-          {edit.reason_for_joining ? (
+          {edit.reasons_to_join_platform ? (
             <div>
               <ReactSelect
-                isMulti
-                menuPortalTarget={document.body}
-                menuPosition={"fixed"}
-                styles={getReactSelectStyles(errors?.reason_for_joining)}
-                value={reasonOfJoiningSelectedOptions}
-                options={reasonOfJoiningOptions}
-                classNamePrefix="select"
-                className="basic-multi-select w-full text-start"
-                placeholder="Select your reasons to join this platform"
-                name="reason_for_joining"
-                onChange={(selectedOptions) => {
-                  setReasonOfJoiningSelectedOptions(selectedOptions);
-                  clearErrors("reason_for_joining");
-                  setValue(
-                    "reason_for_joining",
-                    selectedOptions.map((option) => option.value).join(", "),
-                    { shouldValidate: true }
-                  );
-                }}
-              />
-              {errors.reason_for_joining && (
-                <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-                  {errors.reason_for_joining.message}
-                </span>
-              )}
+            isMulti
+            menuPortalTarget={document.body}
+            menuPosition={"fixed"}
+            styles={getReactSelectStyles(errors?.reasons_to_join_platform
+              &&
+            isFormTouched.reasons_to_join_platform
+            )}
+            value={reasonOfJoiningSelectedOptions}
+            options={reasonOfJoiningOptions}
+            classNamePrefix="select"
+            className="basic-multi-select w-full text-start"
+            placeholder="Select your reasons to join this platform"
+            name="reasons_to_join_platform"
+            onChange={(selectedOptions) => {
+              if (selectedOptions && selectedOptions.length > 0) {
+                setReasonOfJoiningSelectedOptions(selectedOptions);
+                clearErrors("reasons_to_join_platform");
+                setValue(
+                  "reasons_to_join_platform",
+                  selectedOptions.map((option) => option.value).join(", "),
+                  { shouldValidate: true }
+                );
+              } else {
+                setReasonOfJoiningSelectedOptions([]);
+                setValue("reasons_to_join_platform", "", {
+                  shouldValidate: true,
+                });
+                setError("reasons_to_join_platform", {
+                  type: "required",
+                  message: "Selecting a reason is required",
+                });
+              }
+              handleFieldTouch("reasons_to_join_platform");
+            }}
+          />
             </div>
           ) : (
             <div className="flex overflow-x-auto gap-2 cursor-pointer py-1">
@@ -849,9 +856,9 @@ const MentorEdit = () => {
                 ))}
             </div>
           )}
-          {errors.reason_for_joining && (
+          {errors.reasons_to_join_platform && (
             <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
-              {errors.reason_for_joining.message}
+              {errors.reasons_to_join_platform.message}
             </span>
           )}
         </div>
@@ -889,7 +896,7 @@ const MentorEdit = () => {
             </>
           ) : (
             <div className="flex justify-between items-center cursor-pointer p-1">
-              <span>{spoke}</span>
+              <span>{icp_hub_or_spoke}</span>
             </div>
           )}
           {errors.icp_hub_or_spoke && (
@@ -1093,8 +1100,12 @@ const MentorEdit = () => {
                           className="absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 ease-in-out transform opacity-0 group-hover:opacity-100 group-hover:translate-x-6 h-10 w-7"
                           onClick={() => handleLinkEditToggle(key)} // Toggle editing mode for this link
                         >
-                          <img src={editp} alt="edit"    loading="lazy"
-                    draggable={false}/>
+                          <img
+                            src={editp}
+                            alt="edit"
+                            loading="lazy"
+                            draggable={false}
+                          />
                         </button>
                       </>
                     )}
