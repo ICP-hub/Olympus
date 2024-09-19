@@ -705,15 +705,16 @@ const AnnouncementCard = () => {
         </div>
       )}
       {latestAnnouncementData.length === 0 ? (
-        <div>
+        <div className="md:py-4 py-12">
           <NoCardData />
           <button
-            className="bg-[#155EEF] text-white px-2 md:px-4 py-2 rounded-md flex items-center justify-center mx-auto"
-            onClick={() => handleOpenModal(null)}
-          >
-            <CampaignIcon className="mr-2" />
-            Create a new Announcement
-          </button>
+  className="bg-[#155EEF] text-white px-2 md:px-4 py-2 rounded-md flex items-center justify-center mx-auto text-sm sm0:text-[16px] "
+  onClick={() => handleOpenModal(null)}
+>
+  <CampaignIcon className=" mr-2" />
+  <span className="line-clamp-1 break-all">Add new Announcement</span> 
+  </button>
+
         </div>
       ) : (
         latestAnnouncementData.map((card, index) => {

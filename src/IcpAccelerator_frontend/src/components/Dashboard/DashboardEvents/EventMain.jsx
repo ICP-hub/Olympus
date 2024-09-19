@@ -15,7 +15,7 @@ const EventMain = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bg-white">
       <h1 className="text-3xl font-bold bg-opacity-95 -top-[0.6rem] sticky bg-white z-20 py-6">
-        Discover events
+        Discover Cohorts
       </h1>
 
       {/* Filter button  on the left side for mobile */}
@@ -57,7 +57,7 @@ const EventMain = () => {
 
     {/* Filter modal sliding from the bottom */}
     <motion.div
-      className="fixed bottom-0 left-0 lg:left-auto lg:w-[75%] dlg:w-[77%] lgx:w-full lgx:left-0 right-0 bg-white z-40 p-6 rounded-t-3xl shadow-lg"
+      className="fixed bottom-0 left-0 lg:left-auto lg:w-[75%] dlg:w-[77%] lgx:w-full lgx:left-0 right-0 bg-white z-40 p-6 rounded-t-3xl shadow-lg min-h-40"
     >
       <div className="flex justify-between items-center">
         <h2 className="text-lg font-semibold">Filters</h2>

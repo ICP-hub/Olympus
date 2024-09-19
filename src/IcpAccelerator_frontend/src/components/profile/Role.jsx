@@ -432,7 +432,7 @@ const mergedData = mergeData(userCurrentRoleStatus, roledata);
     <>
       <div className="flex flex-col">
         <div className="flex justify-center items-center w-full mt-[2%]">
-        <div className="border-2 rounded-lg shadow-md md:shadow-none pb-5 text-center   md:min-w-[280px] w-full md:max-w-[350px] mb-6 md:mb-0">
+        <div className="border-2 rounded-lg shadow-md md:shadow-none pb-5 text-center   md:min-w-[280px] w-full md:max-w-[350px] mb-6 md:mb-0 md:mt-6">
         <div className="w-full bg-[#EEF2F6] rounded-l-xl rounded-r-full h-1.5 mb- dark:bg-[#EEF2F6]">
               <div className="relative h-1 bg-gray-200">
                 <div className="absolute left-0 top-0 h-full bg-green-500 w-1/3"></div>
