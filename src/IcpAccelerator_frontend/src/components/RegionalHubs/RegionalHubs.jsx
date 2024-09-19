@@ -173,7 +173,7 @@ const DiscoverRegionalHubs = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-
+console.log("my reasonal hub data 176",allHubsData)
   const getAllHubs = async (caller, isMounted) => {
     try {
       const result = await caller.get_icp_hub_details();

@@ -114,11 +114,14 @@ const DiscoverUser = ({ onUserCountChange }) => {
         const principalId = principal;
 
         return (
-          <div className="md1:p-6 my-10 md1:my-0 w-full  rounded-lg shadow-sm mb-4 flex flex-col sm:flex-row" key={index}>
+          <div
+            className="sm:pr-6 sm:pt-6 sm:pb-6 my-10 md1:my-0 w-full  rounded-lg shadow-sm mb-4 flex flex-col sm:flex-row"
+            key={index}
+          >
             <div className=" w-full sm:w-[272px] relative">
               <div
                 onClick={() => handleClick(user)}
-                className="w-full md1:max-w-[250px] md1:w-[250px] h-[254px] bg-gray-100 rounded-lg flex flex-col justify-between overflow-hidden"
+                className="w-full sm:max-w-[250px] sm:w-[250px] h-[254px] bg-gray-100 rounded-lg flex flex-col justify-between overflow-hidden"
               >
                 <div className="absolute inset-0 flex items-center justify-center">
                   <img
