@@ -60,7 +60,7 @@ const Tabs = ({ tabs, currentTab, onTabChange }) => {
       {isScrollable && (
         <button
           onClick={() => scrollTabs("left")}
-          className="absolute left-0 top-[40%] transform -translate-y-1/2 bg-gray-200 p-2 rounded-full z-10"
+          className="absolute left-0 top-[40%] transform -translate-y-1/2 bg-gray-100 p-2 rounded-full z-10"
         >
           <FaChevronLeft />
         </button>
@@ -93,7 +93,7 @@ const Tabs = ({ tabs, currentTab, onTabChange }) => {
       {isScrollable && (
         <button
           onClick={() => scrollTabs("right")}
-          className="absolute right-0 top-[32%] transform -translate-y-1/2 bg-gray-200 p-2 rounded-full z-10"
+          className="absolute right-0 top-[32%] transform -translate-y-1/2 bg-gray-100 p-2 rounded-full z-10"
         >
           <FaChevronRight />
         </button>
