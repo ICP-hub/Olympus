@@ -14,21 +14,22 @@ const EventMain = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bg-white">
-      <h1 className="text-3xl font-bold bg-opacity-95 -top-[0.6rem] sticky bg-white z-20 py-6">
-        Discover Cohorts
+      <div className='flex justify-between'>
+      <h1 className=" text-xl ss1:text-3xl font-bold bg-opacity-95 -top-[0.6rem] sticky bg-white z-20 py-6">
+       <span></span> Discover Cohorts
       </h1>
 
       {/* Filter button  on the left side for mobile */}
-      <div className="mb-4 md:hidden  lg:block lgx:hidden">
+      <div className="mt-7 md:hidden  lg:block lgx:hidden">
         <button
           onClick={() => setIsFiltersOpen(!isFiltersOpen)}
-          className="bg-white border border-gray-300 text-gray-800 py-2 px-4 rounded-md shadow-lg flex items-center"
+          className="bg-white border border-gray-300 text-gray-800 py-2 px-4 rounded-md shadow-lg flex items-center "
         >
           Filters
           <FaSliders className="ml-2" />
         </button>
       </div>
-
+      </div>
       <div className="flex flex-col md:flex-row ">
       
         <div className="w-full md:w-[70%] lg:w-full lgx:w-[70%] pr-6">

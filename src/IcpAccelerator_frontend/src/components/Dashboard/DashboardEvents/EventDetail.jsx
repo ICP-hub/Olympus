@@ -322,15 +322,16 @@ const ProfileImage =  profileimage && profileimage.length > 0
         className="mr-2 text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-2 rounded-md shadow-sm border border-gray-200"
         onClick={() => navigate(-1)} 
       >
-        <ArrowBack className="mr-1" /> Back to profile
+        <ArrowBack className="mr-1" />
+        <span className="hidden xxs1:block"> Back to profile</span>
       </button>
 
         <button
           className="flex items-center md:mr-4 text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-2 rounded-md shadow-sm border border-gray-200"
           onClick={() => setIsModalOpen(true)}
         >
-          {/* {profilepage.shareText}  */}
-          Share Cohort
+         
+        <span className="hidden xxs1:block">Share Cohort</span>  
           <span className="ml-1">{shareSvgIcon}</span>
         </button>
       </div>
