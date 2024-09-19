@@ -29,6 +29,7 @@ const App = () => {
   const isAuthenticated = useSelector(
     (currState) => currState.internet.isAuthenticated
   );
+  const [isModalOpen,setModalOpen]=useState(false)
   const { reloadLogin } = useAuth();
   const dispatch = useDispatch();
 
