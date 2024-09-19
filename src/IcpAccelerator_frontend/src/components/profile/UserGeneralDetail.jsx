@@ -235,7 +235,8 @@ export default function UserGeneralDetail() {
                     className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
                     onClick={() => handleEditToggle("email")}
                   >
-                    {isEditing.email ? "" : <img src={edit} />}
+                    {isEditing.email ? "" : <img src={edit}    loading="lazy"
+                    draggable={false}/>}
                   </button>
                 </div>
               </div>
@@ -320,7 +321,8 @@ export default function UserGeneralDetail() {
                     className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
                     onClick={() => handleEditToggle("about")}
                   >
-                    {isEditing.about ? "" : <img src={edit} />}
+                    {isEditing.about ? "" : <img src={edit}    loading="lazy"
+                    draggable={false}/>}
                   </button>
                 </div>
               </div>
@@ -349,7 +351,8 @@ export default function UserGeneralDetail() {
                     className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
                     onClick={() => handleEditToggle("location")}
                   >
-                    {isEditing.location ? "" : <img src={edit} />}
+                    {isEditing.location ? "" : <img src={edit}    loading="lazy"
+                    draggable={false}/>}
                   </button>
                 </div>
               </div>
@@ -398,7 +401,8 @@ export default function UserGeneralDetail() {
                     className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
                     onClick={() => handleEditToggle("reasons_to_join_platform")}
                   >
-                    {isEditing.reasons_to_join_platform ? "" : <img src={edit} />}
+                    {isEditing.reasons_to_join_platform ? "" : <img src={edit}    loading="lazy"
+                    draggable={false}/>}
                   </button>
                 </div>
               </div>
@@ -446,7 +450,8 @@ export default function UserGeneralDetail() {
                     className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
                     onClick={() => handleEditToggle("interests")}
                   >
-                    {isEditing.interests ? "" : <img src={edit} />}
+                    {isEditing.interests ? "" : <img src={edit}    loading="lazy"
+                    draggable={false}/>}
                   </button>
                 </div>
               </div>
@@ -497,7 +502,8 @@ export default function UserGeneralDetail() {
                     className="absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 ease-in-out transform opacity-0 group-hover:opacity-100 group-hover:translate-x-8  h-10 w-7"
                     onClick={() => handleLinkEditToggle("LinkedIn")}
                   >
-                    <img src={edit} />
+                    <img src={edit}    loading="lazy"
+                    draggable={false}/>
                   </button>
                   {isEditingLink.LinkedIn && (
                     <input
@@ -523,7 +529,8 @@ export default function UserGeneralDetail() {
                     className="absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 ease-in-out transform opacity-0 group-hover:opacity-100 group-hover:translate-x-8  h-10 w-7"
                     onClick={() => handleLinkEditToggle("GitHub")}
                   >
-                    <img src={edit} />
+                    <img src={edit}   loading="lazy"
+                    draggable={false} />
                   </button>
                   {isEditingLink.GitHub && (
                     <input
@@ -549,7 +556,8 @@ export default function UserGeneralDetail() {
                     className="absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 ease-in-out transform opacity-0 group-hover:opacity-100 group-hover:translate-x-8  h-10 w-7"
                     onClick={() => handleLinkEditToggle("Telegram")}
                   >
-                    <img src={edit} />
+                    <img src={edit}    loading="lazy"
+                    draggable={false}/>
                   </button>
                   {isEditingLink.Telegram && (
                     <input

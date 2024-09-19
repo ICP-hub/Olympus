@@ -93,6 +93,8 @@ const ServiceDetailPage = () => {
                       src={ProfileImage}
                       alt="Matt Bowers"
                       className="w-16 h-16 rounded-full mr-4"
+                      loading="lazy"
+                      draggable={false}
                     />
                     <div>
                       <h2 className="text-xl font-bold">Matt Bowers</h2>
@@ -249,6 +251,8 @@ const ServiceDetailPage = () => {
                   src={ServiceDetailPageImage}
                   alt="Landing page design"
                   className="w-full rounded-lg mb-6"
+                  loading="lazy"
+                  draggable={false}
                 />
 
                 <h1 className="text-3xl font-bold mb-4">Landing page design</h1>

@@ -147,8 +147,12 @@ const NewHeader = ({ setModalOpen, gradient }) => {
               src={logoWithText}
               alt="Olympus"
               className="h-8 md:h-10 hidden"
+              loading="lazy"
+              draggable={false}
             />
-            <img src={logoWithText} alt="Olympus" className="h-8 md:h-10" />
+            <img src={logoWithText} alt="Olympus" className="h-8 md:h-10" 
+               loading="lazy"
+               draggable={false}/>
           </a>
           <div className="hidden md:flex gap-0 items-center">
             {/* {navItems.map((navItem, navIndex) => (

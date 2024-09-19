@@ -40,6 +40,8 @@ const UserDetail = (projectData) => {
             src={profilepic}
             alt="Profile"
             className="w-24 h-24 mx-auto rounded-full mb-4"
+            loading="lazy"
+            draggable={false}
           />
           <div className="flex items-center justify-center mb-1">
             <VerifiedIcon className="text-blue-500 mr-1" fontSize="small" />

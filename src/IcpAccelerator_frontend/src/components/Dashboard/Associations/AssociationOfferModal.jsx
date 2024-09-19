@@ -202,11 +202,15 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
                       src={projectLogo}
                       alt="Matt Bowers"
                       className="absolute w-24 h-24 rounded-full backface-hidden transition-transform duration-500 transform hover:rotate-y-180"
+                      loading="lazy"
+                      draggable={false}
                     />
                     <img
                       src={userProfilePicture}
                       alt="Matt Bowers"
                       className="absolute w-24 h-24 rounded-full backface-hidden transition-transform duration-500 transform rotate-y-180 hover:rotate-y-0"
+                      loading="lazy"
+                      draggable={false}
                     />
                   </div>
 

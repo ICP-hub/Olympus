@@ -131,6 +131,8 @@ const RatingModal = ( {showRating, setShowRatingModal, userRatingDetail, cardPri
               src={profilepic}
               alt="Profile"
               className="rounded-full w-28 h-28 mb-4"
+              loading="lazy"
+              draggable={false}
             />
             <h2 className="text-2xl font-bold">{full_name} </h2>
             <p className="text-gray-500">{openchat_username}</p>

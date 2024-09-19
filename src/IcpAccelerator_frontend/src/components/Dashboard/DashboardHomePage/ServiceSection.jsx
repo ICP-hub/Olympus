@@ -39,6 +39,8 @@ const ServiceSection = () => {
               src={LandingPageDesign}
               alt="Landing page design"
               className="w-full h-auto rounded-lg"
+              loading="lazy"
+              draggable={false}
             />
           </div>
 

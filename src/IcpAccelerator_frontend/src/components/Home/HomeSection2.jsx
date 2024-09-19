@@ -31,6 +31,8 @@ export default function Section2() {
                       src={homepagesection2.card1.image.Founder}
                       alt="Founders"
                       className="w-[230px] h-[350px] mr-4"
+                      loading="lazy"
+                      draggable={false}
                     />
                     <div className="px-6">
                       <h2 className="text-2xl font-bold">
@@ -57,6 +59,8 @@ export default function Section2() {
                       src={homepagesection2.card2.image.Investor}
                       alt="Investors"
                       className="w-[230px] h-[350px] mr-4"
+                      loading="lazy"
+                      draggable={false}
                     />
                     <div className="px-6">
                       <h2 className="text-2xl font-bold">
@@ -83,6 +87,8 @@ export default function Section2() {
                       src={homepagesection2.card3.image.MentorsImage}
                       alt="Mentors"
                       className="w-[230px] h-[350px] mr-4"
+                      loading="lazy"
+                      draggable={false}
                     />
                     <div className="px-6">
                       <h2 className="text-2xl font-bold">
@@ -109,6 +115,8 @@ export default function Section2() {
                       src={homepagesection2.card4.image.Talents}
                       alt="Talent"
                       className="w-[230px] h-[350px] mr-4"
+                      loading="lazy"
+                      draggable={false}
                     />
                     <div className="px-6">
                       <h2 className="text-2xl font-bold">

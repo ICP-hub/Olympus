@@ -342,6 +342,8 @@ const ProfileImage =  profileimage && profileimage.length > 0
                 src={ProfileImage}
                 alt={host_name || "Host"}
                 className="w-14 h-14 rounded-full mr-3"
+                loading="lazy"
+                draggable={false}
               />
               <div>
                 <h2 className="text-lg font-medium">
@@ -429,6 +431,8 @@ const ProfileImage =  profileimage && profileimage.length > 0
                     src={GuestProfile1}
                     alt={`Guest ${i + 1}`}
                     className="w-8 h-8 rounded-full mr-1 mb-1"
+                    loading="lazy"
+                    draggable={false}
                   />
                 ))}
               </div>
@@ -466,6 +470,8 @@ const ProfileImage =  profileimage && profileimage.length > 0
                     src={CapacityGroupIcon}
                     alt="Capacity"
                     className="w-4 h-4 text-gray-400 mr-2"
+                    loading="lazy"
+                    draggable={false}
                   />
                   <span className="text-gray-700">{Seats}</span>
                 </div>
@@ -479,6 +485,8 @@ const ProfileImage =  profileimage && profileimage.length > 0
                     src={StartDateCalender}
                     alt="Start Date"
                     className="w-4 h-4 text-gray-400 mr-2"
+                    loading="lazy"
+                    draggable={false}
                   />
                   <span className="text-gray-700">{start_date}</span>
                 </div>
@@ -492,6 +500,8 @@ const ProfileImage =  profileimage && profileimage.length > 0
                     src={StartDateCalender}
                     alt="End Date"
                     className="w-4 h-4 text-gray-400 mr-2"
+                    loading="lazy"
+                    draggable={false}
                   />
                   <span className="text-gray-700">{cohort_end_date}</span>
                 </div>
@@ -518,6 +528,8 @@ const ProfileImage =  profileimage && profileimage.length > 0
                     src={PriceIcon}
                     alt="End Date"
                     className="w-4 h-4 text-gray-400 mr-2"
+                    loading="lazy"
+                    draggable={false}
                   />
                   <span className="text-gray-700">{funding_amount}</span>
                 </div>
@@ -547,6 +559,8 @@ const ProfileImage =  profileimage && profileimage.length > 0
                     src={StartDateCalender}
                     alt="deadline"
                     className="w-4 h-4 text-gray-400 mr-2"
+                    loading="lazy"
+                    draggable={false}
                   />
                   <span className="text-gray-700">{deadline}</span>
                 </div>
@@ -580,6 +594,8 @@ const ProfileImage =  profileimage && profileimage.length > 0
                         src={GuestProfile1}
                         alt={`Guest ${i + 1}`}
                         className="w-8 h-8 rounded-full mr-1 mb-1"
+                        loading="lazy"
+                        draggable={false}
                       />
                     ))}
                   </div>
@@ -617,6 +633,8 @@ const ProfileImage =  profileimage && profileimage.length > 0
                         src={CapacityGroupIcon}
                         alt="Capacity"
                         className="w-4 h-4 text-gray-400 mr-2"
+                        loading="lazy"
+                        draggable={false}
                       />
                       <span className="text-gray-700">{Seats}</span>
                     </div>
@@ -630,6 +648,8 @@ const ProfileImage =  profileimage && profileimage.length > 0
                         src={StartDateCalender}
                         alt="Start Date"
                         className="w-4 h-4 text-gray-400 mr-2"
+                        loading="lazy"
+                        draggable={false}
                       />
                       <span className="text-gray-700">{start_date}</span>
                     </div>
@@ -643,6 +663,8 @@ const ProfileImage =  profileimage && profileimage.length > 0
                         src={StartDateCalender}
                         alt="End Date"
                         className="w-4 h-4 text-gray-400 mr-2"
+                        loading="lazy"
+                        draggable={false}
                       />
                       <span className="text-gray-700">{cohort_end_date}</span>
                     </div>
@@ -669,6 +691,8 @@ const ProfileImage =  profileimage && profileimage.length > 0
                         src={PriceIcon}
                         alt="End Date"
                         className="w-4 h-4 text-gray-400 mr-2"
+                        loading="lazy"
+                        draggable={false}
                       />
                       <span className="text-gray-700">{funding_amount}</span>
                     </div>
@@ -698,6 +722,8 @@ const ProfileImage =  profileimage && profileimage.length > 0
                         src={StartDateCalender}
                         alt="deadline"
                         className="w-4 h-4 text-gray-400 mr-2"
+                        loading="lazy"
+                        draggable={false}
                       />
                       <span className="text-gray-700">{deadline}</span>
                     </div>
@@ -721,6 +747,8 @@ const ProfileImage =  profileimage && profileimage.length > 0
               {bannerImage}
               alt="Event"
               className="w-full h-[200px] rounded-lg lgx:h-[310px] object-cover"
+              loading="lazy"
+              draggable={false}
             />
             <h1 className="text-xl md:text-3xl font-bold mt-4">{title}</h1>
             <div className="flex items-center mt-2 text-gray-600">
@@ -729,6 +757,8 @@ const ProfileImage =  profileimage && profileimage.length > 0
                   src={StartDateCalender}
                   className="w-5 h-5 font-bold"
                   alt="Price icon"
+                  loading="lazy"
+                  draggable={false}
                 />
               </span>
               <span className="mr-2"> {timeLeft.days} days</span>
@@ -737,6 +767,8 @@ const ProfileImage =  profileimage && profileimage.length > 0
                   src={PriceIcon}
                   className="w-5 h-5 font-bold"
                   alt="Price icon"
+                  loading="lazy"
+                  draggable={false}
                 />
               </span>
               <span>{funding_amount}</span>

@@ -23,7 +23,9 @@ const UserModal = ({ openDetail, setOpenDetail, userData }) => {
                     <div className="flex justify-center p-4">
                         <div className="container bg-white rounded-lg shadow-sm p-4 overflow-hidden w-full max-w-[400px]">
                             <div className="p-6 bg-gray-100">
-                                <img src={userData.profileImage} alt={userData.fullname} className="w-24 h-24 mx-auto rounded-full mb-4" />
+                                <img src={userData.profileImage} alt={userData.fullname} className="w-24 h-24 mx-auto rounded-full mb-4"
+                                   loading="lazy"
+                                   draggable={false} />
                                 <div className="flex items-center justify-center mb-1">
                                     <VerifiedIcon className="text-blue-500 mr-1" fontSize="small" />
                                     <h2 className="text-xl font-semibold">{userData.fullname}</h2>

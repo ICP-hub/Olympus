@@ -12,6 +12,8 @@ const UserEventCard = () => {
                         src={bgImg}
                         alt="Event"
                         className="w-full h-[180px] object-cover"
+                        loading="lazy"
+                        draggable={false}
                     />
                 </div>
                 <div className="p-2 flex bg-white rounded absolute top-2 left-2 z-10 justify-between items-start">
@@ -40,16 +42,22 @@ const UserEventCard = () => {
                             src="https://via.placeholder.com/32"
                             alt="User 1"
                             className="w-8 h-8 rounded-full border-2 border-white"
+                            loading="lazy"
+                            draggable={false}
                         />
                         <img
                             src="https://via.placeholder.com/32"
                             alt="User 2"
                             className="w-8 h-8 rounded-full border-2 border-white"
+                            loading="lazy"
+                            draggable={false}
                         />
                         <img
                             src="https://via.placeholder.com/32"
                             alt="User 3"
                             className="w-8 h-8 rounded-full border-2 border-white"
+                            loading="lazy"
+                            draggable={false}
                         />
                         <span className="text-sm text-gray-600">+152</span>
                     </div>

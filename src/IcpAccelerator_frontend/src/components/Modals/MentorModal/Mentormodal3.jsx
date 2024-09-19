@@ -109,7 +109,8 @@ const Mentormodal3 = ({ isOpen, onClose }) => {
                     <div className="mb-2">
                         <label className="block text-sm font-medium mb-1">Cover image<span className='text-[#155EEF]'>*</span></label>
                         <div className='flex gap-2'>
-                            <img src={Foldericon} alt="projectimg" className='border-2 border-dashed border-[#E3E8EF] p-4 rounded-md' />
+                            <img src={Foldericon} alt="projectimg" className='border-2 border-dashed border-[#E3E8EF] p-4 rounded-md'   loading="lazy"
+                    draggable={false} />
                             <div className='flex gap-1 items-center justify-center'>
                                 <div className="flex gap-1">
                                     <label htmlFor="file-upload" className="block font-medium text-gray-700 border border-gray-500 px-1 cursor-pointer rounded">

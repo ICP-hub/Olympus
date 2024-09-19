@@ -139,6 +139,8 @@ const onSubmit = async (data) => {
                       src={imagePreview}
                       alt="Profile"
                       className="h-full w-full object-cover"
+                      loading="lazy"
+                      draggable={false}
                     />
                   ) : (
                     <svg

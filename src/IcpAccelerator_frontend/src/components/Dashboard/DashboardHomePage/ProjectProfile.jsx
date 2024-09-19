@@ -52,6 +52,8 @@ function ProjectProfile() {
               src={ProfileImage}
               alt="Matt Bowers"
               className="w-24 h-24 mx-auto rounded-full mb-4"
+              loading="lazy"
+              draggable={false}
             />
             <div className="flex items-center justify-center mb-1">
               <VerifiedIcon className="text-blue-500 mr-1" fontSize="small" />
@@ -216,6 +218,8 @@ function ProjectProfile() {
                   src={LandingPageDesign}
                   alt="Landing page design"
                   className="w-full h-auto rounded-lg"
+                  loading="lazy"
+                  draggable={false}
                 />
               </div>
 

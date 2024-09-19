@@ -120,18 +120,19 @@ const DiscoverProject = ({ onProjectCountChange }) => {
   const handleAddProjectAsInvestor = async ({ message }) => {
     setIsSubmitting(true);
     console.log("add into a project AS INVESTOR");
-    if (actor && principal) {
+    if (actor) {
       let project_id = listProjectId;
       let msg = message;
-
+let is_cohort_association= false;
+let cohort_id=[];
       await actor
-        .send_offer_to_project_by_investor(project_id, msg)
+        .send_offer_to_project_by_investor(project_id, msg,is_cohort_association,cohort_id)
         .then((result) => {
           console.log("result-in-send_offer_to_project_by_investor", result);
           if (result) {
             handleProjectCloseModalAsInvestor();
             setIsSubmitting(false);
-            fetchProjectData();
+            // fetchProjectData();
             toast.success("offer sent to project successfully");
           } else {
             handleProjectCloseModalAsInvestor();
@@ -285,6 +286,8 @@ const DiscoverProject = ({ onProjectCountChange }) => {
                         src={projectlogo || CypherpunkLabLogo} // Placeholder logo image
                         alt={full_name ?? "Project"}
                         className="w-24 h-24 rounded-full object-cover"
+                        loading="lazy"
+                        draggable={false}
                       />
                     </div>
                   </div>

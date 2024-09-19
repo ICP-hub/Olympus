@@ -49,6 +49,8 @@ const RatingProfileModal = ({ isOpen, setIsOpen }) => {
             src={ProfileImage}
             alt="Profile"
             className="rounded-full w-28 h-28 mb-4"
+            loading="lazy"
+            draggable={false}
           />
           <h2 className="text-2xl font-bold">Matt Bower</h2>
           <p className="text-gray-500">@mattbowers</p>

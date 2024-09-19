@@ -154,6 +154,7 @@ const Header = ({ setModalOpen, gradient }) => {
               }
               alt="IcpLogo"
               loading="lazy"
+                    draggable={false}
             />
           </div>
           {isAuthenticated && (

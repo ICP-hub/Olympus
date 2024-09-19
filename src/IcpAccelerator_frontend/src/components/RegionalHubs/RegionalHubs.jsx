@@ -243,6 +243,8 @@ const DiscoverRegionalHubs = () => {
                       src={logo}
                       alt={name}
                       className="w-12 h-12 rounded-full mb-3"
+                      loading="lazy"
+                      draggable={false}
                     />
                   )}
                   <div>

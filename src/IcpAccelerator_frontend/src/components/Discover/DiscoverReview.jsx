@@ -115,6 +115,8 @@ const DiscoverReview = (userData, principalId) => {
                   src={profilepic}
                   alt="pic"
                   className="rounded-full w-16 h-16 object-cover border border-gray-300"
+                  loading="lazy"
+                  draggable={false}
                 />
                 <div className="flex-grow">
                   <h2 className="text-base font-semibold text-gray-800 mb-1">

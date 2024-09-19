@@ -93,6 +93,8 @@ const UserProjectCard = ({ projectData, userData, principal }) => {
             src={projectlogo}
             alt="Cypherpunk Labs Logo"
             className="w-full sm0:w-[100px] sm0:h-[100px]  object-cover object-center rounded-lg"
+            loading="lazy"
+            draggable={false}
           />
         </div>
         <div className="w-full pl-4 sm0:pl-0 sm0:w-3/4">

@@ -112,7 +112,8 @@ return (
                                     }}
                                 >
                                     <div className="flex items-center py-2">
-                                        <img src={role.image} alt={role.name} className="rounded-full" />
+                                        <img src={role.image} alt={role.name} className="rounded-full"    loading="lazy"
+                    draggable={false}/>
                                         <div className="flex">
                                             <span className="ml-4">
                                                 <span className="font-semibold -mt-2 justify-start flex capitalize">{role.name ==='vc'?'investor':role.name}</span>

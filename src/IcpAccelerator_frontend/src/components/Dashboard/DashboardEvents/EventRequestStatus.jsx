@@ -119,6 +119,8 @@ const EventRequestStatus = ({ event }) => {
                             src=""
                             alt={event.title}
                             className="w-24 h-24 rounded-full object-cover"
+                            loading="lazy"
+                            draggable={false}
                           />
                         </div>
                       </div>
@@ -147,6 +149,8 @@ const EventRequestStatus = ({ event }) => {
                           src={PriceIcon}
                           alt="End Date"
                           className="w-4 h-4 text-gray-400 mr-2"
+                          loading="lazy"
+                          draggable={false}
                         />
                         <span className="text-gray-500">Paisa</span>
                       </div>

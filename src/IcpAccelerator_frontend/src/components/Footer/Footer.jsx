@@ -36,6 +36,8 @@ const Footer = () => {
                     src={footer.logo.logo}
                     alt="logo"
                     className="inline-block"
+                    loading="lazy"
+                    draggable={false}
                   />
                 </h3>
                 <p className="text-gray-600 text-sm font-semibold">

@@ -65,6 +65,8 @@ const DiscoverUserModal = ({ openDetail, setOpenDetail, userData }) => {
                     src={profilepic}
                     alt="Matt Bowers"
                     className="w-24 h-24 mx-auto rounded-full mb-2"
+                    loading="lazy"
+                    draggable={false}
                   />
                   <div className="flex items-center justify-center mb-1">
                     <VerifiedIcon

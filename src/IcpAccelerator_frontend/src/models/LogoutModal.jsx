@@ -111,6 +111,8 @@ const LogoutModal = () => {
             className="w-10 h-10  rounded-full cursor-pointer"
             src={internetIdentity}
             alt="User dropdown"
+            loading="lazy"
+            draggable={false}
           />
         )}
 
@@ -143,6 +145,8 @@ const LogoutModal = () => {
                   className="w-10 h-10  rounded-full "
                   src={internetIdentity}
                   alt={internetIdentity}
+                  loading="lazy"
+                  draggable={false}
                 />
               </div>
               <div className="group flex items-center mt-4">

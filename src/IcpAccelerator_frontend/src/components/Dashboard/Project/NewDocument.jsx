@@ -20,6 +20,8 @@ const NewDocument = ({ cardData }) => {
               src={Filetype}
               alt="Document Thumbnail"
               className="w-[50px] h-[50px] rounded-lg object-cover mx-auto"
+              loading="lazy"
+              draggable={false}
             />
             <a
               href={doc?.link}

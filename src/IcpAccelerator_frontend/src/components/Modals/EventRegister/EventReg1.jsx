@@ -101,6 +101,8 @@ const EventReg1 = ({
                 src={imagePreview}
                 alt="Profile"
                 className="h-full w-full object-cover"
+                loading="lazy"
+                draggable={false}
               />
             ) : (
               <svg

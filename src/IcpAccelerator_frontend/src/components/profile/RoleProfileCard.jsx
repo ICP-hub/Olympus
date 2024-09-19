@@ -8,6 +8,8 @@ const RoleProfileCard = ({role,image,message}) => {
         src={image} 
         alt="Profile"
         className="w-20 h-20 rounded-full mb-4"
+        loading="lazy"
+        draggable={false}
       />
       <div className="bg-blue-100 text-blue-600 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide mb-2">
         {role}

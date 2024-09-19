@@ -85,6 +85,8 @@ const [isOpen, setIsOpen] = useState(false);
           src={currentImage}
           alt={userCurrentRoleStatusActiveRole}
           className="h-[30px] w-[30px] rounded-full"
+          loading="lazy"
+          draggable={false}
         />
 
         {/* <img
@@ -99,6 +101,8 @@ const [isOpen, setIsOpen] = useState(false);
           alt="User"
           className="h-[40px] w-[40px] rounded-full z-30 py-1 px-1"
           onClick={toggleDropdown}
+          loading="lazy"
+          draggable={false}
         />
         {dropdownOpen && (
           <div

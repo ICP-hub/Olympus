@@ -303,6 +303,8 @@ const handleButtonClick = (action) => {
                         src={card.icon}
                         alt="KYC Icon"
                         className="w-14 h-14 object-contain"
+                        loading="lazy"
+                        draggable={false}
                       />
                     )}
                     {card.imageGroup && (
@@ -313,6 +315,8 @@ const handleButtonClick = (action) => {
                               src={mentor}
                               alt="Image 1"
                               className="rounded-full  "
+                              loading="lazy"
+                              draggable={false}
                             />
                           </div>
                           <div className="absolute top-0 right-0 transform -translate-x-1/4 -translate-y-1/4">
@@ -320,6 +324,8 @@ const handleButtonClick = (action) => {
                               src={founder}
                               alt="Image 2"
                               className="rounded-full "
+                              loading="lazy"
+                              draggable={false}
                             />
                           </div>
                           <div className="absolute bottom-0 left-0 transform translate-x-1/4 translate-y-1/4 ">
@@ -327,6 +333,8 @@ const handleButtonClick = (action) => {
                               src={founder}
                               alt="Image 3"
                               className="rounded-full "
+                              loading="lazy"
+                              draggable={false}
                             />
                           </div>
                           <div className="bottom-0 right-0 transform -translate-x-1/4 translate-y-1/4">
@@ -334,6 +342,8 @@ const handleButtonClick = (action) => {
                               src={talent}
                               alt="Image 4"
                               className="rounded-full "
+                              loading="lazy"
+                              draggable={false}
                             />
                           </div>
                         </div>

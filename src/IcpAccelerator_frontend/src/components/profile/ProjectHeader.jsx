@@ -10,6 +10,8 @@ const ProfileHeader = ({ ProfileImage, Fullname, openchat_username }) => (
         src={ProfileImage}
         alt={Fullname}
         className="w-full h-full rounded-full object-cover"
+        loading="lazy"
+        draggable={false}
       />
       <div className="absolute inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300">
         <FaPlus className="text-white text-xl" />

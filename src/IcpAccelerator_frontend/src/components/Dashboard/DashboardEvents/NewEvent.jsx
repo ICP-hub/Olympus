@@ -117,6 +117,8 @@ const NewEvent = ({ event }) => {
                         }}
                         className="h-6 w-6 cursor-pointer opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity z-50"
                         alt="edit"
+                        loading="lazy"
+                        draggable={false}
                       />
                     </div>
       
@@ -137,6 +139,8 @@ const NewEvent = ({ event }) => {
                             src={event.cohort_banner ?uint8ArrayToBase64(event.cohort_banner):''}
                             alt="Event Background"
                             className="w-full md:w-[240px] h-[172px] rounded-lg object-cover object-center"
+                            loading="lazy"
+                            draggable={false}
                           />
                         </div>
       

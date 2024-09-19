@@ -53,6 +53,8 @@ const RequestEventCard = () => {
               src={ok}
               alt="bg image"
               className="w-[200px] h-[240px] rounded-lg mr-4 object-cover"
+              loading="lazy"
+              draggable={false}
             />
           </div>
           <div className="my-3 pl-4">
@@ -72,7 +74,8 @@ const RequestEventCard = () => {
                 Online
               </span>
               <span>
-                <img className="text-sm text-[#121926]" src={ticket1} alt="" />{" "}
+                <img className="text-sm text-[#121926]" src={ticket1} alt=""    loading="lazy"
+                    draggable={false} />{" "}
               </span>
               <span className="text-sm text-[#121926]"> Free</span>
               <div className="flex -space-x-1 ">

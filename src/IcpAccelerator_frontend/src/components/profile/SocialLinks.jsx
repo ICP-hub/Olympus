@@ -39,7 +39,8 @@ const SocialLinks = ({ socialLinks, isEditingLink, handleLinkEditToggle, handleL
                   className="absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 ease-in-out transform opacity-0 group-hover:opacity-100 group-hover:translate-x-8  h-10 w-7"
                   onClick={() => handleLinkEditToggle(index)}
                 >
-                  <img src={edit} alt="Edit" />
+                  <img src={edit} alt="Edit"    loading="lazy"
+                    draggable={false}/>
                 </button>
                 {isEditingLink[index] && (
                   <input

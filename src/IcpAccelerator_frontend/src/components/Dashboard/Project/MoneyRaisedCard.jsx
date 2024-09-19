@@ -14,6 +14,8 @@ const FundingCard = ({ title, value, imageSrc, isPrivate }) => {
             src={imageSrc}
             alt={`${title} Thumbnail`}
             className="w-[150px] h-[100px] object-cover rounded-lg"
+            loading="lazy"
+            draggable={false}
           />
         </div>
 
