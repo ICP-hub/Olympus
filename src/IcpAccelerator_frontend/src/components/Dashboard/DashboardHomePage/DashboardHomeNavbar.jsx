@@ -13,7 +13,7 @@ import toast from "react-hot-toast";
 import Tooltip from '@mui/material/Tooltip';
 import CloseIcon from "@mui/icons-material/Close";
 import DashboardSidebar from "./DashboardHomeSidebar";
-function DashboardHomeNavbar() {
+function DashboardHomeNavbar({id,id2}) {
   const principal = useSelector((currState) => currState.internet.principal);
   const userCurrentRoleStatusActiveRole = useSelector(
     (currState) => currState.currentRoleStatus.activeRole
@@ -82,6 +82,7 @@ const [isOpen, setIsOpen] = useState(false);
       <div className="flex items-center space-x-4 mr-6 md:mr-0 ">
         {/* Display the current active role's image */}
         <img
+        id={id}
           src={currentImage}
           alt={userCurrentRoleStatusActiveRole}
           className="h-[30px] w-[30px] rounded-full"
@@ -95,6 +96,7 @@ const [isOpen, setIsOpen] = useState(false);
           alt="Notification Bell"
         /> */}
         <img
+        id={id2}
           src={
             dashboard.dashboardhomenavbar.logoImages.df_small_logo.df_small_logo
           }
