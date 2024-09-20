@@ -526,8 +526,8 @@ import { Principal } from "@dfinity/principal";
 import Tooltip from "@mui/material/Tooltip";
 import { motion } from "framer-motion";
 
-const Toggle = ({ isChecked, onToggle }) => (
-  <label className="inline-flex items-center cursor-pointer">
+const Toggle = ({ isChecked, onToggle ,id }) => (
+  <label className="inline-flex items-center cursor-pointer" id={id}>
     <input
       type="checkbox"
       className="sr-only peer"
@@ -538,7 +538,7 @@ const Toggle = ({ isChecked, onToggle }) => (
   </label>
 );
 
-function DashboardSidebar({ isOpen, onClose }) {
+function DashboardSidebar({ isOpen, onClose, id, id2 }) {
   const { dashboardhomesidebar } = dashboard;
   const [hasNavigated, setHasNavigated] = useState(false);
 
@@ -578,18 +578,32 @@ function DashboardSidebar({ isOpen, onClose }) {
         vc: role === "vc" ? !prevState.vc : false,
         project: role === "project" ? !prevState.project : false,
       };
+  // Handle Toggle State changes
+  // Handle Toggle State changes
+  const handleToggle = async (role) => {
+    setToggleState((prevState) => {
+      const newState = {
+        mentor: role === "mentor" ? !prevState.mentor : false,
+        vc: role === "vc" ? !prevState.vc : false,
+        project: role === "project" ? !prevState.project : false,
+      };
 
-      localStorage.setItem("toggleState", JSON.stringify(newState));
+        localStorage.setItem("toggleState", JSON.stringify(newState));
 
-      const newStatus = newState[role] ? "active" : "default";
-      dispatch(switchRoleRequestHandler({ roleName: role, newStatus }));
+          const newStatus = newState[role] ? "active" : "default";
+        dispatch(switchRoleRequestHandler({ roleName: role, newStatus }));
 
-      if (!newState.mentor && !newState.vc && !newState.project) {
-        ["mentor", "vc", "project"].forEach((r) => {
-          dispatch(switchRoleRequestHandler({ roleName: r, newStatus: "default" }));
-        });
-      }
+          if (!newState.mentor && !newState.vc && !newState.project) {
+          ["mentor", "vc", "project"].forEach((r) => {
+            dispatch(
+            switchRoleRequestHandler({ roleName: r, newStatus: "default" })
+          );
+          });
+        }
 
+      return newState;
+    });
+  };
       return newState;
     });
   };
@@ -605,8 +619,10 @@ function DashboardSidebar({ isOpen, onClose }) {
   useEffect(() => {
     if (actor && isAuthenticated) {
       dispatch(founderRegisteredHandlerRequest());
-    }
-  }, [dispatch, isAuthenticated, actor]);
+    if (actor && isAuthenticated) {
+      dispatch(founderRegisteredHandlerRequest());
+    }}
+  }, [dispatch, isAuthenticated, actor])
 
   const handleLinkClick = (path) => {
     setActiveLink(path);
@@ -643,6 +659,7 @@ function DashboardSidebar({ isOpen, onClose }) {
 
   const handleNavigation = () => {
     if (cardData && cardData.length > 0) {
+      console.log("data navigation", cardData);
       const projectId = cardData[0]?.[0]?.uid || "No UID available";
       navigate("/dashboard/document", { state: { projectId, cardData } });
     } else {
@@ -650,12 +667,13 @@ function DashboardSidebar({ isOpen, onClose }) {
     }
   };
 
-  const SidebarLink = ({ path, icon, label, disabled, tooltip }) => (
+  const SidebarLink = ({ id2, path, icon, label, disabled, tooltip }) => (
     <Tooltip title={disabled ? tooltip : ""} arrow>
       <div
+        id={id2}
         onClick={() => {
           if (!disabled) {
-            if (typeof path === 'function') {
+            if (typeof path === "function") {
               path(); // If path is a function, execute it
             } else {
               handleLinkClick(path); // Otherwise, navigate normally
@@ -727,8 +745,11 @@ function DashboardSidebar({ isOpen, onClose }) {
     <div className="mb-6">
       <div className="flex items-center justify-between px-6 mb-2">
         <h3 className="text-xs font-semibold text-gray-500 uppercase">{title}</h3>
-        {(currentrole === "mentor" || currentrole === "vc" || currentrole === "project") && (
+        {(currentrole === "mentor" ||
+          currentrole === "vc" ||
+          currentrole === "project") && (
           <Toggle
+            id={id}
             isChecked={toggleState[currentrole]}
             onToggle={() => handleToggle(currentrole)}
           />
@@ -738,6 +759,7 @@ function DashboardSidebar({ isOpen, onClose }) {
         {items.map(({ path, icon, label, disabled, tooltip }, index) => (
           <li key={index}>
             <SidebarLink
+            id2={id2}
               path={path}
               icon={icon}
               label={label}
@@ -759,12 +781,15 @@ function DashboardSidebar({ isOpen, onClose }) {
           path: "/dashboard/mentor",
           icon: gridSvgIcon,
           disabled: true,
+          disabled: true,
           tooltip: "Coming soon",
           label: dashboardhomesidebar.sidebarSections.mentors.items.label1,
         },
         {
           path: "/dashboard/mentor/new",
           icon: plusSvgIcon,
+          disabled: true,
+          tooltip: "Coming soon",
           disabled: true,
           tooltip: "Coming soon",
           label: "Create new Service",
@@ -786,6 +811,8 @@ function DashboardSidebar({ isOpen, onClose }) {
           icon: plusSvgIcon,
           disabled: true,
           tooltip: "Coming soon",
+          disabled: true,
+          tooltip: "Coming soon",
           label: "Create new Project",
         },
       ],
@@ -799,12 +826,15 @@ function DashboardSidebar({ isOpen, onClose }) {
           path: "/dashboard/investor",
           icon: gridSvgIcon,
           disabled: true,
+          disabled: true,
           tooltip: "Coming soon",
           label: dashboardhomesidebar.sidebarSections.investors.items.label1,
         },
         {
           path: "/dashboard/investor/new",
           icon: plusSvgIcon,
+          disabled: true,
+          tooltip: "Coming soon",
           disabled: true,
           tooltip: "Coming soon",
           label: "Create new Investors",
@@ -824,6 +854,7 @@ function DashboardSidebar({ isOpen, onClose }) {
         title: dashboardhomesidebar.sidebarSections.identity.label,
         items: [
           {
+            id2: id2,
             path: "/dashboard/profile",
             icon: userCircleSvgIcon,
             label: dashboardhomesidebar.sidebarSections.identity.items.label,
@@ -847,6 +878,7 @@ function DashboardSidebar({ isOpen, onClose }) {
       <div>
         {sidebarSections.map((section, index) => (
           <SidebarSection
+           id2={ id2 }
             key={index}
             title={section.title}
             items={section.items}
@@ -978,8 +1010,7 @@ function DashboardSidebar({ isOpen, onClose }) {
           </nav>
         </aside>
       </div>
-      
-      {/* Bottom Navigation for mobile */}
+          {/* Bottom Navigation for mobile */}
       {show && <BottomNav />}
     </>
   );
