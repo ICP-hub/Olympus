@@ -5,7 +5,7 @@ import DashboardHomeWelcomeSection from './DashboardHomeWelcomeSection'
 import { Routes, Route } from 'react-router-dom';
 import ProjectProfile from './ProjectProfile';
 import Jobs from '../../jobs/Jobs'
-import ProfilePage from '../../profile/ProfilePage'
+import ProfilePage from '../../Profile/ProfilePage'
 import EventMain from '../DashboardEvents/EventMain'
 import ServiceDetailPage from './ServiceDetailPage'
 import AddNewWork from './AddNewWork'
@@ -154,7 +154,7 @@ function DashboardHomePage() {
             description: ` <div style="
                  text-align: center;
                ">
-                <img src="${allfounder}" alt="Step visual" style="width: 100%; border-radius: 10px; margin-bottom: 15px;" />
+                <img src="${allfounder}" alt="Step visual" draggable="false"  style="width: 100%; border-radius: 10px; margin-bottom: 15px;" />
                 <h2 style="font-size: 20px; font-weight: bold; color: #333;">Welcome to your dashboard</h2>
                 <p style="color: #666; margin-bottom: 20px;">
                   We're glad to have you onboard. Here are some quick tips to get you up and running.
@@ -169,7 +169,7 @@ function DashboardHomePage() {
             description: ` <div style="
                  text-align: center;
                ">
-                <img src="${allfounder}" alt="Step visual" style="width: 100%; border-radius: 10px; margin-bottom: 15px;" />
+                <img src="${allfounder}" alt="Step visual" draggable="false"  style="width: 100%; border-radius: 10px; margin-bottom: 15px;" />
                 <h2 style="font-size: 20px; font-weight: bold; color: #333;">Switch Your Role</h2>
                 <p style="color: #666; margin-bottom: 20px;">
         You can switch between different roles using the toggle buttons below. Only one role can be active at a time. If both toggles are off, the role automatically switches back to "User."
@@ -183,7 +183,7 @@ function DashboardHomePage() {
             description: ` <div style="
                  text-align: center;
                ">
-                <img src="${allfounder}" alt="Step visual" style="width: 100%; border-radius: 10px; margin-bottom: 15px;" />
+                <img src="${allfounder}" alt="Step visual" draggable="false"  style="width: 100%; border-radius: 10px; margin-bottom: 15px;" />
                 <h2 style="font-size: 20px; font-weight: bold; color: #333;">Active Role and Profile</h2>
                 <p style="color: #666; margin-bottom: 20px;">
                  Your current role is displayed below alongside your profile image. Use the toggles to switch between roles, and the active role will automatically update here.
@@ -197,7 +197,7 @@ function DashboardHomePage() {
             description: ` <div style="
                  text-align: center;
                ">
-                <img src="${allfounder}" alt="Step visual" style="width: 100%; border-radius: 10px; margin-bottom: 15px;" />
+                <img src="${allfounder}" alt="Step visual" draggable="false" style="width: 100%; border-radius: 10px; margin-bottom: 15px;" />
                 <h2 style="font-size: 20px; font-weight: bold; color: #333;">Account Actions</h2>
                 <p style="color: #666; margin-bottom: 20px;">
                   Use the dropdown below to copy your principal or log out of your account. This allows you to manage your session and easily retrieve your account identifier.
@@ -211,7 +211,7 @@ function DashboardHomePage() {
             description: ` <div style="
                  text-align: center;
                ">
-                <img src="${allfounder}" alt="Step visual" style="width: 100%; border-radius: 10px; margin-bottom: 15px;" />
+                <img src="${allfounder}" alt="Step visual" draggable="false" style="width: 100%; border-radius: 10px; margin-bottom: 15px;" />
                 <h2 style="font-size: 20px; font-weight: bold; color: #333;">Profile and Data Management</h2>
                 <p style="color: #666; margin-bottom: 20px;">
                   Navigate through the sidebar to manage and update your profile. You can also track and view all your data, keeping everything organized and up to date.

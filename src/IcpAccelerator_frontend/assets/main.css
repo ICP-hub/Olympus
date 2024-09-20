@@ -228,7 +228,9 @@ input[type="number"] {
 
 /* driverjs  */
 
-
+.driver-active-element{
+  top: 60% !important;
+}
 
 .driver-popover.driverjs-theme {
   all: unset;
