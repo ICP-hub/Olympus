@@ -716,7 +716,7 @@ const ProfileDetail = () => {
                       <div>
                         <button
                           type="button"
-                          className="visible md:invisible md:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
+                          className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
                           onClick={() => handleEditToggle("full_name")}
                         >
                           {isEditing.full_name ? "" : <img src={edit}    loading="lazy"
@@ -759,7 +759,7 @@ const ProfileDetail = () => {
                       <div>
                         <button
                           type="button"
-                          className="visible md:invisible md:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
+                          className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
                           onClick={() => handleEditToggle("openchat_user_name")}
                         >
                           {isEditing.openchat_user_name ? (
@@ -807,7 +807,7 @@ const ProfileDetail = () => {
                       <div>
                         <button
                           type="button"
-                          className="visible md:invisible md:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
+                          className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
                           onClick={() => handleEditToggle("email")}
                         >
                           {isEditing.email ? "" : <img src={edit}    loading="lazy"
@@ -858,7 +858,7 @@ const ProfileDetail = () => {
                       <div>
                         <button
                           type="button"
-                          className="visible md:invisible md:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
+                          className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
                           onClick={() => handleEditToggle("bio")}
                         >
                           {isEditing.bio ? "" : <img src={edit}    loading="lazy"
@@ -889,7 +889,7 @@ const ProfileDetail = () => {
                       <div>
                         <button
                           type="button"
-                          className="visible md:invisible md:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
+                          className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
                           onClick={() => handleEditToggle("country")}
                         >
                           {isEditing.country ? "" : <img src={edit}    loading="lazy"
@@ -938,7 +938,7 @@ const ProfileDetail = () => {
                       <div>
                         <button
                           type="button"
-                          className="visible md:invisible md:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
+                          className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
                           onClick={() => handleEditToggle("type_of_profile")}
                         >
                           {isEditing.type_of_profile ? "" : <img src={edit}    loading="lazy"
@@ -988,7 +988,7 @@ const ProfileDetail = () => {
                       <div>
                         <button
                           type="button"
-                          className="visible md:invisible md:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
+                          className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
                           onClick={() => handleEditToggle("reason_to_join")}
                         >
                           {isEditing.reason_to_join ? "" : <img src={edit}    loading="lazy"
@@ -1058,7 +1058,7 @@ const ProfileDetail = () => {
                       <div>
                         <button
                           type="button"
-                          className="visible md:invisible md:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
+                          className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
                           onClick={() => handleEditToggle("area_of_interest")}
                         >
                           {isEditing.area_of_interest ? "" : <img src={edit}    loading="lazy"
@@ -1186,7 +1186,11 @@ const ProfileDetail = () => {
                                     </a>
                                     <button
                                       type="button"
-                                      className="absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 translate-x-6 ease-in-out transform opacity-100 md:opacity-0 md:group-hover:opacity-100 md:group-hover:translate-x-6 h-10 w-7"
+                                      // className="absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 translate-x-6 ease-in-out transform opacity-100 lgx:opacity-0 lgx:group-hover:opacity-100 lgx:group-hover:translate-x-6 h-10 w-7"
+                                       className="absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 translate-x-6 ease-in-out transform opacity-100 lgx:opacity-0 lgx:group-hover:opacity-100 lgx:group-hover:translate-x-6 h-10 w-7"
+                                      // {/* Your icon or content */}
+                                   
+                                    
                                       onClick={() => handleLinkEditToggle(key)} // Toggle editing mode for this link
                                     >
                                       <img src={edit} alt="edit"    loading="lazy"
@@ -1373,7 +1377,7 @@ const ProfileDetail = () => {
                   <div>
                     <button
                       type="button"
-                      className="visible md:invisible md:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
+                      className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
                       onClick={() => handleEditToggle("full_name")}
                     >
                       {isEditing.full_name ? "" : <img src={edit}    loading="lazy"
@@ -1416,7 +1420,7 @@ const ProfileDetail = () => {
                   <div>
                     <button
                       type="button"
-                      className="visible md:invisible md:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
+                      className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
                       onClick={() => handleEditToggle("openchat_user_name")}
                     >
                       {isEditing.openchat_user_name ? "" : <img src={edit}    loading="lazy"
@@ -1460,7 +1464,7 @@ const ProfileDetail = () => {
                   <div>
                     <button
                       type="button"
-                      className="visible md:invisible md:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
+                      className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
                       onClick={() => handleEditToggle("email")}
                     >
                       {isEditing.email ? "" : <img src={edit}    loading="lazy"
@@ -1509,7 +1513,7 @@ const ProfileDetail = () => {
                   <div>
                     <button
                       type="button"
-                      className="visible md:invisible md:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
+                      className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
                       onClick={() => handleEditToggle("bio")}
                     >
                       {isEditing.bio ? "" : <img src={edit}    loading="lazy"
@@ -1540,7 +1544,7 @@ const ProfileDetail = () => {
                   <div>
                     <button
                       type="button"
-                      className="visible md:invisible md:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
+                      className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
                       onClick={() => handleEditToggle("country")}
                     >
                       {isEditing.country ? "" : <img src={edit}    loading="lazy"
@@ -1587,7 +1591,7 @@ const ProfileDetail = () => {
                   <div>
                     <button
                       type="button"
-                      className="visible md:invisible md:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
+                      className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
                       onClick={() => handleEditToggle("type_of_profile")}
                     >
                       {isEditing.type_of_profile ? "" : <img src={edit}    loading="lazy"
@@ -1637,7 +1641,7 @@ const ProfileDetail = () => {
                   <div>
                     <button
                       type="button"
-                      className="visible md:invisible md:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
+                      className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
                       onClick={() => handleEditToggle("reason_to_join")}
                     >
                       {isEditing.reason_to_join ? "" : <img src={edit}    loading="lazy"
@@ -1707,7 +1711,7 @@ const ProfileDetail = () => {
                   <div>
                     <button
                       type="button"
-                      className="visible md:invisible md:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
+                      className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
                       onClick={() => handleEditToggle("area_of_interest")}
                     >
                       {isEditing.area_of_interest ? "" : <img src={edit}    loading="lazy"
@@ -1831,7 +1835,7 @@ const ProfileDetail = () => {
                                 </a>
                                 <button
                                   type="button"
-                                  className="absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 ease-in-out transform opacity-0 group-hover:opacity-100 group-hover:translate-x-6 h-10 w-7"
+                                  className="absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 translate-x-6 ease-in-out transform opacity-100 lgx:opacity-0 lgx:group-hover:opacity-100 md:group-hover:translate-x-6 h-10 w-7"
                                   onClick={() => handleLinkEditToggle(key)} // Toggle editing mode for this link
                                 >
                                   <img src={edit} alt="edit"   loading="lazy"

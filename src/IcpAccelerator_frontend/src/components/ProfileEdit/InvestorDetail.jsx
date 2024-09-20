@@ -615,7 +615,8 @@ console.log("principal in investordetail",principal)
             </label>
             <img
               src={editp}
-              className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
+              className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
+"
               alt="edit"
               onClick={() => handleEditClick("registered")}
               loading="lazy"
@@ -660,7 +661,8 @@ console.log("principal in investordetail",principal)
               </label>
               <img
                 src={editp}
-                className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
+                className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
+"
                 alt="edit"
                 onClick={() => handleEditClick("registered_country")}
                 loading="lazy"
@@ -713,7 +715,8 @@ console.log("principal in investordetail",principal)
             </label>
             <img
               src={editp}
-              className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
+              className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
+"
               alt="edit"
               onClick={() => handleEditClick("preferred_icp_hub")}
               loading="lazy"
@@ -764,7 +767,8 @@ console.log("principal in investordetail",principal)
             </label>
             <img
               src={editp}
-              className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
+              className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
+"
               alt="edit"
               onClick={() => handleEditClick("existing_icp_investor")}
               loading="lazy"
@@ -812,7 +816,8 @@ console.log("principal in investordetail",principal)
               </label>
               <img
                 src={editp}
-                className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
+                className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
+"
                 alt="edit"
                 onClick={() => handleEditClick("investor_type")}
                 loading="lazy"
@@ -882,7 +887,8 @@ console.log("principal in investordetail",principal)
             </label>
             <img
               src={editp}
-              className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
+              className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
+"
               alt="edit"
               onClick={() => handleEditClick("portfolio_link")}
               loading="lazy"
@@ -922,7 +928,8 @@ console.log("principal in investordetail",principal)
             </label>
             <img
               src={editp}
-              className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
+              className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
+"
               alt="edit"
               onClick={() => handleEditClick("name_of_fund")}
               loading="lazy"
@@ -962,7 +969,8 @@ console.log("principal in investordetail",principal)
             </label>
             <img
               src={editp}
-              className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
+              className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
+"
               alt="edit"
               onClick={() => handleEditClick("fund_size")}
               loading="lazy"
@@ -1008,7 +1016,8 @@ console.log("principal in investordetail",principal)
           </label>
             <img
               src={editp}
-              className="absolute right-2 top-2 invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
+              className="absolute right-2 top-2 visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
+"
               alt="edit"
               onClick={() => handleEditClick("invested_in_multi_chain")}
               loading="lazy"
@@ -1057,7 +1066,8 @@ console.log("principal in investordetail",principal)
             </label>
             <img
                 src={editp}
-                className="absolute right-2 top-2  invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
+                className="absolute right-2 top-2  visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
+"
                 alt="edit"
                 onClick={() => handleEditClick("project_on_multichain")}
                 loading="lazy"
@@ -1136,7 +1146,8 @@ console.log("principal in investordetail",principal)
             </label>
             <img
               src={editp}
-              className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
+              className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
+"
               alt="edit"
               onClick={() => handleEditClick("category_of_investment")}
               loading="lazy"
@@ -1207,7 +1218,8 @@ console.log("principal in investordetail",principal)
             </label>
             <img
               src={editp}
-              className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
+              className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
+"
               alt="edit"
               onClick={() => handleEditClick("website_link")}
               loading="lazy"
@@ -1247,7 +1259,8 @@ console.log("principal in investordetail",principal)
             </label>
             <img
               src={editp}
-              className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
+              className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
+"
               alt="edit"
               onClick={() => handleEditClick("stage")}
               loading="lazy"
@@ -1324,7 +1337,8 @@ console.log("principal in investordetail",principal)
             </label>
             <img
               src={editp}
-              className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
+              className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
+"
               alt="edit"
               onClick={() => handleEditClick("range_of_check_size")}
               loading="lazy"
@@ -1449,7 +1463,7 @@ console.log("principal in investordetail",principal)
                                 </a>
                                 <button
                                   type="button"
-                                  className="absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 ease-in-out transform opacity-0 group-hover:opacity-100 group-hover:translate-x-6 h-10 w-7"
+                                  className="absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 translate-x-6 ease-in-out transform opacity-100 lgx:opacity-0 lgx:group-hover:opacity-100 md:group-hover:translate-x-6 h-10 w-7"
                                   onClick={() => handleLinkEditToggle(key)} // Toggle editing mode for this link
                                 >
                                   <img src={editp} alt="edit"    loading="lazy"

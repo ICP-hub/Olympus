@@ -7,7 +7,7 @@ export function formatDateFromBigInt(bigIntDate) {
 
 export function formatFullDateFromBigInt(bigIntDate) {
     const date = new Date(Number(bigIntDate / 1000000n));
-    const dateString = date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+    const dateString = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
     return `${dateString}`;
 }
 

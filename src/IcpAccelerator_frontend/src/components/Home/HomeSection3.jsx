@@ -6,7 +6,7 @@ export default function HomeSection3() {
 
   return (
     <>
-      <div className="bg-white pb-20 md:pb-40">
+      <div className="bg-white  md:pb-40">
         <div className="container mx-auto">
           <div className="max-w-6xl w-full md:px-4 sm:px-6 lg:px-8 mx-auto">
             <div className="p-4 md:p-6">

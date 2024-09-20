@@ -396,13 +396,13 @@ const ProfileImage =  profileimage && profileimage.length > 0
                 {isSubmitting ? (
                   <ThreeDots
                     visible={true}
-                    height="24"
-                    width="24"
+                    height="30"
+                    width="40"
                     color="#FFFFFF"
                     radius="9"
                     ariaLabel="three-dots-loading"
-                    wrapperStyle={{}}
-                    wrapperClassName=""
+                
+                    
                   />
                 ) : (
                   getButtonText(userCurrentRoleStatusActiveRole)

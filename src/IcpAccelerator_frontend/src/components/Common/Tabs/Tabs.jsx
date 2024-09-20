@@ -51,7 +51,8 @@ const Tabs = ({ tabs, currentTab, onTabChange }) => {
     if (tabsContainerRef.current) {
       tabsContainerRef.current.scrollBy({
         left: direction === "left" ? -100 : 100, 
-      });
+        right: direction ==="right" ? -100 :100,
+       });
     }
   };
 
@@ -68,7 +69,7 @@ const Tabs = ({ tabs, currentTab, onTabChange }) => {
 
       <div
         ref={tabsContainerRef}
-        className={`w-full overflow-x-auto whitespace-nowrap scrollbar-hide ${
+        className={`w-[94%] overflow-x-auto whitespace-nowrap scrollbar-hide ${
           isScrollable ? "px-6" : ""
         }`}
       >
@@ -77,7 +78,7 @@ const Tabs = ({ tabs, currentTab, onTabChange }) => {
             <button
               key={tab.value}
               onClick={() => onTabChange(tab.value)}
-              className={`whitespace-nowrap py-2 px-2 border-b-2 font-medium text-sm ${
+              className={`whitespace-nowrap py-2 px-2 border-b-2 font-medium text-sm  ${
                 currentTab === tab.value
                   ? "border-blue-500 text-blue-600"
                   : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"

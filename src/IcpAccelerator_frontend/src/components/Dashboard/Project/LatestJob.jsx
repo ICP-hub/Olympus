@@ -187,7 +187,7 @@ const NewJob = ({ latestJobs }) => {
   return (
     <>
       {!noData && latestJobs && latestJobs.length > 0 && (
-        <div className="hidden sm4:block">
+        <div className="hidden md:block">
           <div className="flex flex-col items-end mb-8 max-w-7xl pt-4 ">
             <button
               className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
@@ -318,13 +318,13 @@ const NewJob = ({ latestJobs }) => {
               <>
                 <div
                   key={card.job_id || index}
-                  className="flex flex-col gap-3 my-8 bg-white rounded-lg shadow p-4"
+                  className="flex flex-col gap-3 my-4 bg-white rounded-lg shadow p-4"
                 >
                   <div className="flex justify-between">
                     <div className="flex flex-col gap-3 w-full ">
                       <p className="text-gray-400">{job_post_time} </p>
                       <div className="flex justify-between">
-                        <h3 className="text-sm xxs:text-xl font-bold break-all truncate">
+                        <h3 className="text-xl font-bold break-all truncate">
                           {job_name}{" "}
                         </h3>
                         <div className="flex  gap-4 items-center">
@@ -391,7 +391,7 @@ const NewJob = ({ latestJobs }) => {
                   </div>
                 </div>
 
-                <hr />
+                {/* <hr /> */}
               </>
             );
           })
@@ -399,7 +399,7 @@ const NewJob = ({ latestJobs }) => {
 
         {!noData && latestJobs && latestJobs.length > 0 && (
           <button
-            className="bg-blue-500 text-white  px-4 py-2 w-full sm4:hidden "
+            className="bg-blue-500 text-white  px-4 py-2 w-full md:hidden rounded-md mb-4 truncate"
             onClick={handleModalOpen}
           >
             + Add new Job

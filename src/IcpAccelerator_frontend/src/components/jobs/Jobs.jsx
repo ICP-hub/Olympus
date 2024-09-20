@@ -196,7 +196,7 @@ console.log('totalJobs',totalJobs)
                 // console.log("cardids", card.job_id);
                 return (
                   <div key={index} >
-                    <div className="flex flex-col gap-3 my-8">
+                    <div className="flex flex-col gap-3 my-8 shadow rounded-md p-4">
                       <div className="flex justify-between">
                         <div
                           onClick={() => openJobDetails(card.job_id)}
@@ -245,7 +245,7 @@ console.log('totalJobs',totalJobs)
                         </div>
                       </div>
                       <div className="flex flex-col gap-3">
-                        <p className="text-gray-600  overflow-hidden text-ellipsis max-h-12 line-clamp-2">
+                        <p className="text-gray-600  overflow-hidden text-ellipsis max-h-12 line-clamp-2 break-all">
                           {parse(job_description)}{" "}
                         </p>
                         <div className="flex gap-5 items-center flex-wrap">
@@ -293,7 +293,7 @@ console.log('totalJobs',totalJobs)
                       </div>
                     </div>
 
-                    <hr />
+                    {/* <hr /> */}
                     </div>
                 );
               })}

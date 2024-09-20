@@ -127,8 +127,8 @@ const RatingPage = () => {
           loading="lazy"
           draggable={false}
         />
-        <h2 className="text-2xl font-bold">{userFullData.full_name} </h2>
-        <p className="text-gray-500">{userFullData.openchat_username}</p>
+        <h2 className="text-2xl font-bold truncate">{userFullData.full_name} </h2>
+        <p className="text-gray-500 truncate">{userFullData.openchat_username}</p>
         {!currentUserHasRated && (
           <button className="flex gap-2 my-5">
             {[...Array(5)].map((_, index) => (

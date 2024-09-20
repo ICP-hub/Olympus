@@ -11,7 +11,7 @@ export default function Section2() {
     <>
       <div className="flex flex-col items-center justify-center  p-4 bg-white">
         <div className='max-w-7xl mx-auto md:px-6'>
-          <div className="flex flex-col items-center justify-center  bg-white mx-auto pb-20 pt-28 ">
+          <div className="flex flex-col items-center justify-center  bg-white mx-auto md:pb-20 md:pt-28 ">
             <div className="py-2 px-4 bg-white border border-blue-500 rounded-full text-blue-500 mb-4">
               {homepagesection2.aboutText}
             </div>
@@ -140,7 +140,7 @@ export default function Section2() {
               </div>
               <div className="relative dlg:-top-[551px] lg1:-top-[501px] flex items-center justify-center w-full mt-8">
                 <div className="bg-white  dlg:p-6 dlg:rounded-full w-full dlg:w-auto">
-                  <button className="px-6 py-3  text-white bg-blue-600 dlg:rounded-full w-full">
+                  <button className="px-6 py-3  text-white bg-blue-600 rounded-md dlg:rounded-full w-full">
                     {homepagesection2.aboutText}
                     <homepagesection2.arrowForwardIcon.ArrowForwardIcon className="ml-2" />
                   </button>
