@@ -578,15 +578,6 @@ function DashboardSidebar({ isOpen, onClose, id, id2 }) {
         vc: role === "vc" ? !prevState.vc : false,
         project: role === "project" ? !prevState.project : false,
       };
-  // Handle Toggle State changes
-  // Handle Toggle State changes
-  const handleToggle = async (role) => {
-    setToggleState((prevState) => {
-      const newState = {
-        mentor: role === "mentor" ? !prevState.mentor : false,
-        vc: role === "vc" ? !prevState.vc : false,
-        project: role === "project" ? !prevState.project : false,
-      };
 
         localStorage.setItem("toggleState", JSON.stringify(newState));
 
@@ -604,9 +595,7 @@ function DashboardSidebar({ isOpen, onClose, id, id2 }) {
       return newState;
     });
   };
-      return newState;
-    });
-  };
+     ;
 
   // Get Toggle State from local storage
   useEffect(() => {

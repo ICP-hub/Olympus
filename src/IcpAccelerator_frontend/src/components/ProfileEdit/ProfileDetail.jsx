@@ -7,7 +7,7 @@ import ArrowOutwardOutlinedIcon from "@mui/icons-material/ArrowOutwardOutlined";
 import toast, { Toaster } from "react-hot-toast";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useCountries } from "react-countries";
-import { useSelector,useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { FaEdit, FaPlus, FaSave, FaTrash } from "react-icons/fa";
 import { Principal } from "@dfinity/principal";
 import { ThreeDots } from "react-loader-spinner";
@@ -24,7 +24,7 @@ import getPlatformFromHostname from "../Utils/navigationHelper/getPlatformFromHo
 import { FaChevronDown, FaChevronUp } from "react-icons/fa"; // Icons for dropdown
 import getReactSelectStyles from "../Utils/navigationHelper/getReactSelectStyles";
 import { userRegisteredHandlerRequest } from "../StateManagement/Redux/Reducers/userRegisteredData";
-
+import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
 
 const ProfileDetail = () => {
   const {
@@ -43,6 +43,7 @@ const ProfileDetail = () => {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const inputRef = useRef(null);
   const userCurrentRoleStatusActiveRole = useSelector(
     (currState) => currState.currentRoleStatus.activeRole
   );
@@ -56,8 +57,12 @@ const ProfileDetail = () => {
   // console.log("User aa raha hai", userFullData);
   const actor = useSelector((currState) => currState.actors.actor);
   const [imagePreview, setImagePreview] = useState(null);
-//  const [dispatchCompleted, setDispatchCompleted] = useState(false);
+  //  const [dispatchCompleted, setDispatchCompleted] = useState(false);
   const [imageData, setImageData] = useState(null);
+  const [logoPreview, setLogoPreview] = useState(null);
+  const [logoData, setLogoData] = useState(null);
+  const [coverPreview, setCoverPreview] = useState(null);
+  const [coverData, setCoverData] = useState(null);
   const [interestedDomainsOptions, setInterestedDomainsOptions] = useState([]);
   const [
     interestedDomainsSelectedOptions,
@@ -97,7 +102,6 @@ const ProfileDetail = () => {
       setTypeOfProfileOptions([]);
     }
   }, [typeOfProfile]);
-  
 
   const [socialLinks, setSocialLinks] = useState({});
   const [isEditingLink, setIsEditingLink] = useState({});
@@ -209,7 +213,7 @@ const ProfileDetail = () => {
   //   console.log("dispatchCompleted value:", dispatchCompleted);
   //   if (dispatchCompleted) {
   //     console.log("Navigation triggered: /dashboard/profile");
-     
+
   //   }
   // }, [dispatchCompleted, navigate]);
 
@@ -249,12 +253,12 @@ const ProfileDetail = () => {
       console.log("Sending user_data to backend using api:", result);
       if ("Ok" in result) {
         toast.success("User profile updated successfully");
-      dispatch(userRegisteredHandlerRequest());
-      navigate("/dashboard/profile");
+        dispatch(userRegisteredHandlerRequest());
+        navigate("/dashboard/profile");
       } else {
         console.log("Error:", result);
-      dispatch(userRegisteredHandlerRequest());
-      navigate("/dashboard/profile");
+        dispatch(userRegisteredHandlerRequest());
+        navigate("/dashboard/profile");
         toast.error("Failed to update profile");
       }
     } catch (error) {
@@ -273,7 +277,7 @@ const ProfileDetail = () => {
       area_of_interest: false,
       country: false,
       reason_to_join: false,
-      links:false
+      links: false,
     });
     // setTempData(profileData);
     setIsLinkBeingEdited(false);
@@ -339,7 +343,7 @@ const ProfileDetail = () => {
   };
 
   const setValuesHandler = (val) => {
-    console.log('val',val);
+    console.log("val", val);
     if (val) {
       setValue("full_name", val?.full_name ?? "");
       setValue("email", val?.email?.[0] ?? "");
@@ -349,7 +353,7 @@ const ProfileDetail = () => {
       setValue("domains_interested_in", val?.area_of_interest ?? "");
       setInterestedDomainsSelectedOptionsHandler(val?.area_of_interest ?? null);
       setImagePreview(val?.profile_picture?.[0] ?? "");
-// setImageData(val?.profile_picture?.[0] ?? "")
+      // setImageData(val?.profile_picture?.[0] ?? "")
       setValue("type_of_profile", val?.type_of_profile?.[0]);
       setValue(
         "reasons_to_join_platform",
@@ -423,6 +427,7 @@ const ProfileDetail = () => {
         : []
     );
   };
+
   const ProfileImage = userFullData?.profile_picture[0];
   const full_name = userFullData?.full_name;
   const openchat_username = userFullData?.openchat_username[0];
@@ -445,6 +450,18 @@ const ProfileDetail = () => {
     setShowDetails(!showDetails);
   };
 
+  const childRef = useRef(null);
+
+  const handleChangeLogo = (val) => {
+    if (childRef.current) {
+      childRef.current.logoCreationFunc(val);
+    }
+  };
+  const handleChangeCover = (val) => {
+    if (childRef.current) {
+      childRef.current.coverCreationFunc(val);
+    }
+  };
   return (
     <div
       ref={containerRef}
@@ -602,37 +619,58 @@ const ProfileDetail = () => {
         <div
           className=" px-6 py-2 md:p-6 bg-gray-50 relative cursor-pointer"
           style={{
-            backgroundImage: `url(${images})`,
+            backgroundImage: `url(${coverPreview ? coverPreview : images})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}
         >
           <div className="absolute top-0 right-0 p-2  cursor-pointer">
-            <img src={edit} className="size-4"    loading="lazy"
-                    draggable={false}/>
+            <img
+              src={edit}
+              className="size-4"
+              loading="lazy"
+              draggable={false}
+              onClick={() => inputRef.current.click()}
+            />
             <input
-              id="file-upload"
               type="file"
-              className="absolute inset-0 opacity-0 cursor-pointer"
-              accept="image/*"
+              className="hidden"
+              id="cover"
+              name="cover"
+              ref={inputRef} 
+              onChange={(e) => {
+                handleChangeCover(e.target.files[0]);
+              }}
+              accept=".jpg, .jpeg, .png"
             />
           </div>
           <div className="relative w-24 h-24 mx-auto rounded-full mb-4 group">
             <img
-              src={ProfileImage}
+              src={logoPreview}
               alt={full_name}
               className="w-full h-full rounded-full object-cover"
               loading="lazy"
               draggable={false}
             />
             <div className="absolute inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <FaPlus className="text-white text-xl" />
-              <input
-                id="file-upload"
-                type="file"
-                className="absolute inset-0 opacity-0 cursor-pointer"
-                accept="image/*"
-              />
+              <>
+                <input
+                  type="file"
+                  className="hidden"
+                  id="logo"
+                  name="logo"
+                  onChange={(e) => {
+                    handleChangeLogo(e.target.files[0]);
+                  }}
+                  accept=".jpg, .jpeg, .png"
+                />
+                <label
+                  htmlFor="logo"
+                  className="p-2  items-center rounded-md text-md bg-transparent cursor-pointer font-semibold"
+                >
+                  <FaPlus className="text-white text-xl" />
+                </label>
+              </>
             </div>
           </div>
 
@@ -719,8 +757,11 @@ const ProfileDetail = () => {
                           className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
                           onClick={() => handleEditToggle("full_name")}
                         >
-                          {isEditing.full_name ? "" : <img src={edit}    loading="lazy"
-                    draggable={false}/>}
+                          {isEditing.full_name ? (
+                            ""
+                          ) : (
+                            <img src={edit} loading="lazy" draggable={false} />
+                          )}
                         </button>
                       </div>
                     </div>
@@ -765,8 +806,7 @@ const ProfileDetail = () => {
                           {isEditing.openchat_user_name ? (
                             ""
                           ) : (
-                            <img src={edit}    loading="lazy"
-                            draggable={false}/>
+                            <img src={edit} loading="lazy" draggable={false} />
                           )}
                         </button>
                       </div>
@@ -810,8 +850,11 @@ const ProfileDetail = () => {
                           className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
                           onClick={() => handleEditToggle("email")}
                         >
-                          {isEditing.email ? "" : <img src={edit}    loading="lazy"
-                    draggable={false}/>}
+                          {isEditing.email ? (
+                            ""
+                          ) : (
+                            <img src={edit} loading="lazy" draggable={false} />
+                          )}
                         </button>
                       </div>
                     </div>
@@ -861,8 +904,11 @@ const ProfileDetail = () => {
                           className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
                           onClick={() => handleEditToggle("bio")}
                         >
-                          {isEditing.bio ? "" : <img src={edit}    loading="lazy"
-                    draggable={false}/>}
+                          {isEditing.bio ? (
+                            ""
+                          ) : (
+                            <img src={edit} loading="lazy" draggable={false} />
+                          )}
                         </button>
                       </div>
                     </div>
@@ -892,8 +938,11 @@ const ProfileDetail = () => {
                           className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
                           onClick={() => handleEditToggle("country")}
                         >
-                          {isEditing.country ? "" : <img src={edit}    loading="lazy"
-                    draggable={false}/>}
+                          {isEditing.country ? (
+                            ""
+                          ) : (
+                            <img src={edit} loading="lazy" draggable={false} />
+                          )}
                         </button>
                       </div>
                     </div>
@@ -941,8 +990,11 @@ const ProfileDetail = () => {
                           className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
                           onClick={() => handleEditToggle("type_of_profile")}
                         >
-                          {isEditing.type_of_profile ? "" : <img src={edit}    loading="lazy"
-                    draggable={false}/>}
+                          {isEditing.type_of_profile ? (
+                            ""
+                          ) : (
+                            <img src={edit} loading="lazy" draggable={false} />
+                          )}
                         </button>
                       </div>
                     </div>
@@ -991,8 +1043,11 @@ const ProfileDetail = () => {
                           className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
                           onClick={() => handleEditToggle("reason_to_join")}
                         >
-                          {isEditing.reason_to_join ? "" : <img src={edit}    loading="lazy"
-                    draggable={false}/>}
+                          {isEditing.reason_to_join ? (
+                            ""
+                          ) : (
+                            <img src={edit} loading="lazy" draggable={false} />
+                          )}
                         </button>
                       </div>
                     </div>
@@ -1061,8 +1116,11 @@ const ProfileDetail = () => {
                           className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
                           onClick={() => handleEditToggle("area_of_interest")}
                         >
-                          {isEditing.area_of_interest ? "" : <img src={edit}    loading="lazy"
-                    draggable={false}/>}
+                          {isEditing.area_of_interest ? (
+                            ""
+                          ) : (
+                            <img src={edit} loading="lazy" draggable={false} />
+                          )}
                         </button>
                       </div>
                     </div>
@@ -1187,14 +1245,17 @@ const ProfileDetail = () => {
                                     <button
                                       type="button"
                                       // className="absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 translate-x-6 ease-in-out transform opacity-100 lgx:opacity-0 lgx:group-hover:opacity-100 lgx:group-hover:translate-x-6 h-10 w-7"
-                                       className="absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 translate-x-6 ease-in-out transform opacity-100 lgx:opacity-0 lgx:group-hover:opacity-100 lgx:group-hover:translate-x-6 h-10 w-7"
+                                      className="absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 translate-x-6 ease-in-out transform opacity-100 lgx:opacity-0 lgx:group-hover:opacity-100 lgx:group-hover:translate-x-6 h-10 w-7"
                                       // {/* Your icon or content */}
-                                   
-                                    
+
                                       onClick={() => handleLinkEditToggle(key)} // Toggle editing mode for this link
                                     >
-                                      <img src={edit} alt="edit"    loading="lazy"
-                    draggable={false}/>
+                                      <img
+                                        src={edit}
+                                        alt="edit"
+                                        loading="lazy"
+                                        draggable={false}
+                                      />
                                     </button>
                                   </>
                                 )}
@@ -1314,7 +1375,17 @@ const ProfileDetail = () => {
 
             {/* Founder Tab Content */}
             {userRole === "project" && activeTab === "project" && (
-              <ProjectDetail />
+              <ProjectDetail
+                logoPreview={logoPreview}
+                setLogoPreview={setLogoPreview}
+                logoData={logoData}
+                setLogoData={setLogoData}
+                coverPreview={coverPreview}
+                setCoverPreview={setCoverPreview}
+                coverData={coverData}
+                setCoverData={setCoverData}
+                ref={childRef}
+              />
             )}
             <button
               onClick={handleToggle}
@@ -1380,8 +1451,11 @@ const ProfileDetail = () => {
                       className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
                       onClick={() => handleEditToggle("full_name")}
                     >
-                      {isEditing.full_name ? "" : <img src={edit}    loading="lazy"
-                    draggable={false}/>}
+                      {isEditing.full_name ? (
+                        ""
+                      ) : (
+                        <img src={edit} loading="lazy" draggable={false} />
+                      )}
                     </button>
                   </div>
                 </div>
@@ -1423,8 +1497,11 @@ const ProfileDetail = () => {
                       className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
                       onClick={() => handleEditToggle("openchat_user_name")}
                     >
-                      {isEditing.openchat_user_name ? "" : <img src={edit}    loading="lazy"
-                    draggable={false}/>}
+                      {isEditing.openchat_user_name ? (
+                        ""
+                      ) : (
+                        <img src={edit} loading="lazy" draggable={false} />
+                      )}
                     </button>
                   </div>
                 </div>
@@ -1467,8 +1544,11 @@ const ProfileDetail = () => {
                       className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
                       onClick={() => handleEditToggle("email")}
                     >
-                      {isEditing.email ? "" : <img src={edit}    loading="lazy"
-                    draggable={false}/>}
+                      {isEditing.email ? (
+                        ""
+                      ) : (
+                        <img src={edit} loading="lazy" draggable={false} />
+                      )}
                     </button>
                   </div>
                 </div>
@@ -1516,8 +1596,11 @@ const ProfileDetail = () => {
                       className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
                       onClick={() => handleEditToggle("bio")}
                     >
-                      {isEditing.bio ? "" : <img src={edit}    loading="lazy"
-                    draggable={false}/>}
+                      {isEditing.bio ? (
+                        ""
+                      ) : (
+                        <img src={edit} loading="lazy" draggable={false} />
+                      )}
                     </button>
                   </div>
                 </div>
@@ -1547,8 +1630,11 @@ const ProfileDetail = () => {
                       className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
                       onClick={() => handleEditToggle("country")}
                     >
-                      {isEditing.country ? "" : <img src={edit}    loading="lazy"
-                    draggable={false}/>}
+                      {isEditing.country ? (
+                        ""
+                      ) : (
+                        <img src={edit} loading="lazy" draggable={false} />
+                      )}
                     </button>
                   </div>
                 </div>
@@ -1594,8 +1680,11 @@ const ProfileDetail = () => {
                       className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
                       onClick={() => handleEditToggle("type_of_profile")}
                     >
-                      {isEditing.type_of_profile ? "" : <img src={edit}    loading="lazy"
-                    draggable={false}/>}
+                      {isEditing.type_of_profile ? (
+                        ""
+                      ) : (
+                        <img src={edit} loading="lazy" draggable={false} />
+                      )}
                     </button>
                   </div>
                 </div>
@@ -1644,8 +1733,11 @@ const ProfileDetail = () => {
                       className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
                       onClick={() => handleEditToggle("reason_to_join")}
                     >
-                      {isEditing.reason_to_join ? "" : <img src={edit}    loading="lazy"
-                    draggable={false}/>}
+                      {isEditing.reason_to_join ? (
+                        ""
+                      ) : (
+                        <img src={edit} loading="lazy" draggable={false} />
+                      )}
                     </button>
                   </div>
                 </div>
@@ -1714,8 +1806,11 @@ const ProfileDetail = () => {
                       className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
                       onClick={() => handleEditToggle("area_of_interest")}
                     >
-                      {isEditing.area_of_interest ? "" : <img src={edit}    loading="lazy"
-                    draggable={false}/>}
+                      {isEditing.area_of_interest ? (
+                        ""
+                      ) : (
+                        <img src={edit} loading="lazy" draggable={false} />
+                      )}
                     </button>
                   </div>
                 </div>
@@ -1838,8 +1933,12 @@ const ProfileDetail = () => {
                                   className="absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 translate-x-6 ease-in-out transform opacity-100 lgx:opacity-0 lgx:group-hover:opacity-100 md:group-hover:translate-x-6 h-10 w-7"
                                   onClick={() => handleLinkEditToggle(key)} // Toggle editing mode for this link
                                 >
-                                  <img src={edit} alt="edit"   loading="lazy"
-                    draggable={false} />
+                                  <img
+                                    src={edit}
+                                    alt="edit"
+                                    loading="lazy"
+                                    draggable={false}
+                                  />
                                 </button>
                               </>
                             )}
@@ -1957,7 +2056,19 @@ const ProfileDetail = () => {
         {userRole === "mentor" && activeTab === "mentor" && <MentorEdit />}
 
         {/* Founder Tab Content */}
-        {userRole === "project" && activeTab === "project" && <ProjectDetail />}
+        {userRole === "project" && activeTab === "project" && (
+          <ProjectDetail
+            logoPreview={logoPreview}
+            setLogoPreview={setLogoPreview}
+            logoData={logoData}
+            setLogoData={setLogoData}
+            coverPreview={coverPreview}
+            setCoverPreview={setCoverPreview}
+            coverData={coverData}
+            setCoverData={setCoverData}
+            ref={childRef}
+          />
+        )}
       </div>
       <Toaster />
     </div>
