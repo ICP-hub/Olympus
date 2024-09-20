@@ -313,7 +313,7 @@ const mergedData = mergeData(userCurrentRoleStatus, roledata);
                 <Avatar alt="project" src={project} />
               </AvatarGroup>
             </div>
-            <div className="mt-5 px-5">
+            <div className="dxs:mt-5 px-5">
               <p className="">{roles.description1}</p>
             </div>
             <div className=" my-0 dxs:my-5 px-5 flex items-center w-full">
@@ -363,13 +363,13 @@ const mergedData = mergeData(userCurrentRoleStatus, roledata);
               <Avatar alt="project" src={project} />
             </AvatarGroup>
           </div>
-          <div className="  mt-4  text-[16px]">
+          <div className="  dxs:mt-4  text-[14px] sxs2:text-[16px]">
             <p className="">{roles.description1}</p>
           </div>
-          <div className="my-4  flex items-center w-full">
+          <div className="dxs:my-4  flex items-center w-full">
             <button
               onClick={() => setRoleModalOpen(!roleModalOpen)}
-              className="border flex gap-2 justify-center rounded-md bg-[#155EEF] p-2  lgx:p-1 xl:p-2 lgx:font-normal dxl0:font-medium  font-medium w-full text-white"
+              className=" truncate border flex gap-2 justify-center rounded-md bg-[#155EEF] p-2  lgx:p-1 xl:p-2 lgx:font-normal dxl0:font-medium  font-medium w-full text-white"
             >
               <span>{userPlusIcon}</span>
               {roles.addrole}
@@ -397,13 +397,13 @@ const mergedData = mergeData(userCurrentRoleStatus, roledata);
               <Avatar alt="project" src={project} />
             </AvatarGroup>
           </div>
-          <div className="  mt-4  text-[16px]">
+          <div className="  dxs:mt-4 text-[14px] sxs2:text-[16px]">
             <p className="">{roles.description1}</p>
           </div>
-          <div className="my-4  flex items-center w-full">
+          <div className="dxs:my-4  flex items-center w-full">
             <button
               onClick={() => setRoleModalOpen(!roleModalOpen)}
-              className="border flex gap-2 justify-center rounded-md bg-[#155EEF] p-2  lgx:p-1 xl:p-2 lgx:font-normal dxl0:font-medium  font-medium w-full text-white"
+              className="truncate border flex gap-2 justify-center rounded-md bg-[#155EEF] p-2  lgx:p-1 xl:p-2 lgx:font-normal dxl0:font-medium  font-medium w-full text-white"
             >
               <span>{userPlusIcon}</span>
               {roles.addrole}

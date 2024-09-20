@@ -484,11 +484,11 @@ const MentorEdit = () => {
     <div ref={editableRef} className="bg-white p-2 ">
       <form onSubmit={handleSubmit(onSubmitHandler, onErrorHandler)}>
         <div className="my-1 relative group  hover:bg-gray-100 rounded-lg p-2 px-3">
-          <div className="absolute right-1 top-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-            <img
+        <div className="absolute right-2 top-1 visible lgx:invisible lgx:group-hover:visible transition-opacity duration-200  ">
+        <img
               src={editp}
-              className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
-              alt="edit"
+              className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
+              "               alt="edit"
               onClick={() => handleEditClick("preferred_icp_hub")}
               loading="lazy"
               draggable={false}
@@ -538,8 +538,8 @@ const MentorEdit = () => {
             <div>
               <button
                 type="button"
-                className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
-                onClick={() => handleEditClick("area_of_expertise")}
+                className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
+                "                onClick={() => handleEditClick("area_of_expertise")}
               >
                 {edit.area_of_expertise ? (
                   ""
@@ -603,11 +603,11 @@ const MentorEdit = () => {
           )}
         </div>
         <div className="my-1 relative group  hover:bg-gray-100 rounded-lg p-2 px-3">
-          <div className="absolute right-1 top-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-            <img
+        <div className="absolute right-2 top-1 visible lgx:invisible lgx:group-hover:visible transition-opacity duration-200  ">
+        <img
               src={editp}
-              className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
-              alt="edit"
+              className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
+              "               alt="edit"
               onClick={() => handleEditClick("multi_chain")}
               loading="lazy"
               draggable={false}
@@ -650,8 +650,8 @@ const MentorEdit = () => {
               </label>
               <img
                 src={editp}
-                className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
-                alt="edit"
+                className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
+                "                 alt="edit"
                 onClick={() => handleEditClick("multi_chain_names")}
                 loading="lazy"
                 draggable={false}
@@ -719,11 +719,11 @@ const MentorEdit = () => {
         )}
 
         <div className="relative group hover:bg-gray-100 rounded-lg p-2 px-3">
-          <div className="absolute right-2 top-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+          <div className="absolute right-2 top-1 visible lgx:invisible lgx:group-hover:visible transition-opacity duration-200  ">
             <img
               src={editp}
-              className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
-              alt="edit"
+              className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
+              "              alt="edit"
               onClick={() => handleEditClick("category_of_mentoring_service")}
               loading="lazy"
               draggable={false}
@@ -789,11 +789,11 @@ const MentorEdit = () => {
           )}
         </div>
         <div className="relative group  hover:bg-gray-100 rounded-lg p-2 px-3">
-          <div className="absolute right-2 top-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-            <img
+        <div className="absolute right-2 top-1 visible lgx:invisible lgx:group-hover:visible transition-opacity duration-200  ">
+        <img
               src={editp}
-              className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
-              alt="edit"
+              className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
+              "               alt="edit"
               onClick={() => handleEditClick("reasons_to_join_platform")}
               loading="lazy"
               draggable={false}
@@ -863,11 +863,11 @@ const MentorEdit = () => {
           )}
         </div>
         <div className="my-1 relative group  hover:bg-gray-100 rounded-lg p-2 px-3">
-          <div className="absolute right-2 top-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-            <img
+        <div className="absolute right-2 top-1 visible lgx:invisible lgx:group-hover:visible transition-opacity duration-200  ">
+        <img
               src={editp}
-              className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
-              alt="edit"
+              className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
+              "               alt="edit"
               onClick={() => handleEditClick("icp_hub_or_spoke")}
               loading="lazy"
               draggable={false}
@@ -914,8 +914,8 @@ const MentorEdit = () => {
               </label>
               <img
                 src={editp}
-                className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
-                alt="edit"
+                className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
+                "                 alt="edit"
                 onClick={() => handleEditClick("hub_owner")}
                 loading="lazy"
                 draggable={false}
@@ -961,11 +961,11 @@ const MentorEdit = () => {
         )}
 
         <div className="my-1 relative group  hover:bg-gray-100 rounded-lg p-2 px-3">
-          <div className="absolute right-2 top-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-            <img
+        <div className="absolute right-2 top-1 visible lgx:invisible lgx:group-hover:visible transition-opacity duration-200  ">
+        <img
               src={editp}
-              className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
-              alt="edit"
+              className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
+              "               alt="edit"
               onClick={() => handleEditClick("website")}
               loading="lazy"
               draggable={false}
@@ -1001,11 +1001,11 @@ const MentorEdit = () => {
         </div>
 
         <div className="my-1 relative group  hover:bg-gray-100 rounded-lg p-2 px-3">
-          <div className="absolute right-2 top-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-            <img
+        <div className="absolute right-2 top-1 visible lgx:invisible lgx:group-hover:visible transition-opacity duration-200  ">
+        <img
               src={editp}
-              className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
-              alt="edit"
+              className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
+              "               alt="edit"
               onClick={() => handleEditClick("years_of_mentoring")}
               loading="lazy"
               draggable={false}
@@ -1097,7 +1097,7 @@ const MentorEdit = () => {
                         </a>
                         <button
                           type="button"
-                          className="absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 ease-in-out transform opacity-0 group-hover:opacity-100 group-hover:translate-x-6 h-10 w-7"
+                          className="absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 translate-x-6 ease-in-out transform opacity-100 lgx:opacity-0 lgx:group-hover:opacity-100 md:group-hover:translate-x-6 h-10 w-7"
                           onClick={() => handleLinkEditToggle(key)} // Toggle editing mode for this link
                         >
                           <img

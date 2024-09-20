@@ -694,7 +694,8 @@ const ProjectDetail = () => {
               </label>
               <img
                 src={editp}
-                className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
+                className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
+"
                 alt="edit"
                 onClick={() => handleEditClick("reason_to_join_incubator")}
                 loading="lazy"
@@ -755,7 +756,8 @@ const ProjectDetail = () => {
               </label>
               <img
                 src={editp}
-                className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
+                className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
+"
                 alt="edit"
                 onClick={() => handleEditClick("preferred_icp_hub")}
                 loading="lazy"
@@ -810,7 +812,8 @@ const ProjectDetail = () => {
               </label>
               <img
                 src={editp}
-                className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
+                className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
+"
                 alt="edit"
                 onClick={() => handleEditClick("project_name")}
                 loading="lazy"
@@ -851,7 +854,8 @@ const ProjectDetail = () => {
               </label>
               <img
                 src={editp}
-                className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
+                className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
+"
                 alt="edit"
                 onClick={handleOpenModal}
                 loading="lazy"
@@ -876,7 +880,8 @@ const ProjectDetail = () => {
               </label>
               <img
                 src={editp}
-                className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
+                className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
+"
                 alt="edit"
                 onClick={() => handleEditClick("project_elevator_pitch")}
                 loading="lazy"
@@ -917,7 +922,8 @@ const ProjectDetail = () => {
               </label>
               <img
                 src={editp}
-                className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
+                className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
+"
                 alt="edit"
                 onClick={() => handleEditClick("project_website")}
                 loading="lazy"
@@ -958,7 +964,8 @@ const ProjectDetail = () => {
               </label>
               <img
                 src={editp}
-                className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
+                className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
+"
                 alt="edit"
                 onClick={() => handleEditClick("is_your_project_registered")}
                 loading="lazy"
@@ -1009,7 +1016,8 @@ const ProjectDetail = () => {
                   </label>
                   <img
                     src={editp}
-                    className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
+                    className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
+"
                     alt="edit"
                     onClick={() => handleEditClick("type_of_registration")}
                     loading="lazy"
@@ -1057,7 +1065,8 @@ const ProjectDetail = () => {
                   </label>
                   <img
                     src={editp}
-                    className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
+                    className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
+"
                     alt="edit"
                     onClick={() => handleEditClick("country_of_registration")}
                     loading="lazy"
@@ -1112,7 +1121,8 @@ const ProjectDetail = () => {
               </label>
               <img
                 src={editp}
-                className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
+                className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
+"
                 alt="edit"
                 onClick={() => {
                   handleEditClick("multi_chain");
@@ -1161,7 +1171,8 @@ const ProjectDetail = () => {
                 </label>
                 <img
                   src={editp}
-                  className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
+                  className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
+"
                   alt="edit"
                   onClick={() => handleEditClick("supports_multichain")}
                   loading="lazy"
@@ -1236,7 +1247,8 @@ const ProjectDetail = () => {
               </label>
               <img
                 src={editp}
-                className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
+                className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
+"
                 alt="edit"
                 onClick={() => handleEditClick("live_on_icp_mainnet")}
                 loading="lazy"
@@ -1286,7 +1298,8 @@ const ProjectDetail = () => {
                   </label>
                   <img
                     src={editp}
-                    className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
+                    className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
+"
                     alt="edit"
                     onClick={() => handleEditClick("dapp_link")}
                     loading="lazy"
@@ -1327,7 +1340,8 @@ const ProjectDetail = () => {
                   </label>
                   <img
                     src={editp}
-                    className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
+                    className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
+"
                     alt="edit"
                     onClick={() => handleEditClick("weekly_active_users")}
                     loading="lazy"
@@ -1370,7 +1384,8 @@ const ProjectDetail = () => {
                   </label>
                   <img
                     src={editp}
-                    className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
+                    className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
+"
                     alt="edit"
                     onClick={() => handleEditClick("revenue")}
                     loading="lazy"
@@ -1414,7 +1429,8 @@ const ProjectDetail = () => {
               <div>
                 <button
                   type="button"
-                  className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
+                  className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
+"
                   onClick={() => handleEditClick("project_area_of_focus")}
                 >
                   <img src={editp} alt="edit"    loading="lazy"
@@ -1478,7 +1494,8 @@ const ProjectDetail = () => {
               </label>
               <img
                 src={editp}
-                className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
+                className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
+"
                 alt="edit"
                 onClick={() => handleEditClick("promotional_video")}
                 loading="lazy"
@@ -1517,7 +1534,8 @@ const ProjectDetail = () => {
               </label>
               <img
                 src={editp}
-                className="invisible group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4"
+                className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
+"
                 alt="edit"
                 onClick={() => handleEditClick("token_economics")}
                 loading="lazy"
@@ -1607,7 +1625,7 @@ const ProjectDetail = () => {
                           </a>
                           <button
                             type="button"
-                            className="absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 ease-in-out transform opacity-0 group-hover:opacity-100 group-hover:translate-x-6 h-10 w-7"
+                            className="absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 translate-x-6 ease-in-out transform opacity-100 lgx:opacity-0 lgx:group-hover:opacity-100 md:group-hover:translate-x-6 h-10 w-7"
                             onClick={() => handleLinkEditToggle(key)} // Toggle editing mode for this link
                           >
                             <img src={editp} alt="edit"    loading="lazy"

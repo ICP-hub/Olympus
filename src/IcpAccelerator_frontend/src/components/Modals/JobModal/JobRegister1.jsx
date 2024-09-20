@@ -235,7 +235,7 @@ const onSubmit = async (data) => {
           modalOpen ? "block" : "hidden"
         }`}
       >
-        <div className="bg-white rounded-lg shadow-lg w-[500px] p-6 pt-4 max-h-[100vh] overflow-y-auto">
+        <div className="bg-white rounded-lg shadow-lg w-[500px] p-6 pt-4 max-h-[100vh] overflow-y-auto mx-4 md:mx-0 ">
           <div className="flex justify-between mr-4">
             <div>
               <h2 className="text-xs text-[#364152] mt-3">Step 1 of 1</h2>

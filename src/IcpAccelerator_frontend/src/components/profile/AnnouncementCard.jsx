@@ -697,7 +697,7 @@ const AnnouncementCard = () => {
         <div className="sm:flex sm:justify-end items-center sticky top-16 bg-white ">
           {/* <h1 className="text-xl font-bold p-3">Announcements</h1> */}
           <button
-            className="hidden sm:block px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
+            className="hidden md:block px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 mt-4"
             onClick={() => handleOpenModal(null)}
           >
             + Add new Announcement
@@ -730,41 +730,38 @@ const AnnouncementCard = () => {
           let ann_project_name = card?.project_name ?? "";
           let ann_project_desc = card?.project_desc ?? "";
           return (
-            <div key={index} className="container mx-auto md:my-6 p-4 bg-white">
+            <div key={index} className="container mx-auto md:my-6  bg-white">
               <div className="flex justify-between items-center pb-1 mb-2">
-                <div className="text-gray-500 font-medium text-xs sm0:text-sm">
+                <div className="text-gray-500 truncate break-all">
                   {ann_time}
                 </div>
-                <div className="flex items-center space-x-1 sm0:space-x-3">
-                  <div
-                    onClick={() => handleOpenModal(card)}
-                    className="rounded-full p-1"
-                  >
-                    <img
-                      src={editp}
-                      className="ss:h-5 ss:w-5 min-h-3 min-w-3 hover:text-green-400 cursor-pointer"
-                      alt="edit"
-                      loading="lazy"
-                      draggable={false}
-                    />
-                  </div>
-                  <div
-                    onClick={() => handleOpenDeleteModal(card)}
-                    className="rounded-full p-1"
-                  >
-                    <DeleteOutlinedIcon className="cursor-pointer hover:text-red-500" />
-                  </div>
-                </div>
+           
+                <div className="flex  gap-4 items-center">
+                          <img
+                            src={editp}
+                            className=" text-gray-500 hover:underline text-xs h-[1.3rem]  sm:h-5 sm:w-5 cursor-pointer"
+                            alt="edit"
+                            onClick={() => handleOpenModal(card)}
+                            loading="lazy"
+                            draggable={false}
+                          />
+                          <span className="text-[16px] text-gray-500 cursor-pointer hover:text-red-700">
+                            <DeleteOutlinedIcon
+                              className="cursor-pointer hover:text-red-500"
+                              onClick={() => handleOpenDeleteModal(card)}
+                            />
+                          </span>
+                        </div>
               </div>
               {/* <h2 className="text-gray-900 text-xl font-bold mb-3">
                 {ann_name}
               </h2> */}
-              <div className="flex w-full items-start p-2 border border-1 mb-4 space-x-4">
+              <div className="flex w-full items-start px-3 py-5 shadow rounded-md mb-4 space-x-4">
                 <div className="flex-shrink-0 self-center">
                   <img
                     src={ann_project_logo}
                     alt="pic"
-                    className="h-8 w-8 sm0:h-10 sm0:w-10 sm:h-12 sm:w-12 rounded-full border border-gray-300"
+                    className="w-16 h-16 rounded-full border border-gray-300"
                     loading="lazy"
                     draggable={false}
                   />
@@ -781,7 +778,7 @@ const AnnouncementCard = () => {
               {/* <div className="text-gray-500 leading-relaxed">
                 <p>{ann_desc}</p>
               </div> */}
-              <hr className="mt-4" />
+              {/* <hr className="mt-4" /> */}
               
             </div>
             
@@ -791,7 +788,7 @@ const AnnouncementCard = () => {
       {latestAnnouncementData.length > 0 && (
         <div className="flex justify-center mt-2">
           <button
-            className=" sm:hidden w-[80%] px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
+            className=" md:hidden w-full px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 mb-8 truncate"
             onClick={() => handleOpenModal(null)}
           >
             + Add new Announcement
