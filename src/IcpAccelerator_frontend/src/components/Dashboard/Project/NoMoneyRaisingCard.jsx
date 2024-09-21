@@ -175,7 +175,7 @@ const MoneyRaising = ({ cardData }) => {
         <>
          <div className="flex flex-col items-end mb-8 max-w-7xl pt-4">
         <button
-          className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
+          className="px-2 line-clamp-1 break-all xxs:px-4 py-1 xxs:py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
           onClick={handleModalOpen}
         >
           + Add More Money Raising

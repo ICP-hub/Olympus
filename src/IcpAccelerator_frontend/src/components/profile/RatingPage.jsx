@@ -1,3 +1,5 @@
+// 
+
 import React, { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
@@ -127,8 +129,8 @@ const RatingPage = () => {
           loading="lazy"
           draggable={false}
         />
-        <h2 className="text-2xl font-bold truncate">{userFullData.full_name} </h2>
-        <p className="text-gray-500 truncate">{userFullData.openchat_username}</p>
+        <h2 className="line-clamp-1 break-all sm3:text-2xl font-bold">{userFullData.full_name} </h2>
+        <p className="line-clamp-1 break-all text-gray-500">{userFullData.openchat_username}</p>
         {!currentUserHasRated && (
           <button className="flex gap-2 my-5">
             {[...Array(5)].map((_, index) => (
@@ -138,7 +140,7 @@ const RatingPage = () => {
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
                 fill={index < rating ? "yellow" : "none"}
-                className={`w-8 h-8 cursor-pointer ${
+                className={`sm0:w-8 sm0:h-8 w-6 h-6 cursor-pointer ${
                   index < rating ? "text-rgb(253,177,34)" : "text-gray-300"
                 }`}
                 stroke={index < rating ? "rgb(253,177,34)" : "currentColor"}
@@ -204,9 +206,9 @@ const RatingPage = () => {
           return (
             <div
               key={indx}
-              className="bg-gray-100 rounded-lg p-4 flex mt-4 flex-col gap-4 "
+              className="bg-gray-100 rounded-lg p-2 sm0:p-4 flex mt-4 flex-col gap-4 "
             >
-              <div className="flex gap-4 flex-shrink-0">
+              <div className="flex gap-2 sm0:gap-4 flex-shrink-0">
                 <img
                   src={profilepic}
                   alt="pic"
@@ -246,7 +248,7 @@ const RatingPage = () => {
                           key={index}
                           xmlns="http://www.w3.org/2000/svg"
                           viewBox="0 0 24 24"
-                          className="xxs:w-4 xxs:h-4 w-3 h-3 text-gray-400"
+                          className="xxs:w-4 xxs:h-4 w-4 h-4 text-gray-400"
                           fill="currentColor"
                         >
                           <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
@@ -256,7 +258,7 @@ const RatingPage = () => {
                   </div>
 
                   <div className="text-gray-600 text-xs ">
-                    <p className="text-sm font-normal break-all line-clamp-2 ">{review.message}</p>
+                    <p className="text-xs sm0:text-sm font-normal break-all line-clamp-2 ">{review.message}</p>
                   </div>
                 </div>
               </div>
