@@ -9,25 +9,25 @@ import { useSelector } from "react-redux";
 
 const DiscoverFundingCard = ({ title, value, imageSrc, isPrivate }) => {
     return (
-        <div className="relative flex items-center p-4 rounded-lg mb-4 shadow-md bg-white transition-all duration-300 hover:shadow-lg">
+        <div className="relative flex flex-col sm1:flex-row sm1:items-center p-4 rounded-lg mb-4 shadow-md bg-white transition-all duration-300 hover:shadow-lg">
             {/* Overlay for Private Documents */}
             {isPrivate && (
                 <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-0 hover:bg-opacity-50 transition-opacity duration-300 rounded-lg z-10">
                 </div>
             )}
             {/* Image Section */}
-            <div className="flex-shrink-0">
+            <div className="flex-shrink-0 ">
                 <img
                     src={imageSrc}
                     alt={`${title} Thumbnail`}
-                    className={`w-[150px] h-[100px] object-cover rounded-lg transition-all duration-300 ${isPrivate ? 'blur-sm' : ''}`}
+                    className={`w-full sm1:w-[150px] sm1:h-[100px] object-cover rounded-lg transition-all duration-300 ${isPrivate ? 'blur-sm' : ''}`}
                     loading="lazy"
                     draggable={false}
                 />
             </div>
 
             {/* Details Section */}
-            <div className={`ml-6 flex-grow transition-all duration-300 ${isPrivate ? 'blur-sm' : ''}`}>
+            <div className={`sm1:ml-6 flex-grow transition-all duration-300 ${isPrivate ? 'blur-sm' : ''}`}>
                 <div className="flex justify-between items-center">
                     <p className="text-lg font-semibold text-gray-900">
                         {title}
@@ -77,7 +77,7 @@ const DiscoverMoneyRaising = ({ data ,projectId}) => {
         <div className="flex flex-col">
           {userCurrentRoleStatusActiveRole === 'user' ?'':
           data &&
-        <button className="bg-blue-600 text-white px-4 py-2 rounded-lg mb-4 w-1/4 self-end"
+        <button className="bg-blue-600 text-white px-4 py-2 rounded-lg mb-4  self-end"
         onClick={sendMoneyRaisingRequest}>
           Request Access
         </button>}

@@ -14,10 +14,10 @@ const DocumentCard = ({ doc, type }) => {
  
   return (
     <div 
-      className={`relative flex items-center p-4 rounded-lg mb-4 shadow-md bg-white transition-all duration-300 ${isPrivate ? 'blur-sm' : ''}`}
+      className={`relative flex flex-col sm4:flex-row sm4:items-center p-4 rounded-lg mb-4 shadow-md bg-white transition-all duration-300 ${isPrivate ? 'blur-sm' : ''}`}
     >
       {/* Image Section with Background */}
-      <div className="bg-gray-100 w-[180px] px-10 py-4 rounded-lg flex-shrink-0 text-center">
+      <div className="bg-gray-100 px-4 py-4 rounded-lg flex-shrink-0 flex flex-col items-center">
         <img
           src={Filetype}
           alt="Document Thumbnail"
@@ -37,13 +37,13 @@ const DocumentCard = ({ doc, type }) => {
       </div>
 
       {/* Details Section */}
-      <div className="ml-4 flex-grow transition-all duration-300">
-        <div className="flex justify-between">
-          <p className={`text-lg font-semibold text-gray-900 ${isPrivate ? 'blur-sm' : ''}`}>
+      <div className="ml-4 mt-3 sm4:mt-0 flex-grow transition-all duration-300">
+        <div className="flex justify-between flex-wrap">
+          <p className={`text:xs dsx:text-sm sm4:text-base font-semibold text-gray-900 ${isPrivate ? 'blur-sm' : ''}`}>
             {title}
           </p>
           <button
-            className={`rounded-lg px-2 text-sm ${
+            className={`rounded-lg px-0.5 sm4:px-1 sm:px-2 text-xs ${
               isPrivate
                 ? "bg-[#FFFAEB] border-2 border-[#F5E1A4] text-[#A37E00]"
                 : "bg-[#ECFDF3] border-2 border-[#ABEFC6] text-[#067647]"

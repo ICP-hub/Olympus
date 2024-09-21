@@ -96,7 +96,7 @@ const DiscoverReview = (userData, principalId) => {
   console.log("USER PROFILE PIC", userPic);
 
   return (
-    <div className="p-6">
+    <div className="md:p-6">
       {reviews.length === 0 ? (
         <div className="text-center "><NoDataFound message="No Review Found"/></div>
       ) : (
@@ -108,13 +108,13 @@ const DiscoverReview = (userData, principalId) => {
           return (
             <div
               key={index}
-              className="bg-gray-100 rounded-lg p-4 flex mt-4 flex-col gap-4 "
+              className="bg-gray-100 rounded-lg p-4 flex md1:mt-4 flex-col gap-4 "
             >
               <div className="flex gap-4 flex-shrink-0">
                 <img
                   src={profilepic}
                   alt="pic"
-                  className="rounded-full w-16 h-16 object-cover border border-gray-300"
+                  className="rounded-full w-12 h-12 ss:w-16 ss:h-16 object-cover border border-gray-300"
                   loading="lazy"
                   draggable={false}
                 />
