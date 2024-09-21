@@ -4,7 +4,6 @@ module.exports = {
   content: ["./src/**/*.{html,js,jsx,ts,tsx}"],
   theme: {
     extend: {
-    
       fontFamily: {
         fontUse: ["Poppins"],
         figtree: ["Figtree", "sans-serif"],
@@ -96,8 +95,13 @@ module.exports = {
       md3: "936px",
       lg: "976px",
       dlg: "1024px",
+      dlg1: "1060px",
+      dlg2: "1090px",
       lg1: "1100px",
+      lg2: "1123px",
       lgx: "1134px",
+      lgx1: "1159px",
+      lgx2: "1193px",
       dxl0: "1240px",
       dxl: "1280px",
       dxl1: "1380px",
