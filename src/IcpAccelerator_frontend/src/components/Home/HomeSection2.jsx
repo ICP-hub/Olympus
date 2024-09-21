@@ -10,7 +10,7 @@ export default function Section2() {
   return (
     <>
       <div className="flex flex-col items-center justify-center  p-4 bg-white">
-        <div className='max-w-7xl mx-auto md:px-6'>
+        <div className="max-w-7xl mx-auto md:px-6">
           <div className="flex flex-col items-center justify-center  bg-white mx-auto md:pb-20 md:pt-28 ">
             <div className="py-2 px-4 bg-white border border-blue-500 rounded-full text-blue-500 mb-4">
               {homepagesection2.aboutText}
@@ -45,10 +45,6 @@ export default function Section2() {
                         {homepagesection2.card1.list.map((list, index) => {
                           return <li key={index}>{list}</li>;
                         })}
-                        {/* <li>Platea sit lacus pellentesque feugiat neque</li>
-                      <li>Blandit a mi dictumst placerat</li>
-                      <li>Tempus cursus enim eget ornare</li>
-                      <li>Cursus tristique in diam porta ut egestas</li> */}
                       </ul>
                     </div>
                   </div>
@@ -73,10 +69,6 @@ export default function Section2() {
                         {homepagesection2.card2.list.map((list, index) => {
                           return <li key={index}>{list}</li>;
                         })}
-                        {/* <li>Platea sit lacus pellentesque feugiat neque</li>
-                      <li>Blandit a mi dictumst placerat</li>
-                      <li>Tempus cursus enim eget ornare</li>
-                      <li>Cursus tristique in diam porta ut egestas</li> */}
                       </ul>
                     </div>
                   </div>
@@ -101,10 +93,6 @@ export default function Section2() {
                         {homepagesection2.card3.list.map((list, index) => {
                           return <li key={index}>{list}</li>;
                         })}
-                        {/* <li>Platea sit lacus pellentesque feugiat neque</li>
-                      <li>Blandit a mi dictumst placerat</li>
-                      <li>Tempus cursus enim eget ornare</li>
-                      <li>Cursus tristique in diam porta ut egestas</li> */}
                       </ul>
                     </div>
                   </div>
@@ -129,16 +117,12 @@ export default function Section2() {
                         {homepagesection2.card4.list.map((list, index) => {
                           return <li key={index}>{list}</li>;
                         })}
-                        {/* <li>Platea sit lacus pellentesque feugiat neque</li>
-                      <li>Blandit a mi dictumst placerat</li>
-                      <li>Tempus cursus enim eget ornare</li>
-                      <li>Cursus tristique in diam porta ut egestas</li> */}
                       </ul>
                     </div>
                   </div>
                 </div>
               </div>
-              <div className="relative dlg:-top-[551px] lg1:-top-[501px] flex items-center justify-center w-full mt-8">
+              <div className="relative dlg:-top-[628px] dlg1:-top-[606px] dlg2:-top-[580px] lg1:-top-[577px] lg2:-top-[556px] lgx1:-top-[527px] lgx2:-top-[505px] flex items-center justify-center w-full mt-8">
                 <div className="bg-white  dlg:p-6 dlg:rounded-full w-full dlg:w-auto">
                   <button className="px-6 py-3  text-white bg-blue-600 rounded-md dlg:rounded-full w-full">
                     {homepagesection2.aboutText}
