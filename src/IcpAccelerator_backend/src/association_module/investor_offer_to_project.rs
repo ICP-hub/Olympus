@@ -138,7 +138,7 @@ pub async fn send_offer_to_project_by_investor(project_id: String, msg: String, 
             return "Cohort ID must be provided for cohort-associated offers.".to_string();
         }
     }
-    let cohort_data_for_association = get_cohort(cohort_id.unwrap_or_else(|| "default_cohort_id".to_string()));
+    let cohort_data_for_association = cohort_id.as_ref().map(|id| get_cohort(id.to_string()));
 
     let offer_to_project = OfferToProjectByInvestor {
         offer_id: offer_id.clone(),
@@ -154,7 +154,7 @@ pub async fn send_offer_to_project_by_investor(project_id: String, msg: String, 
         receiever_principal: project_principal,
         sender_principal: investor_id,
         is_cohort_association: is_cohort_association,
-        cohort_data: Some(cohort_data_for_association.clone())
+        cohort_data: cohort_data_for_association.clone()
     };
 
     store_request_sent_by_capitalist(offer_to_project);
@@ -173,7 +173,7 @@ pub async fn send_offer_to_project_by_investor(project_id: String, msg: String, 
         sender_data: vc_data.clone(),
         receiever_principal: project_principal,
         is_cohort_association: is_cohort_association,
-        cohort_data: Some(cohort_data_for_association.clone())
+        cohort_data: cohort_data_for_association.clone()
     };
 
     notify_project_with_offer(project_id.clone(), offer_to_send_to_project);
