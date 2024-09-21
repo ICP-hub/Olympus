@@ -324,7 +324,7 @@ const NewJob = ({ latestJobs }) => {
                     <div className="flex flex-col gap-3 w-full ">
                       <p className="text-gray-400">{job_post_time} </p>
                       <div className="flex justify-between">
-                        <h3 className="text-xl font-bold break-all truncate">
+                        <h3 className="text-xl font-semibold dxs:font-bold break-all truncate">
                           {job_name}{" "}
                         </h3>
                         <div className="flex  gap-4 items-center">

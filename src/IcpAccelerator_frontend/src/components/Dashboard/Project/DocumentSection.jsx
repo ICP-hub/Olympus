@@ -155,7 +155,7 @@ function DocumentSection() {
           </button>
           {activeMobileTab === "document" && (
             <>
-              <div className="p-6">
+              <div className="">
                 <NewDocument
                   visibility="Visible to public"
                   selectedOption={selectedOption}

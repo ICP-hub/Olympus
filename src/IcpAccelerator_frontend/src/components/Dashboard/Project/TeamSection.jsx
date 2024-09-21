@@ -16,7 +16,7 @@ const TeamMember = ({ cardData, onDelete }) => {
   return (
     <>
       {projectTeam?.map((teamMember, index) => {
-         if (!teamMember || !teamMember[0]) {
+        if (!teamMember || !teamMember[0]) {
           return null;
         }
         const member = teamMember[0];
@@ -31,7 +31,7 @@ const TeamMember = ({ cardData, onDelete }) => {
 
         return (
           <>
-            <div
+            {/* <div
               key={index}
               class="relative overflow-x-auto shadow-md sm:rounded-lg"
             >
@@ -72,25 +72,88 @@ const TeamMember = ({ cardData, onDelete }) => {
                     <td class="px-6 py-4">
                       <div class="flex items-center">
                         <div class="h-2.5 w-2.5 rounded-full bg-green-500 me-2"></div>
-                        {/* <span
-              className={`px-2 py-1 rounded text-sm font-medium ${
-                result?.status === "Active"
-                  ? "bg-[#ecfdf3da] rounded-md border-2 border-[#6ceda0] text-green-800"
-                  : "bg-[#FFFAEB] border-2 border-[#FEDF89] text-[#B54708]"
-              }`}
-            >
-              {result?.status === "Active " && "• "}
-              {result?.status ?? "Unknown Status"}
-            </span> */}
+                       
                         <span
                           className={`px-2 py-1 rounded text-sm font-medium bg-[#ecfdf3da]  border-2 border-[#6ceda0] text-green-800`}
                         >
-                        Active
+                          Active
                         </span>
                       </div>
                     </td>
                     <td class="px-6 py-4">
-                      <button className="text-gray-400 hover:text-gray-600" onClick={() => onDelete(principle)}>
+                      <button
+                        className="text-gray-400 hover:text-gray-600"
+                        onClick={() => onDelete(principle)}
+                      >
+                        <Delete fontSize="small" />
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div> */}
+            <div
+              key={index}
+              className="relative overflow-x-auto shadow-md sm:rounded-lg w-full max-w-full"
+            >
+              <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                <thead className="text-xs flex justify-around w-full text-gray-700 uppercase bg-gray-50 dark:text-gray-400">
+                  <tr className="flex justify-between w-full">
+                    <th
+                      scope="col"
+                      className="text:sm sm3:text-base sm3:px-4 py-2 sm:px-6 sm:py-3"
+                    >
+                      Name
+                    </th>
+                    <th
+                      scope="col"
+                      className="text:sm sm3:text-base sm3:px-4 py-2 sm:px-6 sm:py-3"
+                    >
+                      Status
+                    </th>
+                    <th
+                      scope="col"
+                      className="text:sm sm3:text-base sm3:px-4 py-2 sm:px-6 sm:py-3"
+                    >
+                      Action
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="bg-white w-full justify-between flex border-b hover:bg-gray-50">
+                    <th
+                      scope="row"
+                      className="flex flex-col sm1:flex-row w-1/3 items-center sm1:px-4 py-2 sm:px-6 sm:py-4 text-gray-900  dark:text-white"
+                    >
+                      <img
+                        src={avatar}
+                        alt={name}
+                        className="w-8 h-8 sm:w-10 sm:h-10 rounded-full mr-2 sm:mr-4"
+                        loading="lazy"
+                        draggable={false}
+                      />
+                      <div className="ps-2 sm:ps-3 ">
+                        <p className="line-clamp-1 break-all font-medium text-[#121926] text-xs sm3:text-sm">
+                          {name}
+                        </p>
+                        <p className="line-clamp-1 break-all text-xs sm:text-sm text-gray-500">
+                          {result?.openchat_username?.[0] ?? "No Username"}
+                        </p>
+                      </div>
+                    </th>
+                    <td className="flex items-center justify-around w-1/3 sm3:px-4 py-2 sm:px-6 sm:py-4">
+                      <div className="flex items-center">
+                        <div className="h-2 w-2 sm:h-2.5 sm:w-2.5 rounded-full bg-green-500 mr-1 sm:mr-2"></div>
+                        <span className="hidden sm3:block px-1.5 sm:px-2 py-1 rounded text-xs sm:text-sm font-medium bg-[#ecfdf3da] border-2 border-[#6ceda0] text-green-800">
+                          Active
+                        </span>
+                      </div>
+                    </td>
+                    <td className="px-4 w-1/3 flex items-center justify-end flex-grow-0 py-2 sm:px-6 sm:py-4">
+                      <button
+                        className="text-gray-400 text-center hover:text-gray-600"
+                        onClick={() => onDelete(principle)}
+                      >
                         <Delete fontSize="small" />
                       </button>
                     </td>
@@ -98,6 +161,105 @@ const TeamMember = ({ cardData, onDelete }) => {
                 </tbody>
               </table>
             </div>
+
+            {/* <div
+  key={index}
+  className="relative shadow-md sm:rounded-lg p-4 bg-white dark:bg-gray-800"
+>
+ 
+  <table className="hidden sm3:table w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+   
+    <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:text-gray-400">
+      <tr>
+        <th scope="col" className="px-6 py-3">Name</th>
+        <th scope="col" className="px-6 py-3">Status</th>
+        <th scope="col" className="px-6 py-3">Action</th>
+      </tr>
+    </thead>
+
+   
+    <tbody>
+      <tr className="bg-white border-b hover:bg-gray-50">
+        <th scope="row" className="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
+          <img
+            src={avatar}
+            alt={name}
+            className="w-10 h-10 rounded-full mr-4"
+            loading="lazy"
+            draggable={false}
+          />
+          <div className="ps-3">
+            <p className="font-medium text-base text-[#121926]">{name}</p>
+            <p className="text-sm text-gray-500">
+              {result?.openchat_username?.[0] ?? "No Username"}
+            </p>
+          </div>
+        </th>
+        <td className="px-6 py-4">
+          <div className="flex items-center">
+            <div className="h-2.5 w-2.5 rounded-full bg-green-500 mr-2"></div>
+            <span className="px-2 py-1 rounded text-sm font-medium bg-[#ecfdf3] border-2 border-[#6ceda0] text-green-800">
+              Active
+            </span>
+          </div>
+        </td>
+        <td className="px-6 py-4">
+          <button className="text-gray-400 hover:text-gray-600" onClick={() => onDelete(principle)}>
+            <Delete fontSize="small" />
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  
+  <div className="sm3:hidden space-y-4">
+   
+    <div className="border-b py-2">
+      <div className="font-semibold text-gray-700 flex justify-between">
+        <h3>Name</h3>
+        <div className="flex flex-col sm3:flex-row items-center">
+          <img
+            src={avatar}
+            alt={name}
+            className="w-10 h-10 rounded-full mr-4"
+            loading="lazy"
+            draggable={false}
+          />
+          <div className="ps-3">
+            <p className="font-medium text-base text-[#121926]">{name}</p>
+            <p className="text-sm text-gray-500">
+              {result?.openchat_username?.[0] ?? "No Username"}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+   
+    <div className="border-b py-2">
+      <div className="font-semibold text-gray-700 flex justify-between">
+        <h3>Status</h3>
+        <div className="flex justify-center items-center">
+          <div className="h-2.5 w-2.5 rounded-full bg-green-500 mr-2"></div>
+          <span className="px-2 py-1 rounded text-sm font-medium bg-[#ecfdf3] border-2 border-[#6ceda0] text-green-800">
+            Active
+          </span>
+        </div>
+      </div>
+    </div>
+
+    
+    <div className="border-b py-2">
+      <div className="font-semibold text-gray-700 flex justify-between">
+        <h3>Action</h3>
+        <button className="text-gray-400 hover:text-gray-600" onClick={() => onDelete(principle)}>
+          <Delete fontSize="small" />
+        </button>
+      </div>
+    </div>
+  </div>
+</div> */}
           </>
         );
       }) || (
@@ -148,71 +310,72 @@ function TeamSection({ data, cardData }) {
   };
 
   // =======================================
-    // <<<<<------- member Delete ----->>>>>
+  // <<<<<------- member Delete ----->>>>>
 
-    const handleOpenDeleteModal = (data) => {
-      setCurrentMemberData(data);
-      setDeleteModalOpen(true);
-    };
-  
-    const handleCloseDeleteModal = () => {
-      setDeleteModalOpen(false);
-      setCurrentMemberData(null);
-    };
-    const handleClose = () => {
-      setDeleteModalOpen(false);
-      setCurrentMemberData(null);
-    };
-  
-    const handleDelete = async () => {
-      let project_id = data;
-    
-      if (!currentMemberData) return;
-    
-      setIsSubmitting(true);
-    
-      try {
-    
-        // Reconstruct the Principal object
-        const principalToPass = Principal.fromUint8Array(currentMemberData._arr);
-        const result = await actor.delete_team_member(project_id, principalToPass);
-    
-        if (result) {
-          toast.success("Team member deleted successfully", {
-            style: {
-              backgroundColor: "#d9534f",
-              color: "#fff",
-            },
-            icon: "🗑️",
-          });
-          handleCloseDeleteModal();
-          setTimeout(() => {
-            window.location.reload();
-          }, 2000);
-        } else {
-          toast.error("Failed to delete the team member");
-        }
-      } catch (error) {
-        console.log("Error in delete_team_member:", error);
-        toast.error("Something went wrong");
-      } finally {
-        setIsSubmitting(false);
+  const handleOpenDeleteModal = (data) => {
+    setCurrentMemberData(data);
+    setDeleteModalOpen(true);
+  };
+
+  const handleCloseDeleteModal = () => {
+    setDeleteModalOpen(false);
+    setCurrentMemberData(null);
+  };
+  const handleClose = () => {
+    setDeleteModalOpen(false);
+    setCurrentMemberData(null);
+  };
+
+  const handleDelete = async () => {
+    let project_id = data;
+
+    if (!currentMemberData) return;
+
+    setIsSubmitting(true);
+
+    try {
+      // Reconstruct the Principal object
+      const principalToPass = Principal.fromUint8Array(currentMemberData._arr);
+      const result = await actor.delete_team_member(
+        project_id,
+        principalToPass
+      );
+
+      if (result) {
+        toast.success("Team member deleted successfully", {
+          style: {
+            backgroundColor: "#d9534f",
+            color: "#fff",
+          },
+          icon: "🗑️",
+        });
+        handleCloseDeleteModal();
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
+      } else {
+        toast.error("Failed to delete the team member");
       }
-    };
-    
-    
-// useEffect(() => {
-//   if (actor && latestJobs) {
-//     fetchPostedJobs();
-//   }
-// }, [actor, latestJobs]);
+    } catch (error) {
+      console.log("Error in delete_team_member:", error);
+      toast.error("Something went wrong");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // useEffect(() => {
+  //   if (actor && latestJobs) {
+  //     fetchPostedJobs();
+  //   }
+  // }, [actor, latestJobs]);
   return (
     <>
       <div className="bg-white overflow-hidden">
-        <div className="p-6">
+        <div className="">
           <div className="flex justify-end mb-6">
             <button
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm flex items-center"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 mt-4 rounded-lg text-sm flex items-center"
               onClick={handleTeamMemberOpenModal}
             >
               <PersonAdd className="mr-2" fontSize="small" />
@@ -222,7 +385,10 @@ function TeamSection({ data, cardData }) {
 
           <div className="rounded-lg overflow-hidden border-2 border-gray-100">
             <div>
-              <TeamMember cardData={cardData}  onDelete={handleOpenDeleteModal}/>
+              <TeamMember
+                cardData={cardData}
+                onDelete={handleOpenDeleteModal}
+              />
             </div>
           </div>
         </div>

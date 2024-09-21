@@ -17,7 +17,7 @@ const DocumentCard = ({ doc, type }) => {
       className={`relative flex flex-col sm4:flex-row sm4:items-center p-4 rounded-lg mb-4 shadow-md bg-white transition-all duration-300 ${isPrivate ? 'blur-sm' : ''}`}
     >
       {/* Image Section with Background */}
-      <div className="bg-gray-100 px-4 py-4 rounded-lg flex-shrink-0 flex flex-col items-center">
+      <div className="bg-gray-100 px-3 py-4 rounded-lg flex-shrink-0 flex flex-col items-center">
         <img
           src={Filetype}
           alt="Document Thumbnail"
@@ -29,8 +29,8 @@ const DocumentCard = ({ doc, type }) => {
           href={link}
           target="_blank"
           rel="noopener noreferrer"
-          className="hover:text-blue-800 mt-2 block overflow-hidden text-ellipsis whitespace-nowrap text-sm"
-          style={{ maxWidth: '100px' }}
+          className="hover:text-blue-800 line-clamp-1 break-all mt-2  text-sm"
+          // style={{ maxWidth: '100px' }}
         >
           {link || "No link provided"}
         </a>

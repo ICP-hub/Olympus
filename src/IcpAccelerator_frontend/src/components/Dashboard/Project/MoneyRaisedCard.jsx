@@ -7,20 +7,20 @@ import docu5 from "../../../../assets/images/docu.png";
 
 const FundingCard = ({ title, value, imageSrc, isPrivate }) => {
     return (
-      <div className="relative flex items-center p-4 rounded-lg mb-4 shadow-md bg-white transition-all duration-300">
+      <div className="relative flex flex-col xxs:flex-row items-center p-4 rounded-lg mb-4 shadow-md bg-white transition-all duration-300">
         {/* Image Section */}
-        <div className={`flex-shrink-0`}>
+        <div className={`flex-shrink-0 w-full xxs:w-[180px]`}>
           <img
             src={imageSrc}
             alt={`${title} Thumbnail`}
-            className="w-[150px] h-[100px] object-cover rounded-lg"
+            className="xxs:w-[150px] xxs:h-[100px] w-full object-cover rounded-lg"
             loading="lazy"
             draggable={false}
           />
         </div>
 
         {/* Details Section */}
-        <div className={`ml-6 flex-grow transition-all duration-300 `}>
+        <div className={`w-full mt-2 xxs:mt-0 flex-grow flex justify-between xxs:flex-col xxs:justify-center  transition-all duration-300 `}>
           <div className="flex justify-between items-center">
             <p className="text-xs xxs:text-base sm5:text-lg font-semibold text-gray-900">
               {title}
