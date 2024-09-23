@@ -14,8 +14,8 @@ const EventMain = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bg-white">
-      <div className='flex justify-between'>
-      <h1 className=" text-xl ss1:text-3xl font-bold bg-opacity-95 -top-[0.6rem] sticky bg-white z-20 py-6">
+      <div className='flex justify-between sticky -top-[1.1rem] md:top-0 bg-opacity-95 -mt-[1.1rem] md:mt-0   bg-white z-20'>
+      <h1 className=" text-xl ss1:text-3xl font-bold bg-opacity-95  py-6">
        <span></span> Discover Cohorts
       </h1>
 

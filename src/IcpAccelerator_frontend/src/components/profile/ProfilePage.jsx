@@ -76,7 +76,7 @@ const ProfilePage = () => {
     <div className="container mx-auto mb-5 bg-white px-4 md:px-6 lg:px-8">
      
       {/* Header Section */}
-      <div className="flex flex-col md:flex-row justify-between md:items-center mx-0  p-5 md:h-11 bg-opacity-95 -top-[1.6rem] md:-top-[.60rem] md:p-10 px-0 sticky bg-white z-20">
+      <div className="flex flex-col md:flex-row justify-between md:items-center mx-auto py-6 md:py-10 lgx:ml-[3.3%] -mt-[1.1rem] md:mt-0  md:h-11 bg-opacity-95 -top-[1.1rem] md:top-0 sticky bg-white z-20">
         <div>
           <h2 className="text-2xl font-bold ">
             {profilepage.profileText}

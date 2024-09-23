@@ -233,8 +233,8 @@ const UsersSection = () => {
   return (
     <>
     <div className="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 bg-white">
-      <div className="flex justify-between">
-      <h1 className="text-3xl font-bold p-4 px-0 bg-opacity-95 sticky bg-white z-20 top-0">
+      <div className="flex justify-between sticky  bg-opacity-95 -top-[1.1rem] md:top-0 -mt-[1.1rem] md:mt-0  bg-white z-20">
+      <h1 className="text-3xl font-bold p-4 px-0 ">
         Discover
       </h1>
       {/* Filter button for mobile */}
@@ -251,11 +251,11 @@ const UsersSection = () => {
   
   
       {/* Tabs Section */}
-      <div className="sticky top-[4rem] bg-white z-10">
+      {/* <div className="sticky top-[4rem] bg-white z-10">
        
-      </div>
+      </div> */}
 
-      <div className="md1:flex lg:flex-none lgx:flex justify-between w-full">
+      <div className="md1:flex lg:flex-none lgx:flex justify-between w-full ">
         <div className="flex-1 w-full md1:w-[60%] lg:w-full lgx:w-[60%]">
         <Tabs
           tabs={tabs}
