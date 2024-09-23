@@ -242,7 +242,7 @@ const handleButtonClick = (action) => {
   return (
     <>
       <div className="bg-white rounded-lg lg:p-6 mb-6 pt-1">
-        <h1 className="text-sm sxs2:text-base ss3:text-xl xxs:text-2xl sm5:text-3xl font-bold mb-6 mt-6 pl-3 break-all truncate">
+        <h1 className="text-sm sxs2:text-base ss3:text-xl xxs:text-2xl sm5:text-3xl font-bold mb-6 mt-6  break-all truncate">
           {dashboardwelcomesection.welcome}, {userFullData?.full_name}!
         </h1>
         <div className="overflow-x-auto">

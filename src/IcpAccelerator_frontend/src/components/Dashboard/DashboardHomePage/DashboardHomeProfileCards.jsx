@@ -21,19 +21,19 @@ import DashboardProfileView from "./DashboardProfileView";
 import RatingCard from "../../Common/RatingCard";
 import EditRating from "../../Common/RatingReview";
 import RatingReview from "../../Common/RatingReview";
-import mentor from "../../../../assets/Logo/mentor.png";
-import talent from "../../../../assets/Logo/talent.png";
-import founder from "../../../../assets/Logo/founder.png";
-import Avatar3 from "../../../../assets/Logo/Avatar3.png";
+import user from "../../../../assets/Logo/mentor.png";
+import mentor from "../../../../assets/Logo/talent.png";
+import project from "../../../../assets/Logo/founder.png";
+import investor from "../../../../assets/Logo/Avatar3.png";
 import ProjectCard from "../Project/ProjectCard";
 import { useNavigate, useLocation } from "react-router-dom";
 import DashboardProjectCard from "./DashboardProjectCard";
 
 function getAvatarsByRoles(approvedRoles) {
-  const defaultAvatar = mentor;  // User avatar
-  const mentorAvatar = talent;    // Mentor avatar
-  const investorAvatar = Avatar3;  // Investor avatar
-  const projectAvatar = founder;  // Project avatar
+  const defaultAvatar = user;  
+  const mentorAvatar = mentor;    
+  const investorAvatar = investor;  
+  const projectAvatar = project;  
 
   let firstCardAvatar = defaultAvatar;
   let secondCardAvatar = defaultAvatar;
@@ -103,7 +103,7 @@ function DashboardHomeProfileCards(percentage) {
     if (tab) {
       setActiveTab(tab);
     } else {
-      setActiveTab("project"); // default tab
+      setActiveTab("project"); 
     }
   }, [location.search]);
 
@@ -126,7 +126,7 @@ function DashboardHomeProfileCards(percentage) {
             <h2 className="ss2:text-xl font-bold">Main profile</h2>
             <Link
               to="/dashboard/profile"
-              className="text-blue-500 font-normal "
+              className="text-blue-500 text-xs ss:font-normal "
             >
               Manage &gt;
             </Link>
@@ -178,40 +178,20 @@ function DashboardHomeProfileCards(percentage) {
             </div>
             <Link
               to="/dashboard/profile"
-              className="text-blue-500 font-normal flex "
+              className="text-blue-500 text-xs ss:font-normal flex "
             >
-              <span className="sxxs:hidden dxs:block lgx:hidden dxl0:block block pr-1">View</span>{" "}
+              <span className="sxxs:hidden dxs:block lgx:hidden dxl0:block block pr-1">
+                View
+              </span>{" "}
               Details &gt;
             </Link>
           </div>
-          {/* <div className="border border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center">
-            <svg
-              className="text-gray-200 w-20 h-20 mb-4"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"
-                stroke="currentColor"
-                strokeWidth="1"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-            <p className="text-gray-700 font-semibold mb-2">No ratings yet</p>
-            <p className="text-gray-500 text-sm text-center">
-              Commodo ut non aliquam nunc nulla velit et vulputate turpis. Erat
-              rhoncus tristique ullamcorper sit.
-            </p>
-          </div> */}
+       
           {show === true ? (
             <RatingCard show={show} setShow={setShow} />
           ) : (
             <RatingReview />
           )}
-
-          {/* <RatingReview /> */}
         </div>
 
         {/* Roles card */}
@@ -224,20 +204,31 @@ function DashboardHomeProfileCards(percentage) {
                 fontSize="small"
               />
             </div>
-            <Link to="/dashboard/profile" className="text-blue-500 font-normal">
+            <Link
+              to="/dashboard/profile"
+              className="text-blue-500 text-xs ss:font-normal"
+            >
               Manage &gt;
             </Link>
           </div>
           <div className="mt-2 h-35 flex justify-center items-center border border-dashed border-gray-300 rounded-lg p-6">
             <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
-              <img src={firstCardAvatar} className="text-gray-400 w-12 h-12"    loading="lazy"
-                    draggable={false}/>
+              <img
+                src={firstCardAvatar}
+                className="text-gray-400 w-12 h-12"
+                loading="lazy"
+                draggable={false}
+              />
             </div>
           </div>
           <div className="mt-8 h-35 flex justify-center items-center border border-dashed border-gray-300 rounded-lg p-6">
             <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
-              <img src={secondCardAvatar} className="text-gray-400 w-12 h-12"    loading="lazy"
-                    draggable={false}/>
+              <img
+                src={secondCardAvatar}
+                className="text-gray-400 w-12 h-12"
+                loading="lazy"
+                draggable={false}
+              />
             </div>
           </div>
         </div>

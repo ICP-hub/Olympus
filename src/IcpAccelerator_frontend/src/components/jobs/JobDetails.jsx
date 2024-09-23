@@ -81,7 +81,7 @@ let timestamp = jobDetails?.timestamp
             <CloseIcon sx={{ cursor: "pointer" }} onClick={handleClose} />
           </div>
           <div className="container">
-            <div className="flex flex-col md:flex-row justify-evenly px-[1%] h-screen overflow-y-auto">
+            <div className="flex flex-col md:flex-row justify-evenly px-[1%]  overflow-y-auto">
               <div className="border md:h-fit rounded-lg w-full md:w-[30%] ">
                 <div className="py-6 px-5 border rounded-t-lg bg-[#EEF2F6]">
                   <div className="flex gap-2 items-center">
@@ -191,7 +191,7 @@ let timestamp = jobDetails?.timestamp
                   </div>
                 </div>
               </div>
-              <div className="border rounded-lg p-3 w-full md:w-[65%] overflow-y-auto  ">
+              <div className="border rounded-lg p-3 w-full md:w-[65%] overflow-y-auto  mt-5 h-full">
                 <div className="break-words whitespace-normal overflow-y-auto">
                   {parse(description)}
                 </div>

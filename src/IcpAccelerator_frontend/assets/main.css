@@ -248,7 +248,16 @@ input[type="number"] {
     right: 0;
     background-color: #fff;
 }
-
+@media screen and (max-width: 445px) {
+  .driver-popover.driverjs-theme {
+    max-width: 200px;
+  }
+}
+@media screen and (max-width: 300px) {
+  .driver-popover.driverjs-theme {
+    min-width: 200px;
+  }
+}
 .driver-popover.driverjs-theme .driver-popover-title {
   font-size: 20px;
 }
