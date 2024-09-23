@@ -672,13 +672,14 @@ function DashboardSidebar({ isOpen, onClose, id, id2 }) {
         // className={`flex items-center px-6 py-2 cursor-pointer rounded-lg ${
         //   activeLink === path ? "bg-[#e4e3e2b1]" : "hover:bg-[#e4e3e2b1]"
         // } ${disabled ? "cursor-not-allowed opacity-50" : ""}`}
-        className={` lg:flex lg:items-center lg:px-6 lg:py-2 lg:cursor-pointer lg:rounded-lg ${
+        className={` flex lg:items-center lg:px-6 lg:py-2 lg:cursor-pointer lg:rounded-lg ${
           activeLink === path ? "lg:bg-[#e4e3e2b1]" : "lg:hover:bg-[#e4e3e2b1]"
         } ${disabled ? "lg:cursor-not-allowed lg:opacity-50" : ""}`}
         
       >
         {icon}
-        <span className="ml-3">{label}</span>
+        {/* <span className="ml-3">{label}</span> */}
+        <span className="hidden group-hover:inline-block md:block ml-3 align-bottom pb-1">{label}</span>
       </div>
     </Tooltip>
   );
@@ -879,62 +880,66 @@ function DashboardSidebar({ isOpen, onClose, id, id2 }) {
   };
 
  
+ 
   const BottomNav = () => (
-    <motion.div
-      className="fixed bottom-0 left-0 w-full bg-[#FFF4ED] shadow-lg flex py-2 lg:hidden z-50 rounded-t-md"
-      initial={{ y: '100%' }} // Start off the screen
-      animate={{ y: 0 }} // Animate into the view
-      exit={{ y: '100%' }} // Animate out of the view
-      transition={{ duration: 0.5, ease: 'easeInOut'}} // Add smooth transition
-    >
-      <div className="absolute right-4 top-2">
-        <button onClick={handleClose}>
-          <CloseIcon className="text-gray-600" />
-        </button>
-      </div>
-      <div className="flex justify-between w-full mt-16 mx-4 ">
-        <SidebarLink
-          path="/dashboard"
-          icon={homeSvgIcon}
-          onClick={() => handleLinkClick("/dashboard")}
-        />
-        <SidebarLink
-          path="/dashboard/user"
-          icon={userSvgIcon}
-          onClick={() => handleLinkClick("/dashboard/user")}
-        />
-        <SidebarLink
-          path="/dashboard/event"
-          icon={calenderSvgIcon}
-          onClick={() => handleLinkClick("/dashboard/event")}
-        />
-        <SidebarLink
-        
-          path ="/dashboard/profile"
-          icon= {userCircleSvgIcon}
-          onClick={() => handleLinkClick("/dashboard/profile")}
-        />
-        <SidebarLink
-          path="/dashboard/jobs"
-          icon={briefcaseSvgIcon}
-          onClick={() => handleLinkClick("/dashboard/jobs")}
-        />
-      </div>
-  
-      {/* Add an overlay effect when the navigation is open */}
+    <>
+      {/* Overlay effect to close the bottom nav when clicked outside */}
       {show && (
         <motion.div
-          // className="fixed inset-0 z-40"
-          onClick={handleClose}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 0.5 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
+          className="fixed inset-0"
+          onClick={handleClose} 
         />
       )}
-    </motion.div>
+      
+      {/* Bottom Navigation */}
+      <motion.div
+        className="fixed -bottom-2 left-0 w-full bg-[#FFF4ED] shadow-lg flex py-2  z-50 rounded-t-3xl"
+        initial={{ y: '100%' }} // Start off the screen
+        animate={{ y: 0 }} // Animate into the view
+        exit={{ y: '100%' }} // Animate out of the view
+        transition={{ duration: 0.5, ease: 'easeInOut' }} // Add smooth transition
+      >
+        {/* <div className="absolute right-4 top-2">
+          <button onClick={handleClose}>
+            <CloseIcon className="text-gray-600" />
+          </button>
+        </div> */}
+        <div className="flex justify-between w-full my-8 mx-4 ">
+          <SidebarLink
+            path="/dashboard"
+            icon={homeSvgIcon}
+            onClick={() => handleLinkClick("/dashboard")}
+            label="Profile"
+
+          />
+          <SidebarLink
+            path="/dashboard/user"
+            icon={userSvgIcon}
+            onClick={() => handleLinkClick("/dashboard/user")}
+            label="Dashboard"
+          />
+          <SidebarLink
+            path="/dashboard/event"
+            icon={calenderSvgIcon}
+            onClick={() => handleLinkClick("/dashboard/event")}
+            label="Cohort"s
+          />
+          <SidebarLink
+            path="/dashboard/profile"
+            icon={userCircleSvgIcon}
+            onClick={() => handleLinkClick("/dashboard/profile")}
+            label="Profile"
+          />
+          <SidebarLink
+            path="/dashboard/jobs"
+            icon={briefcaseSvgIcon}
+            onClick={() => handleLinkClick("/dashboard/jobs")}
+            label="Jobs"
+          />
+        </div>
+      </motion.div>
+    </>
   );
-  
   return (
     <>
       {/* Sidebar for larger screens */}

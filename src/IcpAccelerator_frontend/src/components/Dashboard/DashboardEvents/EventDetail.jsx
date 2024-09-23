@@ -319,7 +319,7 @@ const ProfileImage =  profileimage && profileimage.length > 0
     <div className="flex flex-col">
       <div className="flex   w-full justify-between  my-2  ">
       <button
-        className="mr-2 text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-2 rounded-md shadow-sm border border-gray-200"
+        className=" flex mr-2 text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-2 rounded-md shadow-sm border border-gray-200"
         onClick={() => navigate(-1)} 
       >
         <ArrowBack className="mr-1" />
@@ -390,7 +390,7 @@ const ProfileImage =  profileimage && profileimage.length > 0
 
             {userCurrentRoleStatusActiveRole !== "user" && (
               <button
-                className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-300 mb-2 text-sm"
+                className="w-full flex justify-center bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-300 mb-2 text-sm"
                 onClick={registerHandler}
               >
                 {isSubmitting ? (

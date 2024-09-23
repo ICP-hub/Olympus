@@ -322,142 +322,12 @@ const EventRequestCard = () => {
           };
 
           return (
-            // <div key={index} className="bg-white rounded-lg shadow p-4 mb-6">
-            //   <div className="flex justify-between items-center">
-            //     <div className="flex items-center gap-3 relative">
-            //       <div className="w-[272px] h-[230px]">
-            //         <div
-            //           className="max-w-[230px] w-[230px] bg-gray-100 rounded-lg flex flex-col justify-between h-full relative overflow-hidden"
-            //           onClick={() => handleCardClick(userData)}
-            //         >
-            //           <div className="group">
-            //             <div
-            //               className="absolute inset-0 blur-sm"
-            //               style={{
-            //                 backgroundImage: `url(${banner})`,
-            //                 backgroundSize: "cover",
-            //                 backgroundPosition: "center",
-            //               }}
-            //             ></div>
-            //             <div className="absolute inset-0 flex items-center justify-center">
-            //               <img
-            //                 src={profileImageSrc}
-            //                 alt={title}
-            //                 className="w-24 h-24 rounded-full object-cover"
-            //               />
-            //             </div>
-            //           </div>
-            //         </div>
-            //       </div>
-            //       <div>
-            //         <h3 className="text-lg font-bold mt-2">{title}</h3>
-            //         <span className="flex py-2">
-            //           <Avatar
-            //             alt="Mentor"
-            //             src={profileImageSrc}
-            //             className=" mr-2"
-            //             sx={{ width: 24, height: 24 }}
-            //           />
-            //           <span className="text-gray-500">{fullname}</span>
-            //         </span>
-            //         <div className="border-t border-gray-200 "></div>
-            //         <p
-            //           className="text-sm text-gray-500 overflow-hidden text-ellipsis break-all line-clamp-3 mt-2"
-            //           style={{ maxHeight: "3em", lineHeight: "1em" }}
-            //         >
-            //           {parse(description)}
-            //         </p>
-            //         <div className="flex flex-wrap gap-3 items-center mt-2">
-            //           <div className="flex items-center mt-2">
-            //             <img
-            //               src={PriceIcon}
-            //               alt="Funding Amount"
-            //               className="w-4 h-4 text-gray-400 mr-2"
-            //             />
-            //             <span className="text-gray-500">{fundingAmount}</span>
-            //           </div>
-            //           <span className="flex items-center mt-2 text-gray-700">
-            //             <PlaceOutlinedIcon className="" fontSize="small" />
-            //             {country}
-            //           </span>
-            //         </div>
-            //         <div className="flex flex-wrap gap-3 items-center mt-2">
-            //           <div className="flex flex-wrap gap-2">
-            //             {tags?.split(",").map((interest, index) => (
-            //               <span
-            //                 key={index}
-            //                 className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1"
-            //               >
-            //                 {interest.trim()}
-            //               </span>
-            //             ))}
-            //           </div>
-            //         </div>
 
-            //         <div className="flex py-2">
-            //           {appliedType === "pending" &&
-            //             event.status === "pending" && (
-            //               <>
-            //                 <button
-            //                   className="mr-2 mb-2 border border-[#097647] bg-[#EBFDF3] text-[#097647] px-3 py-1 rounded-full"
-            //                   onClick={() => handleAction("Approve", index)}
-            //                   disabled={loadingIndexes[index] === "Approve"}
-            //                 >
-            //                   Accept
-            //                   {loadingIndexes[index] === "Approve" && (
-            //                     <ThreeDots
-            //                       visible={true}
-            //                       height="10"
-            //                       width="20"
-            //                       color="#FFFFFF"
-            //                       radius="8"
-            //                       ariaLabel="three-dots-loading"
-            //                       wrapperStyle={{}}
-            //                       wrapperclassName=""
-            //                     />
-            //                   )}
-            //                 </button>
-            //                 <button
-            //                   className="mr-2 mb-2 border border-[#C11574] bg-[#FDF2FA] text-[#C11574] px-3 py-1 rounded-full"
-            //                   onClick={() => handleAction("Reject", index)}
-            //                   disabled={loadingIndexes[index] === "Reject"}
-            //                 >
-            //                   Reject
-            //                   {loadingIndexes[index] === "Reject" && (
-            //                     <ThreeDots
-            //                       visible={true}
-            //                       height="15"
-            //                       width="20"
-            //                       color="#FFFFFF"
-            //                       radius="8"
-            //                       ariaLabel="three-dots-loading"
-            //                       wrapperStyle={{}}
-            //                       wrapperclassName=""
-            //                     />
-            //                   )}
-            //                 </button>
-            //               </>
-            //             )}
-            //           {appliedType === "approved" && (
-            //             <button className="bg-[#ECFDF3] border-2 border-[#ABEFC6] text-[#067647] rounded-lg px-2 py-1">
-            //               Approved
-            //             </button>
-            //           )}
-            //           {event.status === "rejected" && (
-            //             <button className="bg-[#FDF2FA] border-2 text-[#C11574] border-[#FCCEEE] rounded-lg px-2 py-1">
-            //               Rejected
-            //             </button>
-            //           )}
-            //         </div>
-            //       </div>
-            //     </div>
-            //   </div>
-            // </div>
             <div
   key={index}
-  className="bg-white rounded-lg shadow p-4 mt-4  w-full  md:max-w-full md:flex"
+  className="bg-white rounded-lg shadow p-4 mt-4  w-full  md:max-w-full "
 >
-  <div className="flex flex-col md1:flex-row md1:gap-4 lg:flex-col lg1:flex-row items-start md1:items-center">
+  <div className="flex flex-col sm0:flex-row sm0:gap-4 lg:flex-col lg1:flex-row items-start md1:items-center">
     {/* Image section */}
     <div className="w-full lgx:w-[272px] h-[230px]">
       <div
@@ -544,26 +414,25 @@ const EventRequestCard = () => {
         {appliedType === "pending" && event.status === "pending" && (
           <>
             <button
-              className="mr-2 mb-2 border border-[#097647] bg-[#EBFDF3] text-[#097647] px-3 py-1 rounded-full"
+              className="mr-2 mb-2 border border-[#097647] bg-[#EBFDF3] text-[#097647] px-3 py-1 rounded-full flex justify-center"
               onClick={() => handleAction("Approve", index)}
               disabled={loadingIndexes[index] === "Approve"}
             >
               Accept
               {loadingIndexes[index] === "Approve" && (
-                <ThreeDots
-                  visible={true}
-                  height="10"
-                  width="20"
-                  color="#FFFFFF"
-                  radius="8"
-                  ariaLabel="three-dots-loading"
-                  wrapperStyle={{}}
-                  wrapperclassName=""
-                />
-              )}
+                                <ThreeDots
+                                  visible={true}
+                                  height="10"
+                                  width="20"
+                                  color="#FFFFFF"
+                                  radius="8"
+                                  ariaLabel="three-dots-loading"
+                                 
+                                />
+                              )}
             </button>
             <button
-              className="mr-2 mb-2 border border-[#C11574] bg-[#FDF2FA] text-[#C11574] px-3 py-1 rounded-full"
+              className="mr-2 mb-2 border border-[#C11574] bg-[#FDF2FA] text-[#C11574] px-3 py-1 rounded-full flex justify-center"
               onClick={() => handleAction("Reject", index)}
               disabled={loadingIndexes[index] === "Reject"}
             >
@@ -576,8 +445,7 @@ const EventRequestCard = () => {
                   color="#FFFFFF"
                   radius="8"
                   ariaLabel="three-dots-loading"
-                  wrapperStyle={{}}
-                  wrapperclassName=""
+                 
                 />
               )}
             </button>

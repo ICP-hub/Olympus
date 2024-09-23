@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { dashboard } from "../../Utils/jsondata/data/dashboardData";
 import project from "../../../../assets/Logo/founder.png";
-import mentor from "../../../../assets/Logo/mentor.png";
-import user from "../../../../assets/Logo/talent.png";
+import user from "../../../../assets/Logo/mentor.png";
+import mentor from "../../../../assets/Logo/talent.png";
 import vc from "../../../../assets/Logo/Avatar3.png";
 import { useDispatch, useSelector } from "react-redux";
 import { afterCopySvg, beforeCopySvg } from "../../../components/Utils/Data/SvgData";
@@ -34,7 +34,6 @@ const [isOpen, setIsOpen] = useState(false);
       }
     );
   };
-
   const { logout } = useAuth();
   const logoutHandler = async () => {
     dispatch(changeHasSelectedRoleHandler(false));
@@ -44,10 +43,10 @@ const [isOpen, setIsOpen] = useState(false);
 
   // Define roles and their associated images
   const roleData = {
-    mentor: user,
+    mentor: mentor,
     vc: vc,
     project: project,
-    user: mentor,
+    user: user,
   };
 
   // Get the image for the current active role
