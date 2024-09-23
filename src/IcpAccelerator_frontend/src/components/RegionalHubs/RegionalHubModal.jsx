@@ -74,49 +74,56 @@ const RegionalHubModal = ({ onClose }) => {
     setValue("flag", null);
     clearErrors("flag");
     setImagePreview(null);
-    setImageData(null); // Clear image data when the image is cleared
+    setImageData(null); 
   };
 
 const onSubmit = async (data) => {
-  console.log("On Submit k andr aagya",data)
-    setIsSubmitting(true);
-    console.log("On Submit k andr aagya")
-    try {
-      console.log('TRY A ANDR AAGYA')
-      console.log("HUB KA DESCRIPTION", );
-     
-      const argument = {
-       
-        flag: imageData ? [imageData] : [],
-        description: data.description ? [data.description] : [],
-        name: data.name ? [data.name] : [],
-        website:data.website? [data.website] : [],
-        links: data?.links
-          ? [data.links.map((val) => ({ links: val?.link ? [val.link] : [] }))]
-          : [],
-        
-        // project_id: projectuid,
-      };
-      console.log('YE ARGUMENT FUNCTION KO DE RHA HU', argument)
-  
-      const result = await actor.add_icp_hub_details(argument);
-      console.log("Hub creation result:", result);
-  
-      if (result) {
-        console.log("Hub creation result",result)
-        toast.success("Hub added successfully!");
-       
-        onClose();
-      } else {
-        toast.error("Something went wrong.");
-      }
-    } catch (error) {
-      console.error("Error adding Hub:", error);
-      toast.error("An error occurred while adding the hub.");
-    } finally {
-      setIsSubmitting(false);
+  setIsSubmitting(true);
+
+  console.log("Form Data:", data); // Log form data
+
+  // Check if the actor is defined
+  if (!actor) {
+    console.error("Actor is not defined");
+    toast.error("Actor is not available.");
+    setIsSubmitting(false);
+    return;
+  }
+
+  try {
+    const argument = {
+      flag: imageData ? [imageData] : [],
+      description: data.description ? [data.description] : [],
+      name: data.name ? [data.name] : [],
+      website: data.website ? [data.website] : [],
+      links: data?.links
+        ? [data.links.map((val) => ({ links: val?.link ? [val.link] : [] }))]
+        : [],
+    };
+
+    console.log(
+      "Submitting the following data to add_icp_hub_details:",
+      argument
+    );
+
+    const result = await actor.add_icp_hub_details(argument);
+
+    console.log("Hub creation result:", result);
+
+    if (result) {
+      toast.success("Hub added successfully!");
+      onClose();
+    } else {
+      toast.error("Something went wrong.");
     }
-  };
+  } catch (error) {
+    console.error("Error adding Hub:", error);
+    toast.error("An error occurred while adding the hub.");
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+
  const onErrorHandler = (errors) => {
    toast.error("Please check the form for errors.");
    console.log("Form errors:", errors);
@@ -147,8 +154,8 @@ const onSubmit = async (data) => {
                         alt="Profile"
                         className="h-full w-full object-cover"
                         loading="lazy"
-                      draggable={false}
-                    />
+                        draggable={false}
+                      />
                     ) : (
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -341,6 +348,7 @@ const onSubmit = async (data) => {
           </form>
         </div>
       </div>
+      <Toaster />
     </div>
   );
 };

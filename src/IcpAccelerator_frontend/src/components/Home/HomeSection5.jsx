@@ -36,9 +36,9 @@ export default function HomeSection5() {
               <div className="md:w-1/2 min ">
                 <ul className="space-y-8 relative ml-2">
                   {/* Vertical Line */}
-                  <div className="absolute left-4 top-0 bottom-0 sxxs:h-[29rem] sxs3:h-64 ss:h-[24rem]  dxs:h-80 xxs:h-80   sm2:h-80  sm4:h-80 sm5:h-64  md:h-80 sxxs:left-[14px] ss:left-[14px] dlg:left-[14px] lg1:left-4 lg1:h-64 h-64 w-0.5 bg-gray-300"></div>
+                  <div className="absolute left-4 top-0 bottom-0 sxxs:h-[29rem] sxs3:h-[24rem] ss:h-[24rem]  dxs:h-80 xxs:h-80   sm2:h-80  sm4:h-80 sm5:h-64  md:h-80 sxxs:left-[14px] ss:left-[14px] dlg:left-[14px] lg1:left-4 lg1:h-64 h-[29rem] w-0.5 bg-gray-300"></div>
                   <li className="flex items-start">
-                    <span className="bg-[#F7B27A] text-white rounded-full h-8 w-8 sxxs:w-[5rem] ss:w-[4rem] xxs1:w-[2.5rem]   dxs:w-[3rem] sm4:w-[2rem] md:w-[2.7rem] md1:w-[2.3rem] lg:w-[2.1rem] dlg:w-8 flex items-center justify-center mr-4 relative z-10">
+                    <span className="bg-[#F7B27A] text-white rounded-full h-8 w-[6rem] sxxs:w-[5rem] ss:w-[4rem] xxs1:w-[2.5rem]   dxs:w-[3rem] sm4:w-[2rem] md:w-[2.7rem] md1:w-[2.3rem] lg:w-[2.1rem] dlg:w-8 flex items-center justify-center mr-4 relative z-10">
                       <img
                         src={homepagesection5.step1.icon.CreateProfileIcon}
                         alt="createProfile Icon"
@@ -57,7 +57,7 @@ export default function HomeSection5() {
                     </div>
                   </li>
                   <li className="flex items-start">
-                    <span className="bg-[#F7B27A] text-white rounded-full h-8 w-8 sxxs:w-[5rem] ss:w-[4rem] xxs1:w-[2.5rem] dxs:w-[3rem] sm4:w-[2rem] md:w-[2.7rem] md1:w-[2.3rem] lg:w-[2.1rem] dlg:w-8 flex items-center justify-center mr-4 relative z-10">
+                    <span className="bg-[#F7B27A] text-white rounded-full h-8 w-[6rem] sxxs:w-[5rem] ss:w-[4rem] xxs1:w-[2.5rem] dxs:w-[3rem] sm4:w-[2rem] md:w-[2.7rem] md1:w-[2.3rem] lg:w-[2.1rem] dlg:w-8 flex items-center justify-center mr-4 relative z-10">
                       <img
                         src={homepagesection5.step2.icon.DiscoverAndConnetIcon}
                         alt="DiscoverAndConnect Icon"
@@ -76,7 +76,7 @@ export default function HomeSection5() {
                     </div>
                   </li>
                   <li className="flex items-start">
-                    <span className="bg-[#F7B27A] text-white rounded-full h-8 w-8 sxxs:w-[5rem] xxs1:w-[2.5rem] ss:w-[4rem] dxs:w-[3rem] sm4:w-[2rem] md:w-[2.7rem] md1:w-[2.3rem] lg:w-[2.1rem] dlg:w-8 flex items-center justify-center mr-4 relative z-10">
+                    <span className="bg-[#F7B27A] text-white rounded-full h-8 w-[6rem] sxxs:w-[5rem] xxs1:w-[2.5rem] ss:w-[4rem] dxs:w-[3rem] sm4:w-[2rem] md:w-[2.7rem] md1:w-[2.3rem] lg:w-[2.1rem] dlg:w-8 flex items-center justify-center mr-4 relative z-10">
                       <img
                         src={homepagesection5.step3.icon.CollaborateIcon}
                         alt="Collaboration Icon"
@@ -95,7 +95,7 @@ export default function HomeSection5() {
                     </div>
                   </li>
                   <li className="flex items-start ">
-                    <span className="bg-[#F7B27A] text-white rounded-full h-8 w-8 sxxs:w-[5rem] ss:w-[4rem] xxs1:w-[2.5rem] dxs:w-[3rem] sm4:w-[2rem] md:w-[2.7rem] md1:w-[2.3rem] lg:w-[2.1rem] dlg:w-8 flex items-center justify-center mr-4 relative z-10">
+                    <span className="bg-[#F7B27A] text-white rounded-full h-8 w-[6rem] sxxs:w-[5rem] ss:w-[4rem] xxs1:w-[2.5rem] dxs:w-[3rem] sm4:w-[2rem] md:w-[2.7rem] md1:w-[2.3rem] lg:w-[2.1rem] dlg:w-8 flex items-center justify-center mr-4 relative z-10">
                       <img
                         src={homepagesection5.step4.icon.AccelerateIcon}
                         alt="Accelerate Icon"

@@ -41,7 +41,7 @@ const NewJob = ({ latestJobs }) => {
   const handleJobsOpenModal = (jobData) => {
     setCurrentJobData(jobData);
     setJobsModalOpen(true);
-    console.log("/////id did id ", jobData);
+   
   };
 
   const handleJobsCloseModal = () => {
@@ -67,7 +67,6 @@ const NewJob = ({ latestJobs }) => {
     let principles = Principal.fromText(principal);
     try {
       const result = await actor.get_jobs_posted_by_principal(principles);
-      console.log("result-in-get_jobs_posted_by_project", result);
       if (!result || result.length === 0 || result[0].length === 0) {
         setNoData(true);
         setLatestJob([]);
@@ -87,7 +86,6 @@ const NewJob = ({ latestJobs }) => {
   const handleEdit = async (job_data) => {
     if (!currentJobData) return;
 
-    console.log("currentJobData===>>>>>>>>>", currentJobData);
     setIsSubmitting(true);
     const new_details = {
         title: job_data.jobTitle,
@@ -345,14 +343,14 @@ const NewJob = ({ latestJobs }) => {
                         </div>
                       </div>
 
-                      <div className="flex gap-3 ">
+                      <div className="flex items-center gap-3 ">
                         <div
                           className="flex w-14"
                           onClick={() => openJobDetails(card.job_id)}
                         >
                           <img
                             src={job_project_logo}
-                            className="w-12 h-12 rounded-full"
+                            className="w-12 h-12 rounded-lg"
                             alt="icon"
                             loading="lazy"
                             draggable={false}
