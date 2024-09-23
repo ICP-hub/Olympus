@@ -322,150 +322,156 @@ const EventRequestCard = () => {
           };
 
           return (
-
             <div
-  key={index}
-  className="bg-white rounded-lg shadow p-4 mt-4  w-full  md:max-w-full "
->
-  <div className="flex flex-col sm0:flex-row sm0:gap-4 lg:flex-col lg1:flex-row items-start md1:items-center">
-    {/* Image section */}
-    <div className="w-full lgx:w-[272px] h-[230px]">
-      <div
-        className="w-full lgx:max-w-[230px] lgx:min-w-[230px] bg-gray-100 rounded-lg flex flex-col justify-between h-full relative overflow-hidden"
-        onClick={() => handleCardClick(userData)}
-      >
-        <div className="group">
-          <div
-            className="absolute inset-0 blur-sm"
-            style={{
-              backgroundImage: `url(${banner})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
-          ></div>
-          <div className="absolute inset-0 flex items-center justify-center">
-            <img
-              src={profileImageSrc}
-              alt={title}
-              className="w-20 h-20 md:w-24 md:h-24 rounded-full object-cover"
-              loading="lazy"
-              draggable={false}
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-
-    {/* Content Section */}
-    <div className="w-full">
-      <h3 className="text-base md:text-lg font-bold mt-2 md:mt-0">{title}</h3>
-      <span className="flex py-2">
-        <Avatar
-          alt="Mentor"
-          src={profileImageSrc}
-          className="mr-2"
-          sx={{ width: 24, height: 24 }}
-        />
-        <span className="text-sm text-gray-500">{fullname}</span>
-      </span>
-
-      <div className="border-t border-gray-200 "></div>
-
-      {/* Description */}
-      <p
-        className="text-sm text-gray-500 overflow-hidden text-ellipsis break-all line-clamp-3 mt-2"
-        style={{ maxHeight: "3em", lineHeight: "1em" }}
-      >
-        {parse(description)}
-      </p>
-
-      {/* Funding and Location */}
-      <div className="flex flex-wrap gap-3 items-center mt-2">
-        <div className="flex items-center">
-          <img
-            src={PriceIcon}
-            alt="Funding Amount"
-            className="w-4 h-4 text-gray-400 mr-2"
-            loading="lazy"
-            draggable={false}
-          />
-          <span className="text-sm text-gray-500">{fundingAmount}</span>
-        </div>
-        <span className="flex items-center text-sm text-gray-700">
-          <PlaceOutlinedIcon className="" fontSize="small" />
-          {country}
-        </span>
-      </div>
-
-      {/* Tags */}
-      <div className="flex flex-wrap gap-2 items-center mt-2">
-        {tags?.split(",").map((interest, index) => (
-          <span
-            key={index}
-            className="border-2 border-gray-500 rounded-full text-xs text-gray-700 px-2 py-1"
-          >
-            {interest.trim()}
-          </span>
-        ))}
-      </div>
-
-      {/* Action Buttons */}
-      <div className="flex flex-wrap gap-2 mt-4">
-        {appliedType === "pending" && event.status === "pending" && (
-          <>
-            <button
-              className="mr-2 mb-2 border border-[#097647] bg-[#EBFDF3] text-[#097647] px-3 py-1 rounded-full flex justify-center"
-              onClick={() => handleAction("Approve", index)}
-              disabled={loadingIndexes[index] === "Approve"}
+              key={index}
+              className="bg-white rounded-lg shadow p-4 mt-4  w-full  md:max-w-full "
             >
-              Accept
-              {loadingIndexes[index] === "Approve" && (
-                                <ThreeDots
-                                  visible={true}
-                                  height="10"
-                                  width="20"
-                                  color="#FFFFFF"
-                                  radius="8"
-                                  ariaLabel="three-dots-loading"
-                                 
-                                />
-                              )}
-            </button>
-            <button
-              className="mr-2 mb-2 border border-[#C11574] bg-[#FDF2FA] text-[#C11574] px-3 py-1 rounded-full flex justify-center"
-              onClick={() => handleAction("Reject", index)}
-              disabled={loadingIndexes[index] === "Reject"}
-            >
-              Reject
-              {loadingIndexes[index] === "Reject" && (
-                <ThreeDots
-                  visible={true}
-                  height="15"
-                  width="20"
-                  color="#FFFFFF"
-                  radius="8"
-                  ariaLabel="three-dots-loading"
-                 
-                />
-              )}
-            </button>
-          </>
-        )}
-        {appliedType === "approved" && (
-          <button className="bg-[#ECFDF3] border-2 border-[#ABEFC6] text-[#067647] rounded-lg px-2 py-1">
-            Approved
-          </button>
-        )}
-        {event.status === "rejected" && (
-          <button className="bg-[#FDF2FA] border-2 text-[#C11574] border-[#FCCEEE] rounded-lg px-2 py-1">
-            Rejected
-          </button>
-        )}
-      </div>
-    </div>
-  </div>
-</div>
+              <div className="flex flex-col sm0:flex-row sm0:gap-4 lg:flex-col lg1:flex-row items-start md1:items-center">
+                {/* Image section */}
+                <div className="w-full lgx:w-[272px] h-[230px]">
+                  <div
+                    className="w-full lgx:max-w-[230px] lgx:min-w-[230px] bg-gray-100 rounded-lg flex flex-col justify-between h-full relative overflow-hidden"
+                    onClick={() => handleCardClick(userData)}
+                  >
+                    <div className="group">
+                      <div
+                        className="absolute inset-0 blur-sm"
+                        style={{
+                          backgroundImage: `url(${banner})`,
+                          backgroundSize: "cover",
+                          backgroundPosition: "center",
+                        }}
+                      ></div>
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <img
+                          src={profileImageSrc}
+                          alt={title}
+                          className="w-20 h-20 md:w-24 md:h-24 rounded-full object-cover"
+                          loading="lazy"
+                          draggable={false}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
+                {/* Content Section */}
+                <div className="w-full">
+                  <h3 className="text-base md:text-lg font-bold mt-2 md:mt-0">
+                    {title}
+                  </h3>
+                  <span className="flex py-2">
+                    <Avatar
+                      alt="Mentor"
+                      src={profileImageSrc}
+                      className="mr-2"
+                      sx={{ width: 24, height: 24 }}
+                    />
+                    <span className="text-sm text-gray-500">{fullname}</span>
+                  </span>
+
+                  <div className="border-t border-gray-200 "></div>
+
+                  {/* Description */}
+                  <p
+                    className="text-sm text-gray-500 overflow-hidden text-ellipsis break-all line-clamp-3 mt-2"
+                    style={{ maxHeight: "3em", lineHeight: "1em" }}
+                  >
+                    {parse(description)}
+                  </p>
+
+                  {/* Funding and Location */}
+                  <div className="flex flex-wrap gap-3 items-center mt-2">
+                    <div className="flex items-center">
+                      <img
+                        src={PriceIcon}
+                        alt="Funding Amount"
+                        className="w-4 h-4 text-gray-400 mr-2"
+                        loading="lazy"
+                        draggable={false}
+                      />
+                      <span className="text-sm text-gray-500">
+                        {fundingAmount}
+                      </span>
+                    </div>
+                    <span className="flex items-center text-sm text-gray-700">
+                      <PlaceOutlinedIcon className="" fontSize="small" />
+                      {country}
+                    </span>
+                  </div>
+
+                  {/* Tags */}
+                  <div className="flex flex-wrap gap-2 items-center mt-2">
+                    {tags?.split(",").map((interest, index) => (
+                      <span
+                        key={index}
+                        className="border-2 border-gray-500 rounded-full text-xs text-gray-700 px-2 py-1"
+                      >
+                        {interest.trim()}
+                      </span>
+                    ))}
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex flex-wrap gap-2 mt-4">
+                    {appliedType === "pending" &&
+                      event.status === "pending" && (
+                        <>
+                          {/* Accept Button */}
+                          <button
+                            className="mr-2 mb-2 border border-[#097647] bg-[#EBFDF3] text-[#097647] px-3 py-1 rounded-full flex justify-center items-center"
+                            onClick={() => handleAction("Approve", index)}
+                            disabled={loadingIndexes[index] === "Approve"}
+                          >
+                            {loadingIndexes[index] === "Approve" ? (
+                              <ThreeDots
+                                visible={true}
+                                height="15"
+                                width="20"
+                                color="#097647"
+                                radius="8"
+                                ariaLabel="three-dots-loading"
+                              />
+                            ) : (
+                              <>Accept</>
+                            )}
+                          </button>
+
+                          {/* Reject Button */}
+                          <button
+                            className="mr-2 mb-2 border border-[#C11574] bg-[#FDF2FA] text-[#C11574] px-3 py-1 rounded-full flex justify-center items-center"
+                            onClick={() => handleAction("Reject", index)}
+                            disabled={loadingIndexes[index] === "Reject"}
+                          >
+                            {loadingIndexes[index] === "Reject" ? (
+                              <ThreeDots
+                                visible={true}
+                                height="15"
+                                width="20"
+                                color="#C11574"
+                                radius="8"
+                                ariaLabel="three-dots-loading"
+                              />
+                            ) : (
+                              <>Reject</>
+                            )}
+                          </button>
+                        </>
+                      )}
+                    {appliedType === "approved" && (
+                      <button className="bg-[#ECFDF3] border-2 border-[#ABEFC6] text-[#067647] rounded-lg px-2 py-1">
+                        Approved
+                      </button>
+                    )}
+                    {event.status === "rejected" && (
+                      <button className="bg-[#FDF2FA] border-2 text-[#C11574] border-[#FCCEEE] rounded-lg px-2 py-1">
+                        Rejected
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
           );
         })
       ) : (
