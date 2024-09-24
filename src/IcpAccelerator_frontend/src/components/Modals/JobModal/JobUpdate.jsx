@@ -192,7 +192,7 @@ const JobUpdate = ({
           isJobsModalOpen ? "block" : "hidden"
         }`}
       >
-        <div className="bg-white rounded-lg shadow-lg w-[500px] p-6 pt-4 max-h-[100vh] overflow-y-auto">
+        <div className="bg-white rounded-lg shadow-lg w-[500px] p-6 pt-4 max-h-[100vh] overflow-y-auto mx-4">
           <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t">
             <h3 className="text-xl font-semibold text-gray-900">{jobtitle}</h3>
             <button
