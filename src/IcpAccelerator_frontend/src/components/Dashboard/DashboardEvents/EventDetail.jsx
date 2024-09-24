@@ -157,16 +157,16 @@ const tabs = [
 
   const timeoutRef = useRef(null);
 
-  useEffect(() => {
-    if (cohortData) {
-      const calculateRemainingTime = () => {
-        calculateTimeLeft(cohortData.cohort.cohort_launch_date);
-        timeoutRef.current = setTimeout(calculateRemainingTime, 1000);
-      };
-      calculateRemainingTime(); // Initial call
-      return () => clearTimeout(timeoutRef.current);
-    }
-  }, [cohortData]);
+  // useEffect(() => {
+  //   if (cohortData) {
+  //     const calculateRemainingTime = () => {
+  //       calculateTimeLeft(cohortData.cohort.cohort_launch_date);
+  //       timeoutRef.current = setTimeout(calculateRemainingTime, 1000);
+  //     };
+  //     calculateRemainingTime(); // Initial call
+  //     return () => clearTimeout(timeoutRef.current);
+  //   }
+  // }, [cohortData]);
   
 
   const calculateTimeLeft = (cohortLaunchDate) => {
@@ -317,7 +317,7 @@ const ProfileImage =  profileimage && profileimage.length > 0
  const shareUrl = `${window.location.origin}/dashboard/single-event${cohort_id}`;
   return (
     <div className="flex flex-col">
-      <div className="flex   w-full justify-between  my-2  ">
+      <div className="flex   w-full justify-between  my-2 py-3  -top-[1.2rem] md:-top-[0.2rem] bg-white sticky z-40">
       <button
         className=" flex mr-2 text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-2 rounded-md shadow-sm border border-gray-200"
         onClick={() => navigate(-1)} 
@@ -360,7 +360,7 @@ const ProfileImage =  profileimage && profileimage.length > 0
               <h3 className="text-sm md:text-base font-medium mb-2 text-left">
                 Event starts in
               </h3>
-              <div className="flex items-center justify-between">
+              {/* <div className="flex items-center justify-between">
                 {[
                   { value: timeLeft.days, label: "Days" },
                   { value: timeLeft.hours, label: "Hours" },
@@ -369,11 +369,11 @@ const ProfileImage =  profileimage && profileimage.length > 0
                 ].map((item, index) => (
                   <React.Fragment key={item.label}>
                     <div className="text-center">
-                      {/* Smaller box and text for mobile */}
+                     
                       <div className="text-base lgx:text-xl font-bold bg-white rounded-lg p-1 lgx:p-2 min-w-[35px] lgx:min-w-[48px]">
                         {item.value}
                       </div>
-                      {/* Smaller label for mobile */}
+                    
                       <div className="text-[10px] lgx:text-sm text-gray-500 mt-1">
                         {item.label}
                       </div>
@@ -385,7 +385,7 @@ const ProfileImage =  profileimage && profileimage.length > 0
                     )}
                   </React.Fragment>
                 ))}
-              </div>
+              </div> */}
             </div>
 
             {userCurrentRoleStatusActiveRole !== "user" && (

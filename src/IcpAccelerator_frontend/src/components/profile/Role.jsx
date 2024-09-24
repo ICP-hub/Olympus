@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import VerifiedIcon from "@mui/icons-material/Verified";
 import Avatar from "@mui/material/Avatar";
 import AvatarGroup from "@mui/material/AvatarGroup";
-import mentor from "../../../assets/Logo/mentor.png";
-import user from "../../../assets/Logo/talent.png";
+import user from "../../../assets/Logo/mentor.png";
+import mentor from "../../../assets/Logo/talent.png";
 import project from "../../../assets/Logo/founder.png";
 import vc from "../../../assets/Logo/Avatar3.png";
 import ProfileImage from "../../../assets/Logo/ProfileImage.png";
@@ -82,7 +82,7 @@ const Role = () => {
       Mentor: true,
       Investor: true,
       Project: false,
-       image:user,
+       image:mentor,
        message:"Share your expertise with next generation of Innovators"
     },
     {
@@ -106,7 +106,7 @@ const Role = () => {
       Mentor:true,
       Investor:true,
       Project: true,
-      image:mentor
+      image:user
     }
   ];
   
@@ -313,13 +313,13 @@ const mergedData = mergeData(userCurrentRoleStatus, roledata);
                 <Avatar alt="project" src={project} />
               </AvatarGroup>
             </div>
-            <div className="dxs:mt-5 px-5">
+            <div className="dxs:mt-5 px-5 text-sm dxs:text-[18px]">
               <p className="">{roles.description1}</p>
             </div>
-            <div className=" my-0 dxs:my-5 px-5 flex items-center w-full">
+            <div className=" my-0 dxs:my-5 px-5 py-2 dsx:py-0 flex items-center w-full">
               <button
                 onClick={() => setRoleModalOpen(!roleModalOpen)}
-                className="border flex gap-2 justify-center rounded-md bg-[#155EEF] p-2 font-medium w-full text-white"
+                className="border flex gap-2 justify-center rounded-md bg-[#155EEF] p-2 font-medium w-full text-white truncate"
               >
                 <span>{userPlusIcon}</span>
                 {roles.addrole}

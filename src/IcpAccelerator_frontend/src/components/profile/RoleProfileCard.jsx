@@ -14,7 +14,7 @@ const RoleProfileCard = ({role,image,message}) => {
       <div className="bg-blue-100 text-blue-600 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide mb-2">
         {role}
       </div>
-      <p className="text-gray-700 font-semibold mb-4 text-sm lgx:text-sm dxl0:text-base">
+      <p className="text-gray-700 font-semibold mb-4 text-sm  dxl0:text-base">
         {/* Maximize the expansion of your projects and find investments */}
         {message}
       </p>

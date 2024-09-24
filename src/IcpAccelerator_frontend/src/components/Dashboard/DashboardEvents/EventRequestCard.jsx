@@ -14,6 +14,7 @@ import NoDataFound from "./NoDataFound";
 import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 import CloseIcon from "@mui/icons-material/Close";
 import Avatar from "@mui/material/Avatar";
+import { loginFailure } from "../../StateManagement/Redux/Reducers/InternetIdentityReducer";
 
 const EventRequestCard = () => {
   const [filterOpen, setFilterOpen] = useState(false);
@@ -60,17 +61,23 @@ const EventRequestCard = () => {
           result = await actor.get_pending_cohort_enrollment_requests(
             Principal.fromText(principal)
           );
+          console.log("kya kya aaya pending me",result)
+
           break;
         case "approved":
           result = await actor.get_accepted_cohort_enrollment_requests(
             Principal.fromText(principal)
           );
+          console.log("kya kya aaya accept me",result)
+
           break;
-        case "declined":
-          result = await actor.get_rejected_cohort_enrollment_requests(
-            Principal.fromText(principal)
+        case "rejected":
+          result = await actor.get_rejected_cohort_enrollment_requests(          
+            Principal.fromText(principal)           
           );
+          console.log("kya kya aaya reject me",result)
           break;
+         
       }
       if (category && category !== "all") {
         result = result.filter(
@@ -94,6 +101,8 @@ const EventRequestCard = () => {
     setLoadingIndexes((prevState) => ({
       ...prevState,
       [index]: action,
+
+      
     }));
 
     let event = events[index];
@@ -109,12 +118,16 @@ const EventRequestCard = () => {
           cohortId,
           enroller_principal
         );
+        console.log("accept hogi successfully",result )
+
         event.status = "approved";
       } else if (action === "Reject") {
         result = await actor.reject_enrollment_request(
+          
           cohort_creator_principal,
           enroller_principal
         );
+        console.log("reject hogi successfully",result )
         event.status = "rejected";
       }
 
@@ -258,7 +271,7 @@ const EventRequestCard = () => {
                   {/* <option value="all">All</option> */}
                   <option value="pending">Pending</option>
                   <option value="approved">Accepted</option>
-                  <option value="declined">Rejected</option>
+                  <option value="rejected">Rejected</option>
                 </select>
               </div>
             </div>
