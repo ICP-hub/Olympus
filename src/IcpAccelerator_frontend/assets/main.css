@@ -27,8 +27,12 @@
   }
 
   body {
-    font-family: 'Figtree', sans-serif;
-  }
+    font-family: "Figtree", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+    }
+  
   
   /* React Select Css changed from here */
   /* .css-11uhmi3-control {
@@ -310,5 +314,20 @@ input[type="number"] {
 .driver-popover.driverjs-theme .driver-popover-arrow-side-bottom.driver-popover-arrow {
   border-bottom-color: #fde047;
 }
+.swiper-pagination-bullet {
+  width: 20px; /* Adjust to 48px if needed */
+  height: 20px; /* Adjust to 48px if needed */
+  margin: 0 8px; /* Increase spacing between bullets */
+}
+.swiper-pagination-bullet {
+  padding: 10px;  /* Adds touchable area */
+  background-color: gray; /* Ensure visual consistency */
+  border-radius: 50%; /* Keep it circular */
+  cursor: pointer;
+}
+.swiper-pagination-bullet {
+  margin: 0 12px; /* Adds space between bullets */
+}
+
 
 

@@ -1,9 +1,9 @@
 import React, { lazy, Suspense, } from "react";
 import { Routes, Route, } from "react-router-dom";
-import Home from "./components/Home/Home";
-import MainLayout from "./components/Layout/MainLayout";
-import { useAuth } from "./components/StateManagement/useContext/useAuth";
 import Loader from "./components/Loader/Loader";
+import { useAuth } from "./components/StateManagement/useContext/useAuth";
+const Home = lazy(() => import( "./components/Home/Home"));
+const MainLayout = lazy(() => import("./components/Layout/MainLayout"));
 const DashboardHomePage = lazy(() => import("./components/Dashboard/DashboardHomePage/DashboardHomePage"));
 const Error404 = lazy(() => import("./components/Error404/Error404"));
 const UserRegistration = lazy(() => import("./components/UserRegistration/UserRegistration"));

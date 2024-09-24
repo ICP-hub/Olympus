@@ -1,18 +1,16 @@
 // src/App.js
-import React from 'react';
-import hubs from '../../../assets/images/hubs.png'
-import sec41 from '../../../assets/images/sec41.png'
-import sec42 from '../../../assets/images/sec42.png'
-import sec43 from '../../../assets/images/sec43.png'
-import sec46 from '../../../assets/images/sec46.png'
-import sec47 from '../../../assets/images/sec47.png'
-import sec48 from '../../../assets/images/sec48.png'
-import sec49 from '../../../assets/images/sec49.png'
+import React from "react";
+import hubs from "../../../assets/images/hubs.png";
+import sec41 from "../../../assets/images/sec41.png";
+import sec42 from "../../../assets/images/sec42.png";
+import sec43 from "../../../assets/images/sec43.png";
+import sec46 from "../../../assets/images/sec46.png";
+import sec47 from "../../../assets/images/sec47.png";
+import sec48 from "../../../assets/images/sec48.png";
+import sec49 from "../../../assets/images/sec49.png";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 // import "./home.css"
 import { homepagedata } from "../Utils/jsondata/data/homepageData";
-
-
 
 function HomeSection4() {
   const { homepagesection4 } = homepagedata;
@@ -407,7 +405,7 @@ function HomeSection4() {
             </div>
           </div>
           <div className="mt-10 text-center ">
-            <button className="bg-blue-500 text-white px-6 py-3 rounded-[4px]  border-2 w-full md:w-auto">
+            <button className="bg-blue-700 text-white px-6 py-3 rounded-[4px] border-2 w-full md:w-auto">
               {homepagesection4.button.text}
               <homepagesection4.arrowForwardIcon.ArrowForwardIcon className="ml-1" />
             </button>
@@ -419,5 +417,3 @@ function HomeSection4() {
 }
 
 export default HomeSection4;
-
-

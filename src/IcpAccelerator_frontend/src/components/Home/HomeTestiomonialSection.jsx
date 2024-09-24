@@ -17,6 +17,7 @@ const ArrowButton = ({ direction, onClick, visible }) => {
   const isLeft = direction === "left";
   return (
     <button
+      aria-label={isLeft ? "Previous slide" : "Next slide"} // Add accessible label
       className={`w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center focus:outline-none hover:bg-gray-100 transition-opacity duration-300 ${
         visible ? "opacity-100" : "opacity-0"
       }`}
@@ -77,7 +78,11 @@ function TestimonialSection() {
             prevEl: prevRef.current,
             nextEl: nextRef.current,
           }}
-          pagination={{ clickable: true }}
+          pagination={{
+            clickable: true,
+            bulletClass: "swiper-pagination-bullet", // Apply custom class
+            bulletActiveClass: "swiper-pagination-bullet-active",
+          }}
           scrollbar={{ draggable: true }}
           onSwiper={(swiper) => {
             setTimeout(() => {

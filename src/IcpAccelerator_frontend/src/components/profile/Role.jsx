@@ -178,7 +178,7 @@ const mergedData = mergeData(userCurrentRoleStatus, roledata);
   `;
 
   const greyBackgroundStyle = {
-    strokeDasharray: "300", // Length of the stroke, matching the path
+    strokeDasharray: "320", // Length of the stroke, matching the path
     strokeDashoffset: "0", // No offset, fully visible
   };
   return (

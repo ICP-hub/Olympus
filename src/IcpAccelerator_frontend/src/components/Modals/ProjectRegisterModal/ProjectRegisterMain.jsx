@@ -14,6 +14,8 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { ThreeDots } from "react-loader-spinner";
 import { validationSchema } from "./projectValidation";
 import ProjectRegister6 from "./ProjectRegister6";
+import { founderRegisteredHandlerRequest } from "../../StateManagement/Redux/Reducers/founderRegisteredData";
+import { rolesHandlerRequest } from "../../StateManagement/Redux/Reducers/RoleReducer";
 const ProjectRegisterMain = ({ isopen }) => {
   const actor = useSelector((currState) => currState.actors.actor);
   const [index, setIndex] = useState(0); // TRACKS THE CURRENT FORM PAGE
@@ -242,15 +244,15 @@ const ProjectRegisterMain = ({ isopen }) => {
           toast.error(result); // Show error toast with the returned message
           setModalOpen(false);
           setIsSubmitting(false);
-          setFetchCall(true);
-          // window.location.pathname = "/dashboard/profile"
+          dispatch(rolesHandlerRequest());
+          dispatch(founderRegisteredHandlerRequest());
           navigate("/dashboard");
         } else {
           toast.success("Project registered successfully!"); // Show success message
           setModalOpen(false);
           setIsSubmitting(false);
-          setFetchCall(true);
-          // window.location.pathname = "/dashboard/profile"
+          dispatch(rolesHandlerRequest());
+          dispatch(founderRegisteredHandlerRequest());
           navigate("/dashboard");
         }
       } catch (error) {
@@ -264,11 +266,6 @@ const ProjectRegisterMain = ({ isopen }) => {
     }
   };
 
-  useEffect(() => {
-    if(isfetchCall){
-    dispatch(rolesHandlerRequest());
-  }
-  }, [actor, dispatch,isfetchCall]);
   return (
     <>
       <div

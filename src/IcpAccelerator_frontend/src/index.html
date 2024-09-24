@@ -4,15 +4,27 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Olympus facilitates seamless interaction among founders, mentors, investors, and talents by leveraging the decentralized and secure nature of the ICP blockchain. Whether you're looking to launch a project, mentor emerging startups, invest in cutting-edge technologies, or showcase your skills, Olympus provides the platform to make it happen." />
+  
   <title>OLYMPUS</title>
   <base href="/" />
+  
   <link rel="icon" href="favicon.ico" />
-  <link type="text/css" rel="stylesheet" href="main.css" />
+  
+  <!-- Preload the critical resources like fonts and images -->
+  <link rel="preload" href="path/to/largest-contentful-paint-image.jpg" as="image">
+  
+  <!-- Preload Google Fonts for faster loading -->
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&display=swap" as="style">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;600;700;800&family=Roboto:ital,wght@1,400;1,500&display=swap"
-    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+  
+  <!-- Minify CSS and add defer -->
+  <link type="text/css" rel="stylesheet" href="main.css" />
+  
+  <!-- Defer non-critical JavaScript to avoid render blocking -->
+  <script src="main.js" defer></script>
 </head>
 
 <body>
