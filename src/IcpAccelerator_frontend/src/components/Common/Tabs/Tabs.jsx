@@ -57,7 +57,7 @@ const Tabs = ({ tabs, currentTab, onTabChange }) => {
   };
 
   return (
-    <div className="relative w-full">
+    <div className="sticky top-[5rem] z-20 bg-white w-full">
       {isScrollable && (
         <button
           onClick={() => scrollTabs("left")}

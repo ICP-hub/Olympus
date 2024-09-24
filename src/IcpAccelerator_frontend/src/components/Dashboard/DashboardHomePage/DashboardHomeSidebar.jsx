@@ -545,6 +545,8 @@ function DashboardSidebar({ isOpen, onClose, id, id2 }) {
   const userCurrentRoleStatus = useSelector(
     (currState) => currState.currentRoleStatus.rolesStatusArray
   );
+
+  console.log("roleing roling", userCurrentRoleStatus);
   const isAuthenticated = useSelector(
     (currState) => currState.internet.isAuthenticated
   );
@@ -598,12 +600,24 @@ function DashboardSidebar({ isOpen, onClose, id, id2 }) {
      ;
 
   // Get Toggle State from local storage
-  useEffect(() => {
-    const savedState = localStorage.getItem("toggleState");
-    if (savedState) {
-      setToggleState(JSON.parse(savedState));
-    }
-  }, []);
+  // useEffect(() => {
+  //   const savedState = localStorage.getItem("toggleState");
+  //   if (savedState) {
+  //     setToggleState(JSON.parse(savedState));
+  //   }
+  // }, []);
+useEffect(() => {
+  const savedState = localStorage.getItem("toggleState");
+
+  if (savedState) {
+    setToggleState(JSON.parse(savedState));
+  } else {
+    const initialState = { mentor: false, vc: false, project: false };
+    setToggleState(initialState);
+    localStorage.setItem("toggleState", JSON.stringify(initialState));
+  }
+}, []);
+
 
   useEffect(() => {
     if (actor && isAuthenticated) {
@@ -663,9 +677,9 @@ function DashboardSidebar({ isOpen, onClose, id, id2 }) {
         onClick={() => {
           if (!disabled) {
             if (typeof path === "function") {
-              path(); // If path is a function, execute it
+              path(); 
             } else {
-              handleLinkClick(path); // Otherwise, navigate normally
+              handleLinkClick(path); 
             }
           }
         }}
@@ -678,7 +692,6 @@ function DashboardSidebar({ isOpen, onClose, id, id2 }) {
         
       >
         {icon}
-        {/* <span className="ml-3">{label}</span> */}
         <span className="hidden group-hover:inline-block md:block ml-3 align-bottom pb-1">{label}</span>
       </div>
     </Tooltip>
@@ -734,14 +747,16 @@ function DashboardSidebar({ isOpen, onClose, id, id2 }) {
   const SidebarSection = ({ title, items, currentrole }) => (
     <div className="mb-6">
       <div className="flex items-center justify-between px-6 mb-2">
-        <h3 className="text-xs font-semibold text-gray-500 uppercase">{title}</h3>
+        <h3 className="text-xs font-semibold text-gray-500 uppercase">
+          {title}
+        </h3>
         {(currentrole === "mentor" ||
           currentrole === "vc" ||
           currentrole === "project") && (
           <Toggle
             id={id}
-            isChecked={toggleState[currentrole]}
-            onToggle={() => handleToggle(currentrole)}
+            isChecked={toggleState[currentrole] || false}
+            onToggle={() => handleToggle(currentrole || false)}
           />
         )}
       </div>
@@ -749,7 +764,7 @@ function DashboardSidebar({ isOpen, onClose, id, id2 }) {
         {items.map(({ path, icon, label, disabled, tooltip }, index) => (
           <li key={index}>
             <SidebarLink
-            id2={id2}
+              id2={id2}
               path={path}
               icon={icon}
               label={label}
