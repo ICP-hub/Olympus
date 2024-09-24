@@ -278,7 +278,7 @@ const UsersSection = () => {
         </div>
         </div>
         <div className=" hidden md1:block lg:hidden lgx:block w-full md1:w-[30%] lg:w-full lgx:w-[30%]">
-          <div className="bg-white p-6 rounded-lg shadow-sm sticky top-0">
+          <div className="bg-white p-6 rounded-lg shadow-sm sticky top-12">
             <h2 className="text-lg font-semibold mb-4">Filters</h2>
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-1">
