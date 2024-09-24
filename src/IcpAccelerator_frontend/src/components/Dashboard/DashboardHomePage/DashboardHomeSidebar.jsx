@@ -41,10 +41,8 @@
 //     {/* <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer  peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div> */}
 //     <div className="relative w-7 h-4 bg-[#EDE8E6] peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[#aba29e] rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-[#d8d2ce] after:border-[#aba29e] after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-[#aba29e]"></div>
 
-
 //   </label>
 // );
-
 
 // function DashboardSidebar({ isOpen, onClose }) {
 //   const { dashboardhomesidebar } = dashboard;
@@ -64,14 +62,14 @@
 //   const navigate = useNavigate();
 //   const dispatch = useDispatch();
 //   const [activeLink, setActiveLink] = useState(location.pathname);
-//  const [show, setShow] = useState(isOpen); 
+//  const [show, setShow] = useState(isOpen);
 //  const handleClose = () => {
-//    onClose(); 
+//    onClose();
 //    setTimeout(() => {
-//      setShow(false); 
+//      setShow(false);
 //    }, 300);
 //  };
-//   // Toggle State 
+//   // Toggle State
 //   const [toggleState, setToggleState] = useState({
 //     mentor: false,
 //     investor: false,
@@ -105,7 +103,6 @@
 //   });
 // };
 
-
 //   // Get Toggle State from local storage
 //   useEffect(() => {
 //     const savedState = localStorage.getItem("toggleState");
@@ -113,8 +110,6 @@
 //       setToggleState(JSON.parse(savedState));
 //     }
 //   }, []);
-
-
 
 //   console.log('projectName',projectName)
 //   useEffect(() => {
@@ -127,7 +122,7 @@
 //     setActiveLink(path);
 //     navigate(path);
 //     setHasNavigated(false);
-//      handleClose() 
+//      handleClose()
 //   };
 
 //   const clickEventHandler = async (roleName, value) => {
@@ -138,7 +133,6 @@
 //       })
 //     );
 //   };
-
 
 //   const [cardData, setCardData] = useState([]);
 
@@ -269,8 +263,6 @@
 //     console.log("No roles approved or roles in default state");
 //   }
 
-
-  
 //   const SidebarSection = ({ title, items, currentrole }) => (
 //     <div className="mb-6">
 //       <div className="flex items-center justify-between px-6 mb-2">
@@ -299,7 +291,6 @@
 //       </ul>
 //     </div>
 //   );
-  
 
 //   const sectionConfig = [
 //     {
@@ -309,14 +300,14 @@
 //         {
 //           path: "/dashboard/mentor",
 //           icon: gridSvgIcon,
-//           disabled: true, 
+//           disabled: true,
 //           tooltip: "Coming soon",
 //           label: dashboardhomesidebar.sidebarSections.mentors.items.label1,
 //         },
 //         {
 //           path: "/dashboard/mentor/new",
 //           icon: plusSvgIcon,
-//           disabled: true, 
+//           disabled: true,
 //         tooltip: "Coming soon",
 //           label: "Create new Service",
 //         },
@@ -335,7 +326,7 @@
 //         {
 //           path: "/dashboard/project/new",
 //           icon: plusSvgIcon,
-//           disabled: true, 
+//           disabled: true,
 //         tooltip: "Coming soon",
 //           label: "Create new Project",
 //         },
@@ -349,14 +340,14 @@
 //         {
 //           path: "/dashboard/investor",
 //           icon: gridSvgIcon,
-//           disabled: true, 
+//           disabled: true,
 //           tooltip: "Coming soon",
 //           label: dashboardhomesidebar.sidebarSections.investors.items.label1,
 //         },
 //         {
 //           path: "/dashboard/investor/new",
 //           icon: plusSvgIcon,
-//           disabled: true, 
+//           disabled: true,
 //         tooltip: "Coming soon",
 //           label: "Create new Investors",
 //         },
@@ -402,7 +393,7 @@
 //             key={index}
 //             title={section.title}
 //             items={section.items}
-//             currentrole={section.currentrole} 
+//             currentrole={section.currentrole}
 //           />
 //         ))}
 //       </div>
@@ -422,8 +413,8 @@
 //       {/* Sidebar */}
 //       <aside
 //         className={`
-//           fixed top-0 left-0 z-50 bg-[#FFF4ED] w-64 h-screen overflow-y-auto flex flex-col 
-//           transform transition-transform duration-300 ease-in-out 
+//           fixed top-0 left-0 z-50 bg-[#FFF4ED] w-64 h-screen overflow-y-auto flex flex-col
+//           transform transition-transform duration-300 ease-in-out
 //           ${show ? "translate-x-0" : "-translate-x-full"}
 //           lg:relative lg:translate-x-0`}
 //       >
@@ -488,12 +479,13 @@
 //           </div>
 //         </nav>
 //       </aside>
-  
+
 //     </>
 //   );
 // }
 
 // export default DashboardSidebar;
+
 import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
@@ -525,8 +517,10 @@ import { founderRegisteredHandlerRequest } from "../../StateManagement/Redux/Red
 import { Principal } from "@dfinity/principal";
 import Tooltip from "@mui/material/Tooltip";
 import { motion } from "framer-motion";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 
-const Toggle = ({ isChecked, onToggle ,id }) => (
+const Toggle = ({ isChecked, onToggle, id }) => (
   <label className="inline-flex items-center cursor-pointer" id={id}>
     <input
       type="checkbox"
@@ -546,12 +540,13 @@ function DashboardSidebar({ isOpen, onClose, id, id2 }) {
     (currState) => currState.currentRoleStatus.rolesStatusArray
   );
 
-  console.log("roleing roling", userCurrentRoleStatus);
   const isAuthenticated = useSelector(
     (currState) => currState.internet.isAuthenticated
   );
   const actor = useSelector((currState) => currState.actors.actor);
-  const projectFullData = useSelector((currState) => currState.projectData.data);
+  const projectFullData = useSelector(
+    (currState) => currState.projectData.data
+  );
   const projectName = projectFullData?.[0]?.[0]?.params?.project_name;
   const location = useLocation();
   const navigate = useNavigate();
@@ -581,66 +576,48 @@ function DashboardSidebar({ isOpen, onClose, id, id2 }) {
         project: role === "project" ? !prevState.project : false,
       };
 
-        localStorage.setItem("toggleState", JSON.stringify(newState));
+      localStorage.setItem("toggleState", JSON.stringify(newState));
 
-          const newStatus = newState[role] ? "active" : "default";
-        dispatch(switchRoleRequestHandler({ roleName: role, newStatus }));
+      const newStatus = newState[role] ? "active" : "default";
+      dispatch(switchRoleRequestHandler({ roleName: role, newStatus }));
 
-          if (!newState.mentor && !newState.vc && !newState.project) {
-          ["mentor", "vc", "project"].forEach((r) => {
-            dispatch(
+      if (!newState.mentor && !newState.vc && !newState.project) {
+        ["mentor", "vc", "project"].forEach((r) => {
+          dispatch(
             switchRoleRequestHandler({ roleName: r, newStatus: "default" })
           );
-          });
-        }
-
+        });
+      }
+      handleClose();
       return newState;
     });
   };
-     ;
 
-  // Get Toggle State from local storage
-  // useEffect(() => {
-  //   const savedState = localStorage.getItem("toggleState");
-  //   if (savedState) {
-  //     setToggleState(JSON.parse(savedState));
-  //   }
-  // }, []);
-useEffect(() => {
-  const savedState = localStorage.getItem("toggleState");
+  useEffect(() => {
+    const savedState = localStorage.getItem("toggleState");
 
-  if (savedState) {
-    setToggleState(JSON.parse(savedState));
-  } else {
-    const initialState = { mentor: false, vc: false, project: false };
-    setToggleState(initialState);
-    localStorage.setItem("toggleState", JSON.stringify(initialState));
-  }
-}, []);
-
+    if (savedState) {
+      setToggleState(JSON.parse(savedState));
+    } else {
+      const initialState = { mentor: false, vc: false, project: false };
+      setToggleState(initialState);
+      localStorage.setItem("toggleState", JSON.stringify(initialState));
+    }
+  }, []);
 
   useEffect(() => {
     if (actor && isAuthenticated) {
       dispatch(founderRegisteredHandlerRequest());
-    if (actor && isAuthenticated) {
-      dispatch(founderRegisteredHandlerRequest());
-    }}
-  }, [dispatch, isAuthenticated, actor])
+    }
+  }, [dispatch, isAuthenticated, actor]);
 
   const handleLinkClick = (path) => {
     setActiveLink(path);
     navigate(path);
     setHasNavigated(false);
-    // handleClose();
+    handleClose();
   };
-  const clickEventHandler = async (roleName, value) => {
-    await dispatch(
-      switchRoleRequestHandler({
-        roleName,
-        newStatus: value,
-      })
-    );
-  };
+
   const [cardData, setCardData] = useState([]);
 
   const principal = useSelector((currState) => currState.internet.principal);
@@ -662,7 +639,6 @@ useEffect(() => {
 
   const handleNavigation = () => {
     if (cardData && cardData.length > 0) {
-      console.log("data navigation", cardData);
       const projectId = cardData[0]?.[0]?.uid || "No UID available";
       navigate("/dashboard/document", { state: { projectId, cardData } });
     } else {
@@ -677,22 +653,20 @@ useEffect(() => {
         onClick={() => {
           if (!disabled) {
             if (typeof path === "function") {
-              path(); 
+              path();
             } else {
-              handleLinkClick(path); 
+              handleLinkClick(path);
             }
           }
         }}
-        // className={`flex items-center px-6 py-2 cursor-pointer rounded-lg ${
-        //   activeLink === path ? "bg-[#e4e3e2b1]" : "hover:bg-[#e4e3e2b1]"
-        // } ${disabled ? "cursor-not-allowed opacity-50" : ""}`}
         className={` flex lg:items-center lg:px-6 lg:py-2 lg:cursor-pointer lg:rounded-lg ${
           activeLink === path ? "lg:bg-[#e4e3e2b1]" : "lg:hover:bg-[#e4e3e2b1]"
         } ${disabled ? "lg:cursor-not-allowed lg:opacity-50" : ""}`}
-        
       >
         {icon}
-        <span className="hidden group-hover:inline-block md:block ml-3 align-bottom pb-1">{label}</span>
+        <span className=" ml-3 align-bottom pb-1 text-base md:text-base">
+          {label}
+        </span>
       </div>
     </Tooltip>
   );
@@ -786,15 +760,12 @@ useEffect(() => {
           path: "/dashboard/mentor",
           icon: gridSvgIcon,
           disabled: true,
-          disabled: true,
           tooltip: "Coming soon",
           label: dashboardhomesidebar.sidebarSections.mentors.items.label1,
         },
         {
           path: "/dashboard/mentor/new",
           icon: plusSvgIcon,
-          disabled: true,
-          tooltip: "Coming soon",
           disabled: true,
           tooltip: "Coming soon",
           label: "Create new Service",
@@ -816,8 +787,6 @@ useEffect(() => {
           icon: plusSvgIcon,
           disabled: true,
           tooltip: "Coming soon",
-          disabled: true,
-          tooltip: "Coming soon",
           label: "Create new Project",
         },
       ],
@@ -831,15 +800,12 @@ useEffect(() => {
           path: "/dashboard/investor",
           icon: gridSvgIcon,
           disabled: true,
-          disabled: true,
           tooltip: "Coming soon",
           label: dashboardhomesidebar.sidebarSections.investors.items.label1,
         },
         {
           path: "/dashboard/investor/new",
           icon: plusSvgIcon,
-          disabled: true,
-          tooltip: "Coming soon",
           disabled: true,
           tooltip: "Coming soon",
           label: "Create new Investors",
@@ -883,7 +849,7 @@ useEffect(() => {
       <div>
         {sidebarSections.map((section, index) => (
           <SidebarSection
-           id2={ id2 }
+            id2={id2}
             key={index}
             title={section.title}
             items={section.items}
@@ -894,80 +860,125 @@ useEffect(() => {
     );
   };
 
- 
- 
-  const BottomNav = () => (
-    <>
-      {/* Overlay effect to close the bottom nav when clicked outside */}
-      {show && (
-        <motion.div
-          className="fixed inset-0"
-          onClick={handleClose} 
-        />
-      )}
-      
-      {/* Bottom Navigation */}
-      <motion.div
-        className="fixed -bottom-2 left-0 w-full bg-[#FFF4ED] shadow-lg flex py-2  z-50 rounded-t-3xl"
-        initial={{ y: '100%' }} // Start off the screen
-        animate={{ y: 0 }} // Animate into the view
-        exit={{ y: '100%' }} // Animate out of the view
-        transition={{ duration: 0.5, ease: 'easeInOut' }} // Add smooth transition
-      >
-        {/* <div className="absolute right-4 top-2">
-          <button onClick={handleClose}>
-            <CloseIcon className="text-gray-600" />
-          </button>
-        </div> */}
-        <div className="flex justify-between w-full my-8 mx-4 ">
-          <SidebarLink
-            path="/dashboard"
-            icon={homeSvgIcon}
-            onClick={() => handleLinkClick("/dashboard")}
-            label="Profile"
+  const BottomNav = () => {
+    const [dropdownOpen, setDropdownOpen] = useState(false);
+    const approvedRoles = finalData.filter(
+      (role) => role.approval_status === "approved"
+    );
+    const hasCreatedRole = approvedRoles.some(
+      (role) =>
+        role.name.toLowerCase() === "mentor" ||
+        role.name.toLowerCase() === "vc" ||
+        role.name.toLowerCase() === "project"
+    );
+    return (
+      <>
+        {dropdownOpen && (
+          <motion.div
+            className="fixed inset-0"
+            onClick={() => setDropdownOpen(false)}
+          />
+        )}
 
-          />
-          <SidebarLink
-            path="/dashboard/user"
-            icon={userSvgIcon}
-            onClick={() => handleLinkClick("/dashboard/user")}
-            label="Dashboard"
-          />
-          <SidebarLink
-            path="/dashboard/event"
-            icon={calenderSvgIcon}
-            onClick={() => handleLinkClick("/dashboard/event")}
-            label="Cohort"s
-          />
-          <SidebarLink
-            path="/dashboard/profile"
-            icon={userCircleSvgIcon}
-            onClick={() => handleLinkClick("/dashboard/profile")}
-            label="Profile"
-          />
-          <SidebarLink
-            path="/dashboard/jobs"
-            icon={briefcaseSvgIcon}
-            onClick={() => handleLinkClick("/dashboard/jobs")}
-            label="Jobs"
-          />
-        </div>
-      </motion.div>
-    </>
-  );
+        <motion.div
+          className="fixed bottom-0 left-0 w-full bg-[#FFF4ED] px-2 flex flex-col py-6 z-50 rounded-t-3xl"
+          initial={{ y: "100%" }}
+          animate={{ y: 0 }}
+          exit={{ y: "100%" }}
+          transition={{ duration: 0.5, ease: "easeInOut" }}
+        >
+          <div className="absolute right-[1.3rem] top-2">
+            <button onClick={handleClose}>
+              <CloseIcon className="text-gray-700" />
+            </button>
+          </div>
+          <div className="flex flex-col w-full my-4 mx-4 gap-2">
+            <SidebarLink
+              path="/dashboard"
+              icon={homeSvgIcon}
+              label="Dashboard"
+              onClick={() => handleLinkClick("/dashboard")}
+            />
+            <SidebarLink
+              path="/dashboard/user"
+              icon={userSvgIcon}
+              label="Discover"
+              onClick={() => handleLinkClick("/dashboard/user")}
+            />
+            <SidebarLink
+              path="/dashboard/event"
+              icon={calenderSvgIcon}
+              label="Cohorts"
+              onClick={() => handleLinkClick("/dashboard/event")}
+            />
+            <div className="flex items-center justify-between">
+              <SidebarLink
+                path="/dashboard/profile"
+                icon={userCircleSvgIcon}
+                label="Profile"
+                onClick={() => handleLinkClick("/dashboard/profile")}
+              />
+
+              {hasCreatedRole && (
+                <button
+                  onClick={() => setDropdownOpen(!dropdownOpen)}
+                  className="flex items-center mr-8"
+                >
+                  {dropdownOpen ? <FaChevronUp /> : <FaChevronDown />}
+                </button>
+              )}
+            </div>
+
+            {dropdownOpen && (
+              <div className="flex flex-col bg-[#FFF4ED]  px-2 w-full">
+                {approvedRoles.map((role) => (
+                  <div
+                    key={role.name}
+                    className="flex items-center justify-between px-6 cursor-pointer hover:bg-gray-200"
+                  >
+                    <span>
+                      {role.name.charAt(0).toUpperCase() + role.name.slice(1)}
+                    </span>
+                    <Toggle
+                      id={role.name}
+                      isChecked={toggleState[role.name.toLowerCase()] || false}
+                      onToggle={() => handleToggle(role.name.toLowerCase())}
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <SidebarLink
+              path="/dashboard/jobs"
+              icon={briefcaseSvgIcon}
+              label="Jobs"
+              onClick={() => handleLinkClick("/dashboard/jobs")}
+            />
+          </div>
+        </motion.div>
+      </>
+    );
+  };
+
   return (
     <>
       {/* Sidebar for larger screens */}
       <div className="hidden lg:block">
         <aside
-          className={`
-            fixed top-0 left-0 z-50 bg-[#FFF4ED] w-64 h-screen overflow-y-auto flex flex-col 
-            transform transition-transform duration-300 ease-in-out 
-            ${show ? "translate-x-0" : "-translate-x-full"}
-            lg:relative lg:translate-x-0`}
+          className={`fixed top-0 left-0 z-50 bg-[#FFF4ED] w-64 h-screen overflow-y-auto flex flex-col 
+          transform transition-transform duration-300 ease-in-out 
+          ${show ? "translate-x-0" : "-translate-x-full"}
+          lg:relative lg:translate-x-0`}
         >
           <div className="p-4 flex justify-between items-center">
-            <img src={topLogo} alt="Olympus" className="h-8" loading="lazy" draggable={false} />
+            <img
+              src={topLogo}
+              alt="Olympus"
+              className="h-8 pl-2"
+              loading="lazy"
+              draggable={false}
+            />
             <button onClick={onClose} className="lg:hidden">
               <CloseIcon className="text-gray-600" />
             </button>
@@ -990,28 +1001,36 @@ useEffect(() => {
                   <SidebarLink
                     path="/dashboard/user"
                     icon={userSvgIcon}
-                    label={dashboardhomesidebar.sidebarSections.discover.items.user}
+                    label={
+                      dashboardhomesidebar.sidebarSections.discover.items.user
+                    }
                   />
                 </li>
                 <li>
                   <SidebarLink
                     path="/dashboard/event"
                     icon={calenderSvgIcon}
-                    label={dashboardhomesidebar.sidebarSections.discover.items.events}
+                    label={
+                      dashboardhomesidebar.sidebarSections.discover.items.events
+                    }
                   />
                 </li>
                 <li>
                   <SidebarLink
                     path="/dashboard/regional-hubs"
                     icon={locationHubSvgIcon}
-                    label={dashboardhomesidebar.sidebarSections.discover.items.hub}
+                    label={
+                      dashboardhomesidebar.sidebarSections.discover.items.hub
+                    }
                   />
                 </li>
                 <li>
                   <SidebarLink
                     path="/dashboard/jobs"
                     icon={briefcaseSvgIcon}
-                    label={dashboardhomesidebar.sidebarSections.discover.items.jobs}
+                    label={
+                      dashboardhomesidebar.sidebarSections.discover.items.jobs
+                    }
                   />
                 </li>
               </ul>
@@ -1019,10 +1038,10 @@ useEffect(() => {
           </nav>
         </aside>
       </div>
-          {/* Bottom Navigation for mobile */}
+      {/* Bottom Navigation for mobile */}
       {show && <BottomNav />}
     </>
   );
-  }
+}
 
 export default DashboardSidebar;
