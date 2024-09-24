@@ -162,7 +162,7 @@ const Jobs = () => {
             
           </div>
         </div> */}
-        <div className="flex justify-between sticky -top-[1.1rem] md:top-0 bg-opacity-95 -mt-[1.1rem] md:mt-0   bg-white z-20">
+        <div className="flex justify-between sticky -top-[1.1rem] md:top-0 bg-opacity-95 -mt-[1.1rem] md:mt-0 ml-[2%]  bg-white z-20">
           <h1 className="text-3xl font-bold p-4 px-0 ">Jobs</h1>
 
           <div className=" block md1:hidden lg:block lgx:hidden ">
@@ -175,7 +175,7 @@ const Jobs = () => {
             </button>
           </div>
         </div>
-        <div className="flex mx-auto justify-evenly p-5">
+        <div className="flex mx-auto justify-evenly ">
           <div className="mb-5 w-full md1:w-[65%] lg:w-full lgx:w-[65%] ">
             <div
               id="scrollableDiv"
@@ -295,7 +295,7 @@ const Jobs = () => {
                             {/* Action Buttons */}
                             <div className="sm5:hidden">
                               {" "}
-                              <div className="flex justify-between w-full">
+                              <div className="flex justify-between flex-col sm1:flex-row w-full">
                                 <button className="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition w-full">
                                   Apply{" "}
                                   <span className="ml-2 material-icons">
@@ -309,7 +309,7 @@ const Jobs = () => {
                                 </button>
                                 <button
                                   onClick={() => openJobDetails(card.job_id)}
-                                  className="hover:bg-slate-300 py-2 px-3 text-[#155EEF] font-medium w-full"
+                                  className="hover:bg-slate-300 py-2 px-3 text-[#155EEF] shadow-lg my-1 sm1:my-0 font-medium w-full"
                                 >
                                   view details
                                 </button>
@@ -333,7 +333,7 @@ const Jobs = () => {
 
           <div className="w-[30%] hidden md1:block lg:hidden lgx:block  ">
             <Tooltip title="Coming Soon">
-              <div className="p-4 bg-white sticky top-0  max-w-sm">
+              <div className="p-4 bg-white sticky top-12  max-w-sm">
                 <h2 className="text-xl font-semibold mb-4">Filters</h2>
 
                 <div className="mb-4">

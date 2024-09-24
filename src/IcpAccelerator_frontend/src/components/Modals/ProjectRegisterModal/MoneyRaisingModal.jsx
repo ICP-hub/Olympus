@@ -96,7 +96,7 @@ const onSubmit = async (data) => {
     <>
    
       <div className={`fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 ${modalOpen ? "block" : "hidden"}`}>
-          <div className="bg-white rounded-lg shadow-lg w-[500px] p-5 relative">
+          <div className="bg-white mx-4 rounded-lg shadow-lg w-[500px] p-5 relative">
             <button
               className="absolute top-2 right-2 text-gray-600 text-xl"
               onClick={() => setModalOpen(!modalOpen)}

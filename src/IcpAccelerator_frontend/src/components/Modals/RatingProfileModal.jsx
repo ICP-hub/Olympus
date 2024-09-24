@@ -37,7 +37,7 @@ const RatingProfileModal = ({ isOpen, setIsOpen }) => {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-      <div className="bg-white rounded-lg p-6 relative max-w-sm w-full">
+      <div className="bg-white rounded-lg p-6 mx-4 relative max-w-sm w-full">
         <button
           onClick={() => setIsOpen(false)}
           className="absolute top-3 left-5 font-light text-3xl text-gray-400 hover:text-gray-600 focus:outline-none"
