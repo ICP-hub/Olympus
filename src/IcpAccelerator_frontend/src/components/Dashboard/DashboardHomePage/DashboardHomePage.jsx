@@ -31,6 +31,7 @@ function DashboardHomePage() {
      (currState) => currState.currentRoleStatus.rolesStatusArray
    );
 
+
    // Check if any role exists
    const hasRoles = userCurrentRoleStatus.length > 0;
 
@@ -39,176 +40,203 @@ function DashboardHomePage() {
      (role) => role.status === "approved"
    );
 
-   useEffect(() => {
-     // Retrieve tour status from local storage
-     const rolesTourShown = localStorage.getItem("rolesTourShown") === "true";
-     const noRolesTourShown =
-       localStorage.getItem("noRolesTourShown") === "true";
+//    useEffect(() => {
+//      const rolesTourShown = localStorage.getItem("rolesTourShown") === "true";
+//      console.log("rolesTourShown1: ", rolesTourShown);
+//      const noRolesTourShown =
+//        localStorage.getItem("noRolesTourShown") === "true";
+// console.log("rolesTourShown2: ", noRolesTourShown);
 
-     // Exit if tours have already been shown
-     if (rolesTourShown || noRolesTourShown) return;
+//      if (rolesTourShown || noRolesTourShown) return;
 
-     const driverObj = driver({
-       popoverClass: "driverjs-theme",
-       showButtons: false,
-       onPopoverRender: (popover) => {
-         const skipButton = document.createElement("button");
-         skipButton.innerText = "Skip";
-         skipButton.style.marginRight = "10px";
-         skipButton.style.backgroundColor = "#ffffff";
-         skipButton.style.color = "#000";
-         skipButton.style.border = "2px solid #ccc";
-         skipButton.style.borderRadius = "5px";
-         skipButton.style.cursor = "pointer";
+//      const driverObj = driver({
+//        popoverClass: "driverjs-theme",
+//        showButtons: false,
+//        onPopoverRender: (popover) => {
+//          const skipButton = document.createElement("button");
+//          skipButton.innerText = "Skip";
+//          skipButton.style.marginRight = "10px";
+//          skipButton.style.backgroundColor = "#ffffff";
+//          skipButton.style.color = "#000";
+//          skipButton.style.border = "2px solid #ccc";
+//          skipButton.style.borderRadius = "5px";
+//          skipButton.style.cursor = "pointer";
 
-         skipButton.onmouseover = () =>
-           (skipButton.style.backgroundColor = "#e0e0e0");
-         skipButton.onmouseout = () =>
-           (skipButton.style.backgroundColor = "#ffffff");
+//          skipButton.onmouseover = () =>
+//            (skipButton.style.backgroundColor = "#e0e0e0");
+//          skipButton.onmouseout = () =>
+//            (skipButton.style.backgroundColor = "#ffffff");
 
-         const nextButton = document.createElement("button");
-         nextButton.innerText = "Next";
-         nextButton.style.backgroundColor = "#007BFF";
-         nextButton.style.color = "#fff";
-         nextButton.style.border = "none";
-         nextButton.style.borderRadius = "5px";
-         nextButton.style.cursor = "pointer";
+//          const nextButton = document.createElement("button");
+//          nextButton.innerText = "Next";
+//          nextButton.style.backgroundColor = "#007BFF";
+//          nextButton.style.color = "#fff";
+//          nextButton.style.border = "none";
+//          nextButton.style.borderRadius = "5px";
+//          nextButton.style.cursor = "pointer";
 
-         nextButton.onmouseover = () =>
-           (nextButton.style.backgroundColor = "#1E40AF");
-         nextButton.onmouseout = () =>
-           (nextButton.style.backgroundColor = "#007BFF");
+//          nextButton.onmouseover = () =>
+//            (nextButton.style.backgroundColor = "#1E40AF");
+//          nextButton.onmouseout = () =>
+//            (nextButton.style.backgroundColor = "#007BFF");
 
-         skipButton.addEventListener("click", () => {
-           driverObj.destroy();
-           if (hasRoles) {
-             localStorage.setItem("rolesTourShown", "true"); // Mark roles tour as shown
-           } else {
-             localStorage.setItem("noRolesTourShown", "true"); // Mark no roles tour as shown
-           }
-         });
+//          skipButton.addEventListener("click", () => {
+//            driverObj.destroy();
+//            if (hasApprovedRole) {
+//              localStorage.setItem("rolesTourShown", "true");
+//              console.log("Item set: ", localStorage.getItem("rolesTourShown"));
+//            } else {
+//              localStorage.setItem("noRolesTourShown", "true");
+//            }
+//           console.log("Updated local storage:", {
+//             rolesTourShown: localStorage.getItem("rolesTourShown"),
+//             noRolesTourShown: localStorage.getItem("noRolesTourShown"),
+//           });
+//          });
 
-         nextButton.addEventListener("click", () => {
-           driverObj.moveNext();
-         });
+//          nextButton.addEventListener("click", () => {
+//            driverObj.moveNext();
+//              if (hasApprovedRole) {
+//                localStorage.setItem("rolesTourShown", "true");
+//                console.log(
+//                  "Item set1: ",
+//                  localStorage.getItem("rolesTourShown")
+//                );
+//              } else {
+//                localStorage.setItem("noRolesTourShown", "true");
+//                console.log(
+//                  "Item set2: ",
+//                  localStorage.getItem("noRolesTourShown")
+//                );
+//              }
+//              console.log("Updated local storage rolesTourShown:", {
+//                rolesTourShown: localStorage.getItem("rolesTourShown"),
+//              });
+//               console.log("Updated local storage noRolesTourShown:", {
+//                 noRolesTourShown: localStorage.getItem("noRolesTourShown"),
+//               });
+//          });
 
-         popover.footerButtons.innerHTML = "";
-         popover.footerButtons.appendChild(skipButton);
-         popover.footerButtons.appendChild(nextButton);
-       },
-     });
+//          popover.footerButtons.innerHTML = "";
+//          popover.footerButtons.appendChild(skipButton);
+//          popover.footerButtons.appendChild(nextButton);
+//        },
+//      });
 
-     // Conditional steps based on roles and approval status
-     if (hasApprovedRole) {
-       driverObj.setSteps(  
-               [
-           {
-             popover: {
-               description: `
-                <div style="text-align: center;">
-                  <img src="${allfounder}" alt="Step visual" draggable="false" style="width: 100%; border-radius: 10px; margin-bottom: 15px;" />
-                  <h2 style="font-size: 20px; font-weight: bold; color: #333;">Welcome to your dashboard</h2>
-                  <p style="color: #666; margin-bottom: 20px;">We're glad to have you onboard. Here are some quick tips to get you up and running.</p>
-                </div>`,
-             },
-           },
-           {
-             element: "#step1",
-             popover: {
-               description: `
-                <div style="text-align: center;">
-                  <img src="${allfounder}" alt="Step visual" draggable="false" style="width: 100%; border-radius: 10px; margin-bottom: 15px;" />
-                  <h2 style="font-size: 20px; font-weight: bold; color: #333;">Switch Your Role</h2>
-                  <p style="color: #666; margin-bottom: 20px;">You can switch between different roles using the toggle buttons below. Only one role can be active at a time.</p>
-                </div>`,
-             },
-           },
-           {
-             element: "#step2",
-             popover: {
-               description: `
-                <div style="text-align: center;">
-                  <img src="${allfounder}" alt="Step visual" draggable="false" style="width: 100%; border-radius: 10px; margin-bottom: 15px;" />
-                  <h2 style="font-size: 20px; font-weight: bold; color: #333;">Active Role and Profile</h2>
-                  <p style="color: #666; margin-bottom: 20px;">Your current role is displayed below alongside your profile image. The active role will automatically update here.</p>
-                </div>`,
-             },
-           },
-           {
-             element: "#step3",
-             popover: {
-               description: `
-                <div style="text-align: center;">
-                  <img src="${allfounder}" alt="Step visual" draggable="false" style="width: 100%; border-radius: 10px; margin-bottom: 15px;" />
-                  <h2 style="font-size: 20px; font-weight: bold; color: #333;">Account Actions</h2>
-                  <p style="color: #666; margin-bottom: 20px;">Use the dropdown below to copy your principal or log out of your account.</p>
-                </div>`,
-             },
-           },
-           {
-             element: "#step4",
-             popover: {
-               description: `
-                <div style="text-align: center;">
-                  <img src="${allfounder}" alt="Step visual" draggable="false" style="width: 100%; border-radius: 10px; margin-bottom: 15px;" />
-                  <h2 style="font-size: 20px; font-weight: bold; color: #333;">Profile and Data Management</h2>
-                  <p style="color: #666; margin-bottom: 20px;">Navigate through the sidebar to manage and update your profile. You can also track and view all your data here.</p>
-                </div>`,
-             },
-           },
-         ],);
-     } else if (hasRoles) {
-       driverObj.setSteps([
-         {
-           element: "#step1",
-           popover: {
-             description: `
-              <div style="text-align: center;">
-                <img src="${allfounder}" alt="Step visual" draggable="false" style="width: 100%; border-radius: 10px; margin-bottom: 15px;" />
-                <h2 style="font-size: 20px; font-weight: bold; color: #333;">Welcome to your dashboard</h2>
-                <p style="color: #666; margin-bottom: 20px;">We're glad to have you onboard. Here are some quick tips to get you up and running.</p>
-              </div>`,
-           },
-         },
-         {
-           element: "#step2",
-           popover: {
-             description: `
-              <div style="text-align: center;">
-                <img src="${allfounder}" alt="Step visual" draggable="false" style="width: 100%; border-radius: 10px; margin-bottom: 15px;" />
-                <h2 style="font-size: 20px; font-weight: bold; color: #333;">Active Role and Profile</h2>
-                <p style="color: #666; margin-bottom: 20px;">Your current role is displayed below alongside your profile image. The active role will automatically update here.</p>
-              </div>`,
-           },
-         },
-         {
-           element: "#step3",
-           popover: {
-             description: `
-              <div style="text-align: center;">
-                <img src="${allfounder}" alt="Step visual" draggable="false" style="width: 100%; border-radius: 10px; margin-bottom: 15px;" />
-                <h2 style="font-size: 20px; font-weight: bold; color: #333;">Profile and Data Management</h2>
-                <p style="color: #666; margin-bottom: 20px;">Navigate through the sidebar to manage and update your profile. You can also track and view all your data here.</p>
-              </div>`,
-           },
-         },
-         {
-           element: "#step4",
-           popover: {
-             description: `
-                <div style="text-align: center;">
-                  <img src="${allfounder}" alt="Step visual" draggable="false" style="width: 100%; border-radius: 10px; margin-bottom: 15px;" />
-                  <h2 style="font-size: 20px; font-weight: bold; color: #333;">Profile and Data Management</h2>
-                  <p style="color: #666; margin-bottom: 20px;">Navigate through the sidebar to manage and update your profile. You can also track and view all your data here.</p>
-                </div>`,
-           },
-         },
-       ]);
-     }
+//      if (rolesTourShown==="false") {
+//        driverObj.setSteps([
+//          {
+//            popover: {
+//              description: `
+//                 <div style="text-align: center;">
+//                   <img src="${allfounder}" alt="Step visual" draggable="false" style="width: 100%; border-radius: 10px; margin-bottom: 15px;" />
+//                   <h2 style="font-size: 20px; font-weight: bold; color: #333;">Welcome to your dashboard</h2>
+//                   <p style="color: #666; margin-bottom: 20px;">We're glad to have you onboard. Here are some quick tips to get you up and running.</p>
+//                 </div>`,
+//            },
+//          },
+//          {
+//            element: "#step1",
+//            popover: {
+//              description: `
+//                 <div style="text-align: center;">
+//                   <img src="${allfounder}" alt="Step visual" draggable="false" style="width: 100%; border-radius: 10px; margin-bottom: 15px;" />
+//                   <h2 style="font-size: 20px; font-weight: bold; color: #333;">Switch Your Role</h2>
+//                   <p style="color: #666; margin-bottom: 20px;">You can switch between different roles using the toggle buttons below. Only one role can be active at a time.</p>
+//                 </div>`,
+//            },
+//          },
+//          {
+//            element: "#step2",
+//            popover: {
+//              description: `
+//                 <div style="text-align: center;">
+//                   <img src="${allfounder}" alt="Step visual" draggable="false" style="width: 100%; border-radius: 10px; margin-bottom: 15px;" />
+//                   <h2 style="font-size: 20px; font-weight: bold; color: #333;">Active Role and Profile</h2>
+//                   <p style="color: #666; margin-bottom: 20px;">Your current role is displayed below alongside your profile image. The active role will automatically update here.</p>
+//                 </div>`,
+//            },
+//          },
+//          {
+//            element: "#step3",
+//            popover: {
+//              description: `
+//                 <div style="text-align: center;">
+//                   <img src="${allfounder}" alt="Step visual" draggable="false" style="width: 100%; border-radius: 10px; margin-bottom: 15px;" />
+//                   <h2 style="font-size: 20px; font-weight: bold; color: #333;">Account Actions</h2>
+//                   <p style="color: #666; margin-bottom: 20px;">Use the dropdown below to copy your principal or log out of your account.</p>
+//                 </div>`,
+//            },
+//          },
+//          {
+//            element: "#step4",
+//            popover: {
+//              description: `
+//                 <div style="text-align: center;">
+//                   <img src="${allfounder}" alt="Step visual" draggable="false" style="width: 100%; border-radius: 10px; margin-bottom: 15px;" />
+//                   <h2 style="font-size: 20px; font-weight: bold; color: #333;">Profile and Data Management</h2>
+//                   <p style="color: #666; margin-bottom: 20px;">Navigate through the sidebar to manage and update your profile. You can also track and view all your data here.</p>
+//                 </div>`,
+//            },
+//          },
+//        ]);
+//      } else if (noRolesTourShown==="false") {
+//        driverObj.setSteps([
+//          {
+//            element: "#step1",
+//            popover: {
+//              description: `
+//               <div style="text-align: center;">
+//                 <img src="${allfounder}" alt="Step visual" draggable="false" style="width: 100%; border-radius: 10px; margin-bottom: 15px;" />
+//                 <h2 style="font-size: 20px; font-weight: bold; color: #333;">Welcome to your dashboard</h2>
+//                 <p style="color: #666; margin-bottom: 20px;">We're glad to have you onboard. Here are some quick tips to get you up and running.</p>
+//               </div>`,
+//            },
+//          },
+//          {
+//            element: "#step2",
+//            popover: {
+//              description: `
+//               <div style="text-align: center;">
+//                 <img src="${allfounder}" alt="Step visual" draggable="false" style="width: 100%; border-radius: 10px; margin-bottom: 15px;" />
+//                 <h2 style="font-size: 20px; font-weight: bold; color: #333;">Active Role and Profile</h2>
+//                 <p style="color: #666; margin-bottom: 20px;">Your current role is displayed below alongside your profile image. The active role will automatically update here.</p>
+//               </div>`,
+//            },
+//          },
+//          {
+//            element: "#step3",
+//            popover: {
+//              description: `
+//               <div style="text-align: center;">
+//                 <img src="${allfounder}" alt="Step visual" draggable="false" style="width: 100%; border-radius: 10px; margin-bottom: 15px;" />
+//                 <h2 style="font-size: 20px; font-weight: bold; color: #333;">Profile and Data Management</h2>
+//                 <p style="color: #666; margin-bottom: 20px;">Navigate through the sidebar to manage and update your profile. You can also track and view all your data here.</p>
+//               </div>`,
+//            },
+//          },
+//          {
+//            element: "#step4",
+//            popover: {
+//              description: `
+//                 <div style="text-align: center;">
+//                   <img src="${allfounder}" alt="Step visual" draggable="false" style="width: 100%; border-radius: 10px; margin-bottom: 15px;" />
+//                   <h2 style="font-size: 20px; font-weight: bold; color: #333;">Profile and Data Management</h2>
+//                   <p style="color: #666; margin-bottom: 20px;">Navigate through the sidebar to manage and update your profile. You can also track and view all your data here.</p>
+//                 </div>`,
+//            },
+//          },
+//        ]);
+//      }
 
-     driverObj.drive();
-   }, [hasRoles, hasApprovedRole]);
-  //  useEffect(() => {
+//      if (!rolesTourShown && !noRolesTourShown) {
+//        driverObj.setSteps(hasApprovedRole ? approvedSteps : noRolesSteps);
+//        driverObj.drive();
+//      }
+
+//    }, [hasRoles, hasApprovedRole]);
+  
+   //  useEffect(() => {
   //    const hasTourBeenShown = localStorage.getItem("hasTourBeenShown");
 
   //    if (!hasTourBeenShown) {
@@ -324,6 +352,183 @@ function DashboardHomePage() {
   //      localStorage.setItem("hasTourBeenShown", "true");
   //    }
   //  }, []);
+useEffect(() => {
+   if (localStorage.getItem("rolesTourShown") === null) {
+     localStorage.setItem("rolesTourShown", "false");
+   }
+
+   if (localStorage.getItem("noRolesTourShown") === null) {
+     localStorage.setItem("noRolesTourShown", "false");
+   }
+  const rolesTourShown = localStorage.getItem("rolesTourShown");
+  const noRolesTourShown = localStorage.getItem("noRolesTourShown");
+  console.log("rolesTourShown1...........: ", rolesTourShown);
+
+  console.log("noRolesTourShown...............: ", noRolesTourShown);
+  const driverObj = driver({
+    popoverClass: "driverjs-theme",
+    showButtons: false,
+    onPopoverRender: (popover) => {
+      const skipButton = document.createElement("button");
+      skipButton.innerText = "Skip";
+      skipButton.style.marginRight = "10px";
+      skipButton.style.backgroundColor = "#ffffff";
+      skipButton.style.color = "#000";
+      skipButton.style.border = "2px solid #ccc";
+      skipButton.style.borderRadius = "5px";
+      skipButton.style.cursor = "pointer";
+
+      skipButton.onmouseover = () =>
+        (skipButton.style.backgroundColor = "#e0e0e0");
+      skipButton.onmouseout = () =>
+        (skipButton.style.backgroundColor = "#ffffff");
+
+      const nextButton = document.createElement("button");
+      nextButton.innerText = "Next";
+      nextButton.style.backgroundColor = "#007BFF";
+      nextButton.style.color = "#fff";
+      nextButton.style.border = "none";
+      nextButton.style.borderRadius = "5px";
+      nextButton.style.cursor = "pointer";
+
+      nextButton.onmouseover = () =>
+        (nextButton.style.backgroundColor = "#1E40AF");
+      nextButton.onmouseout = () =>
+        (nextButton.style.backgroundColor = "#007BFF");
+
+      skipButton.addEventListener("click", () => {
+        driverObj.destroy();
+        if (rolesTourShown === "false" && hasApprovedRole) {
+          localStorage.setItem("rolesTourShown", "true");
+        } else if (noRolesTourShown === "false") {
+          localStorage.setItem("noRolesTourShown", "true");
+        }
+      });
+
+      nextButton.addEventListener("click", () => {
+        driverObj.moveNext();
+        if (rolesTourShown === "false" && hasApprovedRole) {
+          localStorage.setItem("rolesTourShown", "true");
+        } else if (noRolesTourShown === "false") {
+          localStorage.setItem("noRolesTourShown", "true");
+        }
+      });
+
+      popover.footerButtons.innerHTML = "";
+      popover.footerButtons.appendChild(skipButton);
+      popover.footerButtons.appendChild(nextButton);
+    },
+  });
+
+  // Set the tour steps based on the localStorage values
+  if (rolesTourShown === "false" && hasApprovedRole) {
+    driverObj.setSteps([
+      {
+        popover: {
+          description: `
+            <div style="text-align: center;">
+              <img src="${allfounder}" alt="Step visual" draggable="false" style="width: 100%; border-radius: 10px; margin-bottom: 15px;" />
+              <h2 style="font-size: 20px; font-weight: bold; color: #333;">Welcome to your dashboard</h2>
+              <p style="color: #666; margin-bottom: 20px;">We're glad to have you onboard. Here are some quick tips to get you up and running.</p>
+            </div>`,
+        },
+      },
+      {
+        element: "#step1",
+        popover: {
+          description: `
+            <div style="text-align: center;">
+              <img src="${allfounder}" alt="Step visual" draggable="false" style="width: 100%; border-radius: 10px; margin-bottom: 15px;" />
+              <h2 style="font-size: 20px; font-weight: bold; color: #333;">Switch Your Role</h2>
+              <p style="color: #666; margin-bottom: 20px;">You can switch between different roles using the toggle buttons below. Only one role can be active at a time.</p>
+            </div>`,
+        },
+      },
+      {
+        element: "#step2",
+        popover: {
+          description: `
+            <div style="text-align: center;">
+              <img src="${allfounder}" alt="Step visual" draggable="false" style="width: 100%; border-radius: 10px; margin-bottom: 15px;" />
+              <h2 style="font-size: 20px; font-weight: bold; color: #333;">Active Role and Profile</h2>
+              <p style="color: #666; margin-bottom: 20px;">Your current role is displayed below alongside your profile image. The active role will automatically update here.</p>
+            </div>`,
+        },
+      },
+      {
+        element: "#step3",
+        popover: {
+          description: `
+            <div style="text-align: center;">
+              <img src="${allfounder}" alt="Step visual" draggable="false" style="width: 100%; border-radius: 10px; margin-bottom: 15px;" />
+              <h2 style="font-size: 20px; font-weight: bold; color: #333;">Account Actions</h2>
+              <p style="color: #666; margin-bottom: 20px;">Use the dropdown below to copy your principal or log out of your account.</p>
+            </div>`,
+        },
+      },
+      {
+        element: "#step4",
+        popover: {
+          description: `
+            <div style="text-align: center;">
+              <img src="${allfounder}" alt="Step visual" draggable="false" style="width: 100%; border-radius: 10px; margin-bottom: 15px;" />
+              <h2 style="font-size: 20px; font-weight: bold; color: #333;">Profile and Data Management</h2>
+              <p style="color: #666; margin-bottom: 20px;">Navigate through the sidebar to manage and update your profile. You can also track and view all your data here.</p>
+            </div>`,
+        },
+      },
+    ]);
+    driverObj.drive();
+  } else if (noRolesTourShown === "false") {
+    driverObj.setSteps([
+      {
+        element: "#step1",
+        popover: {
+          description: `
+            <div style="text-align: center;">
+              <img src="${allfounder}" alt="Step visual" draggable="false" style="width: 100%; border-radius: 10px; margin-bottom: 15px;" />
+              <h2 style="font-size: 20px; font-weight: bold; color: #333;">Welcome to your dashboard</h2>
+              <p style="color: #666; margin-bottom: 20px;">We're glad to have you onboard. Here are some quick tips to get you up and running.</p>
+            </div>`,
+        },
+      },
+      {
+        element: "#step2",
+        popover: {
+          description: `
+            <div style="text-align: center;">
+              <img src="${allfounder}" alt="Step visual" draggable="false" style="width: 100%; border-radius: 10px; margin-bottom: 15px;" />
+              <h2 style="font-size: 20px; font-weight: bold; color: #333;">Active Role and Profile</h2>
+              <p style="color: #666; margin-bottom: 20px;">Your current role is displayed below alongside your profile image. The active role will automatically update here.</p>
+            </div>`,
+        },
+      },
+      {
+        element: "#step3",
+        popover: {
+          description: `
+            <div style="text-align: center;">
+              <img src="${allfounder}" alt="Step visual" draggable="false" style="width: 100%; border-radius: 10px; margin-bottom: 15px;" />
+              <h2 style="font-size: 20px; font-weight: bold; color: #333;">Profile and Data Management</h2>
+              <p style="color: #666; margin-bottom: 20px;">Navigate through the sidebar to manage and update your profile. You can also track and view all your data here.</p>
+            </div>`,
+        },
+      },
+      {
+        element: "#step4",
+        popover: {
+          description: `
+            <div style="text-align: center;">
+              <img src="${allfounder}" alt="Step visual" draggable="false" style="width: 100%; border-radius: 10px; margin-bottom: 15px;" />
+              <h2 style="font-size: 20px; font-weight: bold; color: #333;">Profile and Data Management</h2>
+              <p style="color: #666; margin-bottom: 20px;">Navigate through the sidebar to manage and update your profile. You can also track and view all your data here.</p>
+            </div>`,
+        },
+      },
+    ]);
+    driverObj.drive();
+  }
+}, [hasRoles, hasApprovedRole]);
 
   return (
     <div className="flex flex-col h-screen bg-[#FFF4ED] lg:flex-row" >
