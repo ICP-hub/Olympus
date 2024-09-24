@@ -450,11 +450,7 @@ export const homepagedata={
                 "socialLinks": 
                   {
                     
-                    "linkedinicon": {LinkedInIcon},
-                    "xicon": {XIcon},
-                    "facebookicon": {FacebookIcon},
-                    "githubicon": {GitHubIcon},
-                    
+                  
                   },
                  
                 

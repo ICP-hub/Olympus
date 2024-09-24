@@ -1,9 +1,9 @@
 import React from "react";
 import MailOutlineIcon from "@mui/icons-material/MailOutline";
-import XIcon from "@mui/icons-material/X";
-import FacebookIcon from "@mui/icons-material/Facebook";
-import GitHubIcon from "@mui/icons-material/GitHub";
-import LinkedInIcon from "@mui/icons-material/LinkedIn";
+import XIcon from '@mui/icons-material/X';
+import FacebookIcon from '@mui/icons-material/Facebook';
+import GitHubIcon from '@mui/icons-material/GitHub';
+import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import { homepagedata } from "../Utils/jsondata/data/homepageData";
 
 const Footer = () => {
@@ -18,7 +18,7 @@ const Footer = () => {
             <h2 className="text-2xl font-semibold text-center md:text-left mb-4 md:mb-0">
               {footer.headline}
             </h2>
-            <button className="bg-[#155EEF] text-white text-lg py-3 px-6 rounded-[4px] w-[90%] md:w-auto">
+            <button className="bg-blue-700 text-white text-lg py-3 px-6 rounded-[4px] w-[90%] md:w-auto">
               {footer.buttonText}
             </button>
           </div>
@@ -48,10 +48,10 @@ const Footer = () => {
               {/* Explore, Company, and Resources Section */}
               {["explore", "company", "resources"].map((section) => (
                 <div key={section}>
-                  <h4 className="text-base font-semibold mb-2 text-[#697586]">
+                  <h4 className="text-base font-semibold mb-2 text-gray-800">
                     {footer[section].title}
                   </h4>
-                  <ul className="text-[#4B5565] font-bold">
+                  <ul className="text-gray-600 font-bold">
                     {footer[section].items.map((item, index) => (
                       <li className="mb-2" key={index}>
                         <a href="/">{item}</a>
@@ -63,7 +63,7 @@ const Footer = () => {
 
               {/* Newsletter Section */}
               <div className="w-full md:w-auto mt-8 md:mt-0">
-                <h4 className="text-base font-semibold mb-2 text-[#697586]">
+                <h4 className="text-base font-semibold mb-2 text-gray-800">
                   {footer.newsletter.title}
                 </h4>
                 <form>
@@ -72,12 +72,12 @@ const Footer = () => {
                     <input
                       type="email"
                       placeholder="Enter your email"
-                      className="w-full pl-10 p-2 border border-gray-300 rounded-lg"
+                      className="w-full pl-10 p-2 border border-gray-400 rounded-lg"
                     />
                   </div>
                   <button
                     type="submit"
-                    className="text-gray-600 text-lg py-2 px-6 rounded-lg w-full border border-[#CDD5DF] bg-white hover:border-[#b7bec6]"
+                    className="text-white bg-blue-700 text-lg py-2 px-6 rounded-lg w-full"
                   >
                     {footer.newsletter.buttonText}
                   </button>
@@ -110,29 +110,37 @@ const Footer = () => {
                     {/* Social icon next to each policy on mobile */}
                     <div className="mr-2 md:hidden block">
                       {index === 0 && (
-                        <homepagedata.footer.socialLinks.xicon.XIcon
+                <a href="/" aria-label="XIcon">
+                        <XIcon
                           fontSize="medium"
                           style={{ color: "gray" }}
                           className="md:hidden"
                         />
+                        </a>
                       )}
                       {index === 1 && (
-                        <homepagedata.footer.socialLinks.linkedinicon.LinkedInIcon
+                <a href="/" aria-label="LinkedInIcon">
+                        <LinkedInIcon
                           fontSize="medium"
                           style={{ color: "gray" }}
                         />
+                        </a>
                       )}
                       {index === 2 && (
-                        <homepagedata.footer.socialLinks.facebookicon.FacebookIcon
+                         <a href="/"aria-label="FacebookIcon">
+                        <FacebookIcon
                           fontSize="medium"
                           style={{ color: "gray" }}
                         />
+                        </a>
                       )}
                       {index === 3 && (
-                        <homepagedata.footer.socialLinks.githubicon.GitHubIcon
+                        <a href="/" aria-label="GitHubIcon">
+                        <GitHubIcon
                           fontSize="medium"
                           style={{ color: "gray" }}
                         />
+                        </a>
                       )}
                     </div>
 
@@ -142,26 +150,26 @@ const Footer = () => {
               </div>
               {/* Social Links for Medium and Larger Screens */}
               <div className="hidden md:flex space-x-4 mt-4 md:mt-0 justify-center">
-                <a href="/">
-                  <homepagedata.footer.socialLinks.xicon.XIcon
+                <a href="/" aria-label="XIcon">
+                  <XIcon
                     fontSize="medium"
                     style={{ color: "gray" }}
                   />{" "}
                 </a>
-                <a href="/">
-                  <homepagedata.footer.socialLinks.linkedinicon.LinkedInIcon
+                <a href="/" aria-label="LinkedInIcon">
+                  <LinkedInIcon
                     fontSize="medium"
                     style={{ color: "gray" }}
                   />
                 </a>
-                <a href="/">
-                  <homepagedata.footer.socialLinks.facebookicon.FacebookIcon
+                <a href="/"aria-label="FacebookIcon">
+                  <FacebookIcon
                     fontSize="medium"
                     style={{ color: "gray" }}
                   />
                 </a>
-                <a href="/">
-                  <homepagedata.footer.socialLinks.githubicon.GitHubIcon
+                <a href="/" aria-label="GitHubIcon">
+                  <GitHubIcon
                     fontSize="medium"
                     style={{ color: "gray" }}
                   />

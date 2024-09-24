@@ -1,0 +1,56 @@
+# Allow all bots to crawl the entire site
+User-agent: *
+Disallow:
+
+# Disallow all bots from accessing the admin section
+User-agent: *
+Disallow: /admin/
+
+# Disallow all bots from accessing user profiles
+User-agent: *
+Disallow: /user/
+
+# Disallow all bots from accessing API endpoints
+User-agent: *
+Disallow: /api/
+
+# Disallow specific bots from accessing the entire site (Google's image bot)
+User-agent: Googlebot-Image
+Disallow: /
+
+# Disallow specific bots from accessing certain directories (Bing's bot)
+User-agent: Bingbot
+Disallow: /private/
+
+# Prevent all bots from indexing search result pages
+User-agent: *
+Disallow: /search/
+
+# Block bots from accessing temporary pages (e.g., pages under construction)
+User-agent: *
+Disallow: /temp/
+
+# Allow only Googlebot to access the blog section
+User-agent: Googlebot
+Allow: /blog/
+User-agent: *
+Disallow: /blog/
+
+# Block all bots from accessing sensitive files
+User-agent: *
+Disallow: /config/
+Disallow: /database/
+Disallow: /credentials/
+
+# Prevent all bots from crawling media files (images, videos, etc.)
+User-agent: *
+Disallow: /images/
+Disallow: /videos/
+
+# Disallow crawling of specific file types (.pdf, .zip)
+User-agent: *
+Disallow: /*.pdf$
+Disallow: /*.zip$
+
+# Sitemap location
+Sitemap: https://hptzq-yaaaa-aaaam-adb5a-cai.icp0.io/sitemap.xml

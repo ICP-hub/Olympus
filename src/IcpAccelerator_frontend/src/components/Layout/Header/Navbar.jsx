@@ -45,14 +45,14 @@ const Navbar = ({ setModalOpen }) => {
                     src={navbar.logo.logo}
                     alt="Olympus"
                     className="cursor-pointer hidden md:block"
-                    loading="lazy"
+                    loading="eager"
                     draggable={false}
                   />
                   <img
                     src={logo}
                     alt="Olympus"
                     className="cursor-pointer md:hidden object-cover w-11 h-11"
-                    loading="lazy"
+                    loading="eager"
                     draggable={false}
                   />
                 </Link>

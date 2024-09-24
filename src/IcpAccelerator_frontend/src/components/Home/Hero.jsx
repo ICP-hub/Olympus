@@ -1,8 +1,13 @@
 import React from "react";
 import { useOutletContext } from "react-router-dom";
 import { useSelector } from "react-redux";
-import SplineViewerComponent from "./SplineViewerComponent";
-import {homepagedata} from "../Utils/jsondata/data/homepageData";
+const SplineViewerComponent = React.lazy(() =>
+  import("./SplineViewerComponent")
+);
+
+// Inside the main component
+
+import { homepagedata } from "../Utils/jsondata/data/homepageData";
 
 const HeroSection = () => {
   const { setModalOpen } = useOutletContext();
@@ -33,11 +38,13 @@ const HeroSection = () => {
                     draggable={false}
                   />
                 </div>
-                <h1 className="text-[2.5rem] sm0:text-[3.5rem]  sm3:text-7xl font-bold text-[#121926] leading-tight mb-4">
+                <h1 className="text-[2.5rem] sm0:text-[3.5rem] sm3:text-7xl font-bold text-[#121926] leading-tight mb-4">
                   {homepagedata.section1.content.mainHeading
                     .split(" ")
-                    .map((word, index) =>
-                      word === homepagedata.section1.content.highlightedText ? (
+                    .map((word, index) => {
+                      const isHighlighted =
+                        word === homepagedata.section1.content.highlightedText;
+                      return isHighlighted ? (
                         <span
                           key={index}
                           className="bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-500 bg-clip-text text-transparent"
@@ -45,9 +52,9 @@ const HeroSection = () => {
                           {word}{" "}
                         </span>
                       ) : (
-                        word + " "
-                      )
-                    )}
+                        <span key={index}>{word} </span>
+                      );
+                    })}
                 </h1>
                 <p className="text-xl font-medium text-[#364152] mb-6">
                   {homepagedata.section1.content.description}
@@ -65,12 +72,13 @@ const HeroSection = () => {
         </div>
       </div>
       <div className="absolute inset-0 z-0 hidden md:block">
-        <SplineViewerComponent />
+        <React.Suspense fallback={<div>Loading...</div>}>
+          <SplineViewerComponent />
+        </React.Suspense>
       </div>
       <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white to-transparent"></div>
-      {/* <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-[#FEF5EE] to-transparent"></div> */}
     </section>
   );
-}
+};
 
 export default HeroSection;

@@ -31,13 +31,11 @@
       ],
       "type": "assets"
     }
-
-  }
-  ,
+  },
   "defaults": {
     "build": {
-      "args": "",
-      "packtool": ""
+      "args": "--release",
+      "packtool": "wasm-opt"
     }
   },
   "output_env_file": ".env",
