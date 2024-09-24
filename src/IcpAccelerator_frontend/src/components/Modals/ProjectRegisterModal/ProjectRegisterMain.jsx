@@ -273,7 +273,7 @@ const ProjectRegisterMain = ({ isopen }) => {
           modalOpen ? "block" : "hidden"
         }`}
       >
-        <div className="bg-white rounded-lg shadow-lg w-[500px] p-6 pt-4  max-h-[100vh] overflow-y-auto">
+        <div className="bg-white rounded-lg shadow-lg w-[500px] p-6 pt-4 mx-4 max-h-[100vh] overflow-y-auto">
           <div className="flex justify-endz mr-4">
             <button
               className="text-2xl text-[#121926]"
