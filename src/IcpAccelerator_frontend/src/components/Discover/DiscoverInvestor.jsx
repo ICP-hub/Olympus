@@ -216,7 +216,7 @@ const DiscoverInvestor = ({ onInvestorCountChange }) => {
                     className="absolute cursor-pointer bottom-0 right-[6px] flex items-center bg-gray-100 p-1"
                   >
                     <Star className="text-yellow-400 w-4 h-4" />
-                    <span className="text-sm font-medium">5.0</span>
+                    <span className="text-sm font-medium">Rate Us</span>
                   </div>
                 </div>
 
@@ -236,7 +236,7 @@ const DiscoverInvestor = ({ onInvestorCountChange }) => {
                           id="registerTip"
                           place="top"
                           effect="solid"
-                          className="rounded-full z-10"
+                          className="rounded-full z-50"
                         >
                           Send Association Request
                         </Tooltip>

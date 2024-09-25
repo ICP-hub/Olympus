@@ -229,7 +229,7 @@ const DiscoverMentor = ({ onMentorCountChange }) => {
                             id="registerTip"
                             place="top"
                             effect="solid"
-                            className="rounded-full z-10"
+                            className="rounded-full z-50"
                           >
                             Send Association Request
                           </Tooltip>

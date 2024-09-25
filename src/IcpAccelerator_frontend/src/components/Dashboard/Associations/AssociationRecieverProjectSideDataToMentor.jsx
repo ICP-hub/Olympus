@@ -173,9 +173,9 @@ const AssociationRecieverProjectSideDataToMentor = ({
 
   // POST API HANDLER TO SELF-REJECT A REQUEST WHERE MENTOR APPROCHES PROJECT
   return (
-    <div className="p-6 w-full flex flex-wrap md:flex-nowrap rounded-lg shadow-sm">
+    <div className="md:p-6 w-full flex flex-wrap md:flex-nowrap rounded-lg shadow-sm">
       <div className="w-full flex justify-center md:w-[272px]">
-        <div className="min-w-[236px] w-full md:max-w-[250px] bg-gray-100 rounded-lg flex flex-col justify-between h-60 relative overflow-hidden cursor-pointer">
+        <div className="min-w-[200px] h-40 dxs:min-w-[236px] w-full md:max-w-[250px] bg-gray-100 rounded-lg flex flex-col justify-between dxs:h-60 relative overflow-hidden cursor-pointer">
           <div
             className="absolute inset-0 flex items-center justify-center"
             onClick={() => setOpenDetail(true)}
@@ -199,7 +199,7 @@ const AssociationRecieverProjectSideDataToMentor = ({
       <div className="flex-grow mt-4 md:mt-0 ml-0 md:ml-[25px]  w-full ">
         <div className="flex w-full mt-2 flex-wrap md:flex-nowrap md:mt-0 lg:flex-wrap xl:flex-nowrap xl:mt-0 sm2:justify-between items-start mb-2">
           <div>
-            <h3 className="text-xl font-bold">{userUserName}</h3>
+            <h3 className="text-xl line-clamp-1 break-all font-bold">{userUserName}</h3>
 
             {/* <span className="flex py-2">
                 <Avatar
@@ -210,7 +210,7 @@ const AssociationRecieverProjectSideDataToMentor = ({
                 />
                 <span className="text-gray-500">{userUserName}</span>
               </span> */}
-            <span className="text-gray-500">@{userEmail}</span>
+            <span className="text-gray-500 line-clamp-1 break-all">@{userEmail}</span>
           </div>
           <span className="mr-2 mb-2 text-[#016AA2] px-3 py-1 rounded-full bg-gray-100 text-sm">
             {activeTabData === "pending" ? (
@@ -229,7 +229,7 @@ const AssociationRecieverProjectSideDataToMentor = ({
 
         <div className="border-t border-gray-200 mt-3"></div>
 
-        <p className="text-gray-600 my-2 overflow-hidden line-clamp-2 text-ellipsis max-h-[2rem]">
+        <p className="text-gray-600 my-2 break-all line-clamp-2  ">
           {parse(userBio)}
         </p>
         <div className="flex items-center text-sm text-gray-500 flex-wrap py-2">
@@ -252,7 +252,7 @@ const AssociationRecieverProjectSideDataToMentor = ({
           </span>
         </div>
         {activeTabData === "pending" ? (
-           <div className="">
+           <div className="flex flex-wrap sm:flex-nowrap">
            {/* Handle Self Decline for Mentor or Investor */}
            {selectedTypeData === "to-mentor" ||
            selectedTypeData === "to-investor" ? (
@@ -267,7 +267,7 @@ const AssociationRecieverProjectSideDataToMentor = ({
                Self Decline
              </button>
            ) : selectedTypeData === "from-mentor" ? (
-             <>
+             <div className="flex flex-wrap sm:flex-nowrap">
                {/* Handle Mentor Reject */}
                <button
                  className="mr-2 mb-2 border border-[#C11574] bg-[#FDF2FA] text-[#C11574] px-3 py-1 rounded-full"
@@ -282,7 +282,7 @@ const AssociationRecieverProjectSideDataToMentor = ({
                >
                  Approve
                </button>
-             </>
+             </div>
            ) : (
              <>
                {/* Handle Investor Reject */}
