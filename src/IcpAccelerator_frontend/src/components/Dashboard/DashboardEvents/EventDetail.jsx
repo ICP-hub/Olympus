@@ -157,16 +157,16 @@ const tabs = [
 
   const timeoutRef = useRef(null);
 
-  // useEffect(() => {
-  //   if (cohortData) {
-  //     const calculateRemainingTime = () => {
-  //       calculateTimeLeft(cohortData.cohort.cohort_launch_date);
-  //       timeoutRef.current = setTimeout(calculateRemainingTime, 1000);
-  //     };
-  //     calculateRemainingTime(); // Initial call
-  //     return () => clearTimeout(timeoutRef.current);
-  //   }
-  // }, [cohortData]);
+  useEffect(() => {
+    if (cohortData) {
+      const calculateRemainingTime = () => {
+        calculateTimeLeft(cohortData.cohort.cohort_launch_date);
+        timeoutRef.current = setTimeout(calculateRemainingTime, 1000);
+      };
+      calculateRemainingTime(); // Initial call
+      return () => clearTimeout(timeoutRef.current);
+    }
+  }, [cohortData]);
   
 
   const calculateTimeLeft = (cohortLaunchDate) => {
@@ -336,7 +336,7 @@ const ProfileImage =  profileimage && profileimage.length > 0
         </button>
       </div>
       <div className="flex flex-col  gap-4 md:gap-10 md:flex-row">
-        <div className="  w-full md:w-[30%] bg-white rounded-lg shadow-md pt-4">
+        <div className="  w-full md:w-[30%] bg-white rounded-lg shadow-md pt-2 md:ml-1">
           <div className="bg-gray-100 p-4">
             <div className="flex items-start mb-4">
               <img
@@ -360,7 +360,7 @@ const ProfileImage =  profileimage && profileimage.length > 0
               <h3 className="text-sm md:text-base font-medium mb-2 text-left">
                 Event starts in
               </h3>
-              {/* <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between">
                 {[
                   { value: timeLeft.days, label: "Days" },
                   { value: timeLeft.hours, label: "Hours" },
@@ -370,11 +370,11 @@ const ProfileImage =  profileimage && profileimage.length > 0
                   <React.Fragment key={item.label}>
                     <div className="text-center">
                      
-                      <div className="text-base lgx:text-xl font-bold bg-white rounded-lg p-1 lgx:p-2 min-w-[35px] lgx:min-w-[48px]">
+                      <div className="text-base lgx:text-xl font-bold bg-white rounded-lg p-1 lgx:p-2 min-w-[30px] lgx:min-w-[40px] max-w-[45px]">
                         {item.value}
                       </div>
-                    
-                      <div className="text-[10px] lgx:text-sm text-gray-500 mt-1">
+                     
+                      <div className="text-[10px] lgx:text-sm text-gray-500 mt-1 max-w-[45px] truncate break-all">
                         {item.label}
                       </div>
                     </div>
@@ -385,10 +385,10 @@ const ProfileImage =  profileimage && profileimage.length > 0
                     )}
                   </React.Fragment>
                 ))}
-              </div> */}
+              </div>
             </div>
 
-            {userCurrentRoleStatusActiveRole !== "user" && (
+            {userCurrentRoleStatusActiveRole !== null && (
               <button
                 className="w-full flex justify-center bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-300 mb-2 text-sm"
                 onClick={registerHandler}
@@ -408,7 +408,7 @@ const ProfileImage =  profileimage && profileimage.length > 0
                   getButtonText(userCurrentRoleStatusActiveRole)
                 )}
               </button>
-            )}
+             )}
 
             <button className="w-full border border-[#CDD5DF] bg-white text-gray-700 py-2 px-4 rounded-md hover:bg-gray-200 transition duration-300 mb-2 text-sm">
               Contact organiser
