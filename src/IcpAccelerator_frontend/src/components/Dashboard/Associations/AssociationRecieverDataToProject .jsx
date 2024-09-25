@@ -184,9 +184,9 @@ const AssociationRecieverDataToProject = ({
 
   // POST API HANDLER TO SELF-REJECT A REQUEST WHERE MENTOR APPROCHES PROJECT
   return (
-    <div className="p-6 w-full flex flex-wrap md:flex-nowrap rounded-lg shadow-sm">
+    <div className="md:p-6 w-full flex flex-wrap md:flex-nowrap rounded-lg shadow-sm">
       <div className="w-full flex justify-center md:w-[272px]">
-        <div className="min-w-[236px] w-full md:max-w-[250px] bg-gray-100 rounded-lg flex flex-col justify-between h-60 relative overflow-hidden cursor-pointer">
+        <div className="min-w-[200px] h-40 dxs:min-w-[236px] w-full md:max-w-[250px] bg-gray-100 rounded-lg flex flex-col justify-between dxs:h-60 relative overflow-hidden cursor-pointer">
           <div
             className="absolute inset-0 flex items-center justify-center"
             onClick={() => setOpenDetail(true)}
@@ -219,9 +219,9 @@ const AssociationRecieverDataToProject = ({
                 className=" mr-2"
                 sx={{ width: 24, height: 24 }}
               />
-              <span className="text-gray-500">{userUserName}</span>
+              <span className="text-gray-500 line-clamp-1 break-all">{userUserName}</span>
             </span>
-            <span className="text-gray-500">@{userEmail}</span>
+            <span className="text-gray-500 line-clamp-1 break-all">@{userEmail}</span>
           </div>
           <span className="mr-2 mb-2 text-[#016AA2] px-3 py-1 rounded-full bg-gray-100 text-sm">
             {activeTabData === "pending" ? (
@@ -272,7 +272,7 @@ const AssociationRecieverDataToProject = ({
                 Self Decline
               </button>
             ) : (
-              <div>
+              <div className="flex flex-wrap sm:flex-nowrap">
                 <button
                   className="mr-2 mb-2 border border-[#097647] bg-[#EBFDF3] text-[#097647]  px-3 py-1 rounded-full"
                   onClick={() => handleAcceptModalOpenHandler(offerId)}
