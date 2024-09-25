@@ -44,7 +44,7 @@ const EventSection = () => {
         <h2 className="text-xl font-semibold mb-2">You haven't posted any cohort yet</h2>
         <p className="text-gray-600 mb-2">Any assets used in projects will live here.</p>
         <p className="text-gray-600 mb-6">Start creating by uploading your files.</p>
-        <button className="bg-[#155EEF] text-white px-4 py-2 rounded-md flex items-center justify-center mx-auto w-full truncate break-all"
+        <button className="bg-[#155EEF] text-white px-4 py-2 rounded-md flex items-center justify-center mx-auto w-full truncate break-all md:w-auto"
           onClick={handleModalOpen}
         >
           <WorkOutlineOutlinedIcon className="mr-2" />

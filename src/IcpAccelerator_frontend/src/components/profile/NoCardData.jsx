@@ -8,7 +8,7 @@ const NoCardData = ({  }) => {
 
   return (
 
-    <div className=" py-4 md:py-12">
+    <div className="  md:py-12 md:pb-0">
       {/* Content */}
       <div className="text-center ">
         <div className="flex justify-center items-center">

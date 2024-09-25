@@ -881,7 +881,7 @@ function DashboardSidebar({ isOpen, onClose, id, id2 }) {
         )}
 
         <motion.div
-          className="fixed bottom-0 left-0 w-full bg-[#FFF4ED] px-2 flex flex-col py-6 z-50 rounded-t-3xl"
+          className="fixed bottom-0 left-0 w-full bg-[#FFF4ED] px-2 flex flex-col py-6 pb-2 z-50 rounded-t-3xl"
           initial={{ y: "100%" }}
           animate={{ y: 0 }}
           exit={{ y: "100%" }}
