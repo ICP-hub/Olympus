@@ -6,6 +6,8 @@ import { useLocation } from "react-router-dom";
 import toast from "react-hot-toast";
 import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 import CloseIcon from "@mui/icons-material/Close";
+import NoCardData from "../../profile/NoCardData";
+import NoData from "../../NoDataCard/NoData";
 const AttendeesCard = ({ member }) => {
   return (
     <div className="flex  p-4 bg-white shadow-md rounded-lg mb-6 transition-all items-center hover:shadow-lg">
@@ -166,7 +168,7 @@ const Attendees = (cohortData) => {
     <div className="rounded-xl ">
       <div className="mx-2">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-semibold text-gray-900">Attendees</h2>
+          {/* <h2 className="text-xl font-semibold text-gray-900">Attendees</h2> */}
           <MoreVertIcon onClick={toggleMenu} className="cursor-pointer" />
         </div>
 
@@ -249,13 +251,18 @@ const Attendees = (cohortData) => {
           </div>
         )}
 
-        {noData ? (
-          <p>No attendees available for the selected role.</p>
-        ) : (
-          attendees.map((member, idx) => (
-            <AttendeesCard key={idx} member={member} />
-          ))
-        )}
+        <div>
+          {attendees && attendees.length === 0 ? (
+            // <p>No attendees available for the selected role.</p>
+            <NoData
+              message={"No attendees available for the selected role."}
+            />
+          ) : (
+            attendees.map((member, idx) => (
+              <AttendeesCard key={idx} member={member} />
+            ))
+          )}
+        </div>
       </div>
     </div>
   );

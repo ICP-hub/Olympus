@@ -10,6 +10,7 @@ import parse from "html-react-parser"
 import { useSelector } from "react-redux";
 import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 import { FaChevronRight } from "react-icons/fa"; 
+import NoDataFound from "../DashboardEvents/NoDataFound";
 const ProjectCard = () => {
   const [isopen, setModalOpen] = useState(false);
   const [cardData, setCardData] = useState([]);
@@ -182,7 +183,8 @@ const ProjectCard = () => {
           );
         })
       ) : (
-        <p className="text-center text-gray-500">No projects available</p>
+        // <p className="text-center text-gray-500">No projects available</p>
+        <NoDataFound message="No projects available" />
       )}
 
       {isopen && (
