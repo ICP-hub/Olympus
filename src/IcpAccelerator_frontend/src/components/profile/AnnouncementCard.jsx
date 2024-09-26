@@ -756,7 +756,7 @@ const AnnouncementCard = () => {
               {/* <h2 className="text-gray-900 text-xl font-bold mb-3">
                 {ann_name}
               </h2> */}
-              <div className="flex w-full items-start px-3 py-5 shadow rounded-md mb-4 space-x-4">
+              <div className="flex flex-col sm0:flex-row w-full items-start px-3 py-5 shadow rounded-md mb-4 sm0:space-x-4">
                 <div className="flex-shrink-0 self-center">
                   <img
                     src={ann_project_logo}
@@ -767,7 +767,7 @@ const AnnouncementCard = () => {
                   />
                 </div>
                 <div className="flex flex-col gap-1 overflow-hidden">
-                  <h2 className="text-lg font-semibold break-all line-clamp-1 ">
+                  <h2 className="text-lg mt-4 sm0:mt-0 font-semibold break-all line-clamp-1 ">
                     {ann_name}
                   </h2>
                   <h3 className="text-gray-600 text-sm font-normal break-all line-clamp-2 ">
