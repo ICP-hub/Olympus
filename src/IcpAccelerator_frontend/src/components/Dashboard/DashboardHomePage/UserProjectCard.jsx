@@ -97,7 +97,7 @@ const UserProjectCard = ({setOpenDetails, projectData, userData, principal }) =>
             draggable={false}
           />
         </div>
-        <div className="w-full pl-4 px-2 sm0:pl-0 sm0:w-3/4">
+        <div className="w-full pl-4 px-6 sm0:pl-0 sm0:w-3/4">
           <h3 className="text-lg font-bold text-gray-900 line-clamp-1">
             {projectDetails?.project_name}
           </h3>

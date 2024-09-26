@@ -220,12 +220,12 @@ const Jobs = () => {
                           <div className="flex justify-between">
                             <div
                               onClick={() => openJobDetails(card.job_id)}
-                              className="flex flex-col gap-3  "
+                              className="flex flex-col gap-3 sm5:w-[70%] w-full "
                             >
                               <p className="text-sm xxs:text-base text-gray-400">
                                 {job_post_time}{" "}
                               </p>
-                              <h3 className="text-xl font-bold">{job_name} </h3>
+                              <h3 className="text-xl line-clamp-1 break-all font-bold">{job_name} </h3>
                               <p className="flex items-center">
                                 <span className="mr-3">
                                   <img
@@ -236,7 +236,7 @@ const Jobs = () => {
                                     draggable={false}
                                   />
                                 </span>
-                                <span className="truncate break-all">
+                                <span className="line-clamp-2 break-all">
                                   {job_name}{" "}
                                 </span>
                               </p>
