@@ -24,7 +24,7 @@ const ProfileRoleNoDataCard = () => {
               </div>
       </div>
       <div className="text-blue-600 bg-blue-100 rounded-full px-3 py-1 inline-block text-xs font-semibold mb-2">
-        No Role
+        User
       </div>
       <h3 className="text-gray-700 font-semibold mb-4 text-sm  dxl0:text-base">
         You can't have any another role, You're registered as a Project

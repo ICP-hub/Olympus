@@ -16,7 +16,7 @@ import getSocialLogo from "../Utils/navigationHelper/getSocialLogo";
   return (
     <SkeletonTheme baseColor="#e3e3e3" highlightColor="#c8c8c873">
       <div className="w-full overflow-hidden h-[95vh] bg-gradient-to-r from-[#ECE9FE] to-[#FFFFFF] items-center justify-center rounded-2xl">
-        <div className="bg-white mx-auto h-[90vh] my-10 rounded-lg shadow-md w-[90%]">
+        <div className="bg-white mx-auto h-[83vh] my-10 rounded-lg shadow-md w-[90%]">
           <div className="w-full bg-gray-200 rounded-full h-1.5 mb-4 dark:bg-gray-700">
             <div
               className="bg-green-500 h-1.5 rounded-full dark:bg-gray-700"
@@ -65,7 +65,7 @@ import getSocialLogo from "../Utils/navigationHelper/getSocialLogo";
                 </span>
               )}
             </div>
-            <div className="mt-6 dxl0:h-[60vh] dlg:h-[50vh] dxl0:overflow-y-auto  overflow-hidden overflow-y-scroll">
+            <div className="mt-6  overflow-y-auto  dlg:h-[48vh] dxl0:overflow-y-auto ">
             {/* <div className=" overflow-hidden overflow-y-scroll"> */}
               <div className="my-2">
                 <label className="block font-medium text-gray-600 pb-2">
@@ -136,7 +136,7 @@ import getSocialLogo from "../Utils/navigationHelper/getSocialLogo";
                 </div>
               )}
              </div>
-              <label className="block mt-3 font-medium text-gray-600">
+              <label className="block  font-medium text-gray-600 -mt-1">
                 Interests
               </label>
               <div className="flex sm:max-w-[11rem] md:max-w-[24rem]  overflow-hidden overflow-x-scroll gap-1 ">
@@ -160,7 +160,7 @@ import getSocialLogo from "../Utils/navigationHelper/getSocialLogo";
               )}
               </div>
 
-              <div className="mt-4">
+              <div className="">
                 <label className="block font-medium text-gray-600 pb-1">
                   <LocationOnOutlinedIcon
                     sx={{
