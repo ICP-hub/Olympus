@@ -45,6 +45,7 @@ const DiscoverFundingCard = ({ title, value, imageSrc, isPrivate }) => {
 
 const DiscoverMoneyRaising = ({ data ,projectId}) => {
   console.log("data in 47 ,data dekhte h kya h",data)
+   console.log("data in 48 ,data dekhte h kya h", projectId);
   const actor = useSelector((currState) => currState.actors.actor);
   const userCurrentRoleStatusActiveRole = useSelector(
     (currState) => currState.currentRoleStatus.activeRole
