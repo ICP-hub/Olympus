@@ -23,7 +23,7 @@ export const getSocialLogo = (url) => {
       'linkedin.com': <FaLinkedin className={`text-blue-600 ${size}`} />,
       'twitter.com': <FaTwitter className={`text-blue-400 ${size}`} />, // Changed to FaTwitter
       'github.com': <FaGithub className={`text-gray-700 ${size}`} />,
-      't.me': <FaTelegram className={`text-blue-400 ${size}`} />, // Corrected domain for Telegram
+      'telegram.com': <FaTelegram className={`text-blue-400 ${size}`} />, // Corrected domain for Telegram
       'facebook.com': <FaFacebook className={`text-blue-400 ${size}`} />,
       'instagram.com': <FaInstagram className={`text-pink-600 ${size}`} />,
       'youtube.com': <FaYoutube className={`text-red-600 ${size}`} />,

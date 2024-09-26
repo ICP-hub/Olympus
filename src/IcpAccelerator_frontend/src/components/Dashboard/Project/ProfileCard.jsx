@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useState } from "react";
 import CypherpunkLabLogo from "../../../../assets/Logo/CypherpunkLabLogo.png";
 import ProfileImage from "../../../../assets/Logo/ProfileImage.png";
 import {
@@ -10,9 +10,10 @@ import {
   Telegram,
   Add,
 } from "@mui/icons-material";
+import Avatar from "@mui/material/Avatar";
 import parse from "html-react-parser";
 import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
-
+import getSocialLogo from "../../Utils/navigationHelper/getSocialLogo";
 function ProfileCard({ cardData }) {
   const projectDescription =
     cardData?.[0]?.[0]?.params?.project_description?.[0] ??
@@ -67,6 +68,74 @@ function ProfileCard({ cardData }) {
     return null;
   };
 
+  const projectDetail = cardData;
+  console.log(
+    "my card..../////",
+    projectDetail?.[0][0]?.params?.mentors_assigned?.[0][0][1]?.params
+  );
+
+  let mergedProfiles = [];
+
+  // Extracting mentor profiles
+  if (projectDetail?.[0]?.[0]?.params?.mentors_assigned?.[0]?.length > 0) {
+    projectDetail[0][0].params.mentors_assigned[0].forEach((mentorGroup) => {
+      mentorGroup.forEach((mentor) => {
+        const mentorParams = mentor.params;
+        const profilePicture = mentorParams?.profile_picture[0]
+          ? uint8ArrayToBase64(mentorParams.profile_picture[0])
+          : null;
+
+        mergedProfiles.push({
+          profile_picture: profilePicture,
+          role: "mentor",
+        });
+      });
+    });
+  }
+
+  // Extracting VC profiles
+  if (projectDetail?.[0]?.[0]?.params?.vc_assigned?.[0]?.length > 0) {
+    projectDetail[0][0].params.vc_assigned[0].forEach((vcGroup) => {
+      vcGroup.forEach((vc) => {
+        const vcParams = vc.params;
+        const profilePicture = vcParams?.profile_picture[0]
+          ? uint8ArrayToBase64(vcParams.profile_picture[0])
+          : null;
+
+        mergedProfiles.push({
+          profile_picture: profilePicture,
+          role: "vc", // Mark role as VC
+        });
+      });
+    });
+  } else {
+    console.log("No VCs assigned or data is missing");
+  }
+
+  console.log("mergedProfiles", mergedProfiles); // Log merged profiles
+  const [hoveredIndex, setHoveredIndex] = useState(null);
+  const [activeIndex, setActiveIndex] = useState(null);
+
+  const handleMouseEnter = useCallback(
+    (index) => {
+      if (hoveredIndex !== index) {
+        setHoveredIndex(index);
+        setActiveIndex(index);
+      }
+    },
+    [hoveredIndex]
+  );
+
+  const handleMouseLeave = useCallback(() => {
+    setHoveredIndex(null);
+    setActiveIndex(null);
+  }, []);
+
+  const handleTransitionEnd = () => {
+    if (hoveredIndex === null) {
+      setActiveIndex(null);
+    }
+  };
   return (
     <div className="container bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden w-full dlg:max-w-[400px]">
       <div className="flex flex-col md:flex-row gap-8">
@@ -120,7 +189,7 @@ function ProfileCard({ cardData }) {
               <h3 className="font-normal mb-2 text-xs text-gray-500 uppercase">
                 ASSOCIATIONS
               </h3>
-              <div className="flex space-x-2">
+              {/* <div className="flex space-x-2">
                 <img
                   src={ProfileImage}
                   alt="Profile"
@@ -128,6 +197,35 @@ function ProfileCard({ cardData }) {
                   loading="lazy"
                   draggable={false}
                 />
+              </div> */}
+              <div className="flex items-center space-x-2">
+                {mergedProfiles.map((association, index) => (
+                  <div
+                    key={index}
+                    className="relative flex items-center transition-all duration-600 ease-cubic-bezier(0.25, 0.1, 0.25, 1)"
+                    onMouseEnter={() => handleMouseEnter(index)}
+                    onMouseLeave={handleMouseLeave}
+                    onTransitionEnd={handleTransitionEnd}
+                  >
+                    <span
+                      className={`absolute left-12 transition-all duration-600 ease-cubic-bezier(0.25, 0.1, 0.25, 1) transform ${
+                        activeIndex === index
+                          ? "translate-x-0 opacity-100 delay-100"
+                          : "-translate-x-4 opacity-0"
+                      }`}
+                    >
+                      {association?.role}
+                    </span>
+
+                    <Avatar
+                      src={association?.profile_picture}
+                      alt={`Avatar of ${association.name}`}
+                      className={`h-12 w-12 rounded-full transition-transform duration-600 ease-cubic-bezier(0.25, 0.1, 0.25, 1) hover:scale-105 ${
+                        activeIndex === index ? "mr-16 delay-100" : "mr-0"
+                      }`}
+                    />
+                  </div>
+                ))}
               </div>
             </div>
 
@@ -169,14 +267,7 @@ function ProfileCard({ cardData }) {
               <h3 className="font-normal mb-2 text-sm text-gray-500">
                 Country Of Registration
               </h3>
-              {/* <a className="font-normal mb-2 text-sm text-gray-500">
-                Country Of Registration
-              </a> */}
 
-              {/* <a className="bg-gray-100 hover:bg-gray-200 text-sm w-full px-3 py-2 rounded border border-gray-200 text-left flex items-center">
-                <Add fontSize="small" className="mr-2" />
-                <span className="">{country_of_registration}</span>
-              </a> */}
               <div className="flex space-x-2">
                 <span className="bg-white border border-[#CDD5DF] text-[#364152] px-2 py-1 rounded-full text-sm">
                   {country_of_registration}
@@ -192,8 +283,9 @@ function ProfileCard({ cardData }) {
                     href={linkObj?.link?.[0]}
                     target="_blank"
                     rel="noopener noreferrer"
+                    className="flex items-center"
                   >
-                    {renderIconForLink(linkObj)}
+                    {getSocialLogo(linkObj?.link?.[0])}
                   </a>
                 ))}
               </div>

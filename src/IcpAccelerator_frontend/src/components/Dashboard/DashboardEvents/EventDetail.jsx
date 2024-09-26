@@ -212,6 +212,7 @@ console.log('cohortData',cohortData)
     tags,
     title,
   } = cohortData.cohort;
+  console.log("Line 215..............", cohortData.cohort_creator_data.email);
 console.log("Line 214",cohortData.cohort_creator_data.profile_picture
 )
   const Seats = Number(no_of_seats);
@@ -318,20 +319,19 @@ const ProfileImage =  profileimage && profileimage.length > 0
   return (
     <div className="flex flex-col">
       <div className="flex   w-full justify-between  my-2 py-3  -top-[1.2rem] md:-top-[0.2rem] bg-white sticky z-40">
-      <button
-        className=" flex mr-2 text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-2 rounded-md shadow-sm border border-gray-200"
-        onClick={() => navigate(-1)} 
-      >
-        <ArrowBack className="mr-1" />
-        <span className="hidden xxs1:block"> Back to profile</span>
-      </button>
+        <button
+          className=" flex mr-2 text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-2 rounded-md shadow-sm border border-gray-200"
+          onClick={() => navigate(-1)}
+        >
+          <ArrowBack className="mr-1" />
+          <span className="hidden xxs1:block"> Back to profile</span>
+        </button>
 
         <button
           className="flex items-center md:mr-4 text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-2 rounded-md shadow-sm border border-gray-200"
           onClick={() => setIsModalOpen(true)}
         >
-         
-        <span className="hidden xxs1:block">Share Cohort</span>  
+          <span className="hidden xxs1:block">Share Cohort</span>
           <span className="ml-1">{shareSvgIcon}</span>
         </button>
       </div>
@@ -369,11 +369,10 @@ const ProfileImage =  profileimage && profileimage.length > 0
                 ].map((item, index) => (
                   <React.Fragment key={item.label}>
                     <div className="text-center">
-                     
                       <div className="text-base lgx:text-xl font-bold bg-white rounded-lg p-1 lgx:p-2 min-w-[30px] lgx:min-w-[40px] max-w-[45px]">
                         {item.value}
                       </div>
-                     
+
                       <div className="text-[10px] lgx:text-sm text-gray-500 mt-1 max-w-[45px] truncate break-all">
                         {item.label}
                       </div>
@@ -401,16 +400,19 @@ const ProfileImage =  profileimage && profileimage.length > 0
                     color="#FFFFFF"
                     radius="9"
                     ariaLabel="three-dots-loading"
-                
-                    
                   />
                 ) : (
                   getButtonText(userCurrentRoleStatusActiveRole)
                 )}
               </button>
-             )}
+            )}
 
-            <button className="w-full border border-[#CDD5DF] bg-white text-gray-700 py-2 px-4 rounded-md hover:bg-gray-200 transition duration-300 mb-2 text-sm">
+            <button
+              className="w-full border border-[#CDD5DF] bg-white text-gray-700 py-2 px-4 rounded-md hover:bg-gray-200 transition duration-300 mb-2 text-sm"
+              onClick={() =>
+                (window.location.href = `mailto:${cohortData.cohort_creator_data.email}`)
+              }
+            >
               Contact organiser
             </button>
 
@@ -570,7 +572,6 @@ const ProfileImage =  profileimage && profileimage.length > 0
           </div>
         </div>
 
-    
         {/* mobile screen  */}
         <div className=" bg-white md:hidden  rounded-lg shadow-sm border border-gray-200 overflow-hidden w-full">
           {!showDetails ? (
@@ -744,8 +745,7 @@ const ProfileImage =  profileimage && profileimage.length > 0
         <div className="flex-1 w-full overflow-auto ">
           <div className="py-2">
             <img
-              src=
-              {bannerImage}
+              src={bannerImage}
               alt="Event"
               className="w-full h-[200px] rounded-lg lgx:h-[310px] object-cover"
               loading="lazy"
