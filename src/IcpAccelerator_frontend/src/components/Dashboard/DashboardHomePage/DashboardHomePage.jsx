@@ -57,6 +57,7 @@ useEffect(() => {
   const driverObj = driver({
     popoverClass: "driverjs-theme",
     showButtons: false,
+    allowClose: false,
     onPopoverRender: (popover) => {
       const skipButton = document.createElement("button");
       skipButton.innerText = "Skip";

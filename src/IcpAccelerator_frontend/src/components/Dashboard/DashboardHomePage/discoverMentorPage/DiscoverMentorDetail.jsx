@@ -210,8 +210,8 @@ const DiscoverMentorDetail = ({ projectDetails, userData }) => {
                 fontSize="small"
               />
               <span className="bg-[#F8FAFC] border border-[#E3E8EF] text-[#364152] px-2 py-0.5 rounded text-xs">
-                  HIDDEN
-                </span>
+                HIDDEN
+              </span>
             </div>
           </div>
 
@@ -231,7 +231,7 @@ const DiscoverMentorDetail = ({ projectDetails, userData }) => {
               About
             </h3>
 
-            <p className="text-sm">{userData?.bio[0] }</p>
+            <p className="text-sm">{userData?.bio[0]}</p>
           </div>
 
           <div className="mb-2 group relative hover:bg-gray-100 rounded-lg p-2 ">
@@ -317,18 +317,46 @@ const DiscoverMentorDetail = ({ projectDetails, userData }) => {
       ) : (
         <div className="p-6">
           <h3 className="text-gray-600 text-sm font-medium">ASSOCIATIONS</h3>
-          <div className="flex items-center space-x-2">
+          {/* <div className="flex items-center space-x-2">
             {mergedProfiles.map((association, index) => (
-              <div key={index} className="relative">
-                {/* Profile Picture with Hover Effect */}
+              <div key={index} className="relative flex items-center group">
                 <Avatar
                   src={association?.profile_picture}
                   className="h-12 w-12 rounded-full transition-transform duration-500 ease-in-out hover:scale-105"
                 />
-                {/* Role shown on hover using CSS */}
-                <span className="absolute left-12 top-2 opacity-0 transform transition-all duration-500 ease-in-out hover:opacity-100 hover:translate-x-2">
+
+                <span className="absolute left-14 opacity-0 transform transition-all duration-500 ease-in-out group-hover:opacity-100 group-hover:translate-x-2 whitespace-nowrap">
                   {association?.role}
                 </span>
+              </div>
+            ))}
+          </div> */}
+          <div className="flex items-center space-x-2">
+            {mergedProfiles.map((association, index) => (
+              <div
+                key={index}
+                className="relative flex items-center transition-all duration-600 ease-cubic-bezier(0.25, 0.1, 0.25, 1)"
+                onMouseEnter={() => handleMouseEnter(index)}
+                onMouseLeave={handleMouseLeave}
+                onTransitionEnd={handleTransitionEnd}
+              >
+                <span
+                  className={`absolute left-12 transition-all duration-600 ease-cubic-bezier(0.25, 0.1, 0.25, 1) transform ${
+                    activeIndex === index
+                      ? "translate-x-0 opacity-100 delay-100"
+                      : "-translate-x-4 opacity-0"
+                  }`}
+                >
+                  {association?.role}
+                </span>
+
+                <Avatar
+                  src={association?.profile_picture}
+                  alt={`Avatar of ${association.name}`}
+                  className={`h-12 w-12 rounded-full transition-transform duration-600 ease-cubic-bezier(0.25, 0.1, 0.25, 1) hover:scale-105 ${
+                    activeIndex === index ? "mr-16 delay-100" : "mr-0"
+                  }`}
+                />
               </div>
             ))}
           </div>

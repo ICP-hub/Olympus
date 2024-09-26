@@ -114,25 +114,25 @@ const ProfileDetail = () => {
   const handleSaveLink = (key) => {
     setIsEditingLink((prev) => ({
       ...prev,
-      [key]: false, // Exit editing mode for the saved link
+      [key]: false, 
     }));
   };
 
   // Handle adding new link from form field
   const handleSaveNewLink = (data, index) => {
-    const linkKey = `custom-link-${Date.now()}-${index}`; // Generate unique key
+    const linkKey = `custom-link-${Date.now()}-${index}`; 
     setSocialLinks((prevLinks) => ({
       ...prevLinks,
-      [linkKey]: data, // Add new link to socialLinks state
+      [linkKey]: data, 
     }));
-    remove(index); // Remove the field after saving
+    remove(index); 
   };
 
   // Toggle the editing of individual links
   const handleLinkEditToggle = (key) => {
     setIsEditingLink((prev) => ({
       ...prev,
-      [key]: !prev[key], // Toggle the edit state for each link
+      [key]: !prev[key], 
     }));
     setIsLinkBeingEdited(!isLinkBeingEdited);
   };
@@ -141,7 +141,7 @@ const ProfileDetail = () => {
   const handleLinkChange = (e, key) => {
     setSocialLinks((prev) => ({
       ...prev,
-      [key]: e.target.value, // Update the specific link's value
+      [key]: e.target.value, 
     }));
   };
 
@@ -149,7 +149,7 @@ const ProfileDetail = () => {
   const handleLinkDelete = (key) => {
     setSocialLinks((prev) => {
       const updatedLinks = { ...prev };
-      delete updatedLinks[key]; // Remove the link
+      delete updatedLinks[key]; 
       return updatedLinks;
     });
   };
@@ -462,6 +462,14 @@ const ProfileDetail = () => {
       childRef.current.coverCreationFunc(val);
     }
   };
+
+    const handleGetInTouchClick = () => {
+      if (email) {
+        window.location.href = `mailto:${email}`;
+      } else {
+        alert("Contact information is not available.");
+      }
+    };
   return (
     <div
       ref={containerRef}
@@ -535,6 +543,7 @@ const ProfileDetail = () => {
           </p>
           <button
             type="button"
+            onClick={handleGetInTouchClick}
             className="w-full h-[#155EEF] bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 mb-6 flex items-center justify-center"
           >
             Get in touch
@@ -571,6 +580,7 @@ const ProfileDetail = () => {
           </p>
           <button
             type="button"
+            onClick={handleGetInTouchClick}
             className="w-full h-[#155EEF] bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 mb-6 flex items-center justify-center"
           >
             Get in touch
@@ -608,6 +618,7 @@ const ProfileDetail = () => {
           </p>
           <button
             type="button"
+            onClick={handleGetInTouchClick}
             className="w-full h-[#155EEF] bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 mb-6 flex items-center justify-center"
           >
             Get in touch
@@ -637,7 +648,7 @@ const ProfileDetail = () => {
               className="hidden"
               id="cover"
               name="cover"
-              ref={inputRef} 
+              ref={inputRef}
               onChange={(e) => {
                 handleChangeCover(e.target.files[0]);
               }}
@@ -685,6 +696,7 @@ const ProfileDetail = () => {
           </p>
           <button
             type="button"
+            onClick={handleGetInTouchClick}
             className="w-full h-[#155EEF] bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 mb-6 flex items-center justify-center"
           >
             Get in touch
@@ -1904,7 +1916,7 @@ const ProfileDetail = () => {
                                   </div>
                                   <button
                                     type="button"
-                                    onClick={() => handleSaveLink(key)} // Save the link
+                                    onClick={() => handleSaveLink(key)} 
                                     className="ml-2 text-green-500 hover:text-green-700"
                                   >
                                     <FaSave />
@@ -1926,12 +1938,12 @@ const ProfileDetail = () => {
                                   rel="noopener noreferrer"
                                   className="flex items-center"
                                 >
-                                  {Icon} {/* Display the icon */}
+                                  {Icon} 
                                 </a>
                                 <button
                                   type="button"
                                   className="absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 translate-x-6 ease-in-out transform opacity-100 lgx:opacity-0 lgx:group-hover:opacity-100 md:group-hover:translate-x-6 h-10 w-7"
-                                  onClick={() => handleLinkEditToggle(key)} // Toggle editing mode for this link
+                                  onClick={() => handleLinkEditToggle(key)} 
                                 >
                                   <img
                                     src={edit}
@@ -1974,14 +1986,14 @@ const ProfileDetail = () => {
                                 type="button"
                                 onClick={() =>
                                   handleSaveNewLink(field.value, index)
-                                } // Save the new link
+                                } 
                                 className="ml-2 text-green-500 hover:text-green-700"
                               >
                                 <FaSave />
                               </button>
                               <button
                                 type="button"
-                                onClick={() => remove(index)} // Remove link field
+                                onClick={() => remove(index)} 
                                 className="ml-2 text-red-500 hover:text-red-700"
                               >
                                 <FaTrash />
@@ -2000,6 +2012,7 @@ const ProfileDetail = () => {
                           append({ link: "" });
                         }
                       }}
+
                       className="flex items-center p-1 text-[#155EEF]"
                     >
                       <FaPlus className="mr-1" /> Add Another Link
