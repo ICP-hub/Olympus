@@ -303,7 +303,7 @@ const AssociationRecieverDataFromProject = ({
         onClick={() => setOpenDetail(true)}
       >
         <img
-          src={userProfilePicture}
+          src={senderProfilePicture}
           alt="projectLogo"
           className="w-24 h-24 rounded-full object-cover"
           loading="lazy"
@@ -319,12 +319,25 @@ const AssociationRecieverDataFromProject = ({
   </div>
 
   <div className="flex-grow mt-4 md:mt-0 ml-0 md:ml-[25px]  w-full ">
+
+    <div>
+      <div className="flex flex-col md:flex-row justify-between w-full ">
+        <div>
+        <h3 className="text-xl font-bold line-clamp-1 break-all">
+          {senderFullName}
+       
+          </h3>
+          </div>
+          <div>
+        <span className="mr-2 mb-2 text-[#016AA2] px-3 py-1 rounded-full bg-gray-100 text-sm md:line-clamp-1 break-all">
+
     <div className="flex w-full mt-2 flex-wrap md:flex-nowrap md:mt-0 lg:flex-wrap xl:flex-nowrap xl:mt-0 sm2:justify-between items-start mb-2">
       <div>
         <h3 className="text-xl font-bold line-clamp-1 break-all">{userUserName}</h3>
         <span className="text-gray-500 line-clamp-1 break-all">@{userEmail}</span>
       </div>
       <span className="mr-2 mb-2 text-[#016AA2] px-3 py-1 rounded-full bg-gray-100 text-sm">
+
         {activeTabData === "pending" ? (
           <span className="font-semibold">{timestampAgo(sentAt)}</span>
         ) : activeTabData === "approved" ? (
@@ -335,16 +348,22 @@ const AssociationRecieverDataFromProject = ({
           <span className="font-semibold">{timestampAgo(selfDeclinedAt)}</span>
         ) : null}
       </span>
+      </div>
+      </div>
+      <span className="text-gray-500 line-clamp-1 break-all">@{senderEmail}</span>
+
     </div>
 
     <div className="border-t border-gray-200 mt-3"></div>
 
-    <p className="text-gray-600 my-2 break-all line-clamp-2 ">
-      {parse(userBio)}
+
+    <p className="text-gray-600 my-2 break-all line-clamp-1 ">
+      {parse(senderBio)}
+
     </p>
     <div className="flex items-center text-sm text-gray-500 flex-wrap py-2">
-      {userAreaOfInterest &&
-        userAreaOfInterest
+      {senderAreaOfInterest &&
+        senderAreaOfInterest
           .split(",")
           .slice(0, 2)
           .map((tag, index) => (
@@ -358,7 +377,7 @@ const AssociationRecieverDataFromProject = ({
 
       <span className="mr-2 mb-2 flex text-[#121926] items-center">
         <PlaceOutlinedIcon className="text-[#364152] mr-1 w-4 h-4" />
-        {userCountry}
+        {senderCountry}
       </span>
     </div>
     
