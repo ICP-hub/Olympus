@@ -312,6 +312,7 @@ import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 
 const DiscoverMentorPage = ({
   openDetail,
+  setOpenDetails,
   setOpenDetail,
   projectDetails,
   projectId,
@@ -349,6 +350,10 @@ const DiscoverMentorPage = ({
   const handleChange = (tab) => {
     setActiveTab(tab);
   };
+  const handleclose=()=>{
+    setOpenDetails(false)
+    setOpenDetail(false)
+  }
 
   return (
     <div
@@ -364,7 +369,7 @@ const DiscoverMentorPage = ({
         <div className="p-2 mb-2">
           <CloseIcon
             sx={{ cursor: "pointer" }}
-            onClick={() => setOpenDetail(false)}
+            onClick={() => handleclose()}
           />
         </div>
 

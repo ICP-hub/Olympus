@@ -223,8 +223,8 @@ const DiscoverInvestor = ({ onInvestorCountChange }) => {
                 <div className="flex-grow sm:ml-[25px] mt-5 md1:mt-0 w-full ">
                   <div className="flex justify-between items-start mb-2">
                     <div>
-                      <h3 className="text-xl font-bold">{full_name}</h3>
-                      <p className="text-gray-500">@{openchat_name}</p>
+                      <h3 className="text-xl line-clamp-1 break-all font-bold">{full_name}</h3>
+                      <p className="text-gray-500 line-clamp-1 break-all">@{openchat_name}</p>
                     </div>
                     {userCurrentRoleStatusActiveRole === "project" ? (
                       <button
@@ -258,11 +258,11 @@ const DiscoverInvestor = ({ onInvestorCountChange }) => {
                     </span>
                   )} */}
                   </div>
-                  <div className="border-t border-gray-200 my-3 line-clamp-1">
+                  <div className="border-t border-gray-200 my-3 break-all line-clamp-1">
                     {email}
                   </div>
 
-                  <p className="text-gray-600 mb-2 line-clamp-3">{bio}</p>
+                  <p className="text-gray-600 mb-2 break-all line-clamp-3">{bio}</p>
                   <div className="flex items-center text-sm text-gray-500 flex-wrap gap-1">
                     <div className="flex overflow-x-auto space-x-2">
                       {randomSkills?.map((skill, index) => (

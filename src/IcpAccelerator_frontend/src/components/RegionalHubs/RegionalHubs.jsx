@@ -342,10 +342,10 @@ console.log("hub data ",allHubsData)
   }, [actor]);
 
   return (
-    <div className="container mx-auto mb-5 bg-white">
-      <div className="flex justify-start items-center h-11 bg-opacity-95 -top-[.60rem] p-10 px-0 sticky bg-white z-20">
+    <div className="container mx-auto mb-5 px-6 bg-white">
+      <div className="flex justify-start items-center h-11 bg-opacity-95 -top-[.60rem] p-10 px-1 sticky bg-white z-20">
         <div className="flex justify-between w-full">
-          <h2 className="text-2xl font-bold">Discover Regional Hubs</h2>
+          <h2 className="text-3xl font-bold">Discover Regional Hubs</h2>
           <button
             onClick={() => setIsModalOpen(true)}
             className="border-2 px-2 border-black py-1"

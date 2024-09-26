@@ -81,7 +81,7 @@ const UserDetailPage = ({ openDetail, setOpenDetail, principal,userData,email })
             <UserDetail projectData={allProjectData} />
             </div>
             <div className="px-1 lg1:px-3 py-4 lg1:py-0 w-full lg1:mt-0 lg1:overflow-y-scroll lg1:w-[63%]">
-            <UserProjectCard projectData={allProjectData} principal={principal} userData={userData}/>
+            <UserProjectCard setOpenDetails={setOpenDetail} projectData={allProjectData} principal={principal} userData={userData}/>
             </div>
           </div>
         </div>
