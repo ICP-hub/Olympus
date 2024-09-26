@@ -61,6 +61,7 @@ const DocumentCard = ({ doc, type }) => {
 };
 
 const DiscoverDocument = ({ projectDetails, projectId }) => {
+  console.log("projectdetail on discoverdocument",projectDetails)
   const actor = useSelector((currState) => currState.actors.actor);
   const [loading, setLoading] = useState(false); // State to manage loading
   const userCurrentRoleStatusActiveRole = useSelector(
