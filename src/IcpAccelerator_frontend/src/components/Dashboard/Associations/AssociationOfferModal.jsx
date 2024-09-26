@@ -374,11 +374,11 @@ import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import DiscoverDocument from "../DashboardHomePage/discoverMentorPage/DiscoverDocument";
 import DiscoverTeam from "../DashboardHomePage/discoverMentorPage/DiscoverTeam";
 import DiscoverRatings from "../../Discover/DiscoverRatings";
-import DiscoverMoneyRaising from "../Project/DiscoverFundingCard";
 import DiscoverReview from "../../Discover/DiscoverReview";
+import DiscoverMoneyRaising from "../Project/DiscoverMoneyRais";
 
 const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
-  console.log("user data =>", user);
+  console.log("user data.................... =>", user);
 
   useEffect(() => {
     if (openDetail) {
@@ -590,7 +590,10 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
         } z-20`}
       >
         <div className="p-2 mb-2">
-          <CloseIcon sx={{ cursor: "pointer" }} onClick={() => setOpenDetail(false)} />
+          <CloseIcon
+            sx={{ cursor: "pointer" }}
+            onClick={() => setOpenDetail(false)}
+          />
         </div>
 
         <div className="container mx-auto h-full pb-8 px-[4%] sm:px-[2%] overflow-y-scroll">
@@ -608,114 +611,120 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
                 </div>
 
                 <div className="flex items-center justify-center mb-1">
-                  <VerifiedIcon className="text-blue-500 mr-1" fontSize="small" />
+                  <VerifiedIcon
+                    className="text-blue-500 mr-1"
+                    fontSize="small"
+                  />
                   <h2 className="text-xl font-semibold">{senderFullName}</h2>
                 </div>
-                <p className="text-gray-600 text-center mb-4">{senderUserName} </p>
+                <p className="text-gray-600 text-center mb-4">
+                  {senderUserName}{" "}
+                </p>
                 <a
                   href={`mailto:${senderEmail}`}
                   className="w-full h-[#155EEF] bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 mb-6 flex items-center justify-center"
                 >
                   Get in touch
                   <ArrowOutwardOutlinedIcon className="ml-1" fontSize="small" />
-
                 </a>
               </div>
               <div className="p-6 bg-white">
-                  <div className="mb-4">
+                <div className="mb-4">
+                  <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
+                    Roles
+                  </h3>
+                  <div className="flex space-x-2">
+                    <span className="bg-[#F0F9FF] border border-[#B9E6FE] text-[#026AA2] px-1 py-1 rounded-md text-xs font-normal">
+                      {/* {projectId ? "Project" : "User"} */}
+                    </span>
+                  </div>
+                </div>
+                <hr />
+
+                <div className=" ">
+                  <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-2 ">
                     <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
-                      Roles
+                      Email
                     </h3>
-                    <div className="flex space-x-2">
-                      <span className="bg-[#F0F9FF] border border-[#B9E6FE] text-[#026AA2] px-1 py-1 rounded-md text-xs font-normal">
-                        {/* {projectId ? "Project" : "User"} */}
+
+                    <div className="flex items-center flex-wrap">
+                      <p className="mr-2 text-sm">{senderEmail}</p>
+                      <VerifiedIcon
+                        className="text-blue-500 mr-2 w-2 h-2"
+                        fontSize="small"
+                      />
+                      <span className="bg-[#F8FAFC] border border-[#E3E8EF] text-[#364152] px-2 py-0.5 rounded text-xs">
+                        HIDDEN
                       </span>
                     </div>
                   </div>
-                  <hr />
 
-                  <div className=" ">
-                    <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-2 ">
-                      <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
-                        Email
-                      </h3>
-
-                      <div className="flex items-center flex-wrap">
-                        <p className="mr-2 text-sm">{senderEmail}</p>
-                        <VerifiedIcon
-                          className="text-blue-500 mr-2 w-2 h-2"
-                          fontSize="small"
-                        />
-                        <span className="bg-[#F8FAFC] border border-[#E3E8EF] text-[#364152] px-2 py-0.5 rounded text-xs">
-                          HIDDEN
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* About Section */}
-                    <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-1 ">
-                      <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
-                        About
-                      </h3>
-                      <div>
-                        <p className="text-sm overflow-hidden line-clamp-2 text-ellipsis max-h-[1.75rem]">{senderBio}</p>
-                      </div>
-                    </div>
-
-                    <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-1 ">
-                      <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
-                        Reason to Join Platform
-                      </h3>
-                      <div>
-                        <div className="flex flex-wrap gap-2">
-                          {senderReasonToJoin.map((reason) => (
-                            <span
-                              key={reason}
-                              className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 "
-                            >
-                              {reason}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Location Section */}
-                    <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-1 ">
-                      <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
-                        Location
-                      </h3>
-                      <div className="flex gap-4">
-                        <PlaceOutlinedIcon
-                          sx={{ fontSize: "medium", marginTop: "3px" }}
-                        />
-                        <p className="text-sm">{senderCountry}</p>
-                      </div>
-                    </div>
-
+                  {/* About Section */}
+                  <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-1 ">
+                    <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
+                      About
+                    </h3>
                     <div>
-                      {senderSocialLinks && (
-                        <h3 className="mb-2 text-xs text-gray-500 font-medium ">
-                          LINKS
-                        </h3>
-                      )}
+                      <p className="text-sm overflow-hidden line-clamp-2 text-ellipsis max-h-[1.75rem]">
+                        {senderBio}
+                      </p>
+                    </div>
+                  </div>
 
-                      <div className="flex items-center ">
-                        <div className="flex gap-3">
-                          {senderSocialLinks
-                            ? senderSocialLinks?.map((link, i) => {
-                                const icon = getSocialLogo(link);
-                                return (
-                                  <div
-                                    key={i}
-                                    className="flex items-center space-x-2"
-                                  >
-                                     {icon ? <a href={`${link}`}>{icon}</a> : ""}
-                                  </div>
-                                );
-                              })
-                            : ""}
-                            {/* {senderSocialLinks?.link.map((alllink, i) => {
+                  <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-1 ">
+                    <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
+                      Reason to Join Platform
+                    </h3>
+                    <div>
+                      <div className="flex flex-wrap gap-2">
+                        {senderReasonToJoin.map((reason) => (
+                          <span
+                            key={reason}
+                            className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 "
+                          >
+                            {reason}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Location Section */}
+                  <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-1 ">
+                    <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
+                      Location
+                    </h3>
+                    <div className="flex gap-4">
+                      <PlaceOutlinedIcon
+                        sx={{ fontSize: "medium", marginTop: "3px" }}
+                      />
+                      <p className="text-sm">{senderCountry}</p>
+                    </div>
+                  </div>
+
+                  <div>
+                    {senderSocialLinks && (
+                      <h3 className="mb-2 text-xs text-gray-500 font-medium ">
+                        LINKS
+                      </h3>
+                    )}
+
+                    <div className="flex items-center ">
+                      <div className="flex gap-3">
+                        {senderSocialLinks
+                          ? senderSocialLinks?.map((link, i) => {
+                              const icon = getSocialLogo(link);
+                              return (
+                                <div
+                                  key={i}
+                                  className="flex items-center space-x-2"
+                                >
+                                  {icon ? <a href={`${link}`}>{icon}</a> : ""}
+                                </div>
+                              );
+                            })
+                          : ""}
+                        {/* {senderSocialLinks?.link.map((alllink, i) => {
                 const icon = getSocialLogo(alllink);
                 return (
                   <div key={i} className="flex items-center space-x-2">
@@ -723,21 +732,21 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
                   </div>
                 );
               })} */}
-                        </div>
                       </div>
-                      <div className="my-2 group relative hover:bg-gray-100 rounded-lg p-1 ">
+                    </div>
+                    <div className="my-2 group relative hover:bg-gray-100 rounded-lg p-1 ">
                       <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
                         Proposed By {senderFullName}
                       </h3>
                       <div>
-                        <p className="text-sm overflow-hidden line-clamp-2 text-ellipsis ">{offer}</p>
+                        <p className="text-sm overflow-hidden line-clamp-2 text-ellipsis ">
+                          {offer}
+                        </p>
                       </div>
                     </div>
-                    </div>
-                    </div>
-                    </div>
-                
-          
+                  </div>
+                </div>
+              </div>
             </div>
 
             <div className="px-1 lg1:px-3 py-4 lg1:py-0 w-full lg1:overflow-y-scroll lg1:w-[63%] ">
@@ -750,11 +759,18 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
                       onClick={() => handleMobileTabToggle("document")}
                     >
                       Document
-                      {activeMobileTab === "document" ? <FaChevronUp /> : <FaChevronDown />}
+                      {activeMobileTab === "document" ? (
+                        <FaChevronUp />
+                      ) : (
+                        <FaChevronDown />
+                      )}
                     </button>
                     {activeMobileTab === "document" && (
                       <div className="px-2 py-2">
-                        <DiscoverDocument projectDetails={senderDataProject} projectId={projectid} />
+                        <DiscoverDocument
+                          projectDetails={senderDataProject}
+                          projectId={projectid}
+                        />
                       </div>
                     )}
                   </div>
@@ -767,7 +783,11 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
                       onClick={() => handleMobileTabToggle("team")}
                     >
                       Team
-                      {activeMobileTab === "team" ? <FaChevronUp /> : <FaChevronDown />}
+                      {activeMobileTab === "team" ? (
+                        <FaChevronUp />
+                      ) : (
+                        <FaChevronDown />
+                      )}
                     </button>
                     {activeMobileTab === "team" && (
                       <div className="px-2 py-2">
@@ -784,11 +804,18 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
                       onClick={() => handleMobileTabToggle("ratings")}
                     >
                       Ratings
-                      {activeMobileTab === "ratings" ? <FaChevronUp /> : <FaChevronDown />}
+                      {activeMobileTab === "ratings" ? (
+                        <FaChevronUp />
+                      ) : (
+                        <FaChevronDown />
+                      )}
                     </button>
                     {activeMobileTab === "ratings" && (
                       <div className="px-2 py-2">
-                        <DiscoverRatings userData={senderDataUser} principalId={senderPrincipal} />
+                        <DiscoverRatings
+                          userData={senderDataUser}
+                          principalId={senderPrincipal}
+                        />
                       </div>
                     )}
                   </div>
@@ -801,11 +828,18 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
                       onClick={() => handleMobileTabToggle("moneyraised")}
                     >
                       Money Raised
-                      {activeMobileTab === "moneyraised" ? <FaChevronUp /> : <FaChevronDown />}
+                      {activeMobileTab === "moneyraised" ? (
+                        <FaChevronUp />
+                      ) : (
+                        <FaChevronDown />
+                      )}
                     </button>
                     {activeMobileTab === "moneyraised" && (
                       <div className="px-2 py-2">
-                        <DiscoverMoneyRaising cardData={senderDataProject} projectId={projectid} />
+                        <DiscoverMoneyRaising
+                          cardData={senderDataProject?.params}
+                          projectId={projectid}
+                        />
                       </div>
                     )}
                   </div>
@@ -818,11 +852,18 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
                       onClick={() => handleMobileTabToggle("review")}
                     >
                       Review
-                      {activeMobileTab === "review" ? <FaChevronUp /> : <FaChevronDown />}
+                      {activeMobileTab === "review" ? (
+                        <FaChevronUp />
+                      ) : (
+                        <FaChevronDown />
+                      )}
                     </button>
                     {activeMobileTab === "review" && (
                       <div className="px-2 py-2">
-                        <DiscoverReview userData={senderDataUser} principalId={senderPrincipal} />
+                        <DiscoverReview
+                          userData={senderDataUser}
+                          principalId={senderPrincipal}
+                        />
                       </div>
                     )}
                   </div>
@@ -900,19 +941,31 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
               {/* Desktop Tab Content */}
               <div className="hidden md1:block mb-4">
                 {activeTab === "document" && (
-                  <DiscoverDocument projectDetails={senderDataProject} projectId={projectid} />
+                  <DiscoverDocument
+                    projectDetails={senderDataProject}
+                    projectId={projectid}
+                  />
                 )}
                 {activeTab === "team" && (
                   <DiscoverTeam projectDetails={senderDataProject} />
                 )}
                 {activeTab === "ratings" && (
-                  <DiscoverRatings userData={senderDataUser} principalId={senderPrincipal} />
+                  <DiscoverRatings
+                    userData={senderDataUser}
+                    principalId={senderPrincipal}
+                  />
                 )}
                 {activeTab === "moneyraised" && (
-                  <DiscoverMoneyRaising data={senderDataProject} projectId={projectid} />
+                  <DiscoverMoneyRaising
+                    cardData={senderDataProject?.params}
+                    projectId={projectid}
+                  />
                 )}
                 {activeTab === "review" && (
-                  <DiscoverReview userData={senderDataUser} principalId={senderPrincipal} />
+                  <DiscoverReview
+                    userData={senderDataUser}
+                    principalId={senderPrincipal}
+                  />
                 )}
               </div>
             </div>

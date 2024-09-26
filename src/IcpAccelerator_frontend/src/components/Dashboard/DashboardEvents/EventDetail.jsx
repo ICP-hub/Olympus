@@ -23,6 +23,7 @@ import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { shareSvgIcon } from "../../Utils/Data/SvgData";
 import ShareModal from "./EventshareModel";
 import {useNavigate} from "react-router-dom"
+import DiscoverUserModal from "../DashboardHomePage/discoverMentorPage/DiscoverUserModal";
 
 
 const FAQItem = ({ question, answer }) => {
@@ -95,6 +96,8 @@ const EventDetails = () => {
       });
     }
   };
+
+
  const [showDetails, setShowDetails] = useState(false);
 
  const handleToggle = () => {
@@ -109,7 +112,13 @@ const EventDetails = () => {
     seconds: 0,
   });
   const [difference, setDifference] = useState(null);
-
+    const [openDetail, setOpenDetail] = useState(false);
+    const [cardDetail, setCadDetail] = useState(null);
+    const handleClick = (cohortData) => {
+      setOpenDetail(true);
+      setCadDetail(cohortData);
+      console.log("cardDetail => ", cardDetail);
+    };
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentTab, setCurrentTab] = useState("Summary");
   const cohortCreator = cohortData?.cohort_creator.toText() === principal;
@@ -315,6 +324,7 @@ const ProfileImage =  profileimage && profileimage.length > 0
     }
   };
 
+  
  const shareUrl = `${window.location.origin}/dashboard/single-event${cohort_id}`;
   return (
     <div className="flex flex-col">
@@ -345,6 +355,7 @@ const ProfileImage =  profileimage && profileimage.length > 0
                 className="w-14 h-14 rounded-full mr-3"
                 loading="lazy"
                 draggable={false}
+                onClick={() => handleClick(cohortData?.cohort_creator_data)}
               />
               <div>
                 <h2 className="text-lg font-medium">
@@ -837,6 +848,13 @@ const ProfileImage =  profileimage && profileimage.length > 0
       <Toaster />
       {isModalOpen && (
         <ShareModal onClose={() => setIsModalOpen(false)} shareUrl={shareUrl} />
+      )}
+      {openDetail && (
+        <DiscoverUserModal
+          openDetail={openDetail}
+          setOpenDetail={setOpenDetail}
+          userData={cardDetail}
+        />
       )}
     </div>
   );
