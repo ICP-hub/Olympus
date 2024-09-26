@@ -4,7 +4,7 @@ import DiscoverMentorPage from "./discoverMentorPage/DiscoverMentorPage";
 import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 import parse from "html-react-parser";
 
-const UserProjectCard = ({ projectData, userData, principal }) => {
+const UserProjectCard = ({setOpenDetails, projectData, userData, principal }) => {
   console.log("PRINCIPAL IN PROJECT PAGE", principal);
   console.log("USER DATA IN PROJECT PAGE", userData);
   console.log("PROJECT DATA IN LINE 10", projectData);
@@ -97,7 +97,7 @@ const UserProjectCard = ({ projectData, userData, principal }) => {
             draggable={false}
           />
         </div>
-        <div className="w-full pl-4 sm0:pl-0 sm0:w-3/4">
+        <div className="w-full pl-4 px-2 sm0:pl-0 sm0:w-3/4">
           <h3 className="text-lg font-bold text-gray-900 line-clamp-1">
             {projectDetails?.project_name}
           </h3>
@@ -120,6 +120,7 @@ const UserProjectCard = ({ projectData, userData, principal }) => {
       {openDetail && (
         <DiscoverMentorPage
           openDetail={openDetail}
+          setOpenDetails={setOpenDetails}
           setOpenDetail={setOpenDetail}
           projectDetails={projectDetails}
           projectId={projectId}

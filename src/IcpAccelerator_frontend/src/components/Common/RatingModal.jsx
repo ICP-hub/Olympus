@@ -114,7 +114,7 @@ const RatingModal = ( {showRating, setShowRatingModal, userRatingDetail, cardPri
         showRating ? "block" : "hidden"
       }`}
     >
-      <div className="bg-white rounded-lg overflow-hidden shadow-lg w-[500px]">
+      <div className="bg-white rounded-lg overflow-hidden mx-4 shadow-lg w-[500px]">
         <div className="flex justify-end mr-4">
           <button
             className="text-3xl text-[#121926]"

@@ -32,7 +32,7 @@ const EventMain = () => {
       </div>
       <div className="flex flex-col md:flex-row ">
       
-        <div className="w-full md:w-[70%] lg:w-full lgx:w-[70%] pr-6">
+        <div className="w-full md:w-[70%] lg:w-full lgx:w-[70%] md:pr-6 lg:pr-0 lgx:pr-6">
           
               <EventCard  selectedEventType={selectedEventType} />
         </div>

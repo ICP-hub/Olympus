@@ -163,7 +163,7 @@ const Jobs = () => {
           </div>
         </div> */}
         <div className="flex justify-between sticky -top-[1.1rem] md:top-0 bg-opacity-95 -mt-[1.1rem] md:mt-0   bg-white z-20">
-          <h1 className="text-3xl font-bold p-4 px-0 ">Jobs</h1>
+          <h1 className="text-3xl font-bold p-4  ">Jobs</h1>
 
           <div className=" block md1:hidden lg:block lgx:hidden ">
             <button

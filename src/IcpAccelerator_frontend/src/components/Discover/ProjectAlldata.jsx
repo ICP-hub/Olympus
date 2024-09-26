@@ -367,7 +367,7 @@ let cohort_id=[];
 
                   {/* <div className="border-t border-gray-200 my-3">{email}</div> */}
 
-                  <p className="text-gray-600 mb-4 line-clamp-3  ">
+                  <p className="text-gray-600 mb-4 line-clamp-3 break-all ">
                     {" "}
                     {parse(projectdescription)}
                   </p>
