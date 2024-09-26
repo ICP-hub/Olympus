@@ -97,7 +97,7 @@ function DocumentSection() {
           <div className="w-full">
             {activeTab === "document" && (
               <>
-                <div className="p-6">
+                <div className="py-6">
                   <NewDocument
                     visibility="Visible to public"
                     selectedOption={selectedOption}

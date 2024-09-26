@@ -316,50 +316,45 @@ const DiscoverMentorDetail = ({ projectDetails, userData }) => {
         </div>
       ) : (
         <div className="p-6">
-          <h3 className="text-gray-600 text-sm font-medium">ASSOCIATIONS</h3>
-          {/* <div className="flex items-center space-x-2">
-            {mergedProfiles.map((association, index) => (
-              <div key={index} className="relative flex items-center group">
-                <Avatar
-                  src={association?.profile_picture}
-                  className="h-12 w-12 rounded-full transition-transform duration-500 ease-in-out hover:scale-105"
-                />
+          {mergedProfiles && mergedProfiles.length > 0 && (
+            <>
+              <h3 className="text-gray-600 text-sm font-medium">
+                ASSOCIATIONS
+              </h3>
+              <div className="flex items-center space-x-2">
+                {mergedProfiles
+                  .filter((association) => association.profile_picture) 
+                  .map((association, index) => (
+                    <div
+                      key={index}
+                      className="relative flex items-center transition-all duration-600 ease-cubic-bezier(0.25, 0.1, 0.25, 1)"
+                      onMouseEnter={() => handleMouseEnter(index)}
+                      onMouseLeave={handleMouseLeave}
+                      onTransitionEnd={handleTransitionEnd}
+                    >
+                      <span
+                        className={`absolute left-12 transition-all duration-600 ease-cubic-bezier(0.25, 0.1, 0.25, 1) transform ${
+                          activeIndex === index
+                            ? "translate-x-0 opacity-100 delay-100"
+                            : "-translate-x-4 opacity-0"
+                        }`}
+                      >
+                        {association?.role}
+                      </span>
 
-                <span className="absolute left-14 opacity-0 transform transition-all duration-500 ease-in-out group-hover:opacity-100 group-hover:translate-x-2 whitespace-nowrap">
-                  {association?.role}
-                </span>
+                      <Avatar
+                        src={association.profile_picture}
+                        alt={`Avatar of ${association.name}`}
+                        className={`h-12 w-12 rounded-full transition-transform duration-600 ease-cubic-bezier(0.25, 0.1, 0.25, 1) hover:scale-105 ${
+                          activeIndex === index ? "mr-16 delay-100" : "mr-0"
+                        }`}
+                      />
+                    </div>
+                  ))}
               </div>
-            ))}
-          </div> */}
-          <div className="flex items-center space-x-2">
-            {mergedProfiles.map((association, index) => (
-              <div
-                key={index}
-                className="relative flex items-center transition-all duration-600 ease-cubic-bezier(0.25, 0.1, 0.25, 1)"
-                onMouseEnter={() => handleMouseEnter(index)}
-                onMouseLeave={handleMouseLeave}
-                onTransitionEnd={handleTransitionEnd}
-              >
-                <span
-                  className={`absolute left-12 transition-all duration-600 ease-cubic-bezier(0.25, 0.1, 0.25, 1) transform ${
-                    activeIndex === index
-                      ? "translate-x-0 opacity-100 delay-100"
-                      : "-translate-x-4 opacity-0"
-                  }`}
-                >
-                  {association?.role}
-                </span>
+            </>
+          )}
 
-                <Avatar
-                  src={association?.profile_picture}
-                  alt={`Avatar of ${association.name}`}
-                  className={`h-12 w-12 rounded-full transition-transform duration-600 ease-cubic-bezier(0.25, 0.1, 0.25, 1) hover:scale-105 ${
-                    activeIndex === index ? "mr-16 delay-100" : "mr-0"
-                  }`}
-                />
-              </div>
-            ))}
-          </div>
           <div className="mt-4">
             <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
               Project Name

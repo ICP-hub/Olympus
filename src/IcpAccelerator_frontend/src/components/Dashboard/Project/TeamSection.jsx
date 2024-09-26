@@ -10,27 +10,38 @@ import { Principal } from "@dfinity/principal";
 import toast, { Toaster } from "react-hot-toast";
 import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 import DeleteModel from "./DeleteModel";
+import NoDataFound from "../DashboardEvents/NoDataFound";
+import NoData from "../../NoDataCard/NoData";
+
 const TeamMember = ({ cardData, onDelete }) => {
   const projectTeam = cardData?.[0]?.[0]?.params?.project_team;
 
+  const hasTeamMembers =
+    projectTeam &&
+    Array.isArray(projectTeam) &&
+    projectTeam.length > 0 &&
+    projectTeam.some(
+      (teamMember) => Array.isArray(teamMember) && teamMember.length > 0
+    );
+
   return (
     <>
-      {projectTeam?.map((teamMember, index) => {
-        if (!teamMember || !teamMember[0]) {
-          return null;
-        }
-        const member = teamMember[0];
-        const result = member?.member_data;
-        const principle = member?.member_principal;
-        if (!result) return null;
+      {hasTeamMembers ? (
+        projectTeam.map((teamMember, index) => {
+          if (!teamMember || teamMember.length === 0 || !teamMember[0]) {
+            return null;
+          }
+          const member = teamMember[0];
+          const result = member?.member_data;
+          const principle = member?.member_principal;
+          if (!result) return null;
 
-        const name = result?.full_name ?? "Unnamed Member";
-        const avatar = result?.profile_picture?.[0]
-          ? uint8ArrayToBase64(result.profile_picture[0])
-          : "../../../../assets/Logo/ProfileImage.png";
+          const name = result?.full_name ?? "Unnamed Member";
+          const avatar = result?.profile_picture?.[0]
+            ? uint8ArrayToBase64(result.profile_picture[0])
+            : "../../../../assets/Logo/ProfileImage.png";
 
-        return (
-          <>
+          return (
             <div
               key={index}
               className="relative overflow-x-auto shadow-md sm:rounded-lg w-full max-w-full"
@@ -100,16 +111,15 @@ const TeamMember = ({ cardData, onDelete }) => {
                 </tbody>
               </table>
             </div>
-          </>
-        );
-      }) ?? (
-        <div>
-          <h1>No result</h1>
-        </div>
+          );
+        })
+      ) : (
+        <NoData message="No Team member available" />
       )}
     </>
   );
 };
+
 
 function TeamSection({ data, cardData }) {
   const [isAddTeamModalOpen, setIsAddTeamModalOpen] = useState(false);
