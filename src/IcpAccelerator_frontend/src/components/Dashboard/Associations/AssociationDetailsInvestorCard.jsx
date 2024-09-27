@@ -15,12 +15,15 @@ import timestampAgo from "../../Utils/navigationHelper/timeStampAgo";
 import AssociationRecieverMentorDataToProject from "./AssociationRecieverDataToProject ";
 import AssociationRecieverDataToProject from "./AssociationRecieverDataToProject ";
 import AssociationRecieverDataFromProject from "./AssociationRecieverDataFromProject";
+import fetchRequestAssociation from "../../Utils/apiNames/getAssociationApiName";
 
 const AssociationDetailsInvestorCard = ({
   user,
   index,
   selectedTypeData,
   activeTabData,
+  associateData,
+  setAssociateData,
 }) => {
   console.log("selectedTypeData", selectedTypeData);
   const actor = useSelector((currState) => currState.actors.actor);
@@ -96,7 +99,27 @@ const AssociationDetailsInvestorCard = ({
     try {
       const result = await actor.self_decline_request_from_investor_to_project(offerDataId);
       console.log(`result-in-self_decline_request_from_investor_to_project`, result);
-    //   fetchPendingRequestFromInvestorToProject();
+      if (result){
+        if (result){
+          // handleAcceptModalCloseHandler();
+          const response = fetchRequestAssociation(
+            "self-reject",
+            "from-project",
+            "vc",
+            null,
+            covertedPrincipal,
+            actor
+          );
+         const resultData = await response.api_data;
+          setAssociateData(resultData);
+          setIsSubmitting(false);
+        }else{
+          // handleAcceptModalCloseHandler();
+          setAssociateData([]);
+          setIsSubmitting(false);
+        }
+      }
+
     } catch (error) {
       console.log(`error-in-self_decline_request_from_investor_to_project`, error);
     }
@@ -127,9 +150,24 @@ const AssociationDetailsInvestorCard = ({
         message
       );
       console.log(`result-in-accept_offer_from_project_to_investor`, result);
+      if (result){
       handleAcceptModalCloseHandler();
-    //   fetchPendingRequestFromProjectToInvestor();
+      const response = fetchRequestAssociation(
+        "approved",
+        "from-project",
+        "vc",
+        null,
+        covertedPrincipal,
+        actor
+      );
+     const resultData = await response.api_data;
+      setAssociateData(resultData);
       setIsSubmitting(false);
+    }else{
+      handleAcceptModalCloseHandler();
+      setAssociateData([]);
+      setIsSubmitting(false);
+    }
     } catch (error) {
       console.log(`error-in-accept_offer_from_project_to_investor`, error);
       handleAcceptModalCloseHandler();
@@ -146,9 +184,24 @@ const AssociationDetailsInvestorCard = ({
         message
       );
       console.log(`result-in-decline_offer_from_project_to_investor`, result);
+      if (result){
       handleDeclineModalCloseHandler();
-    //   fetchPendingRequestFromProjectToInvestor();
+      const response = fetchRequestAssociation(
+        "declined",
+        "from-project",
+        "vc",
+        null,
+        covertedPrincipal,
+        actor
+      );
+     const resultData = await response.api_data;
+      setAssociateData(resultData);
     setIsSubmitting(false);
+      }else{
+      handleDeclineModalCloseHandler();
+      setAssociateData([]);
+      setIsSubmitting(false);
+      }
     } catch (error) {
       console.log(`error-in-decline_offer_from_project_to_investor`, error);
       handleDeclineModalCloseHandler();

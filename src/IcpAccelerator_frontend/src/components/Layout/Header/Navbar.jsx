@@ -6,6 +6,8 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
 import { homepagedata } from "../../Utils/jsondata/data/homepageData";
 import logo from "../../../../assets/images/navlogo.png"
+import logo1 from "../../../../assets/Logo/newLogo.png";
+
 const Navbar = ({ setModalOpen }) => {
   const { navbar } = homepagedata;
 
@@ -42,17 +44,17 @@ const Navbar = ({ setModalOpen }) => {
                 <Link to="/">
                   {" "}
                   <img
-                    src={navbar.logo.logo}
+                    src={logo1}
                     alt="Olympus"
                     className="cursor-pointer hidden md:block"
-                    loading="eager"
+                     width="200" height="200"
                     draggable={false}
                   />
                   <img
                     src={logo}
                     alt="Olympus"
                     className="cursor-pointer md:hidden object-cover w-11 h-11"
-                    loading="eager"
+                    loading="lazy"
                     draggable={false}
                   />
                 </Link>

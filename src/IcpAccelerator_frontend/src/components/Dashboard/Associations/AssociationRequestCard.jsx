@@ -15,7 +15,7 @@ import ProjectAssociationFilter from "./ProjectAssociationFilter";
 import { useSelector } from "react-redux";
 import { Principal } from "@dfinity/principal";
 import AssociationDetailsProjectCard from "./AssociationDetailsProjectCard";
-import AssociationDetailsCard from "./AssociationDetailsMentorCard";
+import AssociationDetailsMentorCard from "./AssociationDetailsMentorCard";
 import AssociationDetailsInvestorCard from "./AssociationDetailsInvestorCard";
 import NoData from "../../NoDataCard/NoData";
 import DocumentRequestCard from "../../Request/DocumentRequestCard";
@@ -23,7 +23,9 @@ import MoneyRaiseRequestCard from "../../Request/MoneyRaiseRequestCard";
 import CohortRequestCard from "../../Request/CohortRequestCard";
 
 // Memoize AssociationDetailsCard and AssociationDetailsProjectCard
-const MemoizedAssociationDetailsMentorCard = React.memo(AssociationDetailsCard);
+const MemoizedAssociationDetailsMentorCard = React.memo(
+  AssociationDetailsMentorCard
+);
 const MemoizedAssociationDetailsProjectCard = React.memo(
   AssociationDetailsProjectCard
 );
@@ -263,60 +265,58 @@ const AssociationRequestCard = () => {
           className="text-gray-400 text-2xl cursor-pointer"
         />
       </div> */}
-     <div className="flex items-center justify-between md:p-6 w-full  gap-6">
-
-  <div className="flex items-center border-2 border-gray-400 rounded-lg overflow-hidden flex-grow  h-[38px] md:h-[50px]">
-    <div className="flex items-center px-3 md:px-4">
-      <svg
-        className="h-5 w-5 text-gray-400"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth="2"
-          d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 103.5 3.5a7.5 7.5 0 0013.65 13.65z"
-        ></path>
-      </svg>
-    </div>
-    <input
-      type="text"
-      placeholder="Search people, projects, jobs, events"
-      className="w-full py-2 px-2 md:px-4 text-gray-700 focus:outline-none text-sm md:text-base"
-    />
-    <div className="px-3 md:px-4">
-      <svg
-        className="h-5 w-5 text-gray-400"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth="2"
-          d="M3 6h18M3 12h18m-7 6h7"
-        ></path>
-      </svg>
-    </div>
-  </div>
-  <FaFilter
-    onClick={toggleFilter}
-    className="text-gray-400 text-xl md:text-2xl cursor-pointer"
-  />
-</div>
-
+      <div className="flex items-center justify-between md:p-6 w-full  gap-6">
+        <div className="flex items-center border-2 border-gray-400 rounded-lg overflow-hidden flex-grow  h-[38px] md:h-[50px]">
+          <div className="flex items-center px-3 md:px-4">
+            <svg
+              className="h-5 w-5 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 103.5 3.5a7.5 7.5 0 0013.65 13.65z"
+              ></path>
+            </svg>
+          </div>
+          <input
+            type="text"
+            placeholder="Search people, projects, jobs, events"
+            className="w-full py-2 px-2 md:px-4 text-gray-700 focus:outline-none text-sm md:text-base"
+          />
+          <div className="px-3 md:px-4">
+            <svg
+              className="h-5 w-5 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M3 6h18M3 12h18m-7 6h7"
+              ></path>
+            </svg>
+          </div>
+        </div>
+        <FaFilter
+          onClick={toggleFilter}
+          className="text-gray-400 text-xl md:text-2xl cursor-pointer"
+        />
+      </div>
 
       {associateData.length === 0 ? (
         <NoData message={noDataMessage} />
       ) : (
         associateData.map(
           (user, index) => (
-            console.log(user),
+            console.log('user',user),
             (
               <div key={index}>
                 {selectedType.value === "Associates" ? (
@@ -333,6 +333,8 @@ const AssociationRequestCard = () => {
                       index={index}
                       selectedTypeData={selectedTypeData}
                       activeTabData={activeTabData}
+                      associateData={associateData}
+                      setAssociateData={setAssociateData}
                     />
                   ) : userCurrentRoleStatusActiveRole === "vc" ? (
                     <MemoizedAssociationDetailsInvestorCard
@@ -340,6 +342,8 @@ const AssociationRequestCard = () => {
                       index={index}
                       selectedTypeData={selectedTypeData}
                       activeTabData={activeTabData}
+                      associateData={associateData}
+                      setAssociateData={setAssociateData}
                     />
                   ) : (
                     ""
@@ -358,8 +362,10 @@ const AssociationRequestCard = () => {
                     index={index}
                     activeTabData={activeTabData}
                   />
-                ) : userCurrentRoleStatusActiveRole === "mentor" || userCurrentRoleStatusActiveRole === "project" || userCurrentRoleStatusActiveRole === "vc" &&
-                  selectedType.value === "CohortRequest" ? (
+                ) : userCurrentRoleStatusActiveRole === "mentor" ||
+                  userCurrentRoleStatusActiveRole === "project" ||
+                  (userCurrentRoleStatusActiveRole === "vc" &&
+                    selectedType.value === "CohortRequest") ? (
                   <CohortRequestCard
                     user={user}
                     index={index}

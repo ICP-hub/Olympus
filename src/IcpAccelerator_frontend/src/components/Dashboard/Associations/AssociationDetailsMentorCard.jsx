@@ -22,6 +22,8 @@ const AssociationDetailsMentorCard = ({
   index,
   selectedTypeData,
   activeTabData,
+  associateData,
+  setAssociateData,
 }) => {
   console.log("selectedTypeData", selectedTypeData);
   const actor = useSelector((currState) => currState.actors.actor);
@@ -165,16 +167,18 @@ const AssociationDetailsMentorCard = ({
       );
       if (result) {
         console.log(`result-in-self_decline_request_for_mentor`, result);
-        fetchRequestAssociation(
-          "pending",
+      const response=  fetchRequestAssociation(
+          "self-reject",
           "to-project",
           "mentor",
           null,
-          covertedPrincipal,
+          null,
           actor
         );
+       const resultData = await response.api_data;
+        setAssociateData(resultData);
         setIsSubmitting(false);
-      }
+      }      
     } catch (error) {
       setIsSubmitting(false);
       console.log(`error-in-self_decline_request_for_mentor`, error);
@@ -207,14 +211,16 @@ const AssociationDetailsMentorCard = ({
       );
       console.log(`result-in-accept_offer_of_project`, result);
       handleAcceptModalCloseHandler();
-      fetchRequestAssociation(
-        "pending",
+      const response = fetchRequestAssociation(
+        "approved",
         "from-project",
         "mentor",
         null,
         covertedPrincipal,
         actor
       );
+    const resultData = await response.api_data;
+      setAssociateData(resultData);
       setIsSubmitting(false);
     } catch (error) {
       console.log(`error-in-accept_offer_of_project`, error);
@@ -234,14 +240,16 @@ const AssociationDetailsMentorCard = ({
       );
       console.log(`result-in-decline_offer_of_project`, result);
       handleDeclineModalCloseHandler();
-      fetchRequestAssociation(
-        "pending",
+      const response = fetchRequestAssociation(
+        "declined",
         "from-project",
         "mentor",
         null,
         covertedPrincipal,
         actor
-      ),
+      );
+     const resultData = await response.api_data;
+      setAssociateData(resultData);
         setIsSubmitting(false);
     } catch (error) {
       console.log(`error-in-decline_offer_of_project`, error);

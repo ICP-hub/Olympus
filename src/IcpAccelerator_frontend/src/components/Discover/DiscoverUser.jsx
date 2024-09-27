@@ -103,6 +103,7 @@ const DiscoverUser = ({ onUserCountChange }) => {
   >
     {allUserData.length > 0 ? (
       allUserData.map(([principal, user], index) => {
+        console.log('discoveruser',user)
         const logo = user.profile_picture && user.profile_picture[0]
           ? uint8ArrayToBase64(user.profile_picture[0])
           : "default-profile.png";

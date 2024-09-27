@@ -59,6 +59,7 @@ const DiscoverMentor = ({ onMentorCountChange }) => {
         page_size: itemsPerPage, // Number of items per page
         page: page, // Current page to fetch
       });
+      console.log('discovementor',result)
       if (result && result.data) {
         const mentorData = Object.values(result.data); // Extract mentor data
         if (isRefresh) {
@@ -166,6 +167,7 @@ const DiscoverMentor = ({ onMentorCountChange }) => {
             scrollableTarget="scrollableDiv" 
           >
             {allMentorData?.map((mentorArray, index) => {
+
               const mentor_id = mentorArray[0]?.toText();
               const mentor = mentorArray[1];
               const user = mentorArray[2];

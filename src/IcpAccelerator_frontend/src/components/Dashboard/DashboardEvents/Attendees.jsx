@@ -6,7 +6,7 @@ import { useLocation } from "react-router-dom";
 import toast from "react-hot-toast";
 import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 import CloseIcon from "@mui/icons-material/Close";
-import NoCardData from "../../profile/NoCardData";
+import NoCardData from "../../Profile/NoCardData";
 import NoData from "../../NoDataCard/NoData";
 const AttendeesCard = ({ member }) => {
   return (
@@ -20,7 +20,6 @@ const AttendeesCard = ({ member }) => {
           draggable={false}
         />
       </div>
-
       <div className="ml-6 flex-1">
         <h4 className="text-lg font-bold text-[#2C3E50]">{member.full_name}</h4>
         <p className="text-sm text-gray-500">@{member.username}</p>

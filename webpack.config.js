@@ -12,9 +12,6 @@ module.exports = (env) => {
   const frontendDirectory = env.frontend || "IcpAccelerator_frontend";  // Default to 'IcpAccelerator_frontend' if env.frontend is not set
   const frontendEntry = path.join("src", frontendDirectory, "src", "index.html");
 
-  // console.log("Entry Path:", frontendEntry);
-  // console.log("Resolved Entry Path:", path.resolve(__dirname, frontendEntry));
-
   return {
     target: "web",
     mode: isDevelopment ? "development" : "production",
@@ -24,7 +21,13 @@ module.exports = (env) => {
     devtool: isDevelopment ? "source-map" : false,
     optimization: {
       minimize: !isDevelopment,
-      minimizer: [new TerserPlugin()],
+      minimizer: [new TerserPlugin({
+        terserOptions: {
+          compress: {
+            drop_console: !isDevelopment, // Remove console.logs in production
+          },
+        },
+      })],
     },
     resolve: {
       extensions: [".js", ".ts", ".jsx", ".tsx"],
@@ -39,8 +42,9 @@ module.exports = (env) => {
       },
     },
     output: {
-      filename: "index.js",
+      filename: "index.[contenthash].js",  // Cache-busting filename
       path: path.join(__dirname, "dist", frontendDirectory),
+      clean: true, // Clean old assets in production
     },
     module: {
       rules: [
@@ -57,6 +61,14 @@ module.exports = (env) => {
       new HtmlWebpackPlugin({
         template: path.resolve(__dirname, frontendEntry),
         cache: false,
+        minify: isDevelopment ? false : {
+          collapseWhitespace: true,
+          removeComments: true,
+          removeRedundantAttributes: true,
+          useShortDoctype: true,
+          removeEmptyAttributes: true,
+          minifyCSS: true,
+        },
       }),
       new webpack.EnvironmentPlugin(
         Object.keys(process.env).filter((key) => key.includes("CANISTER") || key.includes("DFX"))

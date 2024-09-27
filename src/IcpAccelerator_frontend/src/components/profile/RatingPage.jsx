@@ -123,7 +123,7 @@ const RatingPage = () => {
     <div className="p-3 sm0:p-6">
       <div className="flex flex-col mt-6 items-center">
         <img
-          src={userFullData?.profile_picture[0]}
+          src={userPic}
           alt="Profile"
           className="rounded-full w-16 h-16 sm:w-16 sm:h-16 md:w-28 md:h-28 mb-4"
           loading="lazy"
