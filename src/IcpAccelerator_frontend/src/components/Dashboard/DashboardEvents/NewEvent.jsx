@@ -24,49 +24,52 @@ const NewEvent = ({ event }) => {
         setSelectedEvent(null);
     };
 
+    const fetchCohorts = async () => {
+      if (actor && principal){
+      try {
+          const covertedPrincipal = Principal.fromText(principal);
+          const data = await actor.get_cohorts_by_principal(covertedPrincipal);
+          if (data && Array.isArray(data) && data.length > 0) {
+              const formattedEvents = data.map(cohort => {
+                  if (!cohort || !cohort.cohort || !cohort.cohort.cohort_banner) {
+                      return null;
+                  }
+
+                  return {
+                      title: cohort.cohort.title,
+                      cohort_banner: cohort.cohort.cohort_banner[0],
+                      cohort_launch_date: cohort.cohort.cohort_launch_date,
+                      cohort_end_date: cohort.cohort.cohort_end_date,
+                      start_date: cohort.cohort.start_date,
+                      no_of_seats: cohort.cohort.no_of_seats,
+                      tags: cohort.cohort.tags,
+                      country: cohort.cohort.country,
+                      description: cohort.cohort.description,
+                      funding_amount: cohort.cohort.funding_amount,
+                      contact_links: cohort.cohort.contact_links,
+                      deadline: cohort.cohort.deadline,
+                      eligibility: cohort.cohort.criteria.eligibility,
+                      funding_type: cohort.cohort.funding_type,
+                      host_name: cohort.cohort.host_name,
+                      level_on_rubric: cohort.cohort.criteria.level_on_rubric,
+                      cohort_id: cohort.cohort_id,
+                  };
+              }).filter(event => event !== null);
+
+              setCohortEvents(formattedEvents);
+              console.log("formattedEvents", formattedEvents);
+          } else {
+              console.log("No data found or the structure is not as expected.");
+          }
+      } catch (error) {
+          console.error('Error fetching cohort data:', error);
+      }
+    }
+  };
     useEffect(() => {
-        const fetchCohorts = async () => {
-            try {
-                const covertedPrincipal = Principal.fromText(principal);
-                const data = await actor.get_cohorts_by_principal(covertedPrincipal);
-                if (data && Array.isArray(data) && data.length > 0) {
-                    const formattedEvents = data.map(cohort => {
-                        if (!cohort || !cohort.cohort || !cohort.cohort.cohort_banner) {
-                            return null;
-                        }
-
-                        return {
-                            title: cohort.cohort.title,
-                            cohort_banner: cohort.cohort.cohort_banner[0],
-                            cohort_launch_date: cohort.cohort.cohort_launch_date,
-                            cohort_end_date: cohort.cohort.cohort_end_date,
-                            start_date: cohort.cohort.start_date,
-                            no_of_seats: cohort.cohort.no_of_seats,
-                            tags: cohort.cohort.tags,
-                            country: cohort.cohort.country,
-                            description: cohort.cohort.description,
-                            funding_amount: cohort.cohort.funding_amount,
-                            contact_links: cohort.cohort.contact_links,
-                            deadline: cohort.cohort.deadline,
-                            eligibility: cohort.cohort.criteria.eligibility,
-                            funding_type: cohort.cohort.funding_type,
-                            host_name: cohort.cohort.host_name,
-                            level_on_rubric: cohort.cohort.criteria.level_on_rubric,
-                            cohort_id: cohort.cohort_id,
-                        };
-                    }).filter(event => event !== null);
-
-                    setCohortEvents(formattedEvents);
-                    console.log("formattedEvents", formattedEvents);
-                } else {
-                    console.log("No data found or the structure is not as expected.");
-                }
-            } catch (error) {
-                console.error('Error fetching cohort data:', error);
-            }
-        };
-
+      if (actor && principal){
         fetchCohorts();
+      }
     }, [actor, principal]);
 
     const handleClick = (cohort_id) => {
@@ -191,6 +194,7 @@ const NewEvent = ({ event }) => {
               editMode={editMode} 
               singleEventData={selectedEvent} 
               cohortId={selectedEvent?.cohort_id} 
+              fetchCohorts={fetchCohorts()}
             />
           )}
         </>

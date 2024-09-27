@@ -14,9 +14,9 @@ import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
 import LinkIcon from "@mui/icons-material/Link";
 import { FaEye } from "react-icons/fa";
 import { Principal } from "@dfinity/principal";
-import { Folder } from '@mui/icons-material';
+import { Folder } from "@mui/icons-material";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
-import WorkOutlineOutlinedIcon from '@mui/icons-material/WorkOutlineOutlined';
+import WorkOutlineOutlinedIcon from "@mui/icons-material/WorkOutlineOutlined";
 import {
   clockSvgIcon,
   coinStackedSvgIcon,
@@ -41,7 +41,6 @@ const NewJob = ({ latestJobs }) => {
   const handleJobsOpenModal = (jobData) => {
     setCurrentJobData(jobData);
     setJobsModalOpen(true);
-   
   };
 
   const handleJobsCloseModal = () => {
@@ -81,19 +80,18 @@ const NewJob = ({ latestJobs }) => {
     }
   };
 
-
   //Edit func
   const handleEdit = async (job_data) => {
     if (!currentJobData) return;
 
     setIsSubmitting(true);
     const new_details = {
-        title: job_data.jobTitle,
-        description: job_data.jobDescription,
-        category: job_data.jobCategory,
-        location: job_data.jobLocation, 
-        link: job_data.jobLink,
-        job_type: job_data.job_type,
+      title: job_data.jobTitle,
+      description: job_data.jobDescription,
+      category: job_data.jobCategory,
+      location: job_data.jobLocation,
+      link: job_data.jobLink,
+      job_type: job_data.job_type,
     };
     console.log("argument", new_details);
 
@@ -102,29 +100,21 @@ const NewJob = ({ latestJobs }) => {
         currentJobData?.job_id,
         new_details
       );
-    //   const isSuccess = result.includes(
-    //     `job post updated successfully for ${currentJobData?.job_id}`
-    //   );
-    //   if (isSuccess) {
-       
-        toast.success("Job post updated successfully", {
-            style: {
-              backgroundColor: "#28a745", 
-              color: "#fff", 
-            },
-            icon: "✅",
-          });
-          handleJobsCloseModal();
+      if (result) {
+        toast.success("Job post updated successfully");
+        handleJobsCloseModal();
         setIsSubmitting(false);
         setTimeout(() => {
-          window.location.reload();
-        }, 2000);
-        console.log("result-in-get_announcements_by_project_id", result);
-    //   } else {
-    //     handleJobsCloseModal();
-    //     setIsSubmitting(false);
-    //     toast.error(result);
-    //   }
+          fetchPostedJobs();
+        }, 1000);
+      } else {
+        toast.error("Something went wrong");
+        handleJobsCloseModal();
+        setIsSubmitting(false);
+        setTimeout(() => {
+          fetchPostedJobs();
+        }, 1000);
+      }
     } catch (error) {
       handleJobsCloseModal();
       setIsSubmitting(false);
@@ -132,42 +122,28 @@ const NewJob = ({ latestJobs }) => {
     }
   };
 
-
-    // <<<<<------- Job Delete ----->>>>>
-    const handleDelete = async () => {
-        console.log("currentJobData===>>>>>>>>>", currentJobData);
-        setIsSubmitting(true);
-        await actor
-          .delete_job_post_by_id(currentJobData?.job_id)
-          .then((result) => {
-            // console.log("delete_job_post_by_id", result);
-            // if (
-            //   result &&
-            //   result.includes(
-            //     `job post deleted successfully for ${currentJobData?.job_id}`
-            //   )
-            // ) {
-            
-              toast.success("Job post deleted successfully", {
-                style: {
-                  backgroundColor: "#d9534f", 
-                  color: "#fff", 
-                },
-                icon: "🗑️", 
-              });
-              setDeleteModalOpen();
-              setIsSubmitting(false);
-              setTimeout(() => {
-                window.location.reload();
-              }, 2000);
-              console.log("result-in-get_announcements_by_project_id", result);
-            // } else {
-            //   setDeleteModalOpen();
-            //   setIsSubmitting(false);
-            //   toast.error(result);
-            // }
-          });
-      };
+  // <<<<<------- Job Delete ----->>>>>
+  const handleDelete = async () => {
+    console.log("currentJobData===>>>>>>>>>", currentJobData);
+    setIsSubmitting(true);
+    await actor.delete_job_post_by_id(currentJobData?.job_id).then((result) => {
+      if (result) {
+        toast.success("Job post deleted successfully");
+        setDeleteModalOpen();
+        setIsSubmitting(false);
+        setTimeout(() => {
+          fetchPostedJobs();
+        }, 1000);
+      } else {
+        toast.error("Something went wrong");
+        setDeleteModalOpen();
+        setIsSubmitting(false);
+        setTimeout(() => {
+          fetchPostedJobs();
+        }, 1000);
+      }
+    });
+  };
   useEffect(() => {
     if (actor && latestJobs) {
       fetchPostedJobs();
@@ -430,7 +406,11 @@ const NewJob = ({ latestJobs }) => {
         />
       )}
       {modalOpen && (
-        <JobRegister1 modalOpen={modalOpen} setModalOpen={setModalOpen} />
+        <JobRegister1
+          modalOpen={modalOpen}
+          setModalOpen={setModalOpen}
+          fetchPostedJob={fetchPostedJobs()}
+        />
       )}
       <Toaster />
     </>

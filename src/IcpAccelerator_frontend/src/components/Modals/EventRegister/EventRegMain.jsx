@@ -21,6 +21,7 @@ const EventRegMain = ({
   editMode,
   singleEventData,
   cohortId,
+  fetchCohorts
 }) => {
   console.log("cohort singleEventData reg main me ", singleEventData);
 
@@ -70,7 +71,6 @@ const EventRegMain = ({
   const {
     handleSubmit,
     trigger,
-    formState: { isSubmitting },
     getValues,
   } = methods;
 
@@ -106,7 +106,6 @@ const EventRegMain = ({
       }
     }
   };
-
   // FUNCTION TO HANDLE NAVIGATING TO PREVIOUS STEP
   const handleBack = () => {
     if (index > 0) {
@@ -155,30 +154,54 @@ const EventRegMain = ({
         cohort_banner: imageData ? [imageData] : [],
         host_name: organiserName ? [organiserName] : [], // Example placeholder for host name
       };
-console.log('eventdata',eventData)
       try {
         setIsSubmiting(true);
         let result;
         if (editMode && singleEventData) {
           console.log("Updating cohort with data:", eventData);
           result = await actor.update_cohort(cohortId, eventData);
+          if (result && result.Ok) {
+            toast.success(result.Ok);
+            setModalOpen(false);
+            setTimeout(() => {
+              fetchCohorts;
+            }, 1000);
+            fetchCohorts;
+          } else if (result && result.Err) {
+            toast.error(result.Err);
+            setModalOpen(false);
+            setTimeout(() => {
+              fetchCohorts;
+            }, 1000);
+          } else {
+            toast.error("Unknown error occurred.");
+            setModalOpen(false);
+            setTimeout(() => {
+              fetchCohorts;
+            }, 1000);
+          }
         } else {
           console.log("Creating new cohort with data:", eventData);
           result = await actor.create_cohort(eventData);
-        }
-
-        console.log("API result", result);
-
-        if (result && result.Ok) {
-          toast.success(result.Ok);
-          setModalOpen(false);
-          navigate("/dashboard/");
-        } else if (result && result.Err) {
-          toast.error(result.Err);
-          setModalOpen(false);
-        } else {
-          toast.error("Unknown error occurred.");
-          setModalOpen(false);
+          if (result && result.Ok) {
+            toast.success(result.Ok);
+            setModalOpen(false);
+            setTimeout(() => {
+              fetchCohorts;
+            }, 1000);
+          } else if (result && result.Err) {
+            toast.error(result.Err);
+            setModalOpen(false);
+            setTimeout(() => {
+              fetchCohorts;
+            }, 1000);
+          } else {
+            toast.error("Unknown error occurred.");
+            setModalOpen(false);
+            setTimeout(() => {
+              fetchCohorts;
+            }, 1000);
+          }
         }
       } catch (error) {
         toast.error("Error submitting cohort");

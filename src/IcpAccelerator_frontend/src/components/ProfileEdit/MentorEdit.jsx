@@ -10,7 +10,7 @@ import editp from "../../../assets/Logo/edit.png";
 import { mentorRegisteredHandlerRequest } from "../StateManagement/Redux/Reducers/mentorRegisteredData";
 import { allHubHandlerRequest } from "../StateManagement/Redux/Reducers/All_IcpHubReducer";
 import { ThreeDots } from "react-loader-spinner";
-import getReactSelectStyles from "../Utils/navigationHelper/getReactSelectStyles";
+import getReactSelectUpdateStyles from "../Utils/navigationHelper/getReactSelectUpdateStyles";
 import { validationSchema } from "../Modals/Mentor-Signup-Model/mentorValidation";
 import getPlatformFromHostname from "../Utils/navigationHelper/getPlatformFromHostname";
 import getSocialLogo from "../Utils/navigationHelper/getSocialLogo";
@@ -555,7 +555,7 @@ const MentorEdit = () => {
                 isMulti
                 menuPortalTarget={document.body}
                 menuPosition={"fixed"}
-                styles={getReactSelectStyles(errors?.area_of_expertise)}
+                styles={getReactSelectUpdateStyles(errors?.area_of_expertise)}
                 value={interestedDomainsSelectedOptions}
                 options={interestedDomainsOptions}
                 classNamePrefix="select"
@@ -663,7 +663,7 @@ const MentorEdit = () => {
                   isMulti
                   menuPortalTarget={document.body}
                   menuPosition={"fixed"}
-                  styles={getReactSelectStyles(errors?.multi_chain_names)}
+                  styles={getReactSelectUpdateStyles(errors?.multi_chain_names)}
                   value={multiChainSelectedOptions}
                   options={multiChainOptions}
                   classNamePrefix="select"
@@ -737,7 +737,7 @@ const MentorEdit = () => {
               isMulti
               menuPortalTarget={document.body}
               menuPosition={"fixed"}
-              styles={getReactSelectStyles(
+              styles={getReactSelectUpdateStyles(
                 errors?.category_of_mentoring_service
               )}
               value={categoryOfMentoringServiceSelectedOptions}
@@ -808,7 +808,7 @@ const MentorEdit = () => {
             isMulti
             menuPortalTarget={document.body}
             menuPosition={"fixed"}
-            styles={getReactSelectStyles(errors?.reasons_to_join_platform
+            styles={getReactSelectUpdateStyles(errors?.reasons_to_join_platform
               &&
             isFormTouched.reasons_to_join_platform
             )}

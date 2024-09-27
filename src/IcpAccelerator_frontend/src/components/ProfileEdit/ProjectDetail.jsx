@@ -11,7 +11,7 @@ import parse from "html-react-parser";
 import { toast, Toaster } from "react-hot-toast";
 import { FaPlus, FaTrash, FaSave } from "react-icons/fa";
 import { founderRegisteredHandlerRequest } from "../StateManagement/Redux/Reducers/founderRegisteredData";
-import getReactSelectStyles from "../Utils/navigationHelper/getReactSelectStyles";
+import getReactSelectUpdateStyles from "../Utils/navigationHelper/getReactSelectUpdateStyles";
 import { validationSchema } from "../Modals/ProjectRegisterModal/projectValidation";
 import getSocialLogo from "../Utils/navigationHelper/getSocialLogo";
 import ProjectDescriptionEdit from "./ProjectDescriptionEdit";
@@ -800,7 +800,7 @@ const clearCoverFunc = (val) => {
                     isMulti
                     menuPortalTarget={document.body}
                     menuPosition={"fixed"}
-                    styles={getReactSelectStyles(
+                    styles={getReactSelectUpdateStyles(
                       errors?.reason_to_join_incubator
                     )}
                     value={reasonOfJoiningSelectedOptions}
@@ -1280,7 +1280,7 @@ const clearCoverFunc = (val) => {
                       isMulti
                       menuPortalTarget={document.body}
                       menuPosition={"fixed"}
-                      styles={getReactSelectStyles(errors?.multi_chain_names)}
+                      styles={getReactSelectUpdateStyles(errors?.multi_chain_names)}
                       value={multiChainSelectedOptions}
                       options={multiChainOptions}
                       classNamePrefix="select"
@@ -1544,7 +1544,7 @@ const clearCoverFunc = (val) => {
                   isMulti
                   menuPortalTarget={document.body}
                   menuPosition={"fixed"}
-                  styles={getReactSelectStyles(errors?.project_area_of_focus)}
+                  styles={getReactSelectUpdateStyles(errors?.project_area_of_focus)}
                   value={interestedDomainsSelectedOptions}
                   options={interestedDomainsOptions}
                   classNamePrefix="select"

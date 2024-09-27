@@ -22,9 +22,10 @@ import { validationSchema } from "../UserRegistration/userValidation";
 import getSocialLogo from "../Utils/navigationHelper/getSocialLogo";
 import getPlatformFromHostname from "../Utils/navigationHelper/getPlatformFromHostname";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa"; // Icons for dropdown
-import getReactSelectStyles from "../Utils/navigationHelper/getReactSelectStyles";
 import { userRegisteredHandlerRequest } from "../StateManagement/Redux/Reducers/userRegisteredData";
 import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
+import getReactSelectUpdateStyles from "../Utils/navigationHelper/getReactSelectUpdateStyles";
+
 
 const ProfileDetail = () => {
   const {
@@ -1068,7 +1069,7 @@ const ProfileDetail = () => {
                         isMulti
                         menuPortalTarget={document.body}
                         menuPosition={"fixed"}
-                        styles={getReactSelectStyles(
+                        styles={getReactSelectUpdateStyles(
                           errors?.reasons_to_join_platform
                         )}
                         value={reasonOfJoiningSelectedOptions}
@@ -1142,7 +1143,7 @@ const ProfileDetail = () => {
                           isMulti
                           menuPortalTarget={document.body}
                           menuPosition={"fixed"}
-                          styles={getReactSelectStyles(
+                          styles={getReactSelectUpdateStyles(
                             errors?.domains_interested_in
                           )}
                           value={interestedDomainsSelectedOptions}
@@ -1758,7 +1759,7 @@ const ProfileDetail = () => {
                     isMulti
                     menuPortalTarget={document.body}
                     menuPosition={"fixed"}
-                    styles={getReactSelectStyles(
+                    styles={getReactSelectUpdateStyles(
                       errors?.reasons_to_join_platform
                     )}
                     value={reasonOfJoiningSelectedOptions}
@@ -1832,7 +1833,7 @@ const ProfileDetail = () => {
                       isMulti
                       menuPortalTarget={document.body}
                       menuPosition={"fixed"}
-                      styles={getReactSelectStyles(
+                      styles={getReactSelectUpdateStyles(
                         errors?.domains_interested_in
                       )}
                       value={interestedDomainsSelectedOptions}
