@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState ,useEffect} from 'react';
 import Filetype from '../../../../../assets/Logo/Filetype.png';
 import { useSelector } from 'react-redux';
 import toast from "react-hot-toast";
@@ -99,6 +99,43 @@ const DiscoverDocument = ({ projectDetails, projectId }) => {
   const hasNoDocuments =
     (!projectDetails.private_docs || projectDetails.private_docs.length === 0) &&
     (!projectDetails.public_docs || projectDetails.public_docs.length === 0);
+    
+  const getAllUser = async (caller, isMounted) => {
+    await caller
+      .access_private_docs(projectId)
+      .then((result) => {
+        console.log('result', result);
+        // if (isMounted) {
+        //   console.log("API SE AAYA HUA DATA", result);
+        //   if (result) {
+        //     // Log the exact structure of result.data to verify it
+        //     console.log("Data received:", result.data);
+        //     setAllProjectData(result);
+        //   } else {
+        //     setAllProjectData([]); // Set to an empty array if no data
+        //   }
+        //   setIsLoading(false);
+        // }
+      })
+      .catch((error) => {
+        if (isMounted) {
+          // setAllProjectData([]);
+          // setIsLoading(false);
+          console.log("error-in-get-all-user", error);
+        }
+      });
+  };
+
+  useEffect(() => {
+    let isMounted = true;
+
+    if (actor) {
+      getAllUser(actor, isMounted);
+    } 
+    return () => {
+      isMounted = false;
+    };
+  }, [actor]);
 
   return (
     <>

@@ -71,7 +71,7 @@ const DiscoverProject = ({ onProjectCountChange }) => {
     setIsAddProjectModalOpen(true);
   };
 
-  console.log("listProjectId", listProjectId);
+ 
   // ASSOCIATE IN A PROJECT HANDLER AS A MENTOR
   const handleAddProject = async ({ message }) => {
     setIsSubmitting(true);

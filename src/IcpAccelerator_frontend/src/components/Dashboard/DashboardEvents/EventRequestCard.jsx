@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { FaFilter } from "react-icons/fa";
 import { ThreeDots } from "react-loader-spinner";
 import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
-import toast from "react-hot-toast";
+import { Tooltip } from "react-tooltip";
 import { Principal } from "@dfinity/principal";
 import parse from "html-react-parser";
 import eventbg from "../../../../assets/images/bg.png";
@@ -14,6 +14,9 @@ import NoDataFound from "./NoDataFound";
 import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 import CloseIcon from "@mui/icons-material/Close";
 import Avatar from "@mui/material/Avatar";
+import toast, { Toaster } from "react-hot-toast";
+import { RiSendPlaneLine } from "react-icons/ri";
+import AddAMentorRequestModal from "../../../models/AddAMentorRequestModal";
 import { loginFailure } from "../../StateManagement/Redux/Reducers/InternetIdentityReducer";
 
 const EventRequestCard = () => {
@@ -28,12 +31,18 @@ const EventRequestCard = () => {
   const [openUserModal, setOpenUserModal] = useState(false);
   const actor = useSelector((state) => state.actors.actor);
   const principal = useSelector((state) => state.internet.principal);
+  const userCurrentRoleStatusActiveRole = useSelector(
+    (currState) => currState.currentRoleStatus.activeRole
+  );
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [listProjectId, setListProjectId] = useState(null);
+  const [listCohortId, setListCohortId] = useState(null);
 
   const toggleFilter = () => {
     setFilterOpen(!filterOpen);
   };
 
-  console.log('appliedType',appliedType)
+  console.log("appliedType", appliedType);
   const handleApply = () => {
     setAppliedCategory(selectedCategory);
     setAppliedType(selectedType);
@@ -50,6 +59,99 @@ const EventRequestCard = () => {
   const handleCloseModal = () => {
     setOpenUserModal(false);
     setSelectedUserData(null);
+  };
+
+  const [isAddProjectModalOpen, setIsAddProjectModalOpen] = useState(false);
+
+  const handleProjectCloseModal = () => setIsAddProjectModalOpen(false);
+  const handleProjectOpenModal = (val) => {
+    setListProjectId(val);
+    setIsAddProjectModalOpen(true);
+  };
+
+  // ASSOCIATE IN A PROJECT HANDLER AS A MENTOR
+  const handleAddProject = async ({ message }) => {
+    setIsSubmitting(true);
+    console.log("add into a project");
+    if (actor && mentorPrincipal) {
+      let project_id = listProjectId;
+      let msg = message;
+      let mentor_id = Principal.fromText(mentorPrincipal);
+      let is_cohort_association = true;
+      let cohort_id = listCohortId;
+      console.log("Data before sending", project_id, msg, mentor_id);
+
+      await actor
+        .send_offer_to_project_by_mentor(project_id, msg, mentor_id)
+        .then((result) => {
+          console.log("result-in-send_offer_to_project_by_mentor", result);
+          if (result) {
+            handleProjectCloseModal();
+            setIsSubmitting(false);
+            toast.success("offer sent to project successfully");
+          } else {
+            handleProjectCloseModal();
+            setIsSubmitting(false);
+            toast.error("something got wrong");
+          }
+        })
+        .catch((error) => {
+          console.log("error-in-send_offer_to_project_by_mentor", error);
+          setIsSubmitting(false);
+          handleProjectCloseModal();
+          toast.error("something got wrong");
+        });
+    }
+  };
+
+  const [isAddProjectModalOpenAsInvestor, setIsAddProjectModalOpenAsInvestor] =
+    useState(false);
+
+  const handleProjectCloseModalAsInvestor = () => {
+    setIsAddProjectModalOpenAsInvestor(false);
+  };
+  const handleProjectOpenModalAsInvestor = (project_id, cohort_id) => {
+    setListProjectId(project_id);
+    setListCohortId(cohort_id);
+    setIsAddProjectModalOpenAsInvestor(true);
+  };
+
+  // ASSOCIATE IN A PROJECT HANDLER AS A Investor
+  const handleAddProjectAsInvestor = async ({ message }) => {
+    setIsSubmitting(true);
+    console.log("add into a project AS INVESTOR");
+    if (actor) {
+      let project_id = listProjectId;
+      let msg = message;
+      let is_cohort_association = true;
+      let cohort_id = listCohortId?[listCohortId] : [];;
+      await actor
+        .send_offer_to_project_by_investor(
+          project_id,
+          msg,
+          is_cohort_association,
+          cohort_id
+        )
+        .then((result) => {
+          console.log("result-in-send_offer_to_project_by_investor", result);
+          if (result) {
+            handleProjectCloseModalAsInvestor();
+            setIsSubmitting(false);
+            // fetchProjectData();
+            toast.success("offer sent to project successfully");
+          } else {
+            handleProjectCloseModalAsInvestor();
+            setIsSubmitting(false);
+            toast.error("something got wrong");
+          }
+        })
+        .catch((error) => {
+          console.log("error-in-send_offer_to_project_by_investor", error);
+          handleProjectCloseModalAsInvestor();
+          setIsSubmitting(false);
+          toast.error("something got wrong");
+        });
+    }
   };
 
   const fetchRequests = async (category, type) => {
@@ -157,53 +259,51 @@ const EventRequestCard = () => {
 
   return (
     <>
-      
       <div className="flex items-center justify-between  gap-6 mt-4 mx-2">
-
-<div className="flex items-center border-2 border-gray-400 rounded-lg overflow-hidden flex-grow h-[38px] md:h-[50px]">
-  <div className="flex items-center px-3 md:px-4">
-    <svg
-      className="h-5 w-5 text-gray-400"
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="2"
-        d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 103.5 3.5a7.5 7.5 0 0013.65 13.65z"
-      ></path>
-    </svg>
-  </div>
-  <input
-    type="text"
-    placeholder="Search people, projects, jobs, events"
-    className="w-full py-2 px-2 md:px-4 text-gray-700 focus:outline-none text-sm md:text-base"
-  />
-  <div className="px-3 md:px-4">
-    <svg
-      className="h-5 w-5 text-gray-400"
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="2"
-        d="M3 6h18M3 12h18m-7 6h7"
-      ></path>
-    </svg>
-  </div>
-</div>
-<FaFilter
-  onClick={toggleFilter}
-  className="text-gray-400 text-xl md:text-2xl cursor-pointer"
-/>
-</div>
+        <div className="flex items-center border-2 border-gray-400 rounded-lg overflow-hidden flex-grow h-[38px] md:h-[50px]">
+          <div className="flex items-center px-3 md:px-4">
+            <svg
+              className="h-5 w-5 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 103.5 3.5a7.5 7.5 0 0013.65 13.65z"
+              ></path>
+            </svg>
+          </div>
+          <input
+            type="text"
+            placeholder="Search people, projects, jobs, events"
+            className="w-full py-2 px-2 md:px-4 text-gray-700 focus:outline-none text-sm md:text-base"
+          />
+          <div className="px-3 md:px-4">
+            <svg
+              className="h-5 w-5 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M3 6h18M3 12h18m-7 6h7"
+              ></path>
+            </svg>
+          </div>
+        </div>
+        <FaFilter
+          onClick={toggleFilter}
+          className="text-gray-400 text-xl md:text-2xl cursor-pointer"
+        />
+      </div>
 
       {filterOpen && (
         <div
@@ -289,6 +389,7 @@ const EventRequestCard = () => {
 
       {events.length > 0 ? (
         events.map((event, index) => {
+          console.log("event", event);
           const title = event.cohort_details.cohort.title;
           const description = event.cohort_details.cohort.description;
           const startDate = event.cohort_details.cohort.start_date;
@@ -319,6 +420,8 @@ const EventRequestCard = () => {
           const email = event.enroller_data.user_data[0]?.params.email;
           const reason =
             event.enroller_data.user_data[0]?.params.reason_to_join;
+          const project_id = event.enroller_data?.project_data?.[0]?.uid;
+          const cohort_id = event?.cohort_details?.cohort_id;
 
           const userData = {
             profileImage: profileImageSrc,
@@ -370,9 +473,40 @@ const EventRequestCard = () => {
 
                 {/* Content Section */}
                 <div className="w-full">
-                  <h3 className="text-base md:text-lg font-bold mt-2 md:mt-0">
-                    {title}
-                  </h3>
+                  <div className="flex justify-between">
+                    <h3 className="text-base md:text-lg font-bold mt-2 md:mt-0">
+                      {title}
+                    </h3>
+
+                    {userCurrentRoleStatusActiveRole === "mentor" ||
+                    userCurrentRoleStatusActiveRole === "vc" ? (
+                      <button
+                        data-tooltip-id="registerTip"
+                        onClick={() => {
+                          if (userCurrentRoleStatusActiveRole === "mentor") {
+                            handleProjectOpenModal(project_id, cohort_id);
+                          } else if (userCurrentRoleStatusActiveRole === "vc") {
+                            handleProjectOpenModalAsInvestor(
+                              project_id,
+                              cohort_id
+                            );
+                          }
+                        }}
+                      >
+                        <RiSendPlaneLine />
+                        <Tooltip
+                          id="registerTip"
+                          place="top"
+                          effect="solid"
+                          className="rounded-full z-10"
+                        >
+                          Send Association Request
+                        </Tooltip>
+                      </button>
+                    ) : (
+                      ""
+                    )}
+                  </div>
                   <span className="flex py-2">
                     <Avatar
                       alt="Mentor"
@@ -382,7 +516,6 @@ const EventRequestCard = () => {
                     />
                     <span className="text-sm text-gray-500">{fullname}</span>
                   </span>
-
                   <div className="border-t border-gray-200 "></div>
 
                   {/* Description */}
@@ -490,7 +623,22 @@ const EventRequestCard = () => {
       ) : (
         <NoDataFound />
       )}
-
+      {isAddProjectModalOpen && (
+        <AddAMentorRequestModal
+          title={"Associate Project"}
+          onClose={handleProjectCloseModal}
+          onSubmitHandler={handleAddProject}
+          isSubmitting={isSubmitting}
+        />
+      )}
+      {isAddProjectModalOpenAsInvestor && (
+        <AddAMentorRequestModal
+          title={"Associate Project"}
+          onClose={handleProjectCloseModalAsInvestor}
+          onSubmitHandler={handleAddProjectAsInvestor}
+          isSubmitting={isSubmitting}
+        />
+      )}
       {openUserModal && (
         <UserModal
           openDetail={openUserModal}
@@ -498,6 +646,7 @@ const EventRequestCard = () => {
           userData={selectedUserData}
         />
       )}
+      <Toaster />
     </>
   );
 };

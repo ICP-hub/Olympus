@@ -13,6 +13,7 @@ import DeclineOfferModal from "../../../models/DeclineOfferModal";
 import { useSelector } from "react-redux";
 import timestampAgo from "../../Utils/navigationHelper/timeStampAgo";
 import AssociationRecieverProjectSideDataToMentor from "./AssociationRecieverProjectSideDataToMentor";
+import AssociationRecieverDataFromProject from "./AssociationRecieverDataFromProject";
 
 const AssociationDetailsProjectCard = ({
   user,
@@ -250,7 +251,7 @@ const handleMentorSelfReject = async (offer_id) => {
           setOpenDetail={setOpenDetail}
         />
       ) : selectedTypeData === "from-mentor" ? (
-        <AssociationRecieverProjectSideDataToMentor
+        <AssociationRecieverDataFromProject
           user={user}
           activeTabData={activeTabData}
           selectedTypeData={selectedTypeData}
@@ -276,7 +277,7 @@ const handleMentorSelfReject = async (offer_id) => {
           setOpenDetail={setOpenDetail}
         />
       ) : selectedTypeData === "from-investor" ? (
-        <AssociationRecieverProjectSideDataToMentor
+        <AssociationRecieverDataFromProject
           user={user}
           activeTabData={activeTabData}
           selectedTypeData={selectedTypeData}
