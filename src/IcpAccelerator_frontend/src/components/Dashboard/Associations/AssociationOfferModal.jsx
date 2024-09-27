@@ -409,13 +409,13 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
 
   useEffect(() => {
     if (openDetail) {
-      // Prevent background from scrolling when modal is open
+ 
       document.body.style.overflow = "hidden";
     } else {
-      // Restore background scroll when modal is closed
+    
       document.body.style.overflow = "auto";
     }
-    // Cleanup when the component is unmounted
+   
     return () => {
       document.body.style.overflow = "auto";
     };
@@ -479,10 +479,14 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
   let senderDataUser = user?.sender_data?.[0][1] ?? {}; // User data at index 1
   console.log("sender user data ", senderDataUser);
   console.log("project data", senderDataProject);
+
   let projectid = senderDataProject.uid;
   console.log(projectid);
 
   // Project Details (Index 0)
+  let projectSocialLinks =  senderDataProject?.params?.social_links?.[0];
+  ("No social links available");
+  console.log("project social links",projectSocialLinks)
   let projectName =
     senderDataProject?.params?.project_name ?? "Project Name not available";
 
@@ -565,7 +569,7 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
   ("No social links available");
   console.log("sender social links", senderSocialLinks);
 
-  //Sender Mentor Details
+  //Sender Mentor Details at index[0]
   let senderYearsOfMentoring =
     senderDataProject?.profile?.years_of_mentoring ?? "0";
   let senderAreaOfExpertise =
@@ -587,6 +591,34 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
     senderDataProject?.profile?.reason_for_joining ?? [];
   let senderWebsite =
     senderDataProject?.profile?.website?.[0] ?? "https://defaultwebsite.com";
+    let mentorSocialLinks =  senderDataProject?.profile?.social_links?.[0];
+    ("No social links available");
+    console.log("mentor social links",mentorSocialLinks)
+
+  //Investor  Details at index[0]
+  let fundName = senderDataProject?.name_of_fund ?? "N/A";
+  let categoryOfInvestment = senderDataProject?.category_of_investment ?? "N/A";
+
+  let fundSize = senderDataProject?.fund_size?? "N/A";
+  let moneyInvested = senderDataProject?.money_invested ?? "N/A";
+  let investorType = senderDataProject?.investor_type ?? [];
+  let portfolioLink = senderDataProject?.portfolio_link ?? "N/A";
+  let stage = senderDataProject?.stage ?? [];
+  let preferredIcpHubforInvestor =
+    senderDataProject?.preferred_icp_hub ?? "N/A";
+  let projectOnMultichain = senderDataProject?.project_on_multichain ?? [];
+  let averageCheckSize = senderDataProject?.average_check_size ?? "N/A";
+  // let rangeOfCheckSize = senderDataProject?.range_of_check_size[0] ?? "N/A";
+  let numberOfPortfolioCompanies =
+    senderDataProject?.number_of_portfolio_companies ?? "N/A";
+  let registered = senderDataProject?.registered ?? false;
+  let registeredCountry = senderDataProject?.registered_country ?? "N/A";
+  let typeOfInvestment = senderDataProject?.type_of_investment ?? "N/A";
+  let websiteLink = senderDataProject?.website_link ?? "N/A";
+  let investorSocialLinks =  senderDataProject?.links?.[0];
+  ("No social links available");
+  console.log("investor social links",investorSocialLinks)
+
   // Other sender-specific details
   let isSenderActive = senderDataUser?.active ?? false;
   let isSenderApproved = senderDataUser?.approve ?? false;
@@ -683,6 +715,16 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
                       onClick={() => setActiveSideTab("mentor")}
                     >
                       Mentor
+                    </button>
+                    <button
+                      className={`px-4 py-2 focus:outline-none font-medium ${
+                        activeSideTab === "investor"
+                          ? "border-b-2 border-blue-500 text-blue-500 font-medium"
+                          : "text-gray-400"
+                      }`}
+                      onClick={() => setActiveSideTab("investor")}
+                    >
+                      Investor
                     </button>
                   </div>
 
@@ -920,17 +962,47 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
                           {tokenEconomics}{" "}
                         </span>
                       </div>
+                      <div>
+                        {senderSocialLinks && (
+                          <h3 className="mb-2 text-xs text-gray-500 font-medium ">
+                            LINKS
+                          </h3>
+                        )}
+
+                        <div className="flex items-center ">
+                          <div className="flex gap-3">
+                            {senderSocialLinks
+                              ? senderSocialLinks?.map((link, i) => {
+                                  const icon = getSocialLogo(link);
+                                  return (
+                                    <div
+                                      key={i}
+                                      className="flex items-center space-x-2"
+                                    >
+                                      {icon ? (
+                                        <a href={`${link}`}>{icon}</a>
+                                      ) : (
+                                        ""
+                                      )}
+                                    </div>
+                                  );
+                                })
+                              : ""}
+                          </div>
+                        </div>
+                        
+                      </div>
                     </div>
                   )}
 
-                  {/* mentor start  */}
+                  {/* Mentor Tab Content  */}
                   {activeSideTab === "mentor" && (
                     <div className="p-4">
                       <div className="mt-4">
                         <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
                           Years of Mentoring
                         </h3>
-                        <span>{Number(senderYearsOfMentoring)}</span>
+                        <span className="text-sm line-clamp-1 break-all truncate">{Number(senderYearsOfMentoring)}</span>
                       </div>
 
                       <div className="mt-4">
@@ -951,14 +1023,14 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
                         <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
                           Category of Mentoring Service
                         </h3>
-                        <span>{senderCategoryOfMentoringService}</span>
+                        <span className="text-sm line-clamp-1 break-all truncate">{senderCategoryOfMentoringService}</span>
                       </div>
 
                       <div className="mt-4">
                         <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
                           Existing ICP Mentor
                         </h3>
-                        <span>{senderExistingIcpMentor ? "Yes" : "No"}</span>
+                        <span className="text-sm line-clamp-1 break-all truncate">{senderExistingIcpMentor ? "Yes" : "No"}</span>
                       </div>
 
                       <div className="mt-4">
@@ -977,7 +1049,7 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
                             )
                           )
                         ) : (
-                          <span>No Project Portfolio</span>
+                          <span className="text-sm line-clamp-1 break-all truncate">No Project Portfolio</span>
                         )}
                       </div>
 
@@ -995,7 +1067,7 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
                             </span>
                           ))
                         ) : (
-                          <span>No Hub Ownership</span>
+                          <span className="text-sm line-clamp-1 break-all truncate">No Hub Ownership</span>
                         )}
                       </div>
 
@@ -1003,7 +1075,7 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
                         <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
                           ICP Hub or Spoke
                         </h3>
-                        <span>{senderIcpHubOrSpoke ? "Yes" : "No"}</span>
+                        <span className="text-sm line-clamp-1 break-all truncate">{senderIcpHubOrSpoke ? "Yes" : "No"}</span>
                       </div>
 
                       <div className="mt-4">
@@ -1020,7 +1092,7 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
                             </span>
                           ))
                         ) : (
-                          <span>No Preferred Hub</span>
+                          <span className="text-sm line-clamp-1 break-all truncate">No Preferred Hub</span>
                         )}
                       </div>
 
@@ -1038,7 +1110,7 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
                             </span>
                           ))
                         ) : (
-                          <span>No Multichain Support</span>
+                          <span className="text-sm line-clamp-1 break-all truncate">No Multichain Support</span>
                         )}
                       </div>
 
@@ -1050,9 +1122,285 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
                           href={senderWebsite}
                           target="_blank"
                           rel="noopener noreferrer"
+                          className="text-sm line-clamp-1 break-all truncate"
                         >
                           {senderWebsite}
                         </a>
+                      </div>
+                      <div>
+                        {senderSocialLinks && (
+                          <h3 className="mb-2 text-xs text-gray-500 font-medium ">
+                            LINKS
+                          </h3>
+                        )}
+
+                        <div className="flex items-center ">
+                          <div className="flex gap-3">
+                            {senderSocialLinks
+                              ? senderSocialLinks?.map((link, i) => {
+                                  const icon = getSocialLogo(link);
+                                  return (
+                                    <div
+                                      key={i}
+                                      className="flex items-center space-x-2"
+                                    >
+                                      {icon ? (
+                                        <a href={`${link}`}>{icon}</a>
+                                      ) : (
+                                        ""
+                                      )}
+                                    </div>
+                                  );
+                                })
+                              : ""}
+                          </div>
+                        </div>
+                        
+                      </div>
+                    </div>
+                  )}
+                  {/* Investor Tab Content */}
+                  {activeSideTab === "investor" && (
+                    <div className="p-4">
+                      
+                      <div className="mt-4">
+                        <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                          Name of Fund
+                        </h3>
+                        <span className="text-sm line-clamp-1 break-all truncate">
+                          {fundName}
+                        </span>
+                      </div>
+
+                      
+                      <div className="mt-4">
+                        <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                          Category of Investment
+                        </h3>
+
+                    
+                        {categoryOfInvestment.length > 0 &&
+                          categoryOfInvestment
+                            .split(",")
+                            .map((category, index) => (
+                              <div
+                                key={index}
+                                className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 inline-block mr-2 mb-2 mt-1"
+                              >
+                                {category.trim()}
+                              </div>
+                            ))}
+                      </div>
+
+                     
+                      <div className="mt-4">
+                        <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                          Fund Size
+                        </h3>
+                        <span className="text-sm line-clamp-1 break-all truncate">
+                          {Number(fundSize)}
+                        </span>
+                      </div>
+
+                  
+                      <div className="mt-4">
+                        <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                          Money Invested
+                        </h3>
+                        <span className="text-sm line-clamp-1 break-all truncate">
+                          {Number(moneyInvested)}
+                        </span>
+                      </div>
+
+                     
+                      <div className="mt-4">
+                        <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                          Investor Type
+                        </h3>
+
+                        {investorType.length > 0 &&
+                          investorType[0].split(",").map((type, index) => (
+                            <div
+                              key={index}
+                              className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 inline-block mr-2 mb-2 mt-1"
+                            >
+                              {type.trim()}
+                            </div>
+                          ))}
+                      </div>
+
+                     
+                      <div className="mt-4">
+                        <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                          Portfolio Link
+                        </h3>
+                        <a
+                          href={portfolioLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-sm line-clamp-1 break-all truncate"
+                        >
+                          {portfolioLink}
+                        </a>
+                      </div>
+
+                     
+                      <div className="mt-4">
+                        <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                          Stage
+                        </h3>
+              
+                        {stage.length > 0 &&
+                          stage[0].split(",").map((stagel, index) => (
+                            <div
+                              key={index}
+                              className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 inline-block mr-2 mb-2 mt-1"
+                            >
+                              {stagel.trim()}
+                            </div>
+                          ))}
+                      </div>
+
+                   
+                      <div className="mt-4">
+                        <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                          Preferred ICP Hub
+                        </h3>
+                        <span className="text-sm line-clamp-1 break-all truncate">
+                          {preferredIcpHubforInvestor}
+                        </span>
+                      </div>
+
+                      <div className="mt-4">
+                        <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                          Projects on Multichain
+                        </h3>
+
+                        <div className="flex flex-wrap gap-1">
+                          {projectOnMultichain.length > 0 &&
+                            projectOnMultichain[0]
+                              .split(",")
+                              .map((chain, index) => (
+                                <div
+                                  key={index}
+                                  className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 inline-block mr-2 mb-2 mt-1"
+                                >
+                                  {chain.trim()}
+                                </div>
+                              ))}
+                        </div>
+                      </div>
+
+                      
+                      <div className="mt-4">
+                        <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                          Average Check Size
+                        </h3>
+                        <span className="text-sm line-clamp-1 break-all truncate">
+                          {Number(averageCheckSize)}
+                        </span>
+                      </div>
+
+                     
+                      {/* <div className="mt-4">
+                        <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                          Range of Check Size
+                        </h3>
+                       
+                        {rangeOfCheckSize.length > 0 &&
+                          rangeOfCheckSize.split(",").map((size, index) => (
+                            <div
+                              key={index}
+                              className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 inline-block mr-2 mb-2 mt-1"
+                            >
+                              {size.trim()}
+                            </div>
+                          ))}
+                      </div> */}
+
+                    
+                      <div className="mt-4">
+                        <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                          Number of Portfolio Companies
+                        </h3>
+                        <span className="text-sm line-clamp-1 break-all truncate">
+                          {Number(numberOfPortfolioCompanies)}
+                        </span>
+                      </div>
+
+                     
+                      <div className="mt-4">
+                        <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                          Registered
+                        </h3>
+                        <span className="text-sm line-clamp-1 break-all truncate">
+                          {registered ? "Yes" : "No"}
+                        </span>
+                      </div>
+
+                     
+                      <div className="mt-4">
+                        <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                          Registered Country
+                        </h3>
+                        <span className="text-sm line-clamp-1 break-all truncate">
+                          {registeredCountry}
+                        </span>
+                      </div>
+
+                     
+                      <div className="mt-4">
+                        <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                          Type of Investment
+                        </h3>
+                        <span className="text-sm line-clamp-1 break-all truncate">
+                          {typeOfInvestment}
+                        </span>
+                      </div>
+
+                      
+                      <div className="mt-4">
+                        <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                          Website Link
+                        </h3>
+                        <a
+                          href={websiteLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-sm line-clamp-1 break-all truncate"
+                        >
+                          {websiteLink}
+                        </a>
+                      </div>
+                      <div>
+                        {senderSocialLinks && (
+                          <h3 className="mb-2 text-xs text-gray-500 font-medium ">
+                            LINKS
+                          </h3>
+                        )}
+
+                        <div className="flex items-center ">
+                          <div className="flex gap-3">
+                            {senderSocialLinks
+                              ? senderSocialLinks?.map((link, i) => {
+                                  const icon = getSocialLogo(link);
+                                  return (
+                                    <div
+                                      key={i}
+                                      className="flex items-center space-x-2"
+                                    >
+                                      {icon ? (
+                                        <a href={`${link}`}>{icon}</a>
+                                      ) : (
+                                        ""
+                                      )}
+                                    </div>
+                                  );
+                                })
+                              : ""}
+                          </div>
+                        </div>
+                        
                       </div>
                     </div>
                   )}
