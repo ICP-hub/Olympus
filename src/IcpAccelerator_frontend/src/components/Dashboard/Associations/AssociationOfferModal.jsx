@@ -382,13 +382,13 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
 
   useEffect(() => {
     if (openDetail) {
-      // Prevent background from scrolling when modal is open
+     
       document.body.style.overflow = "hidden";
     } else {
-      // Restore background scroll when modal is closed
+ 
       document.body.style.overflow = "auto";
     }
-    // Cleanup when the component is unmounted
+   
     return () => {
       document.body.style.overflow = "auto";
     };
@@ -396,8 +396,9 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
 
   const [activeMobileTab, setActiveMobileTab] = useState(null);
   const [activeTab, setActiveTab] = useState("document");
+  const [activeSideTab, setActiveSideTab] = useState("general");
 
-  // Define available tabs
+
   const tabs = ["document", "team", "ratings", "moneyraised","review"];
   const uniqueActiveTabs = [...new Set(tabs)];
 
@@ -438,7 +439,7 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
   // Receiver Data
   let recieverDataProject = user?.reciever_data?.[0][0] ?? {}; // Project data at index 0
   let recieverDataUser = user?.reciever_data?.[0][1] ?? {}; // User data at index 1
-
+console.log("mentor detail on page ",recieverDataProject)
   let recieverYearsOfMentoring =
     recieverDataProject?.profile?.years_of_mentoring ?? "0";
   let recieverIcpHubOrSpoke =
@@ -488,58 +489,63 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
 
   // Project Details (Index 0)
   let projectName =
-    senderDataProject?.profile?.project_name ?? "Project Name not available";
+    senderDataProject?.params?.project_name ?? "Project Name not available";
+   
   let projectDescription =
-    senderDataProject?.profile?.project_description?.[0] ??
+    senderDataProject?.params?.project_description?.[0] ??
     "Project description not available";
   let projectWebsite =
-    senderDataProject?.profile?.project_website?.[0] ??
+    senderDataProject?.params?.project_website?.[0] ??
     "https://defaultwebsite.com";
   let projectElevatorPitch =
-    senderDataProject?.profile?.project_elevator_pitch?.[0] ??
+    senderDataProject?.params?.project_elevator_pitch?.[0] ??
     "No project elevator pitch available";
   let dappLink =
-    senderDataProject?.profile?.dapp_link?.[0] ?? "No dapp link available";
+    senderDataProject?.params?.dapp_link?.[0] ?? "No dapp link available";
   let preferredIcpHub =
-    senderDataProject?.profile?.preferred_icp_hub?.[0] ?? "Hub not available";
+    senderDataProject?.params?.preferred_icp_hub?.[0] ?? "Hub not available";
   let longTermGoals =
-    senderDataProject?.profile?.long_term_goals?.[0] ??
+    senderDataProject?.params?.long_term_goals?.[0] ??
     "Long term goals not available";
-  let revenue = senderDataProject?.profile?.revenue?.[0] ?? 0n;
+  let revenue = senderDataProject?.params?.revenue?.[0] ?? 0n;
   let weeklyActiveUsers =
-    senderDataProject?.profile?.weekly_active_users?.[0] ?? 0n;
+    senderDataProject?.params?.weekly_active_users?.[0] ?? 0n;
   let supportsMultichain =
-    senderDataProject?.profile?.supports_multichain?.[0] ??
+    senderDataProject?.params?.supports_multichain?.[0] ??
     "Chain not available";
   let technicalDocs =
-    senderDataProject?.profile?.technical_docs?.[0] ??
+    senderDataProject?.params?.technical_docs?.[0] ??
     "No technical docs available";
   let tokenEconomics =
-    senderDataProject?.profile?.token_economics?.[0] ??
+    senderDataProject?.params?.token_economics?.[0] ??
     "No token economics available";
   let targetMarket =
-    senderDataProject?.profile?.target_market?.[0] ??
+    senderDataProject?.params?.target_market?.[0] ??
     "Target market not available";
   let moneyRaisedTillNow =
-    senderDataProject?.profile?.money_raised_till_now?.[0] ?? false;
+    senderDataProject?.params?.money_raised_till_now?.[0] ?? false;
   let isYourProjectRegistered =
-    senderDataProject?.profile?.is_your_project_registered?.[0] ?? false;
+    senderDataProject?.params?.is_your_project_registered?.[0] ?? false;
   let liveOnIcpMainnet =
-    senderDataProject?.profile?.live_on_icp_mainnet?.[0] ?? false;
+    senderDataProject?.params?.live_on_icp_mainnet?.[0] ?? false;
   let uploadPrivateDocuments =
-    senderDataProject?.profile?.upload_private_documents?.[0] ?? false;
+    senderDataProject?.params?.upload_private_documents?.[0] ?? false;
   let typeOfRegistration =
-    senderDataProject?.profile?.type_of_registration?.[0] ?? "Company";
+    senderDataProject?.params?.type_of_registration?.[0] ?? "Company";
   let projectAreaOfFocus =
-    senderDataProject?.profile?.project_area_of_focus ??
+    senderDataProject?.params?.project_area_of_focus ??
     "Area of Focus not available";
-  let projectCover = senderDataProject?.profile?.project_cover?.[0]
-    ? uint8ArrayToBase64(senderDataProject?.profile?.project_cover?.[0])
+    let reasontojoinincubator =
+    senderDataProject?.params?.reason_to_join_incubator?? "not available";
+    
+  let projectCover = senderDataProject?.params?.project_cover?.[0]
+    ? uint8ArrayToBase64(senderDataProject?.params?.project_cover?.[0])
     : "../../../assets/Logo/CypherpunkLabLogo.png";
-  let projectLogo = senderDataProject?.profile?.project_logo?.[0]
-    ? uint8ArrayToBase64(senderDataProject?.profile?.project_logo?.[0])
+  let projectLogo = senderDataProject?.params?.project_logo?.[0]
+    ? uint8ArrayToBase64(senderDataProject?.params?.project_logo?.[0])
+    
     : "../../../assets/Logo/CypherpunkLabLogo.png";
-
+    let countryofregistration = senderDataProject?.params?.country_of_registration?.[0] ?? "not available";
   // User Details within Sender Data (Index 1)
   let senderFullName =
     senderDataUser?.params?.full_name ?? "Sender Name not available";
@@ -564,6 +570,30 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
     senderDataUser?.params?.social_links?.[0];
     "No social links available";
   console.log("sender social links",senderSocialLinks)
+
+
+  //Sender Mentor Details
+  let senderYearsOfMentoring =
+  senderDataProject?.profile?.years_of_mentoring ?? "0";
+  let senderAreaOfExpertise =
+  senderDataProject?.profile?.area_of_expertise ?? [];
+let senderCategoryOfMentoringService =
+  senderDataProject?.profile?.category_of_mentoring_service ?? "";
+let senderExistingIcpMentor =
+  senderDataProject?.profile?.existing_icp_mentor ?? false;
+let senderExistingIcpProjectPortfolio =
+  senderDataProject?.profile?.existing_icp_project_porfolio ?? [];
+let senderHubOwner = senderDataProject?.profile?.hub_owner ?? [];
+let senderIcpHubOrSpoke =
+  senderDataProject?.profile?.icp_hub_or_spoke ?? false;
+let senderLinks = senderDataProject?.profile?.links ?? [];
+let senderMultichain = senderDataProject?.profile?.multichain ?? [];
+let senderPreferredIcpHub =
+  senderDataProject?.profile?.preferred_icp_hub ?? [];
+let senderReasonForJoining =
+  senderDataProject?.profile?.reason_for_joining ?? [];
+let senderWebsite =
+  senderDataProject?.profile?.website?.[0] ?? "https://defaultwebsite.com";
   // Other sender-specific details
   let isSenderActive = senderDataUser?.active ?? false;
   let isSenderApproved = senderDataUser?.approve ?? false;
@@ -630,24 +660,48 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
               </div>
               <div className="p-6 bg-white">
                 <div className="mb-4">
-                  <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
-                    Roles
-                  </h3>
-                  <div className="flex space-x-2">
-                    <span className="bg-[#F0F9FF] border border-[#B9E6FE] text-[#026AA2] px-1 py-1 rounded-md text-xs font-normal">
-                      {/* {projectId ? "Project" : "User"} */}
-                    </span>
-                  </div>
-                </div>
-                <hr />
+                <div className="flex justify-start border-b overflow-x-auto">
+                <button
+                  className={`px-4 py-2 focus:outline-none font-medium ${
+                    activeSideTab === "general"
+                      ? "border-b-2 border-blue-500 text-blue-500 font-medium"
+                      : "text-gray-400"
+                  }`}
+                  onClick={() => setActiveSideTab("general")}
+                >
+                  General
+                </button>
+                <button
+                  className={`px-4 py-2 focus:outline-none font-medium ${
+                    activeSideTab === "project"
+                      ? "border-b-2 border-blue-500 text-blue-500 font-medium"
+                      : "text-gray-400"
+                  }`}
+                  onClick={() => setActiveSideTab("project")}
+                >
+                  Project
+                </button>
+                <button
+                  className={`px-4 py-2 focus:outline-none font-medium ${
+                    activeSideTab === "project"
+                      ? "border-b-2 border-blue-500 text-blue-500 font-medium"
+                      : "text-gray-400"
+                  }`}
+                  onClick={() => setActiveSideTab("mentor")}
+                >
+                  Mentor
+                </button>
+              </div>
 
-                <div className=" ">
+              {/* General Tab Content */}
+              {activeSideTab === "general" && (
+                <div className="p-4">
                   <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-2 ">
                     <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
                       Email
                     </h3>
 
-                    <div className="flex items-center flex-wrap">
+                    <div className="flex items-center flex-wrap line-clamp-1 break-all truncate">
                       <p className="mr-2 text-sm">{senderEmail}</p>
                       <VerifiedIcon
                         className="text-blue-500 mr-2 w-2 h-2"
@@ -659,8 +713,7 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
                     </div>
                   </div>
 
-                  {/* About Section */}
-                  <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-1 ">
+                  <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-1  ">
                     <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
                       About
                     </h3>
@@ -689,7 +742,6 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
                     </div>
                   </div>
 
-                  {/* Location Section */}
                   <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-1 ">
                     <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
                       Location
@@ -724,28 +776,273 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
                               );
                             })
                           : ""}
-                        {/* {senderSocialLinks?.link.map((alllink, i) => {
-                const icon = getSocialLogo(alllink);
-                return (
-                  <div key={i} className="flex items-center space-x-2">
-                    {icon ? <a href={`${alllink}`}>{icon}</a> : ""}
-                  </div>
-                );
-              })} */}
                       </div>
                     </div>
                     <div className="my-2 group relative hover:bg-gray-100 rounded-lg p-1 ">
-                      <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
+                      <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase line-clamp-1 break-all truncate">
                         Proposed By {senderFullName}
                       </h3>
                       <div>
-                        <p className="text-sm overflow-hidden line-clamp-2 text-ellipsis ">
+                        <p className="text-sm overflow-hidden line-clamp-2 text-ellipsis break-all ">
                           {offer}
                         </p>
                       </div>
                     </div>
                   </div>
                 </div>
+              )}
+
+              {/* Project Tab Content */}
+              {activeSideTab === "project" && (
+                <div className="p-4">
+                  <div className="mt-4">
+                    <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                      Project Name
+                    </h3>
+                    <p className="text-sm line-clamp-3">{projectName} </p>
+                  </div>
+                  <div className="mt-4">
+                    <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
+                      Project Description
+                    </h3>
+                    <p className="text-sm line-clamp-3 break-all">{projectDescription} </p>
+                  </div>
+                  <div className="mt-6">
+                    <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
+                      Prefered Icp Hub
+                    </h3>
+                    <p className="text-sm">{preferredIcpHub}</p>
+                  </div>
+                  <div className="mt-6">
+                    <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
+                      Project Elevator Pitch
+                    </h3>
+                    <p className="text-sm line-clamp-1 break-all truncate">{projectElevatorPitch}</p>
+                  </div>
+                  <div className="mt-6">
+                    <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
+                      Project Website
+                    </h3>
+                    <p className="text-sm line-clamp-1 break-all truncate">{projectWebsite}</p>
+                  </div>
+
+                  <div className="mt-4">
+                    <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
+                      PROJECT FOCUS AREA
+                    </h3>
+                    {projectAreaOfFocus?.split(", ").map((focus, index) => (
+                      <span
+                        key={index}
+                        className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 inline-block mr-2 mb-2 mt-1"
+                      >
+                        {focus}
+                      </span>
+                    ))}
+                  </div>
+                  <div className="mt-4">
+                    <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
+                      MULTI-CHAIN NAMES
+                    </h3>
+                    {supportsMultichain?.split(", ").map((chain, index) => (
+                      <span
+                        key={index}
+                        className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 inline-block mr-2 mb-2 mt-1"
+                      >
+                        {chain}
+                      </span>
+                    ))}
+                  </div>
+                  <div className="mt-4">
+                    <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
+                      REASON TO JOIN
+                    </h3>
+                    {reasontojoinincubator?.split(", ").map((goal, index) => (
+                      <span
+                        key={index}
+                        className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 inline-block mr-2 mb-2 mt-1"
+                      >
+                        {goal}
+                      </span>
+                    ))}
+                  </div>
+
+                  <div className="mt-4">
+                    <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
+                      TYPE OF REGISTRATION
+                    </h3>
+                    <span className=" border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 inline-block mr-2 mb-2 mt-1">
+                      {typeOfRegistration}{" "}
+                    </span>
+                  </div>
+                  <div className="mt-4">
+                    <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
+                      COUNTRY OF REGISTRATION
+                    </h3>
+                    <span className=" text-sm">{countryofregistration} </span>
+                  </div>
+                  <div className="mt-4">
+                    <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
+                      DAPP LINK
+                    </h3>
+                    <span className=" text-sm line-clamp-1 break-all truncate">{dappLink} </span>
+                  </div>
+                  <div className="mt-4">
+                    <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
+                      WEEKLY ACTIVE USERS
+                    </h3>
+                    <span className=" text-sm line-clamp-1 break-all truncate">{Number(weeklyActiveUsers)}</span>
+                  </div>
+                  <div className="mt-4">
+                    <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
+                      REVENUE
+                    </h3>
+                    <span className=" text-sm line-clamp-1 break-all truncate">{Number(revenue)} </span>
+                  </div>
+                  
+                  <div className="mt-4">
+                    <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
+                      TOKEN ECONOMICS
+                    </h3>
+                    <span className=" text-sm line-clamp-1 break-all truncate">{tokenEconomics} </span>
+                  </div>
+                  
+                </div>
+              )}
+                 {activeSideTab === "mentor" && (
+  <div className="p-4">
+    <div className="mt-4">
+      <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+        Years of Mentoring
+      </h3>
+      <span>{Number(senderYearsOfMentoring)}</span>
+    </div>
+
+    <div className="mt-4">
+      <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+        Area of Expertise
+      </h3>
+      {senderAreaOfExpertise.map((expertise, index) => (
+        <span
+          key={index}
+          className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 inline-block mr-2 mb-2 mt-1"
+        >
+          {expertise}
+        </span>
+      ))}
+    </div>
+
+    <div className="mt-4">
+      <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+        Category of Mentoring Service
+      </h3>
+      <span>{senderCategoryOfMentoringService}</span>
+    </div>
+
+    <div className="mt-4">
+      <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+        Existing ICP Mentor
+      </h3>
+      <span>{senderExistingIcpMentor ? "Yes" : "No"}</span>
+    </div>
+
+    <div className="mt-4">
+      <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+        Existing ICP Project Portfolio
+      </h3>
+      {senderExistingIcpProjectPortfolio.length > 0 ? (
+        senderExistingIcpProjectPortfolio.map((portfolio, index) => (
+          <span
+            key={index}
+            className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 inline-block mr-2 mb-2 mt-1"
+          >
+            {portfolio}
+          </span>
+        ))
+      ) : (
+        <span>No Project Portfolio</span>
+      )}
+    </div>
+
+    <div className="mt-4">
+      <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+        Hub Owner
+      </h3>
+      {senderHubOwner.length > 0 ? (
+        senderHubOwner.map((hub, index) => (
+          <span
+            key={index}
+            className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 inline-block mr-2 mb-2 mt-1"
+          >
+            {hub}
+          </span>
+        ))
+      ) : (
+        <span>No Hub Ownership</span>
+      )}
+    </div>
+
+    <div className="mt-4">
+      <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+        ICP Hub or Spoke
+      </h3>
+      <span>{senderIcpHubOrSpoke ? "Yes" : "No"}</span>
+    </div>
+
+    <div className="mt-4">
+      <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+        Preferred ICP Hub
+      </h3>
+      {senderPreferredIcpHub.length > 0 ? (
+        senderPreferredIcpHub.map((hub, index) => (
+          <span
+            key={index}
+            className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 inline-block mr-2 mb-2 mt-1"
+          >
+            {hub}
+          </span>
+        ))
+      ) : (
+        <span>No Preferred Hub</span>
+      )}
+    </div>
+
+    <div className="mt-4">
+      <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+        Multichain
+      </h3>
+      {senderMultichain.length > 0 ? (
+        senderMultichain.map((chain, index) => (
+          <span
+            key={index}
+            className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 inline-block mr-2 mb-2 mt-1"
+          >
+            {chain}
+          </span>
+        ))
+      ) : (
+        <span>No Multichain Support</span>
+      )}
+    </div>
+
+    <div className="mt-4">
+      <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+        Website
+      </h3>
+      <a href={senderWebsite} target="_blank" rel="noopener noreferrer">
+        {senderWebsite}
+      </a>
+    </div>
+  </div>
+)}
+
+
+                </div>
+                
+
+                
+             
+                
+             
               </div>
             </div>
 
@@ -977,4 +1274,3 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
 };
 
 export default AssociationOfferModal;
-

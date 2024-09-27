@@ -664,7 +664,7 @@ function DashboardSidebar({ isOpen, onClose, id, id2 }) {
         } ${disabled ? "lg:cursor-not-allowed lg:opacity-50" : ""}`}
       >
         {icon}
-        <span className=" ml-3 align-bottom pb-1 text-base md:text-base">
+        <span className=" ml-3 align-bottom pb-1 text-base md:text-base truncate break-all">
           {label}
         </span>
       </div>

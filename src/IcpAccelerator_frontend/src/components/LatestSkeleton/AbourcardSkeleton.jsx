@@ -116,15 +116,15 @@ import getSocialLogo from "../Utils/navigationHelper/getSocialLogo";
               <label className="block mt-3 font-medium text-gray-600">
                 Reason To Join Platform
               </label>
-             <div className="flex sm:max-w-[11rem] md:max-w-[24rem] overflow-hidden overflow-x-scroll gap-1 ">
+             <div className="flex  overflow-hidden overflow-x-scroll gap-1 ">
              {getAllData?.reasons_to_join_platform ? (
                 getAllData?.reasons_to_join_platform
                   .split(", ")
-                  .slice(0, 3)
+                  .slice(0, 10)
                   .map((tag, index) => (
                     <span
                       key={index}
-                      className="text-center sm:min-w-[80px] md:min-w-[100px] lg:max-w-[120px] truncate text-gray-600 border border-gray-300 rounded-lg px-4 py-0.5 font-normal mr-2"
+                      className="text-center rounded-2xl sm:min-w-[80px] md:min-w-[100px] lg:max-w-[120px] truncate text-gray-600 border border-gray-300  px-4 py-0.5 font-normal mr-2"
                     >
                       {tag}
                     </span>
@@ -139,15 +139,15 @@ import getSocialLogo from "../Utils/navigationHelper/getSocialLogo";
               <label className="block  font-medium text-gray-600 -mt-1">
                 Interests
               </label>
-              <div className="flex sm:max-w-[11rem] md:max-w-[24rem]  overflow-hidden overflow-x-scroll gap-1 ">
+              <div className="flex  overflow-hidden overflow-x-scroll gap-1 ">
               {getAllData?.domains_interested_in ? (
                 getAllData?.domains_interested_in
                   .split(", ")
-                  .slice(0, 3)
+                  .slice(0, 10)
                   .map((tag, index) => (
                     <span
                       key={index}
-                      className="text-center sm:min-w-[80px] md:min-w-[100px] lg:max-w-[120px] truncate text-gray-600 border border-gray-300 rounded-lg px-4 py-0.5 font-normal mr-2"
+                      className="text-center sm:min-w-[80px] md:min-w-[100px] lg:max-w-[120px] truncate text-gray-600 border border-gray-300 rounded-2xl px-4 py-0.5 font-normal mr-2"
                     >
                       {tag}
                     </span>
@@ -172,7 +172,7 @@ import getSocialLogo from "../Utils/navigationHelper/getSocialLogo";
                   Location
                 </label>
                 {getAllData?.country ? (
-                  <p className="sm:max-w-[11rem] text-base md:max-w-[24rem]  truncate font-normal">
+                  <p className="sm:max-w-[11rem] text-base   truncate break-all font-normal">
                     {getAllData?.country}
                   </p>
                 ) : (
