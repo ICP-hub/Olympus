@@ -9,8 +9,6 @@
 // const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
 //   console.log("user data =>", user);
 
- 
-
 //   useEffect(() => {
 //     if (openDetail) {
 //       // Prevent background from scrolling when modal is open
@@ -175,7 +173,6 @@
 //   // Response Data
 //   let requestStatus = user?.request_status ?? "pending";
 //   let response = user?.response ?? "";
-
 
 //   return (
 //     <div
@@ -363,32 +360,33 @@
 // };
 
 // export default AssociationOfferModal;
-import React, { useEffect,useState } from "react";
+import React, { useEffect, useState } from "react";
 import VerifiedIcon from "@mui/icons-material/Verified";
 import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
 import ArrowOutwardOutlinedIcon from "@mui/icons-material/ArrowOutwardOutlined";
 import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 import CloseIcon from "@mui/icons-material/Close";
 import getSocialLogo from "../../Utils/navigationHelper/getSocialLogo";
-import { FaChevronDown, FaChevronUp } from "react-icons/fa"; 
+import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import DiscoverDocument from "../DashboardHomePage/discoverMentorPage/DiscoverDocument";
 import DiscoverTeam from "../DashboardHomePage/discoverMentorPage/DiscoverTeam";
 import DiscoverRatings from "../../Discover/DiscoverRatings";
 import DiscoverReview from "../../Discover/DiscoverReview";
 import DiscoverMoneyRaising from "../Project/DiscoverMoneyRais";
+import DiscoverMentorEvent from "../DashboardHomePage/discoverMentor/DiscoverMentorEvent";
+import Nodata from "../Project/Nodata";
+import NoData from "../../NoDataCard/NoData";
 
 const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
   console.log("user data.................... =>", user);
 
   useEffect(() => {
     if (openDetail) {
-     
       document.body.style.overflow = "hidden";
     } else {
- 
       document.body.style.overflow = "auto";
     }
-   
+
     return () => {
       document.body.style.overflow = "auto";
     };
@@ -398,8 +396,7 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
   const [activeTab, setActiveTab] = useState("document");
   const [activeSideTab, setActiveSideTab] = useState("general");
 
-
-  const tabs = ["document", "team", "ratings", "moneyraised","review"];
+  const tabs = ["document", "team", "ratings", "moneyraised", "review"];
   const uniqueActiveTabs = [...new Set(tabs)];
 
   const handleMobileTabToggle = (tab) => {
@@ -409,7 +406,6 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
   const handleChange = (tab) => {
     setActiveTab(tab);
   };
-
 
   useEffect(() => {
     if (openDetail) {
@@ -439,7 +435,7 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
   // Receiver Data
   let recieverDataProject = user?.reciever_data?.[0][0] ?? {}; // Project data at index 0
   let recieverDataUser = user?.reciever_data?.[0][1] ?? {}; // User data at index 1
-console.log("mentor detail on page ",recieverDataProject)
+  console.log("mentor detail on page ", recieverDataProject);
   let recieverYearsOfMentoring =
     recieverDataProject?.profile?.years_of_mentoring ?? "0";
   let recieverIcpHubOrSpoke =
@@ -476,21 +472,20 @@ console.log("mentor detail on page ",recieverDataProject)
   let userTypeOfProfile =
     recieverDataUser?.params?.type_of_profile?.[0] ?? "individual";
   let userSocialLinks =
-    recieverDataUser?.params?.social_links ??
-    "No social links available";
+    recieverDataUser?.params?.social_links ?? "No social links available";
 
   // Sender Data
   let senderDataProject = user?.sender_data?.[0][0] ?? {}; // Project data at index 0
   let senderDataUser = user?.sender_data?.[0][1] ?? {}; // User data at index 1
-  console.log("sender user data ",senderDataUser);
-  console.log("project data",senderDataProject)
+  console.log("sender user data ", senderDataUser);
+  console.log("project data", senderDataProject);
   let projectid = senderDataProject.uid;
-  console.log(projectid)
+  console.log(projectid);
 
   // Project Details (Index 0)
   let projectName =
     senderDataProject?.params?.project_name ?? "Project Name not available";
-   
+
   let projectDescription =
     senderDataProject?.params?.project_description?.[0] ??
     "Project description not available";
@@ -535,17 +530,17 @@ console.log("mentor detail on page ",recieverDataProject)
   let projectAreaOfFocus =
     senderDataProject?.params?.project_area_of_focus ??
     "Area of Focus not available";
-    let reasontojoinincubator =
-    senderDataProject?.params?.reason_to_join_incubator?? "not available";
-    
+  let reasontojoinincubator =
+    senderDataProject?.params?.reason_to_join_incubator ?? "not available";
+
   let projectCover = senderDataProject?.params?.project_cover?.[0]
     ? uint8ArrayToBase64(senderDataProject?.params?.project_cover?.[0])
     : "../../../assets/Logo/CypherpunkLabLogo.png";
   let projectLogo = senderDataProject?.params?.project_logo?.[0]
     ? uint8ArrayToBase64(senderDataProject?.params?.project_logo?.[0])
-    
     : "../../../assets/Logo/CypherpunkLabLogo.png";
-    let countryofregistration = senderDataProject?.params?.country_of_registration?.[0] ?? "not available";
+  let countryofregistration =
+    senderDataProject?.params?.country_of_registration?.[0] ?? "not available";
   // User Details within Sender Data (Index 1)
   let senderFullName =
     senderDataUser?.params?.full_name ?? "Sender Name not available";
@@ -566,34 +561,32 @@ console.log("mentor detail on page ",recieverDataProject)
     "Reason to join not available";
   let senderTypeOfProfile =
     senderDataUser?.params?.type_of_profile?.[0] ?? "individual";
-  let senderSocialLinks =
-    senderDataUser?.params?.social_links?.[0];
-    "No social links available";
-  console.log("sender social links",senderSocialLinks)
-
+  let senderSocialLinks = senderDataUser?.params?.social_links?.[0];
+  ("No social links available");
+  console.log("sender social links", senderSocialLinks);
 
   //Sender Mentor Details
   let senderYearsOfMentoring =
-  senderDataProject?.profile?.years_of_mentoring ?? "0";
+    senderDataProject?.profile?.years_of_mentoring ?? "0";
   let senderAreaOfExpertise =
-  senderDataProject?.profile?.area_of_expertise ?? [];
-let senderCategoryOfMentoringService =
-  senderDataProject?.profile?.category_of_mentoring_service ?? "";
-let senderExistingIcpMentor =
-  senderDataProject?.profile?.existing_icp_mentor ?? false;
-let senderExistingIcpProjectPortfolio =
-  senderDataProject?.profile?.existing_icp_project_porfolio ?? [];
-let senderHubOwner = senderDataProject?.profile?.hub_owner ?? [];
-let senderIcpHubOrSpoke =
-  senderDataProject?.profile?.icp_hub_or_spoke ?? false;
-let senderLinks = senderDataProject?.profile?.links ?? [];
-let senderMultichain = senderDataProject?.profile?.multichain ?? [];
-let senderPreferredIcpHub =
-  senderDataProject?.profile?.preferred_icp_hub ?? [];
-let senderReasonForJoining =
-  senderDataProject?.profile?.reason_for_joining ?? [];
-let senderWebsite =
-  senderDataProject?.profile?.website?.[0] ?? "https://defaultwebsite.com";
+    senderDataProject?.profile?.area_of_expertise ?? [];
+  let senderCategoryOfMentoringService =
+    senderDataProject?.profile?.category_of_mentoring_service ?? "";
+  let senderExistingIcpMentor =
+    senderDataProject?.profile?.existing_icp_mentor ?? false;
+  let senderExistingIcpProjectPortfolio =
+    senderDataProject?.profile?.existing_icp_project_porfolio ?? [];
+  let senderHubOwner = senderDataProject?.profile?.hub_owner ?? [];
+  let senderIcpHubOrSpoke =
+    senderDataProject?.profile?.icp_hub_or_spoke ?? false;
+  let senderLinks = senderDataProject?.profile?.links ?? [];
+  let senderMultichain = senderDataProject?.profile?.multichain ?? [];
+  let senderPreferredIcpHub =
+    senderDataProject?.profile?.preferred_icp_hub ?? [];
+  let senderReasonForJoining =
+    senderDataProject?.profile?.reason_for_joining ?? [];
+  let senderWebsite =
+    senderDataProject?.profile?.website?.[0] ?? "https://defaultwebsite.com";
   // Other sender-specific details
   let isSenderActive = senderDataUser?.active ?? false;
   let isSenderApproved = senderDataUser?.approve ?? false;
@@ -602,11 +595,10 @@ let senderWebsite =
   let senderPrincipal =
     user?.sender_principal ?? "Sender Principal not available";
   let sentAt = user?.sent_at ?? 0n;
-
+  console.log("sender Principle aaa raha hai kya", senderPrincipal);
   // Response Data
   let requestStatus = user?.request_status ?? "pending";
   let response = user?.response ?? "";
-
 
   return (
     <div
@@ -660,610 +652,640 @@ let senderWebsite =
               </div>
               <div className="p-6 bg-white">
                 <div className="mb-4">
-                <div className="flex justify-start border-b overflow-x-auto">
-                <button
-                  className={`px-4 py-2 focus:outline-none font-medium ${
-                    activeSideTab === "general"
-                      ? "border-b-2 border-blue-500 text-blue-500 font-medium"
-                      : "text-gray-400"
-                  }`}
-                  onClick={() => setActiveSideTab("general")}
-                >
-                  General
-                </button>
-                <button
-                  className={`px-4 py-2 focus:outline-none font-medium ${
-                    activeSideTab === "project"
-                      ? "border-b-2 border-blue-500 text-blue-500 font-medium"
-                      : "text-gray-400"
-                  }`}
-                  onClick={() => setActiveSideTab("project")}
-                >
-                  Project
-                </button>
-                <button
-                  className={`px-4 py-2 focus:outline-none font-medium ${
-                    activeSideTab === "project"
-                      ? "border-b-2 border-blue-500 text-blue-500 font-medium"
-                      : "text-gray-400"
-                  }`}
-                  onClick={() => setActiveSideTab("mentor")}
-                >
-                  Mentor
-                </button>
-              </div>
-
-              {/* General Tab Content */}
-              {activeSideTab === "general" && (
-                <div className="p-4">
-                  <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-2 ">
-                    <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
-                      Email
-                    </h3>
-
-                    <div className="flex items-center flex-wrap line-clamp-1 break-all truncate">
-                      <p className="mr-2 text-sm">{senderEmail}</p>
-                      <VerifiedIcon
-                        className="text-blue-500 mr-2 w-2 h-2"
-                        fontSize="small"
-                      />
-                      <span className="bg-[#F8FAFC] border border-[#E3E8EF] text-[#364152] px-2 py-0.5 rounded text-xs">
-                        HIDDEN
-                      </span>
-                    </div>
+                  {/* TAB  */}
+                  <div className="flex justify-start border-b overflow-x-auto">
+                    <button
+                      className={`px-4 py-2 focus:outline-none font-medium ${
+                        activeSideTab === "general"
+                          ? "border-b-2 border-blue-500 text-blue-500 font-medium"
+                          : "text-gray-400"
+                      }`}
+                      onClick={() => setActiveSideTab("general")}
+                    >
+                      General
+                    </button>
+                    <button
+                      className={`px-4 py-2 focus:outline-none font-medium ${
+                        activeSideTab === "project"
+                          ? "border-b-2 border-blue-500 text-blue-500 font-medium"
+                          : "text-gray-400"
+                      }`}
+                      onClick={() => setActiveSideTab("project")}
+                    >
+                      Project
+                    </button>
+                    <button
+                      className={`px-4 py-2 focus:outline-none font-medium ${
+                        activeSideTab === "mentor"
+                          ? "border-b-2 border-blue-500 text-blue-500 font-medium"
+                          : "text-gray-400"
+                      }`}
+                      onClick={() => setActiveSideTab("mentor")}
+                    >
+                      Mentor
+                    </button>
                   </div>
 
-                  <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-1  ">
-                    <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
-                      About
-                    </h3>
-                    <div>
-                      <p className="text-sm overflow-hidden line-clamp-2 text-ellipsis max-h-[1.75rem]">
-                        {senderBio}
-                      </p>
-                    </div>
-                  </div>
+                  {/* General Tab Content */}
+                  {activeSideTab === "general" && (
+                    <div className="p-4">
+                      <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-2 ">
+                        <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
+                          Email
+                        </h3>
 
-                  <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-1 ">
-                    <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
-                      Reason to Join Platform
-                    </h3>
-                    <div>
-                      <div className="flex flex-wrap gap-2">
-                        {senderReasonToJoin.map((reason) => (
+                        <div className="flex items-center flex-wrap line-clamp-1 break-all truncate">
+                          <p className="mr-2 text-sm">{senderEmail}</p>
+                          <VerifiedIcon
+                            className="text-blue-500 mr-2 w-2 h-2"
+                            fontSize="small"
+                          />
+                          <span className="bg-[#F8FAFC] border border-[#E3E8EF] text-[#364152] px-2 py-0.5 rounded text-xs">
+                            HIDDEN
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-1  ">
+                        <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
+                          About
+                        </h3>
+                        <div>
+                          <p className="text-sm overflow-hidden line-clamp-2 text-ellipsis max-h-[1.75rem]">
+                            {senderBio}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-1 ">
+                        <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
+                          Reason to Join Platform
+                        </h3>
+                        <div>
+                          <div className="flex flex-wrap gap-2">
+                            {senderReasonToJoin.map((reason) => (
+                              <span
+                                key={reason}
+                                className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 "
+                              >
+                                {reason}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-1 ">
+                        <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
+                          Location
+                        </h3>
+                        <div className="flex gap-4">
+                          <PlaceOutlinedIcon
+                            sx={{ fontSize: "medium", marginTop: "3px" }}
+                          />
+                          <p className="text-sm">{senderCountry}</p>
+                        </div>
+                      </div>
+
+                      <div>
+                        {senderSocialLinks && (
+                          <h3 className="mb-2 text-xs text-gray-500 font-medium ">
+                            LINKS
+                          </h3>
+                        )}
+
+                        <div className="flex items-center ">
+                          <div className="flex gap-3">
+                            {senderSocialLinks
+                              ? senderSocialLinks?.map((link, i) => {
+                                  const icon = getSocialLogo(link);
+                                  return (
+                                    <div
+                                      key={i}
+                                      className="flex items-center space-x-2"
+                                    >
+                                      {icon ? (
+                                        <a href={`${link}`}>{icon}</a>
+                                      ) : (
+                                        ""
+                                      )}
+                                    </div>
+                                  );
+                                })
+                              : ""}
+                          </div>
+                        </div>
+                        <div className="my-2 group relative hover:bg-gray-100 rounded-lg p-1 ">
+                          <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase line-clamp-1 break-all truncate">
+                            Proposed By {senderFullName}
+                          </h3>
+                          <div>
+                            <p className="text-sm overflow-hidden line-clamp-2 text-ellipsis break-all ">
+                              {offer}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Project Tab Content */}
+                  {activeSideTab === "project" && (
+                    <div className="p-4">
+                      <div className="mt-4">
+                        <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                          Project Name
+                        </h3>
+                        <p className="text-sm line-clamp-3">{projectName} </p>
+                      </div>
+                      <div className="mt-4">
+                        <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
+                          Project Description
+                        </h3>
+                        <p className="text-sm line-clamp-3 break-all">
+                          {projectDescription}{" "}
+                        </p>
+                      </div>
+                      <div className="mt-6">
+                        <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
+                          Prefered Icp Hub
+                        </h3>
+                        <p className="text-sm">{preferredIcpHub}</p>
+                      </div>
+                      <div className="mt-6">
+                        <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
+                          Project Elevator Pitch
+                        </h3>
+                        <p className="text-sm line-clamp-1 break-all truncate">
+                          {projectElevatorPitch}
+                        </p>
+                      </div>
+                      <div className="mt-6">
+                        <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
+                          Project Website
+                        </h3>
+                        <p className="text-sm line-clamp-1 break-all truncate">
+                          {projectWebsite}
+                        </p>
+                      </div>
+
+                      <div className="mt-4">
+                        <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
+                          PROJECT FOCUS AREA
+                        </h3>
+                        {projectAreaOfFocus?.split(", ").map((focus, index) => (
                           <span
-                            key={reason}
-                            className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 "
+                            key={index}
+                            className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 inline-block mr-2 mb-2 mt-1"
                           >
-                            {reason}
+                            {focus}
                           </span>
                         ))}
                       </div>
-                    </div>
-                  </div>
+                      <div className="mt-4">
+                        <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
+                          MULTI-CHAIN NAMES
+                        </h3>
+                        {supportsMultichain?.split(", ").map((chain, index) => (
+                          <span
+                            key={index}
+                            className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 inline-block mr-2 mb-2 mt-1"
+                          >
+                            {chain}
+                          </span>
+                        ))}
+                      </div>
+                      <div className="mt-4">
+                        <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
+                          REASON TO JOIN
+                        </h3>
+                        {reasontojoinincubator
+                          ?.split(", ")
+                          .map((goal, index) => (
+                            <span
+                              key={index}
+                              className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 inline-block mr-2 mb-2 mt-1"
+                            >
+                              {goal}
+                            </span>
+                          ))}
+                      </div>
 
-                  <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-1 ">
-                    <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
-                      Location
-                    </h3>
-                    <div className="flex gap-4">
-                      <PlaceOutlinedIcon
-                        sx={{ fontSize: "medium", marginTop: "3px" }}
-                      />
-                      <p className="text-sm">{senderCountry}</p>
-                    </div>
-                  </div>
+                      <div className="mt-4">
+                        <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
+                          TYPE OF REGISTRATION
+                        </h3>
+                        <span className=" border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 inline-block mr-2 mb-2 mt-1">
+                          {typeOfRegistration}{" "}
+                        </span>
+                      </div>
+                      <div className="mt-4">
+                        <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
+                          COUNTRY OF REGISTRATION
+                        </h3>
+                        <span className=" text-sm">
+                          {countryofregistration}{" "}
+                        </span>
+                      </div>
+                      <div className="mt-4">
+                        <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
+                          DAPP LINK
+                        </h3>
+                        <span className=" text-sm line-clamp-1 break-all truncate">
+                          {dappLink}{" "}
+                        </span>
+                      </div>
+                      <div className="mt-4">
+                        <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
+                          WEEKLY ACTIVE USERS
+                        </h3>
+                        <span className=" text-sm line-clamp-1 break-all truncate">
+                          {Number(weeklyActiveUsers)}
+                        </span>
+                      </div>
+                      <div className="mt-4">
+                        <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
+                          REVENUE
+                        </h3>
+                        <span className=" text-sm line-clamp-1 break-all truncate">
+                          {Number(revenue)}{" "}
+                        </span>
+                      </div>
 
-                  <div>
-                    {senderSocialLinks && (
-                      <h3 className="mb-2 text-xs text-gray-500 font-medium ">
-                        LINKS
-                      </h3>
-                    )}
-
-                    <div className="flex items-center ">
-                      <div className="flex gap-3">
-                        {senderSocialLinks
-                          ? senderSocialLinks?.map((link, i) => {
-                              const icon = getSocialLogo(link);
-                              return (
-                                <div
-                                  key={i}
-                                  className="flex items-center space-x-2"
-                                >
-                                  {icon ? <a href={`${link}`}>{icon}</a> : ""}
-                                </div>
-                              );
-                            })
-                          : ""}
+                      <div className="mt-4">
+                        <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
+                          TOKEN ECONOMICS
+                        </h3>
+                        <span className=" text-sm line-clamp-1 break-all truncate">
+                          {tokenEconomics}{" "}
+                        </span>
                       </div>
                     </div>
-                    <div className="my-2 group relative hover:bg-gray-100 rounded-lg p-1 ">
-                      <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase line-clamp-1 break-all truncate">
-                        Proposed By {senderFullName}
-                      </h3>
-                      <div>
-                        <p className="text-sm overflow-hidden line-clamp-2 text-ellipsis break-all ">
-                          {offer}
-                        </p>
+                  )}
+
+                  {/* mentor start  */}
+                  {activeSideTab === "mentor" && (
+                    <div className="p-4">
+                      <div className="mt-4">
+                        <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                          Years of Mentoring
+                        </h3>
+                        <span>{Number(senderYearsOfMentoring)}</span>
+                      </div>
+
+                      <div className="mt-4">
+                        <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                          Area of Expertise
+                        </h3>
+                        {senderAreaOfExpertise.map((expertise, index) => (
+                          <span
+                            key={index}
+                            className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 inline-block mr-2 mb-2 mt-1"
+                          >
+                            {expertise}
+                          </span>
+                        ))}
+                      </div>
+
+                      <div className="mt-4">
+                        <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                          Category of Mentoring Service
+                        </h3>
+                        <span>{senderCategoryOfMentoringService}</span>
+                      </div>
+
+                      <div className="mt-4">
+                        <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                          Existing ICP Mentor
+                        </h3>
+                        <span>{senderExistingIcpMentor ? "Yes" : "No"}</span>
+                      </div>
+
+                      <div className="mt-4">
+                        <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                          Existing ICP Project Portfolio
+                        </h3>
+                        {senderExistingIcpProjectPortfolio.length > 0 ? (
+                          senderExistingIcpProjectPortfolio.map(
+                            (portfolio, index) => (
+                              <span
+                                key={index}
+                                className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 inline-block mr-2 mb-2 mt-1"
+                              >
+                                {portfolio}
+                              </span>
+                            )
+                          )
+                        ) : (
+                          <span>No Project Portfolio</span>
+                        )}
+                      </div>
+
+                      <div className="mt-4">
+                        <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                          Hub Owner
+                        </h3>
+                        {senderHubOwner.length > 0 ? (
+                          senderHubOwner.map((hub, index) => (
+                            <span
+                              key={index}
+                              className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 inline-block mr-2 mb-2 mt-1"
+                            >
+                              {hub}
+                            </span>
+                          ))
+                        ) : (
+                          <span>No Hub Ownership</span>
+                        )}
+                      </div>
+
+                      <div className="mt-4">
+                        <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                          ICP Hub or Spoke
+                        </h3>
+                        <span>{senderIcpHubOrSpoke ? "Yes" : "No"}</span>
+                      </div>
+
+                      <div className="mt-4">
+                        <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                          Preferred ICP Hub
+                        </h3>
+                        {senderPreferredIcpHub.length > 0 ? (
+                          senderPreferredIcpHub.map((hub, index) => (
+                            <span
+                              key={index}
+                              className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 inline-block mr-2 mb-2 mt-1"
+                            >
+                              {hub}
+                            </span>
+                          ))
+                        ) : (
+                          <span>No Preferred Hub</span>
+                        )}
+                      </div>
+
+                      <div className="mt-4">
+                        <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                          Multichain
+                        </h3>
+                        {senderMultichain.length > 0 ? (
+                          senderMultichain.map((chain, index) => (
+                            <span
+                              key={index}
+                              className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 inline-block mr-2 mb-2 mt-1"
+                            >
+                              {chain}
+                            </span>
+                          ))
+                        ) : (
+                          <span>No Multichain Support</span>
+                        )}
+                      </div>
+
+                      <div className="mt-4">
+                        <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                          Website
+                        </h3>
+                        <a
+                          href={senderWebsite}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {senderWebsite}
+                        </a>
                       </div>
                     </div>
-                  </div>
+                  )}
                 </div>
-              )}
-
-              {/* Project Tab Content */}
-              {activeSideTab === "project" && (
-                <div className="p-4">
-                  <div className="mt-4">
-                    <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
-                      Project Name
-                    </h3>
-                    <p className="text-sm line-clamp-3">{projectName} </p>
-                  </div>
-                  <div className="mt-4">
-                    <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
-                      Project Description
-                    </h3>
-                    <p className="text-sm line-clamp-3 break-all">{projectDescription} </p>
-                  </div>
-                  <div className="mt-6">
-                    <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
-                      Prefered Icp Hub
-                    </h3>
-                    <p className="text-sm">{preferredIcpHub}</p>
-                  </div>
-                  <div className="mt-6">
-                    <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
-                      Project Elevator Pitch
-                    </h3>
-                    <p className="text-sm line-clamp-1 break-all truncate">{projectElevatorPitch}</p>
-                  </div>
-                  <div className="mt-6">
-                    <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
-                      Project Website
-                    </h3>
-                    <p className="text-sm line-clamp-1 break-all truncate">{projectWebsite}</p>
-                  </div>
-
-                  <div className="mt-4">
-                    <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
-                      PROJECT FOCUS AREA
-                    </h3>
-                    {projectAreaOfFocus?.split(", ").map((focus, index) => (
-                      <span
-                        key={index}
-                        className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 inline-block mr-2 mb-2 mt-1"
-                      >
-                        {focus}
-                      </span>
-                    ))}
-                  </div>
-                  <div className="mt-4">
-                    <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
-                      MULTI-CHAIN NAMES
-                    </h3>
-                    {supportsMultichain?.split(", ").map((chain, index) => (
-                      <span
-                        key={index}
-                        className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 inline-block mr-2 mb-2 mt-1"
-                      >
-                        {chain}
-                      </span>
-                    ))}
-                  </div>
-                  <div className="mt-4">
-                    <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
-                      REASON TO JOIN
-                    </h3>
-                    {reasontojoinincubator?.split(", ").map((goal, index) => (
-                      <span
-                        key={index}
-                        className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 inline-block mr-2 mb-2 mt-1"
-                      >
-                        {goal}
-                      </span>
-                    ))}
-                  </div>
-
-                  <div className="mt-4">
-                    <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
-                      TYPE OF REGISTRATION
-                    </h3>
-                    <span className=" border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 inline-block mr-2 mb-2 mt-1">
-                      {typeOfRegistration}{" "}
-                    </span>
-                  </div>
-                  <div className="mt-4">
-                    <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
-                      COUNTRY OF REGISTRATION
-                    </h3>
-                    <span className=" text-sm">{countryofregistration} </span>
-                  </div>
-                  <div className="mt-4">
-                    <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
-                      DAPP LINK
-                    </h3>
-                    <span className=" text-sm line-clamp-1 break-all truncate">{dappLink} </span>
-                  </div>
-                  <div className="mt-4">
-                    <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
-                      WEEKLY ACTIVE USERS
-                    </h3>
-                    <span className=" text-sm line-clamp-1 break-all truncate">{Number(weeklyActiveUsers)}</span>
-                  </div>
-                  <div className="mt-4">
-                    <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
-                      REVENUE
-                    </h3>
-                    <span className=" text-sm line-clamp-1 break-all truncate">{Number(revenue)} </span>
-                  </div>
-                  
-                  <div className="mt-4">
-                    <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
-                      TOKEN ECONOMICS
-                    </h3>
-                    <span className=" text-sm line-clamp-1 break-all truncate">{tokenEconomics} </span>
-                  </div>
-                  
-                </div>
-              )}
-                 {activeSideTab === "mentor" && (
-  <div className="p-4">
-    <div className="mt-4">
-      <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
-        Years of Mentoring
-      </h3>
-      <span>{Number(senderYearsOfMentoring)}</span>
-    </div>
-
-    <div className="mt-4">
-      <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
-        Area of Expertise
-      </h3>
-      {senderAreaOfExpertise.map((expertise, index) => (
-        <span
-          key={index}
-          className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 inline-block mr-2 mb-2 mt-1"
-        >
-          {expertise}
-        </span>
-      ))}
-    </div>
-
-    <div className="mt-4">
-      <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
-        Category of Mentoring Service
-      </h3>
-      <span>{senderCategoryOfMentoringService}</span>
-    </div>
-
-    <div className="mt-4">
-      <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
-        Existing ICP Mentor
-      </h3>
-      <span>{senderExistingIcpMentor ? "Yes" : "No"}</span>
-    </div>
-
-    <div className="mt-4">
-      <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
-        Existing ICP Project Portfolio
-      </h3>
-      {senderExistingIcpProjectPortfolio.length > 0 ? (
-        senderExistingIcpProjectPortfolio.map((portfolio, index) => (
-          <span
-            key={index}
-            className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 inline-block mr-2 mb-2 mt-1"
-          >
-            {portfolio}
-          </span>
-        ))
-      ) : (
-        <span>No Project Portfolio</span>
-      )}
-    </div>
-
-    <div className="mt-4">
-      <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
-        Hub Owner
-      </h3>
-      {senderHubOwner.length > 0 ? (
-        senderHubOwner.map((hub, index) => (
-          <span
-            key={index}
-            className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 inline-block mr-2 mb-2 mt-1"
-          >
-            {hub}
-          </span>
-        ))
-      ) : (
-        <span>No Hub Ownership</span>
-      )}
-    </div>
-
-    <div className="mt-4">
-      <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
-        ICP Hub or Spoke
-      </h3>
-      <span>{senderIcpHubOrSpoke ? "Yes" : "No"}</span>
-    </div>
-
-    <div className="mt-4">
-      <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
-        Preferred ICP Hub
-      </h3>
-      {senderPreferredIcpHub.length > 0 ? (
-        senderPreferredIcpHub.map((hub, index) => (
-          <span
-            key={index}
-            className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 inline-block mr-2 mb-2 mt-1"
-          >
-            {hub}
-          </span>
-        ))
-      ) : (
-        <span>No Preferred Hub</span>
-      )}
-    </div>
-
-    <div className="mt-4">
-      <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
-        Multichain
-      </h3>
-      {senderMultichain.length > 0 ? (
-        senderMultichain.map((chain, index) => (
-          <span
-            key={index}
-            className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 inline-block mr-2 mb-2 mt-1"
-          >
-            {chain}
-          </span>
-        ))
-      ) : (
-        <span>No Multichain Support</span>
-      )}
-    </div>
-
-    <div className="mt-4">
-      <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
-        Website
-      </h3>
-      <a href={senderWebsite} target="_blank" rel="noopener noreferrer">
-        {senderWebsite}
-      </a>
-    </div>
-  </div>
-)}
-
-
-                </div>
-                
-
-                
-             
-                
-             
               </div>
             </div>
 
             <div className="px-1 lg1:px-3 py-4 lg1:py-0 w-full lg1:overflow-y-scroll lg1:w-[63%] ">
-              {/* Mobile Tabs */}
-              <div className="flex flex-col md1:hidden bg-white rounded-lg shadow-sm border mb-4 border-gray-200 overflow-hidden w-full mt-10 p-4 pt-2">
-                {uniqueActiveTabs.includes("document") && (
-                  <div className="border-b">
+              <>
+                {/* project content start  */}
+                {/* Mobile Tabs */}
+                <div className="flex flex-col md1:hidden bg-white rounded-lg shadow-sm border mb-4 border-gray-200 overflow-hidden w-full mt-10 p-4 pt-2">
+                  {uniqueActiveTabs.includes("document") && (
+                    <div className="border-b">
+                      <button
+                        className="flex justify-between items-center w-full px-2 py-3 text-left text-gray-800"
+                        onClick={() => handleMobileTabToggle("document")}
+                      >
+                        Document
+                        {activeMobileTab === "document" ? (
+                          <FaChevronUp />
+                        ) : (
+                          <FaChevronDown />
+                        )}
+                      </button>
+                      {activeMobileTab === "document" && (
+                        <div className="px-2 py-2">
+                          <DiscoverDocument
+                            projectDetails={senderDataProject}
+                            projectId={projectid}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {uniqueActiveTabs.includes("team") && (
+                    <div className="border-b">
+                      <button
+                        className="flex justify-between items-center w-full px-2 py-3 text-left text-gray-800"
+                        onClick={() => handleMobileTabToggle("team")}
+                      >
+                        Team
+                        {activeMobileTab === "team" ? (
+                          <FaChevronUp />
+                        ) : (
+                          <FaChevronDown />
+                        )}
+                      </button>
+                      {activeMobileTab === "team" && (
+                        <div className="px-2 py-2">
+                          <DiscoverTeam projectDetails={senderDataProject} />
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {uniqueActiveTabs.includes("ratings") && (
+                    <div className="border-b">
+                      <button
+                        className="flex justify-between items-center w-full px-2 py-3 text-left text-gray-800"
+                        onClick={() => handleMobileTabToggle("ratings")}
+                      >
+                        Ratings
+                        {activeMobileTab === "ratings" ? (
+                          <FaChevronUp />
+                        ) : (
+                          <FaChevronDown />
+                        )}
+                      </button>
+                      {activeMobileTab === "ratings" && (
+                        <div className="px-2 py-2">
+                          <DiscoverRatings
+                            userData={senderDataUser}
+                            principalId={senderPrincipal}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {uniqueActiveTabs.includes("moneyraised") && (
+                    <div className="border-b">
+                      <button
+                        className="flex justify-between items-center w-full px-2 py-3 text-left text-gray-800"
+                        onClick={() => handleMobileTabToggle("moneyraised")}
+                      >
+                        Money Raised
+                        {activeMobileTab === "moneyraised" ? (
+                          <FaChevronUp />
+                        ) : (
+                          <FaChevronDown />
+                        )}
+                      </button>
+                      {activeMobileTab === "moneyraised" && (
+                        <div className="px-2 py-2">
+                          <DiscoverMoneyRaising
+                            cardData={senderDataProject?.params}
+                            projectId={projectid}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {uniqueActiveTabs.includes("review") && (
+                    <div className="border-b">
+                      <button
+                        className="flex justify-between items-center w-full px-2 py-3 text-left text-gray-800"
+                        onClick={() => handleMobileTabToggle("review")}
+                      >
+                        Review
+                        {activeMobileTab === "review" ? (
+                          <FaChevronUp />
+                        ) : (
+                          <FaChevronDown />
+                        )}
+                      </button>
+                      {activeMobileTab === "review" && (
+                        <div className="px-2 py-2">
+                          <DiscoverReview
+                            userData={senderDataUser}
+                            principalId={senderPrincipal}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+                {/* Desktop Tabs */}
+                <div className="hidden md1:flex justify-start border-b">
+                  {uniqueActiveTabs.includes("document") && (
                     <button
-                      className="flex justify-between items-center w-full px-2 py-3 text-left text-gray-800"
-                      onClick={() => handleMobileTabToggle("document")}
+                      className={`px-4 py-2 focus:outline-none font-medium ${
+                        activeTab === "document"
+                          ? "border-b-2 border-blue-500 text-blue-500 font-medium"
+                          : "text-gray-400"
+                      }`}
+                      onClick={() => handleChange("document")}
                     >
                       Document
-                      {activeMobileTab === "document" ? (
-                        <FaChevronUp />
-                      ) : (
-                        <FaChevronDown />
-                      )}
                     </button>
-                    {activeMobileTab === "document" && (
-                      <div className="px-2 py-2">
-                        <DiscoverDocument
-                          projectDetails={senderDataProject}
-                          projectId={projectid}
-                        />
-                      </div>
-                    )}
-                  </div>
-                )}
+                  )}
 
-                {uniqueActiveTabs.includes("team") && (
-                  <div className="border-b">
+                  {uniqueActiveTabs.includes("team") && (
                     <button
-                      className="flex justify-between items-center w-full px-2 py-3 text-left text-gray-800"
-                      onClick={() => handleMobileTabToggle("team")}
+                      className={`px-4 py-2 focus:outline-none font-medium ${
+                        activeTab === "team"
+                          ? "border-b-2 border-blue-500 text-blue-500 font-medium"
+                          : "text-gray-400"
+                      }`}
+                      onClick={() => handleChange("team")}
                     >
                       Team
-                      {activeMobileTab === "team" ? (
-                        <FaChevronUp />
-                      ) : (
-                        <FaChevronDown />
-                      )}
                     </button>
-                    {activeMobileTab === "team" && (
-                      <div className="px-2 py-2">
-                        <DiscoverTeam projectDetails={senderDataProject} />
-                      </div>
-                    )}
-                  </div>
-                )}
+                  )}
 
-                {uniqueActiveTabs.includes("ratings") && (
-                  <div className="border-b">
+                  {uniqueActiveTabs.includes("ratings") && (
                     <button
-                      className="flex justify-between items-center w-full px-2 py-3 text-left text-gray-800"
-                      onClick={() => handleMobileTabToggle("ratings")}
+                      className={`px-4 py-2 focus:outline-none font-medium ${
+                        activeTab === "ratings"
+                          ? "border-b-2 border-blue-500 text-blue-500 font-medium"
+                          : "text-gray-400"
+                      }`}
+                      onClick={() => handleChange("ratings")}
                     >
                       Ratings
-                      {activeMobileTab === "ratings" ? (
-                        <FaChevronUp />
-                      ) : (
-                        <FaChevronDown />
-                      )}
                     </button>
-                    {activeMobileTab === "ratings" && (
-                      <div className="px-2 py-2">
-                        <DiscoverRatings
-                          userData={senderDataUser}
-                          principalId={senderPrincipal}
-                        />
-                      </div>
-                    )}
-                  </div>
-                )}
+                  )}
 
-                {uniqueActiveTabs.includes("moneyraised") && (
-                  <div className="border-b">
+                  {uniqueActiveTabs.includes("moneyraised") && (
                     <button
-                      className="flex justify-between items-center w-full px-2 py-3 text-left text-gray-800"
-                      onClick={() => handleMobileTabToggle("moneyraised")}
+                      className={`px-4 py-2 focus:outline-none font-medium ${
+                        activeTab === "moneyraised"
+                          ? "border-b-2 border-blue-500 text-blue-500 font-medium"
+                          : "text-gray-400"
+                      }`}
+                      onClick={() => handleChange("moneyraised")}
                     >
                       Money Raised
-                      {activeMobileTab === "moneyraised" ? (
-                        <FaChevronUp />
-                      ) : (
-                        <FaChevronDown />
-                      )}
                     </button>
-                    {activeMobileTab === "moneyraised" && (
-                      <div className="px-2 py-2">
-                        <DiscoverMoneyRaising
-                          cardData={senderDataProject?.params}
-                          projectId={projectid}
-                        />
-                      </div>
-                    )}
-                  </div>
-                )}
+                  )}
 
-                {uniqueActiveTabs.includes("review") && (
-                  <div className="border-b">
+                  {uniqueActiveTabs.includes("review") && (
                     <button
-                      className="flex justify-between items-center w-full px-2 py-3 text-left text-gray-800"
-                      onClick={() => handleMobileTabToggle("review")}
+                      className={`px-4 py-2 focus:outline-none font-medium ${
+                        activeTab === "review"
+                          ? "border-b-2 border-blue-500 text-blue-500 font-medium"
+                          : "text-gray-400"
+                      }`}
+                      onClick={() => handleChange("review")}
                     >
                       Review
-                      {activeMobileTab === "review" ? (
-                        <FaChevronUp />
-                      ) : (
-                        <FaChevronDown />
-                      )}
                     </button>
-                    {activeMobileTab === "review" && (
-                      <div className="px-2 py-2">
-                        <DiscoverReview
-                          userData={senderDataUser}
-                          principalId={senderPrincipal}
-                        />
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
+                  )}
+                </div>
+                {/* Desktop Tab Content */}
+                <div className="hidden md1:block mb-4">
+                  {activeTab === "document" && (
+                    <DiscoverDocument
+                      projectDetails={senderDataProject}
+                      projectId={projectid}
+                    />
+                  )}
+                  {activeTab === "team" && (
+                    <DiscoverTeam projectDetails={senderDataProject} />
+                  )}
+                  {activeTab === "ratings" && (
+                    <DiscoverRatings
+                      userData={senderDataUser}
+                      principalId={senderPrincipal}
+                    />
+                  )}
+                  {activeTab === "moneyraised" && (
+                    <DiscoverMoneyRaising
+                      cardData={senderDataProject?.params}
+                      projectId={projectid}
+                    />
+                  )}
+                  {activeTab === "review" && (
+                    <DiscoverReview
+                      userData={senderDataUser}
+                      principalId={senderPrincipal}
+                    />
+                  )}
+                </div>
+                {/* project content end  */}
+              </>
+              {/* Sender Event Data  */}
+              <DiscoverMentorEvent principal={senderPrincipal} />
 
-              {/* Desktop Tabs */}
-              <div className="hidden md1:flex justify-start border-b">
-                {uniqueActiveTabs.includes("document") && (
-                  <button
-                    className={`px-4 py-2 focus:outline-none font-medium ${
-                      activeTab === "document"
-                        ? "border-b-2 border-blue-500 text-blue-500 font-medium"
-                        : "text-gray-400"
-                    }`}
-                    onClick={() => handleChange("document")}
-                  >
-                    Document
-                  </button>
-                )}
-
-                {uniqueActiveTabs.includes("team") && (
-                  <button
-                    className={`px-4 py-2 focus:outline-none font-medium ${
-                      activeTab === "team"
-                        ? "border-b-2 border-blue-500 text-blue-500 font-medium"
-                        : "text-gray-400"
-                    }`}
-                    onClick={() => handleChange("team")}
-                  >
-                    Team
-                  </button>
-                )}
-
-                {uniqueActiveTabs.includes("ratings") && (
-                  <button
-                    className={`px-4 py-2 focus:outline-none font-medium ${
-                      activeTab === "ratings"
-                        ? "border-b-2 border-blue-500 text-blue-500 font-medium"
-                        : "text-gray-400"
-                    }`}
-                    onClick={() => handleChange("ratings")}
-                  >
-                    Ratings
-                  </button>
-                )}
-
-                {uniqueActiveTabs.includes("moneyraised") && (
-                  <button
-                    className={`px-4 py-2 focus:outline-none font-medium ${
-                      activeTab === "moneyraised"
-                        ? "border-b-2 border-blue-500 text-blue-500 font-medium"
-                        : "text-gray-400"
-                    }`}
-                    onClick={() => handleChange("moneyraised")}
-                  >
-                    Money Raised
-                  </button>
-                )}
-
-                {uniqueActiveTabs.includes("review") && (
-                  <button
-                    className={`px-4 py-2 focus:outline-none font-medium ${
-                      activeTab === "review"
-                        ? "border-b-2 border-blue-500 text-blue-500 font-medium"
-                        : "text-gray-400"
-                    }`}
-                    onClick={() => handleChange("review")}
-                  >
-                    Review
-                  </button>
-                )}
-              </div>
-
-              {/* Desktop Tab Content */}
-              <div className="hidden md1:block mb-4">
-                {activeTab === "document" && (
-                  <DiscoverDocument
-                    projectDetails={senderDataProject}
-                    projectId={projectid}
-                  />
-                )}
-                {activeTab === "team" && (
-                  <DiscoverTeam projectDetails={senderDataProject} />
-                )}
-                {activeTab === "ratings" && (
-                  <DiscoverRatings
-                    userData={senderDataUser}
-                    principalId={senderPrincipal}
-                  />
-                )}
-                {activeTab === "moneyraised" && (
-                  <DiscoverMoneyRaising
-                    cardData={senderDataProject?.params}
-                    projectId={projectid}
-                  />
-                )}
-                {activeTab === "review" && (
-                  <DiscoverReview
-                    userData={senderDataUser}
-                    principalId={senderPrincipal}
-                  />
-                )}
+              <div className=" bg-white shadow-md border rounded-lg">
+                <NoData message=" Investor data not available" />
               </div>
             </div>
           </div>
