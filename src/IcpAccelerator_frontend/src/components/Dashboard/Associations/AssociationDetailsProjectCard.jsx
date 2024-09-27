@@ -14,6 +14,7 @@ import { useSelector } from "react-redux";
 import timestampAgo from "../../Utils/navigationHelper/timeStampAgo";
 import AssociationRecieverProjectSideDataToMentor from "./AssociationRecieverProjectSideDataToMentor";
 import AssociationRecieverDataFromProject from "./AssociationRecieverDataFromProject";
+import AssociationRecieverProjectSideDataFromMentor from "./AssociationRecieverProjectSideDataFromMentor";
 
 const AssociationDetailsProjectCard = ({
   user,
@@ -247,11 +248,11 @@ const handleMentorSelfReject = async (offer_id) => {
           handleMentorDeclineModalOpenHandler={handleMentorDeclineModalOpenHandler}
           handleMentorAcceptModalOpenHandler={handleMentorAcceptModalOpenHandler}
           handleInvestorDeclineModalOpenHandler={handleInvestorDeclineModalOpenHandler}
-          handleInvestorAcceptModalOpenHandler={handleInvestorDeclineModalOpenHandler}
+          handleInvestorAcceptModalOpenHandler={handleInvestorAcceptModalOpenHandler}
           setOpenDetail={setOpenDetail}
         />
       ) : selectedTypeData === "from-mentor" ? (
-        <AssociationRecieverDataFromProject
+        <AssociationRecieverProjectSideDataFromMentor
           user={user}
           activeTabData={activeTabData}
           selectedTypeData={selectedTypeData}
@@ -260,7 +261,7 @@ const handleMentorSelfReject = async (offer_id) => {
           handleMentorDeclineModalOpenHandler={handleMentorDeclineModalOpenHandler}
           handleMentorAcceptModalOpenHandler={handleMentorAcceptModalOpenHandler}
           handleInvestorDeclineModalOpenHandler={handleInvestorDeclineModalOpenHandler}
-          handleInvestorAcceptModalOpenHandler={handleInvestorDeclineModalOpenHandler}
+          handleInvestorAcceptModalOpenHandler={handleInvestorAcceptModalOpenHandler}
           setOpenDetail={setOpenDetail}
         />
       ) : selectedTypeData === "to-investor" ? (
@@ -273,11 +274,11 @@ const handleMentorSelfReject = async (offer_id) => {
           handleMentorDeclineModalOpenHandler={handleMentorDeclineModalOpenHandler}
           handleMentorAcceptModalOpenHandler={handleMentorAcceptModalOpenHandler}
           handleInvestorDeclineModalOpenHandler={handleInvestorDeclineModalOpenHandler}
-          handleInvestorAcceptModalOpenHandler={handleInvestorDeclineModalOpenHandler}
+          handleInvestorAcceptModalOpenHandler={handleInvestorAcceptModalOpenHandler}
           setOpenDetail={setOpenDetail}
         />
       ) : selectedTypeData === "from-investor" ? (
-        <AssociationRecieverDataFromProject
+        <AssociationRecieverProjectSideDataFromMentor
           user={user}
           activeTabData={activeTabData}
           selectedTypeData={selectedTypeData}
@@ -286,7 +287,7 @@ const handleMentorSelfReject = async (offer_id) => {
           handleMentorDeclineModalOpenHandler={handleMentorDeclineModalOpenHandler}
           handleMentorAcceptModalOpenHandler={handleMentorAcceptModalOpenHandler}
           handleInvestorDeclineModalOpenHandler={handleInvestorDeclineModalOpenHandler}
-          handleInvestorAcceptModalOpenHandler={handleInvestorDeclineModalOpenHandler}
+          handleInvestorAcceptModalOpenHandler={handleInvestorAcceptModalOpenHandler}
           setOpenDetail={setOpenDetail}
         />
       ):''}
