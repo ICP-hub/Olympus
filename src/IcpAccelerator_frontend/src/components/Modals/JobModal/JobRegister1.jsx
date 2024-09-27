@@ -61,7 +61,7 @@ const schema = yup
       ),
   })
   .required();
-const JobRegister1 = ({ modalOpen, setModalOpen }) => {
+const JobRegister1 = ({ modalOpen, setModalOpen ,fetchPostedJobs}) => {
   const dispatch = useDispatch();
   const location = useLocation();
   // const { control } = useForm();
@@ -88,49 +88,8 @@ const JobRegister1 = ({ modalOpen, setModalOpen }) => {
     resolver: yupResolver(schema),
     mode: "all",
   });
-  // const projectId = cardData.uid;
+ 
 
-
-//   const onSubmit = async (data) => {
-//     console.log("DATA ARGUMENTS", data);
-//     const projectId = cardData[0]?.uid;
-
-//     if (!projectId) {
-//       toast.error("Project ID is missing!");
-//       return;
-//     }
-//     setIsSubmitting(true);
-//     try {
-//       const parsedDescription = parse(jobDescription); 
-//       const argument = {
-//         title: data.jobTitle,
-//         description: data.parsedDescription,
-//         category: data.jobCategory,
-//         location: data.jobLocation.value,
-//         link: data.jobLink,
-//         job_type: data.job_type.value,
-//         project_id: projectId,
-//       };
-
-//       const result = await actor.post_job(argument);
-// console.log("desc..............",result)
-//       if (result) {
-//         toast.success("Job created successfully!");
-//         setModalOpen(false);
-//       } else {
-//         toast.error("Something went wrong.");
-//         console.log("JOB CREATION WRONG  ");
-//       }
-//     } catch (error) {
-//       console.error("Error creating job:", error);
-//       toast.error("An error occurred while creating the job.");
-//     } finally {
-//       setIsSubmitting(false);
-//     }
-//   };
-const projectFullData = useSelector((currState) => currState.projectData.data);
-// const projectuid=projectFullData[0][0]?.uid
-// console.log("projectFullData", projectuid)
 const onSubmit = async (data) => {
 
   setIsSubmitting(true);
@@ -156,8 +115,16 @@ const onSubmit = async (data) => {
       console.log("Job creation result",result)
       toast.success("Job created successfully!");
       setModalOpen(false);
+      setTimeout(() => {
+        fetchPostedJobs;
+      }, 1000);
     } else {
       toast.error("Something went wrong.");
+      setModalOpen(false);
+      setTimeout(() => {
+        fetchPostedJobs;
+      }, 1000);
+
     }
   } catch (error) {
     console.error("Error creating job:", error);

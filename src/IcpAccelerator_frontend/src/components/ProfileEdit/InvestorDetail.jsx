@@ -13,7 +13,7 @@ import editp from "../../../assets/Logo/edit.png";
 import { ThreeDots } from "react-loader-spinner";
 import { FaPlus, FaTrash, FaSave } from "react-icons/fa";
 import { Principal } from "@dfinity/principal";
-import getReactSelectStyles from "../Utils/navigationHelper/getReactSelectStyles";
+import getReactSelectUpdateStyles from "../Utils/navigationHelper/getReactSelectUpdateStyles";
 import { validationSchema } from "../Modals/investorForm/investorvalidation";
 import getSocialLogo from "../Utils/navigationHelper/getSocialLogo";
 import getPlatformFromHostname from "../Utils/navigationHelper/getPlatformFromHostname";
@@ -818,7 +818,7 @@ const InvestorDetail = () => {
                 isMulti
                 menuPortalTarget={document.body}
                 menuPosition={"fixed"}
-                styles={getReactSelectStyles(errors?.investment_type)}
+                styles={getReactSelectUpdateStyles(errors?.investment_type)}
                 value={typeOfInvestSelectedOptions}
                 options={typeOfInvestOptions}
                 classNamePrefix="select"
@@ -1061,7 +1061,7 @@ const InvestorDetail = () => {
                   isMulti
                   menuPortalTarget={document.body}
                   menuPosition={"fixed"}
-                  styles={getReactSelectStyles(
+                  styles={getReactSelectUpdateStyles(
                     errors?.invested_in_multi_chain_names
                   )}
                   value={investedInMultiChainSelectedOptions}
@@ -1142,7 +1142,7 @@ const InvestorDetail = () => {
                 isMulti
                 menuPortalTarget={document.body}
                 menuPosition={"fixed"}
-                styles={getReactSelectStyles(errors?.investment_categories)}
+                styles={getReactSelectUpdateStyles(errors?.investment_categories)}
                 value={investmentCategoriesSelectedOptions}
                 options={investmentCategoriesOptions}
                 classNamePrefix="select"
@@ -1256,7 +1256,7 @@ const InvestorDetail = () => {
                 isMulti
                 menuPortalTarget={document.body}
                 menuPosition={"fixed"}
-                styles={getReactSelectStyles(errors?.investment_stage)}
+                styles={getReactSelectUpdateStyles(errors?.investment_stage)}
                 value={investStageSelectedOptions}
                 options={investStageOptions}
                 classNamePrefix="select"
@@ -1329,7 +1329,7 @@ const InvestorDetail = () => {
                 isMulti
                 menuPortalTarget={document.body}
                 menuPosition={"fixed"}
-                styles={getReactSelectStyles(errors?.investment_stage_range)}
+                styles={getReactSelectUpdateStyles(errors?.investment_stage_range)}
                 value={investStageRangeSelectedOptions}
                 options={investStageRangeOptions}
                 classNamePrefix="select"
