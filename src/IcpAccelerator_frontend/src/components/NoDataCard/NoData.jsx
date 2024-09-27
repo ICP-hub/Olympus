@@ -4,7 +4,7 @@ import CampaignIcon from "@mui/icons-material/Campaign";
 const NoData = ({message}) => {
 
   return (
-    <div className="p-6 flex justify-center">
+    <div className="p-6 flex justify-center ">
       {/* Content */}
       <div className="text-center py-12">
         <div className="flex justify-center items-center">
