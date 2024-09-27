@@ -6,7 +6,7 @@ import { useLocation } from "react-router-dom";
 import toast from "react-hot-toast";
 import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 import CloseIcon from "@mui/icons-material/Close";
-import NoCardData from "../../Profile/NoCardData";
+import NoCardData from "../../profile/NoCardData";
 import NoData from "../../NoDataCard/NoData";
 const AttendeesCard = ({ member }) => {
   return (
