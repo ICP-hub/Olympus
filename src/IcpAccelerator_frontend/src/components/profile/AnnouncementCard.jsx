@@ -10,6 +10,7 @@ import editp from "../../../assets/Logo/edit.png";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import { Principal } from "@dfinity/principal";
 import CampaignIcon from "@mui/icons-material/Campaign";
+import AnnouncementCardSkeleton from "./skeletonProfile/AnnouncementCardSkeleton";
 
 const AnnouncementCard = () => {
   const actor = useSelector((currState) => currState.actors.actor);
@@ -20,6 +21,7 @@ const AnnouncementCard = () => {
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentAnnouncementData, setCurrentAnnouncementData] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleOpenModal = (card = null) => {
     setCurrentAnnouncementData(card);
@@ -58,10 +60,10 @@ const AnnouncementCard = () => {
             }, 1000);
           } else {
             toast.error("Something went wrong");
-            handleCloseModal(); 
+            handleCloseModal();
             setTimeout(() => {
               fetchLatestAnnouncement();
-            }, 1000); 
+            }, 1000);
           }
         } else {
           // Add new announcement
@@ -78,9 +80,9 @@ const AnnouncementCard = () => {
             handleCloseModal();
             setTimeout(() => {
               fetchLatestAnnouncement();
-            }, 1000);  
+            }, 1000);
+          }
         }
-      }
       } catch (error) {
         toast.error("Something went wrong");
       } finally {
@@ -94,7 +96,7 @@ const AnnouncementCard = () => {
     try {
       const result = await actor.delete_announcement_by_id(announcementId);
 
-      if (result&& result.length > 0) {
+      if (result && result.length > 0) {
         toast.success("Announcement deleted successfully");
         fetchLatestAnnouncement();
         handleCloseDeleteModal();
@@ -123,6 +125,7 @@ const AnnouncementCard = () => {
 
   // Fetch the latest announcements
   const fetchLatestAnnouncement = async () => {
+    setIsLoading(true);
     let convertedId = Principal.fromText(principal);
     await actor
       .get_announcements_by_principal(convertedId)
@@ -131,14 +134,17 @@ const AnnouncementCard = () => {
         if (!result || result.length === 0) {
           setNoData(true);
           setLatestAnnouncementData([]);
+          setIsLoading(false);
         } else {
           setLatestAnnouncementData(result);
           setNoData(false);
+          setIsLoading(false);
         }
       })
       .catch((error) => {
         setNoData(true);
         setLatestAnnouncementData([]);
+        setIsLoading(false);
         console.log("error-in-get_announcements_by_project_id", error);
       });
   };
@@ -166,15 +172,26 @@ const AnnouncementCard = () => {
       )}
       {latestAnnouncementData.length === 0 ? (
         <div className="md:py-4 py-12">
-          <NoCardData />
-          <button
-  className="bg-[#155EEF] text-white px-2 md:px-4 py-2 rounded-md flex items-center justify-center mx-auto text-sm sm0:text-[16px] "
-  onClick={() => handleOpenModal(null)}
->
-  <CampaignIcon className=" mr-2" />
-  <span className="line-clamp-1 break-all">Add new Announcement</span> 
-  </button>
-
+         
+          {/* {noData===true ? <NoCardData />: 
+            <AnnouncementCardSkeleton />
+          }
+          {noData && <button
+            className="bg-[#155EEF] text-white px-2 md:px-4 py-2 rounded-md flex items-center justify-center mx-auto text-sm sm0:text-[16px] "
+            onClick={() => handleOpenModal(null)}
+          >
+            <CampaignIcon className=" mr-2" />
+            <span className="line-clamp-1 break-all">Add new Announcement</span>
+          </button>} */}
+          {noData ===true ? <><NoCardData />
+            <button
+            className="bg-[#155EEF] text-white px-2 md:px-4 py-2 rounded-md flex items-center justify-center mx-auto text-sm sm0:text-[16px] "
+            onClick={() => handleOpenModal(null)}
+          >
+            <CampaignIcon className=" mr-2" />
+            <span className="line-clamp-1 break-all">Add new Announcement</span>
+          </button>
+          </>:<AnnouncementCardSkeleton />}
         </div>
       ) : (
         latestAnnouncementData.map((card, index) => {
@@ -189,33 +206,33 @@ const AnnouncementCard = () => {
             : "";
           let ann_project_name = card?.project_name ?? "";
           let ann_project_desc = card?.project_desc ?? "";
-          return (
+          return !isLoading ? (
             <div key={index} className="container mx-auto md:my-6  bg-white">
-              <div className="flex justify-between items-center pb-1 mb-2">
+              <div className="flex justify-between items-center px-3 pb-1 mb-2">
                 <div className="text-gray-500 truncate break-all">
                   {ann_time}
                 </div>
-           
+
                 <div className="flex  gap-4 items-center">
-                          <img
-                            src={editp}
-                            className=" text-gray-500 hover:underline text-xs h-[1.3rem]  sm:h-5 sm:w-5 cursor-pointer"
-                            alt="edit"
-                            onClick={() => handleOpenModal(card)}
-                            loading="lazy"
-                            draggable={false}
-                          />
-                          <span className="text-[16px] text-gray-500 cursor-pointer hover:text-red-700">
-                            <DeleteOutlinedIcon
-                              className="cursor-pointer hover:text-red-500"
-                              onClick={() => handleOpenDeleteModal(card)}
-                            />
-                          </span>
-                        </div>
+                  <img
+                    src={editp}
+                    className=" text-gray-500 hover:underline text-xs h-[1.3rem]  sm:h-5 sm:w-5 cursor-pointer"
+                    alt="edit"
+                    onClick={() => handleOpenModal(card)}
+                    loading="lazy"
+                    draggable={false}
+                  />
+                  <span className="text-[16px] text-gray-500 cursor-pointer hover:text-red-700">
+                    <DeleteOutlinedIcon
+                      className="cursor-pointer hover:text-red-500"
+                      onClick={() => handleOpenDeleteModal(card)}
+                    />
+                  </span>
+                </div>
               </div>
               {/* <h2 className="text-gray-900 text-xl font-bold mb-3">
-                {ann_name}
-              </h2> */}
+              {ann_name}
+            </h2> */}
               <div className="flex flex-col sm0:flex-row w-full items-start px-3 py-5 shadow rounded-md mb-4 sm0:space-x-4">
                 <div className="flex-shrink-0 self-center">
                   <img
@@ -236,12 +253,13 @@ const AnnouncementCard = () => {
                 </div>
               </div>
               {/* <div className="text-gray-500 leading-relaxed">
-                <p>{ann_desc}</p>
-              </div> */}
+              <p>{ann_desc}</p>
+            </div> */}
               {/* <hr className="mt-4" /> */}
-              
             </div>
-            
+          ) : (
+             <AnnouncementCardSkeleton />
+           
           );
         })
       )}
