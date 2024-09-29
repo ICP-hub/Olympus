@@ -486,8 +486,8 @@
 
 // export default DashboardSidebar;
 
-import React, { useEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   Home as DashboardIcon,
   Person as ProfileIcon,
@@ -497,8 +497,8 @@ import {
   Work as JobsIcon,
   Star as PerksIcon,
   Close as CloseIcon,
-} from "@mui/icons-material";
-import topLogo from "../../../../assets/Logo/topLogo.png";
+} from '@mui/icons-material';
+import topLogo from '../../../../assets/Logo/topLogo.png';
 import {
   briefcaseSvgIcon,
   calenderSvgIcon,
@@ -509,22 +509,22 @@ import {
   userCircleSvgIcon,
   userSvgIcon,
   plusSvgIcon,
-} from "../../Utils/Data/SvgData";
-import { dashboard } from "../../Utils/jsondata/data/dashboardData";
-import { useDispatch, useSelector } from "react-redux";
-import { switchRoleRequestHandler } from "../../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
-import { founderRegisteredHandlerRequest } from "../../StateManagement/Redux/Reducers/founderRegisteredData";
-import { Principal } from "@dfinity/principal";
-import Tooltip from "@mui/material/Tooltip";
-import { motion } from "framer-motion";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import { FaChevronDown, FaChevronUp } from "react-icons/fa";
+} from '../../Utils/Data/SvgData';
+import { dashboard } from '../../Utils/jsondata/data/dashboardData';
+import { useDispatch, useSelector } from 'react-redux';
+import { switchRoleRequestHandler } from '../../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer';
+import { founderRegisteredHandlerRequest } from '../../StateManagement/Redux/Reducers/founderRegisteredData';
+import { Principal } from '@dfinity/principal';
+import Tooltip from '@mui/material/Tooltip';
+import { motion } from 'framer-motion';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 
 const Toggle = ({ isChecked, onToggle, id }) => (
-  <label className="inline-flex items-center cursor-pointer" id={id}>
+  <label className='inline-flex items-center cursor-pointer' id={id}>
     <input
-      type="checkbox"
-      className="sr-only peer"
+      type='checkbox'
+      className='sr-only peer'
       checked={isChecked}
       onChange={onToggle}
     />
@@ -571,20 +571,20 @@ function DashboardSidebar({ isOpen, onClose, id, id2 }) {
   const handleToggle = async (role) => {
     setToggleState((prevState) => {
       const newState = {
-        mentor: role === "mentor" ? !prevState.mentor : false,
-        vc: role === "vc" ? !prevState.vc : false,
-        project: role === "project" ? !prevState.project : false,
+        mentor: role === 'mentor' ? !prevState.mentor : false,
+        vc: role === 'vc' ? !prevState.vc : false,
+        project: role === 'project' ? !prevState.project : false,
       };
 
-      localStorage.setItem("toggleState", JSON.stringify(newState));
+      localStorage.setItem('toggleState', JSON.stringify(newState));
 
-      const newStatus = newState[role] ? "active" : "default";
+      const newStatus = newState[role] ? 'active' : 'default';
       dispatch(switchRoleRequestHandler({ roleName: role, newStatus }));
 
       if (!newState.mentor && !newState.vc && !newState.project) {
-        ["mentor", "vc", "project"].forEach((r) => {
+        ['mentor', 'vc', 'project'].forEach((r) => {
           dispatch(
-            switchRoleRequestHandler({ roleName: r, newStatus: "default" })
+            switchRoleRequestHandler({ roleName: r, newStatus: 'default' })
           );
         });
       }
@@ -594,14 +594,14 @@ function DashboardSidebar({ isOpen, onClose, id, id2 }) {
   };
 
   useEffect(() => {
-    const savedState = localStorage.getItem("toggleState");
+    const savedState = localStorage.getItem('toggleState');
 
     if (savedState) {
       setToggleState(JSON.parse(savedState));
     } else {
       const initialState = { mentor: false, vc: false, project: false };
       setToggleState(initialState);
-      localStorage.setItem("toggleState", JSON.stringify(initialState));
+      localStorage.setItem('toggleState', JSON.stringify(initialState));
     }
   }, []);
 
@@ -625,12 +625,11 @@ function DashboardSidebar({ isOpen, onClose, id, id2 }) {
     const fetchProjectData = async () => {
       try {
         const convertedPrincipal = await Principal.fromText(principal);
-        const data = await actor.get_project_info_using_principal(
-          convertedPrincipal
-        );
+        const data =
+          await actor.get_project_info_using_principal(convertedPrincipal);
         setCardData(data);
       } catch (error) {
-        console.error("Error fetching project data:", error);
+        console.error('Error fetching project data:', error);
       }
     };
 
@@ -639,20 +638,20 @@ function DashboardSidebar({ isOpen, onClose, id, id2 }) {
 
   const handleNavigation = () => {
     if (cardData && cardData.length > 0) {
-      const projectId = cardData[0]?.[0]?.uid || "No UID available";
-      navigate("/dashboard/document", { state: { projectId, cardData } });
+      const projectId = cardData[0]?.[0]?.uid || 'No UID available';
+      navigate('/dashboard/document', { state: { projectId, cardData } });
     } else {
-      console.log("No project data available");
+      console.log('No project data available');
     }
   };
 
   const SidebarLink = ({ id2, path, icon, label, disabled, tooltip }) => (
-    <Tooltip title={disabled ? tooltip : ""} arrow>
+    <Tooltip title={disabled ? tooltip : ''} arrow>
       <div
         id={id2}
         onClick={() => {
           if (!disabled) {
-            if (typeof path === "function") {
+            if (typeof path === 'function') {
               path();
             } else {
               handleLinkClick(path);
@@ -660,11 +659,11 @@ function DashboardSidebar({ isOpen, onClose, id, id2 }) {
           }
         }}
         className={` flex lg:items-center lg:px-6 lg:py-2 lg:cursor-pointer lg:rounded-lg ${
-          activeLink === path ? "lg:bg-[#e4e3e2b1]" : "lg:hover:bg-[#e4e3e2b1]"
-        } ${disabled ? "lg:cursor-not-allowed lg:opacity-50" : ""}`}
+          activeLink === path ? 'lg:bg-[#e4e3e2b1]' : 'lg:hover:bg-[#e4e3e2b1]'
+        } ${disabled ? 'lg:cursor-not-allowed lg:opacity-50' : ''}`}
       >
         {icon}
-        <span className=" ml-3 align-bottom pb-1 text-base md:text-base truncate break-all">
+        <span className=' ml-3 align-bottom pb-1 text-base md:text-base truncate break-all'>
           {label}
         </span>
       </div>
@@ -672,10 +671,10 @@ function DashboardSidebar({ isOpen, onClose, id, id2 }) {
   );
 
   const roledata = [
-    { name: "mentor", Mentor: true, Investor: false, Project: false },
-    { name: "vc", Mentor: false, Investor: true, Project: false },
-    { name: "project", Mentor: false, Investor: false, Project: true },
-    { name: "user", Mentor: false, Investor: false, Project: false },
+    { name: 'mentor', Mentor: true, Investor: false, Project: false },
+    { name: 'vc', Mentor: false, Investor: true, Project: false },
+    { name: 'project', Mentor: false, Investor: false, Project: true },
+    { name: 'user', Mentor: false, Investor: false, Project: false },
   ];
 
   function mergeData(backendData, additionalData) {
@@ -689,44 +688,44 @@ function DashboardSidebar({ isOpen, onClose, id, id2 }) {
 
   const mergedData = mergeData(userCurrentRoleStatus, roledata);
   const filteredData = mergedData.filter(
-    (role) => role.approval_status !== "default" && role.name !== "user"
+    (role) => role.approval_status !== 'default' && role.name !== 'user'
   );
 
   const mentorApproved = filteredData.some(
-    (role) => role.name === "mentor" && role.approval_status === "approved"
+    (role) => role.name === 'mentor' && role.approval_status === 'approved'
   );
 
   const vcApproved = filteredData.some(
-    (role) => role.name === "vc" && role.approval_status === "approved"
+    (role) => role.name === 'vc' && role.approval_status === 'approved'
   );
 
   const projectApproved = filteredData.some(
-    (role) => role.name === "project" && role.approval_status === "approved"
+    (role) => role.name === 'project' && role.approval_status === 'approved'
   );
 
   let finalData = [];
 
   if (mentorApproved && vcApproved) {
     finalData = filteredData.filter(
-      (role) => role.name === "mentor" || role.name === "vc"
+      (role) => role.name === 'mentor' || role.name === 'vc'
     );
   } else if (mentorApproved) {
-    finalData = filteredData.filter((role) => role.name === "mentor");
+    finalData = filteredData.filter((role) => role.name === 'mentor');
   } else if (vcApproved) {
-    finalData = filteredData.filter((role) => role.name === "vc");
+    finalData = filteredData.filter((role) => role.name === 'vc');
   } else if (projectApproved) {
-    finalData = filteredData.filter((role) => role.name === "project");
+    finalData = filteredData.filter((role) => role.name === 'project');
   }
 
   const SidebarSection = ({ title, items, currentrole }) => (
-    <div className="mb-6">
-      <div className="flex items-center justify-between px-6 mb-2">
-        <h3 className="text-xs font-semibold text-gray-500 uppercase">
+    <div className='mb-6'>
+      <div className='flex items-center justify-between px-6 mb-2'>
+        <h3 className='text-xs font-semibold text-gray-500 uppercase'>
           {title}
         </h3>
-        {(currentrole === "mentor" ||
-          currentrole === "vc" ||
-          currentrole === "project") && (
+        {(currentrole === 'mentor' ||
+          currentrole === 'vc' ||
+          currentrole === 'project') && (
           <Toggle
             id={id}
             isChecked={toggleState[currentrole] || false}
@@ -753,28 +752,28 @@ function DashboardSidebar({ isOpen, onClose, id, id2 }) {
 
   const sectionConfig = [
     {
-      roleKey: "Mentor",
+      roleKey: 'Mentor',
       title: dashboardhomesidebar.sidebarSections.mentors.label,
       items: [
         {
-          path: "/dashboard/mentor",
+          path: '/dashboard/mentor',
           icon: gridSvgIcon,
           disabled: true,
-          tooltip: "Coming soon",
+          tooltip: 'Coming soon',
           label: dashboardhomesidebar.sidebarSections.mentors.items.label1,
         },
         {
-          path: "/dashboard/mentor/new",
+          path: '/dashboard/mentor/new',
           icon: plusSvgIcon,
           disabled: true,
-          tooltip: "Coming soon",
-          label: "Create new Service",
+          tooltip: 'Coming soon',
+          label: 'Create new Service',
         },
       ],
-      currentrole: "mentor",
+      currentrole: 'mentor',
     },
     {
-      roleKey: "Project",
+      roleKey: 'Project',
       title: dashboardhomesidebar.sidebarSections.projects.label,
       items: [
         {
@@ -783,41 +782,41 @@ function DashboardSidebar({ isOpen, onClose, id, id2 }) {
           label: projectName,
         },
         {
-          path: "/dashboard/project/new",
+          path: '/dashboard/project/new',
           icon: plusSvgIcon,
           disabled: true,
-          tooltip: "Coming soon",
-          label: "Create new Project",
+          tooltip: 'Coming soon',
+          label: 'Create new Project',
         },
       ],
-      currentrole: "project",
+      currentrole: 'project',
     },
     {
-      roleKey: "Investor",
+      roleKey: 'Investor',
       title: dashboardhomesidebar.sidebarSections.investors.label,
       items: [
         {
-          path: "/dashboard/investor",
+          path: '/dashboard/investor',
           icon: gridSvgIcon,
           disabled: true,
-          tooltip: "Coming soon",
+          tooltip: 'Coming soon',
           label: dashboardhomesidebar.sidebarSections.investors.items.label1,
         },
         {
-          path: "/dashboard/investor/new",
+          path: '/dashboard/investor/new',
           icon: plusSvgIcon,
           disabled: true,
-          tooltip: "Coming soon",
-          label: "Create new Investors",
+          tooltip: 'Coming soon',
+          label: 'Create new Investors',
         },
       ],
-      currentrole: "vc",
+      currentrole: 'vc',
     },
   ];
 
   const Sidebar = () => {
     const approvedRoles = finalData.filter(
-      (role) => role.approval_status === "approved"
+      (role) => role.approval_status === 'approved'
     );
 
     const sidebarSections = [
@@ -826,7 +825,7 @@ function DashboardSidebar({ isOpen, onClose, id, id2 }) {
         items: [
           {
             id2: id2,
-            path: "/dashboard/profile",
+            path: '/dashboard/profile',
             icon: userCircleSvgIcon,
             label: dashboardhomesidebar.sidebarSections.identity.items.label,
           },
@@ -863,66 +862,66 @@ function DashboardSidebar({ isOpen, onClose, id, id2 }) {
   const BottomNav = () => {
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const approvedRoles = finalData.filter(
-      (role) => role.approval_status === "approved"
+      (role) => role.approval_status === 'approved'
     );
     const hasCreatedRole = approvedRoles.some(
       (role) =>
-        role.name.toLowerCase() === "mentor" ||
-        role.name.toLowerCase() === "vc" ||
-        role.name.toLowerCase() === "project"
+        role.name.toLowerCase() === 'mentor' ||
+        role.name.toLowerCase() === 'vc' ||
+        role.name.toLowerCase() === 'project'
     );
     return (
       <>
         {dropdownOpen && (
           <motion.div
-            className="fixed inset-0"
+            className='fixed inset-0'
             onClick={() => setDropdownOpen(false)}
           />
         )}
 
         <motion.div
-          className="fixed bottom-0 left-0 w-full bg-[#FFF4ED] px-2 flex flex-col py-6 pb-2 z-50 rounded-t-3xl"
-          initial={{ y: "100%" }}
+          className='fixed bottom-0 left-0 w-full bg-[#FFF4ED] px-2 flex flex-col py-6 pb-2 z-50 rounded-t-3xl'
+          initial={{ y: '100%' }}
           animate={{ y: 0 }}
-          exit={{ y: "100%" }}
-          transition={{ duration: 0.5, ease: "easeInOut" }}
+          exit={{ y: '100%' }}
+          transition={{ duration: 0.5, ease: 'easeInOut' }}
         >
-          <div className="absolute right-[1.3rem] top-2">
+          <div className='absolute right-[1.3rem] top-2'>
             <button onClick={handleClose}>
-              <CloseIcon className="text-gray-700" />
+              <CloseIcon className='text-gray-700' />
             </button>
           </div>
-          <div className="flex flex-col w-full my-4 mx-4 gap-2">
+          <div className='flex flex-col w-full my-4 mx-4 gap-2'>
             <SidebarLink
-              path="/dashboard"
+              path='/dashboard'
               icon={homeSvgIcon}
-              label="Dashboard"
-              onClick={() => handleLinkClick("/dashboard")}
+              label='Dashboard'
+              onClick={() => handleLinkClick('/dashboard')}
             />
             <SidebarLink
-              path="/dashboard/user"
+              path='/dashboard/user'
               icon={userSvgIcon}
-              label="Discover"
-              onClick={() => handleLinkClick("/dashboard/user")}
+              label='Discover'
+              onClick={() => handleLinkClick('/dashboard/user')}
             />
             <SidebarLink
-              path="/dashboard/event"
+              path='/dashboard/event'
               icon={calenderSvgIcon}
-              label="Cohorts"
-              onClick={() => handleLinkClick("/dashboard/event")}
+              label='Cohorts'
+              onClick={() => handleLinkClick('/dashboard/event')}
             />
-            <div className="flex items-center justify-between">
+            <div className='flex items-center justify-between'>
               <SidebarLink
-                path="/dashboard/profile"
+                path='/dashboard/profile'
                 icon={userCircleSvgIcon}
-                label="Profile"
-                onClick={() => handleLinkClick("/dashboard/profile")}
+                label='Profile'
+                onClick={() => handleLinkClick('/dashboard/profile')}
               />
 
               {hasCreatedRole && (
                 <button
                   onClick={() => setDropdownOpen(!dropdownOpen)}
-                  className="flex items-center mr-8"
+                  className='flex items-center mr-8'
                 >
                   {dropdownOpen ? <FaChevronUp /> : <FaChevronDown />}
                 </button>
@@ -930,11 +929,11 @@ function DashboardSidebar({ isOpen, onClose, id, id2 }) {
             </div>
 
             {dropdownOpen && (
-              <div className="flex flex-col bg-[#FFF4ED]  px-2 w-full">
+              <div className='flex flex-col bg-[#FFF4ED]  px-2 w-full'>
                 {approvedRoles.map((role) => (
                   <div
                     key={role.name}
-                    className="flex items-center justify-between px-6 cursor-pointer hover:bg-gray-200"
+                    className='flex items-center justify-between px-6 cursor-pointer hover:bg-gray-200'
                   >
                     <span>
                       {role.name.charAt(0).toUpperCase() + role.name.slice(1)}
@@ -950,10 +949,10 @@ function DashboardSidebar({ isOpen, onClose, id, id2 }) {
             )}
 
             <SidebarLink
-              path="/dashboard/jobs"
+              path='/dashboard/jobs'
               icon={briefcaseSvgIcon}
-              label="Jobs"
-              onClick={() => handleLinkClick("/dashboard/jobs")}
+              label='Jobs'
+              onClick={() => handleLinkClick('/dashboard/jobs')}
             />
           </div>
         </motion.div>
@@ -964,42 +963,42 @@ function DashboardSidebar({ isOpen, onClose, id, id2 }) {
   return (
     <>
       {/* Sidebar for larger screens */}
-      <div className="hidden lg:block">
+      <div className='hidden lg:block'>
         <aside
           className={`fixed top-0 left-0 z-50 bg-[#FFF4ED] w-64 h-screen overflow-y-auto flex flex-col 
           transform transition-transform duration-300 ease-in-out 
-          ${show ? "translate-x-0" : "-translate-x-full"}
+          ${show ? 'translate-x-0' : '-translate-x-full'}
           lg:relative lg:translate-x-0`}
         >
-          <div className="p-4 flex justify-between items-center">
+          <div className='p-4 flex justify-between items-center'>
             <img
               src={topLogo}
-              alt="Olympus"
-              className="h-8 pl-2"
-              loading="lazy"
+              alt='Olympus'
+              className='h-8 pl-2'
+              loading='lazy'
               draggable={false}
             />
-            <button onClick={onClose} className="lg:hidden">
-              <CloseIcon className="text-gray-600" />
+            <button onClick={onClose} className='lg:hidden'>
+              <CloseIcon className='text-gray-600' />
             </button>
           </div>
-          <nav className="flex-1 py-6">
-            <div className="px-2 mb-6">
+          <nav className='flex-1 py-6'>
+            <div className='px-2 mb-6'>
               <SidebarLink
-                path="/dashboard"
+                path='/dashboard'
                 icon={homeSvgIcon}
                 label={dashboardhomesidebar.sidebarSections.dashboard.label}
               />
             </div>
             {Sidebar()}
             <div>
-              <h3 className="px-6 mb-2 text-xs font-semibold text-gray-500 uppercase">
+              <h3 className='px-6 mb-2 text-xs font-semibold text-gray-500 uppercase'>
                 DISCOVER
               </h3>
               <ul>
                 <li>
                   <SidebarLink
-                    path="/dashboard/user"
+                    path='/dashboard/user'
                     icon={userSvgIcon}
                     label={
                       dashboardhomesidebar.sidebarSections.discover.items.user
@@ -1008,7 +1007,7 @@ function DashboardSidebar({ isOpen, onClose, id, id2 }) {
                 </li>
                 <li>
                   <SidebarLink
-                    path="/dashboard/event"
+                    path='/dashboard/event'
                     icon={calenderSvgIcon}
                     label={
                       dashboardhomesidebar.sidebarSections.discover.items.events
@@ -1017,7 +1016,7 @@ function DashboardSidebar({ isOpen, onClose, id, id2 }) {
                 </li>
                 <li>
                   <SidebarLink
-                    path="/dashboard/regional-hubs"
+                    path='/dashboard/regional-hubs'
                     icon={locationHubSvgIcon}
                     label={
                       dashboardhomesidebar.sidebarSections.discover.items.hub
@@ -1026,7 +1025,7 @@ function DashboardSidebar({ isOpen, onClose, id, id2 }) {
                 </li>
                 <li>
                   <SidebarLink
-                    path="/dashboard/jobs"
+                    path='/dashboard/jobs'
                     icon={briefcaseSvgIcon}
                     label={
                       dashboardhomesidebar.sidebarSections.discover.items.jobs

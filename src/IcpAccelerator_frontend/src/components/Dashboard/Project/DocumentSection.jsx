@@ -3,7 +3,7 @@ import CloudUploadOutlinedIcon from '@mui/icons-material/CloudUploadOutlined';
 import ProfileCard from './ProfileCard';
 import TeamSection from './TeamSection';
 import JobSection from './JobSection';
-import FAQ from "./Faq";
+import FAQ from './Faq';
 import ProjectCard from './ProfileCard'; // Ensure this is correctly imported
 import { shareSvgIcon, backSvg } from '../../Utils/Data/SvgData'; // Ensure this is correctly imported
 import NotificationBanner from './Notification';
@@ -12,94 +12,92 @@ import { DocumentItem } from './DocumentUpload';
 
 import NoMoneyRaising from './NoMoneyRaisingCard';
 import NewDocument from './NewDocument';
-import { Link, useNavigate } from "react-router-dom";
-import { FaChevronDown, FaChevronUp } from "react-icons/fa"; 
+import { Link, useNavigate } from 'react-router-dom';
+import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 function DocumentSection() {
-  const [activeTab, setActiveTab] = useState("document");
-  const [selectedOption, setSelectedOption] = useState("file");
+  const [activeTab, setActiveTab] = useState('document');
+  const [selectedOption, setSelectedOption] = useState('file');
   const handleChange = (tab) => {
     setActiveTab(tab);
   };
   const location = useLocation();
   const navigate = useNavigate();
   const { projectId, cardData } = location.state || {};
- const [activeMobileTab, setActiveMobileTab] = useState(null); 
-    const handleMobileTabToggle = (activeTab) => {
-      setActiveMobileTab((prevTab) =>
-        prevTab === activeTab ? null : activeTab
-      );
-    };
+  const [activeMobileTab, setActiveMobileTab] = useState(null);
+  const handleMobileTabToggle = (activeTab) => {
+    setActiveMobileTab((prevTab) => (prevTab === activeTab ? null : activeTab));
+  };
   return (
-    <div className="container mx-auto mb-5 bg-white">
-      <div className="flex justify-between items-center mx-[3%] h-11 bg-opacity-95 -top-[.60rem] p-10 px-0 sticky bg-white z-20">
+    <div className='container mx-auto mb-5 bg-white'>
+      <div className='flex justify-between items-center mx-[3%] h-11 bg-opacity-95 -top-[.60rem] p-10 px-0 sticky bg-white z-20'>
         <button
           onClick={() => navigate(-1)}
-          className="flex items-center justify-center mr-2 text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-2 rounded-md shadow-sm border border-gray-200"
+          className='flex items-center justify-center mr-2 text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-2 rounded-md shadow-sm border border-gray-200'
         >
           {backSvg} Back to profile
         </button>
-        <button className="flex items-center text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-2 rounded-md shadow-sm border border-gray-200">
+        <button className='flex items-center text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-2 rounded-md shadow-sm border border-gray-200'>
           Share this<span>{shareSvgIcon}</span>
         </button>
       </div>
       {/* <NotificationBanner message="Lorem ipsum dolor sit amet dolor."
           /> */}
 
-      <div className="flex  flex-col dlg:flex-row justify-evenly">
-        <div className="dlg:w-[30%] w-full">
+      <div className='flex  flex-col dlg:flex-row justify-evenly'>
+        <div className='dlg:w-[30%] w-full'>
           <ProfileCard cardData={cardData} />
         </div>
 
-        <div className="dlg:w-[60%] hidden md:block w-full pt-12 dlg:pt-0">
-          <div className="flex justify-start border-b">
+        <div className='dlg:w-[60%] hidden md:block w-full pt-12 dlg:pt-0'>
+          <div className='flex justify-start border-b'>
             <button
               className={`px-4 py-2 focus:outline-none font-medium ${
-                activeTab === "document"
-                  ? "border-b-2 border-blue-500 text-blue-500 font-medium"
-                  : "text-gray-400"
+                activeTab === 'document'
+                  ? 'border-b-2 border-blue-500 text-blue-500 font-medium'
+                  : 'text-gray-400'
               }`}
-              onClick={() => handleChange("document")}
+              onClick={() => handleChange('document')}
             >
               Documents
             </button>
             <button
               className={`px-4 py-2 focus:outline-none font-medium ${
-                activeTab === "team"
-                  ? "border-b-2 border-blue-500 text-blue-500 font-medium"
-                  : "text-gray-400"
+                activeTab === 'team'
+                  ? 'border-b-2 border-blue-500 text-blue-500 font-medium'
+                  : 'text-gray-400'
               }`}
-              onClick={() => handleChange("team")}
+              onClick={() => handleChange('team')}
             >
               Team
             </button>
             <button
               className={`px-4 py-2 focus:outline-none font-medium ${
-                activeTab === "job"
-                  ? "border-b-2 border-blue-500 text-blue-500 font-medium"
-                  : "text-gray-400"
+                activeTab === 'job'
+                  ? 'border-b-2 border-blue-500 text-blue-500 font-medium'
+                  : 'text-gray-400'
               }`}
-              onClick={() => handleChange("job")}
+              onClick={() => handleChange('job')}
             >
               Job
             </button>
             <button
               className={`px-4 py-2 focus:outline-none font-medium ${
-                activeTab === "raising"
-                  ? "border-b-2 border-blue-500 text-blue-500 font-medium"
-                  : "text-gray-400"
+                activeTab === 'raising'
+                  ? 'border-b-2 border-blue-500 text-blue-500 font-medium'
+                  : 'text-gray-400'
               }`}
-              onClick={() => handleChange("raising")}
+              onClick={() => handleChange('raising')}
             >
               Money Rasing
             </button>
           </div>
 
-          <div className="w-full">
-            {activeTab === "document" && (
+          <div className='w-full'>
+            {activeTab === 'document' && (
               <>
-                <div className="py-6">
+                <div className='py-6'>
                   <NewDocument
-                    visibility="Visible to public"
+                    visibility='Visible to public'
                     selectedOption={selectedOption}
                     setSelectedOption={setSelectedOption}
                     cardData={cardData}
@@ -109,26 +107,26 @@ function DocumentSection() {
               </>
             )}
 
-            {activeTab === "team" && (
+            {activeTab === 'team' && (
               <>
                 <TeamSection data={projectId} cardData={cardData} />
                 <FAQ />
               </>
             )}
 
-            {activeTab === "job" && (
+            {activeTab === 'job' && (
               <>
                 <JobSection />
                 <FAQ />
               </>
             )}
-            {activeTab === "raising" && (
+            {activeTab === 'raising' && (
               <>
                 <NoMoneyRaising cardData={cardData} data={projectId} />
               </>
             )}
 
-            {activeTab === "rating" && (
+            {activeTab === 'rating' && (
               <>
                 <>
                   <h1>Rating </h1>
@@ -140,24 +138,24 @@ function DocumentSection() {
         </div>
       </div>
 
-      <div className="block md:hidden bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden w-full mt-10 p-8">
-        <div className=" border-b border-gray-300 ">
+      <div className='block md:hidden bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden w-full mt-10 p-8'>
+        <div className=' border-b border-gray-300 '>
           <button
-            className="flex justify-between items-center w-full px-2 py-3 text-left text-gray-800"
-            onClick={() => handleMobileTabToggle("document")}
+            className='flex justify-between items-center w-full px-2 py-3 text-left text-gray-800'
+            onClick={() => handleMobileTabToggle('document')}
           >
             Document
-            {activeMobileTab === "document" ? (
+            {activeMobileTab === 'document' ? (
               <FaChevronUp />
             ) : (
               <FaChevronDown />
             )}
           </button>
-          {activeMobileTab === "document" && (
+          {activeMobileTab === 'document' && (
             <>
-              <div className="">
+              <div className=''>
                 <NewDocument
-                  visibility="Visible to public"
+                  visibility='Visible to public'
                   selectedOption={selectedOption}
                   setSelectedOption={setSelectedOption}
                   cardData={cardData}
@@ -168,15 +166,15 @@ function DocumentSection() {
           )}
         </div>
 
-        <div className=" border-b border-gray-300 ">
+        <div className=' border-b border-gray-300 '>
           <button
-            className="flex justify-between items-center w-full px-2 py-3 text-left text-gray-800"
-            onClick={() => handleMobileTabToggle("team")}
+            className='flex justify-between items-center w-full px-2 py-3 text-left text-gray-800'
+            onClick={() => handleMobileTabToggle('team')}
           >
             Team
-            {activeMobileTab === "team" ? <FaChevronUp /> : <FaChevronDown />}
+            {activeMobileTab === 'team' ? <FaChevronUp /> : <FaChevronDown />}
           </button>
-          {activeMobileTab === "team" && (
+          {activeMobileTab === 'team' && (
             <>
               <TeamSection data={projectId} cardData={cardData} />
               <FAQ />
@@ -184,15 +182,15 @@ function DocumentSection() {
           )}
         </div>
 
-        <div className=" border-b border-gray-300 ">
+        <div className=' border-b border-gray-300 '>
           <button
-            className="flex justify-between items-center w-full px-2 py-3 text-left text-gray-800"
-            onClick={() => handleMobileTabToggle("job")}
+            className='flex justify-between items-center w-full px-2 py-3 text-left text-gray-800'
+            onClick={() => handleMobileTabToggle('job')}
           >
             Job
-            {activeMobileTab === "job" ? <FaChevronUp /> : <FaChevronDown />}
+            {activeMobileTab === 'job' ? <FaChevronUp /> : <FaChevronDown />}
           </button>
-          {activeMobileTab === "job" && (
+          {activeMobileTab === 'job' && (
             <>
               <JobSection />
               <FAQ />
@@ -200,34 +198,34 @@ function DocumentSection() {
           )}
         </div>
 
-        <div className=" border-b border-gray-300 ">
+        <div className=' border-b border-gray-300 '>
           <button
-            className="flex justify-between items-center w-full px-2 py-3 text-left text-gray-800"
-            onClick={() => handleMobileTabToggle("raising")}
+            className='flex justify-between items-center w-full px-2 py-3 text-left text-gray-800'
+            onClick={() => handleMobileTabToggle('raising')}
           >
             Money Rasing
-            {activeMobileTab === "raising" ? (
+            {activeMobileTab === 'raising' ? (
               <FaChevronUp />
             ) : (
               <FaChevronDown />
             )}
           </button>
-          {activeMobileTab === "raising" && (
+          {activeMobileTab === 'raising' && (
             <>
               <NoMoneyRaising cardData={cardData} data={projectId} />
             </>
           )}
         </div>
 
-        <div className=" border-b border-gray-300 ">
+        <div className=' border-b border-gray-300 '>
           <button
-            className="flex justify-between items-center w-full px-2 py-3 text-left text-gray-800"
-            onClick={() => handleMobileTabToggle("rating")}
+            className='flex justify-between items-center w-full px-2 py-3 text-left text-gray-800'
+            onClick={() => handleMobileTabToggle('rating')}
           >
             Rating
-            {activeMobileTab === "rating" ? <FaChevronUp /> : <FaChevronDown />}
+            {activeMobileTab === 'rating' ? <FaChevronUp /> : <FaChevronDown />}
           </button>
-          {activeMobileTab === "rating" && (
+          {activeMobileTab === 'rating' && (
             <>
               <>
                 <h1>Rating </h1>

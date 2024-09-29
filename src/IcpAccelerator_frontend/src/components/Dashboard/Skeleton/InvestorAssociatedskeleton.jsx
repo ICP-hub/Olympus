@@ -5,7 +5,7 @@
 // export const InvestorAssociatedtSkeleton = () => {
 //   return (
 //     <SkeletonTheme baseColor="#e3e3e3" highlightColor="#c8c8c873">
-                   
+
 //         <div className="shadow-md rounded-lg overflow-hidden w-full border-2 bg-white p-4 mb-4">
 //                     <div className='pt-6'>
 //                         <div className='flex flex-row items-baseline space-x-2 text-black text-lg'>
@@ -46,25 +46,23 @@ import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 
 export const InvestorAssociatedtSkeleton = () => {
-    return (
-        <SkeletonTheme color="#e0e0e0" highlightColor="#f5f5f5">
-            <div className="shadow-md rounded-lg overflow-hidden w-full border-2 bg-white p-4 pt-2 mb-4">
-                <div className='pt-6'>
-                    <div className='flex flex-row  space-x-2  '>
-                        <Skeleton  height={55} width={55} className='rounded-md' />
-                        <Skeleton height={20} width={200}  className='mt-[40px]'/>
-                    </div>
-                    <div className="flex w-full pb-4 pr-4 overflow-x-auto">
-                        
-                    </div>
-                    <div className='pt-4 overflow-x-auto'>
-                        <Skeleton  height='15' count={3} />
-                    </div>
-                    {/* <div className='flex mt-4 text-sm bg-[#3505B2] rounded-md justify-center'> */}
-                        <Skeleton height={42} width='100%'/>
-                    {/* </div> */}
-                </div>
-            </div>
-        </SkeletonTheme>
-    );
+  return (
+    <SkeletonTheme color='#e0e0e0' highlightColor='#f5f5f5'>
+      <div className='shadow-md rounded-lg overflow-hidden w-full border-2 bg-white p-4 pt-2 mb-4'>
+        <div className='pt-6'>
+          <div className='flex flex-row  space-x-2  '>
+            <Skeleton height={55} width={55} className='rounded-md' />
+            <Skeleton height={20} width={200} className='mt-[40px]' />
+          </div>
+          <div className='flex w-full pb-4 pr-4 overflow-x-auto'></div>
+          <div className='pt-4 overflow-x-auto'>
+            <Skeleton height='15' count={3} />
+          </div>
+          {/* <div className='flex mt-4 text-sm bg-[#3505B2] rounded-md justify-center'> */}
+          <Skeleton height={42} width='100%' />
+          {/* </div> */}
+        </div>
+      </div>
+    </SkeletonTheme>
+  );
 };

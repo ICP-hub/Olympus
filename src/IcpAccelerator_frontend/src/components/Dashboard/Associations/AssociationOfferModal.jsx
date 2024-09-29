@@ -360,43 +360,43 @@
 // };
 
 // export default AssociationOfferModal;
-import React, { useEffect, useState } from "react";
-import VerifiedIcon from "@mui/icons-material/Verified";
-import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
-import ArrowOutwardOutlinedIcon from "@mui/icons-material/ArrowOutwardOutlined";
-import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
-import CloseIcon from "@mui/icons-material/Close";
-import getSocialLogo from "../../Utils/navigationHelper/getSocialLogo";
-import { FaChevronDown, FaChevronUp } from "react-icons/fa";
-import DiscoverDocument from "../DashboardHomePage/discoverMentorPage/DiscoverDocument";
-import DiscoverTeam from "../DashboardHomePage/discoverMentorPage/DiscoverTeam";
-import DiscoverRatings from "../../Discover/DiscoverRatings";
-import DiscoverReview from "../../Discover/DiscoverReview";
-import DiscoverMoneyRaising from "../Project/DiscoverMoneyRais";
-import DiscoverMentorEvent from "../DashboardHomePage/discoverMentor/DiscoverMentorEvent";
-import Nodata from "../Project/Nodata";
-import NoData from "../../NoDataCard/NoData";
+import React, { useEffect, useState } from 'react';
+import VerifiedIcon from '@mui/icons-material/Verified';
+import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined';
+import ArrowOutwardOutlinedIcon from '@mui/icons-material/ArrowOutwardOutlined';
+import uint8ArrayToBase64 from '../../Utils/uint8ArrayToBase64';
+import CloseIcon from '@mui/icons-material/Close';
+import getSocialLogo from '../../Utils/navigationHelper/getSocialLogo';
+import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
+import DiscoverDocument from '../DashboardHomePage/discoverMentorPage/DiscoverDocument';
+import DiscoverTeam from '../DashboardHomePage/discoverMentorPage/DiscoverTeam';
+import DiscoverRatings from '../../Discover/DiscoverRatings';
+import DiscoverReview from '../../Discover/DiscoverReview';
+import DiscoverMoneyRaising from '../Project/DiscoverMoneyRais';
+import DiscoverMentorEvent from '../DashboardHomePage/discoverMentor/DiscoverMentorEvent';
+import Nodata from '../Project/Nodata';
+import NoData from '../../NoDataCard/NoData';
 
 const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
-  console.log("user data.................... =>", user);
+  console.log('user data.................... =>', user);
 
   useEffect(() => {
     if (openDetail) {
-      document.body.style.overflow = "hidden";
+      document.body.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = "auto";
+      document.body.style.overflow = 'auto';
     }
 
     return () => {
-      document.body.style.overflow = "auto";
+      document.body.style.overflow = 'auto';
     };
   }, [openDetail]);
 
   const [activeMobileTab, setActiveMobileTab] = useState(null);
-  const [activeTab, setActiveTab] = useState("document");
-  const [activeSideTab, setActiveSideTab] = useState("general");
+  const [activeTab, setActiveTab] = useState('document');
+  const [activeSideTab, setActiveSideTab] = useState('general');
 
-  const tabs = ["document", "team", "ratings", "moneyraised", "review"];
+  const tabs = ['document', 'team', 'ratings', 'moneyraised', 'review'];
   const uniqueActiveTabs = [...new Set(tabs)];
 
   const handleMobileTabToggle = (tab) => {
@@ -409,118 +409,116 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
 
   useEffect(() => {
     if (openDetail) {
- 
-      document.body.style.overflow = "hidden";
+      document.body.style.overflow = 'hidden';
     } else {
-    
-      document.body.style.overflow = "auto";
+      document.body.style.overflow = 'auto';
     }
-   
+
     return () => {
-      document.body.style.overflow = "auto";
+      document.body.style.overflow = 'auto';
     };
   }, [openDetail]);
 
   // Offer details
-  let offer = user?.offer ?? "offer";
-  let offerId = user?.offer_id ?? "offerId";
+  let offer = user?.offer ?? 'offer';
+  let offerId = user?.offer_id ?? 'offerId';
   let acceptedAt = user?.accepted_at ?? 0n;
   let declinedAt = user?.declined_at ?? 0n;
   let selfDeclinedAt = user?.self_declined_at ?? 0n;
 
   // Receiver details
   let receiverPrincipal =
-    user?.receiever_principal ?? "Principal not available";
+    user?.receiever_principal ?? 'Principal not available';
 
   // Receiver Data
   let recieverDataProject = user?.reciever_data?.[0][0] ?? {}; // Project data at index 0
   let recieverDataUser = user?.reciever_data?.[0][1] ?? {}; // User data at index 1
-  console.log("mentor detail on page ", recieverDataProject);
+  console.log('mentor detail on page ', recieverDataProject);
   let recieverYearsOfMentoring =
-    recieverDataProject?.profile?.years_of_mentoring ?? "No Experience";
+    recieverDataProject?.profile?.years_of_mentoring ?? 'No Experience';
   let recieverIcpHubOrSpoke =
     recieverDataProject?.profile?.icp_hub_or_spoke ?? false;
   let recieverHubOwner =
-    recieverDataProject?.profile?.hub_owner?.[0] ?? "Hub not available";
+    recieverDataProject?.profile?.hub_owner?.[0] ?? 'Hub not available';
   let recieverWebsite =
-    recieverDataProject?.profile?.website?.[0] ?? "https://defaultwebsite.com";
+    recieverDataProject?.profile?.website?.[0] ?? 'https://defaultwebsite.com';
   let recieverExistingIcpMentor =
     recieverDataProject?.profile?.existing_icp_mentor ?? false;
   let recieverCategoryOfMentoringService =
     recieverDataProject?.profile?.category_of_mentoring_service ??
-    "Category not available";
+    'Category not available';
 
   // User Details (Index 1)
   let userFullName =
-    recieverDataUser?.params?.full_name ?? "User Name not available";
+    recieverDataUser?.params?.full_name ?? 'User Name not available';
   let userProfilePicture = recieverDataUser?.params?.profile_picture?.[0]
     ? uint8ArrayToBase64(recieverDataUser?.params?.profile_picture?.[0])
-    : "../../../assets/Logo/CypherpunkLabLogo.png";
+    : '../../../assets/Logo/CypherpunkLabLogo.png';
   let userUserName =
     recieverDataUser?.params?.openchat_username?.[0] ??
-    "Username not available";
-  let userEmail = recieverDataUser?.params?.email?.[0] ?? "email@example.com";
+    'Username not available';
+  let userEmail = recieverDataUser?.params?.email?.[0] ?? 'email@example.com';
   let userCountry =
-    recieverDataUser?.params?.country ?? "Country not available";
-  let userBio = recieverDataUser?.params?.bio?.[0] ?? "Bio not available";
+    recieverDataUser?.params?.country ?? 'Country not available';
+  let userBio = recieverDataUser?.params?.bio?.[0] ?? 'Bio not available';
   let userAreaOfInterest =
     recieverDataUser?.params?.area_of_interest ??
-    "Area of Interest not available";
+    'Area of Interest not available';
   let userReasonToJoin =
     recieverDataUser?.params?.reason_to_join?.[0] ??
-    "Reason to join not available";
+    'Reason to join not available';
   let userTypeOfProfile =
-    recieverDataUser?.params?.type_of_profile?.[0] ?? "individual";
+    recieverDataUser?.params?.type_of_profile?.[0] ?? 'individual';
   let userSocialLinks =
-    recieverDataUser?.params?.social_links ?? "No social links available";
+    recieverDataUser?.params?.social_links ?? 'No social links available';
 
   // Sender Data
   let senderDataProject = user?.sender_data?.[0][0] ?? {}; // Project data at index 0
   let senderDataUser = user?.sender_data?.[0][1] ?? {}; // User data at index 1
-  console.log("sender user data ", senderDataUser);
-  console.log("project data", senderDataProject);
+  console.log('sender user data ', senderDataUser);
+  console.log('project data', senderDataProject);
 
   let projectid = senderDataProject.uid;
   console.log(projectid);
 
   // Project Details (Index 0)
-  let projectSocialLinks =  senderDataProject?.params?.social_links?.[0];
-  ("No social links available");
-  console.log("project social links",projectSocialLinks)
+  let projectSocialLinks = senderDataProject?.params?.social_links?.[0];
+  ('No social links available');
+  console.log('project social links', projectSocialLinks);
   let projectName =
-    senderDataProject?.params?.project_name ?? "Project Name not available";
+    senderDataProject?.params?.project_name ?? 'Project Name not available';
 
   let projectDescription =
     senderDataProject?.params?.project_description?.[0] ??
-    "Project description not available";
+    'Project description not available';
   let projectWebsite =
     senderDataProject?.params?.project_website?.[0] ??
-    "https://defaultwebsite.com";
+    'https://defaultwebsite.com';
   let projectElevatorPitch =
     senderDataProject?.params?.project_elevator_pitch?.[0] ??
-    "No project elevator pitch available";
+    'No project elevator pitch available';
   let dappLink =
-    senderDataProject?.params?.dapp_link?.[0] ?? "No dapp link available";
+    senderDataProject?.params?.dapp_link?.[0] ?? 'No dapp link available';
   let preferredIcpHub =
-    senderDataProject?.params?.preferred_icp_hub?.[0] ?? "Hub not available";
+    senderDataProject?.params?.preferred_icp_hub?.[0] ?? 'Hub not available';
   let longTermGoals =
     senderDataProject?.params?.long_term_goals?.[0] ??
-    "Long term goals not available";
+    'Long term goals not available';
   let revenue = senderDataProject?.params?.revenue?.[0] ?? 0n;
   let weeklyActiveUsers =
     senderDataProject?.params?.weekly_active_users?.[0] ?? 0n;
   let supportsMultichain =
     senderDataProject?.params?.supports_multichain?.[0] ??
-    "Chain not available";
+    'Chain not available';
   let technicalDocs =
     senderDataProject?.params?.technical_docs?.[0] ??
-    "No technical docs available";
+    'No technical docs available';
   let tokenEconomics =
     senderDataProject?.params?.token_economics?.[0] ??
-    "No token economics available";
+    'No token economics available';
   let targetMarket =
     senderDataProject?.params?.target_market?.[0] ??
-    "Target market not available";
+    'Target market not available';
   let moneyRaisedTillNow =
     senderDataProject?.params?.money_raised_till_now?.[0] ?? false;
   let isYourProjectRegistered =
@@ -530,52 +528,52 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
   let uploadPrivateDocuments =
     senderDataProject?.params?.upload_private_documents?.[0] ?? false;
   let typeOfRegistration =
-    senderDataProject?.params?.type_of_registration?.[0] ?? "N/A";
+    senderDataProject?.params?.type_of_registration?.[0] ?? 'N/A';
   let projectAreaOfFocus =
     senderDataProject?.params?.project_area_of_focus ??
-    "Area of Focus not available";
+    'Area of Focus not available';
   let reasontojoinincubator =
-    senderDataProject?.params?.reason_to_join_incubator ?? "not available";
+    senderDataProject?.params?.reason_to_join_incubator ?? 'not available';
 
   let projectCover = senderDataProject?.params?.project_cover?.[0]
     ? uint8ArrayToBase64(senderDataProject?.params?.project_cover?.[0])
-    : "../../../assets/Logo/CypherpunkLabLogo.png";
+    : '../../../assets/Logo/CypherpunkLabLogo.png';
   let projectLogo = senderDataProject?.params?.project_logo?.[0]
     ? uint8ArrayToBase64(senderDataProject?.params?.project_logo?.[0])
-    : "../../../assets/Logo/CypherpunkLabLogo.png";
+    : '../../../assets/Logo/CypherpunkLabLogo.png';
   let countryofregistration =
-    senderDataProject?.params?.country_of_registration?.[0] ?? "not available";
+    senderDataProject?.params?.country_of_registration?.[0] ?? 'not available';
   // User Details within Sender Data (Index 1)
   let senderFullName =
-    senderDataUser?.params?.full_name ?? "Sender Name not available";
+    senderDataUser?.params?.full_name ?? 'Sender Name not available';
   let senderProfilePicture = senderDataUser?.params?.profile_picture?.[0]
     ? uint8ArrayToBase64(senderDataUser?.params?.profile_picture?.[0])
-    : "../../../assets/Logo/CypherpunkLabLogo.png";
+    : '../../../assets/Logo/CypherpunkLabLogo.png';
   let senderUserName =
-    senderDataUser?.params?.openchat_username?.[0] ?? "Username not available";
-  let senderEmail = senderDataUser?.params?.email?.[0] ?? "sender@example.com";
+    senderDataUser?.params?.openchat_username?.[0] ?? 'Username not available';
+  let senderEmail = senderDataUser?.params?.email?.[0] ?? 'sender@example.com';
   let senderCountry =
-    senderDataUser?.params?.country ?? "Country not available";
-  let senderBio = senderDataUser?.params?.bio?.[0] ?? "Bio not available";
+    senderDataUser?.params?.country ?? 'Country not available';
+  let senderBio = senderDataUser?.params?.bio?.[0] ?? 'Bio not available';
   let senderAreaOfInterest =
     senderDataUser?.params?.area_of_interest ??
-    "Area of Interest not available";
+    'Area of Interest not available';
   let senderReasonToJoin =
     senderDataUser?.params?.reason_to_join?.[0] ??
-    "Reason to join not available";
+    'Reason to join not available';
   let senderTypeOfProfile =
-    senderDataUser?.params?.type_of_profile?.[0] ?? "individual";
+    senderDataUser?.params?.type_of_profile?.[0] ?? 'individual';
   let senderSocialLinks = senderDataUser?.params?.social_links?.[0];
-  ("No social links available");
-  console.log("sender social links", senderSocialLinks);
+  ('No social links available');
+  console.log('sender social links', senderSocialLinks);
 
   //Sender Mentor Details at index[0]
   let senderYearsOfMentoring =
-    senderDataProject?.profile?.years_of_mentoring ?? "0";
+    senderDataProject?.profile?.years_of_mentoring ?? '0';
   let senderAreaOfExpertise =
     senderDataProject?.profile?.area_of_expertise ?? [];
   let senderCategoryOfMentoringService =
-    senderDataProject?.profile?.category_of_mentoring_service ?? "";
+    senderDataProject?.profile?.category_of_mentoring_service ?? '';
   let senderExistingIcpMentor =
     senderDataProject?.profile?.existing_icp_mentor ?? false;
   let senderExistingIcpProjectPortfolio =
@@ -590,34 +588,34 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
   let senderReasonForJoining =
     senderDataProject?.profile?.reason_for_joining ?? [];
   let senderWebsite =
-    senderDataProject?.profile?.website?.[0] ?? "https://defaultwebsite.com";
-    let mentorSocialLinks =  senderDataProject?.profile?.social_links?.[0];
-    ("No social links available");
-    console.log("mentor social links",mentorSocialLinks)
+    senderDataProject?.profile?.website?.[0] ?? 'https://defaultwebsite.com';
+  let mentorSocialLinks = senderDataProject?.profile?.social_links?.[0];
+  ('No social links available');
+  console.log('mentor social links', mentorSocialLinks);
 
   //Investor  Details at index[0]
-  let fundName = senderDataProject?.name_of_fund ?? "N/A";
-  let categoryOfInvestment = senderDataProject?.category_of_investment ?? "N/A";
+  let fundName = senderDataProject?.name_of_fund ?? 'N/A';
+  let categoryOfInvestment = senderDataProject?.category_of_investment ?? 'N/A';
 
-  let fundSize = senderDataProject?.fund_size?? "N/A";
-  let moneyInvested = senderDataProject?.money_invested ?? "N/A";
+  let fundSize = senderDataProject?.fund_size ?? 'N/A';
+  let moneyInvested = senderDataProject?.money_invested ?? 'N/A';
   let investorType = senderDataProject?.investor_type ?? [];
-  let portfolioLink = senderDataProject?.portfolio_link ?? "N/A";
+  let portfolioLink = senderDataProject?.portfolio_link ?? 'N/A';
   let stage = senderDataProject?.stage ?? [];
   let preferredIcpHubforInvestor =
-    senderDataProject?.preferred_icp_hub ?? "N/A";
+    senderDataProject?.preferred_icp_hub ?? 'N/A';
   let projectOnMultichain = senderDataProject?.project_on_multichain ?? [];
-  let averageCheckSize = senderDataProject?.average_check_size ?? "N/A";
+  let averageCheckSize = senderDataProject?.average_check_size ?? 'N/A';
   // let rangeOfCheckSize = senderDataProject?.range_of_check_size[0] ?? "N/A";
   let numberOfPortfolioCompanies =
-    senderDataProject?.number_of_portfolio_companies ?? "N/A";
+    senderDataProject?.number_of_portfolio_companies ?? 'N/A';
   let registered = senderDataProject?.registered ?? false;
-  let registeredCountry = senderDataProject?.registered_country ?? "N/A";
-  let typeOfInvestment = senderDataProject?.type_of_investment ?? "N/A";
-  let websiteLink = senderDataProject?.website_link ?? "N/A";
-  let investorSocialLinks =  senderDataProject?.links?.[0];
-  ("No social links available");
-  console.log("investor social links",investorSocialLinks)
+  let registeredCountry = senderDataProject?.registered_country ?? 'N/A';
+  let typeOfInvestment = senderDataProject?.type_of_investment ?? 'N/A';
+  let websiteLink = senderDataProject?.website_link ?? 'N/A';
+  let investorSocialLinks = senderDataProject?.links?.[0];
+  ('No social links available');
+  console.log('investor social links', investorSocialLinks);
 
   // Other sender-specific details
   let isSenderActive = senderDataUser?.active ?? false;
@@ -625,122 +623,124 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
   let isSenderDeclined = senderDataUser?.decline ?? false;
 
   let senderPrincipal =
-    user?.sender_principal ?? "Sender Principal not available";
+    user?.sender_principal ?? 'Sender Principal not available';
   let sentAt = user?.sent_at ?? 0n;
-  console.log("sender Principle aaa raha hai kya", senderPrincipal);
+  console.log('sender Principle aaa raha hai kya', senderPrincipal);
   // Response Data
-  let requestStatus = user?.request_status ?? "pending";
-  let response = user?.response ?? "";
+  let requestStatus = user?.request_status ?? 'pending';
+  let response = user?.response ?? '';
 
   return (
     <div
       className={`w-full h-screen fixed inset-0 bg-black bg-opacity-30 backdrop-blur-xs z-50 transition-opacity duration-[4000ms] ease-in-out ${
-        openDetail ? "opacity-100 visible" : "opacity-0 invisible"
+        openDetail ? 'opacity-100 visible' : 'opacity-0 invisible'
       }`}
     >
       <div
         className={`mx-auto w-full sm:w-[70%] absolute right-0 top-0 bg-white h-screen transform transition-transform duration-[4000ms] ease-[cubic-bezier(0.4, 0, 0.2, 1)] ${
-          openDetail ? "translate-x-0" : "translate-x-full"
+          openDetail ? 'translate-x-0' : 'translate-x-full'
         } z-20`}
       >
-        <div className="p-2 mb-2">
+        <div className='p-2 mb-2'>
           <CloseIcon
-            sx={{ cursor: "pointer" }}
+            sx={{ cursor: 'pointer' }}
             onClick={() => setOpenDetail(false)}
           />
         </div>
 
-        <div className="container mx-auto h-full pb-8 px-[4%] sm:px-[2%] overflow-y-scroll">
-          <div className="flex flex-col gap-4 lg1:py-3 lg1:gap-0 lg1:flex-row w-full lg1:justify-evenly ">
-            <div className="border rounded-lg w-full lg1:overflow-y-scroll lg1:w-[32%] ">
-              <div className="p-6 bg-gray-100">
-                <div className="relative w-24 h-24 mx-auto mb-4">
+        <div className='container mx-auto h-full pb-8 px-[4%] sm:px-[2%] overflow-y-scroll'>
+          <div className='flex flex-col gap-4 lg1:py-3 lg1:gap-0 lg1:flex-row w-full lg1:justify-evenly '>
+            <div className='border rounded-lg w-full lg1:overflow-y-scroll lg1:w-[32%] '>
+              <div className='p-6 bg-gray-100'>
+                <div className='relative w-24 h-24 mx-auto mb-4'>
                   <img
                     src={senderProfilePicture}
                     alt={senderFullName}
-                    className="absolute w-24 h-24 rounded-full backface-hidden transition-transform duration-500 transform hover:rotate-y-180"
-                    loading="lazy"
+                    className='absolute w-24 h-24 rounded-full backface-hidden transition-transform duration-500 transform hover:rotate-y-180'
+                    loading='lazy'
                     draggable={false}
                   />
                 </div>
 
-                <div className="flex items-center justify-center mb-1">
+                <div className='flex items-center justify-center mb-1'>
                   <VerifiedIcon
-                    className="text-blue-500 mr-1"
-                    fontSize="small"
+                    className='text-blue-500 mr-1'
+                    fontSize='small'
                   />
-                  <h2 className="text-xl font-semibold">{senderFullName}</h2>
+                  <h2 className='text-xl font-semibold'>{senderFullName}</h2>
                 </div>
-                <p className="text-gray-600 text-center mb-4">
-                  {senderUserName}{" "}
+                <p className='text-gray-600 text-center mb-4'>
+                  {senderUserName}{' '}
                 </p>
                 <a
                   href={`mailto:${senderEmail}`}
-                  className="w-full h-[#155EEF] bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 mb-6 flex items-center justify-center"
+                  className='w-full h-[#155EEF] bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 mb-6 flex items-center justify-center'
                 >
                   Get in touch
-                  <ArrowOutwardOutlinedIcon className="ml-1" fontSize="small" />
+                  <ArrowOutwardOutlinedIcon className='ml-1' fontSize='small' />
                 </a>
               </div>
-              <div className="p-6 bg-white">
-                <div className="mb-4">
+              <div className='p-6 bg-white'>
+                <div className='mb-4'>
                   {/* TAB  */}
-                  <div className="flex justify-start border-b overflow-x-auto">
+                  <div className='flex justify-start border-b overflow-x-auto'>
                     <button
                       className={`px-4 py-2 focus:outline-none font-medium ${
-                        activeSideTab === "general"
-                          ? "border-b-2 border-blue-500 text-blue-500 font-medium"
-                          : "text-gray-400"
+                        activeSideTab === 'general'
+                          ? 'border-b-2 border-blue-500 text-blue-500 font-medium'
+                          : 'text-gray-400'
                       }`}
-                      onClick={() => setActiveSideTab("general")}
+                      onClick={() => setActiveSideTab('general')}
                     >
                       General
                     </button>
                     <button
                       className={`px-4 py-2 focus:outline-none font-medium ${
-                        activeSideTab === "project"
-                          ? "border-b-2 border-blue-500 text-blue-500 font-medium"
-                          : "text-gray-400"
+                        activeSideTab === 'project'
+                          ? 'border-b-2 border-blue-500 text-blue-500 font-medium'
+                          : 'text-gray-400'
                       }`}
-                      onClick={() => setActiveSideTab("project")}
+                      onClick={() => setActiveSideTab('project')}
                     >
                       Project
                     </button>
                     <button
                       className={`px-4 py-2 focus:outline-none font-medium ${
-                        activeSideTab === "mentor"
-                          ? "border-b-2 border-blue-500 text-blue-500 font-medium"
-                          : "text-gray-400"
+                        activeSideTab === 'mentor'
+                          ? 'border-b-2 border-blue-500 text-blue-500 font-medium'
+                          : 'text-gray-400'
                       }`}
-                      onClick={() => setActiveSideTab("mentor")}
+                      onClick={() => setActiveSideTab('mentor')}
                     >
                       Mentor
                     </button>
                     <button
                       className={`px-4 py-2 focus:outline-none font-medium ${
-                        activeSideTab === "investor"
-                          ? "border-b-2 border-blue-500 text-blue-500 font-medium"
-                          : "text-gray-400"
+                        activeSideTab === 'investor'
+                          ? 'border-b-2 border-blue-500 text-blue-500 font-medium'
+                          : 'text-gray-400'
                       }`}
-                      onClick={() => setActiveSideTab("investor")}
+                      onClick={() => setActiveSideTab('investor')}
                     >
                       Investor
                     </button>
                   </div>
 
                   {/* General Tab Content */}
-                  {activeSideTab === "general" && (
-                    <div className="p-4">
-                      <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-1 ">
-                        <h3 className="font-semibold mb-2 text-[14px] text-gray-500 uppercase">
+                  {activeSideTab === 'general' && (
+                    <div className='p-4'>
+                      <div className='mb-4 group relative hover:bg-gray-100 rounded-lg p-1 '>
+                        <h3 className='font-semibold mb-2 text-[14px] text-gray-500 uppercase'>
                           Email
                         </h3>
 
-                        <div className="flex items-center flex-wrap line-clamp-1 break-all truncate">
-                          <p className="mr-2 text-[14px] line-clamp-1 break-all truncate">{senderEmail}</p>
+                        <div className='flex items-center flex-wrap line-clamp-1 break-all truncate'>
+                          <p className='mr-2 text-[14px] line-clamp-1 break-all truncate'>
+                            {senderEmail}
+                          </p>
                           <VerifiedIcon
-                            className="text-blue-500 mr-2 w-2 h-2"
-                            fontSize="small"
+                            className='text-blue-500 mr-2 w-2 h-2'
+                            fontSize='small'
                           />
                           {/* <span className="bg-[#F8FAFC] border border-[#E3E8EF] text-[#364152] px-2 py-0.5 rounded text-[14px]">
                             HIDDEN
@@ -748,27 +748,27 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
                         </div>
                       </div>
 
-                      <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-1  ">
-                        <h3 className="font-semibold mb-2 text-[14px] text-gray-500 uppercase">
+                      <div className='mb-4 group relative hover:bg-gray-100 rounded-lg p-1  '>
+                        <h3 className='font-semibold mb-2 text-[14px] text-gray-500 uppercase'>
                           About
                         </h3>
                         <div>
-                          <p className="text-[14px] overflow-hidden line-clamp-2 text-ellipsis max-h-[1.75rem]">
+                          <p className='text-[14px] overflow-hidden line-clamp-2 text-ellipsis max-h-[1.75rem]'>
                             {senderBio}
                           </p>
                         </div>
                       </div>
 
-                      <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-1 ">
-                        <h3 className="font-semibold mb-2 text-[14px] text-gray-500 uppercase">
+                      <div className='mb-4 group relative hover:bg-gray-100 rounded-lg p-1 '>
+                        <h3 className='font-semibold mb-2 text-[14px] text-gray-500 uppercase'>
                           Reason to Join Platform
                         </h3>
                         <div>
-                          <div className="flex flex-wrap gap-2">
+                          <div className='flex flex-wrap gap-2'>
                             {senderReasonToJoin.map((reason) => (
                               <span
                                 key={reason}
-                                className="border-2 border-gray-500 rounded-full text-gray-700 text-[13px] px-2 py-1 "
+                                className='border-2 border-gray-500 rounded-full text-gray-700 text-[13px] px-2 py-1 '
                               >
                                 {reason}
                               </span>
@@ -777,265 +777,271 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
                         </div>
                       </div>
 
-                      <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-1 mt-2">
-                        <h3 className="font-semibold mb-2 text-[14px] text-gray-500 uppercase">
+                      <div className='mb-4 group relative hover:bg-gray-100 rounded-lg p-1 mt-2'>
+                        <h3 className='font-semibold mb-2 text-[14px] text-gray-500 uppercase'>
                           Location
                         </h3>
-                        <div className="flex gap-2">
+                        <div className='flex gap-2'>
                           <PlaceOutlinedIcon
-                            sx={{ fontSize: "medium", marginTop: "3px" }}
+                            sx={{ fontSize: 'medium', marginTop: '3px' }}
                           />
-                          <p className="text-[14px]">{senderCountry}</p>
+                          <p className='text-[14px]'>{senderCountry}</p>
                         </div>
                       </div>
 
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1'>
                         {senderSocialLinks && (
-                          <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all ">
+                          <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all '>
                             Links
                           </h3>
                         )}
 
-                        <div className="flex items-center ">
-                          <div className="flex gap-3">
+                        <div className='flex items-center '>
+                          <div className='flex gap-3'>
                             {senderSocialLinks
                               ? senderSocialLinks?.map((link, i) => {
                                   const icon = getSocialLogo(link);
                                   return (
                                     <div
                                       key={i}
-                                      className="flex items-center space-x-2"
+                                      className='flex items-center space-x-2'
                                     >
                                       {icon ? (
                                         <a href={`${link}`}>{icon}</a>
                                       ) : (
-                                        ""
+                                        ''
                                       )}
                                     </div>
                                   );
                                 })
-                              : ""}
+                              : ''}
                           </div>
                         </div>
-                       
                       </div>
-                       <div className="my-2 group relative hover:bg-gray-100 rounded-lg p-1 ">
-                          <h3 className="font-semibold mb-2 text-[14px] text-gray-500 uppercase line-clamp-1 break-all truncate">
-                            Proposed By {senderFullName}
-                          </h3>
-                          <div>
-                            <p className="text-[14px] overflow-hidden line-clamp-2 text-ellipsis break-all ">
-                              {offer}
-                            </p>
-                          </div>
+                      <div className='my-2 group relative hover:bg-gray-100 rounded-lg p-1 '>
+                        <h3 className='font-semibold mb-2 text-[14px] text-gray-500 uppercase line-clamp-1 break-all truncate'>
+                          Proposed By {senderFullName}
+                        </h3>
+                        <div>
+                          <p className='text-[14px] overflow-hidden line-clamp-2 text-ellipsis break-all '>
+                            {offer}
+                          </p>
                         </div>
+                      </div>
                     </div>
                   )}
 
                   {/* Project Tab Content */}
-                  {activeSideTab === "project" && (
-                    <div className="p-4">
-                      <div className="mt-4 group relative hover:bg-gray-100 rounded-lg p-1">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                  {activeSideTab === 'project' && (
+                    <div className='p-4'>
+                      <div className='mt-4 group relative hover:bg-gray-100 rounded-lg p-1'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all'>
                           Project Name
                         </h3>
-                        <p className="text-[14px] line-clamp-3">{projectName} </p>
-                      </div>
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-4">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start">
-                          Project Description
-                        </h3>
-                        <p className="text-[14px] line-clamp-3 break-all">
-                          {projectDescription}{" "}
+                        <p className='text-[14px] line-clamp-3'>
+                          {projectName}{' '}
                         </p>
                       </div>
-                      <div className="mt-6">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-4'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start'>
+                          Project Description
+                        </h3>
+                        <p className='text-[14px] line-clamp-3 break-all'>
+                          {projectDescription}{' '}
+                        </p>
+                      </div>
+                      <div className='mt-6'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start'>
                           Prefered Icp Hub
                         </h3>
-                        <p className="text-[14px]">{preferredIcpHub}</p>
+                        <p className='text-[14px]'>{preferredIcpHub}</p>
                       </div>
-                      <div className="mt-6">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start">
+                      <div className='mt-6'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start'>
                           Project Elevator Pitch
                         </h3>
-                        <p className="text-[14px] line-clamp-1 break-all truncate">
+                        <p className='text-[14px] line-clamp-1 break-all truncate'>
                           {projectElevatorPitch}
                         </p>
                       </div>
-                      <div className="mt-6">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start">
+                      <div className='mt-6'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start'>
                           Project Website
                         </h3>
-                        <p className="text-[14px] line-clamp-1 break-all truncate">
+                        <p className='text-[14px] line-clamp-1 break-all truncate'>
                           {projectWebsite}
                         </p>
                       </div>
 
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-4">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-4'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start'>
                           PROJECT FOCUS AREA
                         </h3>
-                        {projectAreaOfFocus?.split(", ").map((focus, index) => (
+                        {projectAreaOfFocus?.split(', ').map((focus, index) => (
                           <span
                             key={index}
-                            className="border-2 border-gray-500 rounded-full text-gray-700 text-[13px] px-2 py-1 inline-block mr-2 mb-2 mt-1"
+                            className='border-2 border-gray-500 rounded-full text-gray-700 text-[13px] px-2 py-1 inline-block mr-2 mb-2 mt-1'
                           >
                             {focus}
                           </span>
                         ))}
                       </div>
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-2 ">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-2 '>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start'>
                           MULTI-CHAIN NAMES
                         </h3>
-                        {supportsMultichain?.split(", ").map((chain, index) => (
+                        {supportsMultichain?.split(', ').map((chain, index) => (
                           <span
                             key={index}
-                            className="border-2 border-gray-500 rounded-full text-gray-700 text-[13px] px-2 py-1 inline-block mr-2 mb-2 mt-1"
+                            className='border-2 border-gray-500 rounded-full text-gray-700 text-[13px] px-2 py-1 inline-block mr-2 mb-2 mt-1'
                           >
                             {chain}
                           </span>
                         ))}
                       </div>
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-2 ">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-2 '>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start'>
                           REASON TO JOIN
                         </h3>
                         {reasontojoinincubator
-                          ?.split(", ")
+                          ?.split(', ')
                           .map((goal, index) => (
                             <span
                               key={index}
-                              className="border-2 border-gray-500 rounded-full text-gray-700 text-[13px] px-2 py-1 inline-block mr-2 mb-2 mt-1"
+                              className='border-2 border-gray-500 rounded-full text-gray-700 text-[13px] px-2 py-1 inline-block mr-2 mb-2 mt-1'
                             >
                               {goal}
                             </span>
                           ))}
                       </div>
 
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-2">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-2'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start'>
                           TYPE OF REGISTRATION
                         </h3>
-                        <span className=" border-2 border-gray-500 rounded-full text-gray-700 text-[13px] px-2 py-1 inline-block mr-2 mb-2 mt-1">
-                          {typeOfRegistration}{" "}
+                        <span className=' border-2 border-gray-500 rounded-full text-gray-700 text-[13px] px-2 py-1 inline-block mr-2 mb-2 mt-1'>
+                          {typeOfRegistration}{' '}
                         </span>
                       </div>
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-2">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-2'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start'>
                           COUNTRY OF REGISTRATION
                         </h3>
-                        <span className=" text-[14px]">
-                          {countryofregistration}{" "}
+                        <span className=' text-[14px]'>
+                          {countryofregistration}{' '}
                         </span>
                       </div>
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-4">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-4'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start'>
                           DAPP LINK
                         </h3>
-                        <span className=" text-[14px] line-clamp-1 break-all truncate">
-                          {dappLink}{" "}
+                        <span className=' text-[14px] line-clamp-1 break-all truncate'>
+                          {dappLink}{' '}
                         </span>
                       </div>
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-4">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-4'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start'>
                           WEEKLY ACTIVE USERS
                         </h3>
-                        <span className=" text-[14px] line-clamp-1 break-all truncate">
+                        <span className=' text-[14px] line-clamp-1 break-all truncate'>
                           {Number(weeklyActiveUsers)}
                         </span>
                       </div>
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-4">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-4'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start'>
                           REVENUE
                         </h3>
-                        <span className=" text-[14px] line-clamp-1 break-all truncate">
-                          {Number(revenue)}{" "}
+                        <span className=' text-[14px] line-clamp-1 break-all truncate'>
+                          {Number(revenue)}{' '}
                         </span>
                       </div>
 
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-4">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-4'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start'>
                           TOKEN ECONOMICS
                         </h3>
-                        <span className=" text-[14px] line-clamp-1 break-all truncate">
-                          {tokenEconomics}{" "}
+                        <span className=' text-[14px] line-clamp-1 break-all truncate'>
+                          {tokenEconomics}{' '}
                         </span>
                       </div>
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-4">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-4'>
                         {senderSocialLinks && (
-                          <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all ">
+                          <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all '>
                             LINKS
                           </h3>
                         )}
 
-                        <div className="flex items-center ">
-                          <div className="flex gap-3">
+                        <div className='flex items-center '>
+                          <div className='flex gap-3'>
                             {senderSocialLinks
                               ? senderSocialLinks?.map((link, i) => {
                                   const icon = getSocialLogo(link);
                                   return (
                                     <div
                                       key={i}
-                                      className="flex items-center space-x-2"
+                                      className='flex items-center space-x-2'
                                     >
                                       {icon ? (
                                         <a href={`${link}`}>{icon}</a>
                                       ) : (
-                                        ""
+                                        ''
                                       )}
                                     </div>
                                   );
                                 })
-                              : ""}
+                              : ''}
                           </div>
                         </div>
-                        
                       </div>
                     </div>
                   )}
 
                   {/* Mentor Tab Content  */}
-                  {activeSideTab === "mentor" && (
-                    <div className="p-4">
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-4">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                  {activeSideTab === 'mentor' && (
+                    <div className='p-4'>
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-4'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all'>
                           Years of Mentoring
                         </h3>
-                        <span className="text-[14px] line-clamp-1 break-all truncate">{Number(senderYearsOfMentoring)}</span>
+                        <span className='text-[14px] line-clamp-1 break-all truncate'>
+                          {Number(senderYearsOfMentoring)}
+                        </span>
                       </div>
 
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-4">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-4'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all'>
                           Area of Expertise
                         </h3>
                         {senderAreaOfExpertise.map((expertise, index) => (
                           <span
                             key={index}
-                            className="border-2 border-gray-500 rounded-full text-gray-700 text-[13px] px-2 py-1 inline-block mr-2 mb-2 mt-1"
+                            className='border-2 border-gray-500 rounded-full text-gray-700 text-[13px] px-2 py-1 inline-block mr-2 mb-2 mt-1'
                           >
                             {expertise}
                           </span>
                         ))}
                       </div>
 
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-2 ">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-2 '>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all'>
                           Category of Mentoring Service
                         </h3>
-                        <span className="text-[14px] line-clamp-1 break-all truncate">{senderCategoryOfMentoringService}</span>
+                        <span className='text-[14px] line-clamp-1 break-all truncate'>
+                          {senderCategoryOfMentoringService}
+                        </span>
                       </div>
 
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-4">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-4'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all'>
                           Existing ICP Mentor
                         </h3>
-                        <span className="text-[14px] line-clamp-1 break-all truncate">{senderExistingIcpMentor ? "Yes" : "No"}</span>
+                        <span className='text-[14px] line-clamp-1 break-all truncate'>
+                          {senderExistingIcpMentor ? 'Yes' : 'No'}
+                        </span>
                       </div>
 
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-4">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-4'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all'>
                           Existing ICP Project Portfolio
                         </h3>
                         {senderExistingIcpProjectPortfolio.length > 0 ? (
@@ -1043,248 +1049,248 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
                             (portfolio, index) => (
                               <span
                                 key={index}
-                                className="border-2 border-gray-500 rounded-full text-gray-700 text-[13px] px-2 py-1 inline-block mr-2 mb-2 mt-1"
+                                className='border-2 border-gray-500 rounded-full text-gray-700 text-[13px] px-2 py-1 inline-block mr-2 mb-2 mt-1'
                               >
                                 {portfolio}
                               </span>
                             )
                           )
                         ) : (
-                          <span className="text-[14px] line-clamp-1 break-all truncate">No Project Portfolio</span>
+                          <span className='text-[14px] line-clamp-1 break-all truncate'>
+                            No Project Portfolio
+                          </span>
                         )}
                       </div>
 
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-2 ">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-2 '>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all'>
                           Hub Owner
                         </h3>
                         {senderHubOwner.length > 0 ? (
                           senderHubOwner.map((hub, index) => (
                             <span
                               key={index}
-                              className="mr-2 text-[14px] line-clamp-1 break-all truncate"
+                              className='mr-2 text-[14px] line-clamp-1 break-all truncate'
                             >
                               {hub}
                             </span>
                           ))
                         ) : (
-                          <span className="text-[14px] line-clamp-1 break-all truncate">No Hub Ownership</span>
+                          <span className='text-[14px] line-clamp-1 break-all truncate'>
+                            No Hub Ownership
+                          </span>
                         )}
                       </div>
 
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-2">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-2'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all'>
                           ICP Hub or Spoke
                         </h3>
-                        <span className="text-[14px] line-clamp-1 break-all truncate">{senderIcpHubOrSpoke ? "Yes" : "No"}</span>
+                        <span className='text-[14px] line-clamp-1 break-all truncate'>
+                          {senderIcpHubOrSpoke ? 'Yes' : 'No'}
+                        </span>
                       </div>
 
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-4">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-4'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all'>
                           Preferred ICP Hub
                         </h3>
                         {senderPreferredIcpHub.length > 0 ? (
                           senderPreferredIcpHub.map((hub, index) => (
                             <span
                               key={index}
-                              className="mr-2 text-[14px] line-clamp-1 break-all truncate"
+                              className='mr-2 text-[14px] line-clamp-1 break-all truncate'
                             >
                               {hub}
                             </span>
                           ))
                         ) : (
-                          <span className="text-[14px] line-clamp-1 break-all truncate">No Preferred Hub</span>
+                          <span className='text-[14px] line-clamp-1 break-all truncate'>
+                            No Preferred Hub
+                          </span>
                         )}
                       </div>
 
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-2 ">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-2 '>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all'>
                           Multichain
                         </h3>
                         {senderMultichain.length > 0 ? (
                           senderMultichain.map((chain, index) => (
                             <span
                               key={index}
-                              className="border-2 border-gray-500 rounded-full text-gray-700 text-[13px] px-2 py-1 inline-block mr-2 mb-2 mt-1"
+                              className='border-2 border-gray-500 rounded-full text-gray-700 text-[13px] px-2 py-1 inline-block mr-2 mb-2 mt-1'
                             >
                               {chain}
                             </span>
                           ))
                         ) : (
-                          <span className="text-[14px] line-clamp-1 break-all truncate">No Multichain Support</span>
+                          <span className='text-[14px] line-clamp-1 break-all truncate'>
+                            No Multichain Support
+                          </span>
                         )}
                       </div>
 
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-2 ">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-2 '>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all'>
                           Website
                         </h3>
                         <a
                           href={senderWebsite}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-[14px] line-clamp-1 break-all truncate"
+                          target='_blank'
+                          rel='noopener noreferrer'
+                          className='text-[14px] line-clamp-1 break-all truncate'
                         >
                           {senderWebsite}
                         </a>
                       </div>
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-4">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-4'>
                         {senderSocialLinks && (
-                          <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                          <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all'>
                             LINKS
                           </h3>
                         )}
 
-                        <div className="flex items-center ">
-                          <div className="flex gap-3">
+                        <div className='flex items-center '>
+                          <div className='flex gap-3'>
                             {senderSocialLinks
                               ? senderSocialLinks?.map((link, i) => {
                                   const icon = getSocialLogo(link);
                                   return (
                                     <div
                                       key={i}
-                                      className="flex items-center space-x-2"
+                                      className='flex items-center space-x-2'
                                     >
                                       {icon ? (
                                         <a href={`${link}`}>{icon}</a>
                                       ) : (
-                                        ""
+                                        ''
                                       )}
                                     </div>
                                   );
                                 })
-                              : ""}
+                              : ''}
                           </div>
                         </div>
-                        
                       </div>
                     </div>
                   )}
                   {/* Investor Tab Content */}
-                  {activeSideTab === "investor" && (
-                    <div className="p-4">
-                      
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-4">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                  {activeSideTab === 'investor' && (
+                    <div className='p-4'>
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-4'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all'>
                           Name of Fund
                         </h3>
-                        <span className="text-[14px] line-clamp-1 break-all truncate">
+                        <span className='text-[14px] line-clamp-1 break-all truncate'>
                           {fundName}
                         </span>
                       </div>
 
-                      
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-4">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-4'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all'>
                           Category of Investment
                         </h3>
 
-                    
                         {categoryOfInvestment.length > 0 &&
                           categoryOfInvestment
-                            .split(",")
+                            .split(',')
                             .map((category, index) => (
                               <div
                                 key={index}
-                                className="border-2 border-gray-500 rounded-full text-gray-700 text-[13px] px-2 py-1 inline-block mr-2 mb-2 mt-1"
+                                className='border-2 border-gray-500 rounded-full text-gray-700 text-[13px] px-2 py-1 inline-block mr-2 mb-2 mt-1'
                               >
                                 {category.trim()}
                               </div>
                             ))}
                       </div>
 
-                     
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-2 ">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-2 '>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all'>
                           Fund Size
                         </h3>
-                        <span className="text-[14px] line-clamp-1 break-all truncate">
+                        <span className='text-[14px] line-clamp-1 break-all truncate'>
                           {Number(fundSize)}
                         </span>
                       </div>
 
-                  
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-4">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-4'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all'>
                           Money Invested
                         </h3>
-                        <span className="text-[14px] line-clamp-1 break-all truncate">
+                        <span className='text-[14px] line-clamp-1 break-all truncate'>
                           {Number(moneyInvested)}
                         </span>
                       </div>
 
-                     
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-4">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-4'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all'>
                           Investor Type
                         </h3>
 
                         {investorType.length > 0 &&
-                          investorType[0].split(",").map((type, index) => (
+                          investorType[0].split(',').map((type, index) => (
                             <div
                               key={index}
-                              className="border-2 border-gray-500 rounded-full text-gray-700 text-[13px] px-2 py-1 inline-block mr-2 mb-2 mt-1"
+                              className='border-2 border-gray-500 rounded-full text-gray-700 text-[13px] px-2 py-1 inline-block mr-2 mb-2 mt-1'
                             >
                               {type.trim()}
                             </div>
                           ))}
                       </div>
 
-                     
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-2">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-2'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all'>
                           Portfolio Link
                         </h3>
                         <a
                           href={portfolioLink}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-[14px] line-clamp-1 break-all truncate"
+                          target='_blank'
+                          rel='noopener noreferrer'
+                          className='text-[14px] line-clamp-1 break-all truncate'
                         >
                           {portfolioLink}
                         </a>
                       </div>
 
-                     
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-4">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-4'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all'>
                           Stage
                         </h3>
-              
+
                         {stage.length > 0 &&
-                          stage[0].split(",").map((stagel, index) => (
+                          stage[0].split(',').map((stagel, index) => (
                             <div
                               key={index}
-                              className="border-2 border-gray-500 rounded-full text-gray-700 text-[13px] px-2 py-1 inline-block mr-2 mb-2 mt-1"
+                              className='border-2 border-gray-500 rounded-full text-gray-700 text-[13px] px-2 py-1 inline-block mr-2 mb-2 mt-1'
                             >
                               {stagel.trim()}
                             </div>
                           ))}
                       </div>
 
-                   
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-2">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-2'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all'>
                           Preferred ICP Hub
                         </h3>
-                        <span className="text-[14px] line-clamp-1 break-all truncate">
+                        <span className='text-[14px] line-clamp-1 break-all truncate'>
                           {preferredIcpHubforInvestor}
                         </span>
                       </div>
 
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-4">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-4'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all'>
                           Projects on Multichain
                         </h3>
 
-                        <div className="flex flex-wrap gap-1">
+                        <div className='flex flex-wrap gap-1'>
                           {projectOnMultichain.length > 0 &&
                             projectOnMultichain[0]
-                              .split(",")
+                              .split(',')
                               .map((chain, index) => (
                                 <div
                                   key={index}
-                                  className="border-2 border-gray-500 rounded-full text-gray-700 text-[13px] px-2 py-1 inline-block mr-2 mb-2 mt-1"
+                                  className='border-2 border-gray-500 rounded-full text-gray-700 text-[13px] px-2 py-1 inline-block mr-2 mb-2 mt-1'
                                 >
                                   {chain.trim()}
                                 </div>
@@ -1292,17 +1298,15 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
                         </div>
                       </div>
 
-                      
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-2">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-2'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all'>
                           Average Check Size
                         </h3>
-                        <span className="text-[14px] line-clamp-1 break-all truncate">
+                        <span className='text-[14px] line-clamp-1 break-all truncate'>
                           {Number(averageCheckSize)}
                         </span>
                       </div>
 
-                     
                       {/* <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-4">
                         <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
                           Range of Check Size
@@ -1319,89 +1323,83 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
                           ))}
                       </div> */}
 
-                    
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-4">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-4'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all'>
                           Number of Portfolio Companies
                         </h3>
-                        <span className="text-[14px] line-clamp-1 break-all truncate">
+                        <span className='text-[14px] line-clamp-1 break-all truncate'>
                           {Number(numberOfPortfolioCompanies)}
                         </span>
                       </div>
 
-                     
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-4">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-4'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all'>
                           Registered
                         </h3>
-                        <span className="text-[14px] line-clamp-1 break-all truncate">
-                          {registered ? "Yes" : "No"}
+                        <span className='text-[14px] line-clamp-1 break-all truncate'>
+                          {registered ? 'Yes' : 'No'}
                         </span>
                       </div>
 
-                     
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-4">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-4'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all'>
                           Registered Country
                         </h3>
-                        <span className="text-[14px] line-clamp-1 break-all truncate">
+                        <span className='text-[14px] line-clamp-1 break-all truncate'>
                           {registeredCountry}
                         </span>
                       </div>
 
-                     
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-4">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-4'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all'>
                           Type of Investment
                         </h3>
-                        <span className="text-[14px] line-clamp-1 break-all truncate">
+                        <span className='text-[14px] line-clamp-1 break-all truncate'>
                           {typeOfInvestment}
                         </span>
                       </div>
 
-                      
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-4">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-4'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all'>
                           Website Link
                         </h3>
                         <a
                           href={websiteLink}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-[14px] line-clamp-1 break-all truncate"
+                          target='_blank'
+                          rel='noopener noreferrer'
+                          className='text-[14px] line-clamp-1 break-all truncate'
                         >
                           {websiteLink}
                         </a>
                       </div>
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-4">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-4'>
                         {senderSocialLinks && (
-                          <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all ">
+                          <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all '>
                             LINKS
                           </h3>
                         )}
 
-                        <div className="flex items-center ">
-                          <div className="flex gap-3">
+                        <div className='flex items-center '>
+                          <div className='flex gap-3'>
                             {senderSocialLinks
                               ? senderSocialLinks?.map((link, i) => {
                                   const icon = getSocialLogo(link);
                                   return (
                                     <div
                                       key={i}
-                                      className="flex items-center space-x-2"
+                                      className='flex items-center space-x-2'
                                     >
                                       {icon ? (
                                         <a href={`${link}`}>{icon}</a>
                                       ) : (
-                                        ""
+                                        ''
                                       )}
                                     </div>
                                   );
                                 })
-                              : ""}
+                              : ''}
                           </div>
                         </div>
-                        
                       </div>
                     </div>
                   )}
@@ -1409,26 +1407,26 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
               </div>
             </div>
 
-            <div className="px-1 lg1:px-3 py-4 lg1:py-0 w-full lg1:overflow-y-scroll lg1:w-[63%] ">
+            <div className='px-1 lg1:px-3 py-4 lg1:py-0 w-full lg1:overflow-y-scroll lg1:w-[63%] '>
               <>
                 {/* project content start  */}
                 {/* Mobile Tabs */}
-                <div className="flex flex-col md1:hidden bg-white rounded-lg shadow-sm border mb-4 border-gray-200 overflow-hidden w-full mt-10 p-4 pt-2">
-                  {uniqueActiveTabs.includes("document") && (
-                    <div className="border-b">
+                <div className='flex flex-col md1:hidden bg-white rounded-lg shadow-sm border mb-4 border-gray-200 overflow-hidden w-full mt-10 p-4 pt-2'>
+                  {uniqueActiveTabs.includes('document') && (
+                    <div className='border-b'>
                       <button
-                        className="flex justify-between items-center w-full px-2 py-3 text-left text-gray-800"
-                        onClick={() => handleMobileTabToggle("document")}
+                        className='flex justify-between items-center w-full px-2 py-3 text-left text-gray-800'
+                        onClick={() => handleMobileTabToggle('document')}
                       >
                         Document
-                        {activeMobileTab === "document" ? (
+                        {activeMobileTab === 'document' ? (
                           <FaChevronUp />
                         ) : (
                           <FaChevronDown />
                         )}
                       </button>
-                      {activeMobileTab === "document" && (
-                        <div className="px-2 py-2">
+                      {activeMobileTab === 'document' && (
+                        <div className='px-2 py-2'>
                           <DiscoverDocument
                             projectDetails={senderDataProject}
                             projectId={projectid}
@@ -1438,42 +1436,42 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
                     </div>
                   )}
 
-                  {uniqueActiveTabs.includes("team") && (
-                    <div className="border-b">
+                  {uniqueActiveTabs.includes('team') && (
+                    <div className='border-b'>
                       <button
-                        className="flex justify-between items-center w-full px-2 py-3 text-left text-gray-800"
-                        onClick={() => handleMobileTabToggle("team")}
+                        className='flex justify-between items-center w-full px-2 py-3 text-left text-gray-800'
+                        onClick={() => handleMobileTabToggle('team')}
                       >
                         Team
-                        {activeMobileTab === "team" ? (
+                        {activeMobileTab === 'team' ? (
                           <FaChevronUp />
                         ) : (
                           <FaChevronDown />
                         )}
                       </button>
-                      {activeMobileTab === "team" && (
-                        <div className="px-2 py-2">
+                      {activeMobileTab === 'team' && (
+                        <div className='px-2 py-2'>
                           <DiscoverTeam projectDetails={senderDataProject} />
                         </div>
                       )}
                     </div>
                   )}
 
-                  {uniqueActiveTabs.includes("ratings") && (
-                    <div className="border-b">
+                  {uniqueActiveTabs.includes('ratings') && (
+                    <div className='border-b'>
                       <button
-                        className="flex justify-between items-center w-full px-2 py-3 text-left text-gray-800"
-                        onClick={() => handleMobileTabToggle("ratings")}
+                        className='flex justify-between items-center w-full px-2 py-3 text-left text-gray-800'
+                        onClick={() => handleMobileTabToggle('ratings')}
                       >
                         Ratings
-                        {activeMobileTab === "ratings" ? (
+                        {activeMobileTab === 'ratings' ? (
                           <FaChevronUp />
                         ) : (
                           <FaChevronDown />
                         )}
                       </button>
-                      {activeMobileTab === "ratings" && (
-                        <div className="px-2 py-2">
+                      {activeMobileTab === 'ratings' && (
+                        <div className='px-2 py-2'>
                           <DiscoverRatings
                             userData={senderDataUser}
                             principalId={senderPrincipal}
@@ -1483,21 +1481,21 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
                     </div>
                   )}
 
-                  {uniqueActiveTabs.includes("moneyraised") && (
-                    <div className="border-b">
+                  {uniqueActiveTabs.includes('moneyraised') && (
+                    <div className='border-b'>
                       <button
-                        className="flex justify-between items-center w-full px-2 py-3 text-left text-gray-800"
-                        onClick={() => handleMobileTabToggle("moneyraised")}
+                        className='flex justify-between items-center w-full px-2 py-3 text-left text-gray-800'
+                        onClick={() => handleMobileTabToggle('moneyraised')}
                       >
                         Money Raised
-                        {activeMobileTab === "moneyraised" ? (
+                        {activeMobileTab === 'moneyraised' ? (
                           <FaChevronUp />
                         ) : (
                           <FaChevronDown />
                         )}
                       </button>
-                      {activeMobileTab === "moneyraised" && (
-                        <div className="px-2 py-2">
+                      {activeMobileTab === 'moneyraised' && (
+                        <div className='px-2 py-2'>
                           <DiscoverMoneyRaising
                             cardData={senderDataProject?.params}
                             projectId={projectid}
@@ -1507,21 +1505,21 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
                     </div>
                   )}
 
-                  {uniqueActiveTabs.includes("review") && (
-                    <div className="border-b">
+                  {uniqueActiveTabs.includes('review') && (
+                    <div className='border-b'>
                       <button
-                        className="flex justify-between items-center w-full px-2 py-3 text-left text-gray-800"
-                        onClick={() => handleMobileTabToggle("review")}
+                        className='flex justify-between items-center w-full px-2 py-3 text-left text-gray-800'
+                        onClick={() => handleMobileTabToggle('review')}
                       >
                         Review
-                        {activeMobileTab === "review" ? (
+                        {activeMobileTab === 'review' ? (
                           <FaChevronUp />
                         ) : (
                           <FaChevronDown />
                         )}
                       </button>
-                      {activeMobileTab === "review" && (
-                        <div className="px-2 py-2">
+                      {activeMobileTab === 'review' && (
+                        <div className='px-2 py-2'>
                           <DiscoverReview
                             userData={senderDataUser}
                             principalId={senderPrincipal}
@@ -1532,96 +1530,96 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
                   )}
                 </div>
                 {/* Desktop Tabs */}
-                <div className="hidden md1:flex justify-start border-b">
-                  {uniqueActiveTabs.includes("document") && (
+                <div className='hidden md1:flex justify-start border-b'>
+                  {uniqueActiveTabs.includes('document') && (
                     <button
                       className={`px-4 py-2 focus:outline-none font-medium ${
-                        activeTab === "document"
-                          ? "border-b-2 border-blue-500 text-blue-500 font-medium"
-                          : "text-gray-400"
+                        activeTab === 'document'
+                          ? 'border-b-2 border-blue-500 text-blue-500 font-medium'
+                          : 'text-gray-400'
                       }`}
-                      onClick={() => handleChange("document")}
+                      onClick={() => handleChange('document')}
                     >
                       Document
                     </button>
                   )}
 
-                  {uniqueActiveTabs.includes("team") && (
+                  {uniqueActiveTabs.includes('team') && (
                     <button
                       className={`px-4 py-2 focus:outline-none font-medium ${
-                        activeTab === "team"
-                          ? "border-b-2 border-blue-500 text-blue-500 font-medium"
-                          : "text-gray-400"
+                        activeTab === 'team'
+                          ? 'border-b-2 border-blue-500 text-blue-500 font-medium'
+                          : 'text-gray-400'
                       }`}
-                      onClick={() => handleChange("team")}
+                      onClick={() => handleChange('team')}
                     >
                       Team
                     </button>
                   )}
 
-                  {uniqueActiveTabs.includes("ratings") && (
+                  {uniqueActiveTabs.includes('ratings') && (
                     <button
                       className={`px-4 py-2 focus:outline-none font-medium ${
-                        activeTab === "ratings"
-                          ? "border-b-2 border-blue-500 text-blue-500 font-medium"
-                          : "text-gray-400"
+                        activeTab === 'ratings'
+                          ? 'border-b-2 border-blue-500 text-blue-500 font-medium'
+                          : 'text-gray-400'
                       }`}
-                      onClick={() => handleChange("ratings")}
+                      onClick={() => handleChange('ratings')}
                     >
                       Ratings
                     </button>
                   )}
 
-                  {uniqueActiveTabs.includes("moneyraised") && (
+                  {uniqueActiveTabs.includes('moneyraised') && (
                     <button
                       className={`px-4 py-2 focus:outline-none font-medium ${
-                        activeTab === "moneyraised"
-                          ? "border-b-2 border-blue-500 text-blue-500 font-medium"
-                          : "text-gray-400"
+                        activeTab === 'moneyraised'
+                          ? 'border-b-2 border-blue-500 text-blue-500 font-medium'
+                          : 'text-gray-400'
                       }`}
-                      onClick={() => handleChange("moneyraised")}
+                      onClick={() => handleChange('moneyraised')}
                     >
                       Money Raised
                     </button>
                   )}
 
-                  {uniqueActiveTabs.includes("review") && (
+                  {uniqueActiveTabs.includes('review') && (
                     <button
                       className={`px-4 py-2 focus:outline-none font-medium ${
-                        activeTab === "review"
-                          ? "border-b-2 border-blue-500 text-blue-500 font-medium"
-                          : "text-gray-400"
+                        activeTab === 'review'
+                          ? 'border-b-2 border-blue-500 text-blue-500 font-medium'
+                          : 'text-gray-400'
                       }`}
-                      onClick={() => handleChange("review")}
+                      onClick={() => handleChange('review')}
                     >
                       Review
                     </button>
                   )}
                 </div>
                 {/* Desktop Tab Content */}
-                <div className="hidden md1:block mb-4">
-                  {activeTab === "document" && (
+                <div className='hidden md1:block mb-4'>
+                  {activeTab === 'document' && (
                     <DiscoverDocument
                       projectDetails={senderDataProject}
                       projectId={projectid}
                     />
                   )}
-                  {activeTab === "team" && (
+                  {activeTab === 'team' && (
                     <DiscoverTeam projectDetails={senderDataProject} />
                   )}
-                  {activeTab === "ratings" && (
+                  {activeTab === 'ratings' && (
                     <DiscoverRatings
                       userData={senderDataUser}
                       principalId={senderPrincipal}
                     />
                   )}
-                  {activeTab === "moneyraised" && (
+                  {activeTab === 'moneyraised' && (
                     <DiscoverMoneyRaising
                       cardData={senderDataProject?.params}
                       projectId={projectid}
                     />
                   )}
-                  {activeTab === "review" && (
+                  {activeTab === 'review' && (
                     <DiscoverReview
                       userData={senderDataUser}
                       principalId={senderPrincipal}
@@ -1633,8 +1631,8 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
               {/* Sender Event Data  */}
               <DiscoverMentorEvent principal={senderPrincipal} />
 
-              <div className=" bg-white shadow-md border rounded-lg">
-                <NoData message=" Investor data not available" />
+              <div className=' bg-white shadow-md border rounded-lg'>
+                <NoData message=' Investor data not available' />
               </div>
             </div>
           </div>

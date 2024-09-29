@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialHubState = {
   data: [],
@@ -7,7 +7,7 @@ const initialHubState = {
 };
 
 const hubSlice = createSlice({
-  name: "hubeData",
+  name: 'hubeData',
   initialState: initialHubState,
   reducers: {
     hubRegisteredHandlerRequest: (state) => {

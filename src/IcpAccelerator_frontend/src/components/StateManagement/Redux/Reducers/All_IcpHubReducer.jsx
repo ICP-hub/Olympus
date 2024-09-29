@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialAllIcpState = {
   allHubs: [],
@@ -7,7 +7,7 @@ const initialAllIcpState = {
 };
 
 const allHubSlice = createSlice({
-  name: "hubs",
+  name: 'hubs',
   initialState: initialAllIcpState,
   reducers: {
     allHubHandlerRequest: (state) => {

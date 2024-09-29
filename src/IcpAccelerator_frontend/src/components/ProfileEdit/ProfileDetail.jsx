@@ -1,31 +1,30 @@
-import React, { useState, useRef, useEffect } from "react";
-import edit from "../../../assets/Logo/edit.png";
-import { useForm, Controller, useFieldArray } from "react-hook-form";
-import VerifiedIcon from "@mui/icons-material/Verified";
-import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
-import ArrowOutwardOutlinedIcon from "@mui/icons-material/ArrowOutwardOutlined";
-import toast, { Toaster } from "react-hot-toast";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { useCountries } from "react-countries";
-import { useSelector, useDispatch } from "react-redux";
-import { FaEdit, FaPlus, FaSave, FaTrash } from "react-icons/fa";
-import { Principal } from "@dfinity/principal";
-import { ThreeDots } from "react-loader-spinner";
-import ReactSelect from "react-select";
-import { useNavigate } from "react-router-dom";
-import images from "../../../assets/images/coverImage.jpg";
-import CompressedImage from "../ImageCompressed/CompressedImage";
-import InvestorDetail from "./InvestorDetail";
-import ProjectDetail from "./ProjectDetail";
-import MentorEdit from "./MentorEdit";
-import { validationSchema } from "../UserRegistration/userValidation";
-import getSocialLogo from "../Utils/navigationHelper/getSocialLogo";
-import getPlatformFromHostname from "../Utils/navigationHelper/getPlatformFromHostname";
-import { FaChevronDown, FaChevronUp } from "react-icons/fa"; // Icons for dropdown
-import { userRegisteredHandlerRequest } from "../StateManagement/Redux/Reducers/userRegisteredData";
-import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
-import getReactSelectUpdateStyles from "../Utils/navigationHelper/getReactSelectUpdateStyles";
-
+import React, { useState, useRef, useEffect } from 'react';
+import edit from '../../../assets/Logo/edit.png';
+import { useForm, Controller, useFieldArray } from 'react-hook-form';
+import VerifiedIcon from '@mui/icons-material/Verified';
+import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined';
+import ArrowOutwardOutlinedIcon from '@mui/icons-material/ArrowOutwardOutlined';
+import toast, { Toaster } from 'react-hot-toast';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { useCountries } from 'react-countries';
+import { useSelector, useDispatch } from 'react-redux';
+import { FaEdit, FaPlus, FaSave, FaTrash } from 'react-icons/fa';
+import { Principal } from '@dfinity/principal';
+import { ThreeDots } from 'react-loader-spinner';
+import ReactSelect from 'react-select';
+import { useNavigate } from 'react-router-dom';
+import images from '../../../assets/images/coverImage.jpg';
+import CompressedImage from '../ImageCompressed/CompressedImage';
+import InvestorDetail from './InvestorDetail';
+import ProjectDetail from './ProjectDetail';
+import MentorEdit from './MentorEdit';
+import { validationSchema } from '../UserRegistration/userValidation';
+import getSocialLogo from '../Utils/navigationHelper/getSocialLogo';
+import getPlatformFromHostname from '../Utils/navigationHelper/getPlatformFromHostname';
+import { FaChevronDown, FaChevronUp } from 'react-icons/fa'; // Icons for dropdown
+import { userRegisteredHandlerRequest } from '../StateManagement/Redux/Reducers/userRegisteredData';
+import uint8ArrayToBase64 from '../Utils/uint8ArrayToBase64';
+import getReactSelectUpdateStyles from '../Utils/navigationHelper/getReactSelectUpdateStyles';
 
 const ProfileDetail = () => {
   const {
@@ -39,7 +38,7 @@ const ProfileDetail = () => {
     formState: { errors, isSubmitting, isValid },
   } = useForm({
     resolver: yupResolver(validationSchema),
-    mode: "all",
+    mode: 'all',
   });
 
   const navigate = useNavigate();
@@ -70,15 +69,15 @@ const ProfileDetail = () => {
     setInterestedDomainsSelectedOptions,
   ] = useState([]);
   const [reasonOfJoiningOptions, setReasonOfJoiningOptions] = useState([
-    { value: "listing_and_promotion", label: "Project listing and promotion" },
-    { value: "Funding", label: "Funding" },
-    { value: "Mentoring", label: "Mentoring" },
-    { value: "Incubation", label: "Incubation" },
+    { value: 'listing_and_promotion', label: 'Project listing and promotion' },
+    { value: 'Funding', label: 'Funding' },
+    { value: 'Mentoring', label: 'Mentoring' },
+    { value: 'Incubation', label: 'Incubation' },
     {
-      value: "Engaging_and_building_community",
-      label: "Engaging and building community",
+      value: 'Engaging_and_building_community',
+      label: 'Engaging and building community',
     },
-    { value: "Jobs", label: "Jobs" },
+    { value: 'Jobs', label: 'Jobs' },
   ]);
   const typeOfProfile = useSelector(
     (currState) => currState.profileTypes.profiles
@@ -109,31 +108,31 @@ const ProfileDetail = () => {
   const [isLinkBeingEdited, setIsLinkBeingEdited] = useState(false);
   const { fields, append, remove } = useFieldArray({
     control,
-    name: "links",
+    name: 'links',
   });
 
   const handleSaveLink = (key) => {
     setIsEditingLink((prev) => ({
       ...prev,
-      [key]: false, 
+      [key]: false,
     }));
   };
 
   // Handle adding new link from form field
   const handleSaveNewLink = (data, index) => {
-    const linkKey = `custom-link-${Date.now()}-${index}`; 
+    const linkKey = `custom-link-${Date.now()}-${index}`;
     setSocialLinks((prevLinks) => ({
       ...prevLinks,
-      [linkKey]: data, 
+      [linkKey]: data,
     }));
-    remove(index); 
+    remove(index);
   };
 
   // Toggle the editing of individual links
   const handleLinkEditToggle = (key) => {
     setIsEditingLink((prev) => ({
       ...prev,
-      [key]: !prev[key], 
+      [key]: !prev[key],
     }));
     setIsLinkBeingEdited(!isLinkBeingEdited);
   };
@@ -142,7 +141,7 @@ const ProfileDetail = () => {
   const handleLinkChange = (e, key) => {
     setSocialLinks((prev) => ({
       ...prev,
-      [key]: e.target.value, 
+      [key]: e.target.value,
     }));
   };
 
@@ -150,7 +149,7 @@ const ProfileDetail = () => {
   const handleLinkDelete = (key) => {
     setSocialLinks((prev) => {
       const updatedLinks = { ...prev };
-      delete updatedLinks[key]; 
+      delete updatedLinks[key];
       return updatedLinks;
     });
   };
@@ -189,7 +188,7 @@ const ProfileDetail = () => {
 
   const imageCreationFunc = async (file) => {
     setIsImageEditing(true);
-    const result = await trigger("image");
+    const result = await trigger('image');
     if (result) {
       try {
         const compressedFile = await CompressedImage(file);
@@ -201,13 +200,13 @@ const ProfileDetail = () => {
         const byteArray = await compressedFile.arrayBuffer();
         setImageData(Array.from(new Uint8Array(byteArray)));
       } catch (error) {
-        setError("image", {
-          type: "manual",
-          message: "Could not process image, please try another.",
+        setError('image', {
+          type: 'manual',
+          message: 'Could not process image, please try another.',
         });
       }
     } else {
-      console.log("ERROR--imageCreationFunc-file", file);
+      console.log('ERROR--imageCreationFunc-file', file);
     }
   };
   // useEffect(() => {
@@ -219,7 +218,7 @@ const ProfileDetail = () => {
   // }, [dispatchCompleted, navigate]);
 
   const handleSave = async (data) => {
-    console.log("data", data);
+    console.log('data', data);
 
     try {
       const convertedPrincipal = await Principal.fromText(principal);
@@ -235,11 +234,11 @@ const ProfileDetail = () => {
         openchat_username: [data?.openchat_user_name],
         country: data?.country,
         area_of_interest: data?.domains_interested_in,
-        type_of_profile: [data?.type_of_profile || ""],
+        type_of_profile: [data?.type_of_profile || ''],
         reason_to_join: [
           data?.reasons_to_join_platform
-            .split(",")
-            .map((val) => val.trim()) || [""],
+            .split(',')
+            .map((val) => val.trim()) || [''],
         ],
         profile_picture: imageData ? [imageData] : [],
         social_links: [updatedSocialLinks],
@@ -251,20 +250,20 @@ const ProfileDetail = () => {
         convertedPrincipal,
         user_data
       );
-      console.log("Sending user_data to backend using api:", result);
-      if ("Ok" in result) {
-        toast.success("User profile updated successfully");
+      console.log('Sending user_data to backend using api:', result);
+      if ('Ok' in result) {
+        toast.success('User profile updated successfully');
         dispatch(userRegisteredHandlerRequest());
-        navigate("/dashboard/profile");
+        navigate('/dashboard/profile');
       } else {
-        console.log("Error:", result);
+        console.log('Error:', result);
         dispatch(userRegisteredHandlerRequest());
-        navigate("/dashboard/profile");
-        toast.error("Failed to update profile");
+        navigate('/dashboard/profile');
+        toast.error('Failed to update profile');
       }
     } catch (error) {
-      console.error("Error sending data to the backend:", error);
-      toast.error("Failed to update profile");
+      console.error('Error sending data to the backend:', error);
+      toast.error('Failed to update profile');
     }
     setIsLinkBeingEdited(false);
     setIsEditingLink({});
@@ -303,7 +302,7 @@ const ProfileDetail = () => {
             handleSubmit(handleSave, onErrorHandler)();
           } else {
             toast.error(
-              "Form contains errors, please correct them before saving."
+              'Form contains errors, please correct them before saving.'
             );
           }
         });
@@ -313,13 +312,13 @@ const ProfileDetail = () => {
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [isEditing, isEditingLink, trigger, handleSubmit]);
 
-  const [activeTab, setActiveTab] = useState("general");
+  const [activeTab, setActiveTab] = useState('general');
 
   const handleChange = (tab) => {
     setActiveTab(tab);
@@ -329,10 +328,10 @@ const ProfileDetail = () => {
     (currState) => currState.currentRoleStatus.activeRole
   );
   const tabs = [
-    { role: "general", label: "General" },
-    userRole === "vc" && { role: "vc", label: "Investor" },
-    userRole === "mentor" && { role: "mentor", label: "Mentor" },
-    userRole === "project" && { role: "project", label: "Project" },
+    { role: 'general', label: 'General' },
+    userRole === 'vc' && { role: 'vc', label: 'Investor' },
+    userRole === 'mentor' && { role: 'mentor', label: 'Mentor' },
+    userRole === 'project' && { role: 'project', label: 'Project' },
   ].filter(Boolean);
 
   const fileInputRef = useRef(null);
@@ -344,21 +343,21 @@ const ProfileDetail = () => {
   };
 
   const setValuesHandler = (val) => {
-    console.log("val", val);
+    console.log('val', val);
     if (val) {
-      setValue("full_name", val?.full_name ?? "");
-      setValue("email", val?.email?.[0] ?? "");
-      setValue("openchat_user_name", val?.openchat_username?.[0] ?? "");
-      setValue("bio", val?.bio?.[0] ?? "");
-      setValue("country", val?.country ?? "");
-      setValue("domains_interested_in", val?.area_of_interest ?? "");
+      setValue('full_name', val?.full_name ?? '');
+      setValue('email', val?.email?.[0] ?? '');
+      setValue('openchat_user_name', val?.openchat_username?.[0] ?? '');
+      setValue('bio', val?.bio?.[0] ?? '');
+      setValue('country', val?.country ?? '');
+      setValue('domains_interested_in', val?.area_of_interest ?? '');
       setInterestedDomainsSelectedOptionsHandler(val?.area_of_interest ?? null);
-      setImagePreview(val?.profile_picture?.[0] ?? "");
+      setImagePreview(val?.profile_picture?.[0] ?? '');
       // setImageData(val?.profile_picture?.[0] ?? "")
-      setValue("type_of_profile", val?.type_of_profile?.[0]);
+      setValue('type_of_profile', val?.type_of_profile?.[0]);
       setValue(
-        "reasons_to_join_platform",
-        val?.reason_to_join ? val.reason_to_join.join(", ") : ""
+        'reasons_to_join_platform',
+        val?.reason_to_join ? val.reason_to_join.join(', ') : ''
       );
       setReasonOfJoiningSelectedOptionsHandler(val?.reason_to_join);
 
@@ -370,14 +369,14 @@ const ProfileDetail = () => {
           if (Array.isArray(linkArray)) {
             linkArray.forEach((linkData) => {
               const url = linkData.link?.[0];
-              if (url && typeof url === "string") {
+              if (url && typeof url === 'string') {
                 try {
                   const parsedUrl = new URL(url);
-                  const hostname = parsedUrl.hostname.replace("www.", "");
+                  const hostname = parsedUrl.hostname.replace('www.', '');
                   const platform = getPlatformFromHostname(hostname);
                   links[platform] = url;
                 } catch (error) {
-                  console.error("Invalid URL:", url, error);
+                  console.error('Invalid URL:', url, error);
                 }
               }
             });
@@ -392,8 +391,8 @@ const ProfileDetail = () => {
   };
 
   const onErrorHandler = (val) => {
-    console.log("Validation errors:", val); // Add this to log validation errors
-    toast.error("Empty fields or invalid values, please recheck the form");
+    console.log('Validation errors:', val); // Add this to log validation errors
+    toast.error('Empty fields or invalid values, please recheck the form');
   };
   // const handleReasonToJoinChange = (selectedOptions) => {
   //   const selectedValues = selectedOptions.map((option) => option.value);
@@ -414,7 +413,7 @@ const ProfileDetail = () => {
     setInterestedDomainsSelectedOptions(
       val
         ? val
-            .split(", ")
+            .split(', ')
             .map((interest) => ({ value: interest, label: interest }))
         : []
     );
@@ -464,24 +463,24 @@ const ProfileDetail = () => {
     }
   };
 
-    const handleGetInTouchClick = () => {
-      if (email) {
-        window.location.href = `mailto:${email}`;
-      } else {
-        alert("Contact information is not available.");
-      }
-    };
+  const handleGetInTouchClick = () => {
+    if (email) {
+      window.location.href = `mailto:${email}`;
+    } else {
+      alert('Contact information is not available.');
+    }
+  };
   return (
     <div
       ref={containerRef}
-      className="container bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden w-full "
+      className='container bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden w-full '
     >
-      <div className="relative h-1 bg-gray-200">
-        <div className="absolute left-0 top-0 h-full bg-green-500 w-1/3"></div>
+      <div className='relative h-1 bg-gray-200'>
+        <div className='absolute left-0 top-0 h-full bg-green-500 w-1/3'></div>
       </div>
-      {activeTab === "general" && (
-        <div className=" px-6 py-2 md:p-6 bg-gray-50">
-          <div className="relative w-24 h-24 mx-auto rounded-full mb-4 group">
+      {activeTab === 'general' && (
+        <div className=' px-6 py-2 md:p-6 bg-gray-50'>
+          <div className='relative w-24 h-24 mx-auto rounded-full mb-4 group'>
             {/* <img
               src={ProfileImage}
               alt={full_name}
@@ -490,42 +489,42 @@ const ProfileDetail = () => {
             {imagePreview && !errors.image ? (
               <img
                 src={imagePreview}
-                alt="Profile"
-                className="h-full w-full rounded-full object-cover"
-                loading="lazy"
+                alt='Profile'
+                className='h-full w-full rounded-full object-cover'
+                loading='lazy'
                 draggable={false}
               />
             ) : (
               <img
                 src={ProfileImage}
                 alt={full_name}
-                className="w-full h-full rounded-full object-cover"
-                loading="lazy"
+                className='w-full h-full rounded-full object-cover'
+                loading='lazy'
                 draggable={false}
               />
             )}
-            <div className="absolute inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <div className='absolute inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300'>
               <Controller
-                name="image"
+                name='image'
                 control={control}
                 render={({ field }) => (
                   <>
                     <input
-                      type="file"
-                      className="hidden"
-                      id="image"
-                      name="image"
+                      type='file'
+                      className='hidden'
+                      id='image'
+                      name='image'
                       onChange={(e) => {
                         field.onChange(e.target.files[0]);
                         imageCreationFunc(e.target.files[0]);
                       }}
-                      accept=".jpg, .jpeg, .png"
+                      accept='.jpg, .jpeg, .png'
                     />
                     <label
-                      htmlFor="image"
-                      className="p-2  items-center rounded-md text-md bg-transparent cursor-pointer font-semibold"
+                      htmlFor='image'
+                      className='p-2  items-center rounded-md text-md bg-transparent cursor-pointer font-semibold'
                     >
-                      <FaPlus className="text-white text-xl" />
+                      <FaPlus className='text-white text-xl' />
                     </label>
                   </>
                 )}
@@ -533,218 +532,218 @@ const ProfileDetail = () => {
             </div>
           </div>
 
-          <div className="flex items-center justify-center mb-1">
-            <VerifiedIcon className="text-blue-500 mr-1" fontSize="small" />
-            <h2 className="text-xl font-semibold truncate break-all">
+          <div className='flex items-center justify-center mb-1'>
+            <VerifiedIcon className='text-blue-500 mr-1' fontSize='small' />
+            <h2 className='text-xl font-semibold truncate break-all'>
               {full_name}
             </h2>
           </div>
-          <p className="text-gray-600 text-center mb-4 truncate break-all">
+          <p className='text-gray-600 text-center mb-4 truncate break-all'>
             {openchat_username}
           </p>
           <button
-            type="button"
+            type='button'
             onClick={handleGetInTouchClick}
-            className="w-full h-[#155EEF] bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 mb-6 flex items-center justify-center"
+            className='w-full h-[#155EEF] bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 mb-6 flex items-center justify-center'
           >
             Get in touch
-            <ArrowOutwardOutlinedIcon className="ml-1" fontSize="small" />
+            <ArrowOutwardOutlinedIcon className='ml-1' fontSize='small' />
           </button>
         </div>
       )}
-      {userRole === "vc" && activeTab === "vc" && (
+      {userRole === 'vc' && activeTab === 'vc' && (
         <div
-          className="px-6  py-2 md:p-6 bg-gray-50 relative cursor-pointer"
+          className='px-6  py-2 md:p-6 bg-gray-50 relative cursor-pointer'
           style={{
             backgroundImage: `url(${images})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
           }}
         >
-          <div className="relative w-24 h-24 mx-auto rounded-full mb-4 group">
+          <div className='relative w-24 h-24 mx-auto rounded-full mb-4 group'>
             <img
               src={ProfileImage}
               alt={full_name}
-              className="w-full h-full rounded-full object-cover"
-              loading="lazy"
+              className='w-full h-full rounded-full object-cover'
+              loading='lazy'
               draggable={false}
             />
           </div>
-          <div className="flex items-center justify-center mb-1">
-            <VerifiedIcon className="text-blue-500 mr-1" fontSize="small" />
-            <h2 className="text-xl font-semibold truncate break-all">
+          <div className='flex items-center justify-center mb-1'>
+            <VerifiedIcon className='text-blue-500 mr-1' fontSize='small' />
+            <h2 className='text-xl font-semibold truncate break-all'>
               {full_name}
             </h2>
           </div>
-          <p className="text-gray-600 text-center mb-4 truncate break-all">
+          <p className='text-gray-600 text-center mb-4 truncate break-all'>
             {openchat_username}
           </p>
           <button
-            type="button"
+            type='button'
             onClick={handleGetInTouchClick}
-            className="w-full h-[#155EEF] bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 mb-6 flex items-center justify-center"
+            className='w-full h-[#155EEF] bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 mb-6 flex items-center justify-center'
           >
             Get in touch
-            <ArrowOutwardOutlinedIcon className="ml-1" fontSize="small" />
+            <ArrowOutwardOutlinedIcon className='ml-1' fontSize='small' />
           </button>
         </div>
       )}
-      {userRole === "mentor" && activeTab === "mentor" && (
+      {userRole === 'mentor' && activeTab === 'mentor' && (
         <div
-          className="px-6 py-2 md:p-6 bg-gray-50 relative cursor-pointer"
+          className='px-6 py-2 md:p-6 bg-gray-50 relative cursor-pointer'
           style={{
             backgroundImage: `url(${images})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
           }}
         >
-          <div className="relative w-24 h-24 mx-auto rounded-full mb-4 group">
+          <div className='relative w-24 h-24 mx-auto rounded-full mb-4 group'>
             <img
               src={ProfileImage}
               alt={full_name}
-              className="w-full h-full rounded-full object-cover"
-              loading="lazy"
+              className='w-full h-full rounded-full object-cover'
+              loading='lazy'
               draggable={false}
             />
           </div>
 
-          <div className="flex items-center justify-center mb-1">
-            <VerifiedIcon className="text-blue-500 mr-1" fontSize="small" />
-            <h2 className="text-xl font-semibold truncate break-all">
+          <div className='flex items-center justify-center mb-1'>
+            <VerifiedIcon className='text-blue-500 mr-1' fontSize='small' />
+            <h2 className='text-xl font-semibold truncate break-all'>
               {full_name}
             </h2>
           </div>
-          <p className="text-gray-600 text-center mb-4 truncate break-all">
+          <p className='text-gray-600 text-center mb-4 truncate break-all'>
             {openchat_username}
           </p>
           <button
-            type="button"
+            type='button'
             onClick={handleGetInTouchClick}
-            className="w-full h-[#155EEF] bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 mb-6 flex items-center justify-center"
+            className='w-full h-[#155EEF] bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 mb-6 flex items-center justify-center'
           >
             Get in touch
-            <ArrowOutwardOutlinedIcon className="ml-1" fontSize="small" />
+            <ArrowOutwardOutlinedIcon className='ml-1' fontSize='small' />
           </button>
         </div>
       )}
-      {userRole === "project" && activeTab === "project" && (
+      {userRole === 'project' && activeTab === 'project' && (
         <div
-          className=" px-6 py-2 md:p-6 bg-gray-50 relative cursor-pointer"
+          className=' px-6 py-2 md:p-6 bg-gray-50 relative cursor-pointer'
           style={{
             backgroundImage: `url(${coverPreview ? coverPreview : images})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
           }}
         >
-          <div className="absolute top-0 right-0 p-2  cursor-pointer">
+          <div className='absolute top-0 right-0 p-2  cursor-pointer'>
             <img
               src={edit}
-              className="size-4"
-              loading="lazy"
+              className='size-4'
+              loading='lazy'
               draggable={false}
               onClick={() => inputRef.current.click()}
             />
             <input
-              type="file"
-              className="hidden"
-              id="cover"
-              name="cover"
+              type='file'
+              className='hidden'
+              id='cover'
+              name='cover'
               ref={inputRef}
               onChange={(e) => {
                 handleChangeCover(e.target.files[0]);
               }}
-              accept=".jpg, .jpeg, .png"
+              accept='.jpg, .jpeg, .png'
             />
           </div>
-          <div className="relative w-24 h-24 mx-auto rounded-full mb-4 group">
+          <div className='relative w-24 h-24 mx-auto rounded-full mb-4 group'>
             <img
               src={logoPreview}
               alt={full_name}
-              className="w-full h-full rounded-full object-cover"
-              loading="lazy"
+              className='w-full h-full rounded-full object-cover'
+              loading='lazy'
               draggable={false}
             />
-            <div className="absolute inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <div className='absolute inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300'>
               <>
                 <input
-                  type="file"
-                  className="hidden"
-                  id="logo"
-                  name="logo"
+                  type='file'
+                  className='hidden'
+                  id='logo'
+                  name='logo'
                   onChange={(e) => {
                     handleChangeLogo(e.target.files[0]);
                   }}
-                  accept=".jpg, .jpeg, .png"
+                  accept='.jpg, .jpeg, .png'
                 />
                 <label
-                  htmlFor="logo"
-                  className="p-2  items-center rounded-md text-md bg-transparent cursor-pointer font-semibold"
+                  htmlFor='logo'
+                  className='p-2  items-center rounded-md text-md bg-transparent cursor-pointer font-semibold'
                 >
-                  <FaPlus className="text-white text-xl" />
+                  <FaPlus className='text-white text-xl' />
                 </label>
               </>
             </div>
           </div>
 
-          <div className="flex items-center justify-center mb-1">
-            <VerifiedIcon className="text-blue-500 mr-1" fontSize="small" />
-            <h2 className="text-xl font-semibold truncate break-all">
+          <div className='flex items-center justify-center mb-1'>
+            <VerifiedIcon className='text-blue-500 mr-1' fontSize='small' />
+            <h2 className='text-xl font-semibold truncate break-all'>
               {full_name}
             </h2>
           </div>
-          <p className="text-gray-600 text-center mb-4 truncate break-all">
+          <p className='text-gray-600 text-center mb-4 truncate break-all'>
             {openchat_username}
           </p>
           <button
-            type="button"
+            type='button'
             onClick={handleGetInTouchClick}
-            className="w-full h-[#155EEF] bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 mb-6 flex items-center justify-center"
+            className='w-full h-[#155EEF] bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 mb-6 flex items-center justify-center'
           >
             Get in touch
-            <ArrowOutwardOutlinedIcon className="ml-1" fontSize="small" />
+            <ArrowOutwardOutlinedIcon className='ml-1' fontSize='small' />
           </button>
         </div>
       )}
 
       {/* mobile screen  */}
-      <div className="px-4 py-2 bg-white md:hidden">
+      <div className='px-4 py-2 bg-white md:hidden'>
         {!showDetails ? (
           <button
             onClick={handleToggle}
-            className=" font-bold py-2 px-4 rounded w-full flex justify-center items-center "
+            className=' font-bold py-2 px-4 rounded w-full flex justify-center items-center '
           >
             Show details
-            <FaChevronDown className="ml-2" />
+            <FaChevronDown className='ml-2' />
           </button>
         ) : (
           <>
-            <div className="mb-4 ">
-              <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
+            <div className='mb-4 '>
+              <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
                 Roles
               </h3>
-              <div className="flex space-x-2">
-                <span className="bg-[#F0F9FF] border border-[#B9E6FE] text-[#026AA2] px-3 py-1 rounded-md text-xs font-medium">
+              <div className='flex space-x-2'>
+                <span className='bg-[#F0F9FF] border border-[#B9E6FE] text-[#026AA2] px-3 py-1 rounded-md text-xs font-medium'>
                   OLYMPIAN
                 </span>
-                <span className="bg-[#F0F9FF] border border-[#B9E6FE] text-[#026AA2] px-3 py-1 rounded-md text-xs font-medium uppercase">
-                  {userCurrentRoleStatusActiveRole === "vc"
-                    ? "INVESTOR"
+                <span className='bg-[#F0F9FF] border border-[#B9E6FE] text-[#026AA2] px-3 py-1 rounded-md text-xs font-medium uppercase'>
+                  {userCurrentRoleStatusActiveRole === 'vc'
+                    ? 'INVESTOR'
                     : userCurrentRoleStatusActiveRole}
                 </span>
               </div>
             </div>
 
-            <div className="flex justify-start border-b">
+            <div className='flex justify-start border-b'>
               {tabs.map(
                 (tab) =>
-                  (tab.role === "general" || userRole === tab.role) && (
+                  (tab.role === 'general' || userRole === tab.role) && (
                     <button
-                      type="button"
+                      type='button'
                       key={tab.role}
                       className={`px-4 py-2 focus:outline-none font-medium ${
                         activeTab === tab.role
-                          ? "border-b-2 border-blue-500 text-blue-500 font-medium"
-                          : "text-gray-400"
+                          ? 'border-b-2 border-blue-500 text-blue-500 font-medium'
+                          : 'text-gray-400'
                       }`}
                       onClick={() => handleChange(tab.role)}
                     >
@@ -755,25 +754,25 @@ const ProfileDetail = () => {
             </div>
 
             {/* General Tab Content */}
-            {activeTab === "general" && (
+            {activeTab === 'general' && (
               <form onSubmit={handleSubmit(handleSave, onErrorHandler)}>
-                <div className="px-1 py-4">
+                <div className='px-1 py-4'>
                   {/* full name  */}
-                  <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-2 px-3">
-                    <div className="flex justify-between">
-                      <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
+                  <div className='mb-4 group relative hover:bg-gray-100 rounded-lg p-2 px-3'>
+                    <div className='flex justify-between'>
+                      <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
                         full name
                       </h3>
                       <div>
                         <button
-                          type="button"
-                          className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
-                          onClick={() => handleEditToggle("full_name")}
+                          type='button'
+                          className='visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300'
+                          onClick={() => handleEditToggle('full_name')}
                         >
                           {isEditing.full_name ? (
-                            ""
+                            ''
                           ) : (
-                            <img src={edit} loading="lazy" draggable={false} />
+                            <img src={edit} loading='lazy' draggable={false} />
                           )}
                         </button>
                       </div>
@@ -781,45 +780,45 @@ const ProfileDetail = () => {
                     {isEditing.full_name ? (
                       <>
                         <input
-                          type="text"
-                          {...register("full_name")}
+                          type='text'
+                          {...register('full_name')}
                           className={`bg-gray-50 border-2 
                                                 ${
                                                   errors?.full_name
-                                                    ? "border-red-500"
-                                                    : "border-[#737373]"
+                                                    ? 'border-red-500'
+                                                    : 'border-[#737373]'
                                                 } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1`}
-                          placeholder="Enter your full name"
+                          placeholder='Enter your full name'
                         />
 
                         {errors?.full_name && (
-                          <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                          <span className='mt-1 text-sm text-red-500 font-bold flex justify-start'>
                             {errors?.full_name?.message}
                           </span>
                         )}
                       </>
                     ) : (
-                      <div className="flex items-center">
-                        <p className="mr-2 text-sm truncate">{full_name}</p>
+                      <div className='flex items-center'>
+                        <p className='mr-2 text-sm truncate'>{full_name}</p>
                       </div>
                     )}
                   </div>
                   {/* full name  */}
-                  <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-2 px-3">
-                    <div className="flex justify-between">
-                      <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
+                  <div className='mb-4 group relative hover:bg-gray-100 rounded-lg p-2 px-3'>
+                    <div className='flex justify-between'>
+                      <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
                         openchat_username
                       </h3>
                       <div>
                         <button
-                          type="button"
-                          className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
-                          onClick={() => handleEditToggle("openchat_user_name")}
+                          type='button'
+                          className='visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300'
+                          onClick={() => handleEditToggle('openchat_user_name')}
                         >
                           {isEditing.openchat_user_name ? (
-                            ""
+                            ''
                           ) : (
-                            <img src={edit} loading="lazy" draggable={false} />
+                            <img src={edit} loading='lazy' draggable={false} />
                           )}
                         </button>
                       </div>
@@ -827,46 +826,46 @@ const ProfileDetail = () => {
                     {isEditing.openchat_user_name ? (
                       <>
                         <input
-                          type="text"
-                          {...register("openchat_user_name")}
+                          type='text'
+                          {...register('openchat_user_name')}
                           className={`bg-gray-50 border-2 
                                                 ${
                                                   errors?.openchat_user_name
-                                                    ? "border-red-500 "
-                                                    : "border-[#737373]"
+                                                    ? 'border-red-500 '
+                                                    : 'border-[#737373]'
                                                 } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1`}
-                          placeholder="Enter your openchat username"
+                          placeholder='Enter your openchat username'
                         />
                         {errors?.openchat_user_name && (
-                          <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                          <span className='mt-1 text-sm text-red-500 font-bold flex justify-start'>
                             {errors?.openchat_user_name?.message}
                           </span>
                         )}
                       </>
                     ) : (
-                      <div className="flex items-center">
-                        <p className="mr-2 text-sm truncate break-all">
+                      <div className='flex items-center'>
+                        <p className='mr-2 text-sm truncate break-all'>
                           {openchat_username}
                         </p>
                       </div>
                     )}
                   </div>
                   {/* email  */}
-                  <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-2 px-3">
-                    <div className="flex justify-between">
-                      <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
+                  <div className='mb-4 group relative hover:bg-gray-100 rounded-lg p-2 px-3'>
+                    <div className='flex justify-between'>
+                      <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
                         Email
                       </h3>
                       <div>
                         <button
-                          type="button"
-                          className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
-                          onClick={() => handleEditToggle("email")}
+                          type='button'
+                          className='visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300'
+                          onClick={() => handleEditToggle('email')}
                         >
                           {isEditing.email ? (
-                            ""
+                            ''
                           ) : (
-                            <img src={edit} loading="lazy" draggable={false} />
+                            <img src={edit} loading='lazy' draggable={false} />
                           )}
                         </button>
                       </div>
@@ -874,160 +873,160 @@ const ProfileDetail = () => {
                     {isEditing.email ? (
                       <>
                         <input
-                          type="email"
-                          {...register("email")}
+                          type='email'
+                          {...register('email')}
                           className={`bg-gray-50 border-2 
                                                 ${
                                                   errors?.email
-                                                    ? "border-red-500"
-                                                    : "border-[#737373]"
+                                                    ? 'border-red-500'
+                                                    : 'border-[#737373]'
                                                 } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1`}
-                          placeholder="Enter your email"
+                          placeholder='Enter your email'
                         />
                         {errors?.email && (
-                          <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                          <span className='mt-1 text-sm text-red-500 font-bold flex justify-start'>
                             {errors?.email?.message}
                           </span>
                         )}
                       </>
                     ) : (
-                      <div className="flex items-center">
-                        <p className="mr-2 text-sm truncate break-all">
+                      <div className='flex items-center'>
+                        <p className='mr-2 text-sm truncate break-all'>
                           {email}
                         </p>
                         <VerifiedIcon
-                          className="text-blue-500 mr-2 w-2 h-2"
-                          fontSize="small"
+                          className='text-blue-500 mr-2 w-2 h-2'
+                          fontSize='small'
                         />
-                        <span className="bg-[#F8FAFC] border border-[#E3E8EF] text-[#364152] px-2 py-0.5 rounded text-xs">
+                        <span className='bg-[#F8FAFC] border border-[#E3E8EF] text-[#364152] px-2 py-0.5 rounded text-xs'>
                           HIDDEN
                         </span>
                       </div>
                     )}
                   </div>
                   {/* About Section */}
-                  <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-2 px-3">
-                    <div className="flex justify-between">
-                      <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
+                  <div className='mb-4 group relative hover:bg-gray-100 rounded-lg p-2 px-3'>
+                    <div className='flex justify-between'>
+                      <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
                         About
                       </h3>
                       <div>
                         <button
-                          type="button"
-                          className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
-                          onClick={() => handleEditToggle("bio")}
+                          type='button'
+                          className='visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300'
+                          onClick={() => handleEditToggle('bio')}
                         >
                           {isEditing.bio ? (
-                            ""
+                            ''
                           ) : (
-                            <img src={edit} loading="lazy" draggable={false} />
+                            <img src={edit} loading='lazy' draggable={false} />
                           )}
                         </button>
                       </div>
                     </div>
                     {isEditing.bio ? (
                       <textarea
-                        {...register("bio")}
+                        {...register('bio')}
                         className={`bg-gray-50 border-2 ${
-                          errors?.bio ? "border-red-500 " : "border-[#737373]"
+                          errors?.bio ? 'border-red-500 ' : 'border-[#737373]'
                         } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1`}
-                        placeholder="Enter your bio"
+                        placeholder='Enter your bio'
                         rows={1}
                       ></textarea>
                     ) : (
-                      <p className="text-sm truncate break-all">{bio}</p>
+                      <p className='text-sm truncate break-all'>{bio}</p>
                     )}
                   </div>
 
                   {/* Location Section */}
-                  <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-2 px-3">
-                    <div className="flex justify-between">
-                      <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
+                  <div className='mb-4 group relative hover:bg-gray-100 rounded-lg p-2 px-3'>
+                    <div className='flex justify-between'>
+                      <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
                         Location
                       </h3>
                       <div>
                         <button
-                          type="button"
-                          className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
-                          onClick={() => handleEditToggle("country")}
+                          type='button'
+                          className='visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300'
+                          onClick={() => handleEditToggle('country')}
                         >
                           {isEditing.country ? (
-                            ""
+                            ''
                           ) : (
-                            <img src={edit} loading="lazy" draggable={false} />
+                            <img src={edit} loading='lazy' draggable={false} />
                           )}
                         </button>
                       </div>
                     </div>
                     {isEditing.country ? (
                       <select
-                        {...register("country")}
+                        {...register('country')}
                         className={`bg-gray-50 border-2 ${
                           errors.country
-                            ? "border-red-500 "
-                            : "border-[#737373]"
+                            ? 'border-red-500 '
+                            : 'border-[#737373]'
                         } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1`}
                       >
-                        <option className="text-lg font-bold" value="">
+                        <option className='text-lg font-bold' value=''>
                           Select your country
                         </option>
                         {countries?.map((expert) => (
                           <option
                             key={expert.name}
                             value={expert.name}
-                            className="text-lg font-normal"
+                            className='text-lg font-normal'
                           >
                             {expert.name}
                           </option>
                         ))}
                       </select>
                     ) : (
-                      <div className="flex items-center">
+                      <div className='flex items-center'>
                         <PlaceOutlinedIcon
-                          className="text-gray-500 mr-1"
-                          fontSize="small"
+                          className='text-gray-500 mr-1'
+                          fontSize='small'
                         />
-                        <p className="text-sm truncate break-all">{country}</p>
+                        <p className='text-sm truncate break-all'>{country}</p>
                       </div>
                     )}
                   </div>
                   {/* Location Section */}
-                  <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-2 px-3">
-                    <div className="flex justify-between">
-                      <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
+                  <div className='mb-4 group relative hover:bg-gray-100 rounded-lg p-2 px-3'>
+                    <div className='flex justify-between'>
+                      <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
                         Type of profile
                       </h3>
                       <div>
                         <button
-                          type="button"
-                          className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
-                          onClick={() => handleEditToggle("type_of_profile")}
+                          type='button'
+                          className='visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300'
+                          onClick={() => handleEditToggle('type_of_profile')}
                         >
                           {isEditing.type_of_profile ? (
-                            ""
+                            ''
                           ) : (
-                            <img src={edit} loading="lazy" draggable={false} />
+                            <img src={edit} loading='lazy' draggable={false} />
                           )}
                         </button>
                       </div>
                     </div>
                     {isEditing.type_of_profile ? (
                       <select
-                        {...register("type_of_profile")}
+                        {...register('type_of_profile')}
                         className={`bg-gray-50 border-2 ${
                           errors.type_of_profile
-                            ? "border-red-500 "
-                            : "border-[#737373]"
+                            ? 'border-red-500 '
+                            : 'border-[#737373]'
                         } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1`}
                       >
-                        <option className="text-lg font-normal" value="">
+                        <option className='text-lg font-normal' value=''>
                           Select profile type
                         </option>
                         {typeOfProfileOptions &&
                           typeOfProfileOptions.map((val, index) => {
                             return (
                               <option
-                                className="text-lg font-bold"
+                                className='text-lg font-bold'
                                 key={index}
                                 value={val?.value}
                               >
@@ -1037,29 +1036,29 @@ const ProfileDetail = () => {
                           })}
                       </select>
                     ) : (
-                      <div className="flex items-center">
-                        <p className="text-smtruncate break-all ">
+                      <div className='flex items-center'>
+                        <p className='text-smtruncate break-all '>
                           {type_of_profile}
                         </p>
                       </div>
                     )}
                   </div>
                   {/* Reasons to Join Platform Section */}
-                  <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-2 px-3">
-                    <div className="flex justify-between">
-                      <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
+                  <div className='mb-4 group relative hover:bg-gray-100 rounded-lg p-2 px-3'>
+                    <div className='flex justify-between'>
+                      <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
                         Reasons to Join Platform
                       </h3>
                       <div>
                         <button
-                          type="button"
-                          className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
-                          onClick={() => handleEditToggle("reason_to_join")}
+                          type='button'
+                          className='visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300'
+                          onClick={() => handleEditToggle('reason_to_join')}
                         >
                           {isEditing.reason_to_join ? (
-                            ""
+                            ''
                           ) : (
-                            <img src={edit} loading="lazy" draggable={false} />
+                            <img src={edit} loading='lazy' draggable={false} />
                           )}
                         </button>
                       </div>
@@ -1068,47 +1067,47 @@ const ProfileDetail = () => {
                       <ReactSelect
                         isMulti
                         menuPortalTarget={document.body}
-                        menuPosition={"fixed"}
+                        menuPosition={'fixed'}
                         styles={getReactSelectUpdateStyles(
                           errors?.reasons_to_join_platform
                         )}
                         value={reasonOfJoiningSelectedOptions}
                         options={reasonOfJoiningOptions}
-                        classNamePrefix="select"
-                        className="basic-multi-select w-full text-start"
-                        placeholder="Select your reasons to join this platform"
-                        name="reasons_to_join_platform"
+                        classNamePrefix='select'
+                        className='basic-multi-select w-full text-start'
+                        placeholder='Select your reasons to join this platform'
+                        name='reasons_to_join_platform'
                         onChange={(selectedOptions) => {
                           if (selectedOptions && selectedOptions.length > 0) {
                             setReasonOfJoiningSelectedOptions(selectedOptions);
-                            clearErrors("reasons_to_join_platform");
+                            clearErrors('reasons_to_join_platform');
                             setValue(
-                              "reasons_to_join_platform",
+                              'reasons_to_join_platform',
                               selectedOptions
                                 .map((option) => option.value)
-                                .join(", "),
+                                .join(', '),
                               { shouldValidate: true }
                             );
                           } else {
                             setReasonOfJoiningSelectedOptions([]);
-                            setValue("reasons_to_join_platform", "", {
+                            setValue('reasons_to_join_platform', '', {
                               shouldValidate: true,
                             });
-                            setError("reasons_to_join_platform", {
-                              type: "required",
-                              message: "Selecting a reason is required",
+                            setError('reasons_to_join_platform', {
+                              type: 'required',
+                              message: 'Selecting a reason is required',
                             });
                           }
                         }}
                       />
                     ) : (
-                      <div className="flex gap-2 overflow-x-auto">
+                      <div className='flex gap-2 overflow-x-auto'>
                         {(userFullData?.reason_to_join || [])
                           .flat()
                           .map((reason, index) => (
                             <span
                               key={`${reason}-${index}`}
-                              className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1"
+                              className='border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1'
                             >
                               {reason}
                             </span>
@@ -1118,21 +1117,21 @@ const ProfileDetail = () => {
                   </div>
 
                   {/* Interests Section */}
-                  <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-2 px-3">
-                    <div className="flex justify-between">
-                      <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
+                  <div className='mb-4 group relative hover:bg-gray-100 rounded-lg p-2 px-3'>
+                    <div className='flex justify-between'>
+                      <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
                         Interests
                       </h3>
                       <div>
                         <button
-                          type="button"
-                          className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
-                          onClick={() => handleEditToggle("area_of_interest")}
+                          type='button'
+                          className='visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300'
+                          onClick={() => handleEditToggle('area_of_interest')}
                         >
                           {isEditing.area_of_interest ? (
-                            ""
+                            ''
                           ) : (
-                            <img src={edit} loading="lazy" draggable={false} />
+                            <img src={edit} loading='lazy' draggable={false} />
                           )}
                         </button>
                       </div>
@@ -1142,53 +1141,53 @@ const ProfileDetail = () => {
                         <ReactSelect
                           isMulti
                           menuPortalTarget={document.body}
-                          menuPosition={"fixed"}
+                          menuPosition={'fixed'}
                           styles={getReactSelectUpdateStyles(
                             errors?.domains_interested_in
                           )}
                           value={interestedDomainsSelectedOptions}
                           options={interestedDomainsOptions}
-                          classNamePrefix="select"
-                          className="basic-multi-select w-full text-start"
-                          placeholder="Select domains you are interested in"
-                          name="domains_interested_in"
+                          classNamePrefix='select'
+                          className='basic-multi-select w-full text-start'
+                          placeholder='Select domains you are interested in'
+                          name='domains_interested_in'
                           onChange={(selectedOptions) => {
                             if (selectedOptions && selectedOptions.length > 0) {
                               setInterestedDomainsSelectedOptions(
                                 selectedOptions
                               );
-                              clearErrors("domains_interested_in");
+                              clearErrors('domains_interested_in');
                               setValue(
-                                "domains_interested_in",
+                                'domains_interested_in',
                                 selectedOptions
                                   .map((option) => option.value)
-                                  .join(", "),
+                                  .join(', '),
                                 { shouldValidate: true }
                               );
                             } else {
                               setInterestedDomainsSelectedOptions([]);
-                              setValue("domains_interested_in", "", {
+                              setValue('domains_interested_in', '', {
                                 shouldValidate: true,
                               });
-                              setError("domains_interested_in", {
-                                type: "required",
-                                message: "Selecting an interest is required",
+                              setError('domains_interested_in', {
+                                type: 'required',
+                                message: 'Selecting an interest is required',
                               });
                             }
                           }}
                         />
                         {errors.domains_interested_in && (
-                          <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                          <span className='mt-1 text-sm text-red-500 font-bold flex justify-start'>
                             {errors.domains_interested_in.message}
                           </span>
                         )}
                       </>
                     ) : (
-                      <div className="flex gap-2 overflow-x-auto">
-                        {area_of_interest.split(", ").map((interest, index) => (
+                      <div className='flex gap-2 overflow-x-auto'>
+                        {area_of_interest.split(', ').map((interest, index) => (
                           <span
                             key={index}
-                            className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 break-words"
+                            className='border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 break-words'
                           >
                             {interest}
                           </span>
@@ -1197,11 +1196,11 @@ const ProfileDetail = () => {
                     )}
                   </div>
                   <div>
-                    <h3 className="mb-2 text-xs text-gray-500 px-3 font-semibold">
+                    <h3 className='mb-2 text-xs text-gray-500 px-3 font-semibold'>
                       LINKS
                     </h3>
-                    <div className="relative px-3">
-                      <div className="flex flex-wrap gap-5">
+                    <div className='relative px-3'>
+                      <div className='flex flex-wrap gap-5'>
                         {Object.keys(socialLinks)
                           .filter((key) => socialLinks[key]) // Only show links with valid URLs
                           .map((key, index) => {
@@ -1209,37 +1208,37 @@ const ProfileDetail = () => {
                             const Icon = getSocialLogo(url); // Get the corresponding social icon
                             return (
                               <div
-                                className="group relative flex items-center mb-3"
+                                className='group relative flex items-center mb-3'
                                 key={key}
                               >
                                 {isEditingLink[key] ? (
-                                  <div className="flex w-full">
-                                    <div className="flex items-center w-full">
-                                      <div className="flex items-center space-x-2 w-full">
-                                        <div className="flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full">
+                                  <div className='flex w-full'>
+                                    <div className='flex items-center w-full'>
+                                      <div className='flex items-center space-x-2 w-full'>
+                                        <div className='flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full'>
                                           {Icon} {/* Display the icon */}
                                         </div>
                                         <input
-                                          type="text"
+                                          type='text'
                                           value={url}
                                           onChange={(e) =>
                                             handleLinkChange(e, key)
                                           }
-                                          className="border p-2 rounded-md w-full"
-                                          placeholder="Enter your social media URL"
+                                          className='border p-2 rounded-md w-full'
+                                          placeholder='Enter your social media URL'
                                         />
                                       </div>
                                       <button
-                                        type="button"
+                                        type='button'
                                         onClick={() => handleSaveLink(key)} // Save the link
-                                        className="ml-2 text-green-500 hover:text-green-700"
+                                        className='ml-2 text-green-500 hover:text-green-700'
                                       >
                                         <FaSave />
                                       </button>
                                       <button
-                                        type="button"
+                                        type='button'
                                         onClick={() => handleLinkDelete(key)} // Delete the link
-                                        className="ml-2 text-red-500 hover:text-red-700"
+                                        className='ml-2 text-red-500 hover:text-red-700'
                                       >
                                         <FaTrash />
                                       </button>
@@ -1249,24 +1248,24 @@ const ProfileDetail = () => {
                                   <>
                                     <a
                                       href={url}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className="flex items-center"
+                                      target='_blank'
+                                      rel='noopener noreferrer'
+                                      className='flex items-center'
                                     >
                                       {Icon} {/* Display the icon */}
                                     </a>
                                     <button
-                                      type="button"
+                                      type='button'
                                       // className="absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 translate-x-6 ease-in-out transform opacity-100 lgx:opacity-0 lgx:group-hover:opacity-100 lgx:group-hover:translate-x-6 h-10 w-7"
-                                      className="absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 translate-x-6 ease-in-out transform opacity-100 lgx:opacity-0 lgx:group-hover:opacity-100 lgx:group-hover:translate-x-6 h-10 w-7"
+                                      className='absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 translate-x-6 ease-in-out transform opacity-100 lgx:opacity-0 lgx:group-hover:opacity-100 lgx:group-hover:translate-x-6 h-10 w-7'
                                       // {/* Your icon or content */}
 
                                       onClick={() => handleLinkEditToggle(key)} // Toggle editing mode for this link
                                     >
                                       <img
                                         src={edit}
-                                        alt="edit"
-                                        loading="lazy"
+                                        alt='edit'
+                                        loading='lazy'
                                         draggable={false}
                                       />
                                     </button>
@@ -1277,43 +1276,43 @@ const ProfileDetail = () => {
                           })}
                       </div>
                       {fields.map((item, index) => (
-                        <div key={item.id} className="flex flex-col">
-                          <div className="flex items-center mb-2 pb-1">
+                        <div key={item.id} className='flex flex-col'>
+                          <div className='flex items-center mb-2 pb-1'>
                             <Controller
                               name={`links[${index}].link`}
                               control={control}
                               render={({ field, fieldState }) => (
-                                <div className="flex items-center w-full">
-                                  <div className="flex items-center space-x-2 w-full">
-                                    <div className="flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full">
+                                <div className='flex items-center w-full'>
+                                  <div className='flex items-center space-x-2 w-full'>
+                                    <div className='flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full'>
                                       {field.value &&
-                                        getSocialLogo(field.value)}{" "}
+                                        getSocialLogo(field.value)}{' '}
                                       {/* Display logo for new link */}
                                     </div>
                                     <input
-                                      type="text"
-                                      placeholder="Enter your social media URL"
+                                      type='text'
+                                      placeholder='Enter your social media URL'
                                       className={`p-2 border ${
                                         fieldState.error
-                                          ? "border-red-500"
-                                          : "border-[#737373]"
+                                          ? 'border-red-500'
+                                          : 'border-[#737373]'
                                       } rounded-md w-full bg-gray-50 border-2 border-[#D1D5DB]`}
                                       {...field}
                                     />
                                   </div>
                                   <button
-                                    type="button"
+                                    type='button'
                                     onClick={() =>
                                       handleSaveNewLink(field.value, index)
                                     } // Save the new link
-                                    className="ml-2 text-green-500 hover:text-green-700"
+                                    className='ml-2 text-green-500 hover:text-green-700'
                                   >
                                     <FaSave />
                                   </button>
                                   <button
-                                    type="button"
+                                    type='button'
                                     onClick={() => remove(index)} // Remove link field
-                                    className="ml-2 text-red-500 hover:text-red-700"
+                                    className='ml-2 text-red-500 hover:text-red-700'
                                   >
                                     <FaTrash />
                                   </button>
@@ -1325,15 +1324,15 @@ const ProfileDetail = () => {
                       ))}
                       {fields.length < 10 && (
                         <button
-                          type="button"
+                          type='button'
                           onClick={() => {
                             if (fields.length < 10) {
-                              append({ link: "" });
+                              append({ link: '' });
                             }
                           }}
-                          className="flex items-center p-1 text-[#155EEF]"
+                          className='flex items-center p-1 text-[#155EEF]'
                         >
-                          <FaPlus className="mr-1" /> Add Another Link
+                          <FaPlus className='mr-1' /> Add Another Link
                         </button>
                       )}
                     </div>
@@ -1343,34 +1342,34 @@ const ProfileDetail = () => {
                     {(Object.values(isEditing).some((value) => value) ||
                       isLinkBeingEdited ||
                       isImageEditing) && (
-                      <div className="flex justify-end gap-4 mt-4">
+                      <div className='flex justify-end gap-4 mt-4'>
                         <button
-                          type="button"
+                          type='button'
                           onClick={handleCancel}
-                          className="bg-gray-300 text-gray-700 py-2 px-4 rounded"
+                          className='bg-gray-300 text-gray-700 py-2 px-4 rounded'
                         >
                           Cancel
                         </button>
                         <button
                           disabled={isSubmitting}
-                          type="submit"
-                          className="bg-blue-600 text-white py-2 px-4 rounded"
+                          type='submit'
+                          className='bg-blue-600 text-white py-2 px-4 rounded'
                         >
                           {isSubmitting ? (
                             <ThreeDots
                               visible={true}
-                              height="35"
-                              width="35"
-                              color="#FFFEFF"
-                              radius="9"
-                              ariaLabel="three-dots-loading"
+                              height='35'
+                              width='35'
+                              color='#FFFEFF'
+                              radius='9'
+                              ariaLabel='three-dots-loading'
                               wrapperStyle={{}}
-                              wrapperclassName=""
+                              wrapperclassName=''
                             />
                           ) : isEditing ? (
-                            "Update"
+                            'Update'
                           ) : (
-                            "Submit"
+                            'Submit'
                           )}
                         </button>
                       </div>
@@ -1381,13 +1380,13 @@ const ProfileDetail = () => {
             )}
 
             {/* Investor Tab Content */}
-            {userRole === "vc" && activeTab === "vc" && <InvestorDetail />}
+            {userRole === 'vc' && activeTab === 'vc' && <InvestorDetail />}
 
             {/* Mentor Tab Content */}
-            {userRole === "mentor" && activeTab === "mentor" && <MentorEdit />}
+            {userRole === 'mentor' && activeTab === 'mentor' && <MentorEdit />}
 
             {/* Founder Tab Content */}
-            {userRole === "project" && activeTab === "project" && (
+            {userRole === 'project' && activeTab === 'project' && (
               <ProjectDetail
                 logoPreview={logoPreview}
                 setLogoPreview={setLogoPreview}
@@ -1402,43 +1401,43 @@ const ProfileDetail = () => {
             )}
             <button
               onClick={handleToggle}
-              className="font-bold py-2 px-4 rounded w-full flex justify-center items-center mt-4 "
+              className='font-bold py-2 px-4 rounded w-full flex justify-center items-center mt-4 '
             >
-              Hide details <FaChevronUp className="ml-2" />
+              Hide details <FaChevronUp className='ml-2' />
             </button>
           </>
         )}
       </div>
 
       {/* laptop screen  */}
-      <div className="p-6 bg-white hidden md:block">
-        <div className="mb-4">
-          <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
+      <div className='p-6 bg-white hidden md:block'>
+        <div className='mb-4'>
+          <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
             Roles
           </h3>
-          <div className="flex space-x-2">
-            <span className="bg-[#F0F9FF] border border-[#B9E6FE] text-[#026AA2] px-3 py-1 rounded-md text-xs font-medium">
+          <div className='flex space-x-2'>
+            <span className='bg-[#F0F9FF] border border-[#B9E6FE] text-[#026AA2] px-3 py-1 rounded-md text-xs font-medium'>
               OLYMPIAN
             </span>
-            <span className="bg-[#F0F9FF] border border-[#B9E6FE] text-[#026AA2] px-3 py-1 rounded-md text-xs font-medium uppercase">
-              {userCurrentRoleStatusActiveRole === "vc"
-                ? "INVESTOR"
+            <span className='bg-[#F0F9FF] border border-[#B9E6FE] text-[#026AA2] px-3 py-1 rounded-md text-xs font-medium uppercase'>
+              {userCurrentRoleStatusActiveRole === 'vc'
+                ? 'INVESTOR'
                 : userCurrentRoleStatusActiveRole}
             </span>
           </div>
         </div>
 
-        <div className="flex justify-start border-b">
+        <div className='flex justify-start border-b'>
           {tabs.map(
             (tab) =>
-              (tab.role === "general" || userRole === tab.role) && (
+              (tab.role === 'general' || userRole === tab.role) && (
                 <button
-                  type="button"
+                  type='button'
                   key={tab.role}
                   className={`px-4 py-2 focus:outline-none font-medium ${
                     activeTab === tab.role
-                      ? "border-b-2 border-blue-500 text-blue-500 font-medium"
-                      : "text-gray-400"
+                      ? 'border-b-2 border-blue-500 text-blue-500 font-medium'
+                      : 'text-gray-400'
                   }`}
                   onClick={() => handleChange(tab.role)}
                 >
@@ -1449,25 +1448,25 @@ const ProfileDetail = () => {
         </div>
 
         {/* General Tab Content */}
-        {activeTab === "general" && (
+        {activeTab === 'general' && (
           <form onSubmit={handleSubmit(handleSave, onErrorHandler)}>
-            <div className="px-1 py-4">
+            <div className='px-1 py-4'>
               {/* full name  */}
-              <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-2 px-3">
-                <div className="flex justify-between">
-                  <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
+              <div className='mb-4 group relative hover:bg-gray-100 rounded-lg p-2 px-3'>
+                <div className='flex justify-between'>
+                  <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
                     full name
                   </h3>
                   <div>
                     <button
-                      type="button"
-                      className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
-                      onClick={() => handleEditToggle("full_name")}
+                      type='button'
+                      className='visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300'
+                      onClick={() => handleEditToggle('full_name')}
                     >
                       {isEditing.full_name ? (
-                        ""
+                        ''
                       ) : (
-                        <img src={edit} loading="lazy" draggable={false} />
+                        <img src={edit} loading='lazy' draggable={false} />
                       )}
                     </button>
                   </div>
@@ -1475,45 +1474,45 @@ const ProfileDetail = () => {
                 {isEditing.full_name ? (
                   <>
                     <input
-                      type="text"
-                      {...register("full_name")}
+                      type='text'
+                      {...register('full_name')}
                       className={`bg-gray-50 border-2 
                                                 ${
                                                   errors?.full_name
-                                                    ? "border-red-500"
-                                                    : "border-[#737373]"
+                                                    ? 'border-red-500'
+                                                    : 'border-[#737373]'
                                                 } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1`}
-                      placeholder="Enter your full name"
+                      placeholder='Enter your full name'
                     />
 
                     {errors?.full_name && (
-                      <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                      <span className='mt-1 text-sm text-red-500 font-bold flex justify-start'>
                         {errors?.full_name?.message}
                       </span>
                     )}
                   </>
                 ) : (
-                  <div className="flex items-center">
-                    <p className="mr-2 text-sm truncate">{full_name}</p>
+                  <div className='flex items-center'>
+                    <p className='mr-2 text-sm truncate'>{full_name}</p>
                   </div>
                 )}
               </div>
               {/* full name  */}
-              <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-2 px-3">
-                <div className="flex justify-between">
-                  <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
+              <div className='mb-4 group relative hover:bg-gray-100 rounded-lg p-2 px-3'>
+                <div className='flex justify-between'>
+                  <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
                     openchat_username
                   </h3>
                   <div>
                     <button
-                      type="button"
-                      className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
-                      onClick={() => handleEditToggle("openchat_user_name")}
+                      type='button'
+                      className='visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300'
+                      onClick={() => handleEditToggle('openchat_user_name')}
                     >
                       {isEditing.openchat_user_name ? (
-                        ""
+                        ''
                       ) : (
-                        <img src={edit} loading="lazy" draggable={false} />
+                        <img src={edit} loading='lazy' draggable={false} />
                       )}
                     </button>
                   </div>
@@ -1521,46 +1520,46 @@ const ProfileDetail = () => {
                 {isEditing.openchat_user_name ? (
                   <>
                     <input
-                      type="text"
-                      {...register("openchat_user_name")}
+                      type='text'
+                      {...register('openchat_user_name')}
                       className={`bg-gray-50 border-2 
                                                 ${
                                                   errors?.openchat_user_name
-                                                    ? "border-red-500 "
-                                                    : "border-[#737373]"
+                                                    ? 'border-red-500 '
+                                                    : 'border-[#737373]'
                                                 } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1`}
-                      placeholder="Enter your openchat username"
+                      placeholder='Enter your openchat username'
                     />
                     {errors?.openchat_user_name && (
-                      <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                      <span className='mt-1 text-sm text-red-500 font-bold flex justify-start'>
                         {errors?.openchat_user_name?.message}
                       </span>
                     )}
                   </>
                 ) : (
-                  <div className="flex items-center">
-                    <p className="mr-2 text-sm truncate break-all">
+                  <div className='flex items-center'>
+                    <p className='mr-2 text-sm truncate break-all'>
                       {openchat_username}
                     </p>
                   </div>
                 )}
               </div>
               {/* email  */}
-              <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-2 px-3">
-                <div className="flex justify-between">
-                  <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
+              <div className='mb-4 group relative hover:bg-gray-100 rounded-lg p-2 px-3'>
+                <div className='flex justify-between'>
+                  <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
                     Email
                   </h3>
                   <div>
                     <button
-                      type="button"
-                      className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
-                      onClick={() => handleEditToggle("email")}
+                      type='button'
+                      className='visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300'
+                      onClick={() => handleEditToggle('email')}
                     >
                       {isEditing.email ? (
-                        ""
+                        ''
                       ) : (
-                        <img src={edit} loading="lazy" draggable={false} />
+                        <img src={edit} loading='lazy' draggable={false} />
                       )}
                     </button>
                   </div>
@@ -1568,156 +1567,156 @@ const ProfileDetail = () => {
                 {isEditing.email ? (
                   <>
                     <input
-                      type="email"
-                      {...register("email")}
+                      type='email'
+                      {...register('email')}
                       className={`bg-gray-50 border-2 
                                                 ${
                                                   errors?.email
-                                                    ? "border-red-500"
-                                                    : "border-[#737373]"
+                                                    ? 'border-red-500'
+                                                    : 'border-[#737373]'
                                                 } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1`}
-                      placeholder="Enter your email"
+                      placeholder='Enter your email'
                     />
                     {errors?.email && (
-                      <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                      <span className='mt-1 text-sm text-red-500 font-bold flex justify-start'>
                         {errors?.email?.message}
                       </span>
                     )}
                   </>
                 ) : (
-                  <div className="flex items-center">
-                    <p className="mr-2 text-sm truncate break-all">{email}</p>
+                  <div className='flex items-center'>
+                    <p className='mr-2 text-sm truncate break-all'>{email}</p>
                     <VerifiedIcon
-                      className="text-blue-500 mr-2 w-2 h-2"
-                      fontSize="small"
+                      className='text-blue-500 mr-2 w-2 h-2'
+                      fontSize='small'
                     />
-                    <span className="bg-[#F8FAFC] border border-[#E3E8EF] text-[#364152] px-2 py-0.5 rounded text-xs">
+                    <span className='bg-[#F8FAFC] border border-[#E3E8EF] text-[#364152] px-2 py-0.5 rounded text-xs'>
                       HIDDEN
                     </span>
                   </div>
                 )}
               </div>
               {/* About Section */}
-              <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-2 px-3">
-                <div className="flex justify-between">
-                  <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
+              <div className='mb-4 group relative hover:bg-gray-100 rounded-lg p-2 px-3'>
+                <div className='flex justify-between'>
+                  <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
                     About
                   </h3>
                   <div>
                     <button
-                      type="button"
-                      className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
-                      onClick={() => handleEditToggle("bio")}
+                      type='button'
+                      className='visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300'
+                      onClick={() => handleEditToggle('bio')}
                     >
                       {isEditing.bio ? (
-                        ""
+                        ''
                       ) : (
-                        <img src={edit} loading="lazy" draggable={false} />
+                        <img src={edit} loading='lazy' draggable={false} />
                       )}
                     </button>
                   </div>
                 </div>
                 {isEditing.bio ? (
                   <textarea
-                    {...register("bio")}
+                    {...register('bio')}
                     className={`bg-gray-50 border-2 ${
-                      errors?.bio ? "border-red-500 " : "border-[#737373]"
+                      errors?.bio ? 'border-red-500 ' : 'border-[#737373]'
                     } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1`}
-                    placeholder="Enter your bio"
+                    placeholder='Enter your bio'
                     rows={1}
                   ></textarea>
                 ) : (
-                  <p className="text-sm truncate break-all">{bio}</p>
+                  <p className='text-sm truncate break-all'>{bio}</p>
                 )}
               </div>
 
               {/* Location Section */}
-              <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-2 px-3">
-                <div className="flex justify-between">
-                  <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
+              <div className='mb-4 group relative hover:bg-gray-100 rounded-lg p-2 px-3'>
+                <div className='flex justify-between'>
+                  <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
                     Location
                   </h3>
                   <div>
                     <button
-                      type="button"
-                      className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
-                      onClick={() => handleEditToggle("country")}
+                      type='button'
+                      className='visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300'
+                      onClick={() => handleEditToggle('country')}
                     >
                       {isEditing.country ? (
-                        ""
+                        ''
                       ) : (
-                        <img src={edit} loading="lazy" draggable={false} />
+                        <img src={edit} loading='lazy' draggable={false} />
                       )}
                     </button>
                   </div>
                 </div>
                 {isEditing.country ? (
                   <select
-                    {...register("country")}
+                    {...register('country')}
                     className={`bg-gray-50 border-2 ${
-                      errors.country ? "border-red-500 " : "border-[#737373]"
+                      errors.country ? 'border-red-500 ' : 'border-[#737373]'
                     } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1`}
                   >
-                    <option className="text-lg font-bold" value="">
+                    <option className='text-lg font-bold' value=''>
                       Select your country
                     </option>
                     {countries?.map((expert) => (
                       <option
                         key={expert.name}
                         value={expert.name}
-                        className="text-lg font-normal"
+                        className='text-lg font-normal'
                       >
                         {expert.name}
                       </option>
                     ))}
                   </select>
                 ) : (
-                  <div className="flex items-center">
+                  <div className='flex items-center'>
                     <PlaceOutlinedIcon
-                      className="text-gray-500 mr-1"
-                      fontSize="small"
+                      className='text-gray-500 mr-1'
+                      fontSize='small'
                     />
-                    <p className="text-sm truncate break-all">{country}</p>
+                    <p className='text-sm truncate break-all'>{country}</p>
                   </div>
                 )}
               </div>
               {/* Location Section */}
-              <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-2 px-3">
-                <div className="flex justify-between">
-                  <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
+              <div className='mb-4 group relative hover:bg-gray-100 rounded-lg p-2 px-3'>
+                <div className='flex justify-between'>
+                  <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
                     Type of profile
                   </h3>
                   <div>
                     <button
-                      type="button"
-                      className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
-                      onClick={() => handleEditToggle("type_of_profile")}
+                      type='button'
+                      className='visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300'
+                      onClick={() => handleEditToggle('type_of_profile')}
                     >
                       {isEditing.type_of_profile ? (
-                        ""
+                        ''
                       ) : (
-                        <img src={edit} loading="lazy" draggable={false} />
+                        <img src={edit} loading='lazy' draggable={false} />
                       )}
                     </button>
                   </div>
                 </div>
                 {isEditing.type_of_profile ? (
                   <select
-                    {...register("type_of_profile")}
+                    {...register('type_of_profile')}
                     className={`bg-gray-50 border-2 ${
                       errors.type_of_profile
-                        ? "border-red-500 "
-                        : "border-[#737373]"
+                        ? 'border-red-500 '
+                        : 'border-[#737373]'
                     } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1`}
                   >
-                    <option className="text-lg font-normal" value="">
+                    <option className='text-lg font-normal' value=''>
                       Select profile type
                     </option>
                     {typeOfProfileOptions &&
                       typeOfProfileOptions.map((val, index) => {
                         return (
                           <option
-                            className="text-lg font-bold"
+                            className='text-lg font-bold'
                             key={index}
                             value={val?.value}
                           >
@@ -1727,29 +1726,29 @@ const ProfileDetail = () => {
                       })}
                   </select>
                 ) : (
-                  <div className="flex items-center">
-                    <p className="text-smtruncate break-all ">
+                  <div className='flex items-center'>
+                    <p className='text-smtruncate break-all '>
                       {type_of_profile}
                     </p>
                   </div>
                 )}
               </div>
               {/* Reasons to Join Platform Section */}
-              <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-2 px-3">
-                <div className="flex justify-between">
-                  <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
+              <div className='mb-4 group relative hover:bg-gray-100 rounded-lg p-2 px-3'>
+                <div className='flex justify-between'>
+                  <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
                     Reasons to Join Platform
                   </h3>
                   <div>
                     <button
-                      type="button"
-                      className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
-                      onClick={() => handleEditToggle("reason_to_join")}
+                      type='button'
+                      className='visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300'
+                      onClick={() => handleEditToggle('reason_to_join')}
                     >
                       {isEditing.reason_to_join ? (
-                        ""
+                        ''
                       ) : (
-                        <img src={edit} loading="lazy" draggable={false} />
+                        <img src={edit} loading='lazy' draggable={false} />
                       )}
                     </button>
                   </div>
@@ -1758,47 +1757,47 @@ const ProfileDetail = () => {
                   <ReactSelect
                     isMulti
                     menuPortalTarget={document.body}
-                    menuPosition={"fixed"}
+                    menuPosition={'fixed'}
                     styles={getReactSelectUpdateStyles(
                       errors?.reasons_to_join_platform
                     )}
                     value={reasonOfJoiningSelectedOptions}
                     options={reasonOfJoiningOptions}
-                    classNamePrefix="select"
-                    className="basic-multi-select w-full text-start"
-                    placeholder="Select your reasons to join this platform"
-                    name="reasons_to_join_platform"
+                    classNamePrefix='select'
+                    className='basic-multi-select w-full text-start'
+                    placeholder='Select your reasons to join this platform'
+                    name='reasons_to_join_platform'
                     onChange={(selectedOptions) => {
                       if (selectedOptions && selectedOptions.length > 0) {
                         setReasonOfJoiningSelectedOptions(selectedOptions);
-                        clearErrors("reasons_to_join_platform");
+                        clearErrors('reasons_to_join_platform');
                         setValue(
-                          "reasons_to_join_platform",
+                          'reasons_to_join_platform',
                           selectedOptions
                             .map((option) => option.value)
-                            .join(", "),
+                            .join(', '),
                           { shouldValidate: true }
                         );
                       } else {
                         setReasonOfJoiningSelectedOptions([]);
-                        setValue("reasons_to_join_platform", "", {
+                        setValue('reasons_to_join_platform', '', {
                           shouldValidate: true,
                         });
-                        setError("reasons_to_join_platform", {
-                          type: "required",
-                          message: "Selecting a reason is required",
+                        setError('reasons_to_join_platform', {
+                          type: 'required',
+                          message: 'Selecting a reason is required',
                         });
                       }
                     }}
                   />
                 ) : (
-                  <div className="flex gap-2 overflow-x-auto">
+                  <div className='flex gap-2 overflow-x-auto'>
                     {(userFullData?.reason_to_join || [])
                       .flat()
                       .map((reason, index) => (
                         <span
                           key={`${reason}-${index}`}
-                          className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1"
+                          className='border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1'
                         >
                           {reason}
                         </span>
@@ -1808,21 +1807,21 @@ const ProfileDetail = () => {
               </div>
 
               {/* Interests Section */}
-              <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-2 px-3">
-                <div className="flex justify-between">
-                  <h3 className="font-semibold mb-2 text-xs text-gray-500 uppercase">
+              <div className='mb-4 group relative hover:bg-gray-100 rounded-lg p-2 px-3'>
+                <div className='flex justify-between'>
+                  <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
                     Interests
                   </h3>
                   <div>
                     <button
-                      type="button"
-                      className="visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300"
-                      onClick={() => handleEditToggle("area_of_interest")}
+                      type='button'
+                      className='visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300'
+                      onClick={() => handleEditToggle('area_of_interest')}
                     >
                       {isEditing.area_of_interest ? (
-                        ""
+                        ''
                       ) : (
-                        <img src={edit} loading="lazy" draggable={false} />
+                        <img src={edit} loading='lazy' draggable={false} />
                       )}
                     </button>
                   </div>
@@ -1832,51 +1831,51 @@ const ProfileDetail = () => {
                     <ReactSelect
                       isMulti
                       menuPortalTarget={document.body}
-                      menuPosition={"fixed"}
+                      menuPosition={'fixed'}
                       styles={getReactSelectUpdateStyles(
                         errors?.domains_interested_in
                       )}
                       value={interestedDomainsSelectedOptions}
                       options={interestedDomainsOptions}
-                      classNamePrefix="select"
-                      className="basic-multi-select w-full text-start"
-                      placeholder="Select domains you are interested in"
-                      name="domains_interested_in"
+                      classNamePrefix='select'
+                      className='basic-multi-select w-full text-start'
+                      placeholder='Select domains you are interested in'
+                      name='domains_interested_in'
                       onChange={(selectedOptions) => {
                         if (selectedOptions && selectedOptions.length > 0) {
                           setInterestedDomainsSelectedOptions(selectedOptions);
-                          clearErrors("domains_interested_in");
+                          clearErrors('domains_interested_in');
                           setValue(
-                            "domains_interested_in",
+                            'domains_interested_in',
                             selectedOptions
                               .map((option) => option.value)
-                              .join(", "),
+                              .join(', '),
                             { shouldValidate: true }
                           );
                         } else {
                           setInterestedDomainsSelectedOptions([]);
-                          setValue("domains_interested_in", "", {
+                          setValue('domains_interested_in', '', {
                             shouldValidate: true,
                           });
-                          setError("domains_interested_in", {
-                            type: "required",
-                            message: "Selecting an interest is required",
+                          setError('domains_interested_in', {
+                            type: 'required',
+                            message: 'Selecting an interest is required',
                           });
                         }
                       }}
                     />
                     {errors.domains_interested_in && (
-                      <span className="mt-1 text-sm text-red-500 font-bold flex justify-start">
+                      <span className='mt-1 text-sm text-red-500 font-bold flex justify-start'>
                         {errors.domains_interested_in.message}
                       </span>
                     )}
                   </>
                 ) : (
-                  <div className="flex gap-2 overflow-x-auto">
-                    {area_of_interest.split(", ").map((interest, index) => (
+                  <div className='flex gap-2 overflow-x-auto'>
+                    {area_of_interest.split(', ').map((interest, index) => (
                       <span
                         key={index}
-                        className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 break-words"
+                        className='border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 break-words'
                       >
                         {interest}
                       </span>
@@ -1885,11 +1884,11 @@ const ProfileDetail = () => {
                 )}
               </div>
               <div>
-                <h3 className="mb-2 text-xs text-gray-500 px-3 font-semibold">
+                <h3 className='mb-2 text-xs text-gray-500 px-3 font-semibold'>
                   LINKS
                 </h3>
-                <div className="relative px-3">
-                  <div className="flex flex-wrap gap-5">
+                <div className='relative px-3'>
+                  <div className='flex flex-wrap gap-5'>
                     {Object.keys(socialLinks)
                       .filter((key) => socialLinks[key]) // Only show links with valid URLs
                       .map((key, index) => {
@@ -1897,35 +1896,35 @@ const ProfileDetail = () => {
                         const Icon = getSocialLogo(url); // Get the corresponding social icon
                         return (
                           <div
-                            className="group relative flex items-center mb-3"
+                            className='group relative flex items-center mb-3'
                             key={key}
                           >
                             {isEditingLink[key] ? (
-                              <div className="flex w-full">
-                                <div className="flex items-center w-full">
-                                  <div className="flex items-center space-x-2 w-full">
-                                    <div className="flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full">
+                              <div className='flex w-full'>
+                                <div className='flex items-center w-full'>
+                                  <div className='flex items-center space-x-2 w-full'>
+                                    <div className='flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full'>
                                       {Icon} {/* Display the icon */}
                                     </div>
                                     <input
-                                      type="text"
+                                      type='text'
                                       value={url}
                                       onChange={(e) => handleLinkChange(e, key)}
-                                      className="border p-2 rounded-md w-full"
-                                      placeholder="Enter your social media URL"
+                                      className='border p-2 rounded-md w-full'
+                                      placeholder='Enter your social media URL'
                                     />
                                   </div>
                                   <button
-                                    type="button"
-                                    onClick={() => handleSaveLink(key)} 
-                                    className="ml-2 text-green-500 hover:text-green-700"
+                                    type='button'
+                                    onClick={() => handleSaveLink(key)}
+                                    className='ml-2 text-green-500 hover:text-green-700'
                                   >
                                     <FaSave />
                                   </button>
                                   <button
-                                    type="button"
+                                    type='button'
                                     onClick={() => handleLinkDelete(key)} // Delete the link
-                                    className="ml-2 text-red-500 hover:text-red-700"
+                                    className='ml-2 text-red-500 hover:text-red-700'
                                   >
                                     <FaTrash />
                                   </button>
@@ -1935,21 +1934,21 @@ const ProfileDetail = () => {
                               <>
                                 <a
                                   href={url}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="flex items-center"
+                                  target='_blank'
+                                  rel='noopener noreferrer'
+                                  className='flex items-center'
                                 >
-                                  {Icon} 
+                                  {Icon}
                                 </a>
                                 <button
-                                  type="button"
-                                  className="absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 translate-x-6 ease-in-out transform opacity-100 lgx:opacity-0 lgx:group-hover:opacity-100 md:group-hover:translate-x-6 h-10 w-7"
-                                  onClick={() => handleLinkEditToggle(key)} 
+                                  type='button'
+                                  className='absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 translate-x-6 ease-in-out transform opacity-100 lgx:opacity-0 lgx:group-hover:opacity-100 md:group-hover:translate-x-6 h-10 w-7'
+                                  onClick={() => handleLinkEditToggle(key)}
                                 >
                                   <img
                                     src={edit}
-                                    alt="edit"
-                                    loading="lazy"
+                                    alt='edit'
+                                    loading='lazy'
                                     draggable={false}
                                   />
                                 </button>
@@ -1960,42 +1959,42 @@ const ProfileDetail = () => {
                       })}
                   </div>
                   {fields.map((item, index) => (
-                    <div key={item.id} className="flex flex-col">
-                      <div className="flex items-center mb-2 pb-1">
+                    <div key={item.id} className='flex flex-col'>
+                      <div className='flex items-center mb-2 pb-1'>
                         <Controller
                           name={`links[${index}].link`}
                           control={control}
                           render={({ field, fieldState }) => (
-                            <div className="flex items-center w-full">
-                              <div className="flex items-center space-x-2 w-full">
-                                <div className="flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full">
-                                  {field.value && getSocialLogo(field.value)}{" "}
+                            <div className='flex items-center w-full'>
+                              <div className='flex items-center space-x-2 w-full'>
+                                <div className='flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full'>
+                                  {field.value && getSocialLogo(field.value)}{' '}
                                   {/* Display logo for new link */}
                                 </div>
                                 <input
-                                  type="text"
-                                  placeholder="Enter your social media URL"
+                                  type='text'
+                                  placeholder='Enter your social media URL'
                                   className={`p-2 border ${
                                     fieldState.error
-                                      ? "border-red-500"
-                                      : "border-[#737373]"
+                                      ? 'border-red-500'
+                                      : 'border-[#737373]'
                                   } rounded-md w-full bg-gray-50 border-2 border-[#D1D5DB]`}
                                   {...field}
                                 />
                               </div>
                               <button
-                                type="button"
+                                type='button'
                                 onClick={() =>
                                   handleSaveNewLink(field.value, index)
-                                } 
-                                className="ml-2 text-green-500 hover:text-green-700"
+                                }
+                                className='ml-2 text-green-500 hover:text-green-700'
                               >
                                 <FaSave />
                               </button>
                               <button
-                                type="button"
-                                onClick={() => remove(index)} 
-                                className="ml-2 text-red-500 hover:text-red-700"
+                                type='button'
+                                onClick={() => remove(index)}
+                                className='ml-2 text-red-500 hover:text-red-700'
                               >
                                 <FaTrash />
                               </button>
@@ -2007,16 +2006,15 @@ const ProfileDetail = () => {
                   ))}
                   {fields.length < 10 && (
                     <button
-                      type="button"
+                      type='button'
                       onClick={() => {
                         if (fields.length < 10) {
-                          append({ link: "" });
+                          append({ link: '' });
                         }
                       }}
-
-                      className="flex items-center p-1 text-[#155EEF]"
+                      className='flex items-center p-1 text-[#155EEF]'
                     >
-                      <FaPlus className="mr-1" /> Add Another Link
+                      <FaPlus className='mr-1' /> Add Another Link
                     </button>
                   )}
                 </div>
@@ -2026,34 +2024,34 @@ const ProfileDetail = () => {
                 {(Object.values(isEditing).some((value) => value) ||
                   isLinkBeingEdited ||
                   isImageEditing) && (
-                  <div className="flex justify-end gap-4 mt-4">
+                  <div className='flex justify-end gap-4 mt-4'>
                     <button
-                      type="button"
+                      type='button'
                       onClick={handleCancel}
-                      className="bg-gray-300 text-gray-700 py-2 px-4 rounded"
+                      className='bg-gray-300 text-gray-700 py-2 px-4 rounded'
                     >
                       Cancel
                     </button>
                     <button
                       disabled={isSubmitting}
-                      type="submit"
-                      className="bg-blue-600 text-white py-2 px-4 rounded"
+                      type='submit'
+                      className='bg-blue-600 text-white py-2 px-4 rounded'
                     >
                       {isSubmitting ? (
                         <ThreeDots
                           visible={true}
-                          height="35"
-                          width="35"
-                          color="#FFFEFF"
-                          radius="9"
-                          ariaLabel="three-dots-loading"
+                          height='35'
+                          width='35'
+                          color='#FFFEFF'
+                          radius='9'
+                          ariaLabel='three-dots-loading'
                           wrapperStyle={{}}
-                          wrapperclassName=""
+                          wrapperclassName=''
                         />
                       ) : isEditing ? (
-                        "Update"
+                        'Update'
                       ) : (
-                        "Submit"
+                        'Submit'
                       )}
                     </button>
                   </div>
@@ -2064,13 +2062,13 @@ const ProfileDetail = () => {
         )}
 
         {/* Investor Tab Content */}
-        {userRole === "vc" && activeTab === "vc" && <InvestorDetail />}
+        {userRole === 'vc' && activeTab === 'vc' && <InvestorDetail />}
 
         {/* Mentor Tab Content */}
-        {userRole === "mentor" && activeTab === "mentor" && <MentorEdit />}
+        {userRole === 'mentor' && activeTab === 'mentor' && <MentorEdit />}
 
         {/* Founder Tab Content */}
-        {userRole === "project" && activeTab === "project" && (
+        {userRole === 'project' && activeTab === 'project' && (
           <ProjectDetail
             logoPreview={logoPreview}
             setLogoPreview={setLogoPreview}

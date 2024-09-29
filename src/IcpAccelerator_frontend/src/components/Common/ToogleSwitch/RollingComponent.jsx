@@ -2,28 +2,28 @@ import React from 'react';
 import Avatar from '@mui/material/Avatar';
 
 const RollingComponent = ({ isToggled, toggle, image }) => {
-  console.log('isToggled',isToggled)
+  console.log('isToggled', isToggled);
   return (
-    <div className="relative">
+    <div className='relative'>
       <input
-        type="checkbox"
-        id="expand-toggle3"
-        className="hidden"
+        type='checkbox'
+        id='expand-toggle3'
+        className='hidden'
         checked={isToggled}
         onChange={toggle}
       />
       <label
-        htmlFor="expand-toggle3"
-        className="block w-14 h-8 mx-auto bg-white rounded-full cursor-pointer transition-all duration-500 hover:bg-[#F7FAFC]"
+        htmlFor='expand-toggle3'
+        className='block w-14 h-8 mx-auto bg-white rounded-full cursor-pointer transition-all duration-500 hover:bg-[#F7FAFC]'
       >
-        <div className="relative w-full h-full rounded-full">
+        <div className='relative w-full h-full rounded-full'>
           <div
             className={`absolute inset-0 w-1/2 h-full transform rounded-full transition-transform duration-500 ease-in-out ${
               isToggled ? 'translate-x-full' : ''
             }`}
           >
             <Avatar
-              alt="Rolling Avatar"
+              alt='Rolling Avatar'
               src={image}
               sx={{
                 width: 30,

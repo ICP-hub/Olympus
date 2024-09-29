@@ -1,11 +1,15 @@
-import React, { useEffect, useState, useRef } from "react";
-import logoWithText from "../../../../assets/Logo/topLogoWhitepng.png";
-import Banner from "../../../../assets/images/banner.png";
-import { useSelector, useDispatch } from "react-redux";
-import LogoutModal from "../../../models/LogoutModal";
-import SwitchRole from "../../../models/SwitchRole";
-import { getCurrentRoleStatusFailureHandler, setCurrentActiveRole, setCurrentRoleStatus } from "../../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState, useRef } from 'react';
+import logoWithText from '../../../../assets/Logo/topLogoWhitepng.png';
+import Banner from '../../../../assets/images/banner.png';
+import { useSelector, useDispatch } from 'react-redux';
+import LogoutModal from '../../../models/LogoutModal';
+import SwitchRole from '../../../models/SwitchRole';
+import {
+  getCurrentRoleStatusFailureHandler,
+  setCurrentActiveRole,
+  setCurrentRoleStatus,
+} from '../../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer';
+import { useNavigate } from 'react-router-dom';
 const NewHeader = ({ setModalOpen, gradient }) => {
   // const navItems = [
   //   {
@@ -139,22 +143,30 @@ const NewHeader = ({ setModalOpen, gradient }) => {
   return (
     <>
       <nav
-        className="z-50 px-[5%] lg1:px-[3%] py-[2%] text-black bg-transparent sticky top-0 transition-transform"
-        style={{ transform: "unset" ,background:' linear-gradient(163deg, #3B00B9 0%, #D38ED7 100%)'}}>
-        <div className="container mx-auto w-full flex items-center justify-between">
-          <a className="self-center flex items-center" href="/">
+        className='z-50 px-[5%] lg1:px-[3%] py-[2%] text-black bg-transparent sticky top-0 transition-transform'
+        style={{
+          transform: 'unset',
+          background: ' linear-gradient(163deg, #3B00B9 0%, #D38ED7 100%)',
+        }}
+      >
+        <div className='container mx-auto w-full flex items-center justify-between'>
+          <a className='self-center flex items-center' href='/'>
             <img
               src={logoWithText}
-              alt="Olympus"
-              className="h-8 md:h-10 hidden"
-              loading="lazy"
+              alt='Olympus'
+              className='h-8 md:h-10 hidden'
+              loading='lazy'
               draggable={false}
             />
-            <img src={logoWithText} alt="Olympus" className="h-8 md:h-10" 
-               loading="lazy"
-               draggable={false}/>
+            <img
+              src={logoWithText}
+              alt='Olympus'
+              className='h-8 md:h-10'
+              loading='lazy'
+              draggable={false}
+            />
           </a>
-          <div className="hidden md:flex gap-0 items-center">
+          <div className='hidden md:flex gap-0 items-center'>
             {/* {navItems.map((navItem, navIndex) => (
               <div
                 key={navIndex}
@@ -219,14 +231,14 @@ const NewHeader = ({ setModalOpen, gradient }) => {
               </div>
             ))} */}
           </div>
-          <div className="flex gap-4 items-center group">
+          <div className='flex gap-4 items-center group'>
             <button
-              type="button"
-              className="font-bold rounded-xl my-2 bg-transparent border-2 border-white/50 font-fontUse text-center text-white uppercase text-[0.625rem] md:text-[0.64375rem] lg:text-[14.5px] xl:text-[0.78125rem] px-6 py-2 top-[6.5rem] sm4:top-[10.5rem] xxs1:top-[8.5rem] ss2:top-[7.5rem] text-wrap group-hover:bg-white group-hover:text-[#BA77FB] z-20
-              backdrop-blur-xl"
+              type='button'
+              className='font-bold rounded-xl my-2 bg-transparent border-2 border-white/50 font-fontUse text-center text-white uppercase text-[0.625rem] md:text-[0.64375rem] lg:text-[14.5px] xl:text-[0.78125rem] px-6 py-2 top-[6.5rem] sm4:top-[10.5rem] xxs1:top-[8.5rem] ss2:top-[7.5rem] text-wrap group-hover:bg-white group-hover:text-[#BA77FB] z-20
+              backdrop-blur-xl'
               onClick={manageHandler}
             >
-              <span className="">SIGNUP / SIGNIN</span>
+              <span className=''>SIGNUP / SIGNIN</span>
             </button>
 
             {/* <button className="md:hidden flex flex-col gap-[6px] border-none bg-transparent px-[4px] h-8 w-8 p-0 justify-center">

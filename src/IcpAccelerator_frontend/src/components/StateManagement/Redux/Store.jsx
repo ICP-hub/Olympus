@@ -1,10 +1,10 @@
-import { configureStore } from "@reduxjs/toolkit";
-import createSagaMiddleware from "redux-saga";
-import rootReducer from "./Reducers/RootReducer";
-import rootSaga from "./Saga/RootSaga";
+import { configureStore } from '@reduxjs/toolkit';
+import createSagaMiddleware from 'redux-saga';
+import rootReducer from './Reducers/RootReducer';
+import rootSaga from './Saga/RootSaga';
 
-import { persistStore, persistReducer } from "redux-persist";
-import storage from "redux-persist/lib/storage";
+import { persistStore, persistReducer } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
 
 // import { encryptTransform } from 'redux-persist-transform-encrypt';
 
@@ -19,7 +19,7 @@ import storage from "redux-persist/lib/storage";
 const sagaMiddleware = createSagaMiddleware();
 
 const persistConfig = {
-  key: "root",
+  key: 'root',
   storage,
   whitelist: [],
   // transforms: [encryptor], // encrypt k lie kia
@@ -36,16 +36,16 @@ const store = configureStore({
       serializableCheck: {
         // Ignore krne k lie these action types in serializability check
         ignoredActions: [
-          "persist/PERSIST",
-          "persist/REHYDRATE",
-          "actors/setActor",
-          "internet/loginSuccess",
-          "internet/loginFailure",
+          'persist/PERSIST',
+          'persist/REHYDRATE',
+          'actors/setActor',
+          'internet/loginSuccess',
+          'internet/loginFailure',
         ],
-        ignoredPaths: ["actors.actor", "internet.identity"],
+        ignoredPaths: ['actors.actor', 'internet.identity'],
 
         // // Ignore these field paths in all actions
-        ignoredActionPaths: ["payload.identity", "payload.actor"],
+        ignoredActionPaths: ['payload.identity', 'payload.actor'],
         // // Ignore these paths in the state
       },
     }).concat(sagaMiddleware),

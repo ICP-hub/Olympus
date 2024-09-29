@@ -1,13 +1,14 @@
-import { takeLatest, call, put, select } from "redux-saga/effects";
-import { hubRegisteredHandlerFailure,hubRegisteredHandlerRequest, hubRegisteredHandlerSuccess } from "../Reducers/hubRegisteredData";
-
+import { takeLatest, call, put, select } from 'redux-saga/effects';
+import {
+  hubRegisteredHandlerFailure,
+  hubRegisteredHandlerRequest,
+  hubRegisteredHandlerSuccess,
+} from '../Reducers/hubRegisteredData';
 
 const selectActor = (currState) => currState.actors.actor;
 
-
 function* fetchHubHandler() {
   try {
-
     const actor = yield select(selectActor);
     // console.log('actor => => => ', actor)
 

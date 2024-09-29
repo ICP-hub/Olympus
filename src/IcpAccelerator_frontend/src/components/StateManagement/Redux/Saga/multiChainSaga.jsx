@@ -1,12 +1,14 @@
-import { takeLatest, call, put, select } from "redux-saga/effects";
-import { multiChainHandlerFailure,  multiChainHandlerRequest, multiChainHandlerSuccess } from "../Reducers/getMultiChainList";
+import { takeLatest, call, put, select } from 'redux-saga/effects';
+import {
+  multiChainHandlerFailure,
+  multiChainHandlerRequest,
+  multiChainHandlerSuccess,
+} from '../Reducers/getMultiChainList';
 
 const selectActor = (currState) => currState.actors.actor;
 
-
 function* fetchMultiChainInHandler() {
   try {
-
     const actor = yield select(selectActor);
     // console.log('actor => => => ', actor)
 

@@ -1,10 +1,10 @@
-import { takeLatest, call, put, select } from "redux-saga/effects";
+import { takeLatest, call, put, select } from 'redux-saga/effects';
 import {
   setActor,
   handleActorRequest,
   actorError,
-} from "../Reducers/actorBindReducer";
-import { createActor } from "../../../../../../declarations/IcpAccelerator_backend/index";
+} from '../Reducers/actorBindReducer';
+import { createActor } from '../../../../../../declarations/IcpAccelerator_backend/index';
 const selectedIdentity = (state) => state.internet.identity;
 
 function* initActorSaga() {
@@ -24,7 +24,7 @@ function* initActorSaga() {
 
     yield put(setActor(actor));
   } catch (error) {
-    console.error("Error in initActorSaga:", error);
+    console.error('Error in initActorSaga:', error);
     yield put(actorError(error.toString()));
   }
 }

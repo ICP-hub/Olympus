@@ -1,14 +1,14 @@
-import { AuthClient } from "@dfinity/auth-client";
-import React, { createContext, useContext, useEffect, useState } from "react";
-import { createActor } from "../../../../../declarations/IcpAccelerator_backend/index";
-import { Actor, HttpAgent } from "@dfinity/agent";
-import { useDispatch } from "react-redux";
-import { setActor } from "../Redux/Reducers/actorBindReducer";
+import { AuthClient } from '@dfinity/auth-client';
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { createActor } from '../../../../../declarations/IcpAccelerator_backend/index';
+import { Actor, HttpAgent } from '@dfinity/agent';
+import { useDispatch } from 'react-redux';
+import { setActor } from '../Redux/Reducers/actorBindReducer';
 import {
   loginSuccess,
   logoutSuccess,
-  logoutFailure
-} from "../Redux/Reducers/InternetIdentityReducer";
+  logoutFailure,
+} from '../Redux/Reducers/InternetIdentityReducer';
 
 const AuthContext = createContext();
 
@@ -31,19 +31,19 @@ const defaultOptions = {
    */
   loginOptionsii: {
     identityProvider:
-      process.env.DFX_NETWORK === "ic"
-        ? "https://identity.ic0.app/#authorize"
+      process.env.DFX_NETWORK === 'ic'
+        ? 'https://identity.ic0.app/#authorize'
         : `http://rdmx6-jaaaa-aaaaa-aaadq-cai.localhost:4943`,
-        // : `https://nfid.one/authenticate/?applicationName=my-ic-app#authorize`,
-        // :`https://nfid.one/authenticate/?applicationName=my-ic-app#authorize`
+    // : `https://nfid.one/authenticate/?applicationName=my-ic-app#authorize`,
+    // :`https://nfid.one/authenticate/?applicationName=my-ic-app#authorize`
   },
   loginOptionsnfid: {
     identityProvider:
-      process.env.DFX_NETWORK === "ic"
-        // ? "https://identity.ic0.app/#authorize"
-        // : `http://rdmx6-jaaaa-aaaaa-aaadq-cai.localhost:4943`,
-        ? `https://nfid.one/authenticate/?applicationName=my-ic-app#authorize`
-        : `https://nfid.one/authenticate/?applicationName=my-ic-app#authorize`
+      process.env.DFX_NETWORK === 'ic'
+        ? // ? "https://identity.ic0.app/#authorize"
+          // : `http://rdmx6-jaaaa-aaaaa-aaadq-cai.localhost:4943`,
+          `https://nfid.one/authenticate/?applicationName=my-ic-app#authorize`
+        : `https://nfid.one/authenticate/?applicationName=my-ic-app#authorize`,
   },
 };
 
@@ -79,7 +79,7 @@ export const useAuthClient = (options = defaultOptions) => {
           updateClient(authClient);
           resolve(AuthClient);
         } else {
-          let opt = val === "ii" ? "loginOptionsii" : "loginOptionsnfid"
+          let opt = val === 'ii' ? 'loginOptionsii' : 'loginOptionsnfid';
           authClient.login({
             ...options[opt],
             onError: (error) => reject(error),
@@ -118,7 +118,6 @@ export const useAuthClient = (options = defaultOptions) => {
     setIsAuthenticated(isAuthenticated);
     // console.log("isAuthenticated-use-Auth", isAuthenticated)
 
-   
     const identity = client.getIdentity();
     setIdentity(identity);
     // console.log("identity-use-Auth", identity)
@@ -131,12 +130,12 @@ export const useAuthClient = (options = defaultOptions) => {
     setAuthClient(client);
     const agent = new HttpAgent({
       identity,
-      verifyQuerySignatures: process.env.DFX_NETWORK === "ic", // Enable signature verification only in production
+      verifyQuerySignatures: process.env.DFX_NETWORK === 'ic', // Enable signature verification only in production
     });
 
-    if (process.env.DFX_NETWORK !== "ic") {
+    if (process.env.DFX_NETWORK !== 'ic') {
       await agent.fetchRootKey().catch((err) => {
-        console.warn("Unable to fetch root key:", err);
+        console.warn('Unable to fetch root key:', err);
       });
     }
 
@@ -144,7 +143,6 @@ export const useAuthClient = (options = defaultOptions) => {
       agent,
     });
     // console.log("actor-use-Auth", actor)
-
 
     if (isAuthenticated === true) {
       dispatch(
@@ -174,8 +172,9 @@ export const useAuthClient = (options = defaultOptions) => {
     process.env.CANISTER_ID_ICPACCELERATOR_BACKEND ||
     process.env.ICPACCELERATOR_BACKEND_CANISTER_ID;
 
-  const actor = createActor(canisterId, { agentOptions: { identity, verifyQuerySignatures: false } });
-  
+  const actor = createActor(canisterId, {
+    agentOptions: { identity, verifyQuerySignatures: false },
+  });
 
   return {
     isAuthenticated,
@@ -198,7 +197,7 @@ export const AuthProvider = ({ children }) => {
   if (auth.authClient && auth.actor) {
     return <AuthContext.Provider value={auth}>{children}</AuthContext.Provider>;
   } else {
-    return null; 
+    return null;
   }
 };
 

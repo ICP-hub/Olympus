@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialMultiChainState = {
   chains: [],
@@ -7,7 +7,7 @@ const initialMultiChainState = {
 };
 
 const multiChainSlice = createSlice({
-  name: "chains",
+  name: 'chains',
   initialState: initialMultiChainState,
   reducers: {
     multiChainHandlerRequest: (state) => {
@@ -26,7 +26,10 @@ const multiChainSlice = createSlice({
   },
 });
 
-export const { multiChainHandlerFailure, multiChainHandlerRequest, multiChainHandlerSuccess } =
-  multiChainSlice.actions;
+export const {
+  multiChainHandlerFailure,
+  multiChainHandlerRequest,
+  multiChainHandlerSuccess,
+} = multiChainSlice.actions;
 
 export default multiChainSlice.reducer;
