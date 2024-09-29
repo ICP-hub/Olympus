@@ -27,13 +27,12 @@
   }
 
   body {
-    font-family: "Figtree", sans-serif;
+    font-family: 'Figtree', sans-serif;
     font-optical-sizing: auto;
     font-weight: 400;
     font-style: normal;
-    }
-  
-  
+  }
+
   /* React Select Css changed from here */
   /* .css-11uhmi3-control {
     max-height: 42px !important;
@@ -119,7 +118,6 @@
 }
 
 @keyframes translateYAnimation {
-
   0%,
   100% {
     transform: translateY(0);
@@ -135,7 +133,7 @@
 }
 
 .CircularProgressbar-text {
-  font-weight: "900" !important;
+  font-weight: '900' !important;
 }
 
 /* Chrome, Safari, Edge, Opera */
@@ -156,10 +154,9 @@ select {
 }
 
 /* Firefox */
-input[type="number"] {
+input[type='number'] {
   -moz-appearance: textfield;
 }
-
 
 /* scroll hidden css  */
 
@@ -182,20 +179,12 @@ input[type="number"] {
   /* Darker color on hover */
 }
 
-
-
-#bgimage{
+#bgimage {
   background-image: url(../assets/images/Backgroundpattern.png);
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
-
 }
-
-
-
-
-
 
 /* Neon color variations */
 .neon-red {
@@ -228,29 +217,27 @@ input[type="number"] {
   text-overflow: ellipsis;
 }
 
-
-
 /* driverjs  */
 
-.driver-active-element{
+.driver-active-element {
   top: 60% !important;
 }
 
 .driver-popover.driverjs-theme {
   all: unset;
-    box-sizing: border-box;
-    color: #2d2d2d;
-    margin: auto;
-    padding: 15px;
-    border-radius: 5px;
-    min-width: 250px;
-    max-width: 400px;
-    box-shadow: 0 1px 10px #0006;
-    z-index: 1000000000;
-    position: fixed;
-    top: 0;
-    right: 0;
-    background-color: #fff;
+  box-sizing: border-box;
+  color: #2d2d2d;
+  margin: auto;
+  padding: 15px;
+  border-radius: 5px;
+  min-width: 250px;
+  max-width: 400px;
+  box-shadow: 0 1px 10px #0006;
+  z-index: 1000000000;
+  position: fixed;
+  top: 0;
+  right: 0;
+  background-color: #fff;
 }
 @media screen and (max-width: 445px) {
   .driver-popover.driverjs-theme {
@@ -284,7 +271,6 @@ input[type="number"] {
   border-radius: 6px;
 }
 
-
 .driver-popover.driverjs-theme .driver-popover-navigation-btns {
   justify-content: space-between;
   gap: 3px;
@@ -299,19 +285,23 @@ input[type="number"] {
   color: #000;
 }
 
-.driver-popover.driverjs-theme .driver-popover-arrow-side-left.driver-popover-arrow {
+.driver-popover.driverjs-theme
+  .driver-popover-arrow-side-left.driver-popover-arrow {
   border-left-color: #fde047;
 }
 
-.driver-popover.driverjs-theme .driver-popover-arrow-side-right.driver-popover-arrow {
+.driver-popover.driverjs-theme
+  .driver-popover-arrow-side-right.driver-popover-arrow {
   border-right-color: #fde047;
 }
 
-.driver-popover.driverjs-theme .driver-popover-arrow-side-top.driver-popover-arrow {
+.driver-popover.driverjs-theme
+  .driver-popover-arrow-side-top.driver-popover-arrow {
   border-top-color: #fde047;
 }
 
-.driver-popover.driverjs-theme .driver-popover-arrow-side-bottom.driver-popover-arrow {
+.driver-popover.driverjs-theme
+  .driver-popover-arrow-side-bottom.driver-popover-arrow {
   border-bottom-color: #fde047;
 }
 .swiper-pagination-bullet {
@@ -320,7 +310,7 @@ input[type="number"] {
   margin: 0 8px; /* Increase spacing between bullets */
 }
 .swiper-pagination-bullet {
-  padding: 10px;  /* Adds touchable area */
+  padding: 10px; /* Adds touchable area */
   background-color: gray; /* Ensure visual consistency */
   border-radius: 50%; /* Keep it circular */
   cursor: pointer;
@@ -328,6 +318,3 @@ input[type="number"] {
 .swiper-pagination-bullet {
   margin: 0 12px; /* Adds space between bullets */
 }
-
-
-

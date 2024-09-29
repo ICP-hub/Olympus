@@ -1,12 +1,14 @@
-import { takeLatest, call, put, select } from "redux-saga/effects";
-import { areaOfExpertiseHandlerFailure,  areaOfExpertiseHandlerRequest, areaOfExpertiseHandlerSuccess } from "../Reducers/getAreaOfExpertise";
+import { takeLatest, call, put, select } from 'redux-saga/effects';
+import {
+  areaOfExpertiseHandlerFailure,
+  areaOfExpertiseHandlerRequest,
+  areaOfExpertiseHandlerSuccess,
+} from '../Reducers/getAreaOfExpertise';
 
 const selectActor = (currState) => currState.actors.actor;
 
-
 function* fetchAreaExpertiseInHandler() {
   try {
-
     const actor = yield select(selectActor);
     // console.log('actor => => => ', actor)
 
@@ -21,5 +23,8 @@ function* fetchAreaExpertiseInHandler() {
 }
 
 export function* expertiseInSaga() {
-  yield takeLatest(areaOfExpertiseHandlerRequest.type, fetchAreaExpertiseInHandler);
+  yield takeLatest(
+    areaOfExpertiseHandlerRequest.type,
+    fetchAreaExpertiseInHandler
+  );
 }

@@ -1,27 +1,27 @@
-import React, { useEffect } from "react";
-import { useState } from "react";
-import { useSelector } from "react-redux";
-import { useDispatch } from "react-redux";
-import { handleActorRequest } from "./components/StateManagement/Redux/Reducers/actorBindReducer";
-import { mentorRegisteredHandlerRequest } from "./components/StateManagement/Redux/Reducers/mentorRegisteredData";
-import { useAuth } from "./components/StateManagement/useContext/useAuth";
-import { areaOfExpertiseHandlerRequest } from "./components/StateManagement/Redux/Reducers/getAreaOfExpertise";
-import { typeOfProfileSliceHandlerRequest } from "./components/StateManagement/Redux/Reducers/getTypeOfProfile";
+import React, { useEffect } from 'react';
+import { useState } from 'react';
+import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
+import { handleActorRequest } from './components/StateManagement/Redux/Reducers/actorBindReducer';
+import { mentorRegisteredHandlerRequest } from './components/StateManagement/Redux/Reducers/mentorRegisteredData';
+import { useAuth } from './components/StateManagement/useContext/useAuth';
+import { areaOfExpertiseHandlerRequest } from './components/StateManagement/Redux/Reducers/getAreaOfExpertise';
+import { typeOfProfileSliceHandlerRequest } from './components/StateManagement/Redux/Reducers/getTypeOfProfile';
 import {
   getCurrentRoleStatusFailureHandler,
   setCurrentActiveRole,
   setCurrentRoleStatus,
-} from "./components/StateManagement/Redux/Reducers/userCurrentRoleStatusReducer";
-import { userRegisteredHandlerRequest } from "./components/StateManagement/Redux/Reducers/userRegisteredData";
-import { multiChainHandlerRequest } from "./components/StateManagement/Redux/Reducers/getMultiChainList";
+} from './components/StateManagement/Redux/Reducers/userCurrentRoleStatusReducer';
+import { userRegisteredHandlerRequest } from './components/StateManagement/Redux/Reducers/userRegisteredData';
+import { multiChainHandlerRequest } from './components/StateManagement/Redux/Reducers/getMultiChainList';
 // import NewHeader from "./component/Layout/Header/NewHeader";
 // import Header from "./component/Layout/Header/Header";
-import AppRoutes from "./AppRoutes";
-import ConnectWallet from "./models/ConnectWallet";
-import WarningMessage from "./ScreenWarning";
-import { founderRegisteredHandlerRequest } from "./components/StateManagement/Redux/Reducers/founderRegisteredData";
-import { investorRegisteredHandlerRequest } from "./components/StateManagement/Redux/Reducers/investorRegisteredData";
-import Loader from "./components/Loader/Loader";
+import AppRoutes from './AppRoutes';
+import ConnectWallet from './models/ConnectWallet';
+import WarningMessage from './ScreenWarning';
+import { founderRegisteredHandlerRequest } from './components/StateManagement/Redux/Reducers/founderRegisteredData';
+import { investorRegisteredHandlerRequest } from './components/StateManagement/Redux/Reducers/investorRegisteredData';
+import Loader from './components/Loader/Loader';
 
 const App = () => {
   const actor = useSelector((currState) => currState.actors.actor);
@@ -29,23 +29,23 @@ const App = () => {
   const isAuthenticated = useSelector(
     (currState) => currState.internet.isAuthenticated
   );
-  const [isModalOpen,setModalOpen]=useState(false)
+  const [isModalOpen, setModalOpen] = useState(false);
   const { reloadLogin } = useAuth();
   const dispatch = useDispatch();
 
   function getNameOfCurrentStatus(rolesStatusArray) {
     const currentStatus = rolesStatusArray.find(
-      (role) => role.status === "active"
+      (role) => role.status === 'active'
     );
     return currentStatus ? currentStatus.name : null;
   }
 
   function formatFullDateFromBigInt(bigIntDate) {
     const date = new Date(Number(bigIntDate / 1000000n));
-    const dateString = date.toLocaleDateString("en-US", {
-      month: "long",
-      day: "numeric",
-      year: "numeric",
+    const dateString = date.toLocaleDateString('en-US', {
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric',
     });
     return `${dateString}`;
   }
@@ -57,9 +57,9 @@ const App = () => {
       Object.keys(obj).forEach((key) => {
         if (Array.isArray(obj[key]) && obj[key].length > 0) {
           if (
-            key === "approved_on" ||
-            key === "rejected_on" ||
-            key === "requested_on"
+            key === 'approved_on' ||
+            key === 'rejected_on' ||
+            key === 'requested_on'
           ) {
             // const date = new Date(Number(obj[key][0])).toLocaleDateString('en-US');
             const date = formatFullDateFromBigInt(obj[key][0]);
@@ -88,7 +88,7 @@ const App = () => {
       } else {
         dispatch(
           getCurrentRoleStatusFailureHandler(
-            "error-in-fetching-role-at-dashboard"
+            'error-in-fetching-role-at-dashboard'
           )
         );
         dispatch(setCurrentActiveRole(null));
@@ -135,8 +135,8 @@ const App = () => {
   return (
     <>
       {/* <WarningMessage /> */}
-      <div className="bg-gray-100">
-        <div className="container-lg mx-auto">
+      <div className='bg-gray-100'>
+        <div className='container-lg mx-auto'>
           <ConnectWallet
             isModalOpen={isModalOpen}
             onClose={() => setModalOpen(false)}

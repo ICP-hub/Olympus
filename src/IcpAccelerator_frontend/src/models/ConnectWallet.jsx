@@ -1,12 +1,12 @@
-	import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from 'react';
 import {
   closeModalSvg,
   walletModalSvg,
-} from "../components/Utils/Data/SvgData";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../components/StateManagement/useContext/useAuth";
-import { userRegisteredHandlerRequest } from "../components/StateManagement/Redux/Reducers/userRegisteredData";
+} from '../components/Utils/Data/SvgData';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../components/StateManagement/useContext/useAuth';
+import { userRegisteredHandlerRequest } from '../components/StateManagement/Redux/Reducers/userRegisteredData';
 
 const ConnectWallet = ({ isModalOpen, onClose }) => {
   const isAuthenticated = useSelector(
@@ -19,29 +19,29 @@ const ConnectWallet = ({ isModalOpen, onClose }) => {
   const modalRef = useRef(null);
 
   useEffect(() => {
-    if (isAuthenticated){
+    if (isAuthenticated) {
       dispatch(userRegisteredHandlerRequest());
-        }
-  }, [isAuthenticated,dispatch]);
+    }
+  }, [isAuthenticated, dispatch]);
   useEffect(() => {
-    console.log("isAuthenticated:", isAuthenticated);
-    console.log("userFullData:", userFullData);
-  
+    console.log('isAuthenticated:', isAuthenticated);
+    console.log('userFullData:', userFullData);
+
     if (isAuthenticated) {
       if (userFullData) {
-        console.log("Navigating to /dashboard");
-        navigate("/dashboard");
+        console.log('Navigating to /dashboard');
+        navigate('/dashboard');
       } else {
-        console.log("Navigating to /register-user");
-        navigate("/register-user");
+        console.log('Navigating to /register-user');
+        navigate('/register-user');
       }
       onClose();
     } else {
-      console.log("Navigating to home page");
-      navigate("/");
+      console.log('Navigating to home page');
+      navigate('/');
     }
   }, [isAuthenticated, userFullData]);
-  
+
   const loginHandler = async (val) => {
     await login(val);
   };
@@ -54,43 +54,47 @@ const ConnectWallet = ({ isModalOpen, onClose }) => {
 
   useEffect(() => {
     if (isModalOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener('mousedown', handleClickOutside);
     } else {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside);
     }
 
-return () => {
-  document.removeEventListener("mousedown", handleClickOutside);
-};
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
   }, [isModalOpen]);
 
   return (
     <>
       {isModalOpen && !isAuthenticated ? (
         <>
-          <div className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm z-50"></div>
-          <div className="overflow-y-auto overflow-x-hidden top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full fixed flex">
+          <div className='fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm z-50'></div>
+          <div className='overflow-y-auto overflow-x-hidden top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full fixed flex'>
             <div
-              className="relative p-4 w-full max-w-md max-h-full"
+              className='relative p-4 w-full max-w-md max-h-full'
               ref={modalRef}
             >
-              <div className="relative bg-white rounded-lg shadow">
-                <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t">
+              <div className='relative bg-white rounded-lg shadow'>
+                <div className='flex items-center justify-between p-4 md:p-5 border-b rounded-t'>
                   <button
-                    type="button"
-                    className="text-gray-400 bg-transparent hover:text-gray-900 rounded-lg text-sm h-8 w-8 inline-flex justify-center items-center z-10"
+                    type='button'
+                    className='text-gray-400 bg-transparent hover:text-gray-900 rounded-lg text-sm h-8 w-8 inline-flex justify-center items-center z-10'
                     onClick={onClose}
                   >
                     {closeModalSvg}
                   </button>
-                  <h3 className="text-lg font-semibold text-gray-900 grow text-center absolute left-0 right-0">
+                  <h3 className='text-lg font-semibold text-gray-900 grow text-center absolute left-0 right-0'>
                     Signup / Signin
                   </h3>
                 </div>
-                <div className="p-4 md:p-5">
-                  <ul className="cursor-pointer">
+                <div className='p-4 md:p-5'>
+                  <ul className='cursor-pointer'>
                     {walletModalSvg.map((wallet, index) => (
-                      <a key={index} onClick={() => loginHandler(wallet.id)} target="_self">
+                      <a
+                        key={index}
+                        onClick={() => loginHandler(wallet.id)}
+                        target='_self'
+                      >
                         {wallet.content}
                       </a>
                     ))}
@@ -102,7 +106,7 @@ return () => {
           </div>
         </>
       ) : (
-        ""
+        ''
       )}
     </>
   );

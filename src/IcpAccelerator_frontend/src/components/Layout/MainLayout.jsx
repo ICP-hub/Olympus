@@ -6,19 +6,19 @@ import ConnectWallet from '../../models/ConnectWallet';
 
 const MainLayout = () => {
   const [isModalOpen, setModalOpen] = useState(false);
-    return (
-        <div className="layout">
-            <Navbar setModalOpen={setModalOpen}/>
-            <main className=''>
-            <ConnectWallet
-            isModalOpen={isModalOpen}
-            onClose={() => setModalOpen(false)}
-          />
-                <Outlet context={{ setModalOpen }}/>
-            </main>
-            <Footer/>
-        </div>
-    );
+  return (
+    <div className='layout'>
+      <Navbar setModalOpen={setModalOpen} />
+      <main className=''>
+        <ConnectWallet
+          isModalOpen={isModalOpen}
+          onClose={() => setModalOpen(false)}
+        />
+        <Outlet context={{ setModalOpen }} />
+      </main>
+      <Footer />
+    </div>
+  );
 };
 
 export default MainLayout;

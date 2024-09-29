@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialJobCategoryState = {
   jobCategory: [],
@@ -7,7 +7,7 @@ const initialJobCategoryState = {
 };
 
 const jobCategorySlice = createSlice({
-  name: "jobCategory",
+  name: 'jobCategory',
   initialState: initialJobCategoryState,
   reducers: {
     jobCategoryHandlerRequest: (state) => {

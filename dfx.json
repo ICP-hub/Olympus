@@ -6,8 +6,8 @@
       "type": "rust",
       "optimize": "cycles"
     },
-    
-    "internet_identity" : {
+
+    "internet_identity": {
       "type": "pull",
       "id": "rdmx6-jaaaa-aaaaa-aaadq-cai"
     },
@@ -19,9 +19,7 @@
     },
 
     "IcpAccelerator_frontend": {
-      "dependencies": [
-        "IcpAccelerator_backend"
-      ],
+      "dependencies": ["IcpAccelerator_backend"],
       "frontend": {
         "entrypoint": "src/IcpAccelerator_frontend/src/index.html"
       },

@@ -17,7 +17,12 @@
     "generate": "dfx generate IcpAccelerator_backend",
     "did": "./scripts/generate_did.sh",
     "start:icpaccelerator": "webpack serve --config webpack.config.js --env frontend=IcpAccelerator_frontend --mode development",
-    "start:admin": "webpack serve --config webpack.config.js --env frontend=admin_frontend --mode development"
+    "start:admin": "webpack serve --config webpack.config.js --env frontend=admin_frontend --mode development",
+    "prepare": "husky",
+    "lint": "eslint",
+    "lint:fix": "eslint --fix",
+    "format": "prettier --write .",
+    "check-format": "prettier --check ."
   },
   "dependencies": {
     "@dfinity/agent": "^2.0.0",
@@ -49,6 +54,7 @@
     "ic": "^0.0.1",
     "jodit-react": "^4.1.2",
     "jq": "^1.7.2",
+    "prettier": "^3.3.3",
     "rc-progress": "^4.0.0",
     "react": "^18.3.1",
     "react-apexcharts": "^1.4.1",
@@ -84,6 +90,7 @@
     "yup": "^1.3.3"
   },
   "devDependencies": {
+    "@eslint/js": "^9.11.1",
     "@types/react": "^17.0.0",
     "assert": "^2.0.0",
     "buffer": "6.0.3",
@@ -91,8 +98,17 @@
     "css-loader": "^6.8.1",
     "css-minimizer-webpack-plugin": "^7.0.0",
     "dotenv": "^16.0.3",
+    "eslint": "^9.11.1",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-plugin-import": "^2.30.0",
+    "eslint-plugin-jsx-a11y": "^6.10.0",
+    "eslint-plugin-react": "^7.37.0",
+    "eslint-plugin-react-hooks": "^4.6.2",
     "events": "3.3.0",
+    "globals": "^15.9.0",
     "html-webpack-plugin": "5.5.0",
+    "husky": "^9.1.6",
+    "lint-staged": "^12.3.2",
     "mini-css-extract-plugin": "^2.9.1",
     "postcss-loader": "^7.3.3",
     "process": "0.11.10",
@@ -109,6 +125,9 @@
   "engines": {
     "node": "^12 || ^14 || ^16 || >=17",
     "npm": "^7.17 || >=8"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,md,html,css}": "prettier --write"
   },
   "browserslist": [
     "last 2 chrome version",

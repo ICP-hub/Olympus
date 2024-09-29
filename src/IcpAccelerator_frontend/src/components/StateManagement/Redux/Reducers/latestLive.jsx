@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialLatestLiveState = {
   latestLiveProject: [],
@@ -7,7 +7,7 @@ const initialLatestLiveState = {
 };
 
 const latestLiveSlice = createSlice({
-  name: "latestLive",
+  name: 'latestLive',
   initialState: initialLatestLiveState,
   reducers: {
     latestLiveHandlerRequest: (state) => {

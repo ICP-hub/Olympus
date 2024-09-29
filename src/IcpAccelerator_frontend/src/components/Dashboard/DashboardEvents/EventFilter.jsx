@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import Select from 'react-select';
 import CalendarTodayOutlinedIcon from '@mui/icons-material/CalendarTodayOutlined';
 
-const Filters = ({ setSelectedEventType,selectedEventType }) => {
+const Filters = ({ setSelectedEventType, selectedEventType }) => {
   console.log('selectedEventType Filter ', selectedEventType);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
@@ -43,45 +43,46 @@ const Filters = ({ setSelectedEventType,selectedEventType }) => {
     { value: 'VIP', label: 'VIP' },
   ];
 
- 
-
   const handlePriceChange = (selectedOption) => {
     console.log('Selected Price:', selectedOption.value);
-    
   };
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-sm block md:block sticky top-0 min-h-[40vh] md:min-h-[40%]">
-      <h2 className="text-[#121926] font-bold mb-4 hidden md:block">Filters</h2>
-      <div className="space-y-4">
+    <div className='bg-white p-6 rounded-lg shadow-sm block md:block sticky top-0 min-h-[40vh] md:min-h-[40%]'>
+      <h2 className='text-[#121926] font-bold mb-4 hidden md:block'>Filters</h2>
+      <div className='space-y-4'>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Event type</label>
-          <div className="relative">
+          <label className='block text-sm font-medium text-gray-700 mb-1'>
+            Event type
+          </label>
+          <div className='relative'>
             <Select
               options={eventTypeOptions}
-              value={eventTypeOptions.find(option => option.value === selectedEventType)}
+              value={eventTypeOptions.find(
+                (option) => option.value === selectedEventType
+              )}
               onChange={handleEventTypeChange}
-              className="w-full"
-              placeholder="Select event type"
-              menuPortalTarget={document.body} 
-              menuPlacement="auto" 
+              className='w-full'
+              placeholder='Select event type'
+              menuPortalTarget={document.body}
+              menuPlacement='auto'
               styles={{
                 menuPortal: (base) => ({
                   ...base,
-                  zIndex: 9999, 
+                  zIndex: 9999,
                 }),
                 control: (base) => ({
                   ...base,
                   '@media (max-width: 768px)': {
-                    width: '100%', 
+                    width: '100%',
                   },
                 }),
               }}
             />
           </div>
         </div>
-    
-         {/* <div>
+
+        {/* <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Price</label>
           <div className="relative">
             <Select

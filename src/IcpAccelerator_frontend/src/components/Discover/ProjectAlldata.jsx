@@ -1,27 +1,27 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 // import { IcpAccelerator_backend } from "../../../../declarations/IcpAccelerator_backend/index";
-import { IcpAccelerator_backend } from "../../../../declarations/IcpAccelerator_backend/index";
-import { useDispatch, useSelector } from "react-redux";
-import { FavoriteBorder, LocationOn, Star } from "@mui/icons-material";
-import CypherpunkLabLogo from "../../../assets/Logo/CypherpunkLabLogo.png";
-import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
-import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
-import { BsFillSendPlusFill } from "react-icons/bs";
-import { IoSendSharp } from "react-icons/io5";
-import { RiSendPlaneLine } from "react-icons/ri";
-import { Tooltip } from "react-tooltip";
-import { Principal } from "@dfinity/principal";
-import toast, { Toaster } from "react-hot-toast";
-import Avatar from "@mui/material/Avatar";
+import { IcpAccelerator_backend } from '../../../../declarations/IcpAccelerator_backend/index';
+import { useDispatch, useSelector } from 'react-redux';
+import { FavoriteBorder, LocationOn, Star } from '@mui/icons-material';
+import CypherpunkLabLogo from '../../../assets/Logo/CypherpunkLabLogo.png';
+import uint8ArrayToBase64 from '../Utils/uint8ArrayToBase64';
+import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined';
+import { BsFillSendPlusFill } from 'react-icons/bs';
+import { IoSendSharp } from 'react-icons/io5';
+import { RiSendPlaneLine } from 'react-icons/ri';
+import { Tooltip } from 'react-tooltip';
+import { Principal } from '@dfinity/principal';
+import toast, { Toaster } from 'react-hot-toast';
+import Avatar from '@mui/material/Avatar';
 
-import UserDetailPage from "../Dashboard/DashboardHomePage/UserDetailPage";
-import AddAMentorRequestModal from "../../models/AddAMentorRequestModal";
-import { mentorRegisteredHandlerRequest } from "../StateManagement/Redux/Reducers/mentorRegisteredData";
-import RatingModal from "../Common/RatingModal";
-import { bufferToImageBlob } from "../Utils/formatter/bufferToImageBlob";
-import parse from "html-react-parser";
-import InfiniteScroll from "react-infinite-scroll-component";
-import NoData from "../NoDataCard/NoData";
+import UserDetailPage from '../Dashboard/DashboardHomePage/UserDetailPage';
+import AddAMentorRequestModal from '../../models/AddAMentorRequestModal';
+import { mentorRegisteredHandlerRequest } from '../StateManagement/Redux/Reducers/mentorRegisteredData';
+import RatingModal from '../Common/RatingModal';
+import { bufferToImageBlob } from '../Utils/formatter/bufferToImageBlob';
+import parse from 'html-react-parser';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import NoData from '../NoDataCard/NoData';
 const DiscoverProject = ({ onProjectCountChange }) => {
   const actor = useSelector((currState) => currState.actors.actor);
   const [allProjectData, setAllProjectData] = useState([]);
@@ -57,7 +57,7 @@ const DiscoverProject = ({ onProjectCountChange }) => {
     (currState) => currState.mentorData.data[0]
   );
   const mentorId = mentorFullData;
-  console.log("mentorId", mentorId);
+  console.log('mentorId', mentorId);
   useEffect(() => {
     if (isAuthenticated) {
       dispatch(mentorRegisteredHandlerRequest());
@@ -71,36 +71,35 @@ const DiscoverProject = ({ onProjectCountChange }) => {
     setIsAddProjectModalOpen(true);
   };
 
- 
   // ASSOCIATE IN A PROJECT HANDLER AS A MENTOR
   const handleAddProject = async ({ message }) => {
     setIsSubmitting(true);
-    console.log("add into a project");
+    console.log('add into a project');
     if (actor && mentorPrincipal) {
       let project_id = listProjectId;
       let msg = message;
       let mentor_id = Principal.fromText(mentorPrincipal);
-      console.log("Data before sending", project_id, msg, mentor_id);
+      console.log('Data before sending', project_id, msg, mentor_id);
 
       await actor
         .send_offer_to_project_by_mentor(project_id, msg, mentor_id)
         .then((result) => {
-          console.log("result-in-send_offer_to_project_by_mentor", result);
+          console.log('result-in-send_offer_to_project_by_mentor', result);
           if (result) {
             handleProjectCloseModal();
             setIsSubmitting(false);
-            toast.success("offer sent to project successfully");
+            toast.success('offer sent to project successfully');
           } else {
             handleProjectCloseModal();
             setIsSubmitting(false);
-            toast.error("something got wrong");
+            toast.error('something got wrong');
           }
         })
         .catch((error) => {
-          console.log("error-in-send_offer_to_project_by_mentor", error);
+          console.log('error-in-send_offer_to_project_by_mentor', error);
           setIsSubmitting(false);
           handleProjectCloseModal();
-          toast.error("something got wrong");
+          toast.error('something got wrong');
         });
     }
   };
@@ -119,32 +118,37 @@ const DiscoverProject = ({ onProjectCountChange }) => {
   // ASSOCIATE IN A PROJECT HANDLER AS A Investor
   const handleAddProjectAsInvestor = async ({ message }) => {
     setIsSubmitting(true);
-    console.log("add into a project AS INVESTOR");
+    console.log('add into a project AS INVESTOR');
     if (actor) {
       let project_id = listProjectId;
       let msg = message;
-let is_cohort_association= false;
-let cohort_id=[];
+      let is_cohort_association = false;
+      let cohort_id = [];
       await actor
-        .send_offer_to_project_by_investor(project_id, msg,is_cohort_association,cohort_id)
+        .send_offer_to_project_by_investor(
+          project_id,
+          msg,
+          is_cohort_association,
+          cohort_id
+        )
         .then((result) => {
-          console.log("result-in-send_offer_to_project_by_investor", result);
+          console.log('result-in-send_offer_to_project_by_investor', result);
           if (result) {
             handleProjectCloseModalAsInvestor();
             setIsSubmitting(false);
             // fetchProjectData();
-            toast.success("offer sent to project successfully");
+            toast.success('offer sent to project successfully');
           } else {
             handleProjectCloseModalAsInvestor();
             setIsSubmitting(false);
-            toast.error("something got wrong");
+            toast.error('something got wrong');
           }
         })
         .catch((error) => {
-          console.log("error-in-send_offer_to_project_by_investor", error);
+          console.log('error-in-send_offer_to_project_by_investor', error);
           handleProjectCloseModalAsInvestor();
           setIsSubmitting(false);
-          toast.error("something got wrong");
+          toast.error('something got wrong');
         });
     }
   };
@@ -161,11 +165,11 @@ let cohort_id=[];
       if (result && result.data) {
         const ProjectData = Object.values(result.data);
         if (isRefresh) {
-          console.log("Refresh", "true");
+          console.log('Refresh', 'true');
           setAllProjectData(ProjectData); // Replace with refreshed data
           onProjectCountChange(ProjectData.length); // Update user count
         } else {
-          console.log("Refresh", "false");
+          console.log('Refresh', 'false');
           setAllProjectData((prevData) => [...prevData, ...ProjectData]);
           const newTotal = allProjectData.length + ProjectData.length;
           onProjectCountChange(newTotal);
@@ -177,7 +181,7 @@ let cohort_id=[];
         setHasMore(false);
       }
     } catch (error) {
-      console.error("Error fetching projects:", error);
+      console.error('Error fetching projects:', error);
       setHasMore(false);
     } finally {
       setIsFetching(false);
@@ -193,7 +197,7 @@ let cohort_id=[];
   const loadMore = () => {
     if (!isFetching && hasMore) {
       const newPage = currentPage + 1;
-      setCurrentPage(newPage); 
+      setCurrentPage(newPage);
       getAllProject(actor, newPage);
     }
   };
@@ -204,7 +208,7 @@ let cohort_id=[];
     setprincipal(principal);
     setOpenDetail(true);
     setUserDataToSend(user);
-    console.log("passed principle", principal);
+    console.log('passed principle', principal);
   };
   const handleRating = (ratings, principalId) => {
     setShowRatingModal(true);
@@ -217,7 +221,7 @@ let cohort_id=[];
       const blob = await bufferToImageBlob(buffer);
       return blob;
     } catch (error) {
-      console.error("Error converting buffer to image blob:", error);
+      console.error('Error converting buffer to image blob:', error);
       throw error; // Re-throw the error to be handled by the caller
     }
   }
@@ -229,11 +233,11 @@ let cohort_id=[];
       setImagePreview(blob);
     } catch (error) {
       // Handle any errors
-      console.error("Error handling profile picture:", error);
+      console.error('Error handling profile picture:', error);
     }
   }
   return (
-    <div id="scrollableDiv" style={{ height: "80vh", overflowY: "auto" }}>
+    <div id='scrollableDiv' style={{ height: '80vh', overflowY: 'auto' }}>
       {allProjectData.length > 0 ? (
         <InfiniteScroll
           dataLength={allProjectData.length}
@@ -241,9 +245,9 @@ let cohort_id=[];
           hasMore={hasMore}
           loader={<h4>Loading more...</h4>}
           endMessage={
-            <p className="flex justify-center">No more data available...</p>
+            <p className='flex justify-center'>No more data available...</p>
           }
-          scrollableTarget="scrollableDiv"
+          scrollableTarget='scrollableDiv'
         >
           {allProjectData?.map((projectArray, index) => {
             const project_id = projectArray[1]?.params?.uid;
@@ -251,7 +255,7 @@ let cohort_id=[];
             const user = projectArray[2];
             let profile = user?.profile_picture[0]
               ? uint8ArrayToBase64(user?.profile_picture[0])
-              : "../../../assets/Logo/CypherpunkLabLogo.png";
+              : '../../../assets/Logo/CypherpunkLabLogo.png';
             const projectlogo = project.params.params.project_logo[0]
               ? uint8ArrayToBase64(project.params.params.project_logo[0])
               : CypherpunkLabLogo;
@@ -259,60 +263,60 @@ let cohort_id=[];
             const projectdescription =
               project.params.params.project_description[0];
             let full_name = user?.full_name;
-            let openchat_name = user?.openchat_username[0] ?? "N/A";
+            let openchat_name = user?.openchat_username[0] ?? 'N/A';
             let country = user?.country;
             let bio = user?.bio[0];
             let email = user?.email[0];
             const randomSkills = user?.area_of_interest
-              .split(",")
+              .split(',')
               ?.map((skill) => skill.trim());
             const activeRole = project?.roles?.find(
-              (role) => role.status === "approved"
+              (role) => role.status === 'approved'
             );
 
             const principle_id = projectArray[0];
             return (
               <div
-                className="sm:pr-6 sm:pt-6 sm:pb-6  my-10 md1:my-0 w-full  rounded-lg shadow-sm mb-4 flex flex-col sm:flex-row "
+                className='sm:pr-6 sm:pt-6 sm:pb-6  my-10 md1:my-0 w-full  rounded-lg shadow-sm mb-4 flex flex-col sm:flex-row '
                 key={index}
               >
-                <div className="w-full sm:w-[272px] relative">
+                <div className='w-full sm:w-[272px] relative'>
                   <div
                     onClick={() => handleClick(principle_id, user)}
-                    className="w-full sm:max-w-[250px] sm:w-[250px] h-[254px] bg-gray-100 rounded-lg flex flex-col justify-between relative overflow-hidden"
+                    className='w-full sm:max-w-[250px] sm:w-[250px] h-[254px] bg-gray-100 rounded-lg flex flex-col justify-between relative overflow-hidden'
                   >
-                    <div className="absolute inset-0 flex items-center justify-center">
+                    <div className='absolute inset-0 flex items-center justify-center'>
                       <img
                         src={projectlogo || CypherpunkLabLogo} // Placeholder logo image
-                        alt={full_name ?? "Project"}
-                        className="w-24 h-24 rounded-full object-cover"
-                        loading="lazy"
+                        alt={full_name ?? 'Project'}
+                        className='w-24 h-24 rounded-full object-cover'
+                        loading='lazy'
                         draggable={false}
                       />
                     </div>
                   </div>
                   <div
                     onClick={() => handleRating(user, principle_id)}
-                    className="absolute cursor-pointer bottom-0 right-[6px] flex items-center bg-gray-100 p-1"
+                    className='absolute cursor-pointer bottom-0 right-[6px] flex items-center bg-gray-100 p-1'
                   >
-                    <Star className="text-yellow-400 w-4 h-4" />
-                    <span className="text-sm font-medium">Rate Us</span>
+                    <Star className='text-yellow-400 w-4 h-4' />
+                    <span className='text-sm font-medium'>Rate Us</span>
                   </div>
                 </div>
                 {/* md1:w-[544px] */}
-                <div className="flex-grow mt-5 md1:mt-0 sm:ml-[25px] w-full ">
-                  <div className="flex justify-between items-start mb-2">
+                <div className='flex-grow mt-5 md1:mt-0 sm:ml-[25px] w-full '>
+                  <div className='flex justify-between items-start mb-2'>
                     <div>
                       <div>
-                        <h3 className="text-xl font-bold">{projectname}</h3>
-                        <span className="flex py-2">
+                        <h3 className='text-xl font-bold'>{projectname}</h3>
+                        <span className='flex py-2'>
                           <Avatar
-                            alt="Mentor"
+                            alt='Mentor'
                             src={profile}
-                            className=" mr-2"
+                            className=' mr-2'
                             sx={{ width: 24, height: 24 }}
                           />
-                          <span className="text-gray-500">{full_name}</span>
+                          <span className='text-gray-500'>{full_name}</span>
                         </span>
                         {/* <span className="text-gray-500">@{openchat_name}</span> */}
                       </div>
@@ -320,44 +324,44 @@ let cohort_id=[];
                       {/* <h3 className="text-xl font-bold">{full_name}</h3> */}
                       {/* <p className="text-gray-500">@{openchat_name}</p> */}
                     </div>
-                    {userCurrentRoleStatusActiveRole === "mentor" ||
-                    userCurrentRoleStatusActiveRole === "vc" ? (
+                    {userCurrentRoleStatusActiveRole === 'mentor' ||
+                    userCurrentRoleStatusActiveRole === 'vc' ? (
                       <button
-                        data-tooltip-id="registerTip"
+                        data-tooltip-id='registerTip'
                         onClick={() => {
-                          if (userCurrentRoleStatusActiveRole === "mentor") {
+                          if (userCurrentRoleStatusActiveRole === 'mentor') {
                             handleProjectOpenModal(project_id);
-                          } else if (userCurrentRoleStatusActiveRole === "vc") {
+                          } else if (userCurrentRoleStatusActiveRole === 'vc') {
                             handleProjectOpenModalAsInvestor(project_id);
                           }
                         }}
                       >
                         <RiSendPlaneLine />
                         <Tooltip
-                          id="registerTip"
-                          place="top"
-                          effect="solid"
-                          className="rounded-full z-50"
+                          id='registerTip'
+                          place='top'
+                          effect='solid'
+                          className='rounded-full z-50'
                         >
                           Send Association Request
                         </Tooltip>
                       </button>
                     ) : (
-                      ""
+                      ''
                     )}
                   </div>
-                  <div className="bg-[#daebf3] border-[#70b2e9] border text-[#144579] rounded-md text-xs px-3 py-1 mr-2 mb-2 w-[4.9rem]">
+                  <div className='bg-[#daebf3] border-[#70b2e9] border text-[#144579] rounded-md text-xs px-3 py-1 mr-2 mb-2 w-[4.9rem]'>
                     PROJECT
                   </div>
-                  <div className="border-t border-gray-200 mt-3"></div>
+                  <div className='border-t border-gray-200 mt-3'></div>
 
-                  <div className="mb-2">
+                  <div className='mb-2'>
                     {activeRole && (
                       <span
                         key={index}
                         className={`inline-block ${
                           tagColors[activeRole.name] ||
-                          "bg-gray-100 text-gray-800"
+                          'bg-gray-100 text-gray-800'
                         } text-xs px-3 py-1 rounded-full mr-2 mb-2`}
                       >
                         {activeRole.name}
@@ -367,22 +371,22 @@ let cohort_id=[];
 
                   {/* <div className="border-t border-gray-200 my-3">{email}</div> */}
 
-                  <p className="text-gray-600 mb-4 line-clamp-3 break-all ">
-                    {" "}
+                  <p className='text-gray-600 mb-4 line-clamp-3 break-all '>
+                    {' '}
                     {parse(projectdescription)}
                   </p>
-                  <div className="flex items-center text-sm text-gray-500 flex-wrap">
+                  <div className='flex items-center text-sm text-gray-500 flex-wrap'>
                     {randomSkills?.map((skill, index) => (
                       <span
                         key={index}
-                        className="mr-2 mb-2 border boder-[#CDD5DF] bg-white text-[#364152] px-3 py-1 rounded-full"
+                        className='mr-2 mb-2 border boder-[#CDD5DF] bg-white text-[#364152] px-3 py-1 rounded-full'
                       >
                         {skill}
                       </span>
                     ))}
 
-                    <span className="mr-2 mb-2 flex text-[#121926] items-center">
-                      <PlaceOutlinedIcon className="text-[#364152] mr-1 w-4 h-4" />
+                    <span className='mr-2 mb-2 flex text-[#121926] items-center'>
+                      <PlaceOutlinedIcon className='text-[#364152] mr-1 w-4 h-4' />
                       {country}
                     </span>
                   </div>
@@ -392,8 +396,8 @@ let cohort_id=[];
           })}
         </InfiniteScroll>
       ) : (
-        <div className="flex justify-center items-center">
-          <NoData message={"No Projects Posted Yet"} />
+        <div className='flex justify-center items-center'>
+          <NoData message={'No Projects Posted Yet'} />
         </div>
       )}
       {showRatingModal && (
@@ -406,7 +410,7 @@ let cohort_id=[];
       )}
       {isAddProjectModalOpen && (
         <AddAMentorRequestModal
-          title={"Associate Project"}
+          title={'Associate Project'}
           onClose={handleProjectCloseModal}
           onSubmitHandler={handleAddProject}
           isSubmitting={isSubmitting}
@@ -414,7 +418,7 @@ let cohort_id=[];
       )}
       {isAddProjectModalOpenAsInvestor && (
         <AddAMentorRequestModal
-          title={"Associate Project"}
+          title={'Associate Project'}
           onClose={handleProjectCloseModalAsInvestor}
           onSubmitHandler={handleAddProjectAsInvestor}
           isSubmitting={isSubmitting}

@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialLatestListedState = {
   latestListedProject: [],
@@ -7,7 +7,7 @@ const initialLatestListedState = {
 };
 
 const latestListedSlice = createSlice({
-  name: "latestList",
+  name: 'latestList',
   initialState: initialLatestListedState,
   reducers: {
     latestListedHandlerRequest: (state) => {

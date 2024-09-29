@@ -12,15 +12,17 @@ const DonerMenu = () => {
   };
 
   return (
-    <div className="menu__wrapper flex flex-col justify-center items-center flex-1">
-      <div className={`menu__item--doner flex flex-col text-center items-center ${isHovered ? 'hovered' : ''}`}
-        onMouseEnter={handleHover} 
+    <div className='menu__wrapper flex flex-col justify-center items-center flex-1'>
+      <div
+        className={`menu__item--doner flex flex-col text-center items-center ${isHovered ? 'hovered' : ''}`}
+        onMouseEnter={handleHover}
         onMouseLeave={handleBlur}
-        onFocus={handleHover} 
-        onBlur={handleBlur}>
-        <div className="line h-0.5 w-4 bg-black mt-0.5"></div>
-        <div className="line h-0.5 w-3 bg-black mt-0.5"></div>
-        <div className="line h-0.5 w-2 bg-black mt-0.5"></div>
+        onFocus={handleHover}
+        onBlur={handleBlur}
+      >
+        <div className='line h-0.5 w-4 bg-black mt-0.5'></div>
+        <div className='line h-0.5 w-3 bg-black mt-0.5'></div>
+        <div className='line h-0.5 w-2 bg-black mt-0.5'></div>
       </div>
       {/* Additional Tailwind CSS styles */}
       {/* <style>
@@ -39,6 +41,6 @@ const DonerMenu = () => {
       </style> */}
     </div>
   );
-}
+};
 
 export default DonerMenu;

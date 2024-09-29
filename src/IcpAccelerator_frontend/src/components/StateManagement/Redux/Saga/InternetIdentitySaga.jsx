@@ -1,5 +1,5 @@
-import { call, put, takeLatest } from "redux-saga/effects";
-import { AuthClient } from "@dfinity/auth-client";
+import { call, put, takeLatest } from 'redux-saga/effects';
+import { AuthClient } from '@dfinity/auth-client';
 import {
   loginStart,
   // loginFailure,
@@ -8,20 +8,19 @@ import {
   logoutStart,
   logoutSuccess,
   checkLoginOnStart,
-} from "../Reducers/InternetIdentityReducer";
+} from '../Reducers/InternetIdentityReducer';
 
 function* clientInfo(authClient) {
-    const identity = yield call([authClient, authClient.getIdentity]);
+  const identity = yield call([authClient, authClient.getIdentity]);
 
   const principal = identity.getPrincipal().toText();
-
 
   yield put(
     loginSuccess({
       isAuthenticated: true,
       identity,
       principal,
-      navi: "roleSelect",
+      navi: 'roleSelect',
     })
   );
 }
@@ -30,8 +29,8 @@ function* performLogin(authClient) {
   yield new Promise((resolve, reject) => {
     authClient.login({
       identityProvider:
-        process.env.DFX_NETWORK === "ic"
-          ? "https://identity.ic0.app"
+        process.env.DFX_NETWORK === 'ic'
+          ? 'https://identity.ic0.app'
           : `http://rdmx6-jaaaa-aaaaa-aaadq-cai.localhost:4943`,
       maxTimeToLive: BigInt(7 * 24 * 60 * 60 * 1000 * 1000 * 1000),
       onSuccess: () => resolve(),
@@ -41,19 +40,15 @@ function* performLogin(authClient) {
 }
 
 function* checkLogin() {
-
   const authClient = yield AuthClient.create();
   const isAuthenticated = yield call([authClient, authClient.isAuthenticated]);
 
   if (isAuthenticated) {
     yield call(clientInfo, authClient);
   }
-
- 
 }
 
 function* handleLogin() {
-
   const authClient = yield AuthClient.create();
   const isAuthenticated = yield call([authClient, authClient.isAuthenticated]);
 
@@ -63,8 +58,6 @@ function* handleLogin() {
     yield call(performLogin, authClient);
     yield call(clientInfo, authClient);
   }
-
- 
 }
 
 function* handleLogout() {

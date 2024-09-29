@@ -1,12 +1,16 @@
-export default function viewProfileHandlerFromUtils(tab, filter, role, user_id) {
-    console.log({ tab, filter, role, user_id });
+export default function viewProfileHandlerFromUtils(
+  tab,
+  filter,
+  role,
+  user_id
+) {
+  console.log({ tab, filter, role, user_id });
 
-    switch (key) {
-        case value:
+  switch (key) {
+    case value:
+      break;
 
-            break;
-
-        default:
-            break;
-    }
+    default:
+      break;
+  }
 }

@@ -5,7 +5,7 @@
 // import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 // import CloseIcon from "@mui/icons-material/Close";
 // import getSocialLogo from "../../Utils/navigationHelper/getSocialLogo";
-// import { FaChevronDown, FaChevronUp } from "react-icons/fa"; 
+// import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 // import DiscoverDocument from "../DashboardHomePage/discoverMentorPage/DiscoverDocument";
 // import DiscoverTeam from "../DashboardHomePage/discoverMentorPage/DiscoverTeam";
 // import DiscoverRatings from "../../Discover/DiscoverRatings";
@@ -43,7 +43,6 @@
 //   const handleChange = (tab) => {
 //     setActiveTab(tab);
 //   };
-
 
 //   useEffect(() => {
 //     if (openDetail) {
@@ -211,7 +210,6 @@
 //   // Response Data
 //   let requestStatus = user?.request_status ?? "pending";
 //   let response = user?.response ?? "";
-
 
 //   return (
 //     <div
@@ -396,4 +394,3 @@
 // };
 
 // export default AssociationOfferModalInvestor;
-

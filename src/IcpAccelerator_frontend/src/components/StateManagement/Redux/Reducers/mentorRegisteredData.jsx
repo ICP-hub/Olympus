@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialMentorState = {
   data: [],
@@ -7,22 +7,22 @@ const initialMentorState = {
 };
 
 const mentorSlice = createSlice({
-  name: "mentoreData",
+  name: 'mentoreData',
   initialState: initialMentorState,
   reducers: {
     mentorRegisteredHandlerRequest: (state) => {
-        // console.log('mentorRegisteredHandlerRequest run')
+      // console.log('mentorRegisteredHandlerRequest run')
 
       state.loading = true;
       state.error = null;
     },
     mentorRegisteredHandlerSuccess: (state, action) => {
-        // console.log('mentorRegisteredHandlerSuccess run')
+      // console.log('mentorRegisteredHandlerSuccess run')
       state.loading = false;
       state.data = action.payload;
     },
     mentorRegisteredHandlerFailure: (state, action) => {
-        // console.log('mentorRegisteredHandlerFailure run')
+      // console.log('mentorRegisteredHandlerFailure run')
 
       state.loading = false;
       state.error = action.payload;
@@ -30,7 +30,10 @@ const mentorSlice = createSlice({
   },
 });
 
-export const { mentorRegisteredHandlerFailure, mentorRegisteredHandlerRequest, mentorRegisteredHandlerSuccess } =
-mentorSlice.actions;
+export const {
+  mentorRegisteredHandlerFailure,
+  mentorRegisteredHandlerRequest,
+  mentorRegisteredHandlerSuccess,
+} = mentorSlice.actions;
 
 export default mentorSlice.reducer;

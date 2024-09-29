@@ -6,15 +6,15 @@
 //       <nav className="-mb-px flex space-x-8">
 //         {tabs.map((tab) => (
 //           <button
-//             key={tab.value} 
-//             onClick={() => onTabChange(tab.value)} 
+//             key={tab.value}
+//             onClick={() => onTabChange(tab.value)}
 //             className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm ${
-//               currentTab === tab.value 
+//               currentTab === tab.value
 //                 ? "border-blue-500 text-blue-600"
 //                 : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
 //             }`}
 //           >
-//             {tab.label} 
+//             {tab.label}
 //           </button>
 //         ))}
 //       </nav>
@@ -23,8 +23,8 @@
 // };
 
 // export default Tabs;
-import React, { useRef, useState, useEffect } from "react";
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import React, { useRef, useState, useEffect } from 'react';
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
 const Tabs = ({ tabs, currentTab, onTabChange }) => {
   const tabsContainerRef = useRef(null);
@@ -40,28 +40,28 @@ const Tabs = ({ tabs, currentTab, onTabChange }) => {
       }
     };
     checkScrollable();
-    window.addEventListener("resize", checkScrollable);
+    window.addEventListener('resize', checkScrollable);
 
     return () => {
-      window.removeEventListener("resize", checkScrollable);
+      window.removeEventListener('resize', checkScrollable);
     };
   }, []);
 
   const scrollTabs = (direction) => {
     if (tabsContainerRef.current) {
       tabsContainerRef.current.scrollBy({
-        left: direction === "left" ? -100 : 100, 
-        right: direction ==="right" ? -100 :100,
-       });
+        left: direction === 'left' ? -100 : 100,
+        right: direction === 'right' ? -100 : 100,
+      });
     }
   };
 
   return (
-    <div className="sticky top-[3.5rem] md:top-[4.6rem] md1:top-[4.25rem] lg:top-[4.6rem] lgx:top-[4.25rem] z-20 bg-white w-full">
+    <div className='sticky top-[3.5rem] md:top-[4.6rem] md1:top-[4.25rem] lg:top-[4.6rem] lgx:top-[4.25rem] z-20 bg-white w-full'>
       {isScrollable && (
         <button
-          onClick={() => scrollTabs("left")}
-          className="absolute left-0 top-[40%] transform -translate-y-1/2 bg-gray-100 p-2 rounded-full z-10"
+          onClick={() => scrollTabs('left')}
+          className='absolute left-0 top-[40%] transform -translate-y-1/2 bg-gray-100 p-2 rounded-full z-10'
         >
           <FaChevronLeft />
         </button>
@@ -70,18 +70,18 @@ const Tabs = ({ tabs, currentTab, onTabChange }) => {
       <div
         ref={tabsContainerRef}
         className={`w-[94%] overflow-x-auto whitespace-nowrap scrollbar-hide ${
-          isScrollable ? "px-6" : ""
+          isScrollable ? 'px-6' : ''
         }`}
       >
-        <nav className="flex space-x-6">
+        <nav className='flex space-x-6'>
           {tabs.map((tab, index) => (
             <button
               key={tab.value}
               onClick={() => onTabChange(tab.value)}
               className={`whitespace-nowrap py-2 px-2 border-b-2 font-medium text-sm  ${
                 currentTab === tab.value
-                  ? "border-blue-500 text-blue-600"
-                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
               // style={index === tabs.length - 1 ? { paddingRight: "40px" } : {}}
             >
@@ -93,8 +93,8 @@ const Tabs = ({ tabs, currentTab, onTabChange }) => {
 
       {isScrollable && (
         <button
-          onClick={() => scrollTabs("right")}
-          className="absolute right-0 top-[32%] transform -translate-y-1/2 bg-gray-100 p-2 rounded-full z-10"
+          onClick={() => scrollTabs('right')}
+          className='absolute right-0 top-[32%] transform -translate-y-1/2 bg-gray-100 p-2 rounded-full z-10'
         >
           <FaChevronRight />
         </button>

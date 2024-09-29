@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialPopularListedState = {
   popularListedProject: [],
@@ -7,7 +7,7 @@ const initialPopularListedState = {
 };
 
 const popularListedSlice = createSlice({
-  name: "pupularList",
+  name: 'pupularList',
   initialState: initialPopularListedState,
   reducers: {
     popularListedHandlerRequest: (state) => {

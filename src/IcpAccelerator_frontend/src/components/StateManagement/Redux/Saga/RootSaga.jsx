@@ -15,35 +15,33 @@ import { latestLiveProjectSaga } from './latestLiveSaga';
 import { latestListedProjectSaga } from './latestListedSaga';
 import { popularListedProjectSaga } from './popularListedSaga';
 import { popularLiveProjectSaga } from './popularLive';
-import {JobCategorySaga} from './jobCategorySaga'
+import { JobCategorySaga } from './jobCategorySaga';
 import { userCurrentRoleSaga } from './userCurrentRoleStatusSaga';
 
 import { fetchUserSaga } from './userSaga';
 import { chainsSaga } from './multiChainSaga';
 
-
-
 export default function* rootSaga() {
-    yield all([
-        // walletSagas(),
-        roleSaga(),
-        allHubsSaga(),
-        internetIdentitySaga(),
-        actorSaga(),
-        userRoleSaga(),
-        fetchUserSaga(),
-        fetchFounderSaga(),
-        fetchHubSaga(),
-        fetchInvestorSaga(),
-        fetchMentorSaga(),
-        expertiseInSaga(),
-        typeOfProfileSaga(),
-        chainsSaga(),
-        latestListedProjectSaga(),
-        latestLiveProjectSaga(),
-        popularListedProjectSaga(),
-        popularLiveProjectSaga(),
-        userCurrentRoleSaga(),
-        JobCategorySaga(),
-    ]);
+  yield all([
+    // walletSagas(),
+    roleSaga(),
+    allHubsSaga(),
+    internetIdentitySaga(),
+    actorSaga(),
+    userRoleSaga(),
+    fetchUserSaga(),
+    fetchFounderSaga(),
+    fetchHubSaga(),
+    fetchInvestorSaga(),
+    fetchMentorSaga(),
+    expertiseInSaga(),
+    typeOfProfileSaga(),
+    chainsSaga(),
+    latestListedProjectSaga(),
+    latestLiveProjectSaga(),
+    popularListedProjectSaga(),
+    popularLiveProjectSaga(),
+    userCurrentRoleSaga(),
+    JobCategorySaga(),
+  ]);
 }

@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
-import CloseIcon from "@mui/icons-material/Close";
-import DiscoverMentorProfile from "./DiscoverMentorProfile";
-import DiscoverMentorEvent from "./DiscoverMentorEvent";
+import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import CloseIcon from '@mui/icons-material/Close';
+import DiscoverMentorProfile from './DiscoverMentorProfile';
+import DiscoverMentorEvent from './DiscoverMentorEvent';
 
 const DiscoverMentorMain = ({ openDetail, setOpenDetail, principal }) => {
   const actor = useSelector((currState) => currState.actors.actor);
-  console.log("principal in DiscoverMentorMain", principal);
+  console.log('principal in DiscoverMentorMain', principal);
   const [allMentorData, setAllMentorData] = useState(null);
   const [loaing, setIsLoading] = useState(true);
 
@@ -15,7 +15,7 @@ const DiscoverMentorMain = ({ openDetail, setOpenDetail, principal }) => {
       .get_mentor_info_using_principal(principal)
       .then((result) => {
         if (isMounted) {
-          console.log("Data received:", result?.[0]);
+          console.log('Data received:', result?.[0]);
           if (result) {
             setAllMentorData(result?.[0]);
           } else {
@@ -28,7 +28,7 @@ const DiscoverMentorMain = ({ openDetail, setOpenDetail, principal }) => {
         if (isMounted) {
           setAllMentorData([]);
           setIsLoading(false);
-          console.log("error-in-get-all-user", error);
+          console.log('error-in-get-all-user', error);
         }
       });
   };
@@ -48,21 +48,24 @@ const DiscoverMentorMain = ({ openDetail, setOpenDetail, principal }) => {
   }, [actor, principal]);
 
   return (
-    <div className="w-full bg-fixed lg1:h-screen fixed inset-0 bg-black bg-opacity-30 backdrop-blur-xs z-50">
-      <div className="mx-auto w-full sm:w-[70%] absolute right-0 top-0 z-10 bg-white h-screen">
-        <div className="p-2 mb-2">
+    <div className='w-full bg-fixed lg1:h-screen fixed inset-0 bg-black bg-opacity-30 backdrop-blur-xs z-50'>
+      <div className='mx-auto w-full sm:w-[70%] absolute right-0 top-0 z-10 bg-white h-screen'>
+        <div className='p-2 mb-2'>
           <CloseIcon
-            sx={{ cursor: "pointer" }}
+            sx={{ cursor: 'pointer' }}
             onClick={() => setOpenDetail(false)}
           />
         </div>
-        <div className="container mx-auto overflow-hidden overflow-y-scroll h-full px-[4%] sm:px-[2%] pb-8">
-          <div className="flex flex-col gap-4 lg1:py-3 lg1:gap-0 lg1:flex-row w-full lg1:justify-evenly  ">
-            <div className=" rounded-lg w-full lg1:overflow-y-scroll lg1:w-[32%] h-full">
+        <div className='container mx-auto overflow-hidden overflow-y-scroll h-full px-[4%] sm:px-[2%] pb-8'>
+          <div className='flex flex-col gap-4 lg1:py-3 lg1:gap-0 lg1:flex-row w-full lg1:justify-evenly  '>
+            <div className=' rounded-lg w-full lg1:overflow-y-scroll lg1:w-[32%] h-full'>
               <DiscoverMentorProfile mentorData={allMentorData} />
             </div>
-            <div className="px-1 lg1:px-3 py-4 lg1:py-0 w-full lg1:overflow-y-scroll lg1:w-[63%] ">
-              <DiscoverMentorEvent mentorData={allMentorData} principal={principal} />
+            <div className='px-1 lg1:px-3 py-4 lg1:py-0 w-full lg1:overflow-y-scroll lg1:w-[63%] '>
+              <DiscoverMentorEvent
+                mentorData={allMentorData}
+                principal={principal}
+              />
             </div>
           </div>
         </div>

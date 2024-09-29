@@ -1,9 +1,9 @@
-import { takeLatest, call, put, select } from "redux-saga/effects";
+import { takeLatest, call, put, select } from 'redux-saga/effects';
 import {
   userRoleHandler,
   userRoleFailureHandler,
   userRoleSuccessHandler,
-} from "../Reducers/userRoleReducer";
+} from '../Reducers/userRoleReducer';
 
 const selectActor = (currState) => currState.actors.actor;
 

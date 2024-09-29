@@ -1,12 +1,14 @@
-import { takeLatest, call, put, select } from "redux-saga/effects";
-import { jobCategoryHandlerRequest,jobCategoryHandlerSuccess,jobCategoryHandlerFailure} from "../Reducers/getJobCategory"
+import { takeLatest, call, put, select } from 'redux-saga/effects';
+import {
+  jobCategoryHandlerRequest,
+  jobCategoryHandlerSuccess,
+  jobCategoryHandlerFailure,
+} from '../Reducers/getJobCategory';
 
 const selectActor = (currState) => currState.actors.actor;
 
-
 function* fetchJobCategoryHandler() {
   try {
-
     const actor = yield select(selectActor);
     // console.log('actor => => => ', actor)
 
