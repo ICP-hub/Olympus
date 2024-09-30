@@ -1,20 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import { IcpAccelerator_backend } from '../../../../declarations/IcpAccelerator_backend/index';
-import { useDispatch, useSelector } from 'react-redux';
-import { Star } from '@mui/icons-material';
-import InfiniteScroll from 'react-infinite-scroll-component';
-import uint8ArrayToBase64 from '../Utils/uint8ArrayToBase64';
-import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined';
-import toast, { Toaster } from 'react-hot-toast';
-import { RiSendPlaneLine } from 'react-icons/ri';
-import { founderRegisteredHandlerRequest } from '../StateManagement/Redux/Reducers/founderRegisteredData';
-import { Tooltip } from 'react-tooltip';
-import AddAMentorRequestModal from '../../models/AddAMentorRequestModal';
-import { Principal } from '@dfinity/principal';
-import DiscoverInvestorPage from '../Dashboard/DashboardHomePage/DiscoverInvestor/DiscoverInvestorPage';
-import RatingModal from '../Common/RatingModal';
-import NoData from '../NoDataCard/NoData';
-
+import React, { useState, useEffect, useLayoutEffect } from "react";
+import { IcpAccelerator_backend } from "../../../../declarations/IcpAccelerator_backend/index";
+import { useDispatch, useSelector } from "react-redux";
+import { Star } from "@mui/icons-material";
+import InfiniteScroll from "react-infinite-scroll-component";
+import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
+import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
+import toast, { Toaster } from "react-hot-toast";
+import { RiSendPlaneLine } from "react-icons/ri";
+import { founderRegisteredHandlerRequest } from "../StateManagement/Redux/Reducers/founderRegisteredData";
+import { Tooltip } from "react-tooltip";
+import AddAMentorRequestModal from "../../models/AddAMentorRequestModal";
+import { Principal } from "@dfinity/principal";
+import DiscoverInvestorPage from "../Dashboard/DashboardHomePage/DiscoverInvestor/DiscoverInvestorPage";
+import RatingModal from "../Common/RatingModal";
+import NoData from "../NoDataCard/NoData";
+import SpinnerLoader from "./SpinnerLoader";
+import AOS from "aos";
+import "aos/dist/aos.css";
 const DiscoverInvestor = ({ onInvestorCountChange }) => {
   const actor = useSelector((currState) => currState.actors.actor);
   const [allInvestorData, setAllInvestorData] = useState([]);
@@ -152,14 +154,29 @@ const DiscoverInvestor = ({ onInvestorCountChange }) => {
     setCurrentPrincipal(principalId);
   };
 
+  // initialize Aos
+  useLayoutEffect(() => {
+    AOS.init({
+      duration: 1000,
+      once: false,
+    });
+  }, []);
   return (
-    <div id='scrollableDiv' style={{ height: '80vh', overflowY: 'auto' }}>
+    <div
+      id="scrollableDiv"
+      style={{ height: "80vh", overflowY: "auto" }}
+      data-aos="fade-up"
+    >
       {allInvestorData.length > 0 ? (
         <InfiniteScroll
           dataLength={allInvestorData.length}
           next={loadMore}
           hasMore={hasMore}
-          loader={<h4>Loading more...</h4>}
+          loader={
+            <>
+              <SpinnerLoader />
+            </>
+          }
           endMessage={
             <p className='flex justify-center'>No more data available...</p>
           }
@@ -222,10 +239,10 @@ const DiscoverInvestor = ({ onInvestorCountChange }) => {
                 <div className='flex-grow sm:ml-[25px] mt-5 md1:mt-0 w-full '>
                   <div className='flex justify-between items-start mb-2'>
                     <div>
-                      <h3 className='text-xl line-clamp-1 break-all font-bold'>
+                      <h3 className="text-xl line-clamp-1 break-all font-bold">
                         {full_name}
                       </h3>
-                      <p className='text-gray-500 line-clamp-1 break-all'>
+                      <p className="text-gray-500 line-clamp-1 break-all">
                         @{openchat_name}
                       </p>
                     </div>
@@ -265,11 +282,11 @@ const DiscoverInvestor = ({ onInvestorCountChange }) => {
                     {email}
                   </div>
 
-                  <p className='text-gray-600 mb-2 break-all line-clamp-3'>
+                  <p className="text-gray-600 mb-2 break-all line-clamp-3">
                     {bio}
                   </p>
-                  <div className='flex items-center text-sm text-gray-500 flex-wrap gap-1'>
-                    <div className='flex overflow-x-auto space-x-2'>
+                  <div className="flex items-center text-sm text-gray-500 flex-wrap gap-1">
+                    <div className="flex overflow-x-auto space-x-2">
                       {randomSkills?.map((skill, index) => (
                         <span
                           key={index}

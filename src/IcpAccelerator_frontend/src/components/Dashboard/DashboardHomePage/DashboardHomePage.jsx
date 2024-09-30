@@ -4,16 +4,16 @@ import DashboardHomeSidebar from './DashboardHomeSidebar';
 import DashboardHomeWelcomeSection from './DashboardHomeWelcomeSection';
 import { Routes, Route } from 'react-router-dom';
 import ProjectProfile from './ProjectProfile';
-import Jobs from '../../jobs/Jobs';
-import ProfilePage from '../../Profile/ProfilePage';
-import EventMain from '../DashboardEvents/EventMain';
-import ServiceDetailPage from './ServiceDetailPage';
-import AddNewWork from './AddNewWork';
-import WorksSection from './WorksSection';
-import WorkSectionDetailPage from './WorkSectionDetailPage';
-import EventDetails from '../DashboardEvents/EventDetail';
-import DocumentSection from '../Project/DocumentSection';
-import DiscoverRegionalHubs from '../../RegionalHubs/RegionalHubs';
+import Jobs from '../../jobs/Jobs'
+import ProfilePage from '../../profile/ProfilePage'
+import EventMain from '../DashboardEvents/EventMain'
+import ServiceDetailPage from './ServiceDetailPage'
+import AddNewWork from './AddNewWork'
+import WorksSection from './WorksSection'
+import WorkSectionDetailPage from './WorkSectionDetailPage'
+import EventDetails from '../DashboardEvents/EventDetail'
+import DocumentSection from '../Project/DocumentSection'
+import DiscoverRegionalHubs from '../../RegionalHubs/RegionalHubs'
 import UsersSection from '../../Discover/UserSection';
 import { useSelector } from 'react-redux';
 

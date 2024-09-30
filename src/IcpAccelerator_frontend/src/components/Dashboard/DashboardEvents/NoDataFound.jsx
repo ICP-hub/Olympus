@@ -79,13 +79,16 @@ const NoDataFound = ({ message }) => {
             </defs>
           </svg>
         </div>
-        <h2 className='text-xl font-semibold mb-2'>{message}</h2>
-        <p className='text-gray-600 mb-2'>
+        <h2 className="text-xl font-semibold mb-2">
+          {message}
+        </h2>
+        {/* <p className="text-gray-600 mb-2">
           Any assets used in projects will live here.
         </p>
         <p className='text-gray-600 mb-6'>
           Start creating by uploading your files.
-        </p>
+        </p> */}
+       
       </div>
     </div>
   );

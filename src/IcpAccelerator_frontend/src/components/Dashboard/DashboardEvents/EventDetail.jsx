@@ -746,18 +746,21 @@ const EventDetails = () => {
           )}
         </div>
 
-        <div className='flex-1 w-full overflow-auto '>
-          <div className='py-2'>
-            <img
-              src={bannerImage}
-              alt='Event'
-              className='w-full h-[200px] rounded-lg lgx:h-[310px] object-cover'
-              loading='lazy'
-              draggable={false}
-            />
-            <h1 className='text-xl md:text-3xl font-bold mt-4'>{title}</h1>
-            <div className='flex items-center mt-2 text-gray-600'>
-              <span className='mr-2'>
+        <div className="flex-1 w-full overflow-auto ">
+          <div className="py-2">
+            <div className="w-full h-[200px] lgx:h-[310px] flex items-center justify-center bg-gray-100">
+              <img
+                src={bannerImage}
+                alt="Event"
+                className="w-full h-full rounded-lg  bg-gray-200"
+                loading="lazy"
+                draggable={false}
+              />
+            </div>
+
+            <h1 className="text-xl md:text-3xl font-bold mt-4">{title}</h1>
+            <div className="flex items-center mt-2 text-gray-600">
+              <span className="mr-2">
                 <img
                   src={StartDateCalender}
                   className='w-5 h-5 font-bold'

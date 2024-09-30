@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined';
-import { useSelector } from 'react-redux';
-import { useLocation } from 'react-router-dom';
-import toast from 'react-hot-toast';
-import uint8ArrayToBase64 from '../../Utils/uint8ArrayToBase64';
-import CloseIcon from '@mui/icons-material/Close';
-import NoCardData from '../../profile/NoCardData';
-import NoData from '../../NoDataCard/NoData';
+import React, { useState, useEffect } from "react";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
+import { useSelector } from "react-redux";
+import { useLocation } from "react-router-dom";
+import toast from "react-hot-toast";
+import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
+import CloseIcon from "@mui/icons-material/Close";
+import NoCardData from "../../profile/NoCardData";
+import NoData from "../../NoDataCard/NoData";
 const AttendeesCard = ({ member }) => {
   return (
     <div className='flex  p-4 bg-white shadow-md rounded-lg mb-6 transition-all items-center hover:shadow-lg'>
@@ -162,9 +162,9 @@ const Attendees = (cohortData) => {
   };
 
   return (
-    <div className='rounded-xl '>
-      <div className='mx-2'>
-        <div className='flex justify-between items-center mb-6'>
+    <div className="rounded-xl ">
+      <div className="mx-2">
+        <div className="flex justify-end items-center mb-6">
           {/* <h2 className="text-xl font-semibold text-gray-900">Attendees</h2> */}
           <MoreVertIcon onClick={toggleMenu} className='cursor-pointer' />
         </div>

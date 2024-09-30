@@ -103,9 +103,9 @@ const ProjectCard = () => {
                     ></div>
                     <img
                       src={projectLogo}
-                      alt={projectName ?? 'ICP'}
-                      className=' sm2:w-3/4 h-28 rounded-2xl border-4 border-[#FFFFFF] relative z-10'
-                      loading='lazy'
+                      alt={projectName ?? "ICP"}
+                      className=" sm2:w-3/4 h-28 rounded-2xl border-4 border-[#FFFFFF] relative z-10 object-cover object-center"
+                      loading="lazy"
                       draggable={false}
                     />
                   </div>

@@ -65,125 +65,129 @@ const JobDetails = ({ setOpen, uid }) => {
 
   const [showDetails, setShowDetails] = useState(false);
 
-  const handleToggle = () => {
-    setShowDetails(!showDetails);
-  };
-  return (
-    <div className='w-full bg-fixed h-screen fixed inset-0 bg-black bg-opacity-30 backdrop-blur-xs z-50'>
-      {/* <div className=' mx-auto w-[83%] absolute right-0 top-0 z-10 bg-white h-screen'> */}
-      <div
-        className={`transition-transform duration-300 ease-in-out transform ${
-          show ? 'translate-x-0' : 'translate-x-full'
-        } mx-auto w-[83%] absolute right-0 top-0 z-10 bg-white h-screen overflow-y-auto `}
-      >
-        <div className=' p-5'>
-          <CloseIcon sx={{ cursor: 'pointer' }} onClick={handleClose} />
-        </div>
-        <div className='container'>
-          <div className='flex flex-col md:flex-row justify-evenly px-[1%]  overflow-y-auto'>
-            <div className='border md:h-fit rounded-lg w-full md:w-[30%] '>
-              <div className='py-6 px-5 border rounded-t-lg bg-[#EEF2F6]'>
-                <div className='flex gap-2 items-center'>
-                  <span className=''>
-                    <img
-                      src={awtar}
-                      alt='icon'
-                      loading='lazy'
-                      draggable={false}
-                    />
-                  </span>
-                  <p className=''>{jobTitle}</p>
+     const handleToggle = () => {
+       setShowDetails(!showDetails);
+     };
+    return (
+      <div className="w-full bg-fixed h-screen fixed inset-0 bg-black bg-opacity-30 backdrop-blur-xs z-50">
+        {/* <div className=' mx-auto w-[83%] absolute right-0 top-0 z-10 bg-white h-screen'> */}
+        <div
+          className={`transition-transform duration-300 ease-in-out transform ${
+            show ? "translate-x-0" : "translate-x-full"
+          } mx-auto w-[70%] absolute right-0 top-0 z-10 bg-white h-screen overflow-y-auto `}
+        >
+          <div className=" p-5">
+            <CloseIcon sx={{ cursor: "pointer" }} onClick={handleClose} />
+          </div>
+          <div className="container">
+            <div className="flex flex-col md:flex-row justify-evenly px-[1%]  overflow-y-auto">
+              <div className="border md:h-fit rounded-lg w-full md:w-[30%] ">
+                <div className="py-6 px-5 border rounded-t-lg bg-[#EEF2F6]">
+                  <div className="flex gap-2 items-center">
+                    <span className="">
+                      <img src={awtar} alt="icon" 
+                         loading="lazy"
+                         draggable={false}/>
+                    </span>
+                    <p className="">{jobTitle}</p>
+                  </div>
+                  <div className="">
+                    <h2 className="text-xl font-bold my-3">
+                      {fullname} {/* Quality Assurance Engineer */}
+                    </h2>
+                  </div>
+                  <div className="">
+                    <a
+                      href={link}
+                      target="_blank"
+                      className="block border rounded-md bg-[#155EEF]  py-2 w-full text-white text-center"
+                    >
+                      Apply <span className=" text-white"></span>
+                      <ArrowOutwardIcon
+                        sx={{ marginTop: "-2px", fontSize: "medium" }}
+                      />
+                    </a>
+                  </div>
                 </div>
-                <div className=''>
-                  <h2 className='text-xl font-bold my-3'>
-                    {fullname} {/* Quality Assurance Engineer */}
-                  </h2>
-                </div>
-                <div className=''>
-                  <a
-                    href={link}
-                    target='_blank'
-                    className='block border rounded-md bg-[#155EEF]  py-2 w-full text-white text-center'
-                  >
-                    Apply <span className=' text-white'></span>
-                    <ArrowOutwardIcon
-                      sx={{ marginTop: '-2px', fontSize: 'medium' }}
-                    />
-                  </a>
-                </div>
-              </div>
-              <div className=' bg-white md:hidden  rounded-lg shadow-sm border border-gray-200 overflow-hidden w-full'>
-                {!showDetails ? (
-                  <button
-                    onClick={handleToggle}
-                    className=' font-bold py-2 px-4 rounded w-full flex justify-center items-center '
-                  >
-                    Show details
-                    <FaChevronDown className='ml-2' />
-                  </button>
-                ) : (
-                  <>
-                    <div className='p-3 '>
-                      <div className='p-2'>
-                        <h3 className='text-gray-400 mb-2 text-sm'>DATE</h3>
-                        <h4 className='text-sm font-medium'>{timestamp}</h4>
-                      </div>
-                      <div className='p-2'>
-                        <h3 className='text-gray-400 mb-2 text-sm'>CATEGORY</h3>
-                        <h4 className='text-sm font-medium'>{category}</h4>
-                      </div>
-                      <div className='p-2'>
-                        <h3 className='text-gray-400 mb-2 text-sm'>LOCATION</h3>
-                        <h4 className='text-sm font-medium'>{location}</h4>
-                      </div>
-                      <div className='p-2'>
-                        <h3 className='text-gray-400 mb-2 text-sm'>
-                          OCCUPATION
-                        </h3>
-                        <h4 className='text-sm font-medium'>{job_type}</h4>
-                      </div>
-                      <div className='p-2'>
-                        <h3 className='text-gray-400 mb-2 text-sm'>CONTACT</h3>
-                        <h4 className='text-sm font-medium flex items-center'>
-                          <TfiEmail />
-                          <span className='ml-2 truncate break-all'>
-                            {email}
-                          </span>
-                        </h4>
-                      </div>
-                    </div>
+                <div className=" bg-white md:hidden  rounded-lg shadow-sm border border-gray-200 overflow-hidden w-full">
+                  {!showDetails ? (
                     <button
                       onClick={handleToggle}
-                      className='font-bold py-2 px-4 rounded w-full flex justify-center items-center mt-4 '
+                      className=" font-bold py-2 px-4 rounded w-full flex justify-center items-center "
                     >
-                      Hide details <FaChevronUp className='ml-2' />
+                      Show details
+                      <FaChevronDown className="ml-2" />
                     </button>
-                  </>
-                )}
-              </div>
-              <div className='p-3 hidden md:block'>
-                <div className='p-2'>
-                  <h3 className='text-gray-400 mb-2 text-sm'>DATE</h3>
-                  <h4 className='text-sm font-medium'>{timestamp}</h4>
+                  ) : (
+                    <>
+                      <div className="p-3 ">
+                        <div className="p-2">
+                          <h3 className="text-gray-400 mb-2 text-sm">DATE</h3>
+                          <h4 className="text-sm font-medium">{timestamp}</h4>
+                        </div>
+                        <div className="p-2">
+                          <h3 className="text-gray-400 mb-2 text-sm">
+                            CATEGORY
+                          </h3>
+                          <h4 className="text-sm font-medium">{category}</h4>
+                        </div>
+                        <div className="p-2">
+                          <h3 className="text-gray-400 mb-2 text-sm">
+                            LOCATION
+                          </h3>
+                          <h4 className="text-sm font-medium">{location}</h4>
+                        </div>
+                        <div className="p-2">
+                          <h3 className="text-gray-400 mb-2 text-sm">
+                            OCCUPATION
+                          </h3>
+                          <h4 className="text-sm font-medium">{job_type}</h4>
+                        </div>
+                        <div className="p-2">
+                          <h3 className="text-gray-400 mb-2 text-sm">
+                            CONTACT
+                          </h3>
+                          <h4 className="text-sm font-medium flex items-center">
+                            <TfiEmail />
+                            <span className="ml-2 truncate break-all">
+                              {email}
+                            </span>
+                          </h4>
+                        </div>
+                      </div>
+                      <button
+                        onClick={handleToggle}
+                        className="font-bold py-2 px-4 rounded w-full flex justify-center items-center mt-4 "
+                      >
+                        Hide details <FaChevronUp className="ml-2" />
+                      </button>
+                    </>
+                  )}
                 </div>
-                <div className='p-2'>
-                  <h3 className='text-gray-400 mb-2 text-sm'>CATEGORY</h3>
-                  <h4 className='text-sm font-medium'>{category}</h4>
-                </div>
-                <div className='p-2'>
-                  <h3 className='text-gray-400 mb-2 text-sm'>LOCATION</h3>
-                  <h4 className='text-sm font-medium'>{location}</h4>
-                </div>
-                <div className='p-2'>
-                  <h3 className='text-gray-400 mb-2 text-sm'>OCCUPATION</h3>
-                  <h4 className='text-sm font-medium'>{job_type}</h4>
-                </div>
-                <div className='p-2'>
-                  <h3 className='text-gray-400 mb-2 text-sm'>CONTACT</h3>
-                  <h4 className='text-sm font-medium flex items-center'>
-                    <TfiEmail />
-                    <span className='ml-2 truncate break-all'>{email}</span>
-                  </h4>
+                <div className="p-3 hidden md:block">
+                  <div className="p-2">
+                    <h3 className="text-gray-400 mb-2 text-sm">DATE</h3>
+                    <h4 className="text-sm font-medium">{timestamp}</h4>
+                  </div>
+                  <div className="p-2">
+                    <h3 className="text-gray-400 mb-2 text-sm">CATEGORY</h3>
+                    <h4 className="text-sm font-medium">{category}</h4>
+                  </div>
+                  <div className="p-2">
+                    <h3 className="text-gray-400 mb-2 text-sm">LOCATION</h3>
+                    <h4 className="text-sm font-medium">{location}</h4>
+                  </div>
+                  <div className="p-2">
+                    <h3 className="text-gray-400 mb-2 text-sm">OCCUPATION</h3>
+                    <h4 className="text-sm font-medium">{job_type}</h4>
+                  </div>
+                  <div className="p-2">
+                    <h3 className="text-gray-400 mb-2 text-sm">CONTACT</h3>
+                    <h4 className="text-sm font-medium flex items-center">
+                      <TfiEmail />
+                      <span className="ml-2 truncate break-all">{email}</span>
+                    </h4>
+                  </div>
                 </div>
               </div>
             </div>
@@ -246,7 +250,6 @@ const JobDetails = ({ setOpen, uid }) => {
           </div>
         </div>
       </div>
-    </div>
   );
 };
 

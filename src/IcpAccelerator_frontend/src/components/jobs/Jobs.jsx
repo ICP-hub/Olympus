@@ -1,32 +1,33 @@
-import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import { IcpAccelerator_backend } from '../../../../declarations/IcpAccelerator_backend/index';
-import CenterFocusStrongOutlinedIcon from '@mui/icons-material/CenterFocusStrongOutlined';
-import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
-import FmdGoodOutlinedIcon from '@mui/icons-material/FmdGoodOutlined';
-import AccessTimeOutlinedIcon from '@mui/icons-material/AccessTimeOutlined';
-import JobDetails from './JobDetails';
-import awtar from '../../../assets/images/icons/_Avatar.png';
-import Select from 'react-select';
-import InfiniteScroll from 'react-infinite-scroll-component';
-import TuneIcon from '@mui/icons-material/Tune';
-import { FaSliders } from 'react-icons/fa6';
-
+import React, { useState, useEffect, useLayoutEffect } from "react";
+import { useSelector } from "react-redux";
+import { IcpAccelerator_backend } from "../../../../declarations/IcpAccelerator_backend/index";
+import CenterFocusStrongOutlinedIcon from "@mui/icons-material/CenterFocusStrongOutlined";
+import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
+import FmdGoodOutlinedIcon from "@mui/icons-material/FmdGoodOutlined";
+import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
+import JobDetails from "./JobDetails";
+import awtar from "../../../assets/images/icons/_Avatar.png";
+import Select from "react-select";
+import InfiniteScroll from "react-infinite-scroll-component";
+import TuneIcon from "@mui/icons-material/Tune";
+import { FaSliders } from "react-icons/fa6";
 import {
   clockSvgIcon,
   coinStackedSvgIcon,
   lenseSvgIcon,
   locationSvgIcon,
-} from '../Utils/Data/SvgData';
-import useFormatDateFromBigInt from '../../components/hooks/useFormatDateFromBigInt';
-
-import { formatFullDateFromBigInt } from '../Utils/formatter/formatDateFromBigInt';
-import LinkIcon from '@mui/icons-material/Link';
-import uint8ArrayToBase64 from '../Utils/uint8ArrayToBase64';
-import parse from 'html-react-parser';
-import Tooltip from '@mui/material/Tooltip';
-import NoData from '../NoDataCard/NoData';
-import JobFilterModal from './JobFilterModal';
+} from "../Utils/Data/SvgData";
+import useFormatDateFromBigInt from "../../components/hooks/useFormatDateFromBigInt";
+import AOS from "aos";
+import "aos/dist/aos.css";
+import { formatFullDateFromBigInt } from "../Utils/formatter/formatDateFromBigInt";
+import LinkIcon from "@mui/icons-material/Link";
+import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
+import parse from "html-react-parser";
+import Tooltip from "@mui/material/Tooltip";
+import NoData from "../NoDataCard/NoData";
+import JobFilterModal from "./JobFilterModal";
+import SpinnerLoader from "../Discover/SpinnerLoader";
 const Jobs = () => {
   const actor = useSelector((currState) => currState.actors.actor);
 
@@ -52,8 +53,8 @@ const Jobs = () => {
           setLatestJobs(result);
           setTotalJobs(result.length);
         } else {
-          console.log('Refresh', 'false');
-          setLatestJobs((prevJobs) => [...prevJobs, ...result]);
+          console.log("Refresh", "false");
+          setLatestJobs(result);
           setTotalJobs(latestJobs.length + result.length);
         }
         if (result.length < itemsPerPage) {
@@ -150,6 +151,14 @@ const Jobs = () => {
   };
 
   const [openDetail, setOpenDetail] = useState(false);
+
+  // initialize Aos
+  useLayoutEffect(() => {
+    AOS.init({
+      duration: 1000,
+      once: false,
+    });
+  }, []);
   return (
     <>
       <div className='container mx-auto px-6 bg-white'>
@@ -178,15 +187,20 @@ const Jobs = () => {
         <div className='flex mx-auto justify-evenly '>
           <div className='mb-5 w-full md1:w-[65%] lg:w-full lgx:w-[65%] '>
             <div
-              id='scrollableDiv'
-              style={{ height: '100vh', overflowY: 'auto' }}
+              id="scrollableDiv"
+              style={{ height: "100vh", overflowY: "auto" }}
+              data-aos="fade-up"
             >
               {latestJobs.length > 0 ? (
                 <InfiniteScroll
                   dataLength={latestJobs.length}
                   next={loadMore}
                   hasMore={hasMore}
-                  loader={<h4>Loading more...</h4>}
+                  loader={
+                    <>
+                      <SpinnerLoader />
+                    </>
+                  }
                   endMessage={
                     <p className='flex justify-center mt-4'>
                       No more data available...
@@ -216,8 +230,8 @@ const Jobs = () => {
                     // console.log("cardids", card.job_id);
                     return (
                       <div key={index}>
-                        <div className='flex flex-col gap-3 my-8 shadow rounded-md p-4'>
-                          <div className='flex justify-between'>
+                        <div className="flex flex-col gap-3 my-8 shadow-md  rounded-md p-4">
+                          <div className="flex justify-between">
                             <div
                               onClick={() => openJobDetails(card.job_id)}
                               className='flex flex-col gap-3 sm5:w-[70%] w-full '
@@ -225,11 +239,11 @@ const Jobs = () => {
                               <p className='text-sm xxs:text-base text-gray-400'>
                                 {job_post_time}{' '}
                               </p>
-                              <h3 className='text-xl line-clamp-1 break-all font-bold'>
-                                {job_name}{' '}
+                              <h3 className="text-xl line-clamp-1 break-all font-bold">
+                                {job_name}{" "}
                               </h3>
-                              <p className='flex items-center'>
-                                <span className='mr-3'>
+                              <p className="flex items-center">
+                                <span className="mr-3">
                                   <img
                                     src={job_project_logo}
                                     className='w-8 h-8 rounded-lg'
