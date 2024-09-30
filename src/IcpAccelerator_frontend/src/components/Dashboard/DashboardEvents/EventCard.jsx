@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined';
 import { useSelector } from 'react-redux';
@@ -8,7 +8,10 @@ import { useNavigate } from 'react-router-dom';
 import parse from 'html-react-parser';
 import images from '../../../../assets/images/bg.png';
 import NoData from '../../NoDataCard/NoData';
-
+import { RotatingLines } from "react-loader-spinner";
+import SpinnerLoader from "../../Discover/SpinnerLoader";
+import AOS from "aos";
+import "aos/dist/aos.css";
 const EventCard = ({ selectedEventType }) => {
   const actor = useSelector((currState) => currState.actors.actor);
   const [noData, setNoData] = useState(false);
@@ -17,14 +20,14 @@ const EventCard = ({ selectedEventType }) => {
   const [hasMore, setHasMore] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-  console.log('my cohort data lenght', allLiveEventsData.length);
+  console.log("my cohort data lenght", allLiveEventsData.length);
   const navigate = useNavigate();
 
   const handleClick = (cohort_id) => {
     navigate(`/dashboard/single-event/${cohort_id}`);
   };
 
-  console.log('selectedEventType', selectedEventType);
+  console.log("selectedEventType", selectedEventType);
 
   const fetchEvents = async (caller, page, isRefresh = false) => {
     setIsLoading(true); // Start loading state
@@ -33,7 +36,7 @@ const EventCard = ({ selectedEventType }) => {
         page_size: itemsPerPage,
         page: page,
       });
-      console.log('result: ', result);
+      console.log("result: ", result);
       let filteredEvents = [];
       switch (selectedEventType) {
         case 'Ongoing':
@@ -82,7 +85,7 @@ const EventCard = ({ selectedEventType }) => {
       console.log(`Current page: ${currentPage}`);
       fetchEvents(actor, currentPage); // Fetch data
     }
-  }, [actor, currentPage, hasMore, selectedEventType]);
+  }, [actor, currentPage, hasMore,  selectedEventType]);
 
   const loadMore = () => {
     if (!isLoading && hasMore) {
@@ -91,18 +94,33 @@ const EventCard = ({ selectedEventType }) => {
       fetchEvents(actor, newPage); // Fetch the next set of data
     }
   };
-  console.log('allLiveEventsData', allLiveEventsData);
-
+  console.log("allLiveEventsData", allLiveEventsData);
+  // initialize Aos
+  useLayoutEffect(() => {
+    AOS.init({
+      duration: 1000,
+      once: false,
+    });
+  }, []);
   return (
-    <div id='scrollableDiv' style={{ height: '80vh', overflowY: 'auto' }}>
+    <div
+      id="scrollableDiv"
+      style={{ height: "80vh", overflowY: "auto" }}
+      data-aos="fade-up"
+    >
       {allLiveEventsData.length > 0 ? (
         <InfiniteScroll
           dataLength={allLiveEventsData.length}
           next={loadMore}
           hasMore={hasMore}
-          loader={<h4>Loading more...</h4>}
+          loader={
+            <>
+              {" "}
+              <SpinnerLoader />
+            </>
+          }
           endMessage={<p>No more data available</p>}
-          scrollableTarget='scrollableDiv'
+          scrollableTarget="scrollableDiv"
         >
           {allLiveEventsData.map((data, index) => {
             const image = data?.cohort?.cohort_banner[0]
@@ -179,47 +197,47 @@ const EventCard = ({ selectedEventType }) => {
                     </div>
                   </div>
                 </div> */}
-                <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center'>
-                  <div className='relative w-full sm:flex items-start sm:items-center gap-3'>
-                    <div className='absolute top-1 left-1 bg-white p-2 rounded-lg max-w-[122px] sm:max-w-[160px]'>
-                      <p className='text-sm sm:text-base font-bold'>
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
+                  <div className="relative w-full sm:flex items-start sm:items-center gap-3">
+                    <div className="absolute top-1 left-1 bg-white p-2 rounded-lg max-w-[122px] sm:max-w-[160px]">
+                      <p className="text-sm sm:text-base font-bold">
                         {launch_date} – {end_date}
                       </p>
-                      <p className='text-xs sm:text-sm font-normal'>
-                        Start at:{' '}
+                      <p className="text-xs sm:text-sm font-normal">
+                        Start at:{" "}
                         {new Date(data?.cohort?.start_date).toLocaleDateString(
-                          'en-US'
+                          "en-US"
                         )}
                       </p>
                     </div>
-                    <div className='w-full sm:w-[240px] h-[140px] sm:h-[172px] flex-shrink-0'>
+                    <div className="w-full sm:w-[240px] h-[140px] sm:h-[172px] flex-shrink-0">
                       <img
                         src={image}
                         alt={name}
-                        className='w-full h-full rounded-lg object-cover object-center'
-                        loading='lazy'
+                        className="w-full h-full rounded-lg object-cover object-center"
+                        loading="lazy"
                         draggable={false}
                       />
                     </div>
-                    <div className='w-full sm:w-2/3 mt-4 sm:mt-0'>
+                    <div className="w-full sm:w-2/3 mt-4 sm:mt-0">
                       <div>
-                        <div className='bg-[#c8eaef] border-[#45b0c1] border text-[#090907] text-xs px-2 py-1 rounded-full w-[70px]'>
+                        <div className="bg-[#c8eaef] border-[#45b0c1] border text-[#090907] text-xs px-2 py-1 rounded-full w-[70px]">
                           COHORT
                         </div>
-                        <h3 className='text-lg font-bold mt-2'>{name}</h3>
-                        <p className='text-sm text-gray-500 mb-4 overflow-hidden text-ellipsis max-h-12 line-clamp-2 mt-2'>
+                        <h3 className="text-lg font-bold mt-2">{name}</h3>
+                        <p className="text-sm text-gray-500 mb-4 overflow-hidden text-ellipsis max-h-12 line-clamp-2 mt-2">
                           {parse(desc)}
                         </p>
                       </div>
-                      <div className='flex gap-3 items-center mt-2 sm:mt-0'>
-                        <span className='text-sm text-[#121926] flex items-center'>
+                      <div className="flex gap-3 items-center mt-2 sm:mt-0">
+                        <span className="text-sm text-[#121926] flex items-center">
                           <PlaceOutlinedIcon
-                            className='text-[#364152]'
-                            fontSize='small'
+                            className="text-[#364152]"
+                            fontSize="small"
                           />
                           {country}
                         </span>
-                        <span className='text-sm text-[#121926]'>
+                        <span className="text-sm text-[#121926]">
                           ${funding}
                         </span>
                       </div>
@@ -231,11 +249,23 @@ const EventCard = ({ selectedEventType }) => {
           })}
         </InfiniteScroll>
       ) : (
-        <div className='flex justify-center items-center'>
+        <div className="flex justify-center items-center">
           {isLoading ? (
-            <div>Loading...</div>
+            <div className="flex justify-center items-center w-full">
+              <RotatingLines
+                visible={true}
+                height="96"
+                width="96"
+                color="grey"
+                strokeWidth="5"
+                animationDuration="0.75"
+                ariaLabel="rotating-lines-loading"
+                wrapperStyle={{}}
+                wrapperClass=""
+              />
+            </div>
           ) : (
-            <NoData message={'No Cohort Available'} />
+            <NoData message={"No Cohort Available"} />
           )}
         </div>
       )}
