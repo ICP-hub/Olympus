@@ -22,6 +22,8 @@ const AnnouncementCard = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentAnnouncementData, setCurrentAnnouncementData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [numSkeletons, setNumSkeletons] = useState(1);
+
 
   const handleOpenModal = (card = null) => {
     setCurrentAnnouncementData(card);
@@ -162,6 +164,24 @@ const AnnouncementCard = () => {
 
   console.log('latestAnnouncementData =>', latestAnnouncementData);
 
+  const updateNumSkeletons = () => {
+    if (window.innerWidth >= 1100) {
+      setNumSkeletons(3);
+    } else if (window.innerWidth >= 768) {
+      setNumSkeletons(2);
+    } else {
+      setNumSkeletons(1);
+    }
+  };
+
+  useEffect(() => {
+    updateNumSkeletons();
+    window.addEventListener("resize", updateNumSkeletons);
+    return () => {
+      window.removeEventListener("resize", updateNumSkeletons);
+    };
+  }, []);
+
   return (
     <div className='bg-white w-full'>
       {latestAnnouncementData.length > 0 && (
@@ -201,7 +221,11 @@ const AnnouncementCard = () => {
               </button>
             </>
           ) : (
-            <AnnouncementCardSkeleton />
+            Array(numSkeletons)
+              .fill(0)
+              .map((_, index) => (
+                <AnnouncementCardSkeleton key={index} />
+              ))
           )}
         </div>
       ) : (
@@ -270,6 +294,7 @@ const AnnouncementCard = () => {
               {/* <hr className="mt-4" /> */}
             </div>
           ) : (
+            
             <AnnouncementCardSkeleton />
           );
         })
