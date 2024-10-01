@@ -18,6 +18,7 @@ import SpinnerLoader from './SpinnerLoader';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import DiscoverSkeleton from './DiscoverSkeleton/DiscoverSkeleton';
+import useTimeout from '../hooks/TimeOutHook';
 const DiscoverInvestor = ({ onInvestorCountChange }) => {
   const actor = useSelector((currState) => currState.actors.actor);
   const [allInvestorData, setAllInvestorData] = useState([]);
@@ -93,10 +94,9 @@ const DiscoverInvestor = ({ onInvestorCountChange }) => {
         });
     }
   };
-
+  useTimeout(() => setIsLoading(false));
   const getAllInvestor = async (caller, page, isRefresh = false) => {
     setIsFetching(true);
-    setIsLoading(true);
     try {
       const result = await caller.list_all_vcs_with_pagination({
         page_size: itemsPerPage,
@@ -128,7 +128,6 @@ const DiscoverInvestor = ({ onInvestorCountChange }) => {
       setHasMore(false);
     } finally {
       setIsFetching(false);
-      setIsLoading(false);
     }
   };
 

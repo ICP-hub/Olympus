@@ -17,6 +17,7 @@ import SpinnerLoader from './SpinnerLoader';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import DiscoverSkeleton from './DiscoverSkeleton/DiscoverSkeleton';
+import useTimeout from '../hooks/TimeOutHook';
 const DiscoverMentor = ({ onMentorCountChange }) => {
   const actor = useSelector((currState) => currState.actors.actor);
   const isAuthenticated = useSelector(
@@ -40,7 +41,7 @@ const DiscoverMentor = ({ onMentorCountChange }) => {
   const userCurrentRoleStatusActiveRole = useSelector(
     (currState) => currState.currentRoleStatus.activeRole
   );
-
+  useTimeout(() => setIsLoading(false));
   const projectFullData = useSelector(
     (currState) => currState.projectData.data
   );
@@ -55,7 +56,6 @@ const DiscoverMentor = ({ onMentorCountChange }) => {
   const getAllMentor = async (caller, page, isRefresh = false) => {
     console.log(`Fetching data for page: ${page}`);
     setIsFetching(true); // Set fetching state
-    setIsLoading(true);
     try {
       // Fetch data from the backend
       const result = await caller.get_all_mentors_with_pagination({
@@ -86,7 +86,6 @@ const DiscoverMentor = ({ onMentorCountChange }) => {
       setHasMore(false); // Handle error and stop loading
     } finally {
       setIsFetching(false); // Reset fetching state
-      setIsLoading(true);
     }
   };
 
