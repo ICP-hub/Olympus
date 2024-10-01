@@ -25,6 +25,7 @@ import ShareModal from './EventshareModel';
 import { useNavigate } from 'react-router-dom';
 import DiscoverUserModal from '../DashboardHomePage/discoverMentorPage/DiscoverUserModal';
 import EventDetailSkeleton from './DashboardEventSkeletons/EventDetailSkeleton';
+import useTimeout from '../../hooks/TimeOutHook';
 
 const FAQItem = ({ question, answer }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -155,7 +156,6 @@ const EventDetails = () => {
           console.log('error-in-get_my_cohort', error);
           setCohortData(null);
         } finally {
-          setIsLoading(true); // Set loading to false after data is fetched
         }
       }
     };
@@ -165,6 +165,7 @@ const EventDetails = () => {
 
   const timeoutRef = useRef(null);
 
+  useTimeout(()=> setIsLoading(false))
   useEffect(() => {
     if (cohortData) {
       const calculateRemainingTime = () => {
@@ -199,7 +200,7 @@ const EventDetails = () => {
   };
 
   if (isLoading) {
-    return <EventDetailSkeleton userCurrentRoleStatusActiveRole={userCurrentRoleStatusActiveRole} cohortCreator={cohortCreator} />; // Show skeleton while loading
+    return <EventDetailSkeleton userCurrentRoleStatusActiveRole={userCurrentRoleStatusActiveRole} cohortCreator={cohortCreator} cohortData={cohortData}/>; // Show skeleton while loading
   }
 
   if (!cohortData) {

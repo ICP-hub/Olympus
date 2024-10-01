@@ -13,6 +13,7 @@ import SpinnerLoader from "../../Discover/SpinnerLoader";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import EventCardSkeleton from './DashboardEventSkeletons/EventCardSkeleton';
+import useTimeout from '../../hooks/TimeOutHook';
 const EventCard = ({ selectedEventType }) => {
   const actor = useSelector((currState) => currState.actors.actor);
   const [noData, setNoData] = useState(false);
@@ -88,13 +89,12 @@ const EventCard = ({ selectedEventType }) => {
   };
 useEffect(() => {
   if (!isLoading && hasMore && actor) {
-    setIsSkeletonLoading(true);
     fetchEvents(actor, currentPage).finally(() => {
-      setIsSkeletonLoading(true);
+     
     });
   }
 }, [actor, currentPage, hasMore, selectedEventType]);
-
+useTimeout(()=> setIsSkeletonLoading(false))
   const loadMore = () => {
     if (!isLoading && hasMore) {
       const newPage = currentPage + 1;
