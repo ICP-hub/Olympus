@@ -1,29 +1,30 @@
-import React, { useState, useEffect, useLayoutEffect } from "react";
+import React, { useState, useEffect, useLayoutEffect } from 'react';
 // import { IcpAccelerator_backend } from "../../../../declarations/IcpAccelerator_backend/index";
-import { IcpAccelerator_backend } from "../../../../declarations/IcpAccelerator_backend/index";
-import { useDispatch, useSelector } from "react-redux";
-import { FavoriteBorder, LocationOn, Star } from "@mui/icons-material";
-import CypherpunkLabLogo from "../../../assets/Logo/CypherpunkLabLogo.png";
-import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
-import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
-import { BsFillSendPlusFill } from "react-icons/bs";
-import { IoSendSharp } from "react-icons/io5";
-import { RiSendPlaneLine } from "react-icons/ri";
-import { Tooltip } from "react-tooltip";
-import { Principal } from "@dfinity/principal";
-import toast, { Toaster } from "react-hot-toast";
-import Avatar from "@mui/material/Avatar";
-import AOS from "aos";
-import "aos/dist/aos.css";
-import UserDetailPage from "../Dashboard/DashboardHomePage/UserDetailPage";
-import AddAMentorRequestModal from "../../models/AddAMentorRequestModal";
-import { mentorRegisteredHandlerRequest } from "../StateManagement/Redux/Reducers/mentorRegisteredData";
-import RatingModal from "../Common/RatingModal";
-import { bufferToImageBlob } from "../Utils/formatter/bufferToImageBlob";
-import parse from "html-react-parser";
-import InfiniteScroll from "react-infinite-scroll-component";
-import NoData from "../NoDataCard/NoData";
-import SpinnerLoader from "./SpinnerLoader";
+import { IcpAccelerator_backend } from '../../../../declarations/IcpAccelerator_backend/index';
+import { useDispatch, useSelector } from 'react-redux';
+import { FavoriteBorder, LocationOn, Star } from '@mui/icons-material';
+import CypherpunkLabLogo from '../../../assets/Logo/CypherpunkLabLogo.png';
+import uint8ArrayToBase64 from '../Utils/uint8ArrayToBase64';
+import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined';
+import { BsFillSendPlusFill } from 'react-icons/bs';
+import { IoSendSharp } from 'react-icons/io5';
+import { RiSendPlaneLine } from 'react-icons/ri';
+import { Tooltip } from 'react-tooltip';
+import { Principal } from '@dfinity/principal';
+import toast, { Toaster } from 'react-hot-toast';
+import Avatar from '@mui/material/Avatar';
+import AOS from 'aos';
+import 'aos/dist/aos.css';
+import UserDetailPage from '../Dashboard/DashboardHomePage/UserDetailPage';
+import AddAMentorRequestModal from '../../models/AddAMentorRequestModal';
+import { mentorRegisteredHandlerRequest } from '../StateManagement/Redux/Reducers/mentorRegisteredData';
+import RatingModal from '../Common/RatingModal';
+import { bufferToImageBlob } from '../Utils/formatter/bufferToImageBlob';
+import parse from 'html-react-parser';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import NoData from '../NoDataCard/NoData';
+import SpinnerLoader from './SpinnerLoader';
+import DiscoverSkeleton from './DiscoverSkeleton/DiscoverSkeleton';
 const DiscoverProject = ({ onProjectCountChange }) => {
   const actor = useSelector((currState) => currState.actors.actor);
   const [allProjectData, setAllProjectData] = useState([]);
@@ -156,7 +157,7 @@ const DiscoverProject = ({ onProjectCountChange }) => {
   };
 
   const getAllProject = async (caller, page, isRefresh = false) => {
-    console.log(`Fetching projects for page: ${page}`);
+    setIsLoading(true);
     setIsFetching(true);
 
     try {
@@ -187,6 +188,7 @@ const DiscoverProject = ({ onProjectCountChange }) => {
       setHasMore(false);
     } finally {
       setIsFetching(false);
+      setIsLoading(true);
     }
   };
 
@@ -239,21 +241,26 @@ const DiscoverProject = ({ onProjectCountChange }) => {
     }
   }
 
-
-  // initialize Aos 
-    useLayoutEffect(() => {
-      AOS.init({
-        duration: 1000,
-        once: false,
-      });
-    }, []);
+  // initialize Aos
+  useLayoutEffect(() => {
+    AOS.init({
+      duration: 1000,
+      once: false,
+    });
+  }, []);
   return (
     <div
-      id="scrollableDiv"
-      style={{ height: "80vh", overflowY: "auto" }}
-      data-aos="fade-up"
+      id='scrollableDiv'
+      style={{ height: '80vh', overflowY: 'auto' }}
+      data-aos='fade-up'
     >
-      {allProjectData.length > 0 ? (
+      {isLoading ? (
+        <>
+          {[...Array(allProjectData.length || 5)].map((_, index) => (
+            <DiscoverSkeleton key={index} />
+          ))}
+        </>
+      ) : allProjectData.length > 0 ? (
         <InfiniteScroll
           dataLength={allProjectData.length}
           next={loadMore}

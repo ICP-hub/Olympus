@@ -6,6 +6,7 @@ import user from '../../../../assets/Logo/mentor.png';
 import mentor from '../../../../assets/Logo/talent.png';
 import vc from '../../../../assets/Logo/Avatar3.png';
 import { useDispatch, useSelector } from 'react-redux';
+import { SearchOutlined, Menu } from '@mui/icons-material';
 import {
   afterCopySvg,
   beforeCopySvg,
@@ -55,13 +56,22 @@ function DashboardHomeNavbar({ id, id2 }) {
   // Get the image for the current active role
   const currentImage = roleData[userCurrentRoleStatusActiveRole] || user;
 
+  // icons
+  const SearchIcon =
+    dashboard?.dashboardhomenavbar?.icons?.searchOutlined?.SearchOutlined;
+  const MenuIcon = dashboard?.dashboardhomenavbar.icons.menuIcon.Menu;
+  const logoutIcon =
+    dashboard?.dashboardhomenavbar?.logoImages?.df_small_logo?.df_small_logo;
+  const Signout = dashboard?.dashboardhomenavbar?.navbarTexts?.signOutText;
+  const principalLabel =
+    dashboard?.dashboardhomenavbar?.navbarTexts?.principalLabel;
   return (
     <nav className='bg-[#FFF4ED] py-3 px-4 md:px-12 md:pl-1 flex items-center justify-end relative lg:pb-8'>
       <button
         onClick={() => setIsOpen(!isOpen)}
         className='lg:hidden absolute  right-2'
       >
-        <dashboard.dashboardhomenavbar.icons.menuIcon.Menu className='text-gray-600' />
+        <MenuIcon className='text-gray-600' />
       </button>
 
       <div className='flex-grow mr-4 md:ml-4 lg:ml-0 hidden md:block'>
@@ -73,7 +83,7 @@ function DashboardHomeNavbar({ id, id2 }) {
               className='w-[480px] h-[44px] py-2 pl-10 pr-4 rounded-md bg-white-100 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500'
               disabled
             />
-            <dashboard.dashboardhomenavbar.icons.searchOutlined.SearchOutlined
+            <SearchIcon
               className='absolute left-3 text-gray-400'
               style={{ top: '50%', transform: 'translateY(-50%)' }}
             />
@@ -99,9 +109,7 @@ function DashboardHomeNavbar({ id, id2 }) {
         /> */}
         <img
           id={id2}
-          src={
-            dashboard.dashboardhomenavbar.logoImages.df_small_logo.df_small_logo
-          }
+          src={logoutIcon}
           alt='User'
           className='h-[40px] w-[40px] rounded-full z-30 py-1 px-1'
           onClick={toggleDropdown}
@@ -136,8 +144,7 @@ function DashboardHomeNavbar({ id, id2 }) {
               </div>
               <div className='group flex items-center mt-4'>
                 <div className='truncate w-32 overflow-hidden text-ellipsis group-hover:text-left'>
-                  {dashboard.dashboardhomenavbar.navbarTexts.principalLabel}:{' '}
-                  {principal}
+                  {principalLabel}: {principal}
                 </div>
                 <button
                   onClick={copyToClipboard}
@@ -153,7 +160,7 @@ function DashboardHomeNavbar({ id, id2 }) {
                 className='py-2 px-4 hover:bg-gray-200 cursor-pointer'
                 onClick={logoutHandler}
               >
-                {dashboard.dashboardhomenavbar.navbarTexts.signOutText}
+                {Signout}
               </p>
             </div>
           </div>

@@ -16,6 +16,8 @@ import {
   setCurrentActiveRole,
   setCurrentRoleStatus,
 } from '../../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer';
+import DashboardHomeWelcomeSectionSkeleton from './DashbooardHomepageSkeletons/DashboardHomeWelcomeSectionSkeleton';
+import useTimeout from '../../hooks/TimeOutHook';
 
 const styles = {
   circularChart: {
@@ -55,6 +57,7 @@ const styles = {
 function DashboardHomeWelcomeSection({ userName, profileCompletion }) {
   const [roleModalOpen, setRoleModalOpen] = useState(false);
   const { dashboardwelcomesection } = dashboard;
+  const [loading, setLoading] = useState(true);
   const userFullData = useSelector((currState) => currState.userData.data.Ok);
   console.log('USER DATA FROM REDUX IS ', userFullData);
   const projectFullData = useSelector(
@@ -238,6 +241,18 @@ function DashboardHomeWelcomeSection({ userName, profileCompletion }) {
       }
     }
   }, [actor, dispatch, userCurrentRoleStatus, userCurrentRoleStatusActiveRole]);
+
+  //  useEffect(() => {
+  //   const timer = setTimeout(() => {
+  //     setLoading(false);
+  //   }, 1000);
+
+  //   return () => clearTimeout(timer);
+  // }, []);
+  useTimeout(() => setLoading(false));
+  if (loading) {
+    return <DashboardHomeWelcomeSectionSkeleton />;
+  }
   return (
     <>
       <div className='bg-white rounded-lg lg:p-6 mb-6 pt-1'>

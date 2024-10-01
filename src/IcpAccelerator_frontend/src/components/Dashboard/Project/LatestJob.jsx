@@ -159,7 +159,7 @@ const NewJob = ({ latestJobs }) => {
     setOpenJobUid(null);
   };
   return (
-    <>
+    <React.Fragment>
       {!noData && latestJobs && latestJobs.length > 0 && (
         <div className='hidden md:block'>
           <div className='flex flex-col items-end mb-8 max-w-7xl pt-4 '>
@@ -292,35 +292,35 @@ const NewJob = ({ latestJobs }) => {
               <>
                 <div
                   key={card.job_id || index}
-                  className="flex flex-col gap-3 my-4 bg-white rounded-lg shadow p-4"
+                  className='flex flex-col gap-3 my-4 bg-white rounded-lg shadow p-4'
                   onClick={() => openJobDetails(card.job_id)}
                 >
-                  <div className="flex justify-between">
-                    <div className="flex flex-col gap-3 w-full ">
-                      <p className="text-gray-400">{job_post_time} </p>
-                      <div className="flex justify-between">
-                        <h3 className="text-xl font-semibold dxs:font-bold break-all truncate w-[70%]">
-                          {job_name}{" "}
+                  <div className='flex justify-between'>
+                    <div className='flex flex-col gap-3 w-full '>
+                      <p className='text-gray-400'>{job_post_time} </p>
+                      <div className='flex justify-between'>
+                        <h3 className='text-xl font-semibold dxs:font-bold break-all truncate w-[70%]'>
+                          {job_name}{' '}
                         </h3>
                         <div className='flex  gap-4 items-center'>
                           <img
                             src={editp}
-                            className=" text-gray-500 hover:underline text-xs h-[1.3rem]  sm:h-5 sm:w-5 cursor-pointer"
-                            alt="edit"
+                            className=' text-gray-500 hover:underline text-xs h-[1.3rem]  sm:h-5 sm:w-5 cursor-pointer'
+                            alt='edit'
                             // onClick={() => handleJobsOpenModal(card)}
                             onClick={(e) => {
                               e.stopPropagation();
                               handleJobsOpenModal(card);
                             }}
-                            loading="lazy"
+                            loading='lazy'
                             draggable={false}
                           />
                           <span className='text-[16px] text-gray-500 cursor-pointer hover:text-red-700'>
                             <DeleteOutlinedIcon
-                              className="cursor-pointer hover:text-red-500"
+                              className='cursor-pointer hover:text-red-500'
                               // onClick={() => handleOpenDeleteModal(card)}
                               onClick={(e) => {
-                                e.stopPropagation(); 
+                                e.stopPropagation();
                                 handleOpenDeleteModal(card);
                               }}
                             />
@@ -328,8 +328,8 @@ const NewJob = ({ latestJobs }) => {
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-3 ">
-                        <div className="flex w-14">
+                      <div className='flex items-center gap-3 '>
+                        <div className='flex w-14'>
                           <img
                             src={job_project_logo}
                             className='w-12 h-12 rounded-lg'
@@ -419,7 +419,7 @@ const NewJob = ({ latestJobs }) => {
         />
       )}
       <Toaster />
-    </>
+    </React.Fragment>
   );
 };
 
