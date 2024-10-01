@@ -1,0 +1,67 @@
+name: CI-OLYMPUS
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  example-job:
+    runs-on: ubuntu-latest 
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      
+    - name: Cache Rust cargo registry
+      uses: actions/cache@v2
+      with:
+        path: ~/.cargo/registry
+        key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-cargo-registry-
+    - name: Cache Rust cargo index
+      uses: actions/cache@v2
+      with:
+        path: ~/.cargo/git
+        key: ${{ runner.os }}-cargo-index-${{ hashFiles('**/Cargo.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-cargo-index-
+    - name: Cache DFX version and installation
+      uses: actions/cache@v2
+      with:
+        path: ~/.cache/dfinity
+        key: ${{ runner.os }}-dfx-${{ hashFiles('dfx.json') }}
+        restore-keys: |
+          ${{ runner.os }}-dfx-
+    - name: Install dfx
+      if: steps.cache-dfx.outputs.cache-hit != 'true'
+      uses: dfinity/setup-dfx@main
+
+    - name: Confirm successful installation
+      run: dfx --version
+
+    - name: Setup Rust target
+      run: rustup target add wasm32-unknown-unknown
+
+    - name: Cache build output
+      uses: actions/cache@v2
+      with:
+        path: target
+        key: ${{ runner.os }}-cargo-build-${{ hashFiles('**/Cargo.lock') }}-${{ hashFiles('**/*.rs') }}
+        restore-keys: |
+          ${{ runner.os }}-cargo-build-
+    - name: Starting DFX instance
+      run: dfx start --clean --background
+
+    - name: Creating Canisters
+      run: |
+        dfx canister create asset_canister_backend
+        dfx canister create IcpAccelerator_backend
+    - name: Building Canisters
+      run: |
+        dfx build asset_canister_backend
+        dfx build IcpAccelerator_backend
