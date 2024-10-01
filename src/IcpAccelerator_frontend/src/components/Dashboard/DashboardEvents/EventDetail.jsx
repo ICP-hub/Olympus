@@ -24,6 +24,7 @@ import { shareSvgIcon } from '../../Utils/Data/SvgData';
 import ShareModal from './EventshareModel';
 import { useNavigate } from 'react-router-dom';
 import DiscoverUserModal from '../DashboardHomePage/discoverMentorPage/DiscoverUserModal';
+import EventDetailSkeleton from './DashboardEventSkeletons/EventDetailSkeleton';
 
 const FAQItem = ({ question, answer }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -100,6 +101,7 @@ const EventDetails = () => {
     setShowDetails(!showDetails);
   };
   const [cohortData, setCohortData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true); // Add a loading state
   const actor = useSelector((currState) => currState.actors.actor);
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
@@ -152,6 +154,8 @@ const EventDetails = () => {
         } catch (error) {
           console.log('error-in-get_my_cohort', error);
           setCohortData(null);
+        } finally {
+          setIsLoading(true); // Set loading to false after data is fetched
         }
       }
     };
@@ -194,9 +198,14 @@ const EventDetails = () => {
     setDifference(difference);
   };
 
+  if (isLoading) {
+    return <EventDetailSkeleton userCurrentRoleStatusActiveRole={userCurrentRoleStatusActiveRole} cohortCreator={cohortCreator} />; // Show skeleton while loading
+  }
+
   if (!cohortData) {
     return <div>Loading...</div>;
   }
+
   console.log('cohortData', cohortData);
   const {
     cohort_banner,
