@@ -1,21 +1,22 @@
-import React, { useState, useEffect, useLayoutEffect } from "react";
-import InfiniteScroll from "react-infinite-scroll-component";
-import { useDispatch, useSelector } from "react-redux";
-import { Star } from "@mui/icons-material";
-import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
-import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
-import { Principal } from "@dfinity/principal";
-import { RiSendPlaneLine } from "react-icons/ri";
-import AddAMentorRequestModal from "../../models/AddAMentorRequestModal";
-import toast, { Toaster } from "react-hot-toast";
-import { founderRegisteredHandlerRequest } from "../StateManagement/Redux/Reducers/founderRegisteredData";
-import { Tooltip } from "react-tooltip";
-import DiscoverMentorMain from "../Dashboard/DashboardHomePage/discoverMentor/DiscoverMentorMain";
-import RatingModal from "../Common/RatingModal";
-import NoData from "../NoDataCard/NoData";
-import SpinnerLoader from "./SpinnerLoader";
-import AOS from "aos";
-import "aos/dist/aos.css";
+import React, { useState, useEffect, useLayoutEffect } from 'react';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import { useDispatch, useSelector } from 'react-redux';
+import { Star } from '@mui/icons-material';
+import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined';
+import uint8ArrayToBase64 from '../Utils/uint8ArrayToBase64';
+import { Principal } from '@dfinity/principal';
+import { RiSendPlaneLine } from 'react-icons/ri';
+import AddAMentorRequestModal from '../../models/AddAMentorRequestModal';
+import toast, { Toaster } from 'react-hot-toast';
+import { founderRegisteredHandlerRequest } from '../StateManagement/Redux/Reducers/founderRegisteredData';
+import { Tooltip } from 'react-tooltip';
+import DiscoverMentorMain from '../Dashboard/DashboardHomePage/discoverMentor/DiscoverMentorMain';
+import RatingModal from '../Common/RatingModal';
+import NoData from '../NoDataCard/NoData';
+import SpinnerLoader from './SpinnerLoader';
+import AOS from 'aos';
+import 'aos/dist/aos.css';
+import DiscoverSkeleton from './DiscoverSkeleton/DiscoverSkeleton';
 const DiscoverMentor = ({ onMentorCountChange }) => {
   const actor = useSelector((currState) => currState.actors.actor);
   const isAuthenticated = useSelector(
@@ -34,7 +35,7 @@ const DiscoverMentor = ({ onMentorCountChange }) => {
   const [showRatingModal, setShowRatingModal] = useState(false);
   const [userRatingDetail, setUserRatingDetail] = useState(null);
   const [currentPrincipal, setCurrentPrincipal] = useState([]);
-
+  const [isLoading, setIsLoading] = useState(true);
   const dispatch = useDispatch();
   const userCurrentRoleStatusActiveRole = useSelector(
     (currState) => currState.currentRoleStatus.activeRole
@@ -54,14 +55,14 @@ const DiscoverMentor = ({ onMentorCountChange }) => {
   const getAllMentor = async (caller, page, isRefresh = false) => {
     console.log(`Fetching data for page: ${page}`);
     setIsFetching(true); // Set fetching state
-
+    setIsLoading(true);
     try {
       // Fetch data from the backend
       const result = await caller.get_all_mentors_with_pagination({
         page_size: itemsPerPage, // Number of items per page
         page: page, // Current page to fetch
       });
-      console.log("discovementor", result);
+      console.log('discovementor', result);
       if (result && result.data) {
         const mentorData = Object.values(result.data); // Extract mentor data
         if (isRefresh) {
@@ -85,6 +86,7 @@ const DiscoverMentor = ({ onMentorCountChange }) => {
       setHasMore(false); // Handle error and stop loading
     } finally {
       setIsFetching(false); // Reset fetching state
+      setIsLoading(true);
     }
   };
 
@@ -164,11 +166,17 @@ const DiscoverMentor = ({ onMentorCountChange }) => {
   return (
     <>
       <div
-        id="scrollableDiv"
-        style={{ height: "80vh", overflowY: "auto" }}
-        data-aos="fade-up"
+        id='scrollableDiv'
+        style={{ height: '80vh', overflowY: 'auto' }}
+        data-aos='fade-up'
       >
-        {allMentorData.length > 0 ? (
+        {isLoading ? (
+          <>
+            {[...Array(allMentorData.length || 5)].map((_, index) => (
+              <DiscoverSkeleton key={index} />
+            ))}
+          </>
+        ) : allMentorData.length > 0 ? (
           <InfiniteScroll
             dataLength={allMentorData.length}
             next={loadMore}
@@ -179,9 +187,9 @@ const DiscoverMentor = ({ onMentorCountChange }) => {
               </>
             }
             endMessage={
-              <p className="flex justify-center">No more data available...</p>
+              <p className='flex justify-center'>No more data available...</p>
             }
-            scrollableTarget="scrollableDiv"
+            scrollableTarget='scrollableDiv'
           >
             {allMentorData?.map((mentorArray, index) => {
               const mentor_id = mentorArray[0]?.toText();
@@ -234,10 +242,10 @@ const DiscoverMentor = ({ onMentorCountChange }) => {
                   <div className='flex-grow sm:ml-[25px] mt-5 md1:mt-0 w-full  '>
                     <div className='flex justify-between items-start mb-2'>
                       <div>
-                        <h3 className="text-xl line-clamp-1 break-all font-bold">
+                        <h3 className='text-xl line-clamp-1 break-all font-bold'>
                           {full_name}
                         </h3>
-                        <p className="text-gray-500 line-clamp-1 break-all">
+                        <p className='text-gray-500 line-clamp-1 break-all'>
                           @{openchat_name}
                         </p>
                       </div>
@@ -277,11 +285,11 @@ const DiscoverMentor = ({ onMentorCountChange }) => {
                       {email}
                     </div>
 
-                    <p className="text-gray-600 mb-2 break-all line-clamp-3">
+                    <p className='text-gray-600 mb-2 break-all line-clamp-3'>
                       {bio}
                     </p>
-                    <div className="flex items-center text-sm text-gray-500 flex-wrap gap-1">
-                      <div className="flex overflow-x-auto space-x-2">
+                    <div className='flex items-center text-sm text-gray-500 flex-wrap gap-1'>
+                      <div className='flex overflow-x-auto space-x-2'>
                         {randomSkills.map((skill, index) => (
                           <span
                             key={index}

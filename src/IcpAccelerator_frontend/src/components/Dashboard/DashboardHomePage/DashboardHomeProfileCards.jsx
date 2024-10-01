@@ -1,33 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import {
-  AccountCircle,
-  Star,
-  Group,
-  InfoOutlined,
-  StarBorderOutlined,
-} from '@mui/icons-material';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import { MoreVert } from '@mui/icons-material';
 import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
-import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
-import nodata from '../../../../assets/images/nodata.png';
-import CypherpunkLabLogo from '../../../../assets/Logo/CypherpunkLabLogo.png';
-import ProfileImage from '../../../../assets/Logo/ProfileImage.png';
 import VerifiedIcon from '@mui/icons-material/Verified';
-import Nodatafound from '../../../../assets/Logo/Nodatafound.png';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import DashboardProfileView from './DashboardProfileView';
 import RatingCard from '../../Common/RatingCard';
-import EditRating from '../../Common/RatingReview';
 import RatingReview from '../../Common/RatingReview';
 import user from '../../../../assets/Logo/mentor.png';
 import mentor from '../../../../assets/Logo/talent.png';
 import project from '../../../../assets/Logo/founder.png';
 import investor from '../../../../assets/Logo/Avatar3.png';
-import ProjectCard from '../Project/ProjectCard';
 import { useNavigate, useLocation } from 'react-router-dom';
 import DashboardProjectCard from './DashboardProjectCard';
+import DashboardHomeProfileCardsSkeleton from './DashbooardHomepageSkeletons/DashboardHomeProfileCardsSkeleton';
+import DashboardHomeProfileCardsmainprofileSkeleton from './DashbooardHomepageSkeletons/DashboardHomeProfileCardsSkeleton';
 
 function getAvatarsByRoles(approvedRoles) {
   const defaultAvatar = user;
@@ -89,6 +75,7 @@ function DashboardHomeProfileCards(percentage) {
   const userFullData = useSelector((currState) => currState.userData.data.Ok);
   const [show, setShow] = useState(true);
   const [activeTab, setActiveTab] = useState('project');
+  const [isLoading, setIsLoading] = useState(true);
   const userRoles = useSelector(
     (currState) => currState.currentRoleStatus.activeRole
   );
@@ -107,6 +94,11 @@ function DashboardHomeProfileCards(percentage) {
     } else {
       setActiveTab('project');
     }
+    //  const timer = setTimeout(() => {
+    //   setIsLoading(false);
+    // }, 1000);
+
+    // return () => clearTimeout(timer);
   }, [location.search]);
 
   const handleChange = (tab) => {
@@ -117,11 +109,14 @@ function DashboardHomeProfileCards(percentage) {
   };
 
   const [firstCardAvatar, secondCardAvatar] = getAvatarsByRoles(approvedRoles);
+  // if (isLoading) {
+  //   return <DashboardHomeProfileCardsSkeleton />;
+  // }
 
   return (
     <>
       <div className='grid grid-cols-1 dlg:grid-cols-2 lgx:grid-cols-3 gap-6 mt-6 lg:p-6'>
-        {/* Main profile card */}
+        {/* main profile card */}
         <div className='bg-white rounded-lg shadow-sm p-6 border'>
           <div className='flex justify-between items-center mb-4'>
             <h2 className='ss2:text-xl font-bold'>Main profile</h2>
@@ -139,10 +134,9 @@ function DashboardHomeProfileCards(percentage) {
             ></div>
             <div className='flex flex-col items-center pt-2'>
               <div className='w-20 h-20 bg-gray-300 rounded-full mb-3 overflow-hidden'>
-                {/* <AccountCircle className="w-full h-full text-gray-400" /> */}
                 <img
                   src={userFullData?.profile_picture[0]}
-                  alt='Profle Image'
+                  alt='Profile Image'
                   className='w-24 h-24 rounded-full object-cover'
                   loading='lazy'
                   draggable={false}
@@ -222,7 +216,7 @@ function DashboardHomeProfileCards(percentage) {
               />
             </div>
           </div>
-          <div className='mt-8 h-35 flex justify-center items-center border border-dashed border-gray-300 rounded-lg p-6'>
+          <div className='mt-4 h-35 flex justify-center items-center border border-dashed border-gray-300 rounded-lg p-6'>
             <div className='w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center'>
               <img
                 src={secondCardAvatar}
@@ -234,20 +228,6 @@ function DashboardHomeProfileCards(percentage) {
           </div>
         </div>
       </div>
-      {userRoles === 'project' && (
-        <div className='bg-white rounded-lg shadow-sm lg:shadow-none lg:p-6 mt-8'>
-          <div className='flex justify-between items-center m-2 p-2'>
-            <h2 className='ss2:text-xl font-semibold'>Projects</h2>
-            <a
-              className='text-sm font-normal cursor-pointer'
-              onClick={() => handleChange('project')}
-            >
-              View all projects
-            </a>
-          </div>
-          <DashboardProjectCard />
-        </div>
-      )}
       <div className='bg-white w-full rounded-lg shadow-sm lg:shadow-none  mt-8 lg:p-6'>
         <DashboardProfileView />
       </div>

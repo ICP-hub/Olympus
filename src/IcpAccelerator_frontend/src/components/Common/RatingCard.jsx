@@ -3,8 +3,9 @@ import RatingReview from './RatingReview';
 import { Principal } from '@dfinity/principal';
 import { useSelector } from 'react-redux';
 import uint8ArrayToBase64 from '../Utils/uint8ArrayToBase64';
+import RatingCardSkeleton from './RatingCardSkeleton';
 
-const RatingCard = ({}) => {
+const RatingCard = ({ isLoading }) => {
   const [showReview, setShowReview] = useState(false);
   const [ratingCount, setRatingCount] = useState(0);
   const principal = useSelector((currState) => currState.internet.principal);
@@ -37,7 +38,9 @@ const RatingCard = ({}) => {
     };
   }, [actor, principal]);
 
-  console.log('RATING CHILD ME JAANE K LIYE TAAYAR HAI', ratingtosend);
+  // if (isLoading) {
+  //   return <RatingCardSkeleton />;
+  // }
 
   return (
     <>
