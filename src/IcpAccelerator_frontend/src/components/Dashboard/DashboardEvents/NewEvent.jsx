@@ -8,6 +8,9 @@ import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined';
 import parse from 'html-react-parser';
 import { Principal } from '@dfinity/principal';
 import Edit from '../../../../assets/Logo/edit.png';
+import NewEventSkeleton from './DashboardEventSkeletons/NewEventSkeleton';
+import { formatFullDateFromSimpleDate } from '../../Utils/formatter/formatDateFromBigInt';
+
 
 const NewEvent = ({ event }) => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -17,6 +20,7 @@ const NewEvent = ({ event }) => {
   const actor = useSelector((currState) => currState.actors.actor);
   const principal = useSelector((currState) => currState.internet.principal);
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
 
   const handleModalOpen = () => {
     setModalOpen(true);
@@ -26,6 +30,7 @@ const NewEvent = ({ event }) => {
 
   const fetchCohorts = async () => {
     if (actor && principal) {
+      setLoading(true); // Start loading
       try {
         const covertedPrincipal = Principal.fromText(principal);
         const data = await actor.get_cohorts_by_principal(covertedPrincipal);
@@ -65,6 +70,8 @@ const NewEvent = ({ event }) => {
         }
       } catch (error) {
         console.error('Error fetching cohort data:', error);
+      } finally {
+        setLoading(false); // Stop loading
       }
     }
   };
@@ -85,7 +92,9 @@ const NewEvent = ({ event }) => {
   };
   return (
     <>
-      {cohortEvents.length === 0 ? (
+    {loading ? (
+        <NewEventSkeleton eventsCount={cohortEvents.length}/>
+      ) : cohortEvents.length === 0 ? (
         <EventSection />
       ) : (
         <>
@@ -205,7 +214,7 @@ const NewEvent = ({ event }) => {
           editMode={editMode}
           singleEventData={selectedEvent}
           cohortId={selectedEvent?.cohort_id}
-          fetchCohorts={fetchCohorts()}
+          fetchCohorts={fetchCohorts}
         />
       )}
     </>

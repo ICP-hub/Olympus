@@ -12,11 +12,14 @@ import { RotatingLines } from "react-loader-spinner";
 import SpinnerLoader from "../../Discover/SpinnerLoader";
 import AOS from "aos";
 import "aos/dist/aos.css";
+import EventCardSkeleton from './DashboardEventSkeletons/EventCardSkeleton';
 const EventCard = ({ selectedEventType }) => {
   const actor = useSelector((currState) => currState.actors.actor);
   const [noData, setNoData] = useState(false);
   const [allLiveEventsData, setAllLiveEventsData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isSkeletonLoading, setIsSkeletonLoading] = useState(true); 
+  const [eventCount, setEventCount] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
@@ -66,9 +69,12 @@ const EventCard = ({ selectedEventType }) => {
 
         if (filteredEvents.length < itemsPerPage) {
           setHasMore(false); // No more data to load
+          
         }
+        setEventCount(filteredEvents.length);
       } else {
         setHasMore(false);
+        setEventCount(0);
       }
 
       setNoData(filteredEvents.length === 0);
@@ -80,12 +86,14 @@ const EventCard = ({ selectedEventType }) => {
       setIsLoading(false); // End loading state
     }
   };
-  useEffect(() => {
-    if (!isLoading && hasMore && actor) {
-      console.log(`Current page: ${currentPage}`);
-      fetchEvents(actor, currentPage); // Fetch data
-    }
-  }, [actor, currentPage, hasMore,  selectedEventType]);
+useEffect(() => {
+  if (!isLoading && hasMore && actor) {
+    setIsSkeletonLoading(true);
+    fetchEvents(actor, currentPage).finally(() => {
+      setIsSkeletonLoading(true);
+    });
+  }
+}, [actor, currentPage, hasMore, selectedEventType]);
 
   const loadMore = () => {
     if (!isLoading && hasMore) {
@@ -108,7 +116,11 @@ const EventCard = ({ selectedEventType }) => {
       style={{ height: "80vh", overflowY: "auto" }}
       data-aos="fade-up"
     >
-      {allLiveEventsData.length > 0 ? (
+        {isSkeletonLoading ? (
+       Array.from({ length: eventCount }).map((_, index) => (
+         <EventCardSkeleton key={index} />
+       ))
+      ) : allLiveEventsData.length > 0 ? (
         <InfiniteScroll
           dataLength={allLiveEventsData.length}
           next={loadMore}
@@ -163,48 +175,7 @@ const EventCard = ({ selectedEventType }) => {
                 className='bg-white rounded-lg shadow p-4 mb-6'
                 onClick={() => handleClick(data.cohort_id)}
               >
-                {/* <div className="flex justify-between items-center">
-                  <div className="sm1:flex items-center gap-3 relative w-full">
-                    <div className="max-w-[160px] absolute top-1 left-1 bg-white p-2 rounded-[8px]">
-                      <p className="text-base font-bold">
-                        {launch_date} – {end_date}
-                      </p>
-                      <p className="text-sm font-normal">
-                        Start at: {new Date(data?.cohort?.start_date).toLocaleDateString("en-US")}
-                      </p>
-                    </div>
-                    <div className="w-[240px] h-[172px]">
-                      <img
-                        src={image}
-                        alt={name}
-                        className="w-[240px] h-[172px] rounded-lg mr-4 object-cover object-center"
-                      />
-                    </div>
-                    <div className="w-2/3">
-                      <div>
-                        <div className="bg-[#c8eaef] border-[#45b0c1] border text-[#090907] text-xs px-2 py-1 rounded-full w-[70px]">
-                          COHORT
-                        </div>
-                        <h3 className="text-lg font-bold mt-2">{name}</h3>
-                        <p className="text-sm text-gray-500 mb-4 overflow-hidden text-ellipsis max-h-12 line-clamp-2 mt-2">
-                          {parse(desc)}
-                        </p>
-                      </div>
-                      <div className="flex gap-3 items-center -bottom-4 relative">
-                        <span className="text-sm text-[#121926]">
-                          <PlaceOutlinedIcon
-                            className="text-[#364152]"
-                            fontSize="small"
-                          />
-                          {country}
-                        </span>
-                        <span className="text-sm text-[#121926]">
-                          ${funding}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div> */}
+               
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
                   <div className="relative w-full sm:flex items-start sm:items-center gap-3">
                     <div className="absolute top-1 left-1 bg-white p-2 rounded-lg max-w-[122px] sm:max-w-[160px]">
