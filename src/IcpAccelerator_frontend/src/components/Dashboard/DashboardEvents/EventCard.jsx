@@ -125,7 +125,6 @@ useEffect(() => {
           dataLength={allLiveEventsData.length}
           next={loadMore}
           hasMore={hasMore}
-<<<<<<< Updated upstream
           loader={
             <>
               {" "}
@@ -134,13 +133,6 @@ useEffect(() => {
           }
           endMessage={<p>No more data available</p>}
           scrollableTarget="scrollableDiv"
-=======
-          loader={<h4>Loading more...</h4>}
-          endMessage={<p className='flex justify-center mt-4'>
-            No more data available...
-          </p>}
-          scrollableTarget='scrollableDiv'
->>>>>>> Stashed changes
         >
           {allLiveEventsData.map((data, index) => {
             const image = data?.cohort?.cohort_banner[0]
