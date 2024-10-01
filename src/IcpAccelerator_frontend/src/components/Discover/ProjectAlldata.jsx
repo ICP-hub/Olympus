@@ -25,6 +25,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import NoData from '../NoDataCard/NoData';
 import SpinnerLoader from './SpinnerLoader';
 import DiscoverSkeleton from './DiscoverSkeleton/DiscoverSkeleton';
+import useTimeout from '../hooks/TimeOutHook';
 const DiscoverProject = ({ onProjectCountChange }) => {
   const actor = useSelector((currState) => currState.actors.actor);
   const [allProjectData, setAllProjectData] = useState([]);
@@ -43,7 +44,7 @@ const DiscoverProject = ({ onProjectCountChange }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentPrincipal, setCurrentPrincipal] = useState([]);
   const [userRatingDetail, setUserRatingDetail] = useState(null);
-
+  useTimeout(() => setIsLoading(false));
   const mentorPrincipal = useSelector(
     (currState) => currState.internet.principal
   );
@@ -157,7 +158,6 @@ const DiscoverProject = ({ onProjectCountChange }) => {
   };
 
   const getAllProject = async (caller, page, isRefresh = false) => {
-    setIsLoading(true);
     setIsFetching(true);
 
     try {
@@ -188,7 +188,6 @@ const DiscoverProject = ({ onProjectCountChange }) => {
       setHasMore(false);
     } finally {
       setIsFetching(false);
-      setIsLoading(true);
     }
   };
 

@@ -11,6 +11,7 @@ import SpinnerLoader from './SpinnerLoader';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import DiscoverSkeleton from './DiscoverSkeleton/DiscoverSkeleton';
+import useTimeout from '../hooks/TimeOutHook';
 const DiscoverUser = ({ onUserCountChange }) => {
   const actor = useSelector((currState) => currState.actors.actor);
   const [allUserData, setAllUserData] = useState([]);
@@ -22,9 +23,8 @@ const DiscoverUser = ({ onUserCountChange }) => {
   const [isFetching, setIsFetching] = useState(false);
   const [currentPrincipal, setCurrentPrincipal] = useState([]);
   const itemsPerPage = 10;
-
+  useTimeout(() => setIsLoading(false));
   const getAllUser = async (caller, page, isRefresh = false) => {
-    setIsLoading(true);
     try {
       setIsFetching(true); // Set loading state
 
@@ -56,7 +56,6 @@ const DiscoverUser = ({ onUserCountChange }) => {
       console.error('Error fetching users:', error);
     } finally {
       setIsFetching(false); // Reset fetching state
-      setIsLoading(true);
     }
   };
   console.log('allUserData', allUserData);
