@@ -183,8 +183,10 @@ type OfferToInvestor = record {
   offer : text;
   reciever_data : opt record { VentureCapitalist; UserInfoInternal };
   accepted_at : nat64;
+  is_cohort_association : bool;
   declined_at : nat64;
   receiever_principal : principal;
+  cohort_data : opt CohortDetails;
   offer_id : text;
   response : text;
   sender_data : opt record { ProjectInfoInternal; UserInfoInternal };
@@ -197,8 +199,10 @@ type OfferToMentor = record {
   offer : text;
   reciever_data : opt record { MentorInternal; UserInfoInternal };
   accepted_at : nat64;
+  is_cohort_association : bool;
   declined_at : nat64;
   receiever_principal : principal;
+  cohort_data : opt CohortDetails;
   offer_id : text;
   response : text;
   sender_data : opt record { ProjectInfoInternal; UserInfoInternal };
@@ -211,8 +215,10 @@ type OfferToProject = record {
   offer : text;
   reciever_data : opt record { ProjectInfoInternal; UserInfoInternal };
   accepted_at : nat64;
+  is_cohort_association : bool;
   declined_at : nat64;
   receiever_principal : principal;
+  cohort_data : opt CohortDetails;
   offer_id : text;
   response : text;
   sender_data : opt record { MentorInternal; UserInfoInternal };
@@ -241,8 +247,10 @@ type OfferToSendToInvestor = record {
   offer : text;
   reciever_data : opt record { VentureCapitalist; UserInfoInternal };
   accepted_at : nat64;
+  is_cohort_association : bool;
   declined_at : nat64;
   receiever_principal : principal;
+  cohort_data : opt CohortDetails;
   offer_id : text;
   response : text;
   sender_data : opt record { ProjectInfoInternal; UserInfoInternal };
@@ -255,8 +263,10 @@ type OfferToSendToMentor = record {
   offer : text;
   reciever_data : opt record { MentorInternal; UserInfoInternal };
   accepted_at : nat64;
+  is_cohort_association : bool;
   declined_at : nat64;
   receiever_principal : principal;
+  cohort_data : opt CohortDetails;
   offer_id : text;
   response : text;
   sender_data : opt record { ProjectInfoInternal; UserInfoInternal };
@@ -858,10 +868,24 @@ service : {
   self_decline_request_from_project_to_investor : (text, text) -> (text);
   self_decline_request_from_project_to_mentor : (text) -> (text);
   send_money_access_request : (text) -> (text);
-  send_offer_to_investor_by_project : (principal, text, text) -> (text);
-  send_offer_to_mentor_from_project : (principal, text, text) -> (text);
+  send_offer_to_investor_by_project : (
+      principal,
+      text,
+      text,
+      bool,
+      opt text,
+    ) -> (text);
+  send_offer_to_mentor_from_project : (
+      principal,
+      text,
+      text,
+      bool,
+      opt text,
+    ) -> (text);
   send_offer_to_project_by_investor : (text, text, bool, opt text) -> (text);
-  send_offer_to_project_by_mentor : (text, text, principal) -> (text);
+  send_offer_to_project_by_mentor : (text, text, principal, bool, opt text) -> (
+      text,
+    );
   send_private_docs_access_request : (text) -> (text);
   send_rejoin_invitation_to_mentor : (text, principal, text) -> (Result);
   set_asset_canister : (principal) -> ();

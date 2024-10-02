@@ -1,7 +1,8 @@
 use crate::project_module::get_project::get_project_info_using_principal;
 use crate::project_module::post_project::find_project_owner_principal;
+use crate::cohort_module::get_cohort::{check_cohort_mebership, get_cohort};
 use crate::vc_module::get_vc::get_vc_info;
-use crate::{state_handler::*, ProjectInfoInternal, UserInfoInternal, VentureCapitalist};
+use crate::{state_handler::*, CohortDetails, ProjectInfoInternal, UserInfoInternal, VentureCapitalist};
 use candid::{CandidType, Principal};
 use ic_cdk::api::management_canister::main::raw_rand;
 use ic_cdk::{api::time, caller};
@@ -24,6 +25,8 @@ pub struct OfferToInvestor {
     pub sender_principal: Principal,
     pub receiever_principal: Principal,
     pub response: String,
+    pub is_cohort_association: bool,
+    pub cohort_data: Option<CohortDetails>,
 }
 
 #[derive(Clone, CandidType, Deserialize, Serialize)]
@@ -40,6 +43,8 @@ pub struct OfferToSendToInvestor {
     pub sender_principal: Principal,
     pub receiever_principal: Principal,
     pub response: String,
+    pub is_cohort_association: bool,
+    pub cohort_data: Option<CohortDetails>,
 }
 
 pub fn store_request_sent_by_project_to_investor(project_id: String, offer: OfferToInvestor) {
@@ -71,6 +76,8 @@ pub async fn send_offer_to_investor_by_project(
     investor_id: Principal,
     msg: String,
     project_id: String,
+    is_cohort_association: bool, 
+    cohort_id: Option<String>
 ) -> String {
     let mut offer_exists = false; 
     let mut existing_status = String::new(); 
@@ -97,6 +104,20 @@ pub async fn send_offer_to_investor_by_project(
     let project_info = get_project_info_using_principal(project_principal);
     let vc_data = get_vc_info(investor_id);
 
+    if is_cohort_association {
+        if let Some(cohort) = &cohort_id {
+            let investor_cohort = check_cohort_mebership(investor_id, cohort.to_string());
+            let project_cohort = check_cohort_mebership(project_principal, cohort.to_string());
+            
+            if !investor_cohort || !project_cohort {
+                return "Both parties must be in the same cohort to make a cohort-associated offer.".to_string();
+            }
+        } else {
+            return "Cohort ID must be provided for cohort-associated offers.".to_string();
+        }
+    }
+    let cohort_data_for_association = cohort_id.as_ref().map(|id| get_cohort(id.to_string()));
+
     let offer_to_investor = OfferToInvestor {
         offer_id: offer_id.clone(),
         offer: msg.clone(),
@@ -109,7 +130,9 @@ pub async fn send_offer_to_investor_by_project(
         sender_data: project_info.clone(),
         reciever_data: vc_data.clone(),
         sender_principal: project_principal,
-        receiever_principal: investor_id
+        receiever_principal: investor_id,
+        is_cohort_association: is_cohort_association,
+        cohort_data: cohort_data_for_association.clone()
     };
 
     store_request_sent_by_project_to_investor(project_id.clone(), offer_to_investor);
@@ -126,7 +149,9 @@ pub async fn send_offer_to_investor_by_project(
         sender_data: project_info,
         reciever_data: vc_data,
         sender_principal: project_principal,
-        receiever_principal: investor_id
+        receiever_principal: investor_id,
+        is_cohort_association: is_cohort_association,
+        cohort_data: cohort_data_for_association.clone()
     };
 
     notify_investor_with_offer(investor_id, offer_to_send_to_investor);
