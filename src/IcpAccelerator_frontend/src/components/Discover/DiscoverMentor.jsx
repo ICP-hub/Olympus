@@ -171,7 +171,7 @@ const DiscoverMentor = ({ onMentorCountChange }) => {
       >
         {isLoading ? (
           <>
-            {[...Array(allMentorData.length || 5)].map((_, index) => (
+            {[...Array(allMentorData.length)].map((_, index) => (
               <DiscoverSkeleton key={index} />
             ))}
           </>
