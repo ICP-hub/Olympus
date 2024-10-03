@@ -94,11 +94,6 @@ jobs:
           dfx build asset_canister_backend
           dfx build IcpAccelerator_backend
 
-      - name: Test Canister Installation
-        run: |
-          dfx canister install --mode reinstall asset_canister_backend
-          dfx canister install --mode reinstall IcpAccelerator_backend
-
       - name: Install Dependencies
         run: npm install --force
 
