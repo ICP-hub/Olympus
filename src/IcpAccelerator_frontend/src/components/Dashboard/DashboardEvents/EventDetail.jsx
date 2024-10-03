@@ -156,9 +156,9 @@ const EventDetails = () => {
           console.log('error-in-get_my_cohort', error);
           setCohortData(null);
         } finally {
-          setTimeout(() => {
-            setIsLoading(false);
-          }, 1000);
+          // setTimeout(() => {
+          //   setIsLoading(false);
+          // }, 1000);
         }
       }
     };
@@ -168,7 +168,7 @@ const EventDetails = () => {
 
   const timeoutRef = useRef(null);
 
-  // useTimeout(()=> setIsLoading(false))
+  useTimeout(() => setIsLoading(false));
   useEffect(() => {
     if (cohortData) {
       const calculateRemainingTime = () => {
