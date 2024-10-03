@@ -2,9 +2,9 @@ name: CI/CD-OLYMPUS
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, master ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, master ]
 
 env:
   CARGO_TERM_COLOR: always
@@ -98,4 +98,5 @@ jobs:
         run: npm install --force
 
       - name: Deploy Canisters to Mainnet
+        if: github.ref == 'refs/heads/main' && github.event.before == 'refs/heads/master'
         run: ./deploy_main.sh
