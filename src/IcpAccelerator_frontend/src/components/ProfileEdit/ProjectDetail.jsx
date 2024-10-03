@@ -26,6 +26,7 @@ import getPlatformFromHostname from '../Utils/navigationHelper/getPlatformFromHo
 import { useNavigate } from 'react-router-dom';
 import CompressedImage from '../ImageCompressed/CompressedImage';
 import { fileSchema } from './validationLogoAndCover';
+import ProjectDetailSkeleton from './ProfileEditSkeleton/ProjectDetailSkeleton';
 
 const ProjectDetail = forwardRef(
   (
@@ -749,6 +750,13 @@ const ProjectDetail = forwardRef(
       }
     }, [projectFullData]);
 
+    const [isLoading, setIsLoading] = useState(true);
+  useEffect(() => {
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 500);
+  }, []);
+
     const preferred_icp_hub =
       projectFullData[0]?.[0]?.params.preferred_icp_hub?.[0] ?? '';
     const project_name = projectFullData[0]?.[0]?.params.project_name ?? '';
@@ -797,6 +805,7 @@ const ProjectDetail = forwardRef(
       <>
         <div ref={projectDetailRef} className='px-1'>
           <div className='px-1'>
+            {isLoading ? <ProjectDetailSkeleton />:
             <form onSubmit={handleSubmit(onSubmitHandler, onErrorHandler)}>
               {/* Preferred ICP Hub */}
               {/* Reason for Joining This Platform */}
@@ -1879,6 +1888,7 @@ const ProjectDetail = forwardRef(
                 </div>
               )}
             </form>
+         }
           </div>
           <Toaster />
         </div>

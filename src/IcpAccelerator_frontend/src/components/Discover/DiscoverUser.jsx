@@ -107,7 +107,7 @@ const DiscoverUser = ({ onUserCountChange }) => {
         data-aos='fade-up'
       >
         {isLoading ? (
-          [...Array(allUserData.length || 5)].map((_, index) => (
+          [...Array(allUserData.length)].map((_, index) => (
             <DiscoverSkeleton key={index} />
           ))
         ) : (

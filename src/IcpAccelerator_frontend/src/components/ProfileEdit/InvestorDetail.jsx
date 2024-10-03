@@ -18,6 +18,7 @@ import { validationSchema } from '../Modals/investorForm/investorvalidation';
 import getSocialLogo from '../Utils/navigationHelper/getSocialLogo';
 import getPlatformFromHostname from '../Utils/navigationHelper/getPlatformFromHostname';
 import { investorRegisteredHandlerRequest } from '../StateManagement/Redux/Reducers/investorRegisteredData';
+import InvestorDetailSkeleton from './ProfileEditSkeleton/InvestorDetailSkeleton';
 
 const InvestorDetail = () => {
   const {
@@ -593,8 +594,17 @@ const InvestorDetail = () => {
     console.log('Validation errors:', val);
     toast.error('Empty fields or invalid values, please recheck the form');
   };
+
+  const [isLoading, setIsLoading] = useState(true);
+  useEffect(() => {
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 500);
+  }, []);
+
   return (
     <form onSubmit={handleSubmit(onSubmitHandler, onErrorHandler)}>
+      {isLoading ? <InvestorDetailSkeleton/> :
       <div className='px-1'>
         <div className='group relative hover:bg-gray-100 rounded-lg p-3 px-3 mt-4 mb-2'>
           <div className='flex justify-between items-center'>
@@ -1551,6 +1561,7 @@ const InvestorDetail = () => {
           </div>
         )}
       </div>
+}
     </form>
   );
 };

@@ -9,6 +9,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useCountries } from 'react-countries';
 import { useSelector } from 'react-redux';
 import { validationSchema } from './UserValidation';
+import UserGeneralDetailSkeleton from './skeletonProfile/UserGeneralDetailSkeleton';
 export default function UserGeneralDetail() {
   const { countries } = useCountries();
   const userFullData = useSelector((currState) => currState.userData.data.Ok);
@@ -228,8 +229,17 @@ export default function UserGeneralDetail() {
   const bio = userFullData?.bio[0];
   const country = userFullData?.country;
   const area_of_interest = userFullData?.area_of_interest;
+
+  const [isLoading, setIsLoading] = useState(true);
+  useEffect(() => {
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+  }, []);
+
   return (
     <>
+    {isLoading ? <UserGeneralDetailSkeleton />:
       <div className='px-1' ref={containerRef}>
         <div className='mb-4 group relative hover:bg-gray-100 rounded-lg p-2 px-3'>
           <div className='flex justify-between'>
@@ -604,6 +614,7 @@ export default function UserGeneralDetail() {
           )}
         </div>
       </div>
+}
     </>
   );
 }

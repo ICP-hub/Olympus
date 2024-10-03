@@ -352,8 +352,11 @@ const RatingPage = () => {
               ...prevReviews,
               { rating, message, reviewer_principal: principal },
             ]);
-            setIsLoading(false);
+            setTimeout(()=>{
+              setIsLoading(false);
             setReviewsLoading(false);
+            
+            },1000)
             setCurrentUserHasRated(true);
           }
         });
@@ -374,8 +377,11 @@ const RatingPage = () => {
           if (result) {
             const fetchedReviews = result?.Ok || [];
             setReviews(fetchedReviews);
-            setIsLoading(false);
+            setTimeout(()=>{
+              setIsLoading(false);
             setReviewsLoading(false);
+            
+            },1000)
 
             const hasRated = fetchedReviews.some(
               (review) =>
@@ -384,8 +390,11 @@ const RatingPage = () => {
             setCurrentUserHasRated(hasRated);
           } else {
             setReviews([]);
-            setIsLoading(false);
+            setTimeout(()=>{
+              setIsLoading(false);
             setReviewsLoading(false);
+            
+            },1000)
             setCurrentUserHasRated(false);
           }
         }
@@ -393,8 +402,11 @@ const RatingPage = () => {
     } catch (error) {
       if (isMounted.current) {
         setReviews([]);
-        setIsLoading(false);
+        setTimeout(()=>{
+          setIsLoading(false);
         setReviewsLoading(false);
+        
+        },1000)
         setCurrentUserHasRated(false);
         console.log('error-in-get-all-user', error);
       }
