@@ -25,6 +25,7 @@ import ShareModal from './EventshareModel';
 import { useNavigate } from 'react-router-dom';
 import DiscoverUserModal from '../DashboardHomePage/discoverMentorPage/DiscoverUserModal';
 import EventDetailSkeleton from './DashboardEventSkeletons/EventDetailSkeleton';
+import useTimeout from '../../hooks/TimeOutHook';
 
 const FAQItem = ({ question, answer }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -155,7 +156,9 @@ const EventDetails = () => {
           console.log('error-in-get_my_cohort', error);
           setCohortData(null);
         } finally {
-          setIsLoading(true); // Set loading to false after data is fetched
+          setTimeout(() => {
+            setIsLoading(false);
+          }, 1000);
         }
       }
     };
@@ -165,6 +168,7 @@ const EventDetails = () => {
 
   const timeoutRef = useRef(null);
 
+  // useTimeout(()=> setIsLoading(false))
   useEffect(() => {
     if (cohortData) {
       const calculateRemainingTime = () => {
@@ -199,7 +203,13 @@ const EventDetails = () => {
   };
 
   if (isLoading) {
-    return <EventDetailSkeleton userCurrentRoleStatusActiveRole={userCurrentRoleStatusActiveRole} cohortCreator={cohortCreator} />; // Show skeleton while loading
+    return (
+      <EventDetailSkeleton
+        userCurrentRoleStatusActiveRole={userCurrentRoleStatusActiveRole}
+        cohortCreator={cohortCreator}
+        cohortData={cohortData}
+      />
+    ); // Show skeleton while loading
   }
 
   if (!cohortData) {
@@ -755,21 +765,21 @@ const EventDetails = () => {
           )}
         </div>
 
-        <div className="flex-1 w-full overflow-auto ">
-          <div className="py-2">
-            <div className="w-full h-[200px] lgx:h-[310px] flex items-center justify-center bg-gray-100">
+        <div className='flex-1 w-full overflow-auto '>
+          <div className='py-2'>
+            <div className='w-full h-[200px] lgx:h-[310px] flex items-center justify-center bg-gray-100'>
               <img
                 src={bannerImage}
-                alt="Event"
-                className="w-full h-full rounded-lg  bg-gray-200"
-                loading="lazy"
+                alt='Event'
+                className='w-full h-full rounded-lg  bg-gray-200'
+                loading='lazy'
                 draggable={false}
               />
             </div>
 
-            <h1 className="text-xl md:text-3xl font-bold mt-4">{title}</h1>
-            <div className="flex items-center mt-2 text-gray-600">
-              <span className="mr-2">
+            <h1 className='text-xl md:text-3xl font-bold mt-4'>{title}</h1>
+            <div className='flex items-center mt-2 text-gray-600'>
+              <span className='mr-2'>
                 <img
                   src={StartDateCalender}
                   className='w-5 h-5 font-bold'

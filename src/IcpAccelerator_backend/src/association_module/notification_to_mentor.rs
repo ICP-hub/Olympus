@@ -1,7 +1,8 @@
+use crate::cohort_module::get_cohort::{check_cohort_mebership, get_cohort};
 use crate::mentor_module::get_mentor::get_mentor_info_using_principal;
 use crate::project_module::get_project::get_project_info_using_principal;
 use crate::project_module::post_project::find_project_owner_principal;
-use crate::{state_handler::*, MentorInternal, ProjectInfoInternal, UserInfoInternal};
+use crate::{state_handler::*, CohortDetails, MentorInternal, ProjectInfoInternal, UserInfoInternal};
 use candid::{CandidType, Principal};
 use ic_cdk::api::management_canister::main::raw_rand;
 use ic_cdk::{api::time, caller};
@@ -12,34 +13,38 @@ use crate::guard::*;
 
 #[derive(Clone, CandidType, Deserialize, Serialize)]
 pub struct OfferToMentor {
-    offer_id: String, 
-    reciever_data: Option<(MentorInternal, UserInfoInternal)>,
-    sender_data: Option<(ProjectInfoInternal, UserInfoInternal)>,
-    offer: String,
-    sent_at: u64,
-    accepted_at: u64,
-    declined_at: u64,
-    self_declined_at: u64,
-    request_status: String,
-    sender_principal: Principal,
-    receiever_principal: Principal,
-    response: String,
+    pub offer_id: String, 
+    pub reciever_data: Option<(MentorInternal, UserInfoInternal)>,
+    pub sender_data: Option<(ProjectInfoInternal, UserInfoInternal)>,
+    pub offer: String,
+    pub sent_at: u64,
+    pub accepted_at: u64,
+    pub declined_at: u64,
+    pub self_declined_at: u64,
+    pub request_status: String,
+    pub sender_principal: Principal,
+    pub receiever_principal: Principal,
+    pub response: String,
+    pub is_cohort_association: bool,
+    pub cohort_data: Option<CohortDetails>,
 }
 
 #[derive(Clone, CandidType, Deserialize, Serialize)]
 pub struct OfferToSendToMentor {
-    offer_id: String, 
-    reciever_data: Option<(MentorInternal, UserInfoInternal)>,
-    sender_data: Option<(ProjectInfoInternal, UserInfoInternal)>,
-    offer: String,
-    sent_at: u64,
-    accepted_at: u64,
-    declined_at: u64,
-    self_declined_at: u64,
-    request_status: String,
-    sender_principal: Principal,
-    receiever_principal: Principal,
-    response: String,
+    pub offer_id: String, 
+    pub reciever_data: Option<(MentorInternal, UserInfoInternal)>,
+    pub sender_data: Option<(ProjectInfoInternal, UserInfoInternal)>,
+    pub offer: String,
+    pub sent_at: u64,
+    pub accepted_at: u64,
+    pub declined_at: u64,
+    pub self_declined_at: u64,
+    pub request_status: String,
+    pub sender_principal: Principal,
+    pub receiever_principal: Principal,
+    pub response: String,
+    pub is_cohort_association: bool,
+    pub cohort_data: Option<CohortDetails>,
 }
 
 pub fn store_request_sent_by_project(offer: OfferToMentor) {
@@ -89,7 +94,7 @@ pub fn get_all_mentor_notification(id: Principal) -> Vec<OfferToSendToMentor> {
 }
 
 #[update(guard = "combined_guard")]
-pub async fn send_offer_to_mentor_from_project(mentor_id: Principal, msg: String, project_id: String) -> String {
+pub async fn send_offer_to_mentor_from_project(mentor_id: Principal, msg: String, project_id: String, is_cohort_association: bool, cohort_id: Option<String>) -> String {
     let mut offer_exists = false;  
     let mut existing_status = String::new();  
 
@@ -114,6 +119,19 @@ pub async fn send_offer_to_mentor_from_project(mentor_id: Principal, msg: String
 
     let project_info = get_project_info_using_principal(project_principal);
     let mentor_data = get_mentor_info_using_principal(mentor_id);
+    if is_cohort_association {
+        if let Some(cohort) = &cohort_id {
+            let investor_cohort = check_cohort_mebership(mentor_id, cohort.to_string());
+            let project_cohort = check_cohort_mebership(project_principal, cohort.to_string());
+            
+            if !investor_cohort || !project_cohort {
+                return "Both parties must be in the same cohort to make a cohort-associated offer.".to_string();
+            }
+        } else {
+            return "Cohort ID must be provided for cohort-associated offers.".to_string();
+        }
+    }
+    let cohort_data_for_association = cohort_id.as_ref().map(|id| get_cohort(id.to_string()));
 
     let offer_to_mentor = OfferToMentor {
         offer_id: offer_id.clone(),
@@ -128,6 +146,8 @@ pub async fn send_offer_to_mentor_from_project(mentor_id: Principal, msg: String
         reciever_data: mentor_data.clone(),
         sender_principal: project_principal,
         receiever_principal: mentor_id,
+        is_cohort_association: is_cohort_association,
+        cohort_data: cohort_data_for_association.clone()
     };
 
     store_request_sent_by_project(offer_to_mentor);
@@ -148,6 +168,8 @@ pub async fn send_offer_to_mentor_from_project(mentor_id: Principal, msg: String
         reciever_data: mentor_data.clone(),
         sender_principal: project_principal,
         receiever_principal: mentor_id,
+        is_cohort_association: is_cohort_association,
+        cohort_data: cohort_data_for_association.clone()
     };
 
     notify_mentor_with_offer(mentor_id, offer_to_send_to_mentor);

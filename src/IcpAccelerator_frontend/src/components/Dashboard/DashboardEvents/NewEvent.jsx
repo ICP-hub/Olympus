@@ -10,6 +10,7 @@ import { Principal } from '@dfinity/principal';
 import Edit from '../../../../assets/Logo/edit.png';
 import NewEventSkeleton from './DashboardEventSkeletons/NewEventSkeleton';
 import { formatFullDateFromSimpleDate } from '../../Utils/formatter/formatDateFromBigInt';
+import useTimeout from '../../hooks/TimeOutHook';
 
 
 const NewEvent = ({ event }) => {
@@ -27,10 +28,9 @@ const NewEvent = ({ event }) => {
     setEditMode(false); // When creating a new cohort, edit mode is false
     setSelectedEvent(null);
   };
-
+  useTimeout(()=> setLoading(false))
   const fetchCohorts = async () => {
     if (actor && principal) {
-      setLoading(true); // Start loading
       try {
         const covertedPrincipal = Principal.fromText(principal);
         const data = await actor.get_cohorts_by_principal(covertedPrincipal);
@@ -71,7 +71,7 @@ const NewEvent = ({ event }) => {
       } catch (error) {
         console.error('Error fetching cohort data:', error);
       } finally {
-        setLoading(false); // Stop loading
+     
       }
     }
   };
