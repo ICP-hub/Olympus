@@ -95,8 +95,9 @@ jobs:
           dfx build IcpAccelerator_backend
 
       - name: Install Dependencies
+        if: github.ref == 'refs/heads/main'
         run: npm install --force
 
       - name: Deploy Canisters to Mainnet
-        if: github.ref == 'refs/heads/main' && github.event.before == 'refs/heads/master'
+        if: github.ref == 'refs/heads/main'
         run: ./deploy_main.sh
