@@ -1,4 +1,4 @@
-name: CI-OLYMPUS
+name: CI/CD-OLYMPUS
 
 on:
   push:
@@ -10,58 +10,97 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  example-job:
-    runs-on: ubuntu-latest 
+  CI-CD-OLYMPUS:
+    name: "CI/CD for Olympus Project"
+    runs-on: ubuntu-latest
+    concurrency:
+      group: "website-update"
+      cancel-in-progress: true
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-      
-    - name: Cache Rust cargo registry
-      uses: actions/cache@v2
-      with:
-        path: ~/.cargo/registry
-        key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-cargo-registry-
-    - name: Cache Rust cargo index
-      uses: actions/cache@v2
-      with:
-        path: ~/.cargo/git
-        key: ${{ runner.os }}-cargo-index-${{ hashFiles('**/Cargo.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-cargo-index-
-    - name: Cache DFX version and installation
-      uses: actions/cache@v2
-      with:
-        path: ~/.cache/dfinity
-        key: ${{ runner.os }}-dfx-${{ hashFiles('dfx.json') }}
-        restore-keys: |
-          ${{ runner.os }}-dfx-
-    - name: Install dfx
-      if: steps.cache-dfx.outputs.cache-hit != 'true'
-      uses: dfinity/setup-dfx@main
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
-    - name: Confirm successful installation
-      run: dfx --version
+      - name: Update Git Submodules
+        run: git submodule update --init
 
-    - name: Setup Rust target
-      run: rustup target add wasm32-unknown-unknown
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22.6.0
 
-    - name: Cache build output
-      uses: actions/cache@v2
-      with:
-        path: target
-        key: ${{ runner.os }}-cargo-build-${{ hashFiles('**/Cargo.lock') }}-${{ hashFiles('**/*.rs') }}
-        restore-keys: |
-          ${{ runner.os }}-cargo-build-
-    - name: Starting DFX instance
-      run: dfx start --clean --background
+      - name: Cache Rust Cargo Registry
+        uses: actions/cache@v2
+        with:
+          path: ~/.cargo/registry
+          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-registry-
 
-    - name: Creating Canisters
-      run: |
-        dfx canister create asset_canister_backend
-        dfx canister create IcpAccelerator_backend
-    - name: Building Canisters
-      run: |
-        dfx build asset_canister_backend
-        dfx build IcpAccelerator_backend
+      - name: Cache Rust Cargo Index
+        uses: actions/cache@v2
+        with:
+          path: ~/.cargo/git
+          key: ${{ runner.os }}-cargo-index-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-index-
+
+      - name: Cache DFX Version and Installation
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/dfinity
+          key: ${{ runner.os }}-dfx-${{ hashFiles('dfx.json') }}
+          restore-keys: |
+            ${{ runner.os }}-dfx-
+
+      - name: Install DFX if Cache Miss
+        if: steps.cache-dfx.outputs.cache-hit != 'true'
+        uses: dfinity/setup-dfx@main
+        with:
+          dfx-version: "0.23.0"
+
+      - name: Confirm DFX Installation
+        run: dfx --version
+
+      - name: Setup Rust Target for WebAssembly
+        run: rustup target add wasm32-unknown-unknown
+
+      - name: Cache Build Output
+        uses: actions/cache@v2
+        with:
+          path: target
+          key: ${{ runner.os }}-cargo-build-${{ hashFiles('**/Cargo.lock') }}-${{ hashFiles('**/*.rs') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-build-
+
+      - name: Start DFX in Background
+        run: dfx start --clean --background
+
+      - name: Dump Identity
+        run: |
+          mkdir -p ~/.config/dfx/identity/default
+          echo "${{ secrets.DFX_IDENTITY }}" | base64 -d > ~/.config/dfx/identity/default/identity.pem
+          sed -i 's/\\r\\n/\r\n/g' ~/.config/dfx/identity/default/identity.pem
+        shell: bash
+
+      - name: Create Canisters
+        run: |
+          dfx canister create asset_canister_backend
+          dfx canister create IcpAccelerator_backend
+
+      - name: Build Canisters
+        run: |
+          dfx build asset_canister_backend
+          dfx build IcpAccelerator_backend
+
+      - name: Test Canister Installation
+        run: |
+          dfx canister install --mode reinstall asset_canister_backend
+          dfx canister install --mode reinstall IcpAccelerator_backend
+
+      - name: Install Dependencies
+        run: npm install --force
+
+      - name: Deploy Canisters to Mainnet
+        run: ./deploy_main.sh
