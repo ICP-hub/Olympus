@@ -5,7 +5,6 @@ import ArrowOutwardOutlinedIcon from '@mui/icons-material/ArrowOutwardOutlined';
 import { userCircleSvgIcon } from '../../Utils/Data/SvgData';
 import VerifiedIcon from '@mui/icons-material/Verified';
 
-
 const ProfilePageSkeleton = () => {
   return <div>ProfilePageSkeleton</div>;
 };
@@ -30,7 +29,24 @@ export const ProfileSkeleton = () => (
         <div className='relative w-24 h-24 mx-auto rounded-full mb-4'>
           <Skeleton circle={true} height={96} width={96} />
           <div className='absolute inset-0 flex items-center justify-center'>
-          {userCircleSvgIcon}
+            {/* {userCircleSvgIcon} */}
+            <div
+              className='flex items-center justify-center border-2 rounded-full border-gray-300 w-10 h-10 absolute mt-0.5'
+              style={{
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                backgroundColor: '#e3e3e3',
+              }}
+            >
+              <svg
+                className='w-5 h-5 text-gray-400'
+                fill='currentColor'
+                viewBox='0 0 24 24'
+              >
+                <path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z' />
+              </svg>
+            </div>
           </div>
         </div>
 
@@ -63,7 +79,7 @@ export const ProfileSkeleton = () => (
         </h3>
         <div className='flex flex-wrap items-center gap-2'>
           <span className='bg-[#F0F9FF] text-[#026AA2] rounded-md text-xs font-medium'>
-          <Skeleton width={100} height={25} />
+            <Skeleton width={100} height={25} />
           </span>
           <span className='bg-[#F0F9FF]  text-[#026AA2]  rounded-md text-xs font-medium uppercase'>
             <Skeleton width={100} height={25} />
@@ -129,8 +145,8 @@ export const ProfileSkeleton = () => (
             </h3>
           </div>
           <div className='flex  gap-2'>
-            <Skeleton style={{borderRadius:"18px"}} height={30} width={90}  />
-            <Skeleton style={{borderRadius:"18px"}} height={30} width={90}  />
+            <Skeleton style={{ borderRadius: '18px' }} height={30} width={90} />
+            <Skeleton style={{ borderRadius: '18px' }} height={30} width={90} />
           </div>
         </div>
 
@@ -142,8 +158,8 @@ export const ProfileSkeleton = () => (
             </h3>
           </div>
           <div className='flex gap-2'>
-          <Skeleton style={{borderRadius:"18px"}} height={30} width={90}  />
-          <Skeleton style={{borderRadius:"18px"}} height={30} width={90}  />
+            <Skeleton style={{ borderRadius: '18px' }} height={30} width={90} />
+            <Skeleton style={{ borderRadius: '18px' }} height={30} width={90} />
           </div>
         </div>
 

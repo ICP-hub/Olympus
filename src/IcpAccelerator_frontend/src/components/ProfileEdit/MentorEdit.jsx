@@ -14,6 +14,7 @@ import getReactSelectUpdateStyles from '../Utils/navigationHelper/getReactSelect
 import { validationSchema } from '../Modals/Mentor-Signup-Model/mentorValidation';
 import getPlatformFromHostname from '../Utils/navigationHelper/getPlatformFromHostname';
 import getSocialLogo from '../Utils/navigationHelper/getSocialLogo';
+import MentorEditSkeleton from './ProfileEditSkeleton/MentorEditSkeleton';
 
 const MentorEdit = () => {
   const dispatch = useDispatch();
@@ -458,6 +459,13 @@ const MentorEdit = () => {
     }
   }, [multiChainNames]);
 
+  const [isLoading, setIsLoading] = useState(true);
+  useEffect(() => {
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 500);
+  }, []);
+
   // data
   const reasons_to_join_platform =
     mentorFullData[0]?.profile?.reason_for_joining ?? '';
@@ -483,6 +491,7 @@ const MentorEdit = () => {
   const multichain = multi_chain === true ? 'Yes' : 'No';
   console.log('domains_interested_in', area_of_expertise);
   return (
+    isLoading ? <MentorEditSkeleton /> :
     <div ref={editableRef} className='bg-white p-2 '>
       <form onSubmit={handleSubmit(onSubmitHandler, onErrorHandler)}>
         <div className='my-1 relative group  hover:bg-gray-100 rounded-lg p-2 px-3'>
@@ -1219,6 +1228,7 @@ const MentorEdit = () => {
         )}
       </form>
     </div>
+      
   );
 };
 

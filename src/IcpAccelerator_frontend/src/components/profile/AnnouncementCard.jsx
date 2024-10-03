@@ -59,14 +59,14 @@ const AnnouncementCard = () => {
             handleCloseModal();
             setTimeout(() => {
               fetchLatestAnnouncement();
-            }, 1000);
+            }, 500);
           } else {
             toast.error('Something went wrong');
 
             handleCloseModal();
             setTimeout(() => {
               fetchLatestAnnouncement();
-            }, 1000);
+            }, 500);
           }
         } else {
           // Add new announcement
@@ -77,13 +77,13 @@ const AnnouncementCard = () => {
             handleCloseModal();
             setTimeout(() => {
               fetchLatestAnnouncement();
-            }, 1000);
+            }, 500);
           } else {
             toast.error('Something went wrong');
             handleCloseModal();
             setTimeout(() => {
               fetchLatestAnnouncement();
-            }, 1000);
+            }, 500);
           }
         }
       } catch (error) {
@@ -128,33 +128,59 @@ const AnnouncementCard = () => {
   };
 
   // Fetch the latest announcements
+  // const fetchLatestAnnouncement = async () => {
+  //   setIsLoading(true);
+  //   let convertedId = Principal.fromText(principal);
+  //   await actor
+  //     .get_announcements_by_principal(convertedId)
+  //     .then((result) => {
+  //       console.log('RESULT FROM ANN API', result);
+  //       if (!result || result.length === 0) {
+  //         setNoData(true);
+  //         setLatestAnnouncementData([]);
+  //         setIsLoading(false);
+  //       } else {
+  //         setLatestAnnouncementData(result);
+  //         setNoData(false);
+  //         setIsLoading(false);
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       setNoData(true);
+  //       setLatestAnnouncementData([]);
+
+  //       console.log('error-in-get_announcements_by_project_id', error);
+
+  //       setIsLoading(false);
+  //       console.log('error-in-get_announcements_by_project_id', error);
+  //     });
+  // };
   const fetchLatestAnnouncement = async () => {
     setIsLoading(true);
     let convertedId = Principal.fromText(principal);
-    await actor
-      .get_announcements_by_principal(convertedId)
-      .then((result) => {
+  
+    setTimeout(async () => {
+      try {
+        const result = await actor.get_announcements_by_principal(convertedId);
         console.log('RESULT FROM ANN API', result);
+  
         if (!result || result.length === 0) {
           setNoData(true);
           setLatestAnnouncementData([]);
-          setIsLoading(false);
         } else {
           setLatestAnnouncementData(result);
           setNoData(false);
-          setIsLoading(false);
         }
-      })
-      .catch((error) => {
+      } catch (error) {
         setNoData(true);
         setLatestAnnouncementData([]);
-
-        console.log('error-in-get_announcements_by_project_id', error);
-
+        console.error('error-in-get_announcements_by_project_id', error);
+      } finally {
         setIsLoading(false);
-        console.log('error-in-get_announcements_by_project_id', error);
-      });
+      }
+    }, 1000); 
   };
+  
 
   useEffect(() => {
     if (actor) {
