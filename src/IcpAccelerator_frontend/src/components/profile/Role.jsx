@@ -28,9 +28,11 @@ import {
 // import RoleProfileCard from "./RoleProfileCard";
 import ProfileRoleNoDataCard from '../Common/ProfileRoleNoDataCard';
 import RoleProfileCard from './RoleProfileCard';
+import RoleSkeleton, { ProfileAddRoleSkeleton, ProfileRoleSkeleton } from './skeletonProfile/RoleSkeleton';
 
 const FAQItem = ({ question, answer }) => {
   const [isOpen, setIsOpen] = useState(false);
+  
 
   return (
     <div className='border-b border-gray-200'>
@@ -74,6 +76,13 @@ const Role = () => {
   const userCurrentRoleStatusActiveRole = useSelector(
     (currState) => currState.currentRoleStatus.activeRole
   );
+  const [isLoading,setIsLoading]=useState(true)
+
+  useEffect(()=>{
+    setTimeout(()=>{
+      setIsLoading(false);
+    },1000);
+  },[])
 
   const roledata = [
     {
@@ -475,6 +484,7 @@ const Role = () => {
   return (
     <>
       <div className='flex flex-col'>
+        {isLoading ? <RoleSkeleton />:
         <div className='flex justify-center items-center w-full mt-[2%]'>
           <div className='border-2 rounded-lg shadow-md md:shadow-none pb-5 text-center   md:min-w-[280px] w-full md:max-w-[350px] mb-6 md:mb-0 md:mt-6'>
             <div className='w-full bg-[#EEF2F6] rounded-l-xl rounded-r-full h-1.5 mb- dark:bg-[#EEF2F6]'>
@@ -531,13 +541,17 @@ const Role = () => {
             </div>
           </div>
         </div>
+}
         {userCurrentRoleStatus && userCurrentRoleStatus.length > 0 && (
           <div className='hidden md:block'>
             {renderRoleSvgsOnce(userCurrentRoleStatus)}
           </div>
         )}
+        
         <div className='flex flex-col md:flex-row justify-around items-center gap-[12%]'>
-          {mergedData && renderRoleCards(mergedData)}
+        {isLoading ? <><ProfileRoleSkeleton /><ProfileRoleSkeleton /></>:
+          mergedData && renderRoleCards(mergedData)
+        }
         </div>
         <FAQ />
       </div>
