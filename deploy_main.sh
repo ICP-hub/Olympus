@@ -1,7 +1,7 @@
 set -e
 
 # use your identities here
-dfx identity use Mohit
+# dfx identity use Mohit
 
 dfx deploy --network ic
 
