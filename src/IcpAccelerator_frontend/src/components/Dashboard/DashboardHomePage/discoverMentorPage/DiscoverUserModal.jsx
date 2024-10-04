@@ -11,7 +11,7 @@ import DiscoverUserModalSkeleton from './DiscoverMentorPageSkeleton/DiscoverUser
 const DiscoverUserModal = ({ openDetail, setOpenDetail, userData }) => {
   console.log('user data =>', userData);
   const [loading, setIsLoading] = useState(true);
-  useTimeout(() => setIsLoading(true));
+  useTimeout(() => setIsLoading(false));
   useEffect(() => {
     if (openDetail) {
       // Prevent background from scrolling when modal is open
