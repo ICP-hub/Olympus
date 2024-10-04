@@ -69,50 +69,104 @@ function ProfileCard({ cardData }) {
   };
 
   const projectDetail = cardData;
-  console.log(
-    'my card..../////',
-    projectDetail?.[0][0]?.params?.mentors_assigned?.[0][0][1]?.params
-  );
+  console.log('my card..../////', projectDetail);
 
+  // Initialize an array to hold merged profiles
   let mergedProfiles = [];
 
   // Extracting mentor profiles
-  if (projectDetail?.[0]?.[0]?.params?.mentors_assigned?.[0]?.length > 0) {
-    projectDetail[0][0].params.mentors_assigned[0].forEach((mentorGroup) => {
-      mentorGroup.forEach((mentor) => {
-        const mentorParams = mentor.params;
-        const profilePicture = mentorParams?.profile_picture[0]
-          ? uint8ArrayToBase64(mentorParams.profile_picture[0])
-          : null;
+  const mentorsAssigned =
+    projectDetail?.[0]?.[0]?.params?.mentors_assigned?.[0];
+  if (Array.isArray(mentorsAssigned) && mentorsAssigned.length > 0) {
+    mentorsAssigned.forEach((mentorGroup) => {
+      if (Array.isArray(mentorGroup)) {
+        mentorGroup.forEach((mentor) => {
+          const mentorParams = mentor?.params; // Safe access
+          const profilePicture = mentorParams?.profile_picture?.[0]
+            ? uint8ArrayToBase64(mentorParams.profile_picture[0])
+            : null;
 
-        mergedProfiles.push({
-          profile_picture: profilePicture,
-          role: 'mentor',
+          mergedProfiles.push({
+            profile_picture: profilePicture,
+            role: 'mentor',
+          });
         });
-      });
+      }
     });
+  } else {
+    console.log('No mentors assigned or data is missing');
   }
 
   // Extracting VC profiles
-  if (projectDetail?.[0]?.[0]?.params?.vc_assigned?.[0]?.length > 0) {
-    projectDetail[0][0].params.vc_assigned[0].forEach((vcGroup) => {
-      vcGroup.forEach((vc) => {
-        const vcParams = vc.params;
-        const profilePicture = vcParams?.profile_picture[0]
-          ? uint8ArrayToBase64(vcParams.profile_picture[0])
-          : null;
+  const vcsAssigned = projectDetail?.[0]?.[0]?.params?.vc_assigned?.[0];
+  if (Array.isArray(vcsAssigned) && vcsAssigned.length > 0) {
+    vcsAssigned.forEach((vcGroup) => {
+      if (Array.isArray(vcGroup)) {
+        vcGroup.forEach((vc) => {
+          const vcParams = vc?.params; // Safe access
+          const profilePicture = vcParams?.profile_picture?.[0]
+            ? uint8ArrayToBase64(vcParams.profile_picture[0])
+            : null;
 
-        mergedProfiles.push({
-          profile_picture: profilePicture,
-          role: 'vc', // Mark role as VC
+          mergedProfiles.push({
+            profile_picture: profilePicture,
+            role: 'vc', // Mark role as VC
+          });
         });
-      });
+      }
     });
   } else {
     console.log('No VCs assigned or data is missing');
   }
 
-  console.log('mergedProfiles', mergedProfiles); // Log merged profiles
+  // Output merged profiles for debugging
+  console.log('Merged Profiles:', mergedProfiles);
+
+  // const projectDetail = cardData;
+  // console.log(
+  //   'my card..../////',
+  //   projectDetail?.[0][0]?.params?.mentors_assigned?.[0][0][1]?.params
+  // );
+
+  // let mergedProfiles = [];
+
+  // // Extracting mentor profiles
+  // if (projectDetail?.[0]?.[0]?.params?.mentors_assigned?.[0]?.length > 0) {
+  //   projectDetail[0][0].params.mentors_assigned[0].forEach((mentorGroup) => {
+  //     mentorGroup.forEach((mentor) => {
+  //       const mentorParams = mentor.params;
+  //       const profilePicture = mentorParams?.profile_picture[0]
+  //         ? uint8ArrayToBase64(mentorParams.profile_picture[0])
+  //         : null;
+
+  //       mergedProfiles.push({
+  //         profile_picture: profilePicture,
+  //         role: 'mentor',
+  //       });
+  //     });
+  //   });
+  // }
+
+  // // Extracting VC profiles
+  // if (projectDetail?.[0]?.[0]?.params?.vc_assigned?.[0]?.length > 0) {
+  //   projectDetail[0][0]?.params.vc_assigned[0].forEach((vcGroup) => {
+  //     vcGroup.forEach((vc) => {
+  //       const vcParams = vc.params;
+  //       const profilePicture = vcParams?.profile_picture[0]
+  //         ? uint8ArrayToBase64(vcParams?.profile_picture[0])
+  //         : null;
+
+  //       mergedProfiles.push({
+  //         profile_picture: profilePicture,
+  //         role: 'vc', // Mark role as VC
+  //       });
+  //     });
+  //   });
+  // } else {
+  //   console.log('No VCs assigned or data is missing');
+  // }
+
+  // console.log('mergedProfiles', mergedProfiles);
   const [hoveredIndex, setHoveredIndex] = useState(null);
   const [activeIndex, setActiveIndex] = useState(null);
 
@@ -221,7 +275,7 @@ function ProfileCard({ cardData }) {
                 </div>
               </div>
             )} */}
-            {mergedProfiles && mergedProfiles.length > 0 && (
+            {mergedProfiles && mergedProfiles.length > 0 ? (
               <div className='mb-4'>
                 <h3 className='font-normal mb-2 text-xs text-gray-500 uppercase'>
                   ASSOCIATIONS
@@ -229,34 +283,47 @@ function ProfileCard({ cardData }) {
                 <div className='flex items-center space-x-2'>
                   {mergedProfiles
                     .filter((association) => association.profile_picture) // Filter out profiles with null profile_picture
-                    .map((association, index) => (
-                      <div
-                        key={index}
-                        className='relative flex items-center transition-all duration-600 ease-cubic-bezier(0.25, 0.1, 0.25, 1)'
-                        onMouseEnter={() => handleMouseEnter(index)}
-                        onMouseLeave={handleMouseLeave}
-                        onTransitionEnd={handleTransitionEnd}
-                      >
-                        <span
-                          className={`absolute left-12 transition-all duration-600 ease-cubic-bezier(0.25, 0.1, 0.25, 1) transform ${
-                            activeIndex === index
-                              ? 'translate-x-0 opacity-100 delay-100'
-                              : '-translate-x-4 opacity-0'
-                          }`}
+                    .map((association, index) => {
+                      console.log(
+                        `Rendering association: ${association.role}`,
+                        association
+                      ); // Log each association
+                      return (
+                        <div
+                          key={index}
+                          className='relative flex items-center transition-all duration-600 ease-cubic-bezier(0.25, 0.1, 0.25, 1)'
+                          onMouseEnter={() => handleMouseEnter(index)}
+                          onMouseLeave={handleMouseLeave}
+                          onTransitionEnd={handleTransitionEnd}
                         >
-                          {association?.role}
-                        </span>
+                          <span
+                            className={`absolute left-12 transition-all duration-600 ease-cubic-bezier(0.25, 0.1, 0.25, 1) transform ${
+                              activeIndex === index
+                                ? 'translate-x-0 opacity-100 delay-100'
+                                : '-translate-x-4 opacity-0'
+                            }`}
+                          >
+                            {association?.role}
+                          </span>
 
-                        <Avatar
-                          src={association.profile_picture}
-                          alt={`Avatar of ${association.name}`}
-                          className={`h-12 w-12 rounded-full transition-transform duration-600 ease-cubic-bezier(0.25, 0.1, 0.25, 1) hover:scale-105 ${
-                            activeIndex === index ? 'mr-16 delay-100' : 'mr-0'
-                          }`}
-                        />
-                      </div>
-                    ))}
+                          <Avatar
+                            src={association.profile_picture}
+                            alt={`Avatar of ${association.name}`}
+                            className={`h-12 w-12 rounded-full transition-transform duration-600 ease-cubic-bezier(0.25, 0.1, 0.25, 1) hover:scale-105 ${
+                              activeIndex === index ? 'mr-16 delay-100' : 'mr-0'
+                            }`}
+                          />
+                        </div>
+                      );
+                    })}
                 </div>
+              </div>
+            ) : (
+              <div className='mb-4'>
+                <h3 className='font-normal mb-2 text-xs text-gray-500 uppercase'>
+                  ASSOCIATIONS
+                </h3>
+                <p>No associations found.</p>
               </div>
             )}
 
