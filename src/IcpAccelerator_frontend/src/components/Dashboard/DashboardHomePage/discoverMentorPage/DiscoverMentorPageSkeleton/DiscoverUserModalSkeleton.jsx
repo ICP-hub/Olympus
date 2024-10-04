@@ -132,7 +132,7 @@ export default function DiscoverUserModalSkeleton({
                   Location
                 </h3>
                 <div className='flex gap-2'>
-                  <Skeleton width={20} />
+                  {/* <Skeleton width={20} /> */}
                   <Skeleton width={100} />
                 </div>
               </div>

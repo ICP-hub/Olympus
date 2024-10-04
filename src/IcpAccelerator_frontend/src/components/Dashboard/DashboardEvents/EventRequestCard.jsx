@@ -18,6 +18,8 @@ import toast, { Toaster } from 'react-hot-toast';
 import { RiSendPlaneLine } from 'react-icons/ri';
 import AddAMentorRequestModal from '../../../models/AddAMentorRequestModal';
 import { loginFailure } from '../../StateManagement/Redux/Reducers/InternetIdentityReducer';
+import useTimeout from '../../hooks/TimeOutHook';
+import EventRequestCardSkeleton from './DashboardEventSkeletons/EventRequestCardSkeleton';
 
 const EventRequestCard = () => {
   const [filterOpen, setFilterOpen] = useState(false);
@@ -37,7 +39,8 @@ const EventRequestCard = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [listProjectId, setListProjectId] = useState(null);
   const [listCohortId, setListCohortId] = useState(null);
-
+  const [loading, setLoading] = useState(true);
+  useTimeout(()=> setLoading(true),1000)
   const toggleFilter = () => {
     setFilterOpen(!filterOpen);
   };
@@ -255,6 +258,7 @@ const EventRequestCard = () => {
 
   return (
     <>
+
       <div className='flex items-center justify-between  gap-6 mt-4 mx-2'>
         <div className='flex items-center border-2 border-gray-400 rounded-lg overflow-hidden flex-grow h-[38px] md:h-[50px]'>
           <div className='flex items-center px-3 md:px-4'>
@@ -383,7 +387,9 @@ const EventRequestCard = () => {
         </div>
       )}
 
-      {events.length > 0 ? (
+    {loading &&  events.length > 0 ? (
+  <EventRequestCardSkeleton /> // Show the skeleton when loading
+): events.length > 0 ? (
         events.map((event, index) => {
           console.log('event', event);
           const title = event.cohort_details.cohort.title;
