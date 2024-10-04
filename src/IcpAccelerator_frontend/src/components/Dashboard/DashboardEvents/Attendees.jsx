@@ -8,6 +8,8 @@ import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
 import CloseIcon from "@mui/icons-material/Close";
 import NoCardData from "../../profile/NoCardData";
 import NoData from "../../NoDataCard/NoData";
+import AttendeeCardSkeleton from "./DashboardEventSkeletons/AttendeesSkeleton";
+import useTimeout from "../../hooks/TimeOutHook";
 const AttendeesCard = ({ member }) => {
   return (
     <div className='flex  p-4 bg-white shadow-md rounded-lg mb-6 transition-all items-center hover:shadow-lg'>
@@ -81,6 +83,8 @@ const Attendees = (cohortData) => {
   const [noData, setNoData] = useState(null);
   const actor = useSelector((currState) => currState.actors.actor);
   const location = useLocation();
+  const [loading, setLoading] = useState(false); 
+  useTimeout(()=> setLoading(false))
   // const { cohort_id } = location.state || {};
   const cohortid = cohortData?.cohortData?.cohort_id;
 
@@ -249,14 +253,26 @@ const Attendees = (cohortData) => {
         )}
 
         <div>
-          {attendees && attendees.length === 0 ? (
+          {/* {attendees && attendees.length === 0 ? (
             // <p>No attendees available for the selected role.</p>
             <NoData message={'No attendees available for the selected role.'} />
           ) : (
             attendees.map((member, idx) => (
               <AttendeesCard key={idx} member={member} />
             ))
-          )}
+          )} */}
+          {
+  loading ? (
+    attendees.length > 0 ? (
+      attendees.map((_, idx) => <AttendeeCardSkeleton key={idx} />)
+    ) : null
+  ) : attendees && attendees.length === 0 ? (
+    <NoData message={'No attendees available for the selected role.'} />
+  ) : (
+    attendees.map((member, idx) => <AttendeesCard key={idx} member={member} />)
+  )
+}
+
         </div>
       </div>
     </div>
