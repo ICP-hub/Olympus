@@ -314,22 +314,7 @@ const DiscoverMentor = ({ onMentorCountChange }) => {
             <NoData message={'No Mentor Present Yet'} />
           </div>
         )}
-        {showRatingModal && (
-          <RatingModal
-            showRating={showRatingModal}
-            setShowRatingModal={setShowRatingModal}
-            userRatingDetail={userRatingDetail}
-            cardPrincipal={currentPrincipal}
-          />
-        )}
-        {isAddMentorModalOpen && (
-          <AddAMentorRequestModal
-            title={'Associate Mentor'}
-            onClose={handleMentorCloseModal}
-            onSubmitHandler={handleAddMentor}
-            isSubmitting={isSubmitting}
-          />
-        )}
+
         {/* {openDetail && <DiscoverMentorMain openDetail={openDetail} setOpenDetail={setOpenDetail}  principal={sendprincipal} />} */}
       </div>
       <Toaster />
@@ -338,6 +323,22 @@ const DiscoverMentor = ({ onMentorCountChange }) => {
           openDetail={openDetail}
           setOpenDetail={setOpenDetail}
           principal={sendprincipal}
+        />
+      )}
+      {showRatingModal && (
+        <RatingModal
+          showRating={showRatingModal}
+          setShowRatingModal={setShowRatingModal}
+          userRatingDetail={userRatingDetail}
+          cardPrincipal={currentPrincipal}
+        />
+      )}
+      {isAddMentorModalOpen && (
+        <AddAMentorRequestModal
+          title={'Associate Mentor'}
+          onClose={handleMentorCloseModal}
+          onSubmitHandler={handleAddMentor}
+          isSubmitting={isSubmitting}
         />
       )}
     </>

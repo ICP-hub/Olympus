@@ -14,6 +14,7 @@ import NoMoneyRaising from './NoMoneyRaisingCard';
 import NewDocument from './NewDocument';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
+import RatingComponent from '../../../Rating/ProjectRating';
 function DocumentSection() {
   const [activeTab, setActiveTab] = useState('document');
   const [selectedOption, setSelectedOption] = useState('file');
@@ -90,6 +91,16 @@ function DocumentSection() {
             >
               Money Rasing
             </button>
+            <button
+              className={`px-4 py-2 focus:outline-none font-medium ${
+                activeTab === 'rating'
+                  ? 'border-b-2 border-blue-500 text-blue-500 font-medium'
+                  : 'text-gray-400'
+              }`}
+              onClick={() => handleChange('rating')}
+            >
+              Rating
+            </button>
           </div>
 
           <div className='w-full'>
@@ -129,7 +140,7 @@ function DocumentSection() {
             {activeTab === 'rating' && (
               <>
                 <>
-                  <h1>Rating </h1>
+                  <RatingComponent />
                 </>
                 <FAQ />
               </>
