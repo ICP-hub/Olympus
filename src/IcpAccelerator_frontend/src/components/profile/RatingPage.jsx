@@ -297,7 +297,7 @@ import { Principal } from '@dfinity/principal';
 import uint8ArrayToBase64 from '../Utils/uint8ArrayToBase64';
 import toast from 'react-hot-toast';
 import { ThreeDots } from 'react-loader-spinner';
-import {ProfileSkeleton} from './skeletonProfile/RatingPageProfileSkeleton'; 
+import { ProfileSkeleton } from './skeletonProfile/RatingPageProfileSkeleton'; 
 import { ReviewSkeleton } from './skeletonProfile/RatingPageProfileSkeleton';  
 import RatingPageProfileSkeleton from './skeletonProfile/RatingPageProfileSkeleton';
 
@@ -305,14 +305,15 @@ const RatingPage = () => {
   const [rating, setRating] = useState(0);
   const [showReview, setShowReview] = useState(false);
   const [currentUserHasRated, setCurrentUserHasRated] = useState(null);
-  const [isLoading, setIsLoading] = useState(true); // Main loading state
-  const [reviewsLoading, setReviewsLoading] = useState(true); // Loading state for reviews
+  const [showRatingProfileSkeleton, setShowRatingProfileSkeleton] = useState(true); // Control for initial profile skeleton
+  const [showProfileSkeleton, setShowProfileSkeleton] = useState(false); // Control for profile skeleton when reviews are loaded
+  const [showReviewSkeleton, setShowReviewSkeleton] = useState(false); // Control for review skeleton when reviews are fetched
   const actor = useSelector((currState) => currState.actors.actor);
   const [reviews, setReviews] = useState([]);
   const isMounted = useRef(true);
+  const [isLoading, setIsLoading] = useState(true);
   const principal = useSelector((currState) => currState.internet.principal);
   const userFullData = useSelector((currState) => currState.userData.data.Ok);
-  const [numSkeletons, setNumSkeletons] = useState(1);
 
   const schema = yup.object().shape({
     review: yup
@@ -321,12 +322,7 @@ const RatingPage = () => {
       .min(10, 'Review must be at least 10 characters'),
   });
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-    reset,
-  } = useForm({
+  const { register, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm({
     resolver: yupResolver(schema),
   });
 
@@ -345,25 +341,19 @@ const RatingPage = () => {
         .add_review(convertedPrincipalId, rating, message)
         .then((result) => {
           if (isMounted.current) {
-            console.log('review from api', result);
             toast.success('Review sent successfully');
             setShowReview(false);
             setReviews((prevReviews) => [
               ...prevReviews,
               { rating, message, reviewer_principal: principal },
             ]);
-            setTimeout(()=>{
-              setIsLoading(false);
-            setReviewsLoading(false);
-            
-            },1000)
+            setIsLoading(false);
             setCurrentUserHasRated(true);
           }
         });
     } catch (error) {
       if (isMounted.current) {
         toast.error('Error in posting review');
-        console.log('error-in-post-review', error);
       }
     }
   };
@@ -373,42 +363,34 @@ const RatingPage = () => {
       const convertedPrincipal = Principal.fromText(principal);
       await caller.get_review(convertedPrincipal).then((result) => {
         if (isMounted.current) {
-          console.log('review from api', result);
-          if (result) {
-            const fetchedReviews = result?.Ok || [];
-            setReviews(fetchedReviews);
-            setTimeout(()=>{
-              setIsLoading(false);
-            setReviewsLoading(false);
-            
-            },1000)
+          const fetchedReviews = result?.Ok || [];
+          setReviews(fetchedReviews);
+          setIsLoading(false);
 
-            const hasRated = fetchedReviews.some(
-              (review) =>
-                review.reviewer_principal.toString() === principal.toString()
-            );
-            setCurrentUserHasRated(hasRated);
-          } else {
-            setReviews([]);
-            setTimeout(()=>{
-              setIsLoading(false);
-            setReviewsLoading(false);
-            
-            },1000)
-            setCurrentUserHasRated(false);
+          const hasRated = fetchedReviews.some(
+            (review) =>
+              review.reviewer_principal.toString() === principal.toString()
+          );
+          setCurrentUserHasRated(hasRated);
+
+          // If there are reviews, show ProfileSkeleton first for 1 second
+          if (fetchedReviews.length > 0) {
+            setShowProfileSkeleton(true);
+            setTimeout(() => {
+              setShowProfileSkeleton(false);
+              setShowReviewSkeleton(true);
+              setTimeout(() => {
+                setShowReviewSkeleton(false);
+              }, 1000); // Show ReviewSkeleton for 1 second
+            }, 1000); // Show ProfileSkeleton for 1 second
           }
         }
       });
     } catch (error) {
       if (isMounted.current) {
         setReviews([]);
-        setTimeout(()=>{
-          setIsLoading(false);
-        setReviewsLoading(false);
-        
-        },1000)
+        setIsLoading(false);
         setCurrentUserHasRated(false);
-        console.log('error-in-get-all-user', error);
       }
     }
   };
@@ -417,61 +399,42 @@ const RatingPage = () => {
     if (actor) {
       getAllReview(actor);
     }
+    setTimeout(() => {
+      setShowRatingProfileSkeleton(false); // Hide initial skeleton after 1 second
+    }, 1000);
 
     return () => {
       isMounted.current = false;
     };
   }, [actor]);
 
-  // Display the profile skeleton while data is loading
-  // if (currentUserHasRated===null) {
-  //   return <RatingPageProfileSkeleton />;
-  // }
-  const updateNumSkeletons = () => {
-    if (window.innerWidth >= 1100) {
-      setNumSkeletons(3);
-    } else if (window.innerWidth >= 768) {
-      setNumSkeletons(2);
-    } else {
-      setNumSkeletons(1);
-    }
-  };
-
-  useEffect(() => {
-    updateNumSkeletons();
-    window.addEventListener("resize", updateNumSkeletons);
-    return () => {
-      window.removeEventListener("resize", updateNumSkeletons);
-    };
-  }, []);
-
   const userPic =
     userFullData?.profile_picture && userFullData?.profile_picture[0]
       ? uint8ArrayToBase64(userFullData?.profile_picture[0])
       : 'userpic';
 
+  // Initial loading skeleton for 1 second if there are no reviews
+  if (showRatingProfileSkeleton) {
+    return <RatingPageProfileSkeleton />;
+  }
+
   return (
     <div className='p-3 sm0:p-6'>
-      {/* User Profile Section */}
       <div className='flex flex-col mt-6 items-center'>
-        {isLoading ? (
-          <ProfileSkeleton />
-        ) : isLoading && currentUserHasRated===null ? <RatingPageProfileSkeleton/>: (
-          <>
-          <img
-            src={userFullData?.profile_picture[0]}
-            alt='Profile'
-            className='rounded-full w-16 h-16 sm:w-16 sm:h-16 md:w-28 md:h-28 mb-4'
-            loading='lazy'
-            draggable={false}
-          />
-          <h2 className='line-clamp-1 break-all sm3:text-2xl font-bold'>
+        <img
+          src={userFullData?.profile_picture[0]}
+          alt='Profile'
+          className='rounded-full w-16 h-16 sm:w-16 sm:h-16 md:w-28 md:h-28 mb-4'
+          loading='lazy'
+          draggable={false}
+        />
+        <h2 className='line-clamp-1 break-all sm3:text-2xl font-bold'>
           {userFullData.full_name}{' '}
         </h2>
         <p className='line-clamp-1 break-all text-gray-500'>
           {userFullData.openchat_username}
         </p>
-        {/* Rating Section */}
+
         {!currentUserHasRated && (
           <button className='flex gap-2 my-5'>
             {[...Array(5)].map((_, index) => (
@@ -495,10 +458,7 @@ const RatingPage = () => {
             ))}
           </button>
         )}
-        </>
-        )}
 
-        {/* Review Form */}
         {showReview && (
           <form onSubmit={handleSubmit(onSubmit)} className='w-full mt-4'>
             <label className='block text-gray-700 text-sm font-bold mb-2'>
@@ -540,15 +500,18 @@ const RatingPage = () => {
           </form>
         )}
       </div>
-
-      {/* Reviews Section */}
       <hr className='mt-4' />
 
-      {/* Loading Skeleton for Reviews */}
-      {reviewsLoading ? (
-         
-        <ReviewSkeleton count={numSkeletons} />
-      ) : (
+      {/* Show ProfileSkeleton for 1 second when reviews are loading */}
+      {showProfileSkeleton && <ProfileSkeleton />}
+
+      {/* Show ReviewSkeleton for 1 second before reviews */}
+      {showReviewSkeleton && reviews.length > 0 && (
+        reviews.map((_, index) => <ReviewSkeleton key={index} />)
+      )}
+
+      {/* Show reviews after skeletons */}
+      {!showProfileSkeleton && !showReviewSkeleton && reviews.length > 0 &&
         reviews.map((review, indx) => {
           const profilepic =
             review?.profile_pic && review?.profile_pic
@@ -557,13 +520,13 @@ const RatingPage = () => {
           return (
             <div
               key={indx}
-              className='bg-gray-100 rounded-lg p-2 sm0:p-4 flex mt-4 flex-col gap-4'
+              className='bg-gray-100 rounded-lg p-2 sm0:p-4 flex mt-4 flex-col gap-4 '
             >
-              <div className='flex flex-col sm0:flex-row justify-center sm0:justify-normal items-center sm0:items-start gap-2 sm0:gap-4 flex-shrink-0'>
+              <div className='flex gap-2 sm0:gap-4 flex-shrink-0'>
                 <img
                   src={profilepic}
                   alt='pic'
-                  className='rounded-full w-8 h-8 xxs:w-12 xxs:h-12 sm0:w-12 sm0:h-12 sm:w-16 sm:h-16 object-cover border border-gray-300'
+                  className='rounded-full w-8 h-8 xxs:w-12 xxs:h-12 sm0:w-12 sm0:h-12 sm:w-16 sm:h-16  object-cover border border-gray-300'
                   loading='lazy'
                   draggable={false}
                 />
@@ -608,8 +571,8 @@ const RatingPage = () => {
                     )}
                   </div>
 
-                  <div className='text-gray-600 text-xs'>
-                    <p className='text-xs sm0:text-sm font-normal break-all line-clamp-2'>
+                  <div className='text-gray-600 text-xs '>
+                    <p className='text-xs sm0:text-sm font-normal break-all line-clamp-2 '>
                       {review.message}
                     </p>
                   </div>
@@ -617,10 +580,12 @@ const RatingPage = () => {
               </div>
             </div>
           );
-        })
-      )}
+        })}
     </div>
   );
 };
 
 export default RatingPage;
+
+
+
