@@ -11,6 +11,7 @@ import { allHubHandlerRequest } from '../../StateManagement/Redux/Reducers/All_I
 import { useNavigate } from 'react-router-dom';
 import { rolesHandlerRequest } from '../../StateManagement/Redux/Reducers/RoleReducer';
 import Rating1 from './Rating1';
+import Rating2 from './Rating2';
 // MAIN COMPONENT FOR MENTOR SIGNUP PROCESS
 const RatingMain = ({}) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
