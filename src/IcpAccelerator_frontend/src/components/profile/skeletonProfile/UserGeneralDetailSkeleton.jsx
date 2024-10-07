@@ -5,9 +5,9 @@ import SkeletonThemeMain from '../../Common/SkeletonTheme';
 const UserGeneralDetailSkeleton = () => {
   return (
     <SkeletonThemeMain>
-    <div className='container bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden w-full '>
+    <div className='container bg-white rounded-lg shadow-sm  overflow-hidden w-full '>
      
-      <div className='px-1 py-4'>
+      <div className=''>
         {/* Skeleton for full name */}
         {/* <div className='mb-4 group  rounded-lg p-2 px-3'>
           <div className='flex justify-between'>
@@ -35,7 +35,7 @@ const UserGeneralDetailSkeleton = () => {
               Email
             </h3>
           </div>
-          <Skeleton height={30} />
+          <Skeleton height={25} />
         </div>
 
         {/* Skeleton for About */}
@@ -55,7 +55,7 @@ const UserGeneralDetailSkeleton = () => {
               Location
             </h3>
           </div>
-          <Skeleton height={30} />
+          <Skeleton height={25} />
         </div>
 
         {/* Skeleton for Type of Profile */}
@@ -66,8 +66,8 @@ const UserGeneralDetailSkeleton = () => {
             </h3>
           </div>
           <div className='flex  gap-2'>
-            <Skeleton style={{ borderRadius: '18px' }} height={30} width={90} />
-            <Skeleton style={{ borderRadius: '18px' }} height={30} width={90} />
+            <Skeleton style={{ borderRadius: '18px' }} height={25} width={90} />
+            <Skeleton style={{ borderRadius: '18px' }} height={25} width={90} />
           </div>
         </div>
 
@@ -79,8 +79,8 @@ const UserGeneralDetailSkeleton = () => {
             </h3>
           </div>
           <div className='flex gap-2'>
-            <Skeleton style={{ borderRadius: '18px' }} height={30} width={90} />
-            <Skeleton style={{ borderRadius: '18px' }} height={30} width={90} />
+            <Skeleton style={{ borderRadius: '18px' }} height={25} width={90} />
+            <Skeleton style={{ borderRadius: '18px' }} height={25} width={90} />
           </div>
         </div>
 

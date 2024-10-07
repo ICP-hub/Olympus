@@ -53,12 +53,12 @@ const ProfileSkeleton = () => {
 
 export { ProfileSkeleton };
 
-const ReviewSkeleton = ({ count = 3 }) => {
+const ReviewSkeleton = () => {
   return (
     <>
-      {[...Array(count)].map((_, index) => (
+      {/* {[...Array(count)].map((_, index) => ( */}
         <div
-          key={index}
+          // key={index}
           className='bg-gray-100 rounded-lg p-2 sm0:p-4 flex mt-4 flex-col gap-4'
         >
           <div className='flex flex-col sm0:flex-row justify-center sm0:justify-normal items-center sm0:items-start gap-2 sm0:gap-4 flex-shrink-0'>
@@ -95,7 +95,7 @@ const ReviewSkeleton = ({ count = 3 }) => {
             </div>
           </div>
         </div>
-      ))}
+      {/* ))} */}
     </>
   );
 };

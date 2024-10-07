@@ -68,7 +68,7 @@ export default function DiscoverUserModalSkeleton({
             <hr />
 
             <div className=' '>
-              <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-2 '>
+              <div className='mb-2 group relative  rounded-lg p-2 '>
                 <h3 className='font-semibold mb-1 text-xs text-gray-500 uppercase'>
                   Email
                 </h3>
@@ -86,7 +86,7 @@ export default function DiscoverUserModalSkeleton({
               </div>
 
               {/* About Section */}
-              <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-2 '>
+              <div className='mb-2 group relative  rounded-lg p-2 '>
                 <h3 className='font-semibold mb-1 text-xs text-gray-500 uppercase'>
                   About
                 </h3>
@@ -96,7 +96,7 @@ export default function DiscoverUserModalSkeleton({
                   </p>
                 </div>
               </div>
-              <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-2 '>
+              <div className='mb-2 group relative  rounded-lg p-2 '>
                 <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
                   Type of Profile
                 </h3>
@@ -105,7 +105,7 @@ export default function DiscoverUserModalSkeleton({
                   <Skeleton width={100} />
                 </div>
               </div>
-              <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-2 '>
+              <div className='mb-2 group relative  rounded-lg p-2 '>
                 <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
                   Reason to Join Platform
                 </h3>
@@ -115,7 +115,7 @@ export default function DiscoverUserModalSkeleton({
                   </div>
                 </div>
               </div>
-              <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-2 '>
+              <div className='mb-2 group relative  rounded-lg p-2 '>
                 <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
                   Area of Interest
                 </h3>
@@ -127,7 +127,7 @@ export default function DiscoverUserModalSkeleton({
               </div>
 
               {/* Location Section */}
-              <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-2 '>
+              <div className='mb-2 group relative  rounded-lg p-2 '>
                 <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
                   Location
                 </h3>
@@ -137,7 +137,7 @@ export default function DiscoverUserModalSkeleton({
                 </div>
               </div>
 
-              <div className='p-2 group relative hover:bg-gray-100 rounded-lg'>
+              <div className='p-2 group relative  rounded-lg'>
                 <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase '>
                   LINKS
                 </h3>
