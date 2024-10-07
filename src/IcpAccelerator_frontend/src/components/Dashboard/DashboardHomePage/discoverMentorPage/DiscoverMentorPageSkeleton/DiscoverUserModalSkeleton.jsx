@@ -19,12 +19,12 @@ export default function DiscoverUserModalSkeleton({
                 <div className='relative flex flex-col items-center'>
                   {/* Profile circle skeleton */}
                   <div className='rounded-full  '>
-                    <Skeleton circle={true} height={56} width={56} />
+                    <Skeleton circle={true} height={96} width={96} />
                   </div>
 
                   {/* Icon in the center of the circle */}
                   <div
-                    className='flex items-center justify-center border-2 rounded-full border-gray-300 w-10 h-10 absolute mt-0.5'
+                    className='flex items-center justify-center border-2 rounded-full border-gray-300 w-12 h-12 absolute mt-0.5'
                     style={{
                       top: '50%',
                       left: '50%',
@@ -33,7 +33,7 @@ export default function DiscoverUserModalSkeleton({
                     }}
                   >
                     <svg
-                      className='w-6 h-6 text-gray-400'
+                      className='w-8 h-8 text-gray-400'
                       fill='currentColor'
                       viewBox='0 0 24 24'
                     >

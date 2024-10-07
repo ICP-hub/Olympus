@@ -4,10 +4,16 @@ import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined';
 import ArrowOutwardOutlinedIcon from '@mui/icons-material/ArrowOutwardOutlined';
 import uint8ArrayToBase64 from '../../Utils/uint8ArrayToBase64';
 import getSocialLogo from '../../Utils/navigationHelper/getSocialLogo';
+import useTimeout from '../../hooks/TimeOutHook';
+import UserGeneralDetailSkeleton from '../../profile/skeletonProfile/UserGeneralDetailSkeleton';
+import DiscoverMentorProfileSkeleton from './discoverMentor/discoverMentorSkeleton/DiscoverMentorProfileSkeleton';
 
 const UserDetail = (projectData) => {
   const userData = projectData?.projectData?.[0]?.[1]?.params;
   console.log('PROJECT DATA ON USER DETAILS PAGE', projectData);
+  const [isLoading,setIsLoading]=useState(true)
+
+  useTimeout(()=>setIsLoading(false))
 
   const handleChange = (tab) => {
     setActiveTab(tab);
@@ -35,6 +41,7 @@ const UserDetail = (projectData) => {
         <div className='relative h-1 bg-gray-200'>
           <div className='absolute left-0 top-0 h-full bg-green-500 w-1/3'></div>
         </div>
+        {isLoading ? <DiscoverMentorProfileSkeleton/>:
         <div className='p-6 bg-gray-50'>
           <img
             src={profilepic}
@@ -56,7 +63,7 @@ const UserDetail = (projectData) => {
             <ArrowOutwardOutlinedIcon className='ml-1' fontSize='small' />
           </a>
         </div>
-
+}
         <div className='p-6 bg-white'>
           <div className='mb-4'>
             <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
@@ -95,7 +102,8 @@ const UserDetail = (projectData) => {
             </button>
           </div>
 
-          {activeTab === 'general' && (
+          {isLoading ? <UserGeneralDetailSkeleton/>:
+          activeTab === 'general' && (
             <div className='px-1'>
               <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-2 '>
                 <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
@@ -147,6 +155,23 @@ const UserDetail = (projectData) => {
                 </div>
               </div>
 
+              <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-2 '>
+                <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
+                  Reasons to Join Platform
+                </h3>
+
+                <div className='flex flex-wrap gap-2'>
+                  {userData?.reason_to_join[0]?.map((reason) => (
+                    <span
+                      key={reason}
+                      className='border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1'
+                    >
+                      {reason}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
               <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-2'>
                 <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
                   Area of Interest
@@ -168,22 +193,7 @@ const UserDetail = (projectData) => {
                 </div>
               </div>
 
-              <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-2 '>
-                <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
-                  Reasons to Join Platform
-                </h3>
-
-                <div className='flex flex-wrap gap-2'>
-                  {userData?.reason_to_join[0]?.map((reason) => (
-                    <span
-                      key={reason}
-                      className='border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1'
-                    >
-                      {reason}
-                    </span>
-                  ))}
-                </div>
-              </div>
+              
 
               <div className='p-2 group relative hover:bg-gray-100 rounded-lg'>
                 {userData?.social_links[0] && (
