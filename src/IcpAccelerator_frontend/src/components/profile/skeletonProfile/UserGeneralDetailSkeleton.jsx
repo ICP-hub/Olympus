@@ -62,7 +62,7 @@ const UserGeneralDetailSkeleton = () => {
         <div className='mb-4 group  rounded-lg p-2 px-3'>
           <div className='flex justify-between'>
             <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
-              Type of Profile
+              Reason to Join Platform
             </h3>
           </div>
           <div className='flex  gap-2'>
@@ -75,7 +75,7 @@ const UserGeneralDetailSkeleton = () => {
         <div className='mb-4 group  rounded-lg p-2 px-3'>
           <div className='flex justify-between'>
             <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
-              Interests
+              Area of Interests
             </h3>
           </div>
           <div className='flex gap-2'>
