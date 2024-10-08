@@ -2,13 +2,18 @@ import React, { useState } from 'react';
 import Filetype from '../../../../assets/Logo/Filetype.png';
 import { DocumentItem } from './DocumentUpload';
 import DocumentModal from './DocumentModal';
+import useTimeout from '../../hooks/TimeOutHook';
+import DiscoverDocumentSkeleton from '../DashboardHomePage/discoverMentorPage/DiscoverMentorPageSkeleton/DiscoverDocumentSkeleton';
 
 const NewDocument = ({ cardData }) => {
   const [selectedOption, setSelectedOption] = useState('file');
   const [isOpen, setIsOpen] = useState(false);
+  const [isLoading,setIsLoading]=useState(true)
+
+  useTimeout(()=>setIsLoading(false))
 
   const renderDocuments = (docs, type) => {
-    return docs.map((doc, index) => (
+    return isLoading ? <>{[...Array(docs.length)].map((_,index)=><DiscoverDocumentSkeleton/>)}</> :docs.map((doc, index) => (
       <div
         key={index}
         className={`relative sm5:gap-3 flex flex-col sm5:flex-row sm5:items-center dlg:flex-col dxl0:flex-row p-4 rounded-lg mb-4 shadow-md bg-white transition-all duration-300 `}

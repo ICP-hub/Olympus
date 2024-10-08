@@ -6,7 +6,7 @@ const DiscoverTeamSkeleton = () => {
   return (
     <SkeletonThemeMain>
       <div className='flex flex-col sm0:flex-row gap-6 sm0:items-center p-4 bg-white shadow-lg border border-gray-200 rounded-xl mt-3  mb-4'>
-        <div className='bg-gray-100 w-full p-2 sm0:p-0 sm0:w-[30%] sm0:h-[100px] flex items-center justify-center'>
+        <div className='bg-gray-100 w-full p-2 sm0:p-0 sm0:w-[100px] sm0:h-[100px] flex items-center justify-center'>
           <SkeletonTheme color='#e3e3e3'>
             <div className='relative flex flex-col items-center'>
               {/* Profile circle skeleton */}
