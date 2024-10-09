@@ -8,6 +8,8 @@ import uint8ArrayToBase64 from '../Utils/uint8ArrayToBase64';
 import toast from 'react-hot-toast';
 import { ThreeDots } from 'react-loader-spinner';
 import NoDataFound from '../Dashboard/DashboardEvents/NoDataFound';
+import useTimeout from '../hooks/TimeOutHook';
+import DiscoverReviewSkeleton from './DiscoverSkeleton/DiscoverReviewSkeleton';
 
 const DiscoverReview = (userData, principalId) => {
   console.log('principal discover pe', principalId);
@@ -19,6 +21,9 @@ const DiscoverReview = (userData, principalId) => {
   const [reviews, setReviews] = useState([]);
   const isMounted = useRef(true);
   const userFullData = userData.userData;
+  const [isLoading,setIsLoading]=useState(true)
+  
+  useTimeout(()=>setIsLoading(false))
 
   const schema = yup.object().shape({
     review: yup
@@ -85,9 +90,9 @@ const DiscoverReview = (userData, principalId) => {
     };
   }, [actor]);
 
-  if (currentUserHasRated === null) {
-    return <div>Loading...</div>;
-  }
+  // if (currentUserHasRated === null) {
+  //   return <div>Loading...</div>;
+  // }
 
   const userPic =
     userFullData?.profile_picture && userFullData?.profile_picture[0]
@@ -101,7 +106,7 @@ const DiscoverReview = (userData, principalId) => {
         <div className='text-center '>
           <NoDataFound message='No Review Found' />
         </div>
-      ) : (
+      ) : isLoading ? <>{[...Array(reviews.length)].map((_,index)=><DiscoverReviewSkeleton/>)} </>:
         reviews.map((review, index) => {
           const profilepic =
             review?.profile_pic && review?.profile_pic
@@ -169,7 +174,7 @@ const DiscoverReview = (userData, principalId) => {
             </div>
           );
         })
-      )}
+      }
     </div>
   );
 };

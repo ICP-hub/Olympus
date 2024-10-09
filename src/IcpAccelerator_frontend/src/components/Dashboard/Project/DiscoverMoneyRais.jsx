@@ -1,11 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import DiscoverFundingCard from './DiscoverFundingCard';
+import useTimeout from '../../hooks/TimeOutHook';
+import DiscoverFundingCardSkeleton from './DiscoverFundingCardSkeleton';
 
 const DiscoverMoneyRaising = ({ cardData, projectId }) => {
   // Ensure that cardData is an array
   const moneyRaisedData = Array.isArray(cardData?.money_raised)
     ? cardData.money_raised
     : [];
+
+    const [isLoading,setIsLoading]=useState(true)
+
+    useTimeout(()=>setIsLoading(false))
 
   console.log('Money Raised Data:', moneyRaisedData);
   console.log('Store money-raising data', cardData);
@@ -14,7 +20,7 @@ const DiscoverMoneyRaising = ({ cardData, projectId }) => {
     <div>
       <div className='flex flex-col items-end mb-4 max-w-7xl pt-4'></div>
       <div className='max-w-7xl mx-auto bg-white'>
-        {moneyRaisedData.length > 0 ? (
+        {moneyRaisedData.length > 0 ? isLoading ? <>{[...Array(5)].map((_,index)=><DiscoverFundingCardSkeleton/>)}</>: (
           moneyRaisedData.map((data, index) => (
             <DiscoverFundingCard
               key={index}

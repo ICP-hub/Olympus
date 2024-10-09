@@ -26,10 +26,8 @@ import { useNavigate } from 'react-router-dom';
 import DiscoverUserModal from '../DashboardHomePage/discoverMentorPage/DiscoverUserModal';
 import EventDetailSkeleton from './DashboardEventSkeletons/EventDetailSkeleton';
 import useTimeout from '../../hooks/TimeOutHook';
-
 const FAQItem = ({ question, answer }) => {
   const [isOpen, setIsOpen] = useState(false);
-
   return (
     <div className='border-b border-gray-200'>
       <button
@@ -90,8 +88,8 @@ const EventDetails = () => {
   const scrollTabs = (direction) => {
     if (tabsContainerRef.current) {
       tabsContainerRef.current.scrollBy({
-        left: direction === 'left' ? -100 : 100, // Adjust scroll amount as needed
-        behavior: 'smooth', // Smooth scroll
+        left: direction === 'left' ? -100 : 100, 
+        behavior: 'smooth', 
       });
     }
   };
@@ -102,7 +100,7 @@ const EventDetails = () => {
     setShowDetails(!showDetails);
   };
   const [cohortData, setCohortData] = useState(null);
-  const [isLoading, setIsLoading] = useState(true); // Add a loading state
+  const [isLoading, setIsLoading] = useState(true);
   const actor = useSelector((currState) => currState.actors.actor);
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
@@ -168,7 +166,7 @@ const EventDetails = () => {
 
   const timeoutRef = useRef(null);
 
-  useTimeout(() => setIsLoading(false));
+  useTimeout(() => setIsLoading(false),1000);
   useEffect(() => {
     if (cohortData) {
       const calculateRemainingTime = () => {
@@ -338,7 +336,8 @@ const EventDetails = () => {
   };
 
   const shareUrl = `${window.location.origin}/dashboard/single-event${cohort_id}`;
-  return (
+ 
+  return ( 
     <div className='flex flex-col'>
       <div className='flex   w-full justify-between  my-2 py-3  -top-[1.2rem] md:-top-[0.2rem] bg-white sticky z-40'>
         <button
@@ -357,7 +356,7 @@ const EventDetails = () => {
           <span className='ml-1'>{shareSvgIcon}</span>
         </button>
       </div>
-      <div className='flex flex-col  gap-4 md:gap-10 md:flex-row'>
+      <div className='flex flex-col  gap-4 md:gap-10 md:flex-row'  >
         <div className='  w-full md:w-[30%] bg-white rounded-lg shadow-md pt-2 md:ml-1'>
           <div className='bg-gray-100 p-4'>
             <div className='flex items-start mb-4'>
@@ -410,7 +409,7 @@ const EventDetails = () => {
               </div>
             </div>
 
-            {userCurrentRoleStatusActiveRole !== null && (
+            {userCurrentRoleStatusActiveRole !== "user" && (
               <button
                 className='w-full flex justify-center bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-300 mb-2 text-sm'
                 onClick={registerHandler}

@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import docu1 from '../../../../assets/images/docu.png';
 import docu2 from '../../../../assets/images/docu.png';
 import docu3 from '../../../../assets/images/docu.png';
 import docu4 from '../../../../assets/images/docu.png';
 import docu5 from '../../../../assets/images/docu.png';
+import useTimeout from '../../hooks/TimeOutHook';
+import MoneyRaisedCardSkeleton from './ProjectSkeleton/MoneyRaisedCardSkeleton';
 
 const FundingCard = ({ title, value, imageSrc, isPrivate }) => {
   return (
@@ -55,7 +57,12 @@ const MoneyRaisedCard = ({ data }) => {
   } = data[0].params.money_raised[0]; // Destructure the necessary fields
   console.log('data kya kya aa rha h', data);
 
+  const [isLoading,setIsLoading]=useState(true)
+  
+  useTimeout(()=>setIsLoading(false))
+
   return (
+    isLoading ? <>{[...Array(5)].map((_,index)=><MoneyRaisedCardSkeleton/>)} </>: 
     <div className='space-y-4'>
       <FundingCard
         title='ICP Grants'

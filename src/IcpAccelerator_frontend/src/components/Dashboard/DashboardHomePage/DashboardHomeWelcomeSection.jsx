@@ -392,7 +392,7 @@ function DashboardHomeWelcomeSection({ userName, profileCompletion }) {
           onClose={() => setRoleModalOpen(false)}
         />
       )}
-      <RatingMain />
+      {/* <RatingMain /> */}
     </>
   );
 }

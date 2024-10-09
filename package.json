@@ -19,6 +19,7 @@
     "start:icpaccelerator": "webpack serve --config webpack.config.js --env frontend=IcpAccelerator_frontend --mode development",
     "start:admin": "webpack serve --config webpack.config.js --env frontend=admin_frontend --mode development",
     "prepare": "husky",
+  
     "format": "prettier --write .",
     "check-format": "prettier --check ."
   },
