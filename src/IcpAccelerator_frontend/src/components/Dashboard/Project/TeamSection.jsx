@@ -12,6 +12,8 @@ import uint8ArrayToBase64 from '../../Utils/uint8ArrayToBase64';
 import DeleteModel from './DeleteModel';
 import NoDataFound from '../DashboardEvents/NoDataFound';
 import NoData from '../../NoDataCard/NoData';
+import useTimeout from '../../hooks/TimeOutHook';
+import TeamSectionSkeleton from './ProjectSkeleton/TeamSectionSkeleton';
 
 const TeamMember = ({ cardData, onDelete }) => {
   const projectTeam = cardData?.[0]?.[0]?.params?.project_team;
@@ -23,10 +25,14 @@ const TeamMember = ({ cardData, onDelete }) => {
     projectTeam.some(
       (teamMember) => Array.isArray(teamMember) && teamMember.length > 0
     );
+    const [isLoading,setIsLoading]=useState(true)
+
+    useTimeout(()=>setIsLoading(false))
 
   return (
     <>
-      {hasTeamMembers ? (
+      {isLoading ? <>{[...Array(cardData.length)].map((_,index)=><TeamSectionSkeleton/>)} </>:
+      hasTeamMembers ? (
         projectTeam.map((teamMember, index) => {
           if (!teamMember || teamMember.length === 0 || !teamMember[0]) {
             return null;

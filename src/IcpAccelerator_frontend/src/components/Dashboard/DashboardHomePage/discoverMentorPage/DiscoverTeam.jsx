@@ -14,7 +14,7 @@ const TeamCard = ({ member }) => {
 
   return (
     <div className='flex flex-col sm0:flex-row gap-6 sm0:items-center p-4 bg-white shadow-lg border border-gray-200 rounded-xl mt-3  mb-4'>
-      <div className='bg-gray-100 w-full p-2 sm0:p-0 sm0:w-[100px] sm0:h-[100px] flex items-center justify-center'>
+      <div className='bg-gray-100 min-w-[100px] w-full p-2 sm0:p-0 sm0:w-[100px] sm0:h-[100px] flex items-center justify-center'>
         <img
           src={profile}
           alt={member?.full_name}
@@ -25,9 +25,9 @@ const TeamCard = ({ member }) => {
       </div>
 
       <div className='ml-4'>
-        <h4 className='text-base font-semibold'>{member?.full_name}</h4>
-        <p className='text-gray-500 text-xs'>{member?.openchat_username}</p>
-        <p className='text-gray-600 text-sm'>{member?.bio[0]}</p>
+        <h4 className='text-base font-semibold line-clamp-1 break-all'>{member?.full_name}</h4>
+        <p className='text-gray-500 text-sm line-clamp-1 break-all'>{member?.openchat_username}</p>
+        <p className='text-gray-600 text-base mt-2 line-clamp-2 break-all'>{member?.bio[0]}</p>
 
         {links?.link.map((alllink, i) => {
           const icon = getSocialLogo(alllink);

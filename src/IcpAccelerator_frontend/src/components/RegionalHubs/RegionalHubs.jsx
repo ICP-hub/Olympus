@@ -302,12 +302,15 @@ import RegionalHubModal from './RegionalHubModal';
 import NoData from '../NoDataCard/NoData';
 import { MdArrowOutward } from 'react-icons/md';
 import getSocialLogo from '../Utils/navigationHelper/getSocialLogo';
+import RegionalHubSkeleton from './RegionalHubSkeleton/RegionalHubSkeleton';
+import useTimeout from '../hooks/TimeOutHook';
 
 const DiscoverRegionalHubs = () => {
   const actor = useSelector((currState) => currState.actors.actor);
   const [allHubsData, setAllHubsData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loading,setLoading]=useState(true)
   console.log('hub data ', allHubsData);
   const getAllHubs = async (caller, isMounted) => {
     try {
@@ -323,6 +326,8 @@ const DiscoverRegionalHubs = () => {
       }
     }
   };
+
+  useTimeout(()=>setLoading(false))
 
   useEffect(() => {
     let isMounted = true;
@@ -351,13 +356,11 @@ const DiscoverRegionalHubs = () => {
           </button>
         </div>
       </div>
-      {isLoading ? (
-        <p>Loading...</p>
-      ) : allHubsData.length === 0 ? (
+      {allHubsData.length === 0 ? (
         <div className='flex items-center justify-center'>
           <NoData message={'No Hubs Data Available'} />
         </div>
-      ) : (
+      ) : loading ? <>{[...Array(allHubsData.length)].map((_,index)=><RegionalHubSkeleton/>)} </> :(
         <div className='grid md:grid-cols-3 gap-6'>
           {allHubsData.map((hub, index) => {
             // Safely access the data from params[0]
@@ -383,10 +386,10 @@ const DiscoverRegionalHubs = () => {
                     />
                   )}
                   <div>
-                    <h3 className='text-lg font-semibold line-clamp-1 truncate'>
+                    <h3 className='text-lg font-semibold line-clamp-1 break-all'>
                       {name}
                     </h3>
-                    <p className='text-sm text-gray-600 mt-2  line-clamp-2 max-h-10 min-h-10'>
+                    <p className='text-sm text-gray-600 mt-2  line-clamp-2 break-all'>
                       {desc}
                     </p>
                   </div>
