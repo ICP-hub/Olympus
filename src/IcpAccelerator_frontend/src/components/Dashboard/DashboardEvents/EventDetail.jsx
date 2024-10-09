@@ -26,12 +26,8 @@ import { useNavigate } from 'react-router-dom';
 import DiscoverUserModal from '../DashboardHomePage/discoverMentorPage/DiscoverUserModal';
 import EventDetailSkeleton from './DashboardEventSkeletons/EventDetailSkeleton';
 import useTimeout from '../../hooks/TimeOutHook';
-
-
-
 const FAQItem = ({ question, answer }) => {
   const [isOpen, setIsOpen] = useState(false);
-
   return (
     <div className='border-b border-gray-200'>
       <button
@@ -92,8 +88,8 @@ const EventDetails = () => {
   const scrollTabs = (direction) => {
     if (tabsContainerRef.current) {
       tabsContainerRef.current.scrollBy({
-        left: direction === 'left' ? -100 : 100, // Adjust scroll amount as needed
-        behavior: 'smooth', // Smooth scroll
+        left: direction === 'left' ? -100 : 100, 
+        behavior: 'smooth', 
       });
     }
   };
@@ -104,7 +100,7 @@ const EventDetails = () => {
     setShowDetails(!showDetails);
   };
   const [cohortData, setCohortData] = useState(null);
-  const [isLoading, setIsLoading] = useState(true); // Add a loading state
+  const [isLoading, setIsLoading] = useState(true);
   const actor = useSelector((currState) => currState.actors.actor);
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
@@ -413,7 +409,7 @@ const EventDetails = () => {
               </div>
             </div>
 
-            {userCurrentRoleStatusActiveRole !== null && (
+            {userCurrentRoleStatusActiveRole !== "user" && (
               <button
                 className='w-full flex justify-center bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-300 mb-2 text-sm'
                 onClick={registerHandler}

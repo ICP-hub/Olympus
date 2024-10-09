@@ -138,7 +138,7 @@ const EventDetailSkeleton = ({
             </div>
 
             <div className='p-4'>
-              <div className='mb-4 hover:bg-[#e4e3e2b1] cursor-not-allowed opacity-50'>
+              <div className='mb-4  cursor-not-allowed opacity-50'>
                 <h3 className='text-[12px] font-medium text-[#697586] mb-2'>
                   GUEST
                 </h3>
