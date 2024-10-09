@@ -4,6 +4,8 @@ import { useSelector } from 'react-redux';
 import toast from 'react-hot-toast';
 import NoDataFound from '../../DashboardEvents/NoDataFound';
 import { ThreeDots } from 'react-loader-spinner';
+import useTimeout from '../../../hooks/TimeOutHook';
+import DiscoverDocumentSkeleton from './DiscoverMentorPageSkeleton/DiscoverDocumentSkeleton';
 
 const DocumentCard = ({ doc, type }) => {
   // Safely access doc properties to avoid undefined errors
@@ -91,9 +93,11 @@ const DiscoverDocument = ({ projectDetails, projectId }) => {
   );
 
   const renderDocuments = (docs, type) => {
-    return docs.map((doc, index) => (
+    return (
+    isLoading ? <>{[...Array(docs.length)].map((_,index)=><DiscoverDocumentSkeleton/>)}</>:
+    docs.map((doc, index) => (
       <DocumentCard key={index} doc={doc} type={type} projectId={projectId} />
-    ));
+    )))
   };
 
   const hasNoDocuments =
@@ -138,6 +142,10 @@ const DiscoverDocument = ({ projectDetails, projectId }) => {
     };
   }, [actor]);
 
+  const [isLoading,setIsLoading]=useState(true)
+
+  useTimeout(()=>setIsLoading(false))
+
   return (
     <>
       <div className='space-y-3 mt-[50px] relative'>
@@ -178,7 +186,7 @@ const DiscoverDocument = ({ projectDetails, projectId }) => {
           <>
             {/* Private Documents Section */}
             {projectDetails.private_docs &&
-              projectDetails.private_docs.length > 0 && (
+              projectDetails.private_docs.length > 0 &&   (
                 <div className='max-w-4xl bg-white p-3 pb-0'>
                   {renderDocuments(projectDetails.private_docs[0], 'private')}
                 </div>
@@ -186,7 +194,7 @@ const DiscoverDocument = ({ projectDetails, projectId }) => {
 
             {/* Public Documents Section */}
             {projectDetails.public_docs &&
-              projectDetails.public_docs.length > 0 && (
+              projectDetails.public_docs.length > 0 &&  (
                 <div className='max-w-4xl bg-white p-3 pt-0'>
                   {renderDocuments(projectDetails.public_docs[0], 'public')}
                 </div>

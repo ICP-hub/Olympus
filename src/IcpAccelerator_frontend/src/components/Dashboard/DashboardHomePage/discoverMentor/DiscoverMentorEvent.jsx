@@ -4,10 +4,14 @@ import { useSelector } from 'react-redux';
 import uint8ArrayToBase64 from '../../../Utils/uint8ArrayToBase64';
 import parse from 'html-react-parser';
 import NoData from '../../../NoDataCard/NoData';
+import useTimeout from '../../../hooks/TimeOutHook';
+import DiscoverMentorEventSkeleton from './discoverMentorSkeleton/DiscoverMentorEventSkeleton';
 
 const DiscoverMentorEvent = ({ principal }) => {
   const [mentorEvents, setMentorEvents] = useState([]);
   const actor = useSelector((currState) => currState.actors.actor);
+  const [isLoading,setIsLoading]=useState(true)
+  useTimeout(()=>setIsLoading(false))
 
   useEffect(() => {
     const fetchCohorts = async () => {
@@ -54,6 +58,67 @@ const DiscoverMentorEvent = ({ principal }) => {
     fetchCohorts();
   }, [actor, principal]);
 
+  // return (
+  //   <div className='w-full mb-4 lg1:pb-2 pb-4'>
+  //     <h2 className='text-lg font-semibold text-gray-800 mb-4'>Events</h2>
+  //     {mentorEvents.length === 0 ? 
+  //       <p>
+  //         <NoData message={'No Events posted Yet'} />
+  //       </p>
+  //      ? isLoading ? <>
+  //     {[...Array(mentorEvents.length)].map((_, index) => (
+  //       <DiscoverMentorEventSkeleton key={index}/>
+  //     ))}
+  //   </>  : (
+  //       mentorEvents.map((event, index) => (
+  //         <div
+  //           key={index}
+  //           className='relative mb-4 bg-white shadow-md border rounded-lg p-4'
+  //         >
+  //           <div className='overflow-hidden rounded-lg'>
+  //             <img
+  //               src={event.cohort_banner}
+  //               alt={event.title}
+  //               className='w-full h-[180px] object-cover'
+  //               loading='lazy'
+  //               draggable={false}
+  //             />
+  //           </div>
+  //           <div className='p-2 flex bg-white rounded absolute top-6 left-6 z-10 justify-between items-start'>
+  //             <div>
+  //               <p className='rounded-md inline-block text-sm font-semibold '>
+  //                 {event.start_date}
+  //               </p>
+  //               <p className='text-sm text-gray-600'>Start at 15:00 GMT+4</p>
+  //             </div>
+  //           </div>
+  //           <div className='mt-4'>
+  //             <span className='border text-gray-700 text-xs font-medium px-2 py-1 rounded-xl'>
+  //               Workshop
+  //             </span>
+  //           </div>
+  //           <h3 className='mt-2 text-lg font-bold text-gray-900'>
+  //             {event.title}
+  //           </h3>
+  //           <div className='mt-2 text-gray-600 text-sm line-clamp-6 hover:line-clamp-none'>
+  //             {parse(event.description)}
+  //           </div>
+  //           <div className='mt-4 flex items-center space-x-4'>
+  //             <span className='text-sm text-gray-600 flex items-center'>
+  //               <PlaceOutlinedIcon
+  //                 sx={{ fontSize: 'medium', marginTop: '-2px' }}
+  //               />
+  //               {event.country}
+  //             </span>
+  //             <span className='text-sm text-gray-600'>
+  //               ${event.funding_amount}
+  //             </span>
+  //           </div>
+  //         </div>
+  //       ))
+  //     )}
+  //   </div>
+  // );
   return (
     <div className='w-full mb-4 lg1:pb-2 pb-4'>
       <h2 className='text-lg font-semibold text-gray-800 mb-4'>Events</h2>
@@ -61,6 +126,12 @@ const DiscoverMentorEvent = ({ principal }) => {
         <p>
           <NoData message={'No Events posted Yet'} />
         </p>
+      ) : isLoading ? (
+        <>
+          {[...Array(mentorEvents.length)].map((_, index) => (
+            <DiscoverMentorEventSkeleton key={index} />
+          ))}
+        </>
       ) : (
         mentorEvents.map((event, index) => (
           <div
@@ -78,7 +149,7 @@ const DiscoverMentorEvent = ({ principal }) => {
             </div>
             <div className='p-2 flex bg-white rounded absolute top-6 left-6 z-10 justify-between items-start'>
               <div>
-                <p className='rounded-md inline-block text-sm font-semibold '>
+                <p className='rounded-md inline-block text-sm font-semibold'>
                   {event.start_date}
                 </p>
                 <p className='text-sm text-gray-600'>Start at 15:00 GMT+4</p>
@@ -111,6 +182,7 @@ const DiscoverMentorEvent = ({ principal }) => {
       )}
     </div>
   );
+  
 };
 
 export default DiscoverMentorEvent;

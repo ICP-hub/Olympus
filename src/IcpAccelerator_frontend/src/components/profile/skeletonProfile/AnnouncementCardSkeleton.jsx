@@ -38,7 +38,7 @@ const AnnouncementCardSkeleton = () => {
             </div>
           <div className='flex flex-col gap-1 w-full overflow-hidden'>
             <Skeleton height={25} width={180} className='rounded-md' />
-            <Skeleton height={20} width='100%' className='rounded-md' />
+            <Skeleton height={20} width='100%' count={2} className='rounded-md' />
             {/* <Skeleton height={20} width="80%" className="rounded-md" /> */}
           </div>
         </div>

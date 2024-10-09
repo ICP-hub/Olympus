@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import SkeletonThemeMain from '../../../Common/SkeletonTheme';
@@ -14,6 +14,8 @@ import FAQ from '../../Project/Faq';
 import Attendees from '../Attendees';
 import NoDataFound from '../NoDataFound';
 import EventRequestCard from '../EventRequestCard';
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 const EventDetailSkeleton = ({
   userCurrentRoleStatusActiveRole,
@@ -21,7 +23,12 @@ const EventDetailSkeleton = ({
   cohortCreator,
 }) => {
   const [currentTab, setCurrentTab] = useState('Summary');
-
+  useLayoutEffect(() => {
+    AOS.init({
+      duration: 1000,
+      once: false,
+    });
+  }, []);
   const tabs = [
     { label: 'Summary', value: 'Summary' },
     ...(userCurrentRoleStatusActiveRole !== 'user'
@@ -39,7 +46,7 @@ const EventDetailSkeleton = ({
   return (
     <>
       <SkeletonThemeMain>
-        <div className='flex   w-full justify-between  my-2 py-3  -top-[1.2rem] md:-top-[0.2rem] bg-white sticky z-40'>
+        <div className='flex   w-full justify-between  my-2 py-3  -top-[1.2rem] md:-top-[0.2rem] bg-white sticky z-40 '>
           <button className=' flex mr-2 text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-2 rounded-md shadow-sm border border-gray-200'>
             <ArrowBack className='mr-1' />
             <span className='hidden xxs1:block'> Back to profile</span>
@@ -51,7 +58,7 @@ const EventDetailSkeleton = ({
           </button>
         </div>
 
-        <div className='flex flex-col gap-4 md:gap-10 md:flex-row'>
+        <div className='flex flex-col gap-4 md:gap-10 md:flex-row'  data-aos="fade-up">
           <div className='w-full md:w-[30%] bg-white rounded-lg shadow-md pt-2 md:ml-1'>
             <div className='bg-gray-100 p-4'>
               <div className='flex items-start mb-4'>
@@ -314,7 +321,7 @@ const EventDetailSkeleton = ({
               </div>
             </SkeletonTheme>
 
-            <Skeleton width='60%' height={30} className='mt-4' />
+            <Skeleton width='30%' height={30} className='mt-4' />
 
             <div className='flex items-center mt-2 text-gray-600'>
               <span className='mr-2'>
@@ -362,12 +369,45 @@ const EventDetailSkeleton = ({
                       </h2>
                       <div className='relative text-gray-700 max-h-[10rem] md:max-h-none overflow-hidden group'>
                         <div className='overflow-hidden text-ellipsis line-clamp-5 md:line-clamp-6 hover:line-clamp-none'>
-                          <Skeleton
+                          {/* <Skeleton
                             width='100%'
                             height={15}
                             count={5}
                             className='rounded-md mb-2'
-                          />
+                          /> */}
+                          <div role="status" class="space-y-2.5 animate-pulse ">
+    <div class="flex items-center w-full">
+        <div class="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-32"></div>
+        <div class="h-2.5 ms-2 bg-gray-300 rounded-full dark:bg-gray-600 w-24"></div>
+        <div class="h-2.5 ms-2 bg-gray-300 rounded-full dark:bg-gray-600 w-full"></div>
+    </div>
+    <div class="flex items-center w-full">
+        <div class="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-full"></div>
+                <div class="h-2.5 ms-2 bg-gray-300 rounded-full dark:bg-gray-600 w-full"></div>
+        <div class="h-2.5 ms-2 bg-gray-300 rounded-full dark:bg-gray-600 w-24"></div>
+    </div>
+    <div class="flex items-center w-full ">
+        <div class="h-2.5 bg-gray-300 rounded-full dark:bg-gray-600 w-full"></div>
+        <div class="h-2.5 ms-2 bg-gray-200 rounded-full dark:bg-gray-700 w-80"></div>
+        <div class="h-2.5 ms-2 bg-gray-300 rounded-full dark:bg-gray-600 w-full"></div>
+    </div>
+    <div class="flex items-center w-full ">
+        <div class="h-2.5  bg-gray-200 rounded-full dark:bg-gray-700 w-full"></div>
+                <div class="h-2.5 ms-2 bg-gray-300 rounded-full dark:bg-gray-600 w-full"></div>
+        <div class="h-2.5 ms-2 bg-gray-300 rounded-full dark:bg-gray-600 w-24"></div>
+    </div>
+    <div class="flex items-center w-full">
+        <div class="h-2.5  bg-gray-300 rounded-full dark:bg-gray-600 w-32"></div>
+        <div class="h-2.5 ms-2 bg-gray-300 rounded-full dark:bg-gray-600 w-24"></div>
+        <div class="h-2.5 ms-2 bg-gray-200 rounded-full dark:bg-gray-700 w-full"></div>
+    </div>
+    <div class="flex items-center w-full ">
+        <div class="h-2.5  bg-gray-300 rounded-full dark:bg-gray-600 w-full"></div>
+        <div class="h-2.5 ms-2 bg-gray-200 rounded-full dark:bg-gray-700 w-80"></div>
+        <div class="h-2.5 ms-2 bg-gray-300 rounded-full dark:bg-gray-600 w-full"></div>
+    </div>
+    <span class="sr-only">Loading...</span>
+</div>
                         </div>
                         <div className='absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-white to-transparent pointer-events-none'></div>
                       </div>
