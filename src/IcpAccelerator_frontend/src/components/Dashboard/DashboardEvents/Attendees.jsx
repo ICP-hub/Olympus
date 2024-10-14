@@ -10,6 +10,8 @@ import NoCardData from "../../profile/NoCardData";
 import NoData from "../../NoDataCard/NoData";
 import AttendeeCardSkeleton from "./DashboardEventSkeletons/AttendeesSkeleton";
 import useTimeout from "../../hooks/TimeOutHook";
+import { FaFilter } from 'react-icons/fa';
+
 const AttendeesCard = ({ member }) => {
   return (
     <div className='flex  p-4 bg-white shadow-md rounded-lg mb-6 transition-all items-center hover:shadow-lg'>
@@ -50,24 +52,7 @@ const AttendeesCard = ({ member }) => {
           </span>
         </div>
 
-        {/* <div className="mt-3 flex flex-wrap gap-2">
-          {member.badges && member.badges.length > 0
-            ? member.badges.map((badge, idx) => (
-                <span
-                  key={idx}
-                  className={`px-3 py-1 rounded-lg text-xs font-medium transition-all ${
-                    badge === "FOUNDER"
-                      ? "bg-[#EAE6F8] text-[#5B4ACD]"
-                      : badge === "MENTOR"
-                      ? "bg-[#FDE8F2] text-[#D63384]"
-                      : "bg-[#DCEEFF] text-[#007BFF]"
-                  }`}
-                >
-                  {badge}
-                </span>
-              ))
-            : "No badges available"}
-        </div> */}
+     
       </div>
     </div>
   );
@@ -83,7 +68,7 @@ const Attendees = (cohortData) => {
   const [noData, setNoData] = useState(null);
   const actor = useSelector((currState) => currState.actors.actor);
   const location = useLocation();
-  const [loading, setLoading] = useState(false); 
+  const [loading, setLoading] = useState(true); 
   useTimeout(()=> setLoading(false))
   // const { cohort_id } = location.state || {};
   const cohortid = cohortData?.cohortData?.cohort_id;
@@ -168,10 +153,55 @@ const Attendees = (cohortData) => {
   return (
     <div className="rounded-xl ">
       <div className="mx-2">
-        <div className="flex justify-end items-center mb-6">
+        
           {/* <h2 className="text-xl font-semibold text-gray-900">Attendees</h2> */}
-          <MoreVertIcon onClick={toggleMenu} className='cursor-pointer' />
+       
+          <div className='flex items-center justify-between  gap-6 my-4'>
+        <div className='flex items-center border-2 border-gray-400 rounded-lg overflow-hidden flex-grow h-[38px] md:h-[50px]'>
+          <div className='flex items-center px-3 md:px-4'>
+            <svg
+              className='h-5 w-5 text-gray-400'
+              fill='none'
+              stroke='currentColor'
+              viewBox='0 0 24 24'
+              xmlns='http://www.w3.org/2000/svg'
+            >
+              <path
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                strokeWidth='2'
+                d='M21 21l-4.35-4.35m0 0A7.5 7.5 0 103.5 3.5a7.5 7.5 0 0013.65 13.65z'
+              ></path>
+            </svg>
+          </div>
+          <input
+            type='text'
+            placeholder='Search people, projects, jobs, events'
+            className='w-full py-2 px-2 md:px-4 text-gray-700 focus:outline-none text-sm md:text-base'
+          />
+          <div className='px-3 md:px-4'>
+            <svg
+              className='h-5 w-5 text-gray-400'
+              fill='none'
+              stroke='currentColor'
+              viewBox='0 0 24 24'
+              xmlns='http://www.w3.org/2000/svg'
+            >
+              <path
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                strokeWidth='2'
+                d='M3 6h18M3 12h18m-7 6h7'
+              ></path>
+            </svg>
+          </div>
         </div>
+        <FaFilter
+         onClick={toggleMenu}
+          className='text-gray-400 text-xl md:text-2xl cursor-pointer'
+        />
+      </div>
+        
 
         {showMenu && (
           <div
@@ -238,29 +268,13 @@ const Attendees = (cohortData) => {
                   Apply
                 </button>
               </div>
-              {/* <div className=" mt-1">
-              <button
-                    type="button"
-                    className="bg-blue-500 text-white px-4 py-1 rounded-md hover:bg-blue-600"
-                    onClick={handleApply}
-                  >
-                    Apply
-                  </button>
-                  
-            </div> */}
+              
             </div>
           </div>
         )}
 
         <div>
-          {/* {attendees && attendees.length === 0 ? (
-            // <p>No attendees available for the selected role.</p>
-            <NoData message={'No attendees available for the selected role.'} />
-          ) : (
-            attendees.map((member, idx) => (
-              <AttendeesCard key={idx} member={member} />
-            ))
-          )} */}
+        
           {
   loading ? (
     attendees.length > 0 ? (

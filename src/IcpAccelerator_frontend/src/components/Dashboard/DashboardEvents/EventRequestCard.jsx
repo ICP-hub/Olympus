@@ -40,7 +40,7 @@ const EventRequestCard = () => {
   const [listProjectId, setListProjectId] = useState(null);
   const [listCohortId, setListCohortId] = useState(null);
   const [loading, setLoading] = useState(true);
-  useTimeout(()=> setLoading(true),1000)
+  useTimeout(()=> setLoading(false))
   const toggleFilter = () => {
     setFilterOpen(!filterOpen);
   };

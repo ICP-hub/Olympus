@@ -10,21 +10,20 @@ const Rating1 = () => {
         <div className="relative mb-4">
           <div className="flex items-center justify-center mt-14">
             {Array.from({ length: 5 }).map((_, index) => {
-              // Determine size based on the index
+          
               let sizeClasses = 'text-[#FDB022]';
-              let size = 'text-4xl'; // Default size for first and last stars
-              let translateY = '-25px'; // Decrease default vertical position
-              let translateX = 0; // Default horizontal position
+              let size = 'text-4xl'; 
+              let translateY = '-25px';
+              let translateX = 0;
 
               if (index === 2) {
-                size = 'text-7xl'; // Middle star (largest)
-                translateY = '-40px'; // Higher position for the middle star
+                size = 'text-7xl'; 
+                translateY = '-40px'; 
               } else if (index === 1 || index === 3) {
-                size = 'text-5xl'; // Side stars (smaller)
-                translateY = '-35px'; // Medium position for side stars
+                size = 'text-5xl';
+                translateY = '-35px'; 
               }
-
-              // Adjust translateX for spacing between stars (5 times more gap)
+             
               switch (index) {
                 case 0:
                   translateX = '-300%'; // First star
@@ -53,7 +52,7 @@ const Rating1 = () => {
                     transform: `translateX(${translateX}) rotate(${(index - 2) * 15}deg) translateY(${translateY})`,
                   }}
                 >
-                  <span className={`${sizeClasses} ${size}`}>★</span> {/* Using ★ for the star */}
+                  <span className={`${sizeClasses} ${size}`}>★</span> 
                 </div>
               );
             })}
@@ -77,7 +76,7 @@ const Rating1 = () => {
         </div>
       </div>
 
-      {/* TOASTER FOR NOTIFICATIONS */}
+ 
       <Toaster />
     </>
   );
