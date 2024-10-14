@@ -76,7 +76,7 @@ const RoleSkeleton = () => {
           </div>
           <div className='flex flex-wrap justify-center items-center'>
             <p className='font-normal'>Role :</p>
-            <span className='flex flex-wrap justify-center gap-3'>
+            <span className='ml-2 flex flex-wrap justify-center gap-3'>
               <Skeleton width={50} height={20} />
               <Skeleton width={50} height={20} />
               <Skeleton width={50} height={20} />

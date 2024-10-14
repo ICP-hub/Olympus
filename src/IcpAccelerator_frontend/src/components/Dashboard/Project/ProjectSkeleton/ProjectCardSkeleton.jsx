@@ -53,15 +53,24 @@ const ProjectCardSkeleton = () => {
             <div className='absolute right-0 text-gray-400'>
               <MoreVert fontSize='small' />
             </div>
-            <Skeleton width='50%' height={24} className='mb-2' />
-            <Skeleton width='30%' height={20} className='mb-4' />
+            <Skeleton width='50%' height={20} className='mb-2' />
+            <Skeleton width='30%' height={15} className='mb-4' />
             <hr />
-            <Skeleton width='80%' height={16} className='mt-4 mb-2' />
-            {/* <Skeleton width='90%' height={14} className='mb-2' /> */}
-            <Skeleton width='85%' height={14} className='mb-2' />
+            <div class='space-y-2.5 animate-pulse w-full '>
+            <div class='flex items-center w-full'>
+              <div class='h-2.5 bg-gray-200 rounded-full  w-32'></div>
+              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
+              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
+            </div>
+            <div class='flex items-center w-full '>
+              <div class='h-2.5 bg-gray-200 rounded-full  w-full'></div>
+              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
+              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
+            </div>
+          </div>
             <div className='flex flex-wrap mt-4 space-x-2'>
-              <Skeleton width={60} height={20} style={{borderRadius:"18px"}} className='rounded-full' />
-              <Skeleton width={50} height={20} style={{borderRadius:"18px"}} className='rounded-full' />
+              <Skeleton width={60} height={18} style={{borderRadius:"18px"}} className='rounded-full' />
+              <Skeleton width={50} height={18} style={{borderRadius:"18px"}} className='rounded-full' />
             </div>
           </div>
           </div>
@@ -98,10 +107,10 @@ const ProjectCardSkeleton = () => {
             </div>
               <div className='ss4:ml-4 ss4:w-[70%] w-full flex flex-col'>
                 <div className="">
-                <Skeleton  height={20}  />
+                <Skeleton  height={18}  />
                 </div>
                 <div className="">
-                <Skeleton  height={15}  />
+                <Skeleton  height={18}  />
                 </div>
               </div>
             </div>

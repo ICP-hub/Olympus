@@ -6,9 +6,31 @@ const RatingPageProfileSkeleton = () => {
   return (
     <SkeletonThemeMain>
       <div className='p-3 sm0:p-6 flex flex-col items-center justify-center'>
-        <Skeleton circle height={100} width={100} />
-        <Skeleton height={30} width={200} />
-        <Skeleton height={20} width={150} />
+        {/* <Skeleton circle height={100} width={100} /> */}
+        <div className='relative  mx-auto rounded-full mb-4'>
+              <Skeleton circle={true} height={100} width={100} />
+              <div className='absolute inset-0 flex items-center justify-center'>
+                <div
+                  className='flex items-center justify-center border-2 rounded-full border-gray-300 w-12 h-12 absolute mt-0.5'
+                  style={{
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    backgroundColor: '#e3e3e3',
+                  }}
+                >
+                  <svg
+                    className='w-8 h-8 text-gray-400'
+                    fill='currentColor'
+                    viewBox='0 0 24 24'
+                  >
+                    <path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z' />
+                  </svg>
+                </div>
+              </div>
+            </div>
+        <Skeleton height={20} width={200} />
+        <Skeleton height={15} width={150} />
         <div className='flex gap-2 my-5'>
           {[...Array(5)].map((_, index) => (
             <Skeleton key={index} circle height={32} width={32} />
@@ -91,7 +113,19 @@ const ReviewSkeleton = () => {
                   <Skeleton key={i} circle height={20} width={20} />
                 ))}
               </div>
-              <Skeleton height={20} count={2} />
+              {/* <Skeleton height={20} count={2} /> */}
+              <div class='space-y-2.5 animate-pulse w-full '>
+            <div class='flex items-center w-full'>
+              <div class='h-2.5 bg-gray-200 rounded-full  w-32'></div>
+              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
+              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
+            </div>
+            <div class='flex items-center w-full '>
+              <div class='h-2.5 bg-gray-200 rounded-full  w-full'></div>
+              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
+              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
+            </div>
+          </div>
             </div>
           </div>
         </div>

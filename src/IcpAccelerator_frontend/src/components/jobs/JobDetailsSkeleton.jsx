@@ -136,12 +136,15 @@ const JobDetailsSkeleton = () => {
             </div>
             <div className='p-2'>
               <h3 className='text-gray-400 mb-2 text-sm'>CONTACT</h3>
-              <h4 className='text-sm  font-medium flex items-center'>
+              {/* <h4 className='text-sm  font-medium flex items-center'>
                 <TfiEmail />
                 <span className='ml-2 w-[94%] truncate break-all'>
                   <Skeleton height={20} />
                 </span>
-              </h4>
+              </h4> */}
+              <div className='truncate break-all'>
+                  <Skeleton height={20} />
+                </div>
             </div>
           </div>
         </div>
@@ -185,7 +188,7 @@ const JobDetailsSkeleton = () => {
               <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
             </div>
 
-            <span class='sr-only'>Loading...</span>
+            
           </div>
         </div>
       </div>
