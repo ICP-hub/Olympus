@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   isAuthenticated: false,
@@ -10,7 +10,7 @@ const initialState = {
 };
 
 const internetIdentitySlice = createSlice({
-  name: "internet",
+  name: 'internet',
   initialState,
   reducers: {
     checkLoginOnStart: (state) => {

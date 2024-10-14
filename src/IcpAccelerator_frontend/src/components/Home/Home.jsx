@@ -1,12 +1,11 @@
-import React, { useState } from 'react'
-import HeroSection from "./Hero"
-import Section2 from "./HomeSection2"
-import HomeSection3 from './HomeSection3'
-import HomeSection4 from './HomeSection4'
-import HomeSection5 from './HomeSection5'
-import HomeSection6 from './Homesection6'
-import TestimonialSection from './HomeTestiomonialSection'
-
+import React, { useState } from 'react';
+import HeroSection from './Hero';
+import Section2 from './HomeSection2';
+import HomeSection3 from './HomeSection3';
+import HomeSection4 from './HomeSection4';
+import HomeSection5 from './HomeSection5';
+import HomeSection6 from './Homesection6';
+import TestimonialSection from './HomeTestiomonialSection';
 
 export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -16,15 +15,15 @@ export default function Home() {
   };
   return (
     <>
-    {/* <div className='container mx-auto'> */}
-      <HeroSection />
-      <Section2 />
-      <HomeSection3 />
-      <HomeSection4 />
-      <HomeSection5 />
-      <TestimonialSection />
-      <HomeSection6 />
-      {/* </div> */}
+      <div className='w-full mx-auto'>
+        <HeroSection />
+        <Section2 />
+        <HomeSection3 />
+        <HomeSection4 />
+        <HomeSection5 />
+        <TestimonialSection />
+        <HomeSection6 />
+      </div>
     </>
-  )
+  );
 }

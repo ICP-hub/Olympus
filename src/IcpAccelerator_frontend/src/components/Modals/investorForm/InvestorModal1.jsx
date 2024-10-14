@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
-import ReactSelect from "react-select";
-import Select from "react-select";
-import { useFormContext } from "react-hook-form";
-import { useSelector } from "react-redux";
-import getReactSelectStyles from "../../Utils/navigationHelper/getReactSelectStyles";
+import React, { useState, useEffect } from 'react';
+import ReactSelect from 'react-select';
+import Select from 'react-select';
+import { useFormContext } from 'react-hook-form';
+import { useSelector } from 'react-redux';
+import getReactSelectStyles from '../../Utils/navigationHelper/getReactSelectStyles';
 
 const InvestorModal1 = ({ formData }) => {
   // DESTRUCTURING HOOKS AND METHODS FROM useFormContext
@@ -22,9 +22,9 @@ const InvestorModal1 = ({ formData }) => {
     useState([]);
   // INVESTOR FORM OPTIONS FOR TYPE OF INVESTMENT
   const [typeOfInvestOptions, setTypeOfInvestOptions] = useState([
-    { value: "Direct", label: "Direct" },
-    { value: "SNS", label: "SNS" },
-    { value: "both", label: "both" },
+    { value: 'Direct', label: 'Direct' },
+    { value: 'SNS', label: 'SNS' },
+    { value: 'both', label: 'both' },
   ]);
 
   // HANDLER TO SET SELECTED INVESTMENT TYPE OPTIONS
@@ -32,7 +32,7 @@ const InvestorModal1 = ({ formData }) => {
     setTypeOfInvestSelectedOptions(
       val
         ? val
-            .split(", ")
+            .split(', ')
             .map((interest) => ({ value: interest, label: interest }))
         : []
     );
@@ -71,26 +71,35 @@ const InvestorModal1 = ({ formData }) => {
 
   // FUNCTION TO SET INITIAL FORM VALUES BASED ON PROVIDED formData
   const setInvestorValuesHandler = (val) => {
-    console.log("val", val);
+    console.log('val', val);
     if (val) {
       setValue(
-        "existing_icp_investor",
-        val?.existing_icp_investor === true || val?.existing_icp_investor === "true"
-          ? "true"
-          : "false"
-      );
-      setValue("investment_type", val.investment_type ? val?.investment_type : "");
-      setValue(
-        "invested_in_multi_chain",
-        val?.invested_in_multi_chain === true || val?.invested_in_multi_chain === "true"
-          ? "true"
-          : "false"
+        'existing_icp_investor',
+        val?.existing_icp_investor === true ||
+          val?.existing_icp_investor === 'true'
+          ? 'true'
+          : 'false'
       );
       setValue(
-        "invested_in_multi_chain_names",
-        val?.invested_in_multi_chain_names ? val?.invested_in_multi_chain_names : ""
+        'investment_type',
+        val.investment_type ? val?.investment_type : ''
       );
-      setMultiChainSelectedOptionsHandler(val.invested_in_multi_chain_names ?? null);
+      setValue(
+        'invested_in_multi_chain',
+        val?.invested_in_multi_chain === true ||
+          val?.invested_in_multi_chain === 'true'
+          ? 'true'
+          : 'false'
+      );
+      setValue(
+        'invested_in_multi_chain_names',
+        val?.invested_in_multi_chain_names
+          ? val?.invested_in_multi_chain_names
+          : ''
+      );
+      setMultiChainSelectedOptionsHandler(
+        val.invested_in_multi_chain_names ?? null
+      );
       setTypeOfInvestSelectedOptionsHandler(val.investment_type ?? null);
     }
   };
@@ -99,7 +108,7 @@ const InvestorModal1 = ({ formData }) => {
   const setMultiChainSelectedOptionsHandler = (val) => {
     setInvestedInMultiChainSelectedOptions(
       val
-        ? val.split(", ").map((chain) => ({ value: chain, label: chain }))
+        ? val.split(', ').map((chain) => ({ value: chain, label: chain }))
         : []
     );
   };
@@ -107,57 +116,57 @@ const InvestorModal1 = ({ formData }) => {
   return (
     <>
       {/* MODAL HEADER */}
-      <h1 className="text-3xl text-[#121926] font-bold mb-3">
+      <h1 className='text-3xl text-[#121926] font-bold mb-3'>
         Create an Investor
       </h1>
 
       {/* INVESTOR REGISTERED FIELD */}
-      <div className="mb-2">
-        <label className="block mb-1">
-          Are you Registered ?<span className="text-[red] ml-1">*</span>
+      <div className='mb-2'>
+        <label className='block mb-1'>
+          Are you Registered ?<span className='text-[red] ml-1'>*</span>
         </label>
         <select
-          {...register("investor_registered")}
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          {...register('investor_registered')}
+          className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
         >
-          <option className="text-lg" value="false">
+          <option className='text-lg' value='false'>
             No
           </option>
-          <option className="text-lg" value="true">
+          <option className='text-lg' value='true'>
             Yes
           </option>
         </select>
         {errors.investor_registered && (
-          <p className="mt-1 text-sm text-red-500 font-bold text-left">
+          <p className='mt-1 text-sm text-red-500 font-bold text-left'>
             {errors.investor_registered.message}
           </p>
         )}
       </div>
 
       {/* CONDITIONAL RENDERING OF REGISTERED COUNTRY FIELD IF INVESTOR IS REGISTERED */}
-      {watch("investor_registered") === "true" && (
-        <div className="mb-2">
-          <label className="block mb-1">
-            Registered Country<span className="text-[red]">*</span>
+      {watch('investor_registered') === 'true' && (
+        <div className='mb-2'>
+          <label className='block mb-1'>
+            Registered Country<span className='text-[red]'>*</span>
           </label>
           <select
-            {...register("registered_country")}
-            name="registered_country"
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            {...register('registered_country')}
+            name='registered_country'
+            className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
           >
-            <option value="">Please choose an option</option>
+            <option value=''>Please choose an option</option>
             {countries?.map((country) => (
               <option
                 key={country.name}
                 value={`${country.name}`}
-                className="text-lg"
+                className='text-lg'
               >
                 {country.name}
               </option>
             ))}
           </select>
           {errors.registered_country && (
-            <p className="mt-1 text-sm text-red-500 font-bold text-left">
+            <p className='mt-1 text-sm text-red-500 font-bold text-left'>
               {errors.registered_country.message}
             </p>
           )}
@@ -165,68 +174,66 @@ const InvestorModal1 = ({ formData }) => {
       )}
 
       {/* EXISTING ICP INVESTOR FIELD */}
-      <div className="mb-2">
-        <label className="block mb-1">
-          Are you an existing ICP investor?
-        </label>
+      <div className='mb-2'>
+        <label className='block mb-1'>Are you an existing ICP investor?</label>
         <select
-          {...register("existing_icp_investor")}
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          {...register('existing_icp_investor')}
+          className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
         >
-          <option className="text-lg" value="false">
+          <option className='text-lg' value='false'>
             No
           </option>
-          <option className="text-lg" value="true">
+          <option className='text-lg' value='true'>
             Yes
           </option>
         </select>
         {errors.existing_icp_investor && (
-          <p className="mt-1 text-sm text-red-500 font-bold text-left">
+          <p className='mt-1 text-sm text-red-500 font-bold text-left'>
             {errors.existing_icp_investor.message}
           </p>
         )}
       </div>
 
       {/* CONDITIONAL RENDERING OF TYPE OF INVESTMENT FIELD IF INVESTOR IS EXISTING ICP INVESTOR */}
-      {watch("existing_icp_investor") === "true" && (
-        <div className="mb-2">
-          <label className="block mb-1">
-            Type of investment<span className="text-[red] ml-1">*</span>
+      {watch('existing_icp_investor') === 'true' && (
+        <div className='mb-2'>
+          <label className='block mb-1'>
+            Type of investment<span className='text-[red] ml-1'>*</span>
           </label>
           <ReactSelect
             isMulti
             menuPortalTarget={document.body}
-            menuPosition={"fixed"}
+            menuPosition={'fixed'}
             styles={getReactSelectStyles(errors?.investment_type)}
             value={typeOfInvestSelectedOptions}
             options={typeOfInvestOptions}
-            classNamePrefix="select"
-            className="basic-multi-select w-full text-start"
-            placeholder="Select an investment type"
-            name="investment_type"
+            classNamePrefix='select'
+            className='basic-multi-select w-full text-start'
+            placeholder='Select an investment type'
+            name='investment_type'
             onChange={(selectedOptions) => {
               if (selectedOptions && selectedOptions.length > 0) {
                 setTypeOfInvestSelectedOptions(selectedOptions);
-                clearErrors("investment_type");
+                clearErrors('investment_type');
                 setValue(
-                  "investment_type",
-                  selectedOptions.map((option) => option.value).join(", "),
+                  'investment_type',
+                  selectedOptions.map((option) => option.value).join(', '),
                   { shouldValidate: true }
                 );
               } else {
                 setTypeOfInvestSelectedOptions([]);
-                setValue("investment_type", "", {
+                setValue('investment_type', '', {
                   shouldValidate: true,
                 });
-                setError("investment_type", {
-                  type: "required",
-                  message: "At least one investment type required",
+                setError('investment_type', {
+                  type: 'required',
+                  message: 'At least one investment type required',
                 });
               }
             }}
           />
           {errors.investment_type && (
-            <p className="mt-1 text-sm text-red-500 font-bold text-left">
+            <p className='mt-1 text-sm text-red-500 font-bold text-left'>
               {errors.investment_type.message}
             </p>
           )}
@@ -234,69 +241,69 @@ const InvestorModal1 = ({ formData }) => {
       )}
 
       {/* MULTI-CHAIN INVESTMENT FIELD */}
-      <div className="mb-2">
-        <label className="block mb-1">
+      <div className='mb-2'>
+        <label className='block mb-1'>
           Do you invest in multiple ecosystems?
-          <span className="text-[red] ml-1">*</span>
+          <span className='text-[red] ml-1'>*</span>
         </label>
         <select
-          {...register("invested_in_multi_chain")}
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          {...register('invested_in_multi_chain')}
+          className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
         >
-          <option className="text-lg" value="false">
+          <option className='text-lg' value='false'>
             No
           </option>
-          <option className="text-lg" value="true">
+          <option className='text-lg' value='true'>
             Yes
           </option>
         </select>
         {errors.invested_in_multi_chain && (
-          <p className="mt-1 text-sm text-red-500 font-bold text-left">
+          <p className='mt-1 text-sm text-red-500 font-bold text-left'>
             {errors.invested_in_multi_chain.message}
           </p>
         )}
       </div>
 
       {/* CONDITIONAL RENDERING OF MULTI-CHAIN NAMES FIELD IF INVESTING IN MULTIPLE ECOSYSTEMS */}
-      {watch("invested_in_multi_chain") === "true" && (
-        <div className="mb-2">
-          <label className="block mb-1">
-            Please select the chains <span className="text-[red] ml-1">*</span>
+      {watch('invested_in_multi_chain') === 'true' && (
+        <div className='mb-2'>
+          <label className='block mb-1'>
+            Please select the chains <span className='text-[red] ml-1'>*</span>
           </label>
           <Select
             isMulti
             menuPortalTarget={document.body}
-            menuPosition={"fixed"}
+            menuPosition={'fixed'}
             styles={getReactSelectStyles(errors?.invested_in_multi_chain_names)}
             value={investedInMultiChainSelectedOptions}
             options={multiChainOptions}
-            classNamePrefix="select"
-            className="basic-multi-select w-full text-start"
-            placeholder="Select a chain"
-            name="invested_in_multi_chain_names"
+            classNamePrefix='select'
+            className='basic-multi-select w-full text-start'
+            placeholder='Select a chain'
+            name='invested_in_multi_chain_names'
             onChange={(selectedOptions) => {
               if (selectedOptions && selectedOptions.length > 0) {
                 setInvestedInMultiChainSelectedOptions(selectedOptions);
-                clearErrors("invested_in_multi_chain_names");
+                clearErrors('invested_in_multi_chain_names');
                 setValue(
-                  "invested_in_multi_chain_names",
-                  selectedOptions.map((option) => option.value).join(", "),
+                  'invested_in_multi_chain_names',
+                  selectedOptions.map((option) => option.value).join(', '),
                   { shouldValidate: true }
                 );
               } else {
                 setInvestedInMultiChainSelectedOptions([]);
-                setValue("invested_in_multi_chain_names", "", {
+                setValue('invested_in_multi_chain_names', '', {
                   shouldValidate: true,
                 });
-                setError("invested_in_multi_chain_names", {
-                  type: "required",
-                  message: "At least one chain name required",
+                setError('invested_in_multi_chain_names', {
+                  type: 'required',
+                  message: 'At least one chain name required',
                 });
               }
             }}
           />
           {errors.invested_in_multi_chain_names && (
-            <p className="mt-1 text-sm text-red-500 font-bold text-left">
+            <p className='mt-1 text-sm text-red-500 font-bold text-left'>
               {errors.invested_in_multi_chain_names.message}
             </p>
           )}

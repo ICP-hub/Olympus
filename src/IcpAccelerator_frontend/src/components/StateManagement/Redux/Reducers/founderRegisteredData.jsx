@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialFounderState = {
   data: [],
@@ -7,7 +7,7 @@ const initialFounderState = {
 };
 
 const founderSlice = createSlice({
-  name: "founderData",  // Corrected the name
+  name: 'founderData', // Corrected the name
   initialState: initialFounderState,
   reducers: {
     founderRegisteredHandlerRequest: (state) => {

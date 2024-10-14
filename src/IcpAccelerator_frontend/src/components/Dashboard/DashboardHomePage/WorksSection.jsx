@@ -1,11 +1,11 @@
-import React from "react";
-import WorkSectionImage from "../../../../assets/Logo/WorkSectionImage.png";
-import ProfileImage from "../../../../assets/Logo/ProfileImage.png";
-import LandingPageDesign from "../../../../assets/Logo/LandingPageDesign.png";
-import CurrencyBitcoinIcon from "@mui/icons-material/CurrencyBitcoin";
-import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import VerifiedIcon from "@mui/icons-material/Verified";
-import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
+import React from 'react';
+import WorkSectionImage from '../../../../assets/Logo/WorkSectionImage.png';
+import ProfileImage from '../../../../assets/Logo/ProfileImage.png';
+import LandingPageDesign from '../../../../assets/Logo/LandingPageDesign.png';
+import CurrencyBitcoinIcon from '@mui/icons-material/CurrencyBitcoin';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import VerifiedIcon from '@mui/icons-material/Verified';
+import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined';
 import AddIcon from '@mui/icons-material/Add';
 import {
   ArrowBack,
@@ -19,226 +19,230 @@ import {
   Telegram,
   Add,
   LocationOn,
-} from "@mui/icons-material";
-import { Link } from "react-router-dom";
+} from '@mui/icons-material';
+import { Link } from 'react-router-dom';
 
 function WorksSection() {
   return (
-    <div className="bg-white p-6 rounded-lg shadow-sm">
+    <div className='bg-white p-6 rounded-lg shadow-sm'>
       {/* Top navigation */}
-      <div className="flex justify-between items-center mb-6">
-        <button className="flex items-center text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-2 rounded-md shadow-sm border border-gray-200">
-          <ArrowBack className="mr-2" fontSize="small" />
+      <div className='flex justify-between items-center mb-6'>
+        <button className='flex items-center text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-2 rounded-md shadow-sm border border-gray-200'>
+          <ArrowBack className='mr-2' fontSize='small' />
           Back to profile
         </button>
-        <div className="flex items-center">
-          <button className="mr-2 text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-2 rounded-md shadow-sm border border-gray-200">
+        <div className='flex items-center'>
+          <button className='mr-2 text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-2 rounded-md shadow-sm border border-gray-200'>
             View public profile
           </button>
-          <button className="flex items-center text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-2 rounded-md shadow-sm border border-gray-200">
-            <Share className="mr-1" fontSize="small" /> Share
+          <button className='flex items-center text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-2 rounded-md shadow-sm border border-gray-200'>
+            <Share className='mr-1' fontSize='small' /> Share
           </button>
         </div>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-8">
+      <div className='flex flex-col md:flex-row gap-8'>
         {/* Profile Card */}
 
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden w-full max-w-sm">
-          <div className="relative h-1 bg-gray-200">
-            <div className="absolute left-0 top-0 h-full bg-green-500 w-1/3"></div>
+        <div className='bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden w-full max-w-sm'>
+          <div className='relative h-1 bg-gray-200'>
+            <div className='absolute left-0 top-0 h-full bg-green-500 w-1/3'></div>
           </div>
-          <div className="p-6 bg-gray-50">
+          <div className='p-6 bg-gray-50'>
             <img
               src={ProfileImage}
-              alt="Matt Bowers"
-              className="w-24 h-24 mx-auto rounded-full mb-4"
+              alt='Matt Bowers'
+              className='w-24 h-24 mx-auto rounded-full mb-4'
+              loading='lazy'
+              draggable={false}
             />
-            <div className="flex items-center justify-center mb-1">
-              <VerifiedIcon className="text-blue-500 mr-1" fontSize="small" />
-              <h2 className="text-2xl font-semibold">Matt Bowers</h2>
+            <div className='flex items-center justify-center mb-1'>
+              <VerifiedIcon className='text-blue-500 mr-1' fontSize='small' />
+              <h2 className='text-2xl font-semibold'>Matt Bowers</h2>
             </div>
-            <p className="text-gray-600 text-center mb-4">@mattbowers</p>
-            <button className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 mb-6 flex items-center justify-center">
+            <p className='text-gray-600 text-center mb-4'>@mattbowers</p>
+            <button className='w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 mb-6 flex items-center justify-center'>
               Get in touch
-              <ArrowForward className="ml-1" fontSize="small" />
+              <ArrowForward className='ml-1' fontSize='small' />
             </button>
           </div>
 
-          <div className="p-6 bg-white">
-            <div className="mb-4">
-              <h3 className="font-normal mb-2 text-xs text-gray-500 uppercase">
+          <div className='p-6 bg-white'>
+            <div className='mb-4'>
+              <h3 className='font-normal mb-2 text-xs text-gray-500 uppercase'>
                 Roles
               </h3>
-              <div className="flex space-x-2">
-                <span className="bg-[#F0F9FF] border border-[#B9E6FE] text-[#026AA2] px-3 py-1 rounded-md text-xs font-medium">
+              <div className='flex space-x-2'>
+                <span className='bg-[#F0F9FF] border border-[#B9E6FE] text-[#026AA2] px-3 py-1 rounded-md text-xs font-medium'>
                   OLYMPIAN
                 </span>
-                <span className="bg-[#ECFDF3] border border-[#ABEFC6] text-[#067647] px-3 py-1 rounded-md text-xs font-medium">
+                <span className='bg-[#ECFDF3] border border-[#ABEFC6] text-[#067647] px-3 py-1 rounded-md text-xs font-medium'>
                   TALENT
                 </span>
               </div>
             </div>
 
-            <div className="mb-4">
-              <div className="flex border-b">
-                <button className="text-blue-600 border-b-2 border-blue-600 pb-2 mr-4 font-medium">
+            <div className='mb-4'>
+              <div className='flex border-b'>
+                <button className='text-blue-600 border-b-2 border-blue-600 pb-2 mr-4 font-medium'>
                   General
                 </button>
-                <button className="text-gray-400 pb-2 font-medium">
+                <button className='text-gray-400 pb-2 font-medium'>
                   Expertise
                 </button>
               </div>
             </div>
 
-            <div className="mb-4">
-              <h3 className="font-normal mb-2 text-xs text-gray-500 uppercase">
+            <div className='mb-4'>
+              <h3 className='font-normal mb-2 text-xs text-gray-500 uppercase'>
                 Email
               </h3>
-              <div className="flex items-center">
-                <p className="mr-2 text-sm">mail@email.com</p>
+              <div className='flex items-center'>
+                <p className='mr-2 text-sm'>mail@email.com</p>
                 <VerifiedIcon
-                  className="text-blue-500 mr-2 w-2 h-2"
-                  fontSize="small"
+                  className='text-blue-500 mr-2 w-2 h-2'
+                  fontSize='small'
                 />
-                <span className="bg-gray-200 text-gray-600 px-2 py-0.5 rounded text-xs">
+                <span className='bg-gray-200 text-gray-600 px-2 py-0.5 rounded text-xs'>
                   HIDDEN
                 </span>
               </div>
             </div>
 
-            <div className="mb-4">
-              <h3 className="font-normal mb-2 text-xs text-gray-500 uppercase">
+            <div className='mb-4'>
+              <h3 className='font-normal mb-2 text-xs text-gray-500 uppercase'>
                 Tagline
               </h3>
-              <p className="text-sm">Founder & CEO at Cypherpunk Labs</p>
+              <p className='text-sm'>Founder & CEO at Cypherpunk Labs</p>
             </div>
 
-            <div className="mb-4">
-              <h3 className="font-normal mb-2 text-xs text-gray-500 uppercase">
+            <div className='mb-4'>
+              <h3 className='font-normal mb-2 text-xs text-gray-500 uppercase'>
                 About
               </h3>
-              <p className="text-sm">
+              <p className='text-sm'>
                 Est malesuada ac elit gravida vel aliquam nec. Arcu pelle
                 ntesque convallis quam feugiat non viverra massa fringilla.
               </p>
             </div>
 
-            <div className="mb-4">
-              <h3 className="font-normal mb-2 text-sm text-gray-500">
+            <div className='mb-4'>
+              <h3 className='font-normal mb-2 text-sm text-gray-500'>
                 INTERESTS
               </h3>
-              <div className="flex space-x-2">
-                <span className="bg-white border borer-[#CDD5DF] text-[#364152] px-2 py-1 rounded-full text-sm">
+              <div className='flex space-x-2'>
+                <span className='bg-white border borer-[#CDD5DF] text-[#364152] px-2 py-1 rounded-full text-sm'>
                   Web3
                 </span>
-                <span className="bg-white border borer-[#CDD5DF] text-[#364152] px-2 py-1 rounded-full text-sm">
+                <span className='bg-white border borer-[#CDD5DF] text-[#364152] px-2 py-1 rounded-full text-sm'>
                   Cryptography
                 </span>
               </div>
             </div>
 
-            <div className="mb-4">
-              <h3 className="font-normal mb-2 text-sm text-gray-500">
+            <div className='mb-4'>
+              <h3 className='font-normal mb-2 text-sm text-gray-500'>
                 LOCATION
               </h3>
-              <div className="flex items-center">
+              <div className='flex items-center'>
                 <PlaceOutlinedIcon
-                  className="text-gray-400 mr-1"
-                  fontSize="small"
+                  className='text-gray-400 mr-1'
+                  fontSize='small'
                 />
                 <p>San Diego, CA</p>
               </div>
             </div>
 
-            <div className="mb-4 max-w-sm">
-              <h3 className="font-normal mb-2 text-sm text-gray-500">
+            <div className='mb-4 max-w-sm'>
+              <h3 className='font-normal mb-2 text-sm text-gray-500'>
                 TIMEZONE
               </h3>
-              <button className="bg-gray-100 hover:bg-gray-200 text-sm w-full px-3 py-2 rounded border border-gray-200 text-left flex items-center">
-                <Add fontSize="small" className="mr-2" />
+              <button className='bg-gray-100 hover:bg-gray-200 text-sm w-full px-3 py-2 rounded border border-gray-200 text-left flex items-center'>
+                <Add fontSize='small' className='mr-2' />
                 <span>Add timezone</span>
               </button>
             </div>
 
-            <div className="mb-4 max-w-sm">
-              <h3 className="font-normal mb-2 text-sm text-gray-500">
+            <div className='mb-4 max-w-sm'>
+              <h3 className='font-normal mb-2 text-sm text-gray-500'>
                 LANGUAGES
               </h3>
-              <button className="bg-gray-100 hover:bg-gray-200 text-sm w-full px-3 py-2 rounded border border-gray-200 text-left flex items-center">
-                <Add fontSize="small" className="mr-1 inline-block" />
+              <button className='bg-gray-100 hover:bg-gray-200 text-sm w-full px-3 py-2 rounded border border-gray-200 text-left flex items-center'>
+                <Add fontSize='small' className='mr-1 inline-block' />
                 Add languages
               </button>
             </div>
 
             <div>
-              <h3 className="font-normal mb-2 text-sm text-gray-500">LINKS</h3>
-              <div className="flex space-x-2">
-                <LinkedIn className="text-gray-400 hover:text-gray-600 cursor-pointer" />
-                <GitHub className="text-gray-400 hover:text-gray-600 cursor-pointer" />
-                <Telegram className="text-gray-400 hover:text-gray-600 cursor-pointer" />
+              <h3 className='font-normal mb-2 text-sm text-gray-500'>LINKS</h3>
+              <div className='flex space-x-2'>
+                <LinkedIn className='text-gray-400 hover:text-gray-600 cursor-pointer' />
+                <GitHub className='text-gray-400 hover:text-gray-600 cursor-pointer' />
+                <Telegram className='text-gray-400 hover:text-gray-600 cursor-pointer' />
               </div>
             </div>
           </div>
         </div>
 
         {/*---------------------Service Section------------------------------- */}
-        <div className="md:w-2/3">
-          <div className="flex flex-col mb-6">
-            <div className="flex justify-between items-center">
-              <div className="flex space-x-4">
-                <button className="text-gray-500 py-2">Roles</button>
-                <button className="text-gray-500 py-2">
+        <div className='md:w-2/3'>
+          <div className='flex flex-col mb-6'>
+            <div className='flex justify-between items-center'>
+              <div className='flex space-x-4'>
+                <button className='text-gray-500 py-2'>Roles</button>
+                <button className='text-gray-500 py-2'>
                   Services
-                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#155EEF]"></div>
+                  <div className='absolute bottom-0 left-0 right-0 h-0.5 bg-[#155EEF]'></div>
                 </button>
 
-                <button className="text-[#155EEF] flex py-2 items-center relative">
+                <button className='text-[#155EEF] flex py-2 items-center relative'>
                   Works
-                  <span className="ml-1 bg-[#EFF4FF] border-[#B2CCFF] border text-[#004EEB] text-xs rounded-full w-6 h-4 flex items-center justify-center">
+                  <span className='ml-1 bg-[#EFF4FF] border-[#B2CCFF] border text-[#004EEB] text-xs rounded-full w-6 h-4 flex items-center justify-center'>
                     1
                   </span>
                 </button>
-                <button className="text-gray-500 py-2">Rating</button>
+                <button className='text-gray-500 py-2'>Rating</button>
               </div>
             </div>
-            <hr className="w-full border-t border-gray-200 mt-0" />
-            <div className="flex justify-end mt-4">
-              <button className="bg-[#155EEF] text-white px-4 py-2 rounded-md flex items-center space-x-2 text-sm font-medium hover:bg-[#1356D9] transition-colors duration-300">
-                <AddIcon className="w-5 h-5" />
+            <hr className='w-full border-t border-gray-200 mt-0' />
+            <div className='flex justify-end mt-4'>
+              <button className='bg-[#155EEF] text-white px-4 py-2 rounded-md flex items-center space-x-2 text-sm font-medium hover:bg-[#1356D9] transition-colors duration-300'>
+                <AddIcon className='w-5 h-5' />
                 <span>Add new work</span>
               </button>
             </div>
           </div>
 
           {/* Landing page design for Startup Business Card */}
-          <Link to="/dashboard/work-section-detail-page">
-          <div className="bg-white rounded-lg shadow-md overflow-hidden max-w-md">
-            <div className="p-4 bg-[#0D4C92]">
-              <img
-                src={WorkSectionImage}
-                alt="Landing page design for Startup Business"
-                className="w-full h-auto rounded"
-              />
-            </div>
-            <div className="p-4">
-              <h2 className="text-xl font-bold mb-2">
-                Landing page design for Startup Business
-              </h2>
-              <p className="text-gray-600 text-sm mb-4">
-                Est malesuada ac elit gravida vel aliquam nec. Arcu pelle
-                ntesque convallis quam feugiat non viverra massa fringilla.
-              </p>
-              <div className="flex space-x-2">
-                <span className="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-xs">
-                  Web design
-                </span>
-                <span className="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-xs">
-                  UX/UI
-                </span>
+          <Link to='/dashboard/work-section-detail-page'>
+            <div className='bg-white rounded-lg shadow-md overflow-hidden max-w-md'>
+              <div className='p-4 bg-[#0D4C92]'>
+                <img
+                  src={WorkSectionImage}
+                  alt='Landing page design for Startup Business'
+                  className='w-full h-auto rounded'
+                  loading='lazy'
+                  draggable={false}
+                />
+              </div>
+              <div className='p-4'>
+                <h2 className='text-xl font-bold mb-2'>
+                  Landing page design for Startup Business
+                </h2>
+                <p className='text-gray-600 text-sm mb-4'>
+                  Est malesuada ac elit gravida vel aliquam nec. Arcu pelle
+                  ntesque convallis quam feugiat non viverra massa fringilla.
+                </p>
+                <div className='flex space-x-2'>
+                  <span className='bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-xs'>
+                    Web design
+                  </span>
+                  <span className='bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-xs'>
+                    UX/UI
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
           </Link>
         </div>
       </div>

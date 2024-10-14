@@ -34,7 +34,7 @@ module.exports = {
         custumPurple: "rgba(50, 0, 153, 1)",
         custumSky: "rgba(114, 131, 234, 1)",
         customBlue: "rgba(185, 192, 242, 1)",
-
+        customHomeBlack: "#121926",
       },
       translate: {
         full: "100%",
@@ -49,24 +49,24 @@ module.exports = {
           "50%": { transform: "rotate(30deg)" },
         },
         spin: {
-          '0%, 100%': {
-            opacity: '0',
-            transform: 'rotateX(0deg)',
+          "0%, 100%": {
+            opacity: "0",
+            transform: "rotateX(0deg)",
           },
-          '50%': {
-            opacity: '1',
-            transform: 'rotateX(360deg)',
+          "50%": {
+            opacity: "1",
+            transform: "rotateX(360deg)",
           },
         },
-        'spin-left-right': {
-          '0%, 100%': { transform: 'rotate(-15deg)' },
-          '50%': { transform: 'rotate(15deg)' },
+        "spin-left-right": {
+          "0%, 100%": { transform: "rotate(-15deg)" },
+          "50%": { transform: "rotate(15deg)" },
         },
       },
       animation: {
         wiggle: "wiggle 5s ease-in-out infinite",
-        spin: 'spin 2s ease-in-out infinite',
-        'spin-left-right': 'spin-left-right 0.7s ease-in-out infinite',
+        spin: "spin 2s ease-in-out infinite",
+        "spin-left-right": "spin-left-right 0.7s ease-in-out infinite",
       },
     },
     screens: {
@@ -96,8 +96,13 @@ module.exports = {
       md3: "936px",
       lg: "976px",
       dlg: "1024px",
+      dlg1: "1060px",
+      dlg2: "1090px",
       lg1: "1100px",
+      lg2: "1123px",
       lgx: "1134px",
+      lgx1: "1159px",
+      lgx2: "1193px",
       dxl0: "1240px",
       dxl: "1280px",
       dxl1: "1380px",

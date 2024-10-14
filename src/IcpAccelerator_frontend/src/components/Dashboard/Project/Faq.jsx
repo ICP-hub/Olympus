@@ -4,16 +4,16 @@ import React, { useState } from 'react';
 
 const FAQItem = ({ question, answer, isOpen, onClick }) => {
   return (
-    <div className="border-b border-gray-200">
+    <div className='border-b border-gray-200'>
       <button
-        className="flex justify-between items-center w-full text-left py-4"
+        className='flex justify-between items-center w-full text-left py-4'
         onClick={onClick}
       >
-        <span className="text-base font-medium">{question}</span>
+        <span className='text-base font-medium'>{question}</span>
         {isOpen ? (
-          <RemoveCircleOutlineOutlinedIcon className="text-[#9AA4B2]" />
+          <RemoveCircleOutlineOutlinedIcon className='text-[#9AA4B2]' />
         ) : (
-          <AddCircleOutlineOutlinedIcon className="text-[#9AA4B2]" />
+          <AddCircleOutlineOutlinedIcon className='text-[#9AA4B2]' />
         )}
       </button>
       <div
@@ -21,7 +21,7 @@ const FAQItem = ({ question, answer, isOpen, onClick }) => {
           isOpen ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0'
         }`}
       >
-        <p className="mt-2 text-[#4B5565] font-normal text-sm pb-4">{answer}</p>
+        <p className='mt-2 text-[#4B5565] font-normal text-sm pb-4'>{answer}</p>
       </div>
     </div>
   );
@@ -32,18 +32,18 @@ const FAQ = () => {
 
   const faqData = [
     {
-      question: "What is a role, actually?",
+      question: 'What is a role, actually?',
       answer:
-        "Est malesuada ac elit gravida vel aliquam nec. Arcu pelle ntesque convallis quam feugiat non viverra massa fringilla.",
+        'Est malesuada ac elit gravida vel aliquam nec. Arcu pelle ntesque convallis quam feugiat non viverra massa fringilla.',
     },
     {
-      question: "How do roles work?",
-      answer: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+      question: 'How do roles work?',
+      answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
     },
     {
-      question: "Can I change roles?",
+      question: 'Can I change roles?',
       answer:
-        "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+        'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
     },
   ];
 
@@ -52,7 +52,7 @@ const FAQ = () => {
   };
 
   return (
-    <div className="mt-14 text-[#121926] text-[18px] font-medium border-gray-200">
+    <div className='mt-14 text-[#121926] text-[18px] font-medium border-gray-200'>
       {faqData.map((item, index) => (
         <FAQItem
           key={index}

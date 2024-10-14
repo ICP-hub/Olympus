@@ -1,5 +1,5 @@
-import imageCompression from "browser-image-compression";
-import Resizer from "react-image-file-resizer";
+import imageCompression from 'browser-image-compression';
+import Resizer from 'react-image-file-resizer';
 
 const compressImage = async (file) => {
   try {
@@ -9,13 +9,13 @@ const compressImage = async (file) => {
         file,
         300, // max width
         300, // max height
-        "JPEG", // format
+        'JPEG', // format
         100, // quality
         0, // rotation
         (uri) => {
           resolve(uri);
         },
-        "blob" // output type
+        'blob' // output type
       );
     });
     const resizedImage1 = await new Promise((resolve) => {
@@ -23,24 +23,23 @@ const compressImage = async (file) => {
         file,
         300, // max width
         300, // max height
-        "JPEG", // format
+        'JPEG', // format
         100, // quality
         0, // rotation
         (uri) => {
           resolve(uri);
         },
-        "base64" // output type
+        'base64' // output type
       );
     });
 
-    console.log("resizedImage", resizedImage)
+    console.log('resizedImage', resizedImage);
 
-    console.log("resizedImage1", resizedImage1)
-    
+    console.log('resizedImage1', resizedImage1);
 
     // Create a File from the resized image blob
     const resizedFile = new File([resizedImage], file.name, {
-      type: "image/jpeg",
+      type: 'image/jpeg',
     });
 
     // Compress the resized image
@@ -53,14 +52,14 @@ const compressImage = async (file) => {
 
     // Create a File from the compressed blob
     const compressedFile = new File([compressedBlob], file.name, {
-      type: "image/jpeg",
+      type: 'image/jpeg',
     });
 
-    console.log("Resized and Compressed File:", compressedFile); // Debugging line, can be commented out
+    console.log('Resized and Compressed File:', compressedFile); // Debugging line, can be commented out
 
     return compressedFile;
   } catch (error) {
-    console.error("Error resizing and compressing image:", error);
+    console.error('Error resizing and compressing image:', error);
     throw error;
   }
 };

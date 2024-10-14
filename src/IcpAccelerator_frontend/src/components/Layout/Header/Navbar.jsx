@@ -1,10 +1,12 @@
-import React, { useState } from "react";
-import DiscoverMenu from "../../Modals/DiscoverMenu";
-import CompanyMenu from "../../Modals/CompanyMenu";
-import MobileMenuDrawer from "./MobileMenuDrawer";
-import { useSelector, useDispatch } from "react-redux";
-import { useNavigate, Link } from "react-router-dom";
-import { homepagedata } from "../../Utils/jsondata/data/homepageData";
+import React, { useState } from 'react';
+import DiscoverMenu from '../../Modals/DiscoverMenu';
+import CompanyMenu from '../../Modals/CompanyMenu';
+import MobileMenuDrawer from './MobileMenuDrawer';
+import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate, Link } from 'react-router-dom';
+import { homepagedata } from '../../Utils/jsondata/data/homepageData';
+import logo from '../../../../assets/images/navlogo.png';
+import logo1 from '../../../../assets/Logo/newLogo.png';
 
 const Navbar = ({ setModalOpen }) => {
   const { navbar } = homepagedata;
@@ -34,17 +36,27 @@ const Navbar = ({ setModalOpen }) => {
   };
   return (
     <>
-      <nav className=" h-20 flex items-center justify-center    py-10 ">
-        <div className="container  bg-[#FEF6EE]">
-          <div className="max-w-7xl w-full mx-auto ">
-            <div className="  flex items-center justify-between    py-8 px-4 sm:px-6 lg:px-8  ">
-              <div className="">
-                <Link to="/">
-                  {" "}
+      <nav className=' h-20 flex items-center justify-center bg-[#FEF6EE]   py-10 '>
+        <div className='container  bg-[#FEF6EE]'>
+          <div className='max-w-7xl w-full mx-auto '>
+            <div className='  flex items-center justify-between    py-8 px-4 sm:px-6 lg:px-8  '>
+              <div className=''>
+                <Link to='/'>
+                  {' '}
                   <img
-                    src={navbar.logo.logo}
-                    alt="Olympus"
-                    className="cursor-pointer"
+                    src={logo1}
+                    alt='Olympus'
+                    className='cursor-pointer hidden md:block'
+                    width='200'
+                    height='200'
+                    draggable={false}
+                  />
+                  <img
+                    src={logo}
+                    alt='Olympus'
+                    className='cursor-pointer md:hidden object-cover w-11 h-11'
+                    loading='lazy'
+                    draggable={false}
                   />
                 </Link>
               </div>
@@ -56,14 +68,14 @@ const Navbar = ({ setModalOpen }) => {
                             {companyMenu && <CompanyMenu companyMenu={companyMenu} setCompanyMenu={setCompanyMenu} />}
                         </div>
                     </div> */}
-              <div className="flex gap-4">
+              <div className='flex gap-4'>
                 {/* <Link to='/dashboard'><button className=' p-2 font-semibold'>{navbar.menuItems.loginButton} </button></Link> */}
                 <button
-                  className="border px-4 rounded-md bg-[#155EEF] p-2 font-semibold text-white"
+                  className='border px-4 rounded-md bg-[#155EEF] p-2 font-semibold text-white'
                   onClick={manageHandler}
                 >
-                  {navbar.menuItems.getstartedButton}{" "}
-                  <span className="pl-1 text-white">
+                  {navbar.menuItems.getstartedButton}{' '}
+                  <span className='pl-1 text-white'>
                     <navbar.forwardArrow.EastIcon />
                   </span>
                 </button>

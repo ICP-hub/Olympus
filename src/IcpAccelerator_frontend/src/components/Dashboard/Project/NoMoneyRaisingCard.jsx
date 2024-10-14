@@ -145,19 +145,17 @@
 // };
 
 // export default MoneyRaising;
-import React, { useState } from "react";
-import MoneyRaisingModal from "../../Modals/ProjectRegisterModal/MoneyRaisingModal";
-import MoneyRaisedCard from "./MoneyRaisedCard";
-import NomoneyRaisFound from "./NomoneyRaisFound";
+import React, { useState } from 'react';
+import MoneyRaisingModal from '../../Modals/ProjectRegisterModal/MoneyRaisingModal';
+import MoneyRaisedCard from './MoneyRaisedCard';
+import NomoneyRaisFound from './NomoneyRaisFound';
 
 const MoneyRaising = ({ cardData }) => {
-  const [moneyRaisingData, setMoneyRaisingData] = useState(
-    cardData || []
-  ); // Store money-raising data
- console.log("Store money-raising data",cardData)
+  const [moneyRaisingData, setMoneyRaisingData] = useState(cardData || []); // Store money-raising data
+  console.log('Store money-raising data', cardData);
   const handleAddMoneyRaising = (newMoneyData) => {
     setMoneyRaisingData([...moneyRaisingData, newMoneyData]);
-    setIsOpen(false); 
+    setIsOpen(false);
   };
 
   const [modalOpen, setModalOpen] = useState(false);
@@ -169,26 +167,26 @@ const MoneyRaising = ({ cardData }) => {
     <div>
       {moneyRaisingData.length === 0 ? (
         <>
-        <NomoneyRaisFound/>
+          <NomoneyRaisFound />
         </>
       ) : (
         <>
-         <div className="flex flex-col items-end mb-8 max-w-7xl pt-4">
-        <button
-          className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
-          onClick={handleModalOpen}
-        >
-          + Add More Money Raising
-        </button>
-      </div>
-      <div className="max-w-7xl mx-auto bg-white">
-        {moneyRaisingData.map((data, index) => (
-          <MoneyRaisedCard key={index} data={data} />
-        ))}
-      </div>
+          <div className='flex flex-col items-end mb-8 max-w-7xl pt-4'>
+            <button
+              className='px-2 line-clamp-1 break-all xxs:px-4 py-1 xxs:py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700'
+              onClick={handleModalOpen}
+            >
+              + Add More Money Raising
+            </button>
+          </div>
+          <div className='max-w-7xl mx-auto bg-white'>
+            {moneyRaisingData.map((data, index) => (
+              <MoneyRaisedCard key={index} data={data} />
+            ))}
+          </div>
         </>
       )}
-     
+
       {/* Conditionally render the MoneyRaisingModal */}
 
       {modalOpen && (

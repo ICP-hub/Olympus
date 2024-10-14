@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialAreaOfExpertiseState = {
   expertise: [],
@@ -7,7 +7,7 @@ const initialAreaOfExpertiseState = {
 };
 
 const areaOfExpertiseSlice = createSlice({
-  name: "expert",
+  name: 'expert',
   initialState: initialAreaOfExpertiseState,
   reducers: {
     areaOfExpertiseHandlerRequest: (state) => {
@@ -25,7 +25,10 @@ const areaOfExpertiseSlice = createSlice({
   },
 });
 
-export const { areaOfExpertiseHandlerFailure, areaOfExpertiseHandlerRequest, areaOfExpertiseHandlerSuccess } =
-  areaOfExpertiseSlice.actions;
+export const {
+  areaOfExpertiseHandlerFailure,
+  areaOfExpertiseHandlerRequest,
+  areaOfExpertiseHandlerSuccess,
+} = areaOfExpertiseSlice.actions;
 
 export default areaOfExpertiseSlice.reducer;

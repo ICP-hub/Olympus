@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialActorState = {
   actor: null,
@@ -6,7 +6,7 @@ const initialActorState = {
 };
 
 const actorSlice = createSlice({
-  name: "actors",
+  name: 'actors',
   initialState: initialActorState,
   reducers: {
     setActor: (state, action) => {
@@ -24,5 +24,6 @@ const actorSlice = createSlice({
   },
 });
 
-export const { setActor, actorError, removeActor, handleActorRequest } = actorSlice.actions;
+export const { setActor, actorError, removeActor, handleActorRequest } =
+  actorSlice.actions;
 export default actorSlice.reducer;

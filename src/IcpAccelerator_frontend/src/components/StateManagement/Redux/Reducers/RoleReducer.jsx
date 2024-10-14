@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialRoleState = {
   roles: [],
@@ -7,7 +7,7 @@ const initialRoleState = {
 };
 
 const roleSlice = createSlice({
-  name: "role",
+  name: 'role',
   initialState: initialRoleState,
   reducers: {
     rolesHandlerRequest: (state) => {

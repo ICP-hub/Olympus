@@ -1,17 +1,24 @@
-import React, { useState ,useEffect} from 'react';
-import KYCfileIcon from "../../../../assets/Logo/KYCfileIcon.png";
+import React, { useState, useEffect } from 'react';
+import KYCfileIcon from '../../../../assets/Logo/KYCfileIcon.png';
 import DashboardHomeProfileCards from './DashboardHomeProfileCards';
-import mentor from "../../../../assets/Logo/mentor.png";
-import talent from "../../../../assets/Logo/talent.png";
-import founder from "../../../../assets/Logo/founder.png";
-import Avatar3 from "../../../../assets/Logo/Avatar3.png";
-import { dashboard } from "../../Utils/jsondata/data/dashboardData";
-import { useSelector,useDispatch } from 'react-redux';
+import mentor from '../../../../assets/Logo/mentor.png';
+import talent from '../../../../assets/Logo/talent.png';
+import founder from '../../../../assets/Logo/founder.png';
+import Avatar3 from '../../../../assets/Logo/Avatar3.png';
+import { dashboard } from '../../Utils/jsondata/data/dashboardData';
+import { useSelector, useDispatch } from 'react-redux';
 import Modal1 from '../../Modals/ProjectModal/Modal1';
 import { useNavigate } from 'react-router-dom';
-import { Principal } from "@dfinity/principal";
+import { Principal } from '@dfinity/principal';
 import Tooltip from '@mui/material/Tooltip';
-import { getCurrentRoleStatusFailureHandler, setCurrentActiveRole, setCurrentRoleStatus } from '../../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer';
+import {
+  getCurrentRoleStatusFailureHandler,
+  setCurrentActiveRole,
+  setCurrentRoleStatus,
+} from '../../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer';
+import DashboardHomeWelcomeSectionSkeleton from './DashbooardHomepageSkeletons/DashboardHomeWelcomeSectionSkeleton';
+import useTimeout from '../../hooks/TimeOutHook';
+import RatingMain from '../../Modals/RatingModals/RatingMain';
 
 const styles = {
   circularChart: {
@@ -43,16 +50,17 @@ const styles = {
     },
   },
   imageGroup: {
-    width: '20px',  // Adjust size as needed
+    width: '20px', // Adjust size as needed
     height: '20px', // Adjust size as needed
   },
 };
 
 function DashboardHomeWelcomeSection({ userName, profileCompletion }) {
   const [roleModalOpen, setRoleModalOpen] = useState(false);
-  const { dashboardwelcomesection } = dashboard
+  const { dashboardwelcomesection } = dashboard;
+  const [loading, setLoading] = useState(true);
   const userFullData = useSelector((currState) => currState.userData.data.Ok);
-  console.log("USER DATA FROM REDUX IS ", userFullData);
+  console.log('USER DATA FROM REDUX IS ', userFullData);
   const projectFullData = useSelector(
     (currState) => currState.projectData.data[0]
   );
@@ -64,7 +72,7 @@ function DashboardHomeWelcomeSection({ userName, profileCompletion }) {
   );
   const mentorCompletion = mentorFullData?.[0].profile_completion;
   const projectCompletion = projectFullData?.[0].profile_completion;
-  const investorCompletion = investorFullData?.[0].profile_completion
+  const investorCompletion = investorFullData?.[0].profile_completion;
   const actor = useSelector((currState) => currState.actors.actor);
   const principal = useSelector((currState) => currState.internet.principal);
   const userCurrentRoleStatus = useSelector(
@@ -79,18 +87,17 @@ function DashboardHomeWelcomeSection({ userName, profileCompletion }) {
   useEffect(() => {
     const fetchUserData = async () => {
       const convertedPrincipal = await Principal.fromText(principal);
-      console.log("convertedPrincipal", convertedPrincipal);
+      console.log('convertedPrincipal', convertedPrincipal);
       try {
-        const data = await actor.get_user_info_using_principal(
-          convertedPrincipal
-        );
-        console.log("Received data in user update:", data);
+        const data =
+          await actor.get_user_info_using_principal(convertedPrincipal);
+        console.log('Received data in user update:', data);
         if (data.length > 0) {
           setCompletionPercentage(data[0].profile_completion);
         }
-        setResult(data); 
+        setResult(data);
       } catch (error) {
-        console.error("Error fetching project data:", error);
+        console.error('Error fetching project data:', error);
       }
     };
 
@@ -99,80 +106,76 @@ function DashboardHomeWelcomeSection({ userName, profileCompletion }) {
     }
   }, [actor]);
 
-console.log("USERFULLDATA", userFullData);
+  console.log('USERFULLDATA', userFullData);
 
-const getCompletionPercentage = (role) => {
-  const completionPercentages = {
-    user: usercompletionPercentage,
-    mentor: mentorCompletion,
-    project: projectCompletion,
-    vc: investorCompletion,
+  const getCompletionPercentage = (role) => {
+    const completionPercentages = {
+      user: usercompletionPercentage,
+      mentor: mentorCompletion,
+      project: projectCompletion,
+      vc: investorCompletion,
+    };
+    return completionPercentages[role] || 0;
   };
-  return completionPercentages[role] || 0;
-};
 
-const completionPercentagetoRender = getCompletionPercentage(
-  userCurrentRoleStatusActiveRole
-);
+  const completionPercentagetoRender = getCompletionPercentage(
+    userCurrentRoleStatusActiveRole
+  );
   const isAuthenticated = useSelector((curr) => curr.internet.isAuthenticated);
   const actionCards = [
     {
-      title: "Complete profile",
+      title: 'Complete profile',
       description:
-        "Commodo ut non aliquam nunc nulla velit et vulputate turpis. Erat rhoncus tristique ullamcorper sit.",
-      progress: ["user", "mentor", "project", "vc"].includes(
+        'Commodo ut non aliquam nunc nulla velit et vulputate turpis. Erat rhoncus tristique ullamcorper sit.',
+      progress: ['user', 'mentor', 'project', 'vc'].includes(
         userCurrentRoleStatusActiveRole
       )
         ? completionPercentagetoRender
         : undefined,
-      action: "Complete profile",
+      action: 'Complete profile',
     },
     {
-      title: "Explore platform",
+      title: 'Explore platform',
       description:
-        "Commodo ut non aliquam nunc nulla velit et vulputate turpis. Erat rhoncus tristique ullamcorper sit.",
-      action: "Discover",
+        'Commodo ut non aliquam nunc nulla velit et vulputate turpis. Erat rhoncus tristique ullamcorper sit.',
+      action: 'Discover',
       dismissable: true,
     },
     {
-      title: "Verify identity",
-      description:
-        "Coming soon",
-      action: "Take KYC",
+      title: 'Verify identity',
+      description: 'Coming soon',
+      action: 'Take KYC',
       icon: KYCfileIcon,
       disabled: true,
-      tooltip: "Coming soon", 
-
+      tooltip: 'Coming soon',
     },
     {
-      title: "Create new role",
+      title: 'Create new role',
       description:
-        "Commodo ut non aliquam nunc nulla velit et vulputate turpis. Erat rhoncus tristique ullamcorper sit.",
-      action: "Create role",
+        'Commodo ut non aliquam nunc nulla velit et vulputate turpis. Erat rhoncus tristique ullamcorper sit.',
+      action: 'Create role',
       dismissable: true,
       imageGroup: true, // Adding a flag to indicate that this card should have the image group
     },
   ];
   const navigate = useNavigate();
 
-const handleButtonClick = (action) => {
-  if (action === 'Create role') {
-    setRoleModalOpen(prevState => !prevState);
-  }
-  else if (action === 'Discover') {
-    navigate("/dashboard/user");
-  }
-  else if (action === 'Complete profile') {
-    navigate("/dashboard/profile");
-  }
-};
+  const handleButtonClick = (action) => {
+    if (action === 'Create role') {
+      setRoleModalOpen((prevState) => !prevState);
+    } else if (action === 'Discover') {
+      navigate('/dashboard/user');
+    } else if (action === 'Complete profile') {
+      navigate('/dashboard/profile');
+    }
+  };
 
   function formatFullDateFromBigInt(bigIntDate) {
     const date = new Date(Number(bigIntDate / 1000000n));
-    const dateString = date.toLocaleDateString("en-US", {
-      month: "long",
-      day: "numeric",
-      year: "numeric",
+    const dateString = date.toLocaleDateString('en-US', {
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric',
     });
     return `${dateString}`;
   }
@@ -184,9 +187,9 @@ const handleButtonClick = (action) => {
       Object.keys(obj).forEach((key) => {
         if (Array.isArray(obj[key]) && obj[key].length > 0) {
           if (
-            key === "approved_on" ||
-            key === "rejected_on" ||
-            key === "requested_on"
+            key === 'approved_on' ||
+            key === 'rejected_on' ||
+            key === 'requested_on'
           ) {
             // const date = new Date(Number(obj[key][0])).toLocaleDateString('en-US');
             const date = formatFullDateFromBigInt(obj[key][0]);
@@ -215,7 +218,7 @@ const handleButtonClick = (action) => {
       } else {
         dispatch(
           getCurrentRoleStatusFailureHandler(
-            "error-in-fetching-role-at-dashboard"
+            'error-in-fetching-role-at-dashboard'
           )
         );
         dispatch(setCurrentActiveRole(null));
@@ -232,132 +235,153 @@ const handleButtonClick = (action) => {
         initialApi();
       } else if (
         userCurrentRoleStatus.length === 4 &&
-        userCurrentRoleStatus[0]?.status === "default"
+        userCurrentRoleStatus[0]?.status === 'default'
       ) {
-        navigate("/register-user");
+        navigate('/register-user');
       } else {
       }
     }
   }, [actor, dispatch, userCurrentRoleStatus, userCurrentRoleStatusActiveRole]);
+
+  //  useEffect(() => {
+  //   const timer = setTimeout(() => {
+  //     setLoading(false);
+  //   }, 1000);
+
+  //   return () => clearTimeout(timer);
+  // }, []);
+  useTimeout(() => setLoading(false));
+  if (loading) {
+    return <DashboardHomeWelcomeSectionSkeleton />;
+  }
   return (
     <>
-      <div className="bg-white rounded-lg p-6 mb-6 pt-1">
-        <h1 className="text-3xl font-bold mb-6 mt-6">
+      <div className='bg-white rounded-lg lg:p-6 mb-6 pt-1'>
+        <h1 className='text-sm sxs2:text-base ss3:text-xl xxs:text-2xl sm5:text-3xl font-bold mb-6 mt-6  break-all truncate'>
           {dashboardwelcomesection.welcome}, {userFullData?.full_name}!
         </h1>
-        <div className="overflow-x-auto">
-          <div className="flex gap-6 my-1">
+        <div className='overflow-x-auto'>
+          <div className='flex gap-6 my-1 '>
             {actionCards.map((card, index) => (
-                <Tooltip
+              <Tooltip
                 key={index}
-                title={card.disabled ? card.tooltip : ""}
+                title={card.disabled ? card.tooltip : ''}
                 arrow
               >
-              {/* <div
+                {/* <div
                 key={index}
                 className="bg-[#F8FAFC] rounded-lg p-4 relative flex flex-col  md:w-[330px] w-[280px] h-[226px] flex-shrink-0 shadow-lg"
               > */}
                 <div
-                  className={`bg-[#F8FAFC] rounded-lg p-4 relative flex flex-col md:w-[330px] w-[280px] h-[226px] flex-shrink-0 shadow-lg ${
-                    card.disabled ? "cursor-not-allowed opacity-50" : ""
+                  className={`bg-[#F8FAFC] rounded-lg p-4 relative flex flex-col w-[237px] md:w-[330px] ss2:w-[280px] h-[226px] flex-shrink-0 shadow-lg ${
+                    card.disabled ? 'cursor-not-allowed opacity-50' : ''
                   }`}
                 >
-                <div className="flex justify-between items-start mb-4">
-                  <div className="flex-grow pr-4">
-                    <h3 className="text-md text-[#121926] font-semibold mb-2">
-                      {card.title}
-                    </h3>
-                    <p className="text-sm text-[#4B5565] line-clamp-3 hover:line-clamp-6  ">
-                      {card.description}
-                    </p>
-                  </div>
-                  <div className="flex-shrink-0">
-                    {card.progress && (
-                      <div className="w-20 h-16">
-                        <svg viewBox="0 0 36 36" style={styles.circularChart}>
-                          <path
-                            d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                            style={styles.circleBg}
-                          />
-                          <path
-                            d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                            style={{
-                              ...styles.circle,
-                              stroke: "#4CAF50",
-                              strokeDasharray: `${card.progress}, 100`,
-                            }}
-                          />
-                          <text
-                            x="18"
-                            y="20.35"
-                            className=" font-bold"
-                            style={styles.percentage}
-                          >
-                            {card.progress}%
-                          </text>
-                        </svg>
-                      </div>
-                    )}
-                    {card.icon && (
-                      <img
-                        src={card.icon}
-                        alt="KYC Icon"
-                        className="w-14 h-14 object-contain"
-                      />
-                    )}
-                    {card.imageGroup && (
-                      <div className="w-14 pt-2">
-                        <div className="relative  mx-auto w-[30px] h-[30px]  ">
-                          <div className="absolute top-0 left-0 transform translate-x-1/4 -translate-y-1/4 ">
-                            <img
-                              src={mentor}
-                              alt="Image 1"
-                              className="rounded-full  "
+                  <div className='flex justify-between items-start mb-4'>
+                    <div className='flex-grow pr-4'>
+                      <h3 className='text-md text-[#121926] font-semibold mb-2'>
+                        {card.title}
+                      </h3>
+                      <p className='text-sm text-[#4B5565] line-clamp-3 hover:line-clamp-6  '>
+                        {card.description}
+                      </p>
+                    </div>
+                    <div className='flex-shrink-0'>
+                      {card.progress && (
+                        <div className='w-20 h-16'>
+                          <svg viewBox='0 0 36 36' style={styles.circularChart}>
+                            <path
+                              d='M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831'
+                              style={styles.circleBg}
                             />
-                          </div>
-                          <div className="absolute top-0 right-0 transform -translate-x-1/4 -translate-y-1/4">
-                            <img
-                              src={founder}
-                              alt="Image 2"
-                              className="rounded-full "
+                            <path
+                              d='M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831'
+                              style={{
+                                ...styles.circle,
+                                stroke: '#4CAF50',
+                                strokeDasharray: `${card.progress}, 100`,
+                              }}
                             />
-                          </div>
-                          <div className="absolute bottom-0 left-0 transform translate-x-1/4 translate-y-1/4 ">
-                            <img
-                              src={founder}
-                              alt="Image 3"
-                              className="rounded-full "
-                            />
-                          </div>
-                          <div className="bottom-0 right-0 transform -translate-x-1/4 translate-y-1/4">
-                            <img
-                              src={talent}
-                              alt="Image 4"
-                              className="rounded-full "
-                            />
+                            <text
+                              x='18'
+                              y='20.35'
+                              className=' font-bold'
+                              style={styles.percentage}
+                            >
+                              {card.progress}%
+                            </text>
+                          </svg>
+                        </div>
+                      )}
+                      {card.icon && (
+                        <img
+                          src={card.icon}
+                          alt='KYC Icon'
+                          className='w-14 h-14 object-contain'
+                          loading='lazy'
+                          draggable={false}
+                        />
+                      )}
+                      {card.imageGroup && (
+                        <div className='w-14 pt-2'>
+                          <div className='relative  mx-auto w-[30px] h-[30px]  '>
+                            <div className='absolute top-0 left-0 transform translate-x-1/4 -translate-y-1/4 '>
+                              <img
+                                src={mentor}
+                                alt='Image 1'
+                                className='rounded-full  '
+                                loading='lazy'
+                                draggable={false}
+                              />
+                            </div>
+                            <div className='absolute top-0 right-0 transform -translate-x-1/4 -translate-y-1/4'>
+                              <img
+                                src={founder}
+                                alt='Image 2'
+                                className='rounded-full '
+                                loading='lazy'
+                                draggable={false}
+                              />
+                            </div>
+                            <div className='absolute bottom-0 left-0 transform translate-x-1/4 translate-y-1/4 '>
+                              <img
+                                src={founder}
+                                alt='Image 3'
+                                className='rounded-full '
+                                loading='lazy'
+                                draggable={false}
+                              />
+                            </div>
+                            <div className='bottom-0 right-0 transform -translate-x-1/4 translate-y-1/4'>
+                              <img
+                                src={talent}
+                                alt='Image 4'
+                                className='rounded-full '
+                                loading='lazy'
+                                draggable={false}
+                              />
+                            </div>
                           </div>
                         </div>
-                      </div>
+                      )}
+                    </div>
+                  </div>
+                  <div className='mt-auto pt-4 flex items-center space-x-2'>
+                    <button
+                      className='bg-white border-2 border-[#CDD5DF] text-[#364152] px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors'
+                      onClick={() => handleButtonClick(card.action)}
+                    >
+                      {card.action}
+                    </button>
+                    {card.dismissable && (
+                      <button className='text-[#4B5565] hover:text-gray-600 text-sm'>
+                        {dashboardwelcomesection.dismiss}
+                      </button>
                     )}
                   </div>
                 </div>
-                <div className="mt-auto pt-4 flex items-center space-x-2">
-                  <button
-                    className="bg-white border-2 border-[#CDD5DF] text-[#364152] px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors"
-                    onClick={() => handleButtonClick(card.action)}
-                  >
-                    {card.action}
-                  </button>
-                  {card.dismissable && (
-                    <button className="text-[#4B5565] hover:text-gray-600 text-sm">
-                      {dashboardwelcomesection.dismiss}
-                    </button>
-                  )}
-                </div>
-              </div>
               </Tooltip>
             ))}
-            
           </div>
         </div>
       </div>
@@ -368,6 +392,7 @@ const handleButtonClick = (action) => {
           onClose={() => setRoleModalOpen(false)}
         />
       )}
+      {/* <RatingMain /> */}
     </>
   );
 }

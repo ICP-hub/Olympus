@@ -1,28 +1,29 @@
-import React, { useState, useEffect } from "react";
-import InfiniteScroll from "react-infinite-scroll-component";
-import { IcpAccelerator_backend } from "../../../../declarations/IcpAccelerator_backend/index";
-import { useDispatch, useSelector } from "react-redux";
-import { Star } from "@mui/icons-material";
-import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
-import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
-import { Principal } from "@dfinity/principal";
-import { RiSendPlaneLine } from "react-icons/ri";
-import AddAMentorRequestModal from "../../models/AddAMentorRequestModal";
-import toast, { Toaster } from "react-hot-toast";
-import { founderRegisteredHandlerRequest } from "../StateManagement/Redux/Reducers/founderRegisteredData";
-import { Tooltip } from "react-tooltip";
-import DiscoverMentorMain from "../Dashboard/DashboardHomePage/discoverMentor/DiscoverMentorMain";
-import RatingModal from "../Common/RatingModal";
-import NoData from "../NoDataCard/NoData";
-
+import React, { useState, useEffect, useLayoutEffect } from 'react';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import { useDispatch, useSelector } from 'react-redux';
+import { Star } from '@mui/icons-material';
+import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined';
+import uint8ArrayToBase64 from '../Utils/uint8ArrayToBase64';
+import { Principal } from '@dfinity/principal';
+import { RiSendPlaneLine } from 'react-icons/ri';
+import AddAMentorRequestModal from '../../models/AddAMentorRequestModal';
+import toast, { Toaster } from 'react-hot-toast';
+import { founderRegisteredHandlerRequest } from '../StateManagement/Redux/Reducers/founderRegisteredData';
+import { Tooltip } from 'react-tooltip';
+import DiscoverMentorMain from '../Dashboard/DashboardHomePage/discoverMentor/DiscoverMentorMain';
+import RatingModal from '../Common/RatingModal';
+import NoData from '../NoDataCard/NoData';
+import SpinnerLoader from './SpinnerLoader';
+import AOS from 'aos';
+import 'aos/dist/aos.css';
+import DiscoverSkeleton from './DiscoverSkeleton/DiscoverSkeleton';
+import useTimeout from '../hooks/TimeOutHook';
 const DiscoverMentor = ({ onMentorCountChange }) => {
   const actor = useSelector((currState) => currState.actors.actor);
   const isAuthenticated = useSelector(
     (currState) => currState.internet.isAuthenticated
   );
-  const [mentorCount, setMentorCount] = useState(0);
-  const [allMentorData, setMentorData] = useState([]);
-  const [userData, setUserData] = useState([]);
+  const [allMentorData, setAllMentorData] = useState([]);
   const [hasMore, setHasMore] = useState(true);
   const itemsPerPage = 10; // Updated to fetch 10 items per page
   const [currentPage, setCurrentPage] = useState(1);
@@ -35,14 +36,12 @@ const DiscoverMentor = ({ onMentorCountChange }) => {
   const [showRatingModal, setShowRatingModal] = useState(false);
   const [userRatingDetail, setUserRatingDetail] = useState(null);
   const [currentPrincipal, setCurrentPrincipal] = useState([]);
-  const [activeTab, setActiveTab] = useState("Users"); // Default active tab
-
+  const [isLoading, setIsLoading] = useState(true);
   const dispatch = useDispatch();
   const userCurrentRoleStatusActiveRole = useSelector(
     (currState) => currState.currentRoleStatus.activeRole
   );
-
-  console.log("my mentor data ", allMentorData);
+  useTimeout(() => setIsLoading(false));
   const projectFullData = useSelector(
     (currState) => currState.projectData.data
   );
@@ -54,86 +53,56 @@ const DiscoverMentor = ({ onMentorCountChange }) => {
     }
   }, [isAuthenticated, dispatch]);
 
-  const getAllMentor = async (caller, page) => {
-    setIsFetching(true);
+  const getAllMentor = async (caller, page, isRefresh = false) => {
+    console.log(`Fetching data for page: ${page}`);
+    setIsFetching(true); // Set fetching state
     try {
+      // Fetch data from the backend
       const result = await caller.get_all_mentors_with_pagination({
-        page_size: itemsPerPage,
-        page: page,
+        page_size: itemsPerPage, // Number of items per page
+        page: page, // Current page to fetch
       });
-
-      // {result?.data.map(val=>{
-      //   setSendprincipal(val[0])
-      // })}
-      console.log("result =>", result?.data);
-
+      console.log('discovementor', result);
       if (result && result.data) {
-        const mentorData = Object.values(result.data);
-        const userData = Object.values(result.user_data || {});
-
-        if (mentorData.length === 0) {
-          setHasMore(false); // No more data to load
+        const mentorData = Object.values(result.data); // Extract mentor data
+        if (isRefresh) {
+          console.log('Refresh mode: replacing mentor and user data');
+          setAllMentorData(mentorData); // Replace with refreshed mentor data
+          onMentorCountChange(mentorData.length); // Update mentor count
         } else {
-          setMentorData((prevData) => {
-            const newData = [...prevData, ...mentorData];
-            onMentorCountChange(newData.length > 0 ? newData.length : 0); // Update count using the length of the data array
-            return newData;
-          });
-          setUserData((prevData) => [...prevData, ...userData]);
-
-          // If fewer items than expected are returned, stop further requests
-          if (mentorData.length < itemsPerPage) {
-            setHasMore(false);
-          }
+          console.log('Appending mentor and user data');
+          setAllMentorData((prevData) => [...prevData, ...mentorData]); // Append new mentor data
+          const newTotal = allMentorData.length + mentorData.length; // Calculate new total
+          onMentorCountChange(newTotal); // Update total mentor count
+        }
+        if (mentorData.length < itemsPerPage) {
+          setHasMore(false); // If fetched data is less than itemsPerPage, stop further requests
         }
       } else {
-        setHasMore(false);
+        setHasMore(false); // If no data, stop further requests
       }
     } catch (error) {
-      console.error("error-in-get-all-mentor", error);
-      setHasMore(false);
+      console.error('Error fetching mentors:', error);
+      setHasMore(false); // Handle error and stop loading
     } finally {
-      setIsFetching(false);
+      setIsFetching(false); // Reset fetching state
     }
   };
-
-  console.log("send", sendprincipal);
 
   useEffect(() => {
-    if (!isFetching && hasMore) {
-      if (actor) {
-        getAllMentor(actor, currentPage);
-      } else {
-        getAllMentor(IcpAccelerator_backend, currentPage);
-      }
+    if (!isFetching && hasMore && actor) {
+      console.log(`Current page: ${currentPage}`);
+      getAllMentor(actor, currentPage); // Fetch data for mentors
     }
-  }, [actor, currentPage]);
+  }, [actor, currentPage, hasMore]);
 
+  // Load more mentor data when scrolling
   const loadMore = () => {
     if (!isFetching && hasMore) {
-      setCurrentPage((prevPage) => {
-        const newPage = prevPage + 1;
-        getAllMentor(actor, newPage); // Fetch data for the next page
-        return newPage;
-      });
+      const newPage = currentPage + 1;
+      setCurrentPage(newPage); // Increment the page number
+      getAllMentor(actor, newPage); // Fetch the next set of mentor data
     }
-  };
-  const refresh = () => {
-    if (actor) {
-      getAllMentor(actor, 1); // Fetch the data starting from the first page
-    }
-  };
-  const tagColors = {
-    mentor: "bg-[#EEF4FF] border-[#C7D7FE] border text-[#3538CD] rounded-md",
-    project: "bg-[#F8FAFC] text-[#364152] border border-[#E3E8EF] rounded-md",
-    vc: "bg-[#FFFAEB] border-[#FEDF89] border text-[#B54708] rounded-md",
-    TALENT: "bg-[#ECFDF3] border-[#ABEFC6] border text-[#067647] rounded-md",
-  };
-
-  const tags = ["OLYMPIAN", "FOUNDER", "TALENT", "INVESTER", "PROJECT"];
-  const getRandomTags = () => {
-    const shuffledTags = tags.sort(() => 0.5 - Math.random());
-    return shuffledTags.slice(0, 2);
   };
 
   const handleMentorCloseModal = () => {
@@ -155,7 +124,7 @@ const DiscoverMentor = ({ onMentorCountChange }) => {
       await actor
         .send_offer_to_mentor_from_project(mentor_id, msg, project_id)
         .then((result) => {
-          console.log("result", result);
+          console.log('result', result);
           if (result) {
             setIsSubmitting(false);
             handleMentorCloseModal();
@@ -163,14 +132,14 @@ const DiscoverMentor = ({ onMentorCountChange }) => {
           } else {
             setIsSubmitting(false);
             handleMentorCloseModal();
-            toast.error("something went wrong");
+            toast.error('something went wrong');
           }
         })
         .catch((error) => {
-          console.error("error-in-send_offer_to_mentor_from_project", error);
+          console.error('error-in-send_offer_to_mentor_from_project', error);
           handleMentorCloseModal();
           setIsSubmitting(false);
-          toast.error("something went wrong");
+          toast.error('something went wrong');
         });
     }
   };
@@ -178,7 +147,6 @@ const DiscoverMentor = ({ onMentorCountChange }) => {
   const handleClick = (principal) => {
     setSendprincipal(principal);
     setOpenDetail(true);
-    console.log("passed principle", principal);
   };
 
   const handleRating = (ratings, principalId) => {
@@ -186,112 +154,120 @@ const DiscoverMentor = ({ onMentorCountChange }) => {
     setUserRatingDetail(ratings);
     setCurrentPrincipal(principalId);
   };
-  console.log("userRatingDetail =>", userRatingDetail);
 
+  // initialize Aos
+  useLayoutEffect(() => {
+    AOS.init({
+      duration: 1000,
+      once: false,
+    });
+  }, []);
   return (
     <>
-      <div>
-        {allMentorData.length > 0 ? (
+      <div
+        id='scrollableDiv'
+        style={{ height: '80vh', overflowY: 'auto' }}
+        data-aos='fade-up'
+      >
+        {isLoading ? (
+          <>
+            {[...Array(allMentorData.length)].map((_, index) => (
+              <DiscoverSkeleton key={index} />
+            ))}
+          </>
+        ) : allMentorData.length > 0 ? (
           <InfiniteScroll
             dataLength={allMentorData.length}
             next={loadMore}
             hasMore={hasMore}
-            loader={<h4>Loading more...</h4>}
-            endMessage={<p>No more data available</p>}
-            refreshFunction={refresh}
-            pullDownToRefresh
-            pullDownToRefreshThreshold={50}
-            pullDownToRefreshContent={
-              <h3 style={{ textAlign: "center" }}>
-                &#8595; Pull down to refresh
-              </h3>
+            loader={
+              <>
+                <SpinnerLoader />
+              </>
             }
-            releaseToRefreshContent={
-              <h3 style={{ textAlign: "center" }}>
-                &#8593; Release to refresh
-              </h3>
+            endMessage={
+              <p className='flex justify-center'>No more data available...</p>
             }
+            scrollableTarget='scrollableDiv'
           >
             {allMentorData?.map((mentorArray, index) => {
               const mentor_id = mentorArray[0]?.toText();
               const mentor = mentorArray[1];
               const user = mentorArray[2];
-
-              // if (!mentor || !user) {
-              //   return null;
-              // }
-              console.log("//data1//", mentor);
-              console.log("//data2//", user);
-              const randomTags = getRandomTags();
               let profile = user?.profile_picture[0]
                 ? uint8ArrayToBase64(user?.profile_picture[0])
-                : "../../../assets/Logo/CypherpunkLabLogo.png";
+                : '../../../assets/Logo/CypherpunkLabLogo.png';
               let full_name = user?.full_name;
               let openchat_name = user?.openchat_username;
               let country = user?.country;
               let bio = user?.bio[0];
               let email = user?.email[0];
               const randomSkills = user?.area_of_interest
-                .split(",")
+                .split(',')
                 ?.map((skill) => skill.trim());
               const activeRole = mentor?.roles.find(
-                (role) => role.status === "approved"
+                (role) => role.status === 'approved'
               );
 
               const principle_id = mentorArray[0];
-              console.log("principle", principle_id);
               return (
                 <div
-                  className="p-6 w-[750px] rounded-lg shadow-sm mb-4 flex"
+                  className='sm:pr-6 sm:pt-6 sm:pb-6  my-10 md1:my-0 w-full   rounded-lg shadow-sm mb-4 flex flex-col sm:flex-row'
                   key={index}
                 >
-                  <div className="w-[272px] relative">
+                  <div className='w-full  sm:w-[272px] relative'>
                     <div
                       onClick={() => handleClick(principle_id)}
-                      className="max-w-[250px] w-[250px] h-[254px] bg-gray-100 rounded-lg flex flex-col justify-between relative overflow-hidden"
+                      className='w-full sm:max-w-[250px] sm:w-[250px] h-[254px] bg-gray-100 rounded-lg flex flex-col justify-between relative overflow-hidden'
                     >
-                      <div className="absolute inset-0 flex items-center justify-center">
+                      <div className='absolute inset-0 flex items-center justify-center'>
                         <img
                           src={profile}
-                          alt={full_name ?? "Mentor"}
-                          className="w-24 h-24 rounded-full object-cover"
+                          alt={full_name ?? 'Mentor'}
+                          className='w-24 h-24 rounded-full object-cover'
+                          loading='lazy'
+                          draggable={false}
                         />
                       </div>
                     </div>
                     <div
                       onClick={() => handleRating(user, principle_id)}
-                      className="absolute bottom-0 right-[6px] flex items-center bg-gray-100 p-1"
+                      className='absolute bottom-0 right-[6px] flex items-center bg-gray-100 p-1'
                     >
-                      <Star className="text-yellow-400 w-4 h-4" />
-                      <span className="text-sm font-medium">5.0</span>
+                      <Star className='text-yellow-400 w-4 h-4' />
+                      <span className='text-sm font-medium'>Rate Us</span>
                     </div>
                   </div>
-                  <div className="flex-grow ml-[25px] w-[544px]">
-                    <div className="flex justify-between items-start mb-2">
+                  <div className='flex-grow sm:ml-[25px] mt-5 md1:mt-0 w-full  '>
+                    <div className='flex justify-between items-start mb-2'>
                       <div>
-                        <h3 className="text-xl font-bold">{full_name}</h3>
-                        <p className="text-gray-500">@{openchat_name}</p>
+                        <h3 className='text-xl line-clamp-1 break-all font-bold'>
+                          {full_name}
+                        </h3>
+                        <p className='text-gray-500 line-clamp-1 break-all'>
+                          @{openchat_name}
+                        </p>
                       </div>
-                      {userCurrentRoleStatusActiveRole === "project" ? (
+                      {userCurrentRoleStatusActiveRole === 'project' ? (
                         <button
-                          data-tooltip-id="registerTip"
+                          data-tooltip-id='registerTip'
                           onClick={() => handleMentorOpenModal(mentor_id)}
                         >
                           <RiSendPlaneLine />
                           <Tooltip
-                            id="registerTip"
-                            place="top"
-                            effect="solid"
-                            className="rounded-full z-10"
+                            id='registerTip'
+                            place='top'
+                            effect='solid'
+                            className='rounded-full z-50'
                           >
                             Send Association Request
                           </Tooltip>
                         </button>
                       ) : (
-                        ""
+                        ''
                       )}
                     </div>
-                    <div className="bg-[#ECFDF3] border-[#ABEFC6] border text-[#067647] rounded-md text-xs px-3 py-1 mr-2 mb-2 w-[4.7rem]">
+                    <div className='bg-[#ECFDF3] border-[#ABEFC6] border text-[#067647] rounded-md text-xs px-3 py-1 mr-2 mb-2 w-[4.7rem]'>
                       MENTOR
                       {/* {activeRole && (
                         <span
@@ -304,25 +280,27 @@ const DiscoverMentor = ({ onMentorCountChange }) => {
                         </span>
                       )} */}
                     </div>
-                    <div className="border-t border-gray-200 my-3 mb-2 line-clamp-1 ">
+                    <div className='border-t border-gray-200 my-3 mb-2 break-all line-clamp-1 '>
                       {email}
                     </div>
 
-                    <p className="text-gray-600 mb-2 line-clamp-3">{bio}</p>
-                    <div className="flex items-center text-sm text-gray-500 flex-wrap gap-1">
-                      <div className="flex overflow-x-auto space-x-2">
+                    <p className='text-gray-600 mb-2 break-all line-clamp-3'>
+                      {bio}
+                    </p>
+                    <div className='flex items-center text-sm text-gray-500 flex-wrap gap-1'>
+                      <div className='flex overflow-x-auto space-x-2'>
                         {randomSkills.map((skill, index) => (
                           <span
                             key={index}
-                            className="border-2 border-gray-500 rounded-full text-gray-700 text-xs px-3 py-1 bg-gray-100"
+                            className='border-2 border-gray-500 rounded-full text-gray-700 text-xs px-3 py-1 bg-gray-100'
                           >
                             {skill}
                           </span>
                         ))}
                       </div>
 
-                      <span className="mr-2  flex text-[#121926] items-center py-1">
-                        <PlaceOutlinedIcon className="text-[#364152] mr-1 w-4 h-4" />
+                      <span className='mr-2  flex text-[#121926] items-center py-1'>
+                        <PlaceOutlinedIcon className='text-[#364152] mr-1 w-4 h-4' />
                         {country}
                       </span>
                     </div>
@@ -332,26 +310,11 @@ const DiscoverMentor = ({ onMentorCountChange }) => {
             })}
           </InfiniteScroll>
         ) : (
-          <div className="flex justify-center">
-            <NoData message={"No Mentor Present Yet"} />
+          <div className='flex justify-center'>
+            <NoData message={'No Mentor Present Yet'} />
           </div>
         )}
-        {showRatingModal && (
-          <RatingModal
-            showRating={showRatingModal}
-            setShowRatingModal={setShowRatingModal}
-            userRatingDetail={userRatingDetail}
-            cardPrincipal={currentPrincipal}
-          />
-        )}
-        {isAddMentorModalOpen && (
-          <AddAMentorRequestModal
-            title={"Associate Mentor"}
-            onClose={handleMentorCloseModal}
-            onSubmitHandler={handleAddMentor}
-            isSubmitting={isSubmitting}
-          />
-        )}
+
         {/* {openDetail && <DiscoverMentorMain openDetail={openDetail} setOpenDetail={setOpenDetail}  principal={sendprincipal} />} */}
       </div>
       <Toaster />
@@ -360,6 +323,22 @@ const DiscoverMentor = ({ onMentorCountChange }) => {
           openDetail={openDetail}
           setOpenDetail={setOpenDetail}
           principal={sendprincipal}
+        />
+      )}
+      {showRatingModal && (
+        <RatingModal
+          showRating={showRatingModal}
+          setShowRatingModal={setShowRatingModal}
+          userRatingDetail={userRatingDetail}
+          cardPrincipal={currentPrincipal}
+        />
+      )}
+      {isAddMentorModalOpen && (
+        <AddAMentorRequestModal
+          title={'Associate Mentor'}
+          onClose={handleMentorCloseModal}
+          onSubmitHandler={handleAddMentor}
+          isSubmitting={isSubmitting}
         />
       )}
     </>

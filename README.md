@@ -18,24 +18,36 @@ Olympus facilitates seamless interaction among founders, mentors, investors, and
 To start using Olympus, follow these steps:
 
 1. **Clone the repository and navigate to the project directory:**
+
    ```bash
    git clone https://github.com/your-repo/Olympus.git
    cd Olympus/
 
+   ```
+
 2. **Install the necessary dependencies:**
+
    ```bash
    npm install
-   
+
+   ```
+
 3. **Deploy the canisters locally:**
+
    ```bash
    dfx start --background
    dfx deploy
 
-   
+
+   ```
+
 4. **Start the development server:**
+
    ```bash
    npm start
-   
+
+   ```
+
 Your application will be available at http://localhost:8080, with API requests proxying to the local replica.
 
 ## Documentation and Resources
@@ -56,9 +68,8 @@ For more information on how to develop and deploy on ICP, refer to the following
 
 ## Contribution
 
- **We welcome contributions from the community. Feel free to open issues, suggest features, or submit pull requests.**
+**We welcome contributions from the community. Feel free to open issues, suggest features, or submit pull requests.**
 
 ## License
 
 This project is licensed under the BSD 2-Clause License. See the [LICENSE](LICENSE) file for more details.
-

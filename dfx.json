@@ -8,8 +8,8 @@
       "wasm": "target/wasm32-unknown-unknown/release/IcpAccelerator_backend.wasm",
       "build": "cargo build --release --target wasm32-unknown-unknown --features cdylib"
     },
-    
-    "internet_identity" : {
+
+    "internet_identity": {
       "type": "pull",
       "id": "rdmx6-jaaaa-aaaaa-aaadq-cai"
     },
@@ -21,9 +21,7 @@
     },
 
     "IcpAccelerator_frontend": {
-      "dependencies": [
-        "IcpAccelerator_backend"
-      ],
+      "dependencies": ["IcpAccelerator_backend"],
       "frontend": {
         "entrypoint": "src/IcpAccelerator_frontend/src/index.html"
       },
@@ -33,13 +31,11 @@
       ],
       "type": "assets"
     }
-
-  }
-  ,
+  },
   "defaults": {
     "build": {
-      "args": "",
-      "packtool": ""
+      "args": "--release",
+      "packtool": "wasm-opt"
     }
   },
   "output_env_file": ".env",

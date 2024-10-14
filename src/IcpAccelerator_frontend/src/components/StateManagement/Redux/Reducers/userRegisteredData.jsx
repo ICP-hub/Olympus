@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialUserState = {
   data: [],
@@ -7,7 +7,7 @@ const initialUserState = {
 };
 
 const userSlice = createSlice({
-  name: "userData",
+  name: 'userData',
   initialState: initialUserState,
   reducers: {
     userRegisteredHandlerRequest: (state) => {

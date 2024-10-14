@@ -1,170 +1,196 @@
-import React, { useEffect, useState } from "react";
-import InfiniteScroll from "react-infinite-scroll-component";
-import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
-import { useSelector } from "react-redux";
-import { IcpAccelerator_backend } from "../../../../../declarations/IcpAccelerator_backend/index";
-import uint8ArrayToBase64 from "../../Utils/uint8ArrayToBase64";
-import { useNavigate } from "react-router-dom";
-import parse from "html-react-parser";
-import images from "../../../../assets/images/bg.png";
-import NoData from "../../NoDataCard/NoData";
-
+import React, { useEffect, useLayoutEffect, useState } from 'react';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined';
+import { useSelector } from 'react-redux';
+import { IcpAccelerator_backend } from '../../../../../declarations/IcpAccelerator_backend/index';
+import uint8ArrayToBase64 from '../../Utils/uint8ArrayToBase64';
+import { useNavigate } from 'react-router-dom';
+import parse from 'html-react-parser';
+import images from '../../../../assets/images/bg.png';
+import NoData from '../../NoDataCard/NoData';
+import { RotatingLines } from "react-loader-spinner";
+import SpinnerLoader from "../../Discover/SpinnerLoader";
+import AOS from "aos";
+import "aos/dist/aos.css";
+import EventCardSkeleton from './DashboardEventSkeletons/EventCardSkeleton';
+import useTimeout from '../../hooks/TimeOutHook';
 const EventCard = ({ selectedEventType }) => {
   const actor = useSelector((currState) => currState.actors.actor);
   const [noData, setNoData] = useState(false);
   const [allLiveEventsData, setAllLiveEventsData] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSkeletonLoading, setIsSkeletonLoading] = useState(true); 
+  const [eventCount, setEventCount] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-console.log("my cohort data lenght",allLiveEventsData.length)
+  console.log("my cohort data lenght", allLiveEventsData.length);
   const navigate = useNavigate();
 
   const handleClick = (cohort_id) => {
     navigate(`/dashboard/single-event/${cohort_id}`);
   };
 
-  useEffect(() => {
-    fetchEvents(currentPage);
-  }, [actor, currentPage, selectedEventType]);
+  console.log("selectedEventType", selectedEventType);
 
-  const fetchEvents = async () => {
-    setIsLoading(true);
+  const fetchEvents = async (caller, page, isRefresh = false) => {
+    setIsLoading(true); // Start loading state
     try {
-      const result = await (actor || IcpAccelerator_backend).get_all_cohorts({
+      const result = await caller.get_all_cohorts({
         page_size: itemsPerPage,
-        page:currentPage,
+        page: page,
       });
-
+      console.log("result: ", result);
       let filteredEvents = [];
       switch (selectedEventType) {
-        case "Ongoing":
+        case 'Ongoing':
           filteredEvents = result.present_cohorts ?? [];
           break;
-        case "Upcoming":
+        case 'Upcoming':
           filteredEvents = result.upcoming_cohorts ?? [];
           break;
-        case "Past":
+        case 'Past':
           filteredEvents = result.past_cohorts ?? [];
           break;
-        case "All":
+        case 'All':
         default:
           filteredEvents = result.data ?? [];
           break;
       }
 
       if (filteredEvents.length > 0) {
-        setAllLiveEventsData((prevEvents) => [
-          ...prevEvents,
-          ...filteredEvents,
-        ]);
+        if (isRefresh) {
+          setAllLiveEventsData(filteredEvents);
+        } else {
+          setAllLiveEventsData((prevEvents) => [
+            ...prevEvents,
+            ...filteredEvents,
+          ]);
+        }
+
+        if (filteredEvents.length < itemsPerPage) {
+          setHasMore(false); // No more data to load
+          
+        }
+        setEventCount(filteredEvents.length);
       } else {
         setHasMore(false);
+        setEventCount(0);
       }
+
       setNoData(filteredEvents.length === 0);
     } catch (error) {
-      console.error("Error in get_all_cohorts:", error);
+      console.error('Error in get_all_cohorts:', error);
       setNoData(true);
       setHasMore(false);
     } finally {
-      setIsLoading(false);
+      setIsLoading(false); // End loading state
     }
   };
-
+useEffect(() => {
+  if (!isLoading && hasMore && actor) {
+    fetchEvents(actor, currentPage).finally(() => {
+     
+    });
+  }
+}, [actor, currentPage, hasMore, selectedEventType]);
+useTimeout(()=> setIsSkeletonLoading(false))
   const loadMore = () => {
     if (!isLoading && hasMore) {
-      setCurrentPage((prevPage) => {
-        const newPage = prevPage + 1;
-        fetchEvents(actor, newPage); // Fetch data for the next page
-        return newPage;
-      });
+      const newPage = currentPage + 1;
+      setCurrentPage(newPage); // Increment the page number
+      fetchEvents(actor, newPage); // Fetch the next set of data
     }
   };
-  const refresh = () => {
-    if (actor) {
-      fetchEvents(actor, 1); // Fetch the data starting from the first page
-    }
-  };
-  // const loadMore = () => {
-  //   if (hasMore && !isLoading) {
-  //     setCurrentPage((prevPage) => prevPage + 1);
-  //   }
-  // };
-
+  console.log("allLiveEventsData", allLiveEventsData);
+  // initialize Aos
+  useLayoutEffect(() => {
+    AOS.init({
+      duration: 1000,
+      once: false,
+    });
+  }, []);
   return (
-    <div>
-      {allLiveEventsData.length > 0 ? (
-             <InfiniteScroll
-            dataLength={allLiveEventsData.length}
-            next={loadMore}
-            hasMore={hasMore}
-            loader={<h4>Loading more...</h4>}
-            endMessage={<p>No more data available</p>}
-            refreshFunction={refresh}
-            pullDownToRefresh
-            pullDownToRefreshThreshold={50}
-            pullDownToRefreshContent={
-              <h3 style={{ textAlign: "center" }}>
-                &#8595; Pull down to refresh
-              </h3>
-            }
-            releaseToRefreshContent={
-              <h3 style={{ textAlign: "center" }}>
-                &#8593; Release to refresh
-              </h3>
-            }
-          >
+    <div
+      id="scrollableDiv"
+      style={{ height: "80vh", overflowY: "auto" }}
+      data-aos="fade-up"
+    >
+        {isSkeletonLoading ? (
+       Array.from({ length: eventCount }).map((_, index) => (
+         <EventCardSkeleton key={index} />
+       ))
+      ) : allLiveEventsData.length > 0 ? (
+        <InfiniteScroll
+          dataLength={allLiveEventsData.length}
+          next={loadMore}
+          hasMore={hasMore}
+          loader={
+            <>
+              {" "}
+              <SpinnerLoader />
+            </>
+          }
+          endMessage={<p>No more data available</p>}
+          scrollableTarget="scrollableDiv"
+        >
           {allLiveEventsData.map((data, index) => {
             const image = data?.cohort?.cohort_banner[0]
               ? uint8ArrayToBase64(data?.cohort?.cohort_banner[0])
               : images;
-            const name = data?.cohort?.title ?? "No Title...";
+            const name = data?.cohort?.title ?? 'No Title...';
             const launch_date = data?.cohort?.cohort_launch_date
               ? new Date(data.cohort.cohort_launch_date).toLocaleDateString(
-                  "en-US",
+                  'en-US',
                   {
-                    month: "short",
-                    day: "numeric",
+                    month: 'short',
+                    day: 'numeric',
                   }
                 )
-              : "";
+              : '';
             const end_date = data?.cohort?.cohort_end_date
               ? new Date(data.cohort.cohort_end_date).toLocaleDateString(
-                  "en-US",
+                  'en-US',
                   {
-                    month: "short",
-                    day: "numeric",
+                    month: 'short',
+                    day: 'numeric',
                   }
                 )
-              : "";
-            const desc = data?.cohort?.description ?? "";
-            const country = data?.cohort?.country ?? "";
-            const funding = data?.cohort?.funding_amount ?? "";
+              : '';
+            const desc = data?.cohort?.description ?? '';
+            const country = data?.cohort?.country ?? '';
+            const funding = data?.cohort?.funding_amount ?? '';
 
             return (
               <div
                 key={index}
-                className="bg-white rounded-lg shadow p-4 mb-6"
+                className='bg-white rounded-lg shadow p-4 mb-6'
                 onClick={() => handleClick(data.cohort_id)}
               >
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center gap-3 relative w-full">
-                    <div className="max-w-[160px] absolute top-1 left-1 bg-white p-2 rounded-[8px]">
-                      <p className="text-base font-bold">
+               
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
+                  <div className="relative w-full sm:flex items-start sm:items-center gap-3">
+                    <div className="absolute top-1 left-1 bg-white p-2 rounded-lg max-w-[122px] sm:max-w-[160px]">
+                      <p className="text-sm sm:text-base font-bold">
                         {launch_date} – {end_date}
                       </p>
-                      <p className="text-sm font-normal">
-                        Start at: {new Date(data?.cohort?.start_date).toLocaleDateString("en-US")}
+                      <p className="text-xs sm:text-sm font-normal">
+                        Start at:{" "}
+                        {new Date(data?.cohort?.start_date).toLocaleDateString(
+                          "en-US"
+                        )}
                       </p>
                     </div>
-                    <div className="w-[240px] h-[172px]">
+                    <div className="w-full sm:w-[240px] h-[140px] sm:h-[172px] flex-shrink-0">
                       <img
                         src={image}
                         alt={name}
-                        className="w-[240px] h-[172px] rounded-lg mr-4 object-cover object-center"
+                        className="w-full h-full rounded-lg object-cover object-center"
+                        loading="lazy"
+                        draggable={false}
                       />
                     </div>
-                    <div className="w-2/3">
+                    <div className="w-full sm:w-2/3 mt-4 sm:mt-0">
                       <div>
                         <div className="bg-[#c8eaef] border-[#45b0c1] border text-[#090907] text-xs px-2 py-1 rounded-full w-[70px]">
                           COHORT
@@ -174,8 +200,8 @@ console.log("my cohort data lenght",allLiveEventsData.length)
                           {parse(desc)}
                         </p>
                       </div>
-                      <div className="flex gap-3 items-center -bottom-4 relative">
-                        <span className="text-sm text-[#121926]">
+                      <div className="flex gap-3 items-center mt-2 sm:mt-0">
+                        <span className="text-sm text-[#121926] flex items-center">
                           <PlaceOutlinedIcon
                             className="text-[#364152]"
                             fontSize="small"
@@ -195,7 +221,23 @@ console.log("my cohort data lenght",allLiveEventsData.length)
         </InfiniteScroll>
       ) : (
         <div className="flex justify-center items-center">
-          {isLoading ? <div>Loading...</div> : <NoData message={"No Cohort Available"} />}
+          {isLoading ? (
+            <div className="flex justify-center items-center w-full">
+              <RotatingLines
+                visible={true}
+                height="96"
+                width="96"
+                color="grey"
+                strokeWidth="5"
+                animationDuration="0.75"
+                ariaLabel="rotating-lines-loading"
+                wrapperStyle={{}}
+                wrapperClass=""
+              />
+            </div>
+          ) : (
+            <NoData message={"No Cohort Available"} />
+          )}
         </div>
       )}
     </div>

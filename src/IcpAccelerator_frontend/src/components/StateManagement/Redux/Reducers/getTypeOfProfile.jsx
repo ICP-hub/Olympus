@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialTypeOfProfile = {
   profiles: [],
@@ -7,7 +7,7 @@ const initialTypeOfProfile = {
 };
 
 const typeOfProfileSlice = createSlice({
-  name: "profileTypes",
+  name: 'profileTypes',
   initialState: initialTypeOfProfile,
   reducers: {
     typeOfProfileSliceHandlerRequest: (state) => {
@@ -25,7 +25,10 @@ const typeOfProfileSlice = createSlice({
   },
 });
 
-export const { typeOfProfileSliceHandlerRequest, typeOfProfileSliceHandlerSuccess, typeOfProfileSliceHandlerFailure } =
-typeOfProfileSlice.actions;
+export const {
+  typeOfProfileSliceHandlerRequest,
+  typeOfProfileSliceHandlerSuccess,
+  typeOfProfileSliceHandlerFailure,
+} = typeOfProfileSlice.actions;
 
 export default typeOfProfileSlice.reducer;

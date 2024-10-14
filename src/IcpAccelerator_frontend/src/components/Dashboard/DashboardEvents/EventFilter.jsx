@@ -1,9 +1,9 @@
-
 import React, { useState, useRef } from 'react';
-import CalendarTodayOutlinedIcon from '@mui/icons-material/CalendarTodayOutlined';
 import Select from 'react-select';
+import CalendarTodayOutlinedIcon from '@mui/icons-material/CalendarTodayOutlined';
 
-const Filters = ({ isOpen, setSelectedEventType }) => {
+const Filters = ({ setSelectedEventType, selectedEventType }) => {
+  console.log('selectedEventType Filter ', selectedEventType);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const startDateRef = useRef();
@@ -16,11 +16,13 @@ const Filters = ({ isOpen, setSelectedEventType }) => {
   const formatDate = (dateString) => {
     if (!dateString) return '';
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-GB', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
-    }).replace(/\//g, '/');
+    return date
+      .toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+      })
+      .replace(/\//g, '/');
   };
 
   // Event type options
@@ -31,38 +33,55 @@ const Filters = ({ isOpen, setSelectedEventType }) => {
     { value: 'Past', label: 'Past' },
   ];
 
-  // Price options
+  const handleEventTypeChange = (selectedOption) => {
+    setSelectedEventType(selectedOption.value);
+  };
+
   const priceOptions = [
     { value: 'Free', label: 'Free' },
     { value: 'Paid', label: 'Paid' },
     { value: 'VIP', label: 'VIP' },
   ];
 
-  const handleEventTypeChange = (selectedOption) => {
-    setSelectedEventType(selectedOption.value); // Pass the selected event type to the parent component
-    console.log('Selected Event Type:', selectedOption.value);
-  };
-
   const handlePriceChange = (selectedOption) => {
     console.log('Selected Price:', selectedOption.value);
-    // Handle price selection logic here, such as passing it to the parent component if needed
   };
 
   return (
-    <div className={`bg-white p-6 rounded-lg shadow-sm ${isOpen ? 'block' : 'hidden'} md:block sticky top-0`}>
-      <h2 className="text-[#121926] font-bold mb-4">Filters</h2>
-      <div className="space-y-4">
+    <div className='bg-white p-6 rounded-lg shadow-sm block md:block sticky top-0 min-h-[40vh] md:min-h-[40%]'>
+      <h2 className='text-[#121926] font-bold mb-4 hidden md:block'>Filters</h2>
+      <div className='space-y-4'>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Event type</label>
-          <div className="relative">
+          <label className='block text-sm font-medium text-gray-700 mb-1'>
+            Event type
+          </label>
+          <div className='relative'>
             <Select
               options={eventTypeOptions}
+              value={eventTypeOptions.find(
+                (option) => option.value === selectedEventType
+              )}
               onChange={handleEventTypeChange}
-              className="w-full"
-              placeholder="Select event type"
+              className='w-full'
+              placeholder='Select event type'
+              menuPortalTarget={document.body}
+              menuPlacement='auto'
+              styles={{
+                menuPortal: (base) => ({
+                  ...base,
+                  zIndex: 9999,
+                }),
+                control: (base) => ({
+                  ...base,
+                  '@media (max-width: 768px)': {
+                    width: '100%',
+                  },
+                }),
+              }}
             />
           </div>
         </div>
+
         {/* <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Price</label>
           <div className="relative">
@@ -73,8 +92,8 @@ const Filters = ({ isOpen, setSelectedEventType }) => {
               placeholder="Select price type"
             />
           </div>
-        </div>
-        <div>
+        </div> */}
+        {/* <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Date range</label>
           <div className="flex space-x-4">
             <div className="relative flex-1">
@@ -128,11 +147,10 @@ const Filters = ({ isOpen, setSelectedEventType }) => {
             placeholder="E.g., Dubai"
             className="text-sm w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-500"
           />
-        </div> */}
+        </div>  */}
       </div>
     </div>
   );
 };
 
 export default Filters;
-

@@ -1,19 +1,21 @@
-import React, { useState ,useEffect} from "react";
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import ProjectRegister1 from "./ProjectRegister1";
-import ProjectRegister2 from "./ProjectRegister2";
-import ProjectRegister3 from "./ProjectRegister3";
-import ProjectRegister4 from "./ProjectRegister4";
-import ProjectRegister5 from "./ProjectRegister5";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { useNavigate } from "react-router-dom";
-import { useForm, FormProvider } from "react-hook-form";
-import toast, { Toaster } from "react-hot-toast";
-import { useSelector,useDispatch } from "react-redux";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { ThreeDots } from "react-loader-spinner";
-import { validationSchema } from "./projectValidation";
-import ProjectRegister6 from "./ProjectRegister6";
+import React, { useState, useEffect } from 'react';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import ProjectRegister1 from './ProjectRegister1';
+import ProjectRegister2 from './ProjectRegister2';
+import ProjectRegister3 from './ProjectRegister3';
+import ProjectRegister4 from './ProjectRegister4';
+import ProjectRegister5 from './ProjectRegister5';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { useNavigate } from 'react-router-dom';
+import { useForm, FormProvider } from 'react-hook-form';
+import toast, { Toaster } from 'react-hot-toast';
+import { useSelector, useDispatch } from 'react-redux';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { ThreeDots } from 'react-loader-spinner';
+import { validationSchema } from './projectValidation';
+import ProjectRegister6 from './ProjectRegister6';
+import { founderRegisteredHandlerRequest } from '../../StateManagement/Redux/Reducers/founderRegisteredData';
+import { rolesHandlerRequest } from '../../StateManagement/Redux/Reducers/RoleReducer';
 const ProjectRegisterMain = ({ isopen }) => {
   const actor = useSelector((currState) => currState.actors.actor);
   const [index, setIndex] = useState(0); // TRACKS THE CURRENT FORM PAGE
@@ -23,12 +25,12 @@ const ProjectRegisterMain = ({ isopen }) => {
   const [formData, setFormData] = useState({}); // STORES ACCUMULATED FORM DATA
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isfetchCall,setFetchCall]=useState(false)
-  const dispatch = useDispatch(); 
+  const [isfetchCall, setFetchCall] = useState(false);
+  const dispatch = useDispatch();
   // INITIALIZE REACT HOOK FORM WITH VALIDATION SCHEMA
   const methods = useForm({
     resolver: yupResolver(validationSchema),
-    mode: "all",
+    mode: 'all',
     defaultValues: {
       upload_public_documents: false,
       publicDocs: [],
@@ -52,42 +54,42 @@ const ProjectRegisterMain = ({ isopen }) => {
 
   // MAP FORM FIELDS TO DIFFERENT STEPS
   const formFields = {
-    0: ["logo", "preferred_icp_hub", "project_name", "project_elevator_pitch"],
+    0: ['logo', 'preferred_icp_hub', 'project_name', 'project_elevator_pitch'],
     1: [
-      "cover",
-      "project_website",
-      "is_your_project_registered",
-      "type_of_registration",
-      "country_of_registration",
+      'cover',
+      'project_website',
+      'is_your_project_registered',
+      'type_of_registration',
+      'country_of_registration',
     ],
     2: [
-      "supports_multichain",
-      "multi_chain_names",
-      "live_on_icp_mainnet",
-      "dapp_link",
-      "weekly_active_users",
-      "revenue",
+      'supports_multichain',
+      'multi_chain_names',
+      'live_on_icp_mainnet',
+      'dapp_link',
+      'weekly_active_users',
+      'revenue',
     ],
     3: [
-      "money_raised_till_now",
-      "icp_grants",
-      "investors",
-      "raised_from_other_ecosystem",
-      "valuation",
-      "target_amount",
+      'money_raised_till_now',
+      'icp_grants',
+      'investors',
+      'raised_from_other_ecosystem',
+      'valuation',
+      'target_amount',
     ],
-    4: ["promotional_video", "token_economics", "links"],
+    4: ['promotional_video', 'token_economics', 'links'],
     5: [
-      "reason_to_join_incubator",
-      "project_area_of_focus",
-      "project_description",
+      'reason_to_join_incubator',
+      'project_area_of_focus',
+      'project_description',
     ],
   };
 
   // HANDLE FORM VALIDATION ERROR
   const onErrorHandler = (val) => {
-    console.log("error", val);
-    toast.error("Empty fields or invalid values, please recheck the form");
+    console.log('error', val);
+    toast.error('Empty fields or invalid values, please recheck the form');
   };
 
   // HANDLE NEXT BUTTON CLICK
@@ -112,80 +114,80 @@ const ProjectRegisterMain = ({ isopen }) => {
   // HANDLE FORM SUBMISSION
   const onSubmitHandler = async () => {
     const data = { ...formData, ...getValues() };
-    console.log("data", data);
+    console.log('data', data);
     setIsSubmitting(true);
     if (actor) {
       const projectData = {
         project_cover: coverData ? [coverData] : [],
         project_logo: logoData ? [logoData] : [],
-        preferred_icp_hub: [data?.preferred_icp_hub ?? ""],
-        project_name: data?.project_name ?? "",
-        project_description: [data?.project_description ?? ""],
-        project_elevator_pitch: [data?.project_elevator_pitch ?? ""],
-        project_website: [data?.project_website ?? ""],
+        preferred_icp_hub: [data?.preferred_icp_hub ?? ''],
+        project_name: data?.project_name ?? '',
+        project_description: [data?.project_description ?? ''],
+        project_elevator_pitch: [data?.project_elevator_pitch ?? ''],
+        project_website: [data?.project_website ?? ''],
         is_your_project_registered: [
-          data?.is_your_project_registered === "true" ? true : false,
+          data?.is_your_project_registered === 'true' ? true : false,
         ],
         type_of_registration: [
-          data?.is_your_project_registered === "true" &&
+          data?.is_your_project_registered === 'true' &&
           data?.type_of_registration
             ? data?.type_of_registration
-            : "",
+            : '',
         ],
         country_of_registration: [
-          data?.is_your_project_registered === "true" &&
+          data?.is_your_project_registered === 'true' &&
           data?.country_of_registration
             ? data?.country_of_registration
-            : "",
+            : '',
         ],
         live_on_icp_mainnet: [
-          data?.live_on_icp_mainnet === "true" ? true : false,
+          data?.live_on_icp_mainnet === 'true' ? true : false,
         ],
         dapp_link: [
-          data?.live_on_icp_mainnet === "true" && data?.dapp_link
+          data?.live_on_icp_mainnet === 'true' && data?.dapp_link
             ? data?.dapp_link.toString()
-            : "",
+            : '',
         ],
         weekly_active_users: [
-          data?.live_on_icp_mainnet === "true" && data?.weekly_active_users
+          data?.live_on_icp_mainnet === 'true' && data?.weekly_active_users
             ? Number(data.weekly_active_users)
             : 0,
         ],
         revenue: [
-          data?.live_on_icp_mainnet === "true" && data?.revenue
+          data?.live_on_icp_mainnet === 'true' && data?.revenue
             ? Number(data.revenue)
             : 0,
         ],
         supports_multichain: [
-          data?.multi_chain === "true" && data?.multi_chain_names
+          data?.multi_chain === 'true' && data?.multi_chain_names
             ? data?.multi_chain_names
-            : "",
+            : '',
         ],
         money_raised_till_now: [
-          data?.money_raised_till_now === "true" ? true : false,
+          data?.money_raised_till_now === 'true' ? true : false,
         ],
-        money_raising: [data?.money_raising === "true" ? true : false],
+        money_raising: [data?.money_raising === 'true' ? true : false],
         money_raised: [
           {
             icp_grants:
-              data?.money_raised_till_now === "true" && data?.icp_grants
+              data?.money_raised_till_now === 'true' && data?.icp_grants
                 ? data.icp_grants.toString()
-                : "",
+                : '',
             investors:
-              data?.money_raised_till_now === "true" && data?.investors
+              data?.money_raised_till_now === 'true' && data?.investors
                 ? data.investors.toString()
-                : "",
+                : '',
             raised_from_other_ecosystem:
-              data?.money_raised_till_now === "true" &&
+              data?.money_raised_till_now === 'true' &&
               data?.raised_from_other_ecosystem
                 ? data.raised_from_other_ecosystem.toString()
-                : "",
+                : '',
             sns:
-              data?.money_raising === "true" && data?.valuation
+              data?.money_raising === 'true' && data?.valuation
                 ? data.valuation.toString()
-                : "",
+                : '',
             target_amount:
-              data?.money_raising === "true" && data?.target_amount
+              data?.money_raising === 'true' && data?.target_amount
                 ? parseFloat(data.target_amount)
                 : 0,
 
@@ -196,62 +198,62 @@ const ProjectRegisterMain = ({ isopen }) => {
             // sns: data.valuation ? data.valuation.toString() : null,
           },
         ],
-        promotional_video: [data?.promotional_video ?? ""],
+        promotional_video: [data?.promotional_video ?? ''],
         links: data?.links
           ? [data.links.map((val) => ({ link: val?.link ? [val.link] : [] }))]
           : [],
-        token_economics: [data?.token_economics ?? ""],
-        long_term_goals: [data?.white_paper ?? ""],
+        token_economics: [data?.token_economics ?? ''],
+        long_term_goals: [data?.white_paper ?? ''],
         private_docs:
-          data?.upload_private_documents === "true" ? [data?.privateDocs] : [],
+          data?.upload_private_documents === 'true' ? [data?.privateDocs] : [],
         public_docs:
-          data?.upload_public_documents === "true" ? [data?.publicDocs] : [],
+          data?.upload_public_documents === 'true' ? [data?.publicDocs] : [],
         upload_private_documents: [
-          data?.upload_private_documents === "true" ? true : false,
+          data?.upload_private_documents === 'true' ? true : false,
         ],
         project_area_of_focus: data?.project_area_of_focus,
-        reason_to_join_incubator: data?.reason_to_join_incubator ?? "",
+        reason_to_join_incubator: data?.reason_to_join_incubator ?? '',
         vc_assigned: [],
         mentors_assigned: [],
         project_team: [],
-        project_twitter: [""],
-        target_market: [""],
-        technical_docs: [""],
+        project_twitter: [''],
+        target_market: [''],
+        technical_docs: [''],
         self_rating_of_project: 0,
       };
 
-      console.log("projectData", projectData);
+      console.log('projectData', projectData);
       try {
         const result = await actor.register_project(projectData); // SUBMIT FORM DATA
-        console.log("result", result);
+        console.log('result', result);
         if (
           result.startsWith("You can't create more than one project") ||
           result.startsWith(
-            "You are not eligible for this role because you have 2 or more roles"
+            'You are not eligible for this role because you have 2 or more roles'
           ) ||
           result.startsWith(
-            "Cannot set private documents unless upload private docs has been set to true"
+            'Cannot set private documents unless upload private docs has been set to true'
           ) ||
           result.startsWith(
-            "You are not allowed to get this role because you already have the Venture Capitalist role"
+            'You are not allowed to get this role because you already have the Venture Capitalist role'
           ) ||
           result.startsWith(
-            "You are not allowed to get this role because you already have the Mentor role."
+            'You are not allowed to get this role because you already have the Mentor role.'
           )
         ) {
           toast.error(result); // Show error toast with the returned message
           setModalOpen(false);
           setIsSubmitting(false);
-          setFetchCall(true);
-          // window.location.pathname = "/dashboard/profile"
-          navigate("/dashboard");
+          dispatch(rolesHandlerRequest());
+          dispatch(founderRegisteredHandlerRequest());
+          navigate('/dashboard');
         } else {
-          toast.success("Project registered successfully!"); // Show success message
+          toast.success('Project registered successfully!'); // Show success message
           setModalOpen(false);
           setIsSubmitting(false);
-          setFetchCall(true);
-          // window.location.pathname = "/dashboard/profile"
-          navigate("/dashboard");
+          dispatch(rolesHandlerRequest());
+          dispatch(founderRegisteredHandlerRequest());
+          navigate('/dashboard');
         }
       } catch (error) {
         console.log(error.message);
@@ -259,33 +261,28 @@ const ProjectRegisterMain = ({ isopen }) => {
       } finally {
       }
     } else {
-      toast.error("Please signup with internet identity first");
-      window.location.href = "/";
+      toast.error('Please signup with internet identity first');
+      window.location.href = '/';
     }
   };
 
-  useEffect(() => {
-    if(isfetchCall){
-    dispatch(rolesHandlerRequest());
-  }
-  }, [actor, dispatch,isfetchCall]);
   return (
     <>
       <div
         className={`fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 ${
-          modalOpen ? "block" : "hidden"
+          modalOpen ? 'block' : 'hidden'
         }`}
       >
-        <div className="bg-white rounded-lg shadow-lg w-[500px] p-6 pt-4  max-h-[100vh] overflow-y-auto">
-          <div className="flex justify-endz mr-4">
+        <div className='bg-white rounded-lg shadow-lg w-[500px] p-6 pt-4 mx-4 max-h-[100vh] overflow-y-auto'>
+          <div className='flex justify-endz mr-4'>
             <button
-              className="text-2xl text-[#121926]"
+              className='text-2xl text-[#121926]'
               onClick={() => setModalOpen(!modalOpen)}
             >
               &times;
             </button>
           </div>
-          <h2 className="text-xs text-[#364152] mb-3">Step {index + 1} of 6</h2>
+          <h2 className='text-xs text-[#364152] mb-3'>Step {index + 1} of 6</h2>
           <FormProvider {...methods}>
             <form onSubmit={handleSubmit(onSubmitHandler, onErrorHandler)}>
               {index === 0 && (
@@ -315,7 +312,7 @@ const ProjectRegisterMain = ({ isopen }) => {
                   formData={formData}
                   setFormData={setFormData}
                 />
-              )}{" "}
+              )}{' '}
               {index === 4 && (
                 <ProjectRegister5
                   formData={formData}
@@ -330,38 +327,38 @@ const ProjectRegisterMain = ({ isopen }) => {
               )}
               <div
                 className={`flex mt-4 ${
-                  index === 0 ? "justify-end" : "justify-between"
+                  index === 0 ? 'justify-end' : 'justify-between'
                 }`}
               >
                 {index > 0 && (
                   <button
-                    type="button"
-                    className="py-2 px-4 text-gray-600 rounded border border-[#CDD5DF] hover:text-black"
+                    type='button'
+                    className='py-2 px-4 text-gray-600 rounded border border-[#CDD5DF] hover:text-black'
                     onClick={handleBack}
                     disabled={index === 0}
                   >
-                    <ArrowBackIcon fontSize="medium" /> Back
+                    <ArrowBackIcon fontSize='medium' /> Back
                   </button>
                 )}
                 {index === 5 ? (
                   <button
-                    type="button"
-                    className="py-2 px-4 bg-[#D1E0FF] text-white rounded hover:bg-blue-600 border-2 border-[#B2CCFF]"
+                    type='button'
+                    className='py-2 px-4 bg-[#D1E0FF] text-white rounded hover:bg-blue-600 border-2 border-[#B2CCFF]'
                     onClick={onSubmitHandler}
                     disabled={isSubmitting} // DISABLE BUTTON WHILE SUBMITTING
                   >
                     {isSubmitting ? (
                       <ThreeDots
                         visible={true}
-                        height="35"
-                        width="35"
-                        color="#FFFEFF"
-                        radius="9"
-                        ariaLabel="three-dots-loading"
+                        height='35'
+                        width='35'
+                        color='#FFFEFF'
+                        radius='9'
+                        ariaLabel='three-dots-loading'
                         wrapperStyle={{}}
                       />
                     ) : (
-                      "Submit"
+                      'Submit'
                     )}
                   </button>
                 ) : (
@@ -384,12 +381,12 @@ const ProjectRegisterMain = ({ isopen }) => {
                   //   )}
                   // </button>
                   <button
-                    type="button"
-                    className="py-2 px-4 bg-[#D1E0FF] text-white rounded hover:bg-blue-600 border-2 border-[#B2CCFF] flex items-center"
+                    type='button'
+                    className='py-2 px-4 bg-[#D1E0FF] text-white rounded hover:bg-blue-600 border-2 border-[#B2CCFF] flex items-center'
                     onClick={handleNext}
                   >
                     Continue
-                    <ArrowForwardIcon fontSize="medium" className="ml-2" />
+                    <ArrowForwardIcon fontSize='medium' className='ml-2' />
                   </button>
                 )}
               </div>
