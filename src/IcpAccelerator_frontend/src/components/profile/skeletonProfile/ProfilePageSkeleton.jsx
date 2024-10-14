@@ -53,7 +53,7 @@ export const ProfileSkeleton = () => (
         {/* Skeleton for Verified Icon and Name */}
         <div className='flex items-center justify-center mb-1'>
           <Skeleton circle={true} width={20} height={20} className='mr-1' />
-          <Skeleton width={120} height={25} />
+          <Skeleton width={120} height={20} />
         </div>
 
         {/* Skeleton for Username */}
@@ -79,10 +79,10 @@ export const ProfileSkeleton = () => (
         </h3>
         <div className='flex flex-wrap items-center gap-2'>
           <span className='bg-[#F0F9FF] text-[#026AA2] rounded-md text-xs font-medium'>
-            <Skeleton width={100} height={25} />
+            <Skeleton width={100} height={20} />
           </span>
           <span className='bg-[#F0F9FF]  text-[#026AA2]  rounded-md text-xs font-medium uppercase'>
-            <Skeleton width={100} height={25} />
+            <Skeleton width={100} height={20} />
           </span>
         </div>
       </div>
@@ -94,7 +94,7 @@ export const ProfileSkeleton = () => (
               full name
             </h3>
           </div>
-          <Skeleton height={30} />
+          <Skeleton height={20} />
         </div>
 
         {/* Skeleton for openchat_username */}
@@ -104,7 +104,7 @@ export const ProfileSkeleton = () => (
               openchat_username
             </h3>
           </div>
-          <Skeleton height={30} />
+          <Skeleton height={20} />
         </div>
 
         {/* Skeleton for Email */}
@@ -114,7 +114,7 @@ export const ProfileSkeleton = () => (
               Email
             </h3>
           </div>
-          <Skeleton height={30} />
+          <Skeleton height={20} />
         </div>
 
         {/* Skeleton for About */}
@@ -124,7 +124,18 @@ export const ProfileSkeleton = () => (
               About
             </h3>
           </div>
-          <Skeleton height={20} count={2} />
+          <div class='space-y-2.5 animate-pulse w-full '>
+            <div class='flex items-center w-full'>
+              <div class='h-2.5 bg-gray-200 rounded-full  w-32'></div>
+              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
+              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
+            </div>
+            <div class='flex items-center w-full '>
+              <div class='h-2.5 bg-gray-200 rounded-full  w-full'></div>
+              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
+              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
+            </div>
+          </div>
         </div>
 
         {/* Skeleton for Location */}
@@ -134,7 +145,7 @@ export const ProfileSkeleton = () => (
               Location
             </h3>
           </div>
-          <Skeleton height={30} />
+          <Skeleton height={20} />
         </div>
 
         {/* Skeleton for Type of Profile */}
@@ -145,8 +156,8 @@ export const ProfileSkeleton = () => (
             </h3>
           </div>
           <div className='flex  gap-2'>
-            <Skeleton style={{ borderRadius: '18px' }} height={30} width={90} />
-            <Skeleton style={{ borderRadius: '18px' }} height={30} width={90} />
+            <Skeleton style={{ borderRadius: '18px' }} height={20} width={90} />
+            <Skeleton style={{ borderRadius: '18px' }} height={20} width={90} />
           </div>
         </div>
 
@@ -158,8 +169,8 @@ export const ProfileSkeleton = () => (
             </h3>
           </div>
           <div className='flex gap-2'>
-            <Skeleton style={{ borderRadius: '18px' }} height={30} width={90} />
-            <Skeleton style={{ borderRadius: '18px' }} height={30} width={90} />
+            <Skeleton style={{ borderRadius: '18px' }} height={20} width={90} />
+            <Skeleton style={{ borderRadius: '18px' }} height={20} width={90} />
           </div>
         </div>
 

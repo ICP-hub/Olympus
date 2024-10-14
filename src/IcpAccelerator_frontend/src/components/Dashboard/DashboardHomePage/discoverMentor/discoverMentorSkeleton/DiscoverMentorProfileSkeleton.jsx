@@ -36,7 +36,7 @@ const DiscoverMentorProfileSkeleton = () => {
         {/* Skeleton for Verified Icon and Name */}
         <div className='flex items-center justify-center mb-1'>
           <Skeleton circle={true} width={20} height={20} className='mr-1' />
-          <Skeleton width={120} height={25} />
+          <Skeleton width={120} height={20} />
         </div>
 
         {/* Skeleton for Username */}

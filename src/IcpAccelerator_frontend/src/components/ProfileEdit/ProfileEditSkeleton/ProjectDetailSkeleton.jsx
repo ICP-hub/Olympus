@@ -13,8 +13,8 @@ const ProjectDetailSkeleton = () => {
               </label>
             </div>
             <div className='flex  gap-2'>
-            <Skeleton style={{ borderRadius: '18px' }} height={30} width={90} />
-            <Skeleton style={{ borderRadius: '18px' }} height={30} width={90} />
+            <Skeleton style={{ borderRadius: '18px' }} height={20} width={90} />
+            <Skeleton style={{ borderRadius: '18px' }} height={20} width={90} />
           </div> 
           </div>
 
@@ -25,7 +25,7 @@ const ProjectDetailSkeleton = () => {
                 Preferred ICP Hub you would like to be associated with
               </label>
             </div>
-            <Skeleton height={30} />
+            <Skeleton height={20} />
           </div>
 
           {/* Project Name */}
@@ -35,7 +35,7 @@ const ProjectDetailSkeleton = () => {
                 Project Name
               </label>
             </div>
-            <Skeleton height={30} />
+            <Skeleton height={20} />
           </div>
 
           {/* Project Description */}
@@ -45,7 +45,18 @@ const ProjectDetailSkeleton = () => {
                 Project Description
               </label>
             </div>
-            <Skeleton height={30} count={2} />
+            <div class='space-y-2.5 animate-pulse w-full '>
+            <div class='flex items-center w-full'>
+              <div class='h-2.5 bg-gray-200 rounded-full  w-32'></div>
+              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
+              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
+            </div>
+            <div class='flex items-center w-full '>
+              <div class='h-2.5 bg-gray-200 rounded-full  w-full'></div>
+              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
+              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
+            </div>
+          </div>
           </div>
 
           <div className='group relative  rounded-lg p-2 px-3 mb-2'>
@@ -54,7 +65,7 @@ const ProjectDetailSkeleton = () => {
                 Project Elevator pitch
               </label>
             </div>
-            <Skeleton height={30} />
+            <Skeleton height={20} />
           </div>
 
           <div className='group relative  rounded-lg p-2 px-3 mb-2'>
@@ -63,7 +74,7 @@ const ProjectDetailSkeleton = () => {
                 Project Website
               </label>
             </div>
-            <Skeleton height={30} />
+            <Skeleton height={20} />
           </div>
 
           <div className='group relative  rounded-lg p-2 px-3 mb-2'>
@@ -72,7 +83,7 @@ const ProjectDetailSkeleton = () => {
                 Is your Project registered
               </label>
             </div>
-            <Skeleton height={30} />
+            <Skeleton height={20} />
           </div>
 
           <div className='group relative  rounded-lg p-2 px-3 mb-2'>
@@ -81,7 +92,7 @@ const ProjectDetailSkeleton = () => {
                 Type of registration
               </label>
             </div>
-            <Skeleton height={30} />
+            <Skeleton height={20} />
           </div>
 
           <div className='group relative rounded-lg p-2 px-3 mb-2'>
@@ -90,7 +101,7 @@ const ProjectDetailSkeleton = () => {
                 Country of registration
               </label>
             </div>
-            <Skeleton height={30} />
+            <Skeleton height={20} />
           </div>
 
           <div className='group relative  rounded-lg p-2 px-3 mb-2'>
@@ -99,7 +110,7 @@ const ProjectDetailSkeleton = () => {
                 Are you also multichain
               </label>
             </div>
-            <Skeleton height={30} />
+            <Skeleton height={20} />
           </div>
 
           <div className='group relative rounded-lg p-2 px-3 mb-2'>
@@ -109,8 +120,8 @@ const ProjectDetailSkeleton = () => {
               </label>
             </div>
             <div className='flex  gap-2'>
-            <Skeleton style={{ borderRadius: '18px' }} height={30} width={90} />
-            <Skeleton style={{ borderRadius: '18px' }} height={30} width={90} />
+            <Skeleton style={{ borderRadius: '18px' }} height={20} width={90} />
+            <Skeleton style={{ borderRadius: '18px' }} height={20} width={90} />
           </div> 
           </div>
 
@@ -120,7 +131,7 @@ const ProjectDetailSkeleton = () => {
                 Live on icp Mainnet
               </label>
             </div>
-            <Skeleton height={30} />
+            <Skeleton height={20} />
           </div>
 
           <div className='group relative rounded-lg p-2 px-3 mb-2'>
@@ -129,7 +140,7 @@ const ProjectDetailSkeleton = () => {
                 DApp link
               </label>
             </div>
-            <Skeleton height={30} />
+            <Skeleton height={20} />
           </div>
 
           <div className='group relative  rounded-lg p-2 px-3 mb-2'>
@@ -138,7 +149,7 @@ const ProjectDetailSkeleton = () => {
                 Weekly active users
               </label>
             </div>
-            <Skeleton height={30} />
+            <Skeleton height={20} />
           </div>
 
           <div className='group relative  rounded-lg p-2 px-3 mb-2'>
@@ -147,7 +158,7 @@ const ProjectDetailSkeleton = () => {
                 Revenue (in million usd)
               </label>
             </div>
-            <Skeleton height={30} />
+            <Skeleton height={20} />
           </div>
 
           <div className='group relative  rounded-lg p-2 px-3 mb-2'>
@@ -157,8 +168,8 @@ const ProjectDetailSkeleton = () => {
               </label>
             </div>
             <div className='flex  gap-2'>
-            <Skeleton style={{ borderRadius: '18px' }} height={30} width={90} />
-            <Skeleton style={{ borderRadius: '18px' }} height={30} width={90} />
+            <Skeleton style={{ borderRadius: '18px' }} height={20} width={90} />
+            <Skeleton style={{ borderRadius: '18px' }} height={20} width={90} />
           </div> 
           </div>
 
@@ -168,7 +179,7 @@ const ProjectDetailSkeleton = () => {
                 Promotional video
               </label>
             </div>
-            <Skeleton height={30} />
+            <Skeleton height={20} />
           </div>
 
           <div className='group relative  rounded-lg p-2 px-3 mb-2'>
@@ -177,7 +188,7 @@ const ProjectDetailSkeleton = () => {
                 Toconomics
               </label>
             </div>
-            <Skeleton height={30} />
+            <Skeleton height={20} />
           </div>
 
           {/* Social Links */}

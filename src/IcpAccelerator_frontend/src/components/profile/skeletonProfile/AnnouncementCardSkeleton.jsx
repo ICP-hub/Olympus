@@ -18,7 +18,7 @@ const AnnouncementCardSkeleton = () => {
               <Skeleton circle={true} height={60} width={60} />
               <div className='absolute inset-0 flex items-center justify-center'>
                 <div
-                  className='flex items-center justify-center border-2 rounded-full border-gray-300 w-6 h-6 absolute mt-0.5'
+                  className='flex items-center justify-center border-2 rounded-full border-gray-300 w-10 h-10 absolute mt-0.5'
                   style={{
                     top: '50%',
                     left: '50%',
@@ -27,7 +27,7 @@ const AnnouncementCardSkeleton = () => {
                   }}
                 >
                   <svg
-                    className='w-5 h-5 text-gray-400'
+                    className='w-8 h-8 text-gray-400'
                     fill='currentColor'
                     viewBox='0 0 24 24'
                   >
@@ -37,8 +37,20 @@ const AnnouncementCardSkeleton = () => {
               </div>
             </div>
           <div className='flex flex-col gap-1 w-full overflow-hidden'>
-            <Skeleton height={25} width={180} className='rounded-md' />
-            <Skeleton height={20} width='100%' count={2} className='rounded-md' />
+            <Skeleton height={20} width={180} className='rounded-md' />
+            {/* <Skeleton height={20} width='100%' count={2} className='rounded-md' /> */}
+            <div class='space-y-2.5 animate-pulse w-full mt-2 '>
+            <div class='flex items-center w-full'>
+              <div class='h-2.5 bg-gray-200 rounded-full  w-32'></div>
+              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
+              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
+            </div>
+            <div class='flex items-center w-full '>
+              <div class='h-2.5 bg-gray-200 rounded-full  w-full'></div>
+              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
+              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
+            </div>
+          </div>
             {/* <Skeleton height={20} width="80%" className="rounded-md" /> */}
           </div>
         </div>

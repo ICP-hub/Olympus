@@ -13,7 +13,7 @@ const InvestorDetailSkeleton = () => {
             Are you registered?
           </label>
         </div>
-        <Skeleton height={30} />
+        <Skeleton height={20} />
       </div>
 
       {/* Registered Country */}
@@ -24,7 +24,7 @@ const InvestorDetailSkeleton = () => {
               Registered Country
             </label>
           </div>
-          <Skeleton height={30} />
+          <Skeleton height={20} />
         </div>
      
 
@@ -35,7 +35,7 @@ const InvestorDetailSkeleton = () => {
             ICP Hub you will like to be associated
           </label>
         </div>
-        <Skeleton height={30} />
+        <Skeleton height={20} />
       </div>
 
       {/* ICP Investor */}
@@ -45,7 +45,7 @@ const InvestorDetailSkeleton = () => {
             Are you an existing ICP investor?
           </label>
         </div>
-        <Skeleton height={30} />
+        <Skeleton height={20} />
       </div>
 
       <div className='my-1 group relative  rounded-lg p-2 px-3'>
@@ -53,8 +53,8 @@ const InvestorDetailSkeleton = () => {
             Type of investment
           </h3>
           <div className='flex  gap-2'>
-            <Skeleton style={{ borderRadius: '18px' }} height={30} width={90} />
-            <Skeleton style={{ borderRadius: '18px' }} height={30} width={90} />
+            <Skeleton style={{ borderRadius: '18px' }} height={20} width={90} />
+            <Skeleton style={{ borderRadius: '18px' }} height={20} width={90} />
           </div>        
         </div>
 
@@ -65,7 +65,7 @@ const InvestorDetailSkeleton = () => {
             Portfolio Link
           </label>
         </div>
-        <Skeleton height={30} />
+        <Skeleton height={20} />
       </div>
 
       {/* Fund Name */}
@@ -75,7 +75,7 @@ const InvestorDetailSkeleton = () => {
             Fund Name
           </label>
         </div>
-        <Skeleton height={30} />
+        <Skeleton height={20} />
       </div>
 
       {/* Fund Size */}
@@ -85,7 +85,7 @@ const InvestorDetailSkeleton = () => {
             Fund size (in million USD)
           </label>
         </div>
-        <Skeleton height={30} />
+        <Skeleton height={20} />
       </div>
 
       <div className='group relative  rounded-lg p-3 px-3 mt-4 mb-2'>
@@ -94,7 +94,7 @@ const InvestorDetailSkeleton = () => {
             Do you invest in multiple ecosystems
           </label>
         </div>
-        <Skeleton height={30} />
+        <Skeleton height={20} />
       </div>
 
       <div className='my-1 group relative  rounded-lg p-2 px-3'>
@@ -102,8 +102,8 @@ const InvestorDetailSkeleton = () => {
             Please select the chains
           </h3>
           <div className='flex  gap-2'>
-            <Skeleton style={{ borderRadius: '18px' }} height={30} width={90} />
-            <Skeleton style={{ borderRadius: '18px' }} height={30} width={90} />
+            <Skeleton style={{ borderRadius: '18px' }} height={20} width={90} />
+            <Skeleton style={{ borderRadius: '18px' }} height={20} width={90} />
           </div>        
         </div>
 
@@ -112,8 +112,8 @@ const InvestorDetailSkeleton = () => {
             Category of investment
           </h3>
           <div className='flex  gap-2'>
-            <Skeleton style={{ borderRadius: '18px' }} height={30} width={90} />
-            <Skeleton style={{ borderRadius: '18px' }} height={30} width={90} />
+            <Skeleton style={{ borderRadius: '18px' }} height={20} width={90} />
+            <Skeleton style={{ borderRadius: '18px' }} height={20} width={90} />
           </div>        
         </div>
 
@@ -124,7 +124,7 @@ const InvestorDetailSkeleton = () => {
             Website Link
           </label>
         </div>
-        <Skeleton height={30} />
+        <Skeleton height={20} />
       </div>
 
       <div className='my-1 group relative  rounded-lg p-2 px-3'>
@@ -132,8 +132,8 @@ const InvestorDetailSkeleton = () => {
             Which stage(s) do you invest at ?
           </h3>
           <div className='flex  gap-2'>
-            <Skeleton style={{ borderRadius: '18px' }} height={30} width={90} />
-            <Skeleton style={{ borderRadius: '18px' }} height={30} width={90} />
+            <Skeleton style={{ borderRadius: '18px' }} height={20} width={90} />
+            <Skeleton style={{ borderRadius: '18px' }} height={20} width={90} />
           </div>        
         </div>
 
@@ -142,8 +142,8 @@ const InvestorDetailSkeleton = () => {
             What is your range of your check size ?
           </h3>
           <div className='flex  gap-2'>
-            <Skeleton style={{ borderRadius: '18px' }} height={30} width={90} />
-            <Skeleton style={{ borderRadius: '18px' }} height={30} width={90} />
+            <Skeleton style={{ borderRadius: '18px' }} height={20} width={90} />
+            <Skeleton style={{ borderRadius: '18px' }} height={20} width={90} />
           </div>        
         </div>
 

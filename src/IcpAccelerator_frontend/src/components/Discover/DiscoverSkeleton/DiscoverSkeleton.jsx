@@ -48,35 +48,46 @@ export default function DiscoverSkeleton() {
           <div className='flex justify-between items-start mb-2'>
             <div>
               <h3 className='text-xl font-bold'>
-                <Skeleton width={150} height={20} />
+                <Skeleton width={150} height={15} />
               </h3>
               <p className='text-gray-500'>
-                <Skeleton width={150} height={20} />
+                <Skeleton width={150} height={15} />
               </p>
             </div>
           </div>
           <div className='  w-[3.4rem]'>
             <Skeleton
               variant='rectangular'
-              height={20}
+              height={15}
               style={{ borderRadius: '0.25rem' }}
             />
           </div>
           <div className='border-t border-gray-200 my-1'></div>
           <p className='text-gray-600 mb-4 overflow-hidden text-ellipsis max-h-12 line-clamp-2'>
-            <Skeleton count={2} height={20} />
+          <div class='space-y-2.5 animate-pulse w-full mt-2 '>
+            <div class='flex items-center w-full'>
+              <div class='h-2.5 bg-gray-200 rounded-full  w-32'></div>
+              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
+              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
+            </div>
+            <div class='flex items-center w-full '>
+              <div class='h-2.5 bg-gray-200 rounded-full  w-full'></div>
+              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
+              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
+            </div>
+          </div>
           </p>
           <div className='flex gap-6  text-sm text-gray-500 flex-wrap'>
-            <Skeleton width={100} height={20} />
+            <Skeleton width={100} height={15} />
 
             <span className='mr-2 mb-2 flex text-[#121926] items-center'>
               <Skeleton
                 variant='circular'
                 width={16}
-                height={20}
+                height={15}
                 className='mr-1'
               />
-              <Skeleton width={150} height={20} />
+              <Skeleton width={150} height={15} />
             </span>
           </div>
         </div>

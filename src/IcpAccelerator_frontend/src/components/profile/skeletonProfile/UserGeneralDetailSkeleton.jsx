@@ -35,7 +35,7 @@ const UserGeneralDetailSkeleton = () => {
               Email
             </h3>
           </div>
-          <Skeleton height={25} />
+          <Skeleton height={20} />
         </div>
 
         {/* Skeleton for About */}
@@ -45,7 +45,18 @@ const UserGeneralDetailSkeleton = () => {
               About
             </h3>
           </div>
-          <Skeleton height={20} count={2} />
+          <div class='space-y-2.5 animate-pulse w-full '>
+            <div class='flex items-center w-full'>
+              <div class='h-2.5 bg-gray-200 rounded-full  w-32'></div>
+              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
+              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
+            </div>
+            <div class='flex items-center w-full '>
+              <div class='h-2.5 bg-gray-200 rounded-full  w-full'></div>
+              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
+              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
+            </div>
+          </div>
         </div>
 
         {/* Skeleton for Location */}
@@ -55,7 +66,7 @@ const UserGeneralDetailSkeleton = () => {
               Location
             </h3>
           </div>
-          <Skeleton height={25} />
+          <Skeleton height={20} />
         </div>
 
         {/* Skeleton for Type of Profile */}
@@ -66,8 +77,8 @@ const UserGeneralDetailSkeleton = () => {
             </h3>
           </div>
           <div className='flex  gap-2'>
-            <Skeleton style={{ borderRadius: '18px' }} height={25} width={90} />
-            <Skeleton style={{ borderRadius: '18px' }} height={25} width={90} />
+            <Skeleton style={{ borderRadius: '18px' }} height={20} width={90} />
+            <Skeleton style={{ borderRadius: '18px' }} height={20} width={90} />
           </div>
         </div>
 
@@ -79,8 +90,8 @@ const UserGeneralDetailSkeleton = () => {
             </h3>
           </div>
           <div className='flex gap-2'>
-            <Skeleton style={{ borderRadius: '18px' }} height={25} width={90} />
-            <Skeleton style={{ borderRadius: '18px' }} height={25} width={90} />
+            <Skeleton style={{ borderRadius: '18px' }} height={20} width={90} />
+            <Skeleton style={{ borderRadius: '18px' }} height={20} width={90} />
           </div>
         </div>
 

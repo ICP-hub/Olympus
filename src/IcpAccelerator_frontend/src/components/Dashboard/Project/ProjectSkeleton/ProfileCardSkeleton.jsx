@@ -79,9 +79,18 @@ const ProfileCardSkeleton = () => {
             <h3 className='font-normal mb-2 text-xs text-gray-500 uppercase'>
               About
             </h3>
-            <p className='text-sm'>
-              <Skeleton height={15} count={2} />
-            </p>
+            <div class='space-y-2.5 animate-pulse w-full '>
+            <div class='flex items-center w-full'>
+              <div class='h-2.5 bg-gray-200 rounded-full  w-32'></div>
+              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
+              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
+            </div>
+            <div class='flex items-center w-full '>
+              <div class='h-2.5 bg-gray-200 rounded-full  w-full'></div>
+              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
+              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
+            </div>
+          </div>
           </div>
 
           <div className='mb-4'>
