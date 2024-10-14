@@ -7,6 +7,8 @@ import { formatFullDateFromBigInt } from '../Utils/formatter/formatDateFromBigIn
 import parse from 'html-react-parser';
 import { TfiEmail } from 'react-icons/tfi';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
+import JobDetailsSkeleton from './JobDetailsSkeleton';
+import useTimeout from '../hooks/TimeOutHook';
 const JobDetails = ({ setOpen, uid }) => {
   const actor = useSelector((currState) => currState.actors.actor);
   const [jobDetails, setJobDetails] = useState(null);
@@ -63,6 +65,10 @@ const JobDetails = ({ setOpen, uid }) => {
     }, 300);
   };
 
+  const [loading, setLoading] = useState(true);
+
+  useTimeout(()=>setLoading(false))
+
   const [showDetails, setShowDetails] = useState(false);
 
   const handleToggle = () => {
@@ -80,123 +86,132 @@ const JobDetails = ({ setOpen, uid }) => {
           <CloseIcon sx={{ cursor: 'pointer' }} onClick={handleClose} />
         </div>
         <div className='container'>
-          <div className='flex flex-col md:flex-row justify-evenly px-[1%]  overflow-y-auto'>
-            <div className='border md:h-fit rounded-lg w-full md:w-[30%] '>
-              <div className='py-6 px-5 border rounded-t-lg bg-[#EEF2F6]'>
-                <div className='flex gap-2 items-center'>
-                  <span className=''>
-                    <img
-                      src={awtar}
-                      alt='icon'
-                      loading='lazy'
-                      draggable={false}
-                    />
-                  </span>
-                  <p className=''>{jobTitle}</p>
+          {loading ? (
+            <JobDetailsSkeleton />
+          ) : (
+            <div className='flex flex-col md:flex-row justify-evenly px-[1%]  overflow-y-auto'>
+              <div className='border md:h-fit rounded-lg w-full md:w-[30%] '>
+                <div className='py-6 px-5 border  rounded-t-lg bg-[#EEF2F6]'>
+                  <div className=' gap-2 flex flex-col justify-center items-center'>
+                    <span className=''>
+                      <img
+                        src={awtar}
+                        alt='icon'
+                        loading='lazy'
+                        draggable={false}
+                      />
+                    </span>
+                    <p className=''>{jobTitle}</p>
+                  </div>
+                  <div className='flex justify-center'>
+                    <h2 className='text-xl font-bold my-3'>
+                      {fullname} {/* Quality Assurance Engineer */}
+                    </h2>
+                  </div>
+                  <div className=''>
+                    <a
+                      href={link}
+                      target='_blank'
+                      className='block border rounded-md bg-[#155EEF]  py-2 w-full text-white text-center'
+                    >
+                      Apply <span className=' text-white'></span>
+                      <ArrowOutwardIcon
+                        sx={{ marginTop: '-2px', fontSize: 'medium' }}
+                      />
+                    </a>
+                  </div>
                 </div>
-                <div className=''>
-                  <h2 className='text-xl font-bold my-3'>
-                    {fullname} {/* Quality Assurance Engineer */}
-                  </h2>
-                </div>
-                <div className=''>
-                  <a
-                    href={link}
-                    target='_blank'
-                    className='block border rounded-md bg-[#155EEF]  py-2 w-full text-white text-center'
-                  >
-                    Apply <span className=' text-white'></span>
-                    <ArrowOutwardIcon
-                      sx={{ marginTop: '-2px', fontSize: 'medium' }}
-                    />
-                  </a>
-                </div>
-              </div>
-              <div className=' bg-white md:hidden  rounded-lg shadow-sm border border-gray-200 overflow-hidden w-full'>
-                {!showDetails ? (
-                  <button
-                    onClick={handleToggle}
-                    className=' font-bold py-2 px-4 rounded w-full flex justify-center items-center '
-                  >
-                    Show details
-                    <FaChevronDown className='ml-2' />
-                  </button>
-                ) : (
-                  <>
-                    <div className='p-3 '>
-                      <div className='p-2'>
-                        <h3 className='text-gray-400 mb-2 text-sm'>DATE</h3>
-                        <h4 className='text-sm font-medium'>{timestamp}</h4>
-                      </div>
-                      <div className='p-2'>
-                        <h3 className='text-gray-400 mb-2 text-sm'>CATEGORY</h3>
-                        <h4 className='text-sm font-medium'>{category}</h4>
-                      </div>
-                      <div className='p-2'>
-                        <h3 className='text-gray-400 mb-2 text-sm'>LOCATION</h3>
-                        <h4 className='text-sm font-medium'>{location}</h4>
-                      </div>
-                      <div className='p-2'>
-                        <h3 className='text-gray-400 mb-2 text-sm'>
-                          OCCUPATION
-                        </h3>
-                        <h4 className='text-sm font-medium'>{job_type}</h4>
-                      </div>
-                      <div className='p-2'>
-                        <h3 className='text-gray-400 mb-2 text-sm'>CONTACT</h3>
-                        <h4 className='text-sm font-medium flex items-center'>
-                          <TfiEmail />
-                          <span className='ml-2 truncate break-all'>
-                            {email}
-                          </span>
-                        </h4>
-                      </div>
-                    </div>
+                <div className=' bg-white md:hidden  rounded-lg shadow-sm border border-gray-200 overflow-hidden w-full'>
+                  {!showDetails ? (
                     <button
                       onClick={handleToggle}
-                      className='font-bold py-2 px-4 rounded w-full flex justify-center items-center mt-4 '
+                      className=' font-bold py-2 px-4 rounded w-full flex justify-center items-center '
                     >
-                      Hide details <FaChevronUp className='ml-2' />
+                      Show details
+                      <FaChevronDown className='ml-2' />
                     </button>
-                  </>
-                )}
+                  ) : (
+                    <>
+                      <div className='p-3 '>
+                        <div className='p-2'>
+                          <h3 className='text-gray-400 mb-2 text-sm'>DATE</h3>
+                          <h4 className='text-sm font-medium'>{timestamp}</h4>
+                        </div>
+                        <div className='p-2'>
+                          <h3 className='text-gray-400 mb-2 text-sm'>
+                            CATEGORY
+                          </h3>
+                          <h4 className='text-sm font-medium'>{category}</h4>
+                        </div>
+                        <div className='p-2'>
+                          <h3 className='text-gray-400 mb-2 text-sm'>
+                            LOCATION
+                          </h3>
+                          <h4 className='text-sm font-medium'>{location}</h4>
+                        </div>
+                        <div className='p-2'>
+                          <h3 className='text-gray-400 mb-2 text-sm'>
+                            OCCUPATION
+                          </h3>
+                          <h4 className='text-sm font-medium'>{job_type}</h4>
+                        </div>
+                        <div className='p-2'>
+                          <h3 className='text-gray-400 mb-2 text-sm'>
+                            CONTACT
+                          </h3>
+                          <h4 className='text-sm font-medium flex items-center'>
+                            <TfiEmail />
+                            <span className='ml-2 truncate break-all'>
+                              {email}
+                            </span>
+                          </h4>
+                        </div>
+                      </div>
+                      <button
+                        onClick={handleToggle}
+                        className='font-bold py-2 px-4 rounded w-full flex justify-center items-center mt-4 '
+                      >
+                        Hide details <FaChevronUp className='ml-2' />
+                      </button>
+                    </>
+                  )}
+                </div>
+                <div className='p-3 hidden md:block'>
+                  <div className='p-2'>
+                    <h3 className='text-gray-400 mb-2 text-sm'>DATE</h3>
+                    <h4 className='text-sm font-medium'>{timestamp}</h4>
+                  </div>
+                  <div className='p-2'>
+                    <h3 className='text-gray-400 mb-2 text-sm'>CATEGORY</h3>
+                    <h4 className='text-sm font-medium'>{category}</h4>
+                  </div>
+                  <div className='p-2'>
+                    <h3 className='text-gray-400 mb-2 text-sm'>LOCATION</h3>
+                    <h4 className='text-sm font-medium'>{location}</h4>
+                  </div>
+                  <div className='p-2'>
+                    <h3 className='text-gray-400 mb-2 text-sm'>OCCUPATION</h3>
+                    <h4 className='text-sm font-medium'>{job_type}</h4>
+                  </div>
+                  <div className='p-2'>
+                    <h3 className='text-gray-400 mb-2 text-sm'>CONTACT</h3>
+                    <h4 className='text-sm font-medium flex items-center'>
+                      <TfiEmail />
+                      <span className='ml-2 truncate break-all'>{email}</span>
+                    </h4>
+                  </div>
+                </div>
               </div>
-              <div className='p-3 hidden md:block'>
-                <div className='p-2'>
-                  <h3 className='text-gray-400 mb-2 text-sm'>DATE</h3>
-                  <h4 className='text-sm font-medium'>{timestamp}</h4>
+              <div className='border rounded-lg p-3 w-full md:w-[65%] overflow-y-auto   h-full'>
+                <div className='break-words whitespace-normal overflow-y-auto'>
+                  {parse(description)}
                 </div>
-                <div className='p-2'>
-                  <h3 className='text-gray-400 mb-2 text-sm'>CATEGORY</h3>
-                  <h4 className='text-sm font-medium'>{category}</h4>
-                </div>
-                <div className='p-2'>
-                  <h3 className='text-gray-400 mb-2 text-sm'>LOCATION</h3>
-                  <h4 className='text-sm font-medium'>{location}</h4>
-                </div>
-                <div className='p-2'>
-                  <h3 className='text-gray-400 mb-2 text-sm'>OCCUPATION</h3>
-                  <h4 className='text-sm font-medium'>{job_type}</h4>
-                </div>
-                <div className='p-2'>
-                  <h3 className='text-gray-400 mb-2 text-sm'>CONTACT</h3>
-                  <h4 className='text-sm font-medium flex items-center'>
-                    <TfiEmail />
-                    <span className='ml-2 truncate break-all'>{email}</span>
-                  </h4>
-                </div>
-              </div>
-            </div>
-            <div className='border rounded-lg p-3 w-full md:w-[65%] overflow-y-auto   h-full'>
-              <div className='break-words whitespace-normal overflow-y-auto'>
-                {parse(description)}
-              </div>
-              {/* <p className=''>Sweatcoin is a London-based and well-funded scale-up with a team of 100+ and the mission to make the world more physically active. Our iOS and Android apps have more than 150M installs, 15M+ active users, more than 500 commercial partners and confirmed by the independent academic research ability to make our users up to 20% more active.
+                {/* <p className=''>Sweatcoin is a London-based and well-funded scale-up with a team of 100+ and the mission to make the world more physically active. Our iOS and Android apps have more than 150M installs, 15M+ active users, more than 500 commercial partners and confirmed by the independent academic research ability to make our users up to 20% more active.
                                     </p>
                                     <p className=''> If you are interested in solving complex problems, then we are looking forward to seeing you be a part of our team!.
                                     </p> */}
-            </div>
-            {/* <div className=' '>
+              </div>
+              {/* <div className=' '>
                                     <h3 className='font-bold'>we are :</h3>
                                     <ul className='list-disc pl-[5%]'>
                                         <li className=''>
@@ -243,7 +258,8 @@ const JobDetails = ({ setOpen, uid }) => {
                                         </li>
                                     </ul>
                                 </div> */}
-          </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

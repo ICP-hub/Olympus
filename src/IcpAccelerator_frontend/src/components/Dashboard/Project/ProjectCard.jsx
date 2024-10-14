@@ -11,6 +11,8 @@ import { useSelector } from 'react-redux';
 import uint8ArrayToBase64 from '../../Utils/uint8ArrayToBase64';
 import { FaChevronRight } from 'react-icons/fa';
 import NoDataFound from '../DashboardEvents/NoDataFound';
+import useTimeout from '../../hooks/TimeOutHook';
+import ProjectCardSkeleton from './ProjectSkeleton/ProjectCardSkeleton';
 const ProjectCard = () => {
   const [isopen, setModalOpen] = useState(false);
   const [cardData, setCardData] = useState([]);
@@ -45,6 +47,11 @@ const ProjectCard = () => {
       cardData.length > 0 ? cardData[0][0].uid : 'No UID available';
     navigate('/dashboard/document', { state: { projectId, cardData } });
   };
+
+  const [isLoading,setIsLoading]=useState(true)
+
+  useTimeout(()=>setIsLoading(false))
+
   return (
     <div className='pt-12'>
       <div className='hidden md:block'>
@@ -58,7 +65,8 @@ const ProjectCard = () => {
         </div>
       </div>
 
-      {cardData && cardData.length > 0 ? (
+      {isLoading ? <ProjectCardSkeleton/> : 
+      cardData && cardData.length > 0 ? (
         cardData.map((data, index) => {
           const projectDescription =
             data[0]?.params?.project_description[0] ??
@@ -80,6 +88,7 @@ const ProjectCard = () => {
             : ['No interest provided'];
           const country = data[1]?.params?.country || 'No country provided';
           return (
+            
             <>
               <div className='mb-3 hidden md:block ' key={index}>
                 {/* for desktop screen  */}
@@ -176,6 +185,7 @@ const ProjectCard = () => {
                 </button>
               </div>
             </>
+                  
           );
         })
       ) : (

@@ -50,17 +50,17 @@ const DiscoverMentorEventSkeleton = () => {
               <Skeleton   height={20} />
             </h3>
             <div className='mt-2 text-gray-600 text-sm line-clamp-6 hover:line-clamp-none'>
-            <Skeleton   height={20} />
+            <Skeleton   height={15} />
             </div>
-            <div className='mt-4 flex items-center space-x-4'>
-              <span className='text-sm text-gray-600 flex items-center'>
+            <div className='mt-4 flex items-center gap-2'>
+              <span className='text-sm text-gray-600 mr-2 flex items-center'>
                 <PlaceOutlinedIcon
                   sx={{ fontSize: 'medium', marginTop: '-2px' }}
                 />
-                <Skeleton   height={20} />
+                <Skeleton   height={20} width={80} />
               </span>
-              <span className='text-sm text-gray-600'>
-              <Skeleton   height={20} />
+              <span className='text-sm flex items-center text-gray-600'> $
+              <Skeleton   height={20} width={80} style={{marginLeft:"2px"}} />
               </span>
             </div>
           </div>
