@@ -4,8 +4,7 @@ use IcpAccelerator_backend::{mentor_module::mentor_types::{MentorInternal, Mento
 use std::fs;
 
 // Define the path to your compiled Wasm file
-const BACKEND_WASM: &str = "/Users/mridulyadav/Desktop/ICPAccelerator/target/wasm32-unknown-unknown/release/IcpAccelerator_backend.wasm";
-
+const BACKEND_WASM: &str = "/home/harman/accelerator/ICPAccelerator/target/wasm32-unknown-unknown/release/IcpAccelerator_backend.wasm";
 // Setup function to initialize PocketIC and install the Wasm module
 fn setup() -> (PocketIc, Principal) {
     let pic = PocketIc::new();
@@ -25,7 +24,7 @@ fn test_get_mentor_info_using_principal() {
     let test_principal = Principal::anonymous(); // Replace with a specific principal if needed
 
     // Define the UserInformation with some fields set to None
-    let user_info = UserInfoInternal {
+let user_info = UserInfoInternal {
         params: UserInformation {
             full_name: "Test Mentor".to_string(),
             profile_picture: None, // Profile picture provided
@@ -40,16 +39,22 @@ fn test_get_mentor_info_using_principal() {
         },
         uid: "839047bc25dd6b3d25bf153f8ae121bdfb5ca2cc9246763fb59a679c1eeb4586".to_string(),
         is_active: true,
-        joining_date: 1625097600, // Example timestamp
+        joining_date: 1625097600,
+        profile_completion: 50, // Example timestamp
     };
 
     // Simulate registering the user
-    pic.update_call(
+    let Ok(WasmResult::Reply(response))= pic.update_call(
         backend_canister,
         test_principal,
         "register_user",
-        encode_one(user_info.params.clone()).unwrap(),
-    ).expect("User registration failed");
+        encode_args((captcha_id, captcha_input, user_info.params.clone())).unwrap(),
+    )else{
+        panic!("Expected Reply")
+    };
+
+    let result:Result<std::string::String, std::string::String>= decode_one(&response).unwrap();
+    ic_cdk::println!("REGISTERED USER {:?}", result);
 
     // Create a MentorInternal object to simulate mentor registration
     let mentor_profile = MentorInternal {
@@ -60,10 +65,10 @@ fn test_get_mentor_info_using_principal() {
             icp_hub_or_spoke: false,
             category_of_mentoring_service: "Technology".to_string(),
             links: None,
-            multichain: Some("Ethereum, Solana".to_string()),
+            multichain: Some(vec!["Ethereum".to_string(), "Solana".to_string()]),
             years_of_mentoring: "10".to_string(),
             website: Some("https://mentor.example.com".to_string()),
-            area_of_expertise: "Blockchain".to_string(),
+            area_of_expertise: vec!["Blockchain".to_string()],
             reason_for_joining: Some("To mentor emerging projects.".to_string()),
             hub_owner: Some("ICP Hub Owner".to_string()),
         },
@@ -71,6 +76,7 @@ fn test_get_mentor_info_using_principal() {
         active: true,
         approve: true,
         decline: false,
+        profile_completion: 50,
     };
 
     // Simulate the mentor registration by directly manipulating the canister state
@@ -115,7 +121,7 @@ fn test_missing_fields() {
     let (pic, backend_canister) = setup();
     let test_principal = Principal::anonymous();
 
-    let user_info = UserInfoInternal {
+let user_info = UserInfoInternal {
         params: UserInformation {
             full_name: "Test Mentor".to_string(),
             profile_picture: None,
@@ -131,6 +137,7 @@ fn test_missing_fields() {
         uid: "test_uid".to_string(),
         is_active: true,
         joining_date: 1625097600,
+        profile_completion: 50,
     };
 
     pic.update_call(
@@ -151,7 +158,7 @@ fn test_missing_fields() {
             multichain: None,  // Missing multichain
             years_of_mentoring: "10".to_string(),
             website: None,  // Missing website
-            area_of_expertise: "Blockchain".to_string(),
+            area_of_expertise: vec!["Blockchain".to_string()],
             reason_for_joining: None,  // Missing reason for joining
             hub_owner: None,  // Missing hub owner
         },
@@ -159,6 +166,7 @@ fn test_missing_fields() {
         active: true,
         approve: true,
         decline: false,
+        profile_completion: 50,
     };
 
     pic.update_call(
@@ -245,7 +253,22 @@ fn test_non_existent_mentor_retrieval() {
 //     let (pic, backend_canister) = setup();
 //     let test_principal = Principal::anonymous();
 
-//     let user_info = UserInfoInternal {
+//     let Ok(WasmResult::Reply(response))= pic.update_call(
+        backend_canister,
+        test_principal,
+        "generate_captcha_with_id",
+        encode_one(()).unwrap()
+    )else{
+        panic!("Expected reply")
+    };
+
+    let result: (String,String) = decode_args(&response).unwrap();
+
+    let captcha_id = &result.0;
+    let captcha_input=&result.1;
+    ic_cdk::println!("CAPTCHA {:?}", result);
+
+    let user_info = UserInfoInternal {
 //         params: UserInformation {
 //             full_name: "Inactive Mentor".to_string(),
 //             profile_picture: None,
@@ -261,6 +284,7 @@ fn test_non_existent_mentor_retrieval() {
 //         uid: "inactive_uid".to_string(),
 //         is_active: true,  
 //         joining_date: 1625097600,
+//         profile_completion: 50,
 //     };
 
 //     // Simulate registering the user
@@ -280,10 +304,10 @@ fn test_non_existent_mentor_retrieval() {
 //             icp_hub_or_spoke: false,
 //             category_of_mentoring_service: "Technology".to_string(),
 //             links: None,
-//             multichain: Some("Ethereum, Solana".to_string()),
+//             multichain: Some(vec!["Ethereum".to_string(), "Solana".to_string()]),
 //             years_of_mentoring: "10".to_string(),
 //             website: Some("https://inactive.mentor.com".to_string()),
-//             area_of_expertise: "Blockchain".to_string(),
+//             area_of_expertise: vec!["Blockchain".to_string()],
 //             reason_for_joining: Some("To mentor while being inactive.".to_string()),
 //             hub_owner: Some("ICP Hub Owner".to_string()),
 //         },

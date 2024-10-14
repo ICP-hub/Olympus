@@ -26,6 +26,21 @@ fn test_update_user_data() {
     let test_principal = Principal::anonymous(); // Replace with a specific principal if needed
 
     // Define the UserInformation with some fields set to None
+    let Ok(WasmResult::Reply(response))= pic.update_call(
+        backend_canister,
+        test_principal,
+        "generate_captcha_with_id",
+        encode_one(()).unwrap()
+    )else{
+        panic!("Expected reply")
+    };
+
+    let result: (String,String) = decode_args(&response).unwrap();
+
+    let captcha_id = &result.0;
+    let captcha_input=&result.1;
+    ic_cdk::println!("CAPTCHA {:?}", result);
+
     let user_info = UserInfoInternal{
         params :UserInformation {
             full_name: "Test User".to_string(),
@@ -42,15 +57,21 @@ fn test_update_user_data() {
         uid: "839047bc25dd6b3d25bf153f8ae121bdfb5ca2cc9246763fb59a679c1eeb4586".to_string(),
         is_active: true,
         joining_date: 06062003,
+        profile_completion: 50,
     };
 
     // Simulate registering the user
-    pic.update_call(
+    let Ok(WasmResult::Reply(response))= pic.update_call(
         backend_canister,
         test_principal,
         "register_user",
-        encode_one(user_info.params.clone()).unwrap(),
-    ).expect("User registration failed");
+        encode_args((captcha_id, captcha_input, user_info.params.clone())).unwrap(),
+    )else{
+        panic!("Expected Reply")
+    };
+
+    let result:Result<std::string::String, std::string::String>= decode_one(&response).unwrap();
+    ic_cdk::println!("REGISTERED USER {:?}", result);
 
     // Call the update_user_data function using an update call
     let Ok(WasmResult::Reply(_response)) = pic.update_call(

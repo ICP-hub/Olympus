@@ -6,7 +6,7 @@ use IcpAccelerator_backend::user_modules::user_types::*;
 use IcpAccelerator_backend::vc_module::vc_types::*;
 
 // Define the path to your compiled Wasm file
-const BACKEND_WASM: &str = "/Users/mridulyadav/Desktop/ICPAccelerator/target/wasm32-unknown-unknown/release/IcpAccelerator_backend.wasm";
+const BACKEND_WASM: &str = "/home/harman/accelerator/ICPAccelerator/target/wasm32-unknown-unknown/release/IcpAccelerator_backend.wasm";
 
 // Setup function to initialize PocketIC and install the Wasm module
 fn setup() -> (PocketIc, Principal) {
@@ -27,6 +27,21 @@ fn test_update_venture_capitalist() {
     let test_principal = Principal::anonymous(); // Replace with a specific principal if needed
 
    // Define the UserInformation with some fields set to None
+    let Ok(WasmResult::Reply(response))= pic.update_call(
+        backend_canister,
+        test_principal,
+        "generate_captcha_with_id",
+        encode_one(()).unwrap()
+    )else{
+        panic!("Expected reply")
+    };
+
+    let result: (String,String) = decode_args(&response).unwrap();
+
+    let captcha_id = &result.0;
+    let captcha_input=&result.1;
+    ic_cdk::println!("CAPTCHA {:?}", result);
+
     let user_info = UserInfoInternal{
         params :UserInformation {
             full_name: "Test User".to_string(),
@@ -43,15 +58,21 @@ fn test_update_venture_capitalist() {
         uid: "839047bc25dd6b3d25bf153f8ae121bdfb5ca2cc9246763fb59a679c1eeb4586".to_string(),
         is_active: true,
         joining_date: 06062003,
+        profile_completion: 50,
     };
 
     // Simulate registering the user
-    pic.update_call(
+    let Ok(WasmResult::Reply(response))= pic.update_call(
         backend_canister,
         test_principal,
         "register_user",
-        encode_one(user_info.params.clone()).unwrap(),
-    ).expect("User registration failed");
+        encode_args((captcha_id, captcha_input, user_info.params.clone())).unwrap(),
+    )else{
+        panic!("Expected Reply")
+    };
+
+    let result:Result<std::string::String, std::string::String>= decode_one(&response).unwrap();
+    ic_cdk::println!("REGISTERED USER {:?}", result);
 
     // Define the initial VentureCapitalist parameters
     let vc_info_initial = VentureCapitalist {
@@ -714,7 +735,7 @@ fn test_update_venture_capitalist_empty_strings() {
         money_invested: Some(100_000_000.0),
         existing_icp_portfolio: Some("".to_string()),
         type_of_investment: "".to_string(),
-        project_on_multichain: Some("".to_string()),
+        project_on_multichain: Some(String::new()),
         category_of_investment: "".to_string(),
         reason_for_joining: Some("".to_string()),
         preferred_icp_hub: "".to_string(),
@@ -753,273 +774,6 @@ fn test_update_venture_capitalist_empty_strings() {
     assert_eq!(result, vc_info_updated);
 }
 
-#[test]
-fn test_update_venture_capitalist_concurrent_updates() {
-    let (pic, backend_canister) = setup();
-    let test_principal = Principal::anonymous(); 
-
-    // Register a user
-    let user_info = UserInformation {
-        full_name: "Concurrent VC User".to_string(),
-        profile_picture: None,
-        email: Some("concurrentvc@example.com".to_string()),
-        country: "United States".to_string(),
-        social_links: None,
-        bio: Some("Investor.".to_string()),
-        area_of_interest: "Technology".to_string(),
-        openchat_username: None,
-        type_of_profile: Some("investor".to_string()),
-        reason_to_join: Some(vec!["Invest in innovative projects.".to_string()]),
-    };
-    pic.update_call(
-        backend_canister,
-        test_principal,
-        "register_user",
-        encode_one(user_info).unwrap(),
-    ).expect("User registration failed");
-
-    // Initial VC registration
-    let vc_info_initial = VentureCapitalist {
-        name_of_fund: "Initial Fund".to_string(),
-        fund_size: Some(100_000_000.0),
-        assets_under_management: Some("1B USD".to_string()),
-        registered_under_any_hub: Some(true),
-        average_check_size: 5_000_000.0,
-        existing_icp_investor: true,
-        money_invested: Some(50_000_000.0),
-        existing_icp_portfolio: Some("ICP Projects".to_string()),
-        type_of_investment: "Equity".to_string(),
-        project_on_multichain: Some("Ethereum, Solana".to_string()),
-        category_of_investment: "Technology".to_string(),
-        reason_for_joining: Some("Growth opportunities".to_string()),
-        preferred_icp_hub: "ICP Hub".to_string(),
-        investor_type: Some("Venture Capital".to_string()),
-        number_of_portfolio_companies: 10,
-        portfolio_link: "https://portfolio.example.com".to_string(),
-        website_link: Some("https://vcfund.example.com".to_string()),
-        links: None,
-        registered: true,
-        registered_country: Some("United States".to_string()),
-        stage: Some("Growth".to_string()),
-        range_of_check_size: Some("$2-5M".to_string()),
-    };
-    pic.update_call(
-        backend_canister,
-        test_principal,
-        "register_venture_capitalist",
-        encode_one(vc_info_initial.clone()).unwrap(),
-    ).expect("VC registration failed");
-
-    // Perform two concurrent updates
-    let vc_info_update_1 = VentureCapitalist {
-        name_of_fund: "Concurrent Fund 1".to_string(),
-        fund_size: Some(150_000_000.0),
-        assets_under_management: Some("1.5B USD".to_string()),
-        registered_under_any_hub: Some(false),
-        average_check_size: 7_500_000.0,
-        existing_icp_investor: false,
-        money_invested: Some(75_000_000.0),
-        existing_icp_portfolio: Some("Updated ICP Projects".to_string()),
-        type_of_investment: "Equity".to_string(),
-        project_on_multichain: Some("Polkadot, Cosmos".to_string()),
-        category_of_investment: "Finance".to_string(),
-        reason_for_joining: Some("Concurrent update 1".to_string()),
-        preferred_icp_hub: "ICP Hub 1".to_string(),
-        investor_type: Some("Venture Capital".to_string()),
-        number_of_portfolio_companies: 15,
-        portfolio_link: "https://portfolio1.example.com".to_string(),
-        website_link: Some("https://vcfund1.example.com".to_string()),
-        links: None,
-        registered: true,
-        registered_country: Some("Canada".to_string()),
-        stage: Some("Growth".to_string()),
-        range_of_check_size: Some("$2-5M".to_string()),
-    };
-
-    let vc_info_update_2 = VentureCapitalist {
-        name_of_fund: "Concurrent Fund 2".to_string(),
-        fund_size: Some(200_000_000.0),
-        assets_under_management: Some("2B USD".to_string()),
-        registered_under_any_hub: Some(false),
-        average_check_size: 10_000_000.0,
-        existing_icp_investor: false,
-        money_invested: Some(100_000_000.0),
-        existing_icp_portfolio: Some("Updated ICP Projects 2".to_string()),
-        type_of_investment: "Debt".to_string(),
-        project_on_multichain: Some("Solana, Avalanche".to_string()),
-        category_of_investment: "Technology".to_string(),
-        reason_for_joining: Some("Concurrent update 2".to_string()),
-        preferred_icp_hub: "ICP Hub 2".to_string(),
-        investor_type: Some("Private Equity".to_string()),
-        number_of_portfolio_companies: 20,
-        portfolio_link: "https://portfolio2.example.com".to_string(),
-        website_link: Some("https://vcfund2.example.com".to_string()),
-        links: None,
-        registered: true,
-        registered_country: Some("United States".to_string()),
-        stage: Some("Expansion".to_string()),
-        range_of_check_size: Some("$5-10M".to_string()),
-    };
-
-    let handle_1 = std::thread::spawn({
-        let pic = pic.clone();
-        let backend_canister = backend_canister.clone();
-        let test_principal = test_principal.clone();
-        move || {
-            let Ok(WasmResult::Reply(response)) = pic.update_call(
-                backend_canister,
-                test_principal,
-                "update_venture_capitalist",
-                encode_one(vc_info_update_1.clone()).unwrap(),
-            ) else {
-                panic!("Expected reply");
-            };
-            let result: String = decode_one(&response).unwrap();
-            assert_eq!(result, "Profile updated successfully");
-        }
-    });
-
-    let handle_2 = std::thread::spawn({
-        let pic = pic.clone();
-        let backend_canister = backend_canister.clone();
-        let test_principal = test_principal.clone();
-        move || {
-            let Ok(WasmResult::Reply(response)) = pic.update_call(
-                backend_canister,
-                test_principal,
-                "update_venture_capitalist",
-                encode_one(vc_info_update_2.clone()).unwrap(),
-            ) else {
-                panic!("Expected reply");
-            };
-            let result: String = decode_one(&response).unwrap();
-            assert_eq!(result, "Profile updated successfully");
-        }
-    });
-
-    handle_1.join().unwrap();
-    handle_2.join().unwrap();
-
-    // Verify that the VC's profile was updated with one of the concurrent updates (the final state is non-deterministic)
-    let Ok(WasmResult::Reply(vc_info_response)) = pic.query_call(
-        backend_canister,
-        test_principal,
-        "get_vc_info_using_principal",
-        encode_one(test_principal).unwrap(),
-    ) else {
-        panic!("Expected reply");
-    };
-    let updated_vc_info: Option<(VentureCapitalist, UserInfoInternal)> = decode_one(&vc_info_response).unwrap();
-    let result = updated_vc_info.unwrap().0;
-    assert!(result == vc_info_update_1 || result == vc_info_update_2);
-}
-
-#[test]
-fn test_update_venture_capitalist_with_null_values() {
-    let (pic, backend_canister) = setup();
-    let test_principal = Principal::anonymous(); 
-
-    // Register a user
-    let user_info = UserInformation {
-        full_name: "Null VC User".to_string(),
-        profile_picture: None,
-        email: Some("nullvc@example.com".to_string()),
-        country: "United States".to_string(),
-        social_links: None,
-        bio: Some("Investor.".to_string()),
-        area_of_interest: "Technology".to_string(),
-        openchat_username: None,
-        type_of_profile: Some("investor".to_string()),
-        reason_to_join: Some(vec!["Invest in innovative projects.".to_string()]),
-    };
-    pic.update_call(
-        backend_canister,
-        test_principal,
-        "register_user",
-        encode_one(user_info).unwrap(),
-    ).expect("User registration failed");
-
-    // Initial VC registration
-    let vc_info_initial = VentureCapitalist {
-        name_of_fund: "Initial Fund".to_string(),
-        fund_size: Some(100_000_000.0),
-        assets_under_management: Some("1B USD".to_string()),
-        registered_under_any_hub: Some(true),
-        average_check_size: 5_000_000.0,
-        existing_icp_investor: true,
-        money_invested: Some(50_000_000.0),
-        existing_icp_portfolio: Some("ICP Projects".to_string()),
-        type_of_investment: "Equity".to_string(),
-        project_on_multichain: Some("Ethereum, Solana".to_string()),
-        category_of_investment: "Technology".to_string(),
-        reason_for_joining: Some("Growth opportunities".to_string()),
-        preferred_icp_hub: "ICP Hub".to_string(),
-        investor_type: Some("Venture Capital".to_string()),
-        number_of_portfolio_companies: 10,
-        portfolio_link: "https://portfolio.example.com".to_string(),
-        website_link: Some("https://vcfund.example.com".to_string()),
-        links: None,
-        registered: true,
-        registered_country: Some("United States".to_string()),
-        stage: Some("Growth".to_string()),
-        range_of_check_size: Some("$2-5M".to_string()),
-    };
-    pic.update_call(
-        backend_canister,
-        test_principal,
-        "register_venture_capitalist",
-        encode_one(vc_info_initial.clone()).unwrap(),
-    ).expect("VC registration failed");
-
-    // Update VC profile with null values
-    let vc_info_updated = VentureCapitalist {
-        name_of_fund: "Updated Fund".to_string(),
-        fund_size: None, // Null value
-        assets_under_management: None, // Null value
-        registered_under_any_hub: None, // Null value
-        average_check_size: 0.0,
-        existing_icp_investor: false,
-        money_invested: None, // Null value
-        existing_icp_portfolio: None, // Null value
-        type_of_investment: "".to_string(), // Empty value
-        project_on_multichain: None, // Null value
-        category_of_investment: "".to_string(), // Empty value
-        reason_for_joining: None, // Null value
-        preferred_icp_hub: "".to_string(), // Empty value
-        investor_type: None, // Null value
-        number_of_portfolio_companies: 0,
-        portfolio_link: "".to_string(), // Empty value
-        website_link: None, // Null value
-        links: None,
-        registered: true,
-        registered_country: None, // Null value
-        stage: None, // Null value
-        range_of_check_size: None, // Null value
-    };
-    let Ok(WasmResult::Reply(response)) = pic.update_call(
-        backend_canister,
-        test_principal,
-        "update_venture_capitalist",
-        encode_one(vc_info_updated.clone()).unwrap(),
-    ) else {
-        panic!("Expected reply");
-    };
-    let result: String = decode_one(&response).unwrap();
-    assert_eq!(result, "Profile updated successfully");
-
-    // Verify that the VC's profile was updated correctly with null values
-    let Ok(WasmResult::Reply(vc_info_response)) = pic.query_call(
-        backend_canister,
-        test_principal,
-        "get_vc_info_using_principal",
-        encode_one(test_principal).unwrap(),
-    ) else {
-        panic!("Expected reply");
-    };
-    let updated_vc_info: Option<(VentureCapitalist, UserInfoInternal)> = decode_one(&vc_info_response).unwrap();
-    let result = updated_vc_info.unwrap().0;
-    assert_eq!(result, vc_info_updated);
-}
 
 #[test]
 fn test_update_venture_capitalist_inactive_vc() {

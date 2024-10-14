@@ -4,7 +4,7 @@ use IcpAccelerator_backend::{project_module::project_types::{ProjectInfo, Projec
 use std::fs;
 
 // Define the path to your compiled Wasm file
-const BACKEND_WASM: &str = "/Users/mridulyadav/Desktop/ICPAccelerator/target/wasm32-unknown-unknown/release/IcpAccelerator_backend.wasm";
+const BACKEND_WASM: &str = "/home/harman/accelerator/ICPAccelerator/target/wasm32-unknown-unknown/release/IcpAccelerator_backend.wasm";
 
 // Setup function to initialize PocketIC and install the Wasm module
 fn setup() -> (PocketIc, Principal) {
@@ -41,6 +41,7 @@ fn test_make_project_active_inactive() {
        uid: "839047bc25dd6b3d25bf153f8ae121bdfb5ca2cc9246763fb59a679c1eeb4586".to_string(),
        is_active: true,
        joining_date: 06062003,
+        profile_completion: 50,
    };
 
    // Simulate registering the user
@@ -91,7 +92,8 @@ fn test_make_project_active_inactive() {
        uid: "b7deb0ac398bb66b3d8e1736cd4163d0a8411ec4fda4e8be58de74cdac6c8e08".to_string(),
        is_active: true,
        is_verified: false,
-       creation_date: 1625097600, // Example timestamp
+       creation_date: 1625097600,
+       profile_completion: 50, // Example timestamp
    };
 
    // Simulate the project registration by directly manipulating the canister state
@@ -176,6 +178,7 @@ fn test_make_project_active_inactive_unauthorized() {
         uid: "839047bc25dd6b3d25bf153f8ae121bdfb5ca2cc9246763fb59a679c1eeb4586".to_string(),
         is_active: true,
         joining_date: 06062003,
+        profile_completion: 50,
     };
 
     // Simulate registering the user
@@ -203,6 +206,7 @@ fn test_make_project_active_inactive_unauthorized() {
         uid: "gdgdgd".to_string(),
         is_active: true,
         joining_date: 09092003,
+        profile_completion: 50,
     };
 
     // Simulate registering the user
@@ -253,7 +257,8 @@ fn test_make_project_active_inactive_unauthorized() {
         uid: "b7deb0ac398bb66b3d8e1736cd4163d0a8411ec4fda4e8be58de74cdac6c8e08".to_string(),
         is_active: true,
         is_verified: false,
-        creation_date: 1625097600, // Example timestamp
+        creation_date: 1625097600,
+        profile_completion: 50, // Example timestamp
     };
 
     // Simulate the project registration by directly manipulating the canister state

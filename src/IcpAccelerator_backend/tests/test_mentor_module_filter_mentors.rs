@@ -7,8 +7,7 @@ use IcpAccelerator_backend::{
 use std::fs;
 
 // Define the path to your compiled Wasm file
-const BACKEND_WASM: &str = "/Users/mridulyadav/Desktop/ICPAccelerator/target/wasm32-unknown-unknown/release/IcpAccelerator_backend.wasm";
-
+const BACKEND_WASM: &str = "/home/harman/accelerator/ICPAccelerator/target/wasm32-unknown-unknown/release/IcpAccelerator_backend.wasm";
 // Setup function to initialize PocketIC and install the Wasm module
 fn setup() -> (PocketIc, Principal) {
     let pic = PocketIc::new();
@@ -28,7 +27,7 @@ fn test_filter_mentors() {
     let test_principal = Principal::anonymous(); // Replace with a specific principal if needed
 
     // Define the UserInformation
-    let user_info = UserInfoInternal {
+let user_info = UserInfoInternal {
         params: UserInformation {
             full_name: "Tech Mentor".to_string(),
             profile_picture: None,
@@ -44,15 +43,21 @@ fn test_filter_mentors() {
         uid: "839047bc25dd6b3d25bf153f8ae121bdfb5ca2cc9246763fb59a679c1eeb4586".to_string(),
         is_active: true,
         joining_date: 1625097600,
+        profile_completion: 50,
     };
 
     // Simulate registering the user
-    pic.update_call(
+    let Ok(WasmResult::Reply(response))= pic.update_call(
         backend_canister,
         test_principal,
         "register_user",
-        encode_one(user_info.params.clone()).unwrap(),
-    ).expect("User registration failed");
+        encode_args((captcha_id, captcha_input, user_info.params.clone())).unwrap(),
+    )else{
+        panic!("Expected Reply")
+    };
+
+    let result:Result<std::string::String, std::string::String>= decode_one(&response).unwrap();
+    ic_cdk::println!("REGISTERED USER {:?}", result);
 
     // Create a MentorProfile object to simulate mentor registration
     let mentor_profile = MentorInternal {
@@ -63,10 +68,10 @@ fn test_filter_mentors() {
             icp_hub_or_spoke: false,
             category_of_mentoring_service: "Technology".to_string(),
             links: None,
-            multichain: Some("Ethereum, Solana".to_string()),
+            multichain: Some(vec!["Ethereum".to_string(), "Solana".to_string()]),
             years_of_mentoring: "10".to_string(),
             website: Some("https://mentor.example.com".to_string()),
-            area_of_expertise: "Blockchain".to_string(),
+            area_of_expertise: vec!["Blockchain".to_string()],
             reason_for_joining: Some("Mentor emerging tech projects.".to_string()),
             hub_owner: Some("ICP Hub Owner".to_string()),
         },
@@ -74,6 +79,7 @@ fn test_filter_mentors() {
         active: true,
         approve: true,
         decline: false,
+        profile_completion: 50,
     };
 
     // Simulate the mentor registration by directly manipulating the canister state
@@ -129,7 +135,22 @@ fn test_multiple_criteria_matching() {
         let principal = Principal::from_slice(&[i as u8]);
 
         // Register as user first
-        let user_info = UserInfoInternal {
+        let Ok(WasmResult::Reply(response))= pic.update_call(
+        backend_canister,
+        test_principal,
+        "generate_captcha_with_id",
+        encode_one(()).unwrap()
+    )else{
+        panic!("Expected reply")
+    };
+
+    let result: (String,String) = decode_args(&response).unwrap();
+
+    let captcha_id = &result.0;
+    let captcha_input=&result.1;
+    ic_cdk::println!("CAPTCHA {:?}", result);
+
+    let user_info = UserInfoInternal {
             uid: format!("user_uid_{}", i),
             params: UserInformation {
                 full_name: format!("User {}", i),
@@ -145,6 +166,7 @@ fn test_multiple_criteria_matching() {
             },
             is_active: true,
             joining_date: 121548,
+            profile_completion: 50,
         };
         pic.update_call(
             backend_canister,
@@ -162,10 +184,10 @@ fn test_multiple_criteria_matching() {
                 icp_hub_or_spoke: false,
                 category_of_mentoring_service: "Technology".to_string(),
                 links: None,
-                multichain: Some("Ethereum, Solana".to_string()),
+                multichain: Some(vec!["Ethereum".to_string(), "Solana".to_string()]),
                 years_of_mentoring: "10".to_string(),
                 website: Some(format!("https://mentor{}.com", i)),
-                area_of_expertise: "Blockchain".to_string(),
+                area_of_expertise: vec!["Blockchain".to_string()],
                 reason_for_joining: Some(format!("To mentor project {}", i)),
                 hub_owner: Some("ICP Hub Owner".to_string()),
             },
@@ -173,6 +195,7 @@ fn test_multiple_criteria_matching() {
             active: true,
             approve: true,
             decline: false,
+            profile_completion: 50,
         };
         pic.update_call(
             backend_canister,
@@ -214,6 +237,21 @@ fn test_no_matching_criteria() {
     let principal = Principal::from_slice(&[1 as u8]);
 
     // Register as user first
+    let Ok(WasmResult::Reply(response))= pic.update_call(
+        backend_canister,
+        test_principal,
+        "generate_captcha_with_id",
+        encode_one(()).unwrap()
+    )else{
+        panic!("Expected reply")
+    };
+
+    let result: (String,String) = decode_args(&response).unwrap();
+
+    let captcha_id = &result.0;
+    let captcha_input=&result.1;
+    ic_cdk::println!("CAPTCHA {:?}", result);
+
     let user_info = UserInfoInternal {
         uid: "user_uid_1".to_string(),
         params: UserInformation {
@@ -230,6 +268,7 @@ fn test_no_matching_criteria() {
         },
         is_active: true,
         joining_date: 121548,
+            profile_completion: 50,
     };
 // Simulate registering the user
     pic.update_call(
@@ -248,10 +287,10 @@ fn test_no_matching_criteria() {
             icp_hub_or_spoke: false,
             category_of_mentoring_service: "Technology".to_string(),
             links: None,
-            multichain: Some("Ethereum, Solana".to_string()),
+            multichain: Some(vec!["Ethereum".to_string(), "Solana".to_string()]),
             years_of_mentoring: "10".to_string(),
             website: Some("https://mentor.com".to_string()),
-            area_of_expertise: "Blockchain".to_string(),
+            area_of_expertise: vec!["Blockchain".to_string()],
             reason_for_joining: Some("To mentor projects.".to_string()),
             hub_owner: Some("ICP Hub Owner".to_string()),
         },
@@ -259,6 +298,8 @@ fn test_no_matching_criteria() {
         active: true,
         approve: true,
         decline: false,
+        profile_completion: 50,
+
     };
     pic.update_call(
         backend_canister,
@@ -319,6 +360,7 @@ fn test_inactive_declined_mentors() {
         },
         is_active: true,
         joining_date: 121548,
+            profile_completion: 50,
     };
     pic.update_call(
         backend_canister,
@@ -343,6 +385,7 @@ fn test_inactive_declined_mentors() {
         },
         is_active: true,
         joining_date: 121548,
+            profile_completion: 50,
     };
     pic.update_call(
         backend_canister,
@@ -360,10 +403,10 @@ fn test_inactive_declined_mentors() {
             icp_hub_or_spoke: false,
             category_of_mentoring_service: "Technology".to_string(),
             links: None,
-            multichain: Some("Ethereum, Solana".to_string()),
+            multichain: Some(vec!["Ethereum".to_string(), "Solana".to_string()]),
             years_of_mentoring: "10".to_string(),
             website: Some("https://inactive.mentor.com".to_string()),
-            area_of_expertise: "Blockchain".to_string(),
+            area_of_expertise: vec!["Blockchain".to_string()],
             reason_for_joining: Some("To mentor projects.".to_string()),
             hub_owner: Some("ICP Hub Owner".to_string()),
         },
@@ -371,6 +414,7 @@ fn test_inactive_declined_mentors() {
         active: false,  // Inactive
         approve: true,
         decline: false,
+        profile_completion: 50,
     };
     pic.update_call(
         backend_canister,
@@ -388,17 +432,18 @@ fn test_inactive_declined_mentors() {
             icp_hub_or_spoke: false,
             category_of_mentoring_service: "Technology".to_string(),
             links: None,
-            multichain: Some("Ethereum, Solana".to_string()),
+            multichain: Some(vec!["Ethereum".to_string(), "Solana".to_string()]),
             years_of_mentoring: "10".to_string(),
             website: Some("https://declined.mentor.com".to_string()),
-            area_of_expertise: "Blockchain".to_string(),
+            area_of_expertise: vec!["Blockchain".to_string()],
             reason_for_joining: Some("To mentor projects.".to_string()),
             hub_owner: Some("ICP Hub Owner".to_string()),
         },
         uid: "declined_mentor_uid".to_string(),
         active: true,
         approve: false,  // Not approved
-        decline: true,   // Declined
+        decline: true,
+        profile_completion: 50,   // Declined
     };
     pic.update_call(
         backend_canister,
@@ -443,6 +488,21 @@ fn test_case_sensitivity() {
     let principal = Principal::from_slice(&[1 as u8]);
 
     // Register as user first
+    let Ok(WasmResult::Reply(response))= pic.update_call(
+        backend_canister,
+        test_principal,
+        "generate_captcha_with_id",
+        encode_one(()).unwrap()
+    )else{
+        panic!("Expected reply")
+    };
+
+    let result: (String,String) = decode_args(&response).unwrap();
+
+    let captcha_id = &result.0;
+    let captcha_input=&result.1;
+    ic_cdk::println!("CAPTCHA {:?}", result);
+
     let user_info = UserInfoInternal {
         uid: "user_uid_1".to_string(),
         params: UserInformation {
@@ -459,6 +519,7 @@ fn test_case_sensitivity() {
         },
         is_active: true,
         joining_date: 121548,
+            profile_completion: 50,
     };
 // Simulate registering the user
     pic.update_call(
@@ -477,10 +538,10 @@ fn test_case_sensitivity() {
             icp_hub_or_spoke: false,
             category_of_mentoring_service: "Technology".to_string(),
             links: None,
-            multichain: Some("Ethereum, Solana".to_string()),
+            multichain: Some(vec!["Ethereum".to_string(), "Solana".to_string()]),
             years_of_mentoring: "10".to_string(),
             website: Some("https://mentor.com".to_string()),
-            area_of_expertise: "Blockchain".to_string(),
+            area_of_expertise: vec!["Blockchain".to_string()],
             reason_for_joining: Some("To mentor projects.".to_string()),
             hub_owner: Some("ICP Hub Owner".to_string()),
         },
@@ -488,6 +549,8 @@ fn test_case_sensitivity() {
         active: true,
         approve: true,
         decline: false,
+        profile_completion: 50,
+
     };
     pic.update_call(
         backend_canister,
@@ -532,7 +595,22 @@ fn test_empty_criteria() {
         let principal = Principal::from_slice(&[i as u8]);
 
         // Register as user first
-        let user_info = UserInfoInternal {
+        let Ok(WasmResult::Reply(response))= pic.update_call(
+        backend_canister,
+        test_principal,
+        "generate_captcha_with_id",
+        encode_one(()).unwrap()
+    )else{
+        panic!("Expected reply")
+    };
+
+    let result: (String,String) = decode_args(&response).unwrap();
+
+    let captcha_id = &result.0;
+    let captcha_input=&result.1;
+    ic_cdk::println!("CAPTCHA {:?}", result);
+
+    let user_info = UserInfoInternal {
             uid: format!("user_uid_{}", i),
             params: UserInformation {
                 full_name: format!("User {}", i),
@@ -548,6 +626,7 @@ fn test_empty_criteria() {
             },
             is_active: true,
             joining_date: 121548,
+            profile_completion: 50,
         };
         pic.update_call(
             backend_canister,
@@ -565,10 +644,10 @@ fn test_empty_criteria() {
                 icp_hub_or_spoke: false,
                 category_of_mentoring_service: "Technology".to_string(),
                 links: None,
-                multichain: Some("Ethereum, Solana".to_string()),
+                multichain: Some(vec!["Ethereum".to_string(), "Solana".to_string()]),
                 years_of_mentoring: "10".to_string(),
                 website: Some(format!("https://mentor{}.com", i)),
-                area_of_expertise: "Blockchain".to_string(),
+                area_of_expertise: vec!["Blockchain".to_string()],
                 reason_for_joining: Some(format!("To mentor project {}", i)),
                 hub_owner: Some("ICP Hub Owner".to_string()),
             },
@@ -576,6 +655,7 @@ fn test_empty_criteria() {
             active: true,
             approve: true,
             decline: false,
+            profile_completion: 50,
         };
         pic.update_call(
             backend_canister,
@@ -621,6 +701,21 @@ fn test_null_none_values() {
     let principal = Principal::from_slice(&[1 as u8]);
 
     // Register as user first
+    let Ok(WasmResult::Reply(response))= pic.update_call(
+        backend_canister,
+        test_principal,
+        "generate_captcha_with_id",
+        encode_one(()).unwrap()
+    )else{
+        panic!("Expected reply")
+    };
+
+    let result: (String,String) = decode_args(&response).unwrap();
+
+    let captcha_id = &result.0;
+    let captcha_input=&result.1;
+    ic_cdk::println!("CAPTCHA {:?}", result);
+
     let user_info = UserInfoInternal {
         uid: "user_uid_1".to_string(),
         params: UserInformation {
@@ -637,6 +732,7 @@ fn test_null_none_values() {
         },
         is_active: true,
         joining_date: 121548,
+            profile_completion: 50,
     };
 // Simulate registering the user
     pic.update_call(
@@ -655,10 +751,10 @@ fn test_null_none_values() {
             icp_hub_or_spoke: false,
             category_of_mentoring_service: "Technology".to_string(),
             links: None,
-            multichain: Some("Ethereum, Solana".to_string()),
+            multichain: Some(vec!["Ethereum".to_string(), "Solana".to_string()]),
             years_of_mentoring: "10".to_string(),
             website: Some("https://mentor.com".to_string()),
-            area_of_expertise: "Blockchain".to_string(),
+            area_of_expertise: vec!["Blockchain".to_string()],
             reason_for_joining: Some("To mentor projects.".to_string()),
             hub_owner: Some("ICP Hub Owner".to_string()),
         },
@@ -666,6 +762,7 @@ fn test_null_none_values() {
         active: true,
         approve: true,
         decline: false,
+        profile_completion: 50,
     };
     pic.update_call(
         backend_canister,
@@ -709,6 +806,21 @@ fn test_invalid_inputs() {
     let principal = Principal::from_slice(&[1 as u8]);
 
     // Register as user first
+    let Ok(WasmResult::Reply(response))= pic.update_call(
+        backend_canister,
+        test_principal,
+        "generate_captcha_with_id",
+        encode_one(()).unwrap()
+    )else{
+        panic!("Expected reply")
+    };
+
+    let result: (String,String) = decode_args(&response).unwrap();
+
+    let captcha_id = &result.0;
+    let captcha_input=&result.1;
+    ic_cdk::println!("CAPTCHA {:?}", result);
+
     let user_info = UserInfoInternal {
         uid: "user_uid_1".to_string(),
         params: UserInformation {
@@ -725,6 +837,7 @@ fn test_invalid_inputs() {
         },
         is_active: true,
         joining_date: 121548,
+            profile_completion: 50,
     };
 // Simulate registering the user
     pic.update_call(
@@ -743,10 +856,10 @@ fn test_invalid_inputs() {
             icp_hub_or_spoke: false,
             category_of_mentoring_service: "Technology".to_string(),
             links: None,
-            multichain: Some("Ethereum, Solana".to_string()),
+            multichain: Some(vec!["Ethereum".to_string(), "Solana".to_string()]),
             years_of_mentoring: "10".to_string(),
             website: Some("https://mentor.com".to_string()),
-            area_of_expertise: "Blockchain".to_string(),
+            area_of_expertise: vec!["Blockchain".to_string()],
             reason_for_joining: Some("To mentor projects.".to_string()),
             hub_owner: Some("ICP Hub Owner".to_string()),
         },
@@ -754,6 +867,7 @@ fn test_invalid_inputs() {
         active: true,
         approve: true,
         decline: false,
+        profile_completion: 50,
     };
     pic.update_call(
         backend_canister,

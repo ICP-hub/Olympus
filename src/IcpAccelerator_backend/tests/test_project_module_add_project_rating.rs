@@ -4,7 +4,7 @@ use IcpAccelerator_backend::{project_module::project_types::*, user_modules::use
 use std::fs;
 
 // Define the path to your compiled Wasm file
-const BACKEND_WASM: &str = "/Users/mridulyadav/Desktop/ICPAccelerator/target/wasm32-unknown-unknown/release/IcpAccelerator_backend.wasm";
+const BACKEND_WASM: &str = "/home/harman/accelerator/ICPAccelerator/target/wasm32-unknown-unknown/release/IcpAccelerator_backend.wasm";
 
 // Setup function to initialize PocketIC and install the Wasm module
 fn setup() -> (PocketIc, Principal) {
@@ -53,7 +53,7 @@ fn test_add_project_rating_successful() {
         preferred_icp_hub: Some("ICP Hub".to_string()),
         live_on_icp_mainnet: Some(true),
         money_raised_till_now: Some(false),
-        supports_multichain: Some("Ethereum, Solana".to_string()),
+        supports_multichain: Some("EthereumSolana".to_string()),
         project_elevator_pitch: Some("A revolutionary project.".to_string()),
         project_area_of_focus: "Technology".to_string(),
         promotional_video: None,
@@ -154,7 +154,7 @@ fn test_add_project_rating_already_rated() {
         preferred_icp_hub: Some("ICP Hub".to_string()),
         live_on_icp_mainnet: Some(true),
         money_raised_till_now: Some(false),
-        supports_multichain: Some("Ethereum, Solana".to_string()),
+        supports_multichain: Some("EthereumSolana".to_string()),
         project_elevator_pitch: Some("A revolutionary project.".to_string()),
         project_area_of_focus: "Technology".to_string(),
         promotional_video: None,

@@ -28,6 +28,21 @@ fn test_filter_projects_by_live_status() {
 
 
     // Define the UserInformation with some fields set to None
+    let Ok(WasmResult::Reply(response))= pic.update_call(
+        backend_canister,
+        test_principal,
+        "generate_captcha_with_id",
+        encode_one(()).unwrap()
+    )else{
+        panic!("Expected reply")
+    };
+
+    let result: (String,String) = decode_args(&response).unwrap();
+
+    let captcha_id = &result.0;
+    let captcha_input=&result.1;
+    ic_cdk::println!("CAPTCHA {:?}", result);
+
     let user_info = UserInfoInternal{
         params :UserInformation {
             full_name: "Test User".to_string(),
@@ -44,6 +59,7 @@ fn test_filter_projects_by_live_status() {
         uid: "839047bc25dd6b3d25bf153f8ae121bdfb5ca2cc9246763fb59a679c1eeb4586".to_string(),
         is_active: true,
         joining_date: 06062003,
+        profile_completion: 50,
     };
 
     // Simulate registering the user

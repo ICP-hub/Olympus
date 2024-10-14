@@ -4,7 +4,7 @@ use IcpAccelerator_backend::{user_modules::user_types::{UserInfoInternal, UserIn
 use std::fs;
 
 // Define the path to your compiled Wasm file
-const BACKEND_WASM: &str = "/Users/mridulyadav/Desktop/ICPAccelerator/target/wasm32-unknown-unknown/release/IcpAccelerator_backend.wasm";
+const BACKEND_WASM: &str = "/home/harman/accelerator/ICPAccelerator/target/wasm32-unknown-unknown/release/IcpAccelerator_backend.wasm";
 
 // Setup function to initialize PocketIC and install the Wasm module
 fn setup() -> (PocketIc, Principal) {
@@ -544,13 +544,7 @@ fn test_unauthorized_deletion_attempt() {
     let updated_vc_info: Option<(VentureCapitalist, UserInfoInternal)> = decode_one(&vc_info_response).unwrap();
     assert!(updated_vc_info.is_some(), "VC account should still be active.");
 }
-Attempt Deletion After Multiple Role Assignment:
 
-Purpose: Verify that deletion is still possible after assigning multiple roles.
-Scenario: Register a VC and assign multiple roles (like mentor and investor), then attempt to delete the VC.
-Expected Outcome: The VC profile should be deactivated, and roles should be checked if correctly handled.
-rust
-Copy code
 #[test]
 fn test_deletion_after_multiple_role_assignment() {
     let (pic, backend_canister) = setup();
@@ -639,13 +633,7 @@ fn test_deletion_after_multiple_role_assignment() {
     let updated_vc_info: Option<(VentureCapitalist, UserInfoInternal)> = decode_one(&vc_info_response).unwrap();
     assert!(updated_vc_info.is_none(), "VC account should be deactivated and inaccessible.");
 }
-Edge Case Deletion with Minimum and Maximum Values:
 
-Purpose: Test how the deletion handles edge cases with minimal and maximal input values.
-Scenario: Register a VC with extreme values (e.g., maximum fund size, portfolio companies, etc.) and then delete it.
-Expected Outcome: The VC should be successfully deleted, demonstrating that the function handles extreme data correctly.
-rust
-Copy code
 #[test]
 fn test_edge_case_deletion_with_min_max_values() {
     let (pic, backend_canister) = setup();
@@ -730,13 +718,7 @@ fn test_edge_case_deletion_with_min_max_values() {
     let updated_vc_info: Option<(VentureCapitalist, UserInfoInternal)> = decode_one(&vc_info_response).unwrap();
     assert!(updated_vc_info.is_none(), "VC account should be deactivated and inaccessible.");
 }
-Repeated Deletion Requests:
 
-Purpose: Ensure the function behaves correctly when the same VC tries to delete their profile multiple times.
-Scenario: Call the delete_venture_capitalist function multiple times in succession.
-Expected Outcome: The first deletion should succeed, and subsequent deletions should not affect the already deactivated profile.
-rust
-Copy code
 #[test]
 fn test_repeated_deletion_requests() {
     let (pic, backend_canister) = setup();

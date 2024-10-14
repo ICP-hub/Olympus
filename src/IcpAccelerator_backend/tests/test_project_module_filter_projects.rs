@@ -4,7 +4,7 @@ use IcpAccelerator_backend::{project_module::project_types::{FilterCriteria, Pro
 use std::fs;
 
 // Define the path to your compiled Wasm file
-const BACKEND_WASM: &str = "/Users/mridulyadav/Desktop/ICPAccelerator/target/wasm32-unknown-unknown/release/IcpAccelerator_backend.wasm";
+const BACKEND_WASM: &str = "/home/harman/accelerator/ICPAccelerator/target/wasm32-unknown-unknown/release/IcpAccelerator_backend.wasm";
 
 // Setup function to initialize PocketIC and install the Wasm module
 fn setup() -> (PocketIc, Principal) {
@@ -43,6 +43,7 @@ fn test_filter_projects() {
         uid: "839047bc25dd6b3d25bf153f8ae121bdfb5ca2cc9246763fb59a679c1eeb4586".to_string(),
         is_active: true,
         joining_date: 06062003,
+        profile_completion: 50,
     };
 
     // Simulate registering the user
@@ -70,6 +71,7 @@ fn test_filter_projects() {
         uid: "gdgdgd".to_string(),
         is_active: true,
         joining_date: 09092003,
+        profile_completion: 50,
     };
 
     // Simulate registering the user
@@ -121,7 +123,8 @@ fn test_filter_projects() {
         uid: "5cbe7089b7f6704eda6cb2194489327900ae5cec9042352e3a0be17ab4573c5d".to_string(),
         is_active: true,
         is_verified: false,
-        creation_date: 1625097600, // Example timestamp
+        creation_date: 1625097600,
+        profile_completion: 50, // Example timestamp
     };
 
     // Simulate the project registration by directly manipulating the canister state
@@ -176,7 +179,8 @@ fn test_filter_projects() {
         uid: "b6214924954366fa5cc590af7a267b0f30de3c36a4419048efaf0d5e74ca16a3".to_string(),
         is_active: true,
         is_verified: false,
-        creation_date: 1625097600, // Example timestamp
+        creation_date: 1625097600,
+        profile_completion: 50, // Example timestamp
     };
 
     // Simulate the project registration by directly manipulating the canister state
@@ -254,6 +258,7 @@ fn test_filter_projects_no_match() {
        uid: "839047bc25dd6b3d25bf153f8ae121bdfb5ca2cc9246763fb59a679c1eeb4586".to_string(),
        is_active: true,
        joining_date: 06062003,
+        profile_completion: 50,
    };
 
    // Simulate registering the user
@@ -281,6 +286,7 @@ fn test_filter_projects_no_match() {
        uid: "gdgdgd".to_string(),
        is_active: true,
        joining_date: 09092003,
+        profile_completion: 50,
    };
 
    // Simulate registering the user
@@ -330,7 +336,8 @@ fn test_filter_projects_no_match() {
        uid: "5cbe7089b7f6704eda6cb2194489327900ae5cec9042352e3a0be17ab4573c5d".to_string(),
        is_active: true,
        is_verified: false,
-       creation_date: 1625097600, // Example timestamp
+       creation_date: 1625097600,
+       profile_completion: 50,// Example timestamp
    };
 
    // Simulate the project registration by directly manipulating the canister state
@@ -385,7 +392,8 @@ fn test_filter_projects_no_match() {
        uid: "b6214924954366fa5cc590af7a267b0f30de3c36a4419048efaf0d5e74ca16a3".to_string(),
        is_active: true,
        is_verified: false,
-       creation_date: 1625097600, // Example timestamp
+       creation_date: 1625097600,
+       profile_completion: 50, // Example timestamp
    };
 
    // Simulate the project registration by directly manipulating the canister state

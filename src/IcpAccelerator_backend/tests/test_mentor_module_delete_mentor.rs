@@ -4,8 +4,7 @@ use IcpAccelerator_backend::{mentor_module::mentor_types:: MentorProfile, user_m
 use std::fs;
 
 // Define the path to your compiled Wasm file
-const BACKEND_WASM: &str = "/Users/mridulyadav/Desktop/ICPAccelerator/target/wasm32-unknown-unknown/release/IcpAccelerator_backend.wasm";
-
+const BACKEND_WASM: &str = "/home/harman/accelerator/ICPAccelerator/target/wasm32-unknown-unknown/release/IcpAccelerator_backend.wasm";
 // Setup function to initialize PocketIC and install the Wasm module
 fn setup() -> (PocketIc, Principal) {
     let pic = PocketIc::new();
@@ -25,7 +24,7 @@ fn test_delete_mentor() {
     let test_principal = Principal::anonymous(); // Replace with a specific principal if needed
 
     // Define the initial UserInformation
-    let user_info = UserInfoInternal {
+let user_info = UserInfoInternal {
         params: UserInformation {
             full_name: "Mentor Test".to_string(),
             profile_picture: None,
@@ -41,15 +40,21 @@ fn test_delete_mentor() {
         uid: "839047bc25dd6b3d25bf153f8ae121bdfb5ca2cc9246763fb59a679c1eeb4586".to_string(),
         is_active: true,
         joining_date: 1625097600,
+        profile_completion: 50,
     };
 
     // Simulate registering the user
-    pic.update_call(
+    let Ok(WasmResult::Reply(response))= pic.update_call(
         backend_canister,
         test_principal,
         "register_user",
-        encode_one(user_info.params.clone()).unwrap(),
-    ).expect("User registration failed");
+        encode_args((captcha_id, captcha_input, user_info.params.clone())).unwrap(),
+    )else{
+        panic!("Expected Reply")
+    };
+
+    let result:Result<std::string::String, std::string::String>= decode_one(&response).unwrap();
+    ic_cdk::println!("REGISTERED USER {:?}", result);
 
     // Define the MentorProfile to be registered
     let mentor_profile = MentorProfile {
@@ -59,21 +64,28 @@ fn test_delete_mentor() {
         icp_hub_or_spoke: false,
         category_of_mentoring_service: "Blockchain".to_string(),
         links: None,
-        multichain: Some("Ethereum, Solana".to_string()),
+        multichain: Some(vec!["Ethereum".to_string(), "Solana".to_string()]),
         years_of_mentoring: "10".to_string(),
         website: Some("https://mentor.example.com".to_string()),
-        area_of_expertise: "Blockchain".to_string(),
+        area_of_expertise: vec!["Blockchain".to_string()],
         reason_for_joining: Some("To help new projects succeed.".to_string()),
         hub_owner: Some("ICP Hub Owner".to_string()),
     };
 
     // Register the mentor
-    pic.update_call(
+    // Call the register_mentor function
+    let Ok(WasmResult::Reply(response)) = pic.update_call(
         backend_canister,
         test_principal,
         "register_mentor",
         encode_one(mentor_profile.clone()).unwrap(),
-    ).expect("Mentor registration failed");
+    ) else {
+        panic!("Expected reply");
+    };
+
+    // Decode the response and verify the mentor was registered correctly
+    let registration_result: String = decode_one(&response).unwrap();
+    assert!(registration_result.contains("Mentor Profile Created With UID"), "Mentor registration failed");
 
     // Call the delete_mentor function
     let Ok(WasmResult::Reply(response)) = pic.update_call(
@@ -120,7 +132,22 @@ fn test_delete_non_existent_mentor() {
     let test_principal = Principal::anonymous();
 
         // Define the initial UserInformation
-        let user_info = UserInfoInternal {
+        let Ok(WasmResult::Reply(response))= pic.update_call(
+        backend_canister,
+        test_principal,
+        "generate_captcha_with_id",
+        encode_one(()).unwrap()
+    )else{
+        panic!("Expected reply")
+    };
+
+    let result: (String,String) = decode_args(&response).unwrap();
+
+    let captcha_id = &result.0;
+    let captcha_input=&result.1;
+    ic_cdk::println!("CAPTCHA {:?}", result);
+
+    let user_info = UserInfoInternal {
             params: UserInformation {
                 full_name: "Mentor Test".to_string(),
                 profile_picture: None,
@@ -136,6 +163,7 @@ fn test_delete_non_existent_mentor() {
             uid: "839047bc25dd6b3d25bf153f8ae121bdfb5ca2cc9246763fb59a679c1eeb4586".to_string(),
             is_active: true,
             joining_date: 1625097600,
+            profile_completion: 50,
         };
     
         // Simulate registering the user
@@ -172,6 +200,21 @@ fn test_delete_multiple_times() {
     let test_principal = Principal::from_slice(&[1 as u8]);
 
     // Register as user and mentor
+    let Ok(WasmResult::Reply(response))= pic.update_call(
+        backend_canister,
+        test_principal,
+        "generate_captcha_with_id",
+        encode_one(()).unwrap()
+    )else{
+        panic!("Expected reply")
+    };
+
+    let result: (String,String) = decode_args(&response).unwrap();
+
+    let captcha_id = &result.0;
+    let captcha_input=&result.1;
+    ic_cdk::println!("CAPTCHA {:?}", result);
+
     let user_info = UserInfoInternal {
         uid: "user_uid_1".to_string(),
         params: UserInformation {
@@ -188,14 +231,20 @@ fn test_delete_multiple_times() {
         },
         is_active: true,
         joining_date: 153518 ,
+        profile_completion: 50,
     };
     // Simulate registering the user
-    pic.update_call(
+    let Ok(WasmResult::Reply(response))= pic.update_call(
         backend_canister,
         test_principal,
         "register_user",
-        encode_one(user_info.params.clone()).unwrap(),
-    ).expect("User registration failed");
+        encode_args((captcha_id, captcha_input, user_info.params.clone())).unwrap(),
+    )else{
+        panic!("Expected Reply")
+    };
+
+    let result:Result<std::string::String, std::string::String>= decode_one(&response).unwrap();
+    ic_cdk::println!("REGISTERED USER {:?}", result);
 
     let mentor_profile = MentorProfile {
         preferred_icp_hub: Some("ICP Hub".to_string()),
@@ -204,10 +253,10 @@ fn test_delete_multiple_times() {
         icp_hub_or_spoke: false,
         category_of_mentoring_service: "Blockchain".to_string(),
         links: None,
-        multichain: Some("Ethereum, Solana".to_string()),
+        multichain: Some(vec!["Ethereum".to_string(), "Solana".to_string()]),
         years_of_mentoring: "10".to_string(),
         website: Some("https://mentor.example.com".to_string()),
-        area_of_expertise: "Blockchain".to_string(),
+        area_of_expertise: vec!["Blockchain".to_string()],
         reason_for_joining: Some("To help new projects succeed.".to_string()),
         hub_owner: Some("ICP Hub Owner".to_string()),
     };
@@ -259,6 +308,21 @@ fn test_delete_mentor_with_inactive_user() {
     let test_principal = Principal::from_slice(&[4 as u8]);
 
     // Register as an inactive user and mentor
+    let Ok(WasmResult::Reply(response))= pic.update_call(
+        backend_canister,
+        test_principal,
+        "generate_captcha_with_id",
+        encode_one(()).unwrap()
+    )else{
+        panic!("Expected reply")
+    };
+
+    let result: (String,String) = decode_args(&response).unwrap();
+
+    let captcha_id = &result.0;
+    let captcha_input=&result.1;
+    ic_cdk::println!("CAPTCHA {:?}", result);
+
     let user_info = UserInfoInternal {
         uid: "user_uid_4".to_string(),
         params: UserInformation {
@@ -275,14 +339,20 @@ fn test_delete_mentor_with_inactive_user() {
         },
         is_active: false,  // User is inactive
         joining_date: 151747,
+        profile_completion: 50,
     };
     // Simulate registering the user
-    pic.update_call(
+    let Ok(WasmResult::Reply(response))= pic.update_call(
         backend_canister,
         test_principal,
         "register_user",
-        encode_one(user_info.params.clone()).unwrap(),
-    ).expect("User registration failed");
+        encode_args((captcha_id, captcha_input, user_info.params.clone())).unwrap(),
+    )else{
+        panic!("Expected Reply")
+    };
+
+    let result:Result<std::string::String, std::string::String>= decode_one(&response).unwrap();
+    ic_cdk::println!("REGISTERED USER {:?}", result);
 
     let mentor_profile = MentorProfile {
         preferred_icp_hub: Some("ICP Hub".to_string()),
@@ -291,10 +361,10 @@ fn test_delete_mentor_with_inactive_user() {
         icp_hub_or_spoke: false,
         category_of_mentoring_service: "Blockchain".to_string(),
         links: None,
-        multichain: Some("Ethereum, Solana".to_string()),
+        multichain: Some(vec!["Ethereum".to_string(), "Solana".to_string()]),
         years_of_mentoring: "10".to_string(),
         website: Some("https://mentor.example.com".to_string()),
-        area_of_expertise: "Blockchain".to_string(),
+        area_of_expertise: vec!["Blockchain".to_string()],
         reason_for_joining: Some("To help new projects succeed.".to_string()),
         hub_owner: Some("ICP Hub Owner".to_string()),
     };
@@ -344,6 +414,21 @@ fn test_delete_mentor_with_special_characters_in_profile() {
     let test_principal = Principal::from_slice(&[5 as u8]);
 
     // Register as user and mentor with special characters in the profile
+    let Ok(WasmResult::Reply(response))= pic.update_call(
+        backend_canister,
+        test_principal,
+        "generate_captcha_with_id",
+        encode_one(()).unwrap()
+    )else{
+        panic!("Expected reply")
+    };
+
+    let result: (String,String) = decode_args(&response).unwrap();
+
+    let captcha_id = &result.0;
+    let captcha_input=&result.1;
+    ic_cdk::println!("CAPTCHA {:?}", result);
+
     let user_info = UserInfoInternal {
         uid: "user_uid_5".to_string(),
         params: UserInformation {
@@ -360,14 +445,20 @@ fn test_delete_mentor_with_special_characters_in_profile() {
         },
         is_active: true,
         joining_date: 151747,
+        profile_completion: 50,
     };
     // Simulate registering the user
-    pic.update_call(
+    let Ok(WasmResult::Reply(response))= pic.update_call(
         backend_canister,
         test_principal,
         "register_user",
-        encode_one(user_info.params.clone()).unwrap(),
-    ).expect("User registration failed");
+        encode_args((captcha_id, captcha_input, user_info.params.clone())).unwrap(),
+    )else{
+        panic!("Expected Reply")
+    };
+
+    let result:Result<std::string::String, std::string::String>= decode_one(&response).unwrap();
+    ic_cdk::println!("REGISTERED USER {:?}", result);
 
     let mentor_profile = MentorProfile {
         preferred_icp_hub: Some("✨ICP Hub✨".to_string()),
@@ -376,10 +467,10 @@ fn test_delete_mentor_with_special_characters_in_profile() {
         icp_hub_or_spoke: false,
         category_of_mentoring_service: "Blockchain 🌐".to_string(),
         links: None,
-        multichain: Some("🌍 Ethereum, Solana 🌍".to_string()),
+        multichain: Some(vec!["🌍 Ethereum".to_string(), "Solana 🌍".to_string()]),
         years_of_mentoring: "10".to_string(),
         website: Some("https://mentor.example.com".to_string()),
-        area_of_expertise: "Blockchain 🔒".to_string(),
+        area_of_expertise: vec!["Blockchain 🔒".to_string()],
         reason_for_joining: Some("To help new projects succeed 🌟".to_string()),
         hub_owner: Some("ICP Hub Owner 🌟".to_string()),
     };
@@ -429,6 +520,21 @@ fn test_delete_mentor_with_large_profile_data() {
     let test_principal = Principal::from_slice(&[6 as u8]);
 
     // Register as user and mentor with large profile data
+    let Ok(WasmResult::Reply(response))= pic.update_call(
+        backend_canister,
+        test_principal,
+        "generate_captcha_with_id",
+        encode_one(()).unwrap()
+    )else{
+        panic!("Expected reply")
+    };
+
+    let result: (String,String) = decode_args(&response).unwrap();
+
+    let captcha_id = &result.0;
+    let captcha_input=&result.1;
+    ic_cdk::println!("CAPTCHA {:?}", result);
+
     let user_info = UserInfoInternal {
         uid: "user_uid_6".to_string(),
         params: UserInformation {
@@ -445,14 +551,20 @@ fn test_delete_mentor_with_large_profile_data() {
         },
         is_active: true,
         joining_date: 151747,
+        profile_completion: 50,
     };
     // Simulate registering the user
-    pic.update_call(
+    let Ok(WasmResult::Reply(response))= pic.update_call(
         backend_canister,
         test_principal,
         "register_user",
-        encode_one(user_info.params.clone()).unwrap(),
-    ).expect("User registration failed");
+        encode_args((captcha_id, captcha_input, user_info.params.clone())).unwrap(),
+    )else{
+        panic!("Expected Reply")
+    };
+
+    let result:Result<std::string::String, std::string::String>= decode_one(&response).unwrap();
+    ic_cdk::println!("REGISTERED USER {:?}", result);
 
     let large_string = "A".repeat(10_000);
 
@@ -463,10 +575,10 @@ fn test_delete_mentor_with_large_profile_data() {
         icp_hub_or_spoke: false,
         category_of_mentoring_service: large_string.clone(),
         links: None,
-        multichain: Some(large_string.clone()),
+        multichain: Some(vec![large_string.clone()]),
         years_of_mentoring: large_string.clone(),
         website: Some("https://mentor.example.com".to_string()),
-        area_of_expertise: large_string.clone(),
+        area_of_expertise: vec![large_string.clone()],
         reason_for_joining: Some(large_string.clone()),
         hub_owner: Some(large_string.clone()),
     };
@@ -513,6 +625,21 @@ fn test_delete_mentor_after_re_registration() {
     let test_principal = Principal::from_slice(&[7 as u8]);
 
     // Register as user and mentor
+    let Ok(WasmResult::Reply(response))= pic.update_call(
+        backend_canister,
+        test_principal,
+        "generate_captcha_with_id",
+        encode_one(()).unwrap()
+    )else{
+        panic!("Expected reply")
+    };
+
+    let result: (String,String) = decode_args(&response).unwrap();
+
+    let captcha_id = &result.0;
+    let captcha_input=&result.1;
+    ic_cdk::println!("CAPTCHA {:?}", result);
+
     let user_info = UserInfoInternal {
         uid: "user_uid_7".to_string(),
         params: UserInformation {
@@ -529,14 +656,20 @@ fn test_delete_mentor_after_re_registration() {
         },
         is_active: true,
         joining_date: 151747,
+        profile_completion: 50,
     };
     // Simulate registering the user
-    pic.update_call(
+    let Ok(WasmResult::Reply(response))= pic.update_call(
         backend_canister,
         test_principal,
         "register_user",
-        encode_one(user_info.params.clone()).unwrap(),
-    ).expect("User registration failed");
+        encode_args((captcha_id, captcha_input, user_info.params.clone())).unwrap(),
+    )else{
+        panic!("Expected Reply")
+    };
+
+    let result:Result<std::string::String, std::string::String>= decode_one(&response).unwrap();
+    ic_cdk::println!("REGISTERED USER {:?}", result);
 
     let mentor_profile = MentorProfile {
         preferred_icp_hub: Some("ICP Hub".to_string()),
@@ -545,10 +678,10 @@ fn test_delete_mentor_after_re_registration() {
         icp_hub_or_spoke: false,
         category_of_mentoring_service: "Blockchain".to_string(),
         links: None,
-        multichain: Some("Ethereum, Solana".to_string()),
+        multichain: Some(vec!["Ethereum".to_string(), "Solana".to_string()]),
         years_of_mentoring: "10".to_string(),
         website: Some("https://mentor.example.com".to_string()),
-        area_of_expertise: "Blockchain".to_string(),
+        area_of_expertise: vec!["Blockchain".to_string()],
         reason_for_joining: Some("To help new projects succeed.".to_string()),
         hub_owner: Some("ICP Hub Owner".to_string()),
     };
@@ -616,6 +749,21 @@ fn test_delete_mentor_with_unicode_characters() {
     let test_principal = Principal::from_slice(&[8 as u8]);
 
     // Register as user and mentor with unicode characters in the profile
+    let Ok(WasmResult::Reply(response))= pic.update_call(
+        backend_canister,
+        test_principal,
+        "generate_captcha_with_id",
+        encode_one(()).unwrap()
+    )else{
+        panic!("Expected reply")
+    };
+
+    let result: (String,String) = decode_args(&response).unwrap();
+
+    let captcha_id = &result.0;
+    let captcha_input=&result.1;
+    ic_cdk::println!("CAPTCHA {:?}", result);
+
     let user_info = UserInfoInternal {
         uid: "user_uid_8".to_string(),
         params: UserInformation {
@@ -632,14 +780,20 @@ fn test_delete_mentor_with_unicode_characters() {
         },
         is_active: true,
         joining_date: 151747,
+        profile_completion: 50,
     };
     // Simulate registering the user
-    pic.update_call(
+    let Ok(WasmResult::Reply(response))= pic.update_call(
         backend_canister,
         test_principal,
         "register_user",
-        encode_one(user_info.params.clone()).unwrap(),
-    ).expect("User registration failed");
+        encode_args((captcha_id, captcha_input, user_info.params.clone())).unwrap(),
+    )else{
+        panic!("Expected Reply")
+    };
+
+    let result:Result<std::string::String, std::string::String>= decode_one(&response).unwrap();
+    ic_cdk::println!("REGISTERED USER {:?}", result);
 
     let mentor_profile = MentorProfile {
         preferred_icp_hub: Some("हब".to_string()), // Unicode characters
@@ -648,10 +802,10 @@ fn test_delete_mentor_with_unicode_characters() {
         icp_hub_or_spoke: false,
         category_of_mentoring_service: "ब्लॉकचेन".to_string(), // Unicode characters
         links: None,
-        multichain: Some("इथीरियम, सोलाना".to_string()), // Unicode characters
+        multichain: Some(vec!["इथीरियम".to_string(), "सोलाना".to_string()]), // Unicode characters
         years_of_mentoring: "10".to_string(),
         website: Some("https://mentor.example.com".to_string()),
-        area_of_expertise: "ब्लॉकचेन".to_string(), // Unicode characters
+        area_of_expertise: vec!["ब्लॉकचेन".to_string()], // Unicode characters
         reason_for_joining: Some("नई परियोजनाओं को सफल होने में मदद करना".to_string()), // Unicode characters
         hub_owner: Some("आईसीपी हब मालिक".to_string()), // Unicode characters
     };
@@ -700,6 +854,21 @@ fn test_delete_mentor_with_different_principal() {
 
 
     // Register as user and mentor
+    let Ok(WasmResult::Reply(response))= pic.update_call(
+        backend_canister,
+        test_principal,
+        "generate_captcha_with_id",
+        encode_one(()).unwrap()
+    )else{
+        panic!("Expected reply")
+    };
+
+    let result: (String,String) = decode_args(&response).unwrap();
+
+    let captcha_id = &result.0;
+    let captcha_input=&result.1;
+    ic_cdk::println!("CAPTCHA {:?}", result);
+
     let user_info = UserInfoInternal {
         uid: "user_uid_9".to_string(),
         params: UserInformation {
@@ -716,14 +885,20 @@ fn test_delete_mentor_with_different_principal() {
         },
         is_active: true,
         joining_date: 151747,
+        profile_completion: 50,
     };
     // Simulate registering the user
-    pic.update_call(
+    let Ok(WasmResult::Reply(response))= pic.update_call(
         backend_canister,
         test_principal,
         "register_user",
-        encode_one(user_info.params.clone()).unwrap(),
-    ).expect("User registration failed");
+        encode_args((captcha_id, captcha_input, user_info.params.clone())).unwrap(),
+    )else{
+        panic!("Expected Reply")
+    };
+
+    let result:Result<std::string::String, std::string::String>= decode_one(&response).unwrap();
+    ic_cdk::println!("REGISTERED USER {:?}", result);
 
     let mentor_profile = MentorProfile {
         preferred_icp_hub: Some("ICP Hub".to_string()),
@@ -732,10 +907,10 @@ fn test_delete_mentor_with_different_principal() {
         icp_hub_or_spoke: false,
         category_of_mentoring_service: "Blockchain".to_string(),
         links: None,
-        multichain: Some("Ethereum, Solana".to_string()),
+        multichain: Some(vec!["Ethereum".to_string(), "Solana".to_string()]),
         years_of_mentoring: "10".to_string(),
         website: Some("https://mentor.example.com".to_string()),
-        area_of_expertise: "Blockchain".to_string(),
+        area_of_expertise: vec!["Blockchain".to_string()],
         reason_for_joining: Some("To help new projects succeed.".to_string()),
         hub_owner: Some("ICP Hub Owner".to_string()),
     };
@@ -769,3 +944,7 @@ fn test_delete_mentor_with_different_principal() {
     let retrieved_mentor_info: Option<(MentorProfile, UserInfoInternal)> = decode_one(&response).unwrap();
     assert!(retrieved_mentor_info.is_some(), "Mentor profile should still be present");
 }
+
+
+
+

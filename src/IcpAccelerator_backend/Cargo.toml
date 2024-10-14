@@ -12,7 +12,7 @@ default = ["as_cdylib"]
 as_cdylib = []
 
 [lib]
-crate-type = ["rlib", "cdylib"]
+crate-type = ["rlib","cdylib"]
 path = "src/lib.rs"
 
 
@@ -37,6 +37,7 @@ ic-stable-structures = "0.6.3"
 base64 = "0.13.0"
 ic-certified-assets = "0.2.5"
 serde_bytes = "0.11.5"
+regex = "1.10.6"
 
 
 [dev-dependencies]
@@ -44,8 +45,4 @@ pocket-ic = "4.0.0"
 ic-agent = "0.37.1"
 tokio = { version = "1", features = ["full"] } 
 async-std = "1.12.0"
-sha2 = "0.10.8"
 
-
-
-regex = "1.10.6"

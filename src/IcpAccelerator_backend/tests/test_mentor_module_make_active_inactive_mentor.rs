@@ -4,8 +4,7 @@ use IcpAccelerator_backend::{mentor_module::mentor_types::{MentorInternal, Mento
 use std::fs;
 
 // Define the path to your compiled Wasm file
-const BACKEND_WASM: &str = "/Users/mridulyadav/Desktop/ICPAccelerator/target/wasm32-unknown-unknown/release/IcpAccelerator_backend.wasm";
-
+const BACKEND_WASM: &str = "/home/harman/accelerator/ICPAccelerator/target/wasm32-unknown-unknown/release/IcpAccelerator_backend.wasm";
 // Setup function to initialize PocketIC and install the Wasm module
 fn setup() -> (PocketIc, Principal) {
     let pic = PocketIc::new();
@@ -25,7 +24,7 @@ fn test_make_active_inactive_mentor() {
     let test_principal = Principal::anonymous(); // Replace with a specific principal if needed
 
     // Define the initial UserInformation
-    let user_info = UserInfoInternal {
+let user_info = UserInfoInternal {
         params: UserInformation {
             full_name: "Test Mentor".to_string(),
             profile_picture: None,
@@ -41,15 +40,21 @@ fn test_make_active_inactive_mentor() {
         uid: "839047bc25dd6b3d25bf153f8ae121bdfb5ca2cc9246763fb59a679c1eeb4586".to_string(),
         is_active: true,
         joining_date: 1625097600,
+        profile_completion: 50,
     };
 
     // Simulate registering the user
-    pic.update_call(
+    let Ok(WasmResult::Reply(response))= pic.update_call(
         backend_canister,
         test_principal,
         "register_user",
-        encode_one(user_info.params.clone()).unwrap(),
-    ).expect("User registration failed");
+        encode_args((captcha_id, captcha_input, user_info.params.clone())).unwrap(),
+    )else{
+        panic!("Expected Reply")
+    };
+
+    let result:Result<std::string::String, std::string::String>= decode_one(&response).unwrap();
+    ic_cdk::println!("REGISTERED USER {:?}", result);
 
     // Define the MentorProfile to be registered
     let mentor_profile = MentorProfile {
@@ -59,10 +64,10 @@ fn test_make_active_inactive_mentor() {
         icp_hub_or_spoke: false,
         category_of_mentoring_service: "Blockchain".to_string(),
         links: None,
-        multichain: Some("Ethereum, Solana".to_string()),
+        multichain: Some(vec!["Ethereum".to_string(), "Solana".to_string()]),
         years_of_mentoring: "10".to_string(),
         website: Some("https://mentor.example.com".to_string()),
-        area_of_expertise: "Blockchain".to_string(),
+        area_of_expertise: vec!["Blockchain".to_string()],
         reason_for_joining: Some("To help new projects succeed.".to_string()),
         hub_owner: Some("ICP Hub Owner".to_string()),
     };
@@ -149,7 +154,7 @@ fn test_make_active_inactive_mentor_non_existent() {
     let test_principal = Principal::anonymous();
     
     // Define the initial UserInformation
-    let user_info = UserInfoInternal {
+let user_info = UserInfoInternal {
         params: UserInformation {
             full_name: "Test Mentor".to_string(),
             profile_picture: None,
@@ -165,15 +170,21 @@ fn test_make_active_inactive_mentor_non_existent() {
         uid: "839047bc25dd6b3d25bf153f8ae121bdfb5ca2cc9246763fb59a679c1eeb4586".to_string(),
         is_active: true,
         joining_date: 1625097600,
+        profile_completion: 50,
     };
 
     // Simulate registering the user
-    pic.update_call(
+    let Ok(WasmResult::Reply(response))= pic.update_call(
         backend_canister,
         test_principal,
         "register_user",
-        encode_one(user_info.params.clone()).unwrap(),
-    ).expect("User registration failed");
+        encode_args((captcha_id, captcha_input, user_info.params.clone())).unwrap(),
+    )else{
+        panic!("Expected Reply")
+    };
+
+    let result:Result<std::string::String, std::string::String>= decode_one(&response).unwrap();
+    ic_cdk::println!("REGISTERED USER {:?}", result);
 
     // Attempt to deactivate a non-existent mentor
     let Ok(WasmResult::Reply(response)) = pic.update_call(
@@ -200,7 +211,7 @@ fn test_make_active_inactive_mentor_with_different_principal() {
     let different_principal = Principal::from_slice(&[3 as u8]);
 
     // Simulate registering the user
-    let user_info = UserInfoInternal {
+let user_info = UserInfoInternal {
         params: UserInformation {
             full_name: "Different Principal Mentor".to_string(),
             profile_picture: None,
@@ -216,14 +227,20 @@ fn test_make_active_inactive_mentor_with_different_principal() {
         uid: "839047bc25dd6b3d25bf153f8ae121bdfb5ca2cc9246763fb59a679c1eeb4586".to_string(),
         is_active: true,
         joining_date: 1625097600,
+        profile_completion: 50,
     };
 
-    pic.update_call(
+    let Ok(WasmResult::Reply(response))= pic.update_call(
         backend_canister,
         test_principal,
         "register_user",
-        encode_one(user_info.params.clone()).unwrap(),
-    ).expect("User registration failed");
+        encode_args((captcha_id, captcha_input, user_info.params.clone())).unwrap(),
+    )else{
+        panic!("Expected Reply")
+    };
+
+    let result:Result<std::string::String, std::string::String>= decode_one(&response).unwrap();
+    ic_cdk::println!("REGISTERED USER {:?}", result);
 
     // Register the mentor
     let mentor_profile = MentorProfile {
@@ -233,10 +250,10 @@ fn test_make_active_inactive_mentor_with_different_principal() {
         icp_hub_or_spoke: false,
         category_of_mentoring_service: "Blockchain".to_string(),
         links: None,
-        multichain: Some("Ethereum, Solana".to_string()),
+        multichain: Some(vec!["Ethereum".to_string(), "Solana".to_string()]),
         years_of_mentoring: "10".to_string(),
         website: Some("https://mentor.example.com".to_string()),
-        area_of_expertise: "Blockchain".to_string(),
+        area_of_expertise: vec!["Blockchain".to_string()],
         reason_for_joining: Some("To help new projects succeed.".to_string()),
         hub_owner: Some("ICP Hub Owner".to_string()),
     };
@@ -286,7 +303,7 @@ fn test_make_active_inactive_mentor_with_concurrent_requests() {
     let test_principal = Principal::from_slice(&[4 as u8]);
 
     // Simulate registering the user
-    let user_info = UserInfoInternal {
+let user_info = UserInfoInternal {
         params: UserInformation {
             full_name: "Concurrent Mentor".to_string(),
             profile_picture: None,
@@ -302,14 +319,20 @@ fn test_make_active_inactive_mentor_with_concurrent_requests() {
         uid: "839047bc25dd6b3d25bf153f8ae121bdfb5ca2cc9246763fb59a679c1eeb4586".to_string(),
         is_active: true,
         joining_date: 1625097600,
+        profile_completion: 50,
     };
 
-    pic.update_call(
+    let Ok(WasmResult::Reply(response))= pic.update_call(
         backend_canister,
         test_principal,
         "register_user",
-        encode_one(user_info.params.clone()).unwrap(),
-    ).expect("User registration failed");
+        encode_args((captcha_id, captcha_input, user_info.params.clone())).unwrap(),
+    )else{
+        panic!("Expected Reply")
+    };
+
+    let result:Result<std::string::String, std::string::String>= decode_one(&response).unwrap();
+    ic_cdk::println!("REGISTERED USER {:?}", result);
 
     // Register the mentor
     let mentor_profile = MentorProfile {
@@ -319,10 +342,10 @@ fn test_make_active_inactive_mentor_with_concurrent_requests() {
         icp_hub_or_spoke: false,
         category_of_mentoring_service: "Blockchain".to_string(),
         links: None,
-        multichain: Some("Ethereum, Solana".to_string()),
+        multichain: Some(vec!["Ethereum".to_string(), "Solana".to_string()]),
         years_of_mentoring: "10".to_string(),
         website: Some("https://mentor.example.com".to_string()),
-        area_of_expertise: "Blockchain".to_string(),
+        area_of_expertise: vec!["Blockchain".to_string()],
         reason_for_joining: Some("To help new projects succeed.".to_string()),
         hub_owner: Some("ICP Hub Owner".to_string()),
     };
@@ -387,7 +410,7 @@ fn test_make_active_inactive_mentor_with_inactive_user() {
     let test_principal = Principal::from_slice(&[5 as u8]);
 
     // Simulate registering the user as inactive
-    let user_info = UserInfoInternal {
+let user_info = UserInfoInternal {
         params: UserInformation {
             full_name: "Inactive User".to_string(),
             profile_picture: None,
@@ -403,14 +426,20 @@ fn test_make_active_inactive_mentor_with_inactive_user() {
         uid: "839047bc25dd6b3d25bf153f8ae121bdfb5ca2cc9246763fb59a679c1eeb4586".to_string(),
         is_active: false, // Inactive user
         joining_date: 1625097600,
+        profile_completion: 50,
     };
 
-    pic.update_call(
+    let Ok(WasmResult::Reply(response))= pic.update_call(
         backend_canister,
         test_principal,
         "register_user",
-        encode_one(user_info.params.clone()).unwrap(),
-    ).expect("User registration failed");
+        encode_args((captcha_id, captcha_input, user_info.params.clone())).unwrap(),
+    )else{
+        panic!("Expected Reply")
+    };
+
+    let result:Result<std::string::String, std::string::String>= decode_one(&response).unwrap();
+    ic_cdk::println!("REGISTERED USER {:?}", result);
 
     // Register the mentor
     let mentor_profile = MentorProfile {
@@ -420,10 +449,10 @@ fn test_make_active_inactive_mentor_with_inactive_user() {
         icp_hub_or_spoke: false,
         category_of_mentoring_service: "Inactive Blockchain".to_string(),
         links: None,
-        multichain: Some("Inactive Chain".to_string()),
+        multichain: Some(vec!["Inactive Chain".to_string(),]),
         years_of_mentoring: "5".to_string(),
         website: Some("https://inactive-mentor.example.com".to_string()),
-        area_of_expertise: "Inactive Blockchain".to_string(),
+        area_of_expertise: vec!["Inactive Blockchain".to_string()],
         reason_for_joining: Some("Inactive Reason".to_string()),
         hub_owner: Some("Inactive Hub Owner".to_string()),
     };

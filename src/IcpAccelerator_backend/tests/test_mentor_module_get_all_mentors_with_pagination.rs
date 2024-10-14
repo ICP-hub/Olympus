@@ -6,8 +6,7 @@ use IcpAccelerator_backend::{
 use std::fs;
 
 // Define the path to your compiled Wasm file
-const BACKEND_WASM: &str = "/Users/mridulyadav/Desktop/ICPAccelerator/target/wasm32-unknown-unknown/release/IcpAccelerator_backend.wasm";
-
+const BACKEND_WASM: &str = "/home/harman/accelerator/ICPAccelerator/target/wasm32-unknown-unknown/release/IcpAccelerator_backend.wasm";
 
 // Setup function to initialize PocketIC and install the Wasm module
 fn setup() -> (PocketIc, Principal) {
@@ -28,7 +27,7 @@ fn test_get_all_mentors_with_pagination() {
     let test_principal = Principal::anonymous(); // Replace with a specific principal if needed
 
     // Define the UserInformation with some fields set to None
-    let user_info = UserInfoInternal {
+let user_info = UserInfoInternal {
         params: UserInformation {
             full_name: "Test Mentor".to_string(),
             profile_picture: None,
@@ -44,15 +43,21 @@ fn test_get_all_mentors_with_pagination() {
         uid: "839047bc25dd6b3d25bf153f8ae121bdfb5ca2cc9246763fb59a679c1eeb4586".to_string(),
         is_active: true,
         joining_date: 1625097600,
+        profile_completion: 50,
     };
 
     // Simulate registering the user
-    pic.update_call(
+    let Ok(WasmResult::Reply(response))= pic.update_call(
         backend_canister,
         test_principal,
         "register_user",
-        encode_one(user_info.params.clone()).unwrap(),
-    ).expect("User registration failed");
+        encode_args((captcha_id, captcha_input, user_info.params.clone())).unwrap(),
+    )else{
+        panic!("Expected Reply")
+    };
+
+    let result:Result<std::string::String, std::string::String>= decode_one(&response).unwrap();
+    ic_cdk::println!("REGISTERED USER {:?}", result);
 
     // Create a MentorProfile object to simulate mentor registration
     let mentor_profile = MentorInternal {
@@ -63,10 +68,10 @@ fn test_get_all_mentors_with_pagination() {
             icp_hub_or_spoke: false,
             category_of_mentoring_service: "Technology".to_string(),
             links: None,
-            multichain: Some("Ethereum, Solana".to_string()),
+            multichain: Some(vec!["Ethereum".to_string(), "Solana".to_string()]),
             years_of_mentoring: "10".to_string(),
             website: Some("https://mentor.example.com".to_string()),
-            area_of_expertise: "Blockchain".to_string(),
+            area_of_expertise: vec!["Blockchain".to_string()],
             reason_for_joining: Some("To mentor emerging projects.".to_string()),
             hub_owner: Some("ICP Hub Owner".to_string()),
         },
@@ -74,6 +79,7 @@ fn test_get_all_mentors_with_pagination() {
         active: true,
         approve: true,
         decline: false,
+        profile_completion: 50,
     };
 
     // Simulate the mentor registration by directly manipulating the canister state
@@ -139,7 +145,22 @@ fn test_multiple_pages() {
         ic_cdk::println!("PRINCIPAL {:?}",principal);
 
         // Define the UserInformation with some fields set to None
-        let user_info = UserInfoInternal{
+        let Ok(WasmResult::Reply(response))= pic.update_call(
+        backend_canister,
+        test_principal,
+        "generate_captcha_with_id",
+        encode_one(()).unwrap()
+    )else{
+        panic!("Expected reply")
+    };
+
+    let result: (String,String) = decode_args(&response).unwrap();
+
+    let captcha_id = &result.0;
+    let captcha_input=&result.1;
+    ic_cdk::println!("CAPTCHA {:?}", result);
+
+    let user_info = UserInfoInternal{
             params :UserInformation {
                 full_name: "Test User".to_string(),
                 profile_picture: None, // No initial picture provided
@@ -155,6 +176,7 @@ fn test_multiple_pages() {
             uid: "839047bc25dd6b3d25bf153f8ae121bdfb5ca2cc9246763fb59a679c1eeb4586".to_string(),
             is_active: true,
             joining_date: 06062003,
+            profile_completion: 50,
         };
 
         // Simulate registering the user
@@ -183,10 +205,10 @@ fn test_multiple_pages() {
                     icp_hub_or_spoke: false,
                     category_of_mentoring_service: "Technology".to_string(),
                     links: None,
-                    multichain: Some("Ethereum, Solana".to_string()),
+                    multichain: Some(vec!["Ethereum".to_string(), "Solana".to_string()]),
                     years_of_mentoring: "10".to_string(),
                     website: Some(format!("https://mentor{}.com", i)),
-                    area_of_expertise: "Blockchain".to_string(),
+                    area_of_expertise: vec!["Blockchain".to_string()],
                     reason_for_joining: Some(format!("To mentor project {}", i)),
                     hub_owner: Some("ICP Hub Owner".to_string()),
                 },
@@ -194,6 +216,7 @@ fn test_multiple_pages() {
                 active: true,
                 approve: true,
                 decline: false,
+                profile_completion: 50,
             },
             roles: vec![mentor_role],  // Assign the mentor role
         };
@@ -309,7 +332,22 @@ fn test_non_existent_page() {
         let principal = Principal::from_slice(&[i as u8]);
 
                 // Define the UserInformation with some fields set to None
-                let user_info = UserInfoInternal{
+                let Ok(WasmResult::Reply(response))= pic.update_call(
+        backend_canister,
+        test_principal,
+        "generate_captcha_with_id",
+        encode_one(()).unwrap()
+    )else{
+        panic!("Expected reply")
+    };
+
+    let result: (String,String) = decode_args(&response).unwrap();
+
+    let captcha_id = &result.0;
+    let captcha_input=&result.1;
+    ic_cdk::println!("CAPTCHA {:?}", result);
+
+    let user_info = UserInfoInternal{
                     params :UserInformation {
                         full_name: "Test User".to_string(),
                         profile_picture: None, // No initial picture provided
@@ -325,6 +363,7 @@ fn test_non_existent_page() {
                     uid: "839047bc25dd6b3d25bf153f8ae121bdfb5ca2cc9246763fb59a679c1eeb4586".to_string(),
                     is_active: true,
                     joining_date: 06062003,
+                    profile_completion: 50,
                 };
         
                 // Simulate registering the user
@@ -352,10 +391,10 @@ fn test_non_existent_page() {
                     icp_hub_or_spoke: false,
                     category_of_mentoring_service: "Technology".to_string(),
                     links: None,
-                    multichain: Some("Ethereum, Solana".to_string()),
+                    multichain: Some(vec!["Ethereum".to_string(), "Solana".to_string()]),
                     years_of_mentoring: "10".to_string(),
                     website: Some(format!("https://mentor{}.com", i)),
-                    area_of_expertise: "Blockchain".to_string(),
+                    area_of_expertise: vec!["Blockchain".to_string()],
                     reason_for_joining: Some(format!("To mentor project {}", i)),
                     hub_owner: Some("ICP Hub Owner".to_string()),
                 },
@@ -363,6 +402,7 @@ fn test_non_existent_page() {
                 active: true,
                 approve: true,
                 decline: false,
+                profile_completion: 50,
             },
             roles: vec![mentor_role],  // Assign the mentor role
         };
@@ -429,7 +469,22 @@ fn test_page_size_larger_than_total_mentors() {
         let principal = Principal::from_slice(&[i as u8]);
 
         // Define the UserInformation with some fields set to None
-        let user_info = UserInfoInternal{
+        let Ok(WasmResult::Reply(response))= pic.update_call(
+        backend_canister,
+        test_principal,
+        "generate_captcha_with_id",
+        encode_one(()).unwrap()
+    )else{
+        panic!("Expected reply")
+    };
+
+    let result: (String,String) = decode_args(&response).unwrap();
+
+    let captcha_id = &result.0;
+    let captcha_input=&result.1;
+    ic_cdk::println!("CAPTCHA {:?}", result);
+
+    let user_info = UserInfoInternal{
             params :UserInformation {
                 full_name: "Test User".to_string(),
                 profile_picture: None, // No initial picture provided
@@ -445,6 +500,7 @@ fn test_page_size_larger_than_total_mentors() {
             uid: "839047bc25dd6b3d25bf153f8ae121bdfb5ca2cc9246763fb59a679c1eeb4586".to_string(),
             is_active: true,
             joining_date: 06062003,
+            profile_completion: 50,
         };
 
         // Simulate registering the user
@@ -472,10 +528,10 @@ fn test_page_size_larger_than_total_mentors() {
                     icp_hub_or_spoke: false,
                     category_of_mentoring_service: "Technology".to_string(),
                     links: None,
-                    multichain: Some("Ethereum, Solana".to_string()),
+                    multichain: Some(vec!["Ethereum".to_string(), "Solana".to_string()]),
                     years_of_mentoring: "10".to_string(),
                     website: Some(format!("https://mentor{}.com", i)),
-                    area_of_expertise: "Blockchain".to_string(),
+                    area_of_expertise: vec!["Blockchain".to_string()],
                     reason_for_joining: Some(format!("To mentor project {}", i)),
                     hub_owner: Some("ICP Hub Owner".to_string()),
                 },
@@ -483,6 +539,7 @@ fn test_page_size_larger_than_total_mentors() {
                 active: true,
                 approve: true,
                 decline: false,
+                profile_completion: 50,
             },
             roles: vec![mentor_role],  // Assign the mentor role
         };
@@ -542,6 +599,21 @@ fn test_zero_values() {
     let principal = Principal::from_slice(&[1 as u8]);
 
     // Define the UserInformation with some fields set to None
+    let Ok(WasmResult::Reply(response))= pic.update_call(
+        backend_canister,
+        test_principal,
+        "generate_captcha_with_id",
+        encode_one(()).unwrap()
+    )else{
+        panic!("Expected reply")
+    };
+
+    let result: (String,String) = decode_args(&response).unwrap();
+
+    let captcha_id = &result.0;
+    let captcha_input=&result.1;
+    ic_cdk::println!("CAPTCHA {:?}", result);
+
     let user_info = UserInfoInternal{
         params :UserInformation {
             full_name: "Test User".to_string(),
@@ -558,6 +630,7 @@ fn test_zero_values() {
         uid: "839047bc25dd6b3d25bf153f8ae121bdfb5ca2cc9246763fb59a679c1eeb4586".to_string(),
         is_active: true,
         joining_date: 06062003,
+        profile_completion: 50,
     };
 
     // Simulate registering the user
@@ -585,10 +658,10 @@ fn test_zero_values() {
                 icp_hub_or_spoke: false,
                 category_of_mentoring_service: "Technology".to_string(),
                 links: None,
-                multichain: Some("Ethereum, Solana".to_string()),
+                multichain: Some(vec!["Ethereum".to_string(), "Solana".to_string()]),
                 years_of_mentoring: "10".to_string(),
                 website: Some("https://mentor.com".to_string()),
-                area_of_expertise: "Blockchain".to_string(),
+                area_of_expertise: vec!["Blockchain".to_string()],
                 reason_for_joining: Some("To mentor project".to_string()),
                 hub_owner: Some("ICP Hub Owner".to_string()),
             },
@@ -596,6 +669,7 @@ fn test_zero_values() {
             active: true,
             approve: true,
             decline: false,
+            profile_completion: 50,
         },
         roles: vec![mentor_role],  // Assign the mentor role
     };

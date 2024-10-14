@@ -11,7 +11,7 @@ pub struct PaginationParams {
     pub page_size: usize,
 }
 
-#[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug,PartialEq)]
 pub struct ListAllProjects {
     pub params: ProjectInfoInternal,
     pub overall_average: Option<f64>,
@@ -24,7 +24,7 @@ pub struct PaginationReturnProjectData {
     pub count: u64,
 }
 
-#[derive(CandidType, Clone)]
+#[derive(CandidType, Clone,Deserialize)]
 pub struct PaginationReturnVcData {
     pub data: Vec<(Principal, VcWithRoles, UserInformation)>,
     pub count: u64,

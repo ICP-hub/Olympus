@@ -8,7 +8,7 @@ use IcpAccelerator_backend::user_modules::user_types::*;
 use IcpAccelerator_backend::vc_module::vc_types::*;
 
 // Define the path to your compiled Wasm file
-const BACKEND_WASM: &str = "/Users/mridulyadav/Desktop/ICPAccelerator/target/wasm32-unknown-unknown/release/IcpAccelerator_backend.wasm";
+const BACKEND_WASM: &str = "/home/harman/accelerator/ICPAccelerator/target/wasm32-unknown-unknown/release/IcpAccelerator_backend.wasm";
 
 // Setup function to initialize PocketIC and install the Wasm module
 fn setup() -> (PocketIc, Principal) {
@@ -47,6 +47,7 @@ fn test_list_all_vcs() {
         uid: "839047bc25dd6b3d25bf153f8ae121bdfb5ca2cc9246763fb59a679c1eeb4586".to_string(),
         is_active: true,
         joining_date: 06062003,
+        profile_completion: 50,
     };
 
     // Simulate registering the user
@@ -74,6 +75,7 @@ fn test_list_all_vcs() {
         uid: "gdgdgd".to_string(),
         is_active: true,
         joining_date: 09092003,
+        profile_completion: 50,
     };
 
     // Simulate registering the user
@@ -171,6 +173,7 @@ fn test_list_all_vcs() {
             is_active: true,
             approve: false,
             decline: false,
+            profile_completion: 50,
         },
         roles: vec![], // This should match the roles returned by get_roles_for_principal
     };
@@ -182,6 +185,7 @@ fn test_list_all_vcs() {
             is_active: true,
             approve: false,
             decline: false,
+            profile_completion: 50,
         },
         roles: vec![], // This should match the roles returned by get_roles_for_principal
     };

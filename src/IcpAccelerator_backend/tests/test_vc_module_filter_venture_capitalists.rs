@@ -6,7 +6,7 @@ use std::fs;
 use IcpAccelerator_backend::{user_modules::user_types::UserInformation, vc_module::vc_types::*};
 
 // Define the path to your compiled Wasm file
-const BACKEND_WASM: &str = "/Users/mridulyadav/Desktop/ICPAccelerator/target/wasm32-unknown-unknown/release/IcpAccelerator_backend.wasm";
+const BACKEND_WASM: &str = "/home/harman/accelerator/ICPAccelerator/target/wasm32-unknown-unknown/release/IcpAccelerator_backend.wasm";
 
 // Setup function to initialize PocketIC and install the Wasm module
 fn setup() -> (PocketIc, Principal) {
@@ -555,8 +555,8 @@ fn test_filter_vcs_with_partially_matching_range() {
         backend_canister,
         Principal::anonymous(),
         "filter_venture_capitalists",
-        encode_one(criteria).unwrap());
-    else {
+        encode_one(criteria).unwrap())
+    else{
         panic!("Expected reply");
     };
 

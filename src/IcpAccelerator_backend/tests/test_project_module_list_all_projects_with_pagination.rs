@@ -1,3 +1,4 @@
+
 use candid::{decode_one, encode_one, Principal};
 use pocket_ic::{PocketIc, WasmResult};
 use IcpAccelerator_backend::project_module::project_types::{ProjectInfo, ProjectInfoInternal};
@@ -7,7 +8,7 @@ use std::fs;
 
 
 // Define the path to your compiled Wasm file
-const BACKEND_WASM: &str = "/Users/mridulyadav/Desktop/ICPAccelerator/target/wasm32-unknown-unknown/release/IcpAccelerator_backend.wasm";
+const BACKEND_WASM: &str = "/home/harman/accelerator/ICPAccelerator/target/wasm32-unknown-unknown/release/IcpAccelerator_backend.wasm";
 
 // Setup function to initialize PocketIC and install the Wasm module
 fn setup() -> (PocketIc, Principal) {
@@ -46,6 +47,7 @@ fn test_list_all_projects_with_pagination() {
         uid: "839047bc25dd6b3d25bf153f8ae121bdfb5ca2cc9246763fb59a679c1eeb4586".to_string(),
         is_active: true,
         joining_date: 06062003,
+        profile_completion: 50,
     };
 
     // Simulate registering the user
@@ -73,6 +75,7 @@ fn test_list_all_projects_with_pagination() {
         uid: "gdgdgd".to_string(),
         is_active: true,
         joining_date: 09092003,
+        profile_completion: 50,
     };
 
     // Simulate registering the user
@@ -122,7 +125,8 @@ fn test_list_all_projects_with_pagination() {
         uid: "5cbe7089b7f6704eda6cb2194489327900ae5cec9042352e3a0be17ab4573c5d".to_string(),
         is_active: true,
         is_verified: false,
-        creation_date: 1625097600, // Example timestamp
+        creation_date: 1625097600,
+        profile_completion: 50, // Example timestamp
     };
 
     // Simulate the project registration by directly manipulating the canister state
@@ -177,7 +181,8 @@ fn test_list_all_projects_with_pagination() {
         uid: "b6214924954366fa5cc590af7a267b0f30de3c36a4419048efaf0d5e74ca16a3".to_string(),
         is_active: true,
         is_verified: false,
-        creation_date: 1625097600, // Example timestamp
+        creation_date: 1625097600,
+        profile_completion: 50, // Example timestamp
     };
 
     // Simulate the project registration by directly manipulating the canister state
@@ -214,11 +219,11 @@ fn test_list_all_projects_with_pagination() {
 
     assert_eq!(pagination_result.data.len(), 1, "Should return one project on the first page");
 
-    let first_project = &pagination_result.data[0];
-
+    let (_principal_all, list_all_projects,_userinfo_alll) = &pagination_result.data[0];
+    
     // Verify the project details for the first page
-    assert_eq!(first_project.params.params.project_name, project_info1.params.project_name, "First project name mismatch");
-    assert!(pagination_result.user_data.contains_key(&test_principal1), "First user's information should be present");
+    assert_eq!(list_all_projects.params.params.project_name, project_info1.params.project_name, "First project name mismatch");
+    assert!(pagination_result.data.iter().any(|(principal, _, _)| *principal == test_principal1),  "First user's information should be present");
 
     // Verify total count of projects
     assert_eq!(pagination_result.count, 2, "Total project count should be 2");
@@ -238,15 +243,17 @@ fn test_list_all_projects_with_pagination() {
         panic!("Expected reply");
     };
 
+
+
     let pagination_result_page_2: PaginationReturnProjectData = decode_one(&response_page_2).expect("Decoding failed");
 
     assert_eq!(pagination_result_page_2.data.len(), 1, "Should return one project on the second page");
 
-    let second_project = &pagination_result_page_2.data[0];
+    let (_principal_all_2, list_all_projects_2, _userinfo_all_2) = &pagination_result_page_2.data[0];
 
     // Verify the project details for the second page
-    assert_eq!(second_project.params.params.project_name, project_info2.params.project_name, "Second project name mismatch");
-    assert!(pagination_result_page_2.user_data.contains_key(&test_principal2), "Second user's information should be present");
+    assert_eq!(list_all_projects_2.params.params.project_name, project_info2.params.project_name, "Second project name mismatch");
+    assert!(pagination_result_page_2.data.iter().any(|(principal, _, _)| *principal == test_principal2), "Second user's information should be present");
 }
 
 #[test]

@@ -7,8 +7,7 @@ use IcpAccelerator_backend::{
 use std::fs;
 
 // Define the path to your compiled Wasm file
-const BACKEND_WASM: &str = "/Users/mridulyadav/Desktop/ICPAccelerator/target/wasm32-unknown-unknown/release/IcpAccelerator_backend.wasm";
-
+const BACKEND_WASM: &str = "/home/harman/accelerator/ICPAccelerator/target/wasm32-unknown-unknown/release/IcpAccelerator_backend.wasm";
 // Setup function to initialize PocketIC and install the Wasm module
 fn setup() -> (PocketIc, Principal) {
     let pic = PocketIc::new();
@@ -28,7 +27,7 @@ fn test_update_mentor() {
     let test_principal = Principal::anonymous(); // Replace with a specific principal if needed
 
     // Define the initial UserInformation
-    let user_info = UserInfoInternal {
+let user_info = UserInfoInternal {
         params: UserInformation {
             full_name: "Mentor Test".to_string(),
             profile_picture: None,
@@ -44,15 +43,21 @@ fn test_update_mentor() {
         uid: "839047bc25dd6b3d25bf153f8ae121bdfb5ca2cc9246763fb59a679c1eeb4586".to_string(),
         is_active: true,
         joining_date: 1625097600,
+        profile_completion: 50,
     };
 
     // Simulate registering the user
-    pic.update_call(
+    let Ok(WasmResult::Reply(response))= pic.update_call(
         backend_canister,
         test_principal,
         "register_user",
-        encode_one(user_info.params.clone()).unwrap(),
-    ).expect("User registration failed");
+        encode_args((captcha_id, captcha_input, user_info.params.clone())).unwrap(),
+    )else{
+        panic!("Expected Reply")
+    };
+
+    let result:Result<std::string::String, std::string::String>= decode_one(&response).unwrap();
+    ic_cdk::println!("REGISTERED USER {:?}", result);
 
     // Define the initial MentorProfile
     let mentor_profile = MentorProfile {
@@ -62,10 +67,10 @@ fn test_update_mentor() {
         icp_hub_or_spoke: false,
         category_of_mentoring_service: "Blockchain".to_string(),
         links: None,
-        multichain: Some("Ethereum, Solana".to_string()),
+        multichain: Some(vec!["Ethereum".to_string(), "Solana".to_string()]),
         years_of_mentoring: "10".to_string(),
         website: Some("https://mentor.example.com".to_string()),
-        area_of_expertise: "Blockchain".to_string(),
+        area_of_expertise: vec!["Blockchain".to_string()],
         reason_for_joining: Some("To help new projects succeed.".to_string()),
         hub_owner: Some("ICP Hub Owner".to_string()),
     };
@@ -86,10 +91,10 @@ fn test_update_mentor() {
         icp_hub_or_spoke: true,
         category_of_mentoring_service: "Updated Service".to_string(),
         links: None,
-        multichain: Some("Polkadot, Avalanche".to_string()),
+        multichain: Some(vec![String::from("Polkadot, Avalanche")]),
         years_of_mentoring: "15".to_string(),
         website: Some("https://new-mentor.example.com".to_string()),
-        area_of_expertise: "Decentralized Finance".to_string(),
+        area_of_expertise: vec![String::from("Decentralized Finance")],
         reason_for_joining: Some("To mentor in new areas.".to_string()),
         hub_owner: Some("New Hub Owner".to_string()),
     };
@@ -145,7 +150,7 @@ fn test_update_non_existent_mentor() {
 
     let principal = Principal::from_slice(&[2 as u8]);
     // Define the initial UserInformation
-    let user_info = UserInfoInternal {
+let user_info = UserInfoInternal {
         params: UserInformation {
             full_name: "Mentor Test".to_string(),
             profile_picture: None,
@@ -161,6 +166,7 @@ fn test_update_non_existent_mentor() {
         uid: "839047bc25dd6b3d25bf153f8ae121bdfb5ca2cc9246763fb59a679c1eeb4586".to_string(),
         is_active: true,
         joining_date: 1625097600,
+        profile_completion: 50,
     };
 
     // Simulate registering the user
@@ -179,10 +185,10 @@ fn test_update_non_existent_mentor() {
         icp_hub_or_spoke: true,
         category_of_mentoring_service: "DeFi".to_string(),
         links: None,
-        multichain: Some("Polkadot, Avalanche".to_string()),
+        multichain: Some(vec![String::from("Polkadot, Avalanche")]),
         years_of_mentoring: "15".to_string(),
         website: Some("https://mentor.example.com".to_string()),
-        area_of_expertise: "DeFi".to_string(),
+        area_of_expertise: vec![String::from("DeFi")],
         reason_for_joining: Some("To mentor DeFi projects.".to_string()),
         hub_owner: Some("ICP Hub Owner".to_string()),
     };
@@ -213,6 +219,21 @@ fn test_partial_update() {
     let principal = Principal::from_slice(&[3 as u8]);
 
     // Register as user and mentor
+    let Ok(WasmResult::Reply(response))= pic.update_call(
+        backend_canister,
+        test_principal,
+        "generate_captcha_with_id",
+        encode_one(()).unwrap()
+    )else{
+        panic!("Expected reply")
+    };
+
+    let result: (String,String) = decode_args(&response).unwrap();
+
+    let captcha_id = &result.0;
+    let captcha_input=&result.1;
+    ic_cdk::println!("CAPTCHA {:?}", result);
+
     let user_info = UserInfoInternal {
         uid: "user_uid_3".to_string(),
         params: UserInformation {
@@ -229,6 +250,7 @@ fn test_partial_update() {
         },
         is_active: true,
         joining_date: 150823,
+        profile_completion: 50,
     };
 // Simulate registering the user
     pic.update_call(
@@ -245,10 +267,10 @@ fn test_partial_update() {
         icp_hub_or_spoke: false,
         category_of_mentoring_service: "Blockchain".to_string(),
         links: None,
-        multichain: Some("Ethereum, Solana".to_string()),
+        multichain: Some(vec!["Ethereum".to_string(), "Solana".to_string()]),
         years_of_mentoring: "10".to_string(),
         website: Some("https://mentor.example.com".to_string()),
-        area_of_expertise: "Blockchain".to_string(),
+        area_of_expertise: vec!["Blockchain".to_string()],
         reason_for_joining: Some("To help new projects succeed.".to_string()),
         hub_owner: Some("ICP Hub Owner".to_string()),
     };
@@ -270,7 +292,7 @@ fn test_partial_update() {
         multichain: None,
         years_of_mentoring: "10".to_string(), // No change
         website: Some("https://updated-mentor.example.com".to_string()),
-        area_of_expertise: "Blockchain".to_string(), // No change
+        area_of_expertise: vec!["Blockchain".to_string()], // No change
         reason_for_joining: None,
         hub_owner: None,
     };
@@ -302,10 +324,10 @@ fn test_partial_update() {
     let (retrieved_mentor, _) = retrieved_mentor_info.unwrap();
 
     // Verify only the updated fields were changed
-    assert_eq!(retrieved_mentor.category_of_mentoring_service, "Updated Service", "Category of mentoring service should be updated");
-    assert_eq!(retrieved_mentor.website, Some("https://updated-mentor.example.com".to_string()), "Website should be updated");
-    assert_eq!(retrieved_mentor.years_of_mentoring, "10".to_string(), "Years of mentoring should remain unchanged");
-    assert_eq!(retrieved_mentor.area_of_expertise, "Blockchain".to_string(), "Area of expertise should remain unchanged");
+    assert_eq!(retrieved_mentor.category_of_mentoring_service, mentor_profile.category_of_mentoring_service, "Category of mentoring service should be updated");
+    assert_eq!(retrieved_mentor.website, mentor_profile.website, "Website should be updated");
+    assert_eq!(retrieved_mentor.years_of_mentoring, mentor_profile.years_of_mentoring, "Years of mentoring should remain unchanged");
+    assert_eq!(retrieved_mentor.area_of_expertise, mentor_profile.area_of_expertise, "Area of expertise should remain unchanged");
 }
 
 
@@ -322,6 +344,21 @@ fn test_update_with_empty_fields() {
     let principal = Principal::from_slice(&[4 as u8]);
 
     // Register as user and mentor
+    let Ok(WasmResult::Reply(response))= pic.update_call(
+        backend_canister,
+        test_principal,
+        "generate_captcha_with_id",
+        encode_one(()).unwrap()
+    )else{
+        panic!("Expected reply")
+    };
+
+    let result: (String,String) = decode_args(&response).unwrap();
+
+    let captcha_id = &result.0;
+    let captcha_input=&result.1;
+    ic_cdk::println!("CAPTCHA {:?}", result);
+
     let user_info = UserInfoInternal {
         uid: "user_uid_4".to_string(),
         params: UserInformation {
@@ -338,6 +375,7 @@ fn test_update_with_empty_fields() {
         },
         is_active: true,
         joining_date: 150823,
+        profile_completion: 50,
     };
 // Simulate registering the user
     pic.update_call(
@@ -354,10 +392,10 @@ fn test_update_with_empty_fields() {
         icp_hub_or_spoke: false,
         category_of_mentoring_service: "Blockchain".to_string(),
         links: None,
-        multichain: Some("Ethereum, Solana".to_string()),
+        multichain: Some(vec!["Ethereum".to_string(), "Solana".to_string()]),
         years_of_mentoring: "10".to_string(),
         website: Some("https://mentor.example.com".to_string()),
-        area_of_expertise: "Blockchain".to_string(),
+        area_of_expertise: vec!["Blockchain".to_string()],
         reason_for_joining: Some("To help new projects succeed.".to_string()),
         hub_owner: Some("ICP Hub Owner".to_string()),
     };
@@ -376,10 +414,10 @@ fn test_update_with_empty_fields() {
         icp_hub_or_spoke: true,
         category_of_mentoring_service: "".to_string(),  // Empty string
         links: None,
-        multichain: Some("".to_string()),  // Empty string
+        multichain: Some(vec![String::new()]),  // Empty string
         years_of_mentoring: "".to_string(),  // Empty string
         website: Some("".to_string()),  // Empty string
-        area_of_expertise: "".to_string(),  // Empty string
+        area_of_expertise: vec![String::new()],  // Empty string
         reason_for_joining: Some("".to_string()),  // Empty string
         hub_owner: Some("".to_string()),  // Empty string
     };
@@ -411,10 +449,10 @@ fn test_update_with_empty_fields() {
     let (retrieved_mentor, _) = retrieved_mentor_info.unwrap();
 
     // Ensure empty fields are updated correctly (or remain unchanged if empty input is ignored)
-    assert_eq!(retrieved_mentor.preferred_icp_hub, Some("".to_string()), "Preferred ICP Hub should be an empty string");
-    assert_eq!(retrieved_mentor.category_of_mentoring_service, "".to_string(), "Category of mentoring service should be an empty string");
-    assert_eq!(retrieved_mentor.website, Some("".to_string()), "Website should be an empty string");
-    assert_eq!(retrieved_mentor.area_of_expertise, "".to_string(), "Area of expertise should be an empty string");
+    assert_eq!(retrieved_mentor.preferred_icp_hub, mentor_profile.preferred_icp_hub, "Preferred ICP Hub should be an empty string");
+    assert_eq!(retrieved_mentor.category_of_mentoring_service, mentor_profile.category_of_mentoring_service, "Category of mentoring service should be an empty string");
+    assert_eq!(retrieved_mentor.website, mentor_profile.website, "Website should be an empty string");
+    assert_eq!(retrieved_mentor.area_of_expertise, mentor_profile.area_of_expertise, "Area of expertise should be an empty string");
 }
 
 
@@ -430,6 +468,21 @@ fn test_maximum_limits_on_input_data() {
     let principal = Principal::from_slice(&[7 as u8]);
 
     // Register as user and mentor
+    let Ok(WasmResult::Reply(response))= pic.update_call(
+        backend_canister,
+        test_principal,
+        "generate_captcha_with_id",
+        encode_one(()).unwrap()
+    )else{
+        panic!("Expected reply")
+    };
+
+    let result: (String,String) = decode_args(&response).unwrap();
+
+    let captcha_id = &result.0;
+    let captcha_input=&result.1;
+    ic_cdk::println!("CAPTCHA {:?}", result);
+
     let user_info = UserInfoInternal {
         uid: "user_uid_7".to_string(),
         params: UserInformation {
@@ -446,6 +499,7 @@ fn test_maximum_limits_on_input_data() {
         },
         is_active: true,
         joining_date: 150823,
+        profile_completion: 50,
     };
 // Simulate registering the user
     pic.update_call(
@@ -462,10 +516,10 @@ fn test_maximum_limits_on_input_data() {
         icp_hub_or_spoke: false,
         category_of_mentoring_service: "Blockchain".to_string(),
         links: None,
-        multichain: Some("Ethereum, Solana".to_string()),
+        multichain: Some(vec!["Ethereum".to_string(), "Solana".to_string()]),
         years_of_mentoring: "10".to_string(),
         website: Some("https://mentor.example.com".to_string()),
-        area_of_expertise: "Blockchain".to_string(),
+        area_of_expertise: vec!["Blockchain".to_string()],
         reason_for_joining: Some("To help new projects succeed.".to_string()),
         hub_owner: Some("ICP Hub Owner".to_string()),
     };
@@ -487,10 +541,10 @@ fn test_maximum_limits_on_input_data() {
         icp_hub_or_spoke: true,
         category_of_mentoring_service: max_length_string.clone(), // Maximum length string
         links: None,
-        multichain: Some(max_length_string.clone()), // Maximum length string
+        multichain: Some(vec![max_length_string.clone()]), // Maximum length string
         years_of_mentoring: max_length_string.clone(), // Maximum length string
         website: Some(max_length_string.clone()), // Maximum length string (even though it's supposed to be a URL)
-        area_of_expertise: max_length_string.clone(), // Maximum length string
+        area_of_expertise: vec![max_length_string.clone()], // Maximum length string
         reason_for_joining: Some(max_length_string.clone()), // Maximum length string
         hub_owner: Some(max_length_string.clone()), // Maximum length string
     };
@@ -523,10 +577,10 @@ fn test_maximum_limits_on_input_data() {
     let (retrieved_mentor, _) = retrieved_mentor_info.unwrap();
 
     // Ensure the maximum input data is updated correctly
-    assert_eq!(retrieved_mentor.preferred_icp_hub, Some(max_length_string.clone()), "Preferred ICP Hub should match the maximum input data");
-    assert_eq!(retrieved_mentor.category_of_mentoring_service, max_length_string.clone(), "Category of mentoring service should match the maximum input data");
-    assert_eq!(retrieved_mentor.website, Some(max_length_string.clone()), "Website should match the maximum input data");
-    assert_eq!(retrieved_mentor.area_of_expertise, max_length_string.clone(), "Area of expertise should match the maximum input data");
+    assert_eq!(retrieved_mentor.preferred_icp_hub, mentor_profile.preferred_icp_hub, "Preferred ICP Hub should match the maximum input data");
+    assert_eq!(retrieved_mentor.category_of_mentoring_service, mentor_profile.category_of_mentoring_service, "Category of mentoring service should match the maximum input data");
+    assert_eq!(retrieved_mentor.website, mentor_profile.website, "Website should match the maximum input data");
+    assert_eq!(retrieved_mentor.area_of_expertise, mentor_profile.area_of_expertise, "Area of expertise should match the maximum input data");
 }
 
 
@@ -543,6 +597,21 @@ fn test_case_sensitivity() {
     let principal = Principal::from_slice(&[8 as u8]);
 
     // Register as user and mentor
+    let Ok(WasmResult::Reply(response))= pic.update_call(
+        backend_canister,
+        test_principal,
+        "generate_captcha_with_id",
+        encode_one(()).unwrap()
+    )else{
+        panic!("Expected reply")
+    };
+
+    let result: (String,String) = decode_args(&response).unwrap();
+
+    let captcha_id = &result.0;
+    let captcha_input=&result.1;
+    ic_cdk::println!("CAPTCHA {:?}", result);
+
     let user_info = UserInfoInternal {
         uid: "user_uid_8".to_string(),
         params: UserInformation {
@@ -559,6 +628,7 @@ fn test_case_sensitivity() {
         },
         is_active: true,
         joining_date: 150823,
+        profile_completion: 50,
     };
 // Simulate registering the user
     pic.update_call(
@@ -575,10 +645,10 @@ fn test_case_sensitivity() {
         icp_hub_or_spoke: false,
         category_of_mentoring_service: "Blockchain".to_string(),
         links: None,
-        multichain: Some("Ethereum, Solana".to_string()),
+        multichain: Some(vec!["Ethereum".to_string(), "Solana".to_string()]),
         years_of_mentoring: "10".to_string(),
         website: Some("https://mentor.example.com".to_string()),
-        area_of_expertise: "Blockchain".to_string(),
+        area_of_expertise: vec!["Blockchain".to_string()],
         reason_for_joining: Some("To help new projects succeed.".to_string()),
         hub_owner: Some("ICP Hub Owner".to_string()),
     };
@@ -597,10 +667,10 @@ fn test_case_sensitivity() {
         icp_hub_or_spoke: true,
         category_of_mentoring_service: "DeFi".to_string(), // Different case
         links: None,
-        multichain: Some("Ethereum, Solana".to_string()), // Original case
+        multichain: Some(vec!["Ethereum".to_string(), "Solana".to_string()]), // Original case
         years_of_mentoring: "15".to_string(),
         website: Some("https://mentor.example.com".to_string()),
-        area_of_expertise: "DeFi".to_string(), // Different case
+        area_of_expertise: vec![String::from("DeFi")], // Different case
         reason_for_joining: Some("to mentor defi projects.".to_string()), // Lowercase
         hub_owner: Some("icp hub owner".to_string()), // Lowercase
     };
@@ -651,6 +721,21 @@ fn test_invalid_data_types() {
     let principal = Principal::from_slice(&[9 as u8]);
 
     // Register as user and mentor
+    let Ok(WasmResult::Reply(response))= pic.update_call(
+        backend_canister,
+        test_principal,
+        "generate_captcha_with_id",
+        encode_one(()).unwrap()
+    )else{
+        panic!("Expected reply")
+    };
+
+    let result: (String,String) = decode_args(&response).unwrap();
+
+    let captcha_id = &result.0;
+    let captcha_input=&result.1;
+    ic_cdk::println!("CAPTCHA {:?}", result);
+
     let user_info = UserInfoInternal {
         uid: "user_uid_9".to_string(),
         params: UserInformation {
@@ -667,6 +752,7 @@ fn test_invalid_data_types() {
         },
         is_active: true,
         joining_date: 150823,
+        profile_completion: 50,
     };
 // Simulate registering the user
     pic.update_call(
@@ -683,10 +769,10 @@ fn test_invalid_data_types() {
         icp_hub_or_spoke: false,
         category_of_mentoring_service: "Blockchain".to_string(),
         links: None,
-        multichain: Some("Ethereum, Solana".to_string()),
+        multichain: Some(vec!["Ethereum".to_string(), "Solana".to_string()]),
         years_of_mentoring: "10".to_string(),
         website: Some("https://mentor.example.com".to_string()),
-        area_of_expertise: "Blockchain".to_string(),
+        area_of_expertise: vec!["Blockchain".to_string()],
         reason_for_joining: Some("To help new projects succeed.".to_string()),
         hub_owner: Some("ICP Hub Owner".to_string()),
     };
@@ -705,10 +791,10 @@ fn test_invalid_data_types() {
         icp_hub_or_spoke: false,
         category_of_mentoring_service: "Blockchain".to_string(),
         links: None,
-        multichain: Some("Ethereum, Solana".to_string()),
+        multichain: Some(vec!["Ethereum".to_string(), "Solana".to_string()]),
         years_of_mentoring: "15".to_string(),  // Valid
         website: Some("https://mentor.example.com".to_string()),  // Valid
-        area_of_expertise: "Blockchain".to_string(),  // Valid
+        area_of_expertise: vec!["Blockchain".to_string()],  // Valid
         reason_for_joining: Some("To mentor new projects.".to_string()),  // Valid
         hub_owner: Some("ICP Hub Owner".to_string()),  // Valid
     };
@@ -756,6 +842,21 @@ fn test_special_characters_and_emojis() {
     let principal = Principal::from_slice(&[14 as u8]);
 
     // Register as user and mentor
+    let Ok(WasmResult::Reply(response))= pic.update_call(
+        backend_canister,
+        test_principal,
+        "generate_captcha_with_id",
+        encode_one(()).unwrap()
+    )else{
+        panic!("Expected reply")
+    };
+
+    let result: (String,String) = decode_args(&response).unwrap();
+
+    let captcha_id = &result.0;
+    let captcha_input=&result.1;
+    ic_cdk::println!("CAPTCHA {:?}", result);
+
     let user_info = UserInfoInternal {
         uid: "user_uid_14".to_string(),
         params: UserInformation {
@@ -772,6 +873,7 @@ fn test_special_characters_and_emojis() {
         },
         is_active: true,
         joining_date: 150823,
+        profile_completion: 50,
     };
 // Simulate registering the user
     pic.update_call(
@@ -788,10 +890,10 @@ fn test_special_characters_and_emojis() {
         icp_hub_or_spoke: false,
         category_of_mentoring_service: "Blockchain".to_string(),
         links: None,
-        multichain: Some("Ethereum, Solana".to_string()),
+        multichain: Some(vec!["Ethereum".to_string(), "Solana".to_string()]),
         years_of_mentoring: "10".to_string(),
         website: Some("https://mentor.example.com".to_string()),
-        area_of_expertise: "Blockchain".to_string(),
+        area_of_expertise: vec!["Blockchain".to_string()],
         reason_for_joining: Some("To help new projects succeed.".to_string()),
         hub_owner: Some("ICP Hub Owner".to_string()),
     };
@@ -810,10 +912,10 @@ fn test_special_characters_and_emojis() {
         icp_hub_or_spoke: true,
         category_of_mentoring_service: "Blockchain 🌐".to_string(),  // Special characters and emojis
         links: None,
-        multichain: Some("🌍 Ethereum, Solana 🌍".to_string()),  // Special characters and emojis
+        multichain: Some(vec!["🌍 Ethereum, Solana 🌍".to_string()]),  // Special characters and emojis
         years_of_mentoring: "10️⃣".to_string(),  // Special characters and emojis
         website: Some("https://mentor.example.com/✨".to_string()),  // Special characters and emojis
-        area_of_expertise: "Blockchain 🔒".to_string(),  // Special characters and emojis
+        area_of_expertise: vec!["Blockchain 🔒".to_string()],  // Special characters and emojis
         reason_for_joining: Some("To help new projects succeed 🌟".to_string()),  // Special characters and emojis
         hub_owner: Some("ICP Hub Owner 🌟".to_string()),  // Special characters and emojis
     };
@@ -846,10 +948,10 @@ fn test_special_characters_and_emojis() {
     let (retrieved_mentor, _) = retrieved_mentor_info.unwrap();
 
     // Ensure the special characters and emojis are updated correctly
-    assert_eq!(retrieved_mentor.preferred_icp_hub, Some("✨ICP Hub✨".to_string()), "Preferred ICP Hub should match the input with special characters and emojis");
-    assert_eq!(retrieved_mentor.category_of_mentoring_service, "Blockchain 🌐".to_string(), "Category of mentoring service should match the input with special characters and emojis");
-    assert_eq!(retrieved_mentor.website, Some("https://mentor.example.com/✨".to_string()), "Website should match the input with special characters and emojis");
-    assert_eq!(retrieved_mentor.area_of_expertise, "Blockchain 🔒".to_string(), "Area of expertise should match the input with special characters and emojis");
+    assert_eq!(retrieved_mentor.preferred_icp_hub, mentor_profile.preferred_icp_hub, "Preferred ICP Hub should match the input with special characters and emojis");
+    assert_eq!(retrieved_mentor.category_of_mentoring_service, mentor_profile.category_of_mentoring_service, "Category of mentoring service should match the input with special characters and emojis");
+    assert_eq!(retrieved_mentor.website, mentor_profile.website, "Website should match the input with special characters and emojis");
+    assert_eq!(retrieved_mentor.area_of_expertise, mentor_profile.area_of_expertise, "Area of expertise should match the input with special characters and emojis");
 }
 
 

@@ -7,7 +7,7 @@ use IcpAccelerator_backend::user_modules::user_types::*;
 use IcpAccelerator_backend::vc_module::vc_types::*;
 
 // Define the path to your compiled Wasm file
-const BACKEND_WASM: &str = "/Users/mridulyadav/Desktop/ICPAccelerator/target/wasm32-unknown-unknown/release/IcpAccelerator_backend.wasm";
+const BACKEND_WASM: &str = "/home/harman/accelerator/ICPAccelerator/target/wasm32-unknown-unknown/release/IcpAccelerator_backend.wasm";
 
 // Setup function to initialize PocketIC and install the Wasm module
 fn setup() -> (PocketIc, Principal) {
@@ -186,7 +186,8 @@ fn test_register_venture_capitalist_with_project_role_conflict() {
         uid: "b7deb0ac398bb66b3d8e1736cd4163d0a8411ec4fda4e8be58de74cdac6c8e08".to_string(),
         is_active: true,
         is_verified: false,
-        creation_date: 1625097600, // Example timestamp
+        creation_date: 1625097600,
+        profile_completion: 50, // Example timestamp
     };
 
     // Simulate the project registration by directly manipulating the canister state
