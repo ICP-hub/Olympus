@@ -15,9 +15,9 @@ const AboutcardSkeleton = ({ getAllData }) => {
     <SkeletonTheme baseColor='#e3e3e3' highlightColor='#c8c8c873'>
       <div className='w-full overflow-hidden h-[95vh] bg-gradient-to-r from-[#ECE9FE] to-[#FFFFFF] items-center justify-center rounded-2xl'>
         <div className='bg-white mx-auto h-[83vh] my-10 rounded-lg shadow-md w-[90%]'>
-          <div className='w-full bg-gray-200 rounded-full h-1.5 mb-4 dark:bg-gray-700'>
+          <div className='w-full bg-gray-200 rounded-full h-1.5 mb-4 '>
             <div
-              className='bg-green-500 h-1.5 rounded-full dark:bg-gray-700'
+              className='bg-green-500 h-1.5 rounded-full '
               style={{ width: '20%' }}
             ></div>
           </div>
