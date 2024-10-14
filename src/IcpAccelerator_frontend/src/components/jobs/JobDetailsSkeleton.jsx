@@ -43,7 +43,7 @@ const JobDetailsSkeleton = () => {
               <Skeleton height={20} />
             </p>
             <div className='mb-3'>
-            <Skeleton height={20} />
+              <Skeleton height={20} />
             </div>
             <div className=''>
               <a className='block border rounded-md bg-[#155EEF]  py-2 w-full text-white text-center'>
@@ -139,15 +139,53 @@ const JobDetailsSkeleton = () => {
               <h4 className='text-sm  font-medium flex items-center'>
                 <TfiEmail />
                 <span className='ml-2 w-[94%] truncate break-all'>
-                  <Skeleton height={20}  />
+                  <Skeleton height={20} />
                 </span>
               </h4>
             </div>
           </div>
         </div>
         <div className='border rounded-lg p-3 w-full md:w-[65%] overflow-y-auto   h-full'>
-          <div className='break-words whitespace-normal overflow-y-auto'>
+          {/* <div className='break-words whitespace-normal overflow-y-auto'>
             <Skeleton height={15} count={5} />
+            
+          </div> */}
+          <div class='space-y-2.5 animate-pulse w-full '>
+            <div class='flex items-center w-full'>
+              <div class='h-2.5 bg-gray-200 rounded-full  w-32'></div>
+              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
+              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
+            </div>
+            <div class='flex items-center w-full '>
+              <div class='h-2.5 bg-gray-200 rounded-full  w-full'></div>
+              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
+              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
+            </div>
+
+            <div class='flex items-center w-full'>
+              <div class='h-2.5 bg-gray-200 rounded-full  w-32'></div>
+              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
+              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
+            </div>
+
+            <div class='flex items-center w-full'>
+              <div class='h-2.5 bg-gray-200 rounded-full  w-32'></div>
+              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
+              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
+            </div>
+
+            <div class='flex items-center w-full '>
+              <div class='h-2.5  bg-gray-300 rounded-full w-32'></div>
+              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
+              <div class='h-2.5 ms-2 bg-gray-200 rounded-full  w-full'></div>
+            </div>
+            <div class='flex items-center w-full max-w-[480px]'>
+              <div class='h-2.5 bg-gray-200 rounded-full  w-full'></div>
+              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
+              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
+            </div>
+
+            <span class='sr-only'>Loading...</span>
           </div>
         </div>
       </div>
