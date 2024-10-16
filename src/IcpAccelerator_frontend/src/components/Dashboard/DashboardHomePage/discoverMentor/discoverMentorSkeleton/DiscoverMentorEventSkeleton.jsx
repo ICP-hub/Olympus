@@ -46,7 +46,7 @@ const DiscoverMentorEventSkeleton = () => {
           </span>
         </div>
         <h3 className='mt-2 text-lg font-bold text-gray-900'>
-          <Skeleton height={15} />
+          <Skeleton height={15} width="60%" />
         </h3>
         <div className='mt-2 text-gray-600 text-sm line-clamp-6 hover:line-clamp-none'>
           <div class='space-y-2.5 animate-pulse w-full '>
@@ -54,6 +54,11 @@ const DiscoverMentorEventSkeleton = () => {
               <div class='h-2.5 bg-gray-200 rounded-full  w-32'></div>
               <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
               <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
+            </div>
+            <div class='flex items-center w-full '>
+              <div class='h-2.5 bg-gray-200 rounded-full  w-full'></div>
+              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
+              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
             </div>
             <div class='flex items-center w-full '>
               <div class='h-2.5 bg-gray-200 rounded-full  w-full'></div>

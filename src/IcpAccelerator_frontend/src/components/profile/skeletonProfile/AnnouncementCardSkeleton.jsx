@@ -9,8 +9,8 @@ const AnnouncementCardSkeleton = () => {
         <div className='flex justify-between items-center mx-3 pb-1 mb-2'>
           <Skeleton height={20} width={80} className='rounded-md' />
           <div className='flex gap-2 sm0:gap-4 items-center'>
-            <Skeleton circle height={30} width={30} />
-            <Skeleton circle height={30} width={30} />
+            <Skeleton circle height={25} width={25} />
+            <Skeleton circle height={25} width={25} />
           </div>
         </div>
         <div className='flex flex-col sm0:flex-row w-full items-center sm0:items-start px-3 py-5 shadow rounded-md mb-4 sm0:space-x-4'>
