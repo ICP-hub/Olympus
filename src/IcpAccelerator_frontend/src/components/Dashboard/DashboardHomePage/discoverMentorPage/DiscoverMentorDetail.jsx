@@ -8,7 +8,7 @@ import Avatar from '@mui/material/Avatar';
 import UserDetail from '../UserDetail';
 import getSocialLogo from '../../../Utils/navigationHelper/getSocialLogo';
 import useTimeout from '../../../hooks/TimeOutHook';
-import UserGeneralDetailSkeleton from '../../../Profile/skeletonProfile/UserGeneralDetailSkeleton';
+import UserGeneralDetailSkeleton from '../../../profile/skeletonProfile/UserGeneralDetailSkeleton';
 import DiscoverProjectProfileSkeleton from '../DiscoverProjectSkeleton/DiscoverProjectProfileSkeleton';
 
 const DiscoverMentorDetail = ({ projectDetails, userData }) => {
@@ -242,7 +242,7 @@ const DiscoverMentorDetail = ({ projectDetails, userData }) => {
               About
             </h3>
 
-            <p className='text-sm'>{userData?.bio[0]}</p>
+            <p className='text-sm line-clamp-2 break-all'>{userData?.bio[0]}</p>
           </div>
 
           <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-2 '>

@@ -123,7 +123,8 @@ const DiscoverReview = (userData, principalId) => {
               key={index}
               className='bg-gray-100 rounded-lg p-4 flex md1:mt-4 flex-col gap-4 '
             >
-              <div className='flex gap-4 flex-shrink-0'>
+              <div className='sm0:flex  items-center justify-center w-full  gap-4 flex-shrink-0'>
+                <div className="flex justify-center sm0:justify-start">
                 <img
                   src={profilepic}
                   alt='pic'
@@ -131,7 +132,8 @@ const DiscoverReview = (userData, principalId) => {
                   loading='lazy'
                   draggable={false}
                 />
-                <div className='flex-grow'>
+                </div>
+                <div className='flex flex-col w-full items-center justify-center sm0:items-start'>
                   <h2 className='text-base font-semibold text-gray-800 mb-1'>
                     {review.name}
                   </h2>
@@ -173,7 +175,7 @@ const DiscoverReview = (userData, principalId) => {
                   </div>
 
                   <div className='text-gray-600 text-xs'>
-                    <p>{review.message}</p>
+                    <p className='line-clamp-2 break-all'>{review.message}</p>
                   </div>
                 </div>
               </div>
