@@ -3,29 +3,32 @@ import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import SkeletonThemeMain from '../../../Common/SkeletonTheme';
 
-const LatestJobSkeleton = () => {
-  return (
+const LatestJobSkeleton = ({ jobCount }) => {
+  return  (
     <SkeletonThemeMain color='#e3e3e3' highlightColor='#f0f0f0'>
-      <div className='flex flex-col my-4 bg-white rounded-lg shadow px-4'>
-        <Skeleton width='30%' height={20} className="mt-2" />
+      {[...Array(jobCount)].map((_, index) => (
 
-        <div className='flex justify-between items-center'>
-          <Skeleton width={150} height={24} />
+      <div className='flex flex-col my-4 bg-white rounded-lg shadow px-4 '>
+        <Skeleton width='50%' height={20} className="mt-2" />
+
+        <div className='flex justify-between items-center mt-1'>
+          <Skeleton width={150} height={20} />
           <div className='flex gap-4 items-center'>
-            <Skeleton circle={true} height={24} width={24} />
-            <Skeleton circle={true} height={24} width={24} />
+            <Skeleton circle={true} height={20} width={20} />
+            <Skeleton circle={true} height={20} width={20} />
           </div>
         </div>
 
         {/* Middle Section: Logo and Job Details */}
-        <div className='flex items-center gap-3 mt-2'>
+        <div className='flex items-center gap-3 my-2'>
           {/* <Skeleton circle={true} height={48} width={48} />
            */}
             <SkeletonTheme color='#e3e3e3'>
                   <div className='relative flex flex-col items-center'>
                     {/* Profile circle skeleton */}
-                    <div className='rounded-full  '>
-                      <Skeleton circle={true} height={48} width={48} />
+                    
+                      <div className='rounded-lg  '>
+                      <Skeleton  height={48} width={48} style={{ borderRadius: '18px' }}/>
                     </div>
 
                     {/* Icon in the center of the circle */}
@@ -48,20 +51,57 @@ const LatestJobSkeleton = () => {
                     </div>
                   </div>
                 </SkeletonTheme>
-          <Skeleton width='60%' height={20} />
+          <Skeleton width={130} height={23} />
         </div>
 
         {/* Description */}
         <Skeleton width='100%' height={15} count={2} className='my-1' />
 
         {/* Bottom Section: Job Attributes */}
-        <div className='flex gap-3 items-center flex-wrap mb-2'>
+        {/* <div className='flex gap-3 items-center flex-wrap mb-2'>
           <Skeleton width={60} height={20} />
           <Skeleton width={60} height={20} />
           <Skeleton width={60} height={20} />
           <Skeleton width={60} height={20} />
-        </div>
+        </div> */}
+        <div className='flex gap-5 items-center flex-wrap mb-2'>
+            <div className='flex items-center gap-2'>
+              {' '}
+              {/* {lenseSvgIcon}{' '} */}
+              <Skeleton width={20} height={20} />
+              {' '}
+              <span className=''>
+                <Skeleton width={65} height={20} />
+              </span>{' '}
+            </div>
+            <div className='flex items-center gap-2'>
+              {/* {locationSvgIcon} */}
+              <Skeleton width={20} height={20} />
+
+              {' '}
+              <span className=''>
+                <Skeleton width={65} height={20} />
+              </span>{' '}
+            </div>
+            <div className='flex items-center gap-2'>
+              {/* {clockSvgIcon} */}
+              <Skeleton width={20} height={20} />
+
+              {' '}
+              <span >
+                <Skeleton width={65} height={20} />
+              </span>{' '}
+            </div>
+            <div className='flex items-center gap-2'>
+              <span className='flex'>
+                {/* <LinkIcon />/ */}
+                <Skeleton width={20} height={20} />
+
+              </span>{' '}
+            </div> 
+          </div>
       </div>
+        ))}
     </SkeletonThemeMain>
   );
 };

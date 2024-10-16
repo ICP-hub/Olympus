@@ -5,9 +5,10 @@ const AttendeeCardSkeleton = () => {
     return (
         <>
         <SkeletonThemeMain>
-      <div className='flex flex-col sm:flex-row  p-4 bg-white shadow-md rounded-lg mb-6 transition-all items-center hover:shadow-lg'>
-        <div className='flex-shrink-0 w-[70px] h-[70px]'>
+      <div className='md:flex  p-4 bg-white shadow-md rounded-lg mb-6 transition-all items-center hover:shadow-lg text-center md:text-left'>
+        <div className='flex justify-center'>
           {/* <Skeleton circle={true} height={70} width={70}  className="w-full h-full rounded-full object-cover"/> */}
+          <div className='w-[70px] h-[70px]'>
           <SkeletonTheme color='#e3e3e3'>
                   <div className='relative flex flex-col items-center'>
                     {/* Profile circle skeleton */}
@@ -36,8 +37,9 @@ const AttendeeCardSkeleton = () => {
                   </div>
                 </SkeletonTheme>
            {/* Circular Skeleton for profile picture */}
+           </div>
         </div>
-        <div className='sm:ml-6 flex-1 w-full'>
+        <div className='md:ml-6 flex-1'>
         <Skeleton 
   height={20} 
   width="75%"

@@ -138,35 +138,74 @@ const EventDetails = () => {
     setCurrentTab(tab);
   };
 
+  // useEffect(() => {
+  //   const fetchCohortData = async () => {
+  //     if (actor && cohort_id) {
+  //       try {
+  //         const result = await actor.get_cohort(cohort_id);
+  //         console.log('result', result);
+  //         if (result && Object.keys(result).length > 0) {
+  //           setCohortData(result);
+  //           calculateTimeLeft(result.cohort.cohort_launch_date);
+  //         } else {
+  //           setCohortData(null);
+  //         }
+  //       } catch (error) {
+  //         console.log('error-in-get_my_cohort', error);
+  //         setCohortData(null);
+  //       } finally {
+  //         // setTimeout(() => {
+  //         //   setIsLoading(false);
+  //         // }, 1000);
+  //       }
+  //     }
+  //   };
+
+  //   fetchCohortData();
+  // }, [actor, cohort_id]);
   useEffect(() => {
+    const fetchDataWithTimeout = (timeout = 1000) => {
+      return Promise.race([
+        actor.get_cohort(cohort_id),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Request timed out")), timeout)
+        ),
+      ]);
+    };
+  
     const fetchCohortData = async () => {
-      if (actor && cohort_id) {
-        try {
-          const result = await actor.get_cohort(cohort_id);
-          console.log('result', result);
-          if (result && Object.keys(result).length > 0) {
-            setCohortData(result);
-            calculateTimeLeft(result.cohort.cohort_launch_date);
-          } else {
-            setCohortData(null);
-          }
-        } catch (error) {
-          console.log('error-in-get_my_cohort', error);
+      setIsLoading(true); // Show skeleton
+      const startTime = Date.now(); // Track the start time
+  
+      try {
+        const result = await fetchDataWithTimeout();
+        if (result && Object.keys(result).length > 0) {
+          setCohortData(result);
+          calculateTimeLeft(result.cohort.cohort_launch_date);
+        } else {
           setCohortData(null);
-        } finally {
-          // setTimeout(() => {
-          //   setIsLoading(false);
-          // }, 1000);
         }
+      } catch (error) {
+        console.log('Error:', error);
+        setCohortData(null);
+      } finally {
+        const timeElapsed = Date.now() - startTime;
+        const minimumTime = Math.max(1000 - timeElapsed, 0); // Ensure the minimum time is non-negative
+  
+        // Only hide skeleton if data has been fetched or an error occurred
+        setTimeout(() => {
+          setIsLoading(false); // Hide skeleton once data fetch is done
+        }, minimumTime);
       }
     };
-
+  
     fetchCohortData();
   }, [actor, cohort_id]);
-
+  
+  // useTimeout(() => setIsLoading(false),1000);
   const timeoutRef = useRef(null);
 
-  useTimeout(() => setIsLoading(false),1000);
+  
   useEffect(() => {
     if (cohortData) {
       const calculateRemainingTime = () => {

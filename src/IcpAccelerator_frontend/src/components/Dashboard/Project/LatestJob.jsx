@@ -39,7 +39,7 @@ const NewJob = ({ latestJobs }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [openJobUid, setOpenJobUid] = useState(null);
   const [loading, setLoading] = useState(true);
-  useTimeout(()=> setLoading(true))
+  useTimeout(()=> setLoading(false))
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const principal = useSelector((currState) => currState.internet.principal);
   const handleJobsOpenModal = (jobData) => {
