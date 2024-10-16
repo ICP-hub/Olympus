@@ -39,14 +39,14 @@ const NewJob = ({ latestJobs }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [openJobUid, setOpenJobUid] = useState(null);
   const [loading, setLoading] = useState(true);
-  useTimeout(()=> setLoading(false))
+  useTimeout(() => setLoading(false));
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const principal = useSelector((currState) => currState.internet.principal);
   const handleJobsOpenModal = (jobData) => {
     setCurrentJobData(jobData);
     setJobsModalOpen(true);
   };
- 
+
   const handleJobsCloseModal = () => {
     setJobsModalOpen(false);
     setCurrentJobData(null);
@@ -164,7 +164,7 @@ const NewJob = ({ latestJobs }) => {
   };
   return (
     <React.Fragment>
-      { latestJob && latestJob.length > 0 && (
+      {latestJob && latestJob.length > 0 && (
         <div className='hidden md:block'>
           <div className='flex flex-col items-end mb-8 max-w-7xl pt-4 '>
             <button
@@ -178,11 +178,10 @@ const NewJob = ({ latestJobs }) => {
       )}
       <div className='max-w-7xl mx-auto bg-white'>
         {/* {latestJob.length === 0 ? ( */}
-     
-        {loading && latestJob.length > 0 ? (
-          <LatestJobSkeleton jobCount={latestJob.length}/>
-        ) : latestJob.length === 0 ? (
 
+        {loading && latestJob.length > 0 ? (
+          <LatestJobSkeleton jobCount={latestJob.length} />
+        ) : latestJob.length === 0 ? (
           <>
             <div className=' md:p-6'>
               {/* Content */}
@@ -279,7 +278,7 @@ const NewJob = ({ latestJobs }) => {
               </div>
             </div>
           </>
-          ): (
+        ) : (
           latestJob.map((card, index) => {
             const fullname = card?.job_poster[0]?.full_name ?? '';
             const job_name = card?.job_data?.title ?? '';

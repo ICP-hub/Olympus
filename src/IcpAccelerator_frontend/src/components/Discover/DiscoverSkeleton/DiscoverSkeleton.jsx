@@ -64,18 +64,18 @@ export default function DiscoverSkeleton() {
           </div>
           <div className='border-t border-gray-200 my-1'></div>
           <p className='text-gray-600 mb-4 overflow-hidden text-ellipsis max-h-12 line-clamp-2'>
-          <div class='space-y-2.5 animate-pulse w-full mt-2 '>
-            <div class='flex items-center w-full'>
-              <div class='h-2.5 bg-gray-200 rounded-full  w-32'></div>
-              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
-              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
+            <div class='space-y-2.5 animate-pulse w-full mt-2 '>
+              <div class='flex items-center w-full'>
+                <div class='h-2.5 bg-gray-200 rounded-full  w-32'></div>
+                <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
+                <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
+              </div>
+              <div class='flex items-center w-full '>
+                <div class='h-2.5 bg-gray-200 rounded-full  w-full'></div>
+                <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
+                <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
+              </div>
             </div>
-            <div class='flex items-center w-full '>
-              <div class='h-2.5 bg-gray-200 rounded-full  w-full'></div>
-              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
-              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
-            </div>
-          </div>
           </p>
           <div className='flex gap-6  text-sm text-gray-500 flex-wrap'>
             <Skeleton width={100} height={15} />

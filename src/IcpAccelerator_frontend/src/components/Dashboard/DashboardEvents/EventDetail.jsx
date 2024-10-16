@@ -88,8 +88,8 @@ const EventDetails = () => {
   const scrollTabs = (direction) => {
     if (tabsContainerRef.current) {
       tabsContainerRef.current.scrollBy({
-        left: direction === 'left' ? -100 : 100, 
-        behavior: 'smooth', 
+        left: direction === 'left' ? -100 : 100,
+        behavior: 'smooth',
       });
     }
   };
@@ -168,15 +168,15 @@ const EventDetails = () => {
       return Promise.race([
         actor.get_cohort(cohort_id),
         new Promise((_, reject) =>
-          setTimeout(() => reject(new Error("Request timed out")), timeout)
+          setTimeout(() => reject(new Error('Request timed out')), timeout)
         ),
       ]);
     };
-  
+
     const fetchCohortData = async () => {
       setIsLoading(true); // Show skeleton
       const startTime = Date.now(); // Track the start time
-  
+
       try {
         const result = await fetchDataWithTimeout();
         if (result && Object.keys(result).length > 0) {
@@ -191,21 +191,20 @@ const EventDetails = () => {
       } finally {
         const timeElapsed = Date.now() - startTime;
         const minimumTime = Math.max(1000 - timeElapsed, 0); // Ensure the minimum time is non-negative
-  
+
         // Only hide skeleton if data has been fetched or an error occurred
         setTimeout(() => {
           setIsLoading(false); // Hide skeleton once data fetch is done
         }, minimumTime);
       }
     };
-  
+
     fetchCohortData();
   }, [actor, cohort_id]);
-  
+
   // useTimeout(() => setIsLoading(false),1000);
   const timeoutRef = useRef(null);
 
-  
   useEffect(() => {
     if (cohortData) {
       const calculateRemainingTime = () => {
@@ -375,8 +374,8 @@ const EventDetails = () => {
   };
 
   const shareUrl = `${window.location.origin}/dashboard/single-event${cohort_id}`;
- 
-  return ( 
+
+  return (
     <div className='flex flex-col'>
       <div className='flex   w-full justify-between  my-2 py-3  -top-[1.2rem] md:-top-[0.2rem] bg-white sticky z-40'>
         <button
@@ -395,7 +394,7 @@ const EventDetails = () => {
           <span className='ml-1'>{shareSvgIcon}</span>
         </button>
       </div>
-      <div className='flex flex-col  gap-4 md:gap-10 md:flex-row'  >
+      <div className='flex flex-col  gap-4 md:gap-10 md:flex-row'>
         <div className='  w-full md:w-[30%] bg-white rounded-lg shadow-md pt-2 md:ml-1'>
           <div className='bg-gray-100 p-4'>
             <div className='flex items-start mb-4'>
@@ -448,7 +447,7 @@ const EventDetails = () => {
               </div>
             </div>
 
-            {userCurrentRoleStatusActiveRole !== "user" && (
+            {userCurrentRoleStatusActiveRole !== 'user' && (
               <button
                 className='w-full flex justify-center bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-300 mb-2 text-sm'
                 onClick={registerHandler}

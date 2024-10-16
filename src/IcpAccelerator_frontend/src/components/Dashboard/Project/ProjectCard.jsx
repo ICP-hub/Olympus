@@ -48,9 +48,9 @@ const ProjectCard = () => {
     navigate('/dashboard/document', { state: { projectId, cardData } });
   };
 
-  const [isLoading,setIsLoading]=useState(true)
+  const [isLoading, setIsLoading] = useState(true);
 
-  useTimeout(()=>setIsLoading(false))
+  useTimeout(() => setIsLoading(false));
 
   return (
     <div className='pt-12'>
@@ -65,8 +65,9 @@ const ProjectCard = () => {
         </div>
       </div>
 
-      {isLoading ? <ProjectCardSkeleton/> : 
-      cardData && cardData.length > 0 ? (
+      {isLoading ? (
+        <ProjectCardSkeleton />
+      ) : cardData && cardData.length > 0 ? (
         cardData.map((data, index) => {
           const projectDescription =
             data[0]?.params?.project_description[0] ??
@@ -88,7 +89,6 @@ const ProjectCard = () => {
             : ['No interest provided'];
           const country = data[1]?.params?.country || 'No country provided';
           return (
-            
             <>
               <div className='mb-3 hidden md:block ' key={index}>
                 {/* for desktop screen  */}
@@ -112,9 +112,9 @@ const ProjectCard = () => {
                     ></div>
                     <img
                       src={projectLogo}
-                      alt={projectName ?? "ICP"}
-                      className=" sm2:w-3/4 h-28 rounded-2xl border-4 border-[#FFFFFF] relative z-10 object-cover object-center"
-                      loading="lazy"
+                      alt={projectName ?? 'ICP'}
+                      className=' sm2:w-3/4 h-28 rounded-2xl border-4 border-[#FFFFFF] relative z-10 object-cover object-center'
+                      loading='lazy'
                       draggable={false}
                     />
                   </div>
@@ -185,7 +185,6 @@ const ProjectCard = () => {
                 </button>
               </div>
             </>
-                  
           );
         })
       ) : (

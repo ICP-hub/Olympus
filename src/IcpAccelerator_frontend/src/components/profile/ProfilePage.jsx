@@ -20,13 +20,13 @@ const ProfilePage = () => {
   const [activeMobileTab, setActiveMobileTab] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { profilepage } = profile;
-  const [isLoading,setIsLoading]=useState(true)
+  const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(()=>{
-    setTimeout(()=>{
+  useEffect(() => {
+    setTimeout(() => {
       setIsLoading(false);
-    },1000);
-  },[])
+    }, 1000);
+  }, []);
 
   const userCurrentRoleStatus = useSelector(
     (currState) => currState.currentRoleStatus.rolesStatusArray
@@ -85,8 +85,8 @@ const ProfilePage = () => {
         {/* Header Section */}
         <div className='flex flex-col md:flex-row justify-between md:items-center mx-auto py-6 md:py-10 lgx:ml-[3.3%] -mt-[1.1rem] md:mt-0  md:h-11 bg-opacity-95 -top-[1.1rem] md:top-0 sticky bg-white z-20'>
           <div>
-          <h2 className='text-2xl font-bold '>{profilepage.profileText}</h2>
-        </div>
+            <h2 className='text-2xl font-bold '>{profilepage.profileText}</h2>
+          </div>
           {/* <div className="flex    md:gap-4 w-full justify-between my-2 md:my-0"> */}
           {/* <div className="flex gap-2 md:gap-4 w-full justify-between md:justify-end my-2 md:my-0">
           <button className="mr-2 text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-2 rounded-md shadow-sm border border-gray-200">
@@ -101,13 +101,15 @@ const ProfilePage = () => {
         {/* Profile and Content Sections */}
         <div className='container flex flex-col lgx:flex-row justify-evenly'>
           {/* Profile Details */}
-          {!isLoading ?
-          <div className='w-full lgx:w-[30%] mb-6 md:mb-0'>
-          <ProfileDetail />
-        </div>:
-        <div className='w-full lgx:w-[30%] mb-6 md:mb-0'>
-        <ProfileSkeleton />
-      </div>}
+          {!isLoading ? (
+            <div className='w-full lgx:w-[30%] mb-6 md:mb-0'>
+              <ProfileDetail />
+            </div>
+          ) : (
+            <div className='w-full lgx:w-[30%] mb-6 md:mb-0'>
+              <ProfileSkeleton />
+            </div>
+          )}
 
           {/* Main Content with Tabs */}
           <div className='w-full lgx:w-[60%] flex flex-col md:pt-12 lgx:pt-0'>

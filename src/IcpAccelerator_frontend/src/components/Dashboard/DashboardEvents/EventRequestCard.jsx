@@ -40,7 +40,7 @@ const EventRequestCard = () => {
   const [listProjectId, setListProjectId] = useState(null);
   const [listCohortId, setListCohortId] = useState(null);
   const [loading, setLoading] = useState(true);
-  useTimeout(()=> setLoading(false))
+  useTimeout(() => setLoading(false));
   const toggleFilter = () => {
     setFilterOpen(!filterOpen);
   };
@@ -158,6 +158,7 @@ const EventRequestCard = () => {
   };
 
   const fetchRequests = async (category, type) => {
+    setLoading(true); // Start loading
     let result = [];
 
     try {
@@ -166,23 +167,19 @@ const EventRequestCard = () => {
           result = await actor.get_pending_cohort_enrollment_requests(
             Principal.fromText(principal)
           );
-          console.log('kya kya aaya pending me', result);
-
           break;
         case 'approved':
           result = await actor.get_accepted_cohort_enrollment_requests(
             Principal.fromText(principal)
           );
-          console.log('kya kya aaya accept me', result);
-
           break;
         case 'rejected':
           result = await actor.get_rejected_cohort_enrollment_requests(
             Principal.fromText(principal)
           );
-          console.log('kya kya aaya reject me', result);
           break;
       }
+
       if (category && category !== 'all') {
         result = result.filter(
           (event) => event.enroller_data?.[category]?.length > 0
@@ -194,10 +191,12 @@ const EventRequestCard = () => {
         status: event.status || 'pending',
       }));
 
-      setEvents(eventsWithStatus || []);
+      setEvents(eventsWithStatus);
     } catch (error) {
       console.error('Error fetching requests:', error);
       setEvents([]);
+    } finally {
+      setLoading(false); // Stop loading regardless of success or failure
     }
   };
 
@@ -258,7 +257,6 @@ const EventRequestCard = () => {
 
   return (
     <>
-
       <div className='flex items-center justify-between  gap-6 mt-4 mx-2'>
         <div className='flex items-center border-2 border-gray-400 rounded-lg overflow-hidden flex-grow h-[38px] md:h-[50px]'>
           <div className='flex items-center px-3 md:px-4'>
@@ -387,9 +385,9 @@ const EventRequestCard = () => {
         </div>
       )}
 
-    {loading &&  events.length > 0 ? (
-  <EventRequestCardSkeleton /> // Show the skeleton when loading
-): events.length > 0 ? (
+      {loading ? (
+        <EventRequestCardSkeleton /> // Show the skeleton when loading
+      ) : events.length > 0 ? (
         events.map((event, index) => {
           console.log('event', event);
           const title = event.cohort_details.cohort.title;
@@ -623,7 +621,7 @@ const EventRequestCard = () => {
           );
         })
       ) : (
-        <NoDataFound message="No Request Found" />
+        <NoDataFound message='No Request Found' />
       )}
       {isAddProjectModalOpen && (
         <AddAMentorRequestModal

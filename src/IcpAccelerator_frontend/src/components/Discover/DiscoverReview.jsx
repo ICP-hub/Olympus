@@ -21,9 +21,9 @@ const DiscoverReview = (userData, principalId) => {
   const [reviews, setReviews] = useState([]);
   const isMounted = useRef(true);
   const userFullData = userData.userData;
-  const [isLoading,setIsLoading]=useState(true)
-  
-  useTimeout(()=>setIsLoading(false))
+  const [isLoading, setIsLoading] = useState(true);
+
+  useTimeout(() => setIsLoading(false));
 
   const schema = yup.object().shape({
     review: yup
@@ -106,7 +106,13 @@ const DiscoverReview = (userData, principalId) => {
         <div className='text-center '>
           <NoDataFound message='No Review Found' />
         </div>
-      ) : isLoading ? <>{[...Array(reviews.length)].map((_,index)=><DiscoverReviewSkeleton/>)} </>:
+      ) : isLoading ? (
+        <>
+          {[...Array(reviews.length)].map((_, index) => (
+            <DiscoverReviewSkeleton />
+          ))}{' '}
+        </>
+      ) : (
         reviews.map((review, index) => {
           const profilepic =
             review?.profile_pic && review?.profile_pic
@@ -174,7 +180,7 @@ const DiscoverReview = (userData, principalId) => {
             </div>
           );
         })
-      }
+      )}
     </div>
   );
 };

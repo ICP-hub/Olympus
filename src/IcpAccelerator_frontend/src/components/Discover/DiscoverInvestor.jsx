@@ -71,9 +71,16 @@ const DiscoverInvestor = ({ onInvestorCountChange }) => {
       let investor_id = Principal.fromText(investorId);
       let msg = message;
       let project_id = projectId;
-
+      let is_cohort_association = false;
+      let cohort_id = [];
       await actor
-        .send_offer_to_investor_by_project(investor_id, msg, project_id)
+        .send_offer_to_investor_by_project(
+          investor_id,
+          msg,
+          project_id,
+          is_cohort_association,
+          cohort_id
+        )
         .then((result) => {
           console.log('result-in-send_offer_to_investor', result);
           if (result) {

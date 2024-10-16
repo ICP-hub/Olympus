@@ -310,7 +310,7 @@ const DiscoverRegionalHubs = () => {
   const [allHubsData, setAllHubsData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [loading,setLoading]=useState(true)
+  const [loading, setLoading] = useState(true);
   console.log('hub data ', allHubsData);
   const getAllHubs = async (caller, isMounted) => {
     try {
@@ -327,7 +327,7 @@ const DiscoverRegionalHubs = () => {
     }
   };
 
-  useTimeout(()=>setLoading(false))
+  useTimeout(() => setLoading(false));
 
   useEffect(() => {
     let isMounted = true;
@@ -360,7 +360,13 @@ const DiscoverRegionalHubs = () => {
         <div className='flex items-center justify-center'>
           <NoData message={'No Hubs Data Available'} />
         </div>
-      ) : loading ? <>{[...Array(allHubsData.length)].map((_,index)=><RegionalHubSkeleton/>)} </> :(
+      ) : loading ? (
+        <>
+          {[...Array(allHubsData.length)].map((_, index) => (
+            <RegionalHubSkeleton />
+          ))}{' '}
+        </>
+      ) : (
         <div className='grid md:grid-cols-3 gap-6'>
           {allHubsData.map((hub, index) => {
             // Safely access the data from params[0]

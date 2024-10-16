@@ -93,11 +93,17 @@ const DiscoverDocument = ({ projectDetails, projectId }) => {
   );
 
   const renderDocuments = (docs, type) => {
-    return (
-    isLoading ? <>{[...Array(docs.length)].map((_,index)=><DiscoverDocumentSkeleton/>)}</>:
-    docs.map((doc, index) => (
-      <DocumentCard key={index} doc={doc} type={type} projectId={projectId} />
-    )))
+    return isLoading ? (
+      <>
+        {[...Array(docs.length)].map((_, index) => (
+          <DiscoverDocumentSkeleton />
+        ))}
+      </>
+    ) : (
+      docs.map((doc, index) => (
+        <DocumentCard key={index} doc={doc} type={type} projectId={projectId} />
+      ))
+    );
   };
 
   const hasNoDocuments =
@@ -142,9 +148,9 @@ const DiscoverDocument = ({ projectDetails, projectId }) => {
     };
   }, [actor]);
 
-  const [isLoading,setIsLoading]=useState(true)
+  const [isLoading, setIsLoading] = useState(true);
 
-  useTimeout(()=>setIsLoading(false))
+  useTimeout(() => setIsLoading(false));
 
   return (
     <>
@@ -186,7 +192,7 @@ const DiscoverDocument = ({ projectDetails, projectId }) => {
           <>
             {/* Private Documents Section */}
             {projectDetails.private_docs &&
-              projectDetails.private_docs.length > 0 &&   (
+              projectDetails.private_docs.length > 0 && (
                 <div className='max-w-4xl bg-white p-3 pb-0'>
                   {renderDocuments(projectDetails.private_docs[0], 'private')}
                 </div>
@@ -194,7 +200,7 @@ const DiscoverDocument = ({ projectDetails, projectId }) => {
 
             {/* Public Documents Section */}
             {projectDetails.public_docs &&
-              projectDetails.public_docs.length > 0 &&  (
+              projectDetails.public_docs.length > 0 && (
                 <div className='max-w-4xl bg-white p-3 pt-0'>
                   {renderDocuments(projectDetails.public_docs[0], 'public')}
                 </div>

@@ -13,8 +13,8 @@ const AboutcardSkeleton = ({ getAllData }) => {
 
   return (
     <SkeletonTheme baseColor='#e3e3e3' highlightColor='#c8c8c873'>
-      <div className='w-full overflow-hidden h-[95vh] bg-gradient-to-r from-[#ECE9FE] to-[#FFFFFF] items-center justify-center rounded-2xl'>
-        <div className='bg-white mx-auto h-[83vh] my-10 rounded-lg shadow-md w-[90%]'>
+      <div className='w-full overflow-hidden bg-gradient-to-r from-[#ECE9FE] to-[#FFFFFF] items-center justify-center rounded-2xl'>
+        <div className='bg-white rounded-lg shadow-md m-8'>
           <div className='w-full bg-gray-200 rounded-full h-1.5 mb-4 '>
             <div
               className='bg-green-500 h-1.5 rounded-full '

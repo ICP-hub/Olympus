@@ -143,8 +143,8 @@ const JobDetailsSkeleton = () => {
                 </span>
               </h4> */}
               <div className='truncate break-all'>
-                  <Skeleton height={20} />
-                </div>
+                <Skeleton height={20} />
+              </div>
             </div>
           </div>
         </div>
@@ -187,8 +187,6 @@ const JobDetailsSkeleton = () => {
               <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
               <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
             </div>
-
-            
           </div>
         </div>
       </div>

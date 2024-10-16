@@ -7,9 +7,11 @@ import { useNavigate, Link } from 'react-router-dom';
 import { homepagedata } from '../../Utils/jsondata/data/homepageData';
 import logo from '../../../../assets/images/navlogo.png';
 import logo1 from '../../../../assets/Logo/newLogo.png';
+import { useAuth } from '../../StateManagement/useContext/useAuth';
 
 const Navbar = ({ setModalOpen }) => {
   const { navbar } = homepagedata;
+  const { logout } = useAuth();
 
   const [discoverMenu, setDiscoverMenu] = useState(false);
   const [companyMenu, setCompanyMenu] = useState(false);
@@ -33,6 +35,7 @@ const Navbar = ({ setModalOpen }) => {
 
   const manageHandler = () => {
     !principal ? setModalOpen(true) : setModalOpen(false);
+    // logout();
   };
   return (
     <>

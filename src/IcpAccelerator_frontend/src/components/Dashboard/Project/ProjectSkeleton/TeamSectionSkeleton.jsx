@@ -3,7 +3,6 @@ import SkeletonThemeMain from '../../../Common/SkeletonTheme';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { Delete } from '@mui/icons-material';
 
-
 const TeamSectionSkeleton = () => {
   return (
     <SkeletonThemeMain>
@@ -61,10 +60,10 @@ const TeamSectionSkeleton = () => {
                 </div>
                 <div className='ps-2 sm:ps-3 '>
                   <p className='line-clamp-1 break-all font-medium text-[#121926] text-xs sm3:text-sm'>
-                    <Skeleton  width={80} height={20} />
+                    <Skeleton width={80} height={20} />
                   </p>
                   <p className='line-clamp-1 break-all text-xs sm:text-sm text-gray-500'>
-                    <Skeleton   width={80} height={15} />
+                    <Skeleton width={80} height={15} />
                   </p>
                 </div>
               </th>

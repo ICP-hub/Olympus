@@ -604,90 +604,146 @@ const InvestorDetail = () => {
 
   return (
     <form onSubmit={handleSubmit(onSubmitHandler, onErrorHandler)}>
-      {isLoading ? <InvestorDetailSkeleton/> :
-      <div className='px-1'>
-        <div className='group relative hover:bg-gray-100 rounded-lg p-3 px-3 mt-4 mb-2'>
-          <div className='flex justify-between items-center'>
-            <label className='font-semibold  text-xs text-gray-500 uppercase mb-1'>
-              Are you registered?
-            </label>
-            <img
-              src={editp}
-              className='visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
-'
-              alt='edit'
-              onClick={() => handleEditClick('registered')}
-              loading='lazy'
-              draggable={false}
-            />
-          </div>
-          {edit.registered ? (
-            <div>
-              <select
-                {...register('investor_registered')}
-                className={`bg-gray-50 border-2 ${
-                  errors.investor_registered
-                    ? 'border-red-500'
-                    : 'border-[#737373]'
-                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-              >
-                <option className='text-lg font-bold' value='false'>
-                  No
-                </option>
-                <option className='text-lg font-bold' value='true'>
-                  Yes
-                </option>
-              </select>
-            </div>
-          ) : (
-            <div className='flex justify-between items-center cursor-pointer py-1'>
-              <span className='mr-2 text-sm truncate break-all'>
-                {registeredValue}
-              </span>
-            </div>
-          )}
-          {errors.investor_registered && (
-            <p className='mt-1 text-sm text-red-500 font-bold text-left'>
-              {errors.investor_registered.message}
-            </p>
-          )}
-        </div>
-        {watch('investor_registered') === 'true' && (
-          <div className='group relative hover:bg-gray-100 rounded-lg my-3 p-2 px-3'>
+      {isLoading ? (
+        <InvestorDetailSkeleton />
+      ) : (
+        <div className='px-1'>
+          <div className='group relative hover:bg-gray-100 rounded-lg p-3 px-3 mt-4 mb-2'>
             <div className='flex justify-between items-center'>
               <label className='font-semibold  text-xs text-gray-500 uppercase mb-1'>
-                Registered Country
+                Are you registered?
               </label>
               <img
                 src={editp}
                 className='visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
 '
                 alt='edit'
-                onClick={() => handleEditClick('registered_country')}
+                onClick={() => handleEditClick('registered')}
                 loading='lazy'
                 draggable={false}
               />
             </div>
-            {edit.registered_country ? (
+            {edit.registered ? (
               <div>
                 <select
-                  {...register('registered_country')}
+                  {...register('investor_registered')}
                   className={`bg-gray-50 border-2 ${
-                    errors.registered_country
-                      ? 'border-red-500 placeholder:text-red-500'
+                    errors.investor_registered
+                      ? 'border-red-500'
+                      : 'border-[#737373]'
+                  } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                >
+                  <option className='text-lg font-bold' value='false'>
+                    No
+                  </option>
+                  <option className='text-lg font-bold' value='true'>
+                    Yes
+                  </option>
+                </select>
+              </div>
+            ) : (
+              <div className='flex justify-between items-center cursor-pointer py-1'>
+                <span className='mr-2 text-sm truncate break-all'>
+                  {registeredValue}
+                </span>
+              </div>
+            )}
+            {errors.investor_registered && (
+              <p className='mt-1 text-sm text-red-500 font-bold text-left'>
+                {errors.investor_registered.message}
+              </p>
+            )}
+          </div>
+          {watch('investor_registered') === 'true' && (
+            <div className='group relative hover:bg-gray-100 rounded-lg my-3 p-2 px-3'>
+              <div className='flex justify-between items-center'>
+                <label className='font-semibold  text-xs text-gray-500 uppercase mb-1'>
+                  Registered Country
+                </label>
+                <img
+                  src={editp}
+                  className='visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
+'
+                  alt='edit'
+                  onClick={() => handleEditClick('registered_country')}
+                  loading='lazy'
+                  draggable={false}
+                />
+              </div>
+              {edit.registered_country ? (
+                <div>
+                  <select
+                    {...register('registered_country')}
+                    className={`bg-gray-50 border-2 ${
+                      errors.registered_country
+                        ? 'border-red-500 placeholder:text-red-500'
+                        : 'border-[#737373]'
+                    } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                  >
+                    <option className='text-lg font-bold' value=''>
+                      Select your registered country
+                    </option>
+                    {countries?.map((country) => (
+                      <option
+                        key={country.name}
+                        value={`${country.name}`}
+                        className='text-lg font-bold'
+                      >
+                        {country.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              ) : (
+                <div className='flex justify-between items-center cursor-pointer py-1'>
+                  <span className='mr-2 text-sm truncate break-all'>
+                    {registered_country}
+                  </span>
+                </div>
+              )}
+              {errors.registered_country && (
+                <p className='mt-1 text-sm text-red-500 font-bold text-left'>
+                  {errors.registered_country.message}
+                </p>
+              )}
+            </div>
+          )}
+
+          <div className='group relative hover:bg-gray-100 rounded-lg my-3 p-2 px-3'>
+            <div className='flex justify-between items-center'>
+              <label className='font-semibold  text-xs text-gray-500 uppercase mb-1'>
+                ICP hub you will like to be associated
+              </label>
+              <img
+                src={editp}
+                className='visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
+'
+                alt='edit'
+                onClick={() => handleEditClick('preferred_icp_hub')}
+                loading='lazy'
+                draggable={false}
+              />
+            </div>
+            {edit.preferred_icp_hub ? (
+              <div>
+                <select
+                  {...register('preferred_icp_hub')}
+                  className={`bg-gray-50 border-2 ${
+                    errors.preferred_icp_hub
+                      ? 'border-red-500'
                       : 'border-[#737373]'
                   } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                 >
                   <option className='text-lg font-bold' value=''>
-                    Select your registered country
+                    Select
                   </option>
-                  {countries?.map((country) => (
+                  {getAllIcpHubs?.map((hub) => (
                     <option
-                      key={country.name}
-                      value={`${country.name}`}
+                      key={hub.id}
+                      value={`${hub.name} ,${hub.region}`}
                       className='text-lg font-bold'
                     >
-                      {country.name}
+                      {hub.name}, {hub.region}
                     </option>
                   ))}
                 </select>
@@ -695,176 +751,569 @@ const InvestorDetail = () => {
             ) : (
               <div className='flex justify-between items-center cursor-pointer py-1'>
                 <span className='mr-2 text-sm truncate break-all'>
-                  {registered_country}
+                  {preferred_icp_hub}
                 </span>
               </div>
             )}
-            {errors.registered_country && (
+            {errors.preferred_icp_hub && (
               <p className='mt-1 text-sm text-red-500 font-bold text-left'>
-                {errors.registered_country.message}
+                {errors.preferred_icp_hub.message}
               </p>
             )}
           </div>
-        )}
 
-        <div className='group relative hover:bg-gray-100 rounded-lg my-3 p-2 px-3'>
-          <div className='flex justify-between items-center'>
-            <label className='font-semibold  text-xs text-gray-500 uppercase mb-1'>
-              ICP hub you will like to be associated
-            </label>
-            <img
-              src={editp}
-              className='visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
-'
-              alt='edit'
-              onClick={() => handleEditClick('preferred_icp_hub')}
-              loading='lazy'
-              draggable={false}
-            />
-          </div>
-          {edit.preferred_icp_hub ? (
-            <div>
-              <select
-                {...register('preferred_icp_hub')}
-                className={`bg-gray-50 border-2 ${
-                  errors.preferred_icp_hub
-                    ? 'border-red-500'
-                    : 'border-[#737373]'
-                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-              >
-                <option className='text-lg font-bold' value=''>
-                  Select
-                </option>
-                {getAllIcpHubs?.map((hub) => (
-                  <option
-                    key={hub.id}
-                    value={`${hub.name} ,${hub.region}`}
-                    className='text-lg font-bold'
-                  >
-                    {hub.name}, {hub.region}
-                  </option>
-                ))}
-              </select>
-            </div>
-          ) : (
-            <div className='flex justify-between items-center cursor-pointer py-1'>
-              <span className='mr-2 text-sm truncate break-all'>
-                {preferred_icp_hub}
-              </span>
-            </div>
-          )}
-          {errors.preferred_icp_hub && (
-            <p className='mt-1 text-sm text-red-500 font-bold text-left'>
-              {errors.preferred_icp_hub.message}
-            </p>
-          )}
-        </div>
-
-        <div className='group relative hover:bg-gray-100 rounded-lg my-3 p-2 px-3'>
-          <div className='flex justify-between items-center'>
-            <label className='font-semibold  text-xs text-gray-500 uppercase mb-1'>
-              Are you an existing ICP investor
-            </label>
-            <img
-              src={editp}
-              className='visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
-'
-              alt='edit'
-              onClick={() => handleEditClick('existing_icp_investor')}
-              loading='lazy'
-              draggable={false}
-            />
-          </div>
-          {edit.existing_icp_investor ? (
-            <div>
-              <select
-                {...register('existing_icp_investor')}
-                className={`bg-gray-50 border-2 ${
-                  errors.existing_icp_investor
-                    ? 'border-red-500'
-                    : 'border-[#737373]'
-                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-              >
-                <option className='text-lg font-bold' value='false'>
-                  No
-                </option>
-                <option className='text-lg font-bold' value='true'>
-                  Yes
-                </option>
-              </select>
-            </div>
-          ) : (
-            <div className='flex justify-between items-center cursor-pointer py-1'>
-              <span className='mr-2 text-sm truncate break-all'>
-                {getValues('existing_icp_investor') === 'true' ? 'Yes' : 'No'}
-              </span>
-            </div>
-          )}
-          {errors.existing_icp_investor && (
-            <p className='mt-1 text-sm text-red-500 font-bold text-left'>
-              {errors.existing_icp_investor.message}
-            </p>
-          )}
-        </div>
-
-        {watch('existing_icp_investor') === 'true' && (
           <div className='group relative hover:bg-gray-100 rounded-lg my-3 p-2 px-3'>
             <div className='flex justify-between items-center'>
               <label className='font-semibold  text-xs text-gray-500 uppercase mb-1'>
-                Type of investment
+                Are you an existing ICP investor
               </label>
               <img
                 src={editp}
                 className='visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
 '
                 alt='edit'
-                onClick={() => handleEditClick('investor_type')}
+                onClick={() => handleEditClick('existing_icp_investor')}
                 loading='lazy'
                 draggable={false}
               />
             </div>
-            {edit.investor_type ? (
-              <ReactSelect
-                isMulti
-                menuPortalTarget={document.body}
-                menuPosition={'fixed'}
-                styles={getReactSelectUpdateStyles(errors?.investment_type)}
-                value={typeOfInvestSelectedOptions}
-                options={typeOfInvestOptions}
-                classNamePrefix='select'
-                className='basic-multi-select w-full text-start'
-                placeholder='Select a investment type'
-                name='investment_type'
-                onChange={(selectedOptions) => {
-                  if (selectedOptions && selectedOptions.length > 0) {
-                    setTypeOfInvestSelectedOptions(selectedOptions);
-                    clearErrors('investment_type');
-                    setValue(
-                      'investment_type',
-                      selectedOptions.map((option) => option.value).join(', '),
-                      { shouldValidate: true }
-                    );
-                  } else {
-                    setTypeOfInvestSelectedOptions([]);
-                    setValue('investment_type', '', {
-                      shouldValidate: true,
-                    });
-                    setError('investment_type', {
-                      type: 'required',
-                      message: 'At least one investment type required',
-                    });
-                  }
-                }}
+            {edit.existing_icp_investor ? (
+              <div>
+                <select
+                  {...register('existing_icp_investor')}
+                  className={`bg-gray-50 border-2 ${
+                    errors.existing_icp_investor
+                      ? 'border-red-500'
+                      : 'border-[#737373]'
+                  } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                >
+                  <option className='text-lg font-bold' value='false'>
+                    No
+                  </option>
+                  <option className='text-lg font-bold' value='true'>
+                    Yes
+                  </option>
+                </select>
+              </div>
+            ) : (
+              <div className='flex justify-between items-center cursor-pointer py-1'>
+                <span className='mr-2 text-sm truncate break-all'>
+                  {getValues('existing_icp_investor') === 'true' ? 'Yes' : 'No'}
+                </span>
+              </div>
+            )}
+            {errors.existing_icp_investor && (
+              <p className='mt-1 text-sm text-red-500 font-bold text-left'>
+                {errors.existing_icp_investor.message}
+              </p>
+            )}
+          </div>
+
+          {watch('existing_icp_investor') === 'true' && (
+            <div className='group relative hover:bg-gray-100 rounded-lg my-3 p-2 px-3'>
+              <div className='flex justify-between items-center'>
+                <label className='font-semibold  text-xs text-gray-500 uppercase mb-1'>
+                  Type of investment
+                </label>
+                <img
+                  src={editp}
+                  className='visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
+'
+                  alt='edit'
+                  onClick={() => handleEditClick('investor_type')}
+                  loading='lazy'
+                  draggable={false}
+                />
+              </div>
+              {edit.investor_type ? (
+                <ReactSelect
+                  isMulti
+                  menuPortalTarget={document.body}
+                  menuPosition={'fixed'}
+                  styles={getReactSelectUpdateStyles(errors?.investment_type)}
+                  value={typeOfInvestSelectedOptions}
+                  options={typeOfInvestOptions}
+                  classNamePrefix='select'
+                  className='basic-multi-select w-full text-start'
+                  placeholder='Select a investment type'
+                  name='investment_type'
+                  onChange={(selectedOptions) => {
+                    if (selectedOptions && selectedOptions.length > 0) {
+                      setTypeOfInvestSelectedOptions(selectedOptions);
+                      clearErrors('investment_type');
+                      setValue(
+                        'investment_type',
+                        selectedOptions
+                          .map((option) => option.value)
+                          .join(', '),
+                        { shouldValidate: true }
+                      );
+                    } else {
+                      setTypeOfInvestSelectedOptions([]);
+                      setValue('investment_type', '', {
+                        shouldValidate: true,
+                      });
+                      setError('investment_type', {
+                        type: 'required',
+                        message: 'At least one investment type required',
+                      });
+                    }
+                  }}
+                />
+              ) : (
+                <div className='flex overflow-hidden overflow-x-auto gap-2 cursor-pointer py-1'>
+                  {investor_type && typeof investor_type[0] === 'string' ? (
+                    investor_type[0].split(', ').map((type, index) => (
+                      <span
+                        key={index}
+                        className='border-2 border-gray-500 min-w-[80px] truncate text-center rounded-full text-gray-700 text-xs px-2 py-1'
+                      >
+                        {type}
+                      </span>
+                    ))
+                  ) : (
+                    <span className='border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1'></span>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+
+          <div className='group relative hover:bg-gray-100 rounded-lg my-3 p-2 px-3'>
+            <div className='flex justify-between items-center'>
+              <label className='font-semibold  text-xs text-gray-500 uppercase mb-1'>
+                Portfolio Link
+              </label>
+              <img
+                src={editp}
+                className='visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
+'
+                alt='edit'
+                onClick={() => handleEditClick('portfolio_link')}
+                loading='lazy'
+                draggable={false}
               />
+            </div>
+            {edit.portfolio_link ? (
+              <div>
+                <input
+                  type='text'
+                  {...register('investor_portfolio_link')}
+                  className={`bg-gray-50 border-2 ${
+                    errors.investor_portfolio_link
+                      ? 'border-red-500 '
+                      : 'border-[#737373]'
+                  } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                  placeholder='Enter your portfolio url'
+                />
+              </div>
+            ) : (
+              <div className='flex justify-between items-center cursor-pointer py-1 '>
+                <span className='mr-2 text-sm truncate break-all'>
+                  {portfolio_link}
+                </span>
+              </div>
+            )}
+            {errors.investor_portfolio_link && (
+              <span className='mt-1 text-sm text-red-500 font-bold flex justify-start'>
+                {errors.investor_portfolio_link.message}
+              </span>
+            )}
+          </div>
+
+          <div className='group relative hover:bg-gray-100 rounded-lg my-3 p-2 px-3'>
+            <div className='flex justify-between items-center'>
+              <label className='font-semibold text-xs text-gray-500 uppercase mb-1'>
+                Fund Name
+              </label>
+              <img
+                src={editp}
+                className='visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
+'
+                alt='edit'
+                onClick={() => handleEditClick('name_of_fund')}
+                loading='lazy'
+                draggable={false}
+              />
+            </div>
+            {edit.name_of_fund ? (
+              <div>
+                <input
+                  type='text'
+                  {...register('investor_fund_name')}
+                  className={`bg-gray-50 border-2 ${
+                    errors.investor_fund_name
+                      ? 'border-red-500 '
+                      : 'border-[#737373]'
+                  } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                  placeholder='Enter your fund name'
+                />
+              </div>
+            ) : (
+              <div className='flex justify-between items-center cursor-pointer py-1'>
+                <span className='mr-2 text-sm truncate break-all'>
+                  {name_of_fund}
+                </span>
+              </div>
+            )}
+            {errors.investor_fund_name && (
+              <span className='mt-1 text-sm text-red-500 font-bold flex justify-start'>
+                {errors.investor_fund_name.message}
+              </span>
+            )}
+          </div>
+
+          <div className='group relative hover:bg-gray-100 rounded-lg my-3 p-2 px-3'>
+            <div className='flex justify-between items-center'>
+              <label className='font-semibold  text-xs text-gray-500 uppercase mb-1'>
+                Fund size (in million USD)
+              </label>
+              <img
+                src={editp}
+                className='visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
+'
+                alt='edit'
+                onClick={() => handleEditClick('fund_size')}
+                loading='lazy'
+                draggable={false}
+              />
+            </div>
+            {edit.fund_size ? (
+              <div>
+                <input
+                  type='number'
+                  {...register('investor_fund_size')}
+                  className={`bg-gray-50 border-2 ${
+                    errors.investor_fund_size
+                      ? 'border-red-500 '
+                      : 'border-[#737373]'
+                  } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                  placeholder='Enter fund size in Millions'
+                  onWheel={(e) => e.target.blur()}
+                  min={0}
+                />
+              </div>
+            ) : (
+              <div className='flex justify-between items-center cursor-pointer py-1'>
+                <span className='mr-2 text-sm truncate break-all'>
+                  {fund_size}
+                </span>
+              </div>
+            )}
+            {errors.investor_fund_size && (
+              <span className='mt-1 text-sm text-red-500 font-bold flex justify-start'>
+                {errors.investor_fund_size.message}
+              </span>
+            )}
+          </div>
+
+          <div className='group relative hover:bg-gray-100 rounded-lg my-3 p-2 px-3'>
+            <div className='flex justify-between items-center'>
+              <label className='font-semibold  text-xs text-gray-500 uppercase mb-1'>
+                Do you invest in multiple ecosystems{' '}
+              </label>
+              <img
+                src={editp}
+                className='absolute right-2 top-2 visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
+'
+                alt='edit'
+                onClick={() => handleEditClick('invested_in_multi_chain')}
+                loading='lazy'
+                draggable={false}
+              />
+            </div>
+            {edit.invested_in_multi_chain ? (
+              <div className=''>
+                <select
+                  {...register('invested_in_multi_chain')}
+                  className={`bg-gray-50 border-2 ${
+                    errors.invested_in_multi_chain
+                      ? 'border-red-500'
+                      : 'border-[#737373]'
+                  } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
+                >
+                  <option className='text-lg font-bold' value='false'>
+                    No
+                  </option>
+                  <option className='text-lg font-bold' value='true'>
+                    Yes
+                  </option>
+                </select>
+              </div>
+            ) : (
+              <div className='flex justify-between items-center cursor-pointer py-1'>
+                <span className='mr-2 text-sm truncate break-all'>
+                  {getValues('invested_in_multi_chain') === 'true'
+                    ? 'Yes'
+                    : 'No'}
+                </span>
+              </div>
+            )}
+            {errors.invested_in_multi_chain && (
+              <p className='mt-1 text-sm text-red-500 font-bold text-left'>
+                {errors.invested_in_multi_chain.message}
+              </p>
+            )}
+          </div>
+          {watch('invested_in_multi_chain') === 'true' && (
+            <div className='group relative hover:bg-gray-100 rounded-lg my-3 p-2 px-3'>
+              <div className=''>
+                <label className='font-semibold  text-xs text-gray-500 uppercase mb-1'>
+                  Please select the chains
+                </label>
+                <img
+                  src={editp}
+                  className='absolute right-2 top-2  visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
+'
+                  alt='edit'
+                  onClick={() => handleEditClick('project_on_multichain')}
+                  loading='lazy'
+                  draggable={false}
+                />
+              </div>
+              {edit.project_on_multichain ? (
+                <div className=''>
+                  <ReactSelect
+                    isMulti
+                    menuPortalTarget={document.body}
+                    menuPosition={'fixed'}
+                    styles={getReactSelectUpdateStyles(
+                      errors?.invested_in_multi_chain_names
+                    )}
+                    value={investedInMultiChainSelectedOptions}
+                    options={investedInmultiChainOptions}
+                    classNamePrefix='select'
+                    className='basic-multi-select w-full text-start'
+                    placeholder='Select a chain'
+                    name='invested_in_multi_chain_names'
+                    onChange={(selectedOptions) => {
+                      if (selectedOptions && selectedOptions.length > 0) {
+                        setInvestedInMultiChainSelectedOptions(selectedOptions);
+                        clearErrors('invested_in_multi_chain_names');
+                        setValue(
+                          'invested_in_multi_chain_names',
+                          selectedOptions
+                            .map((option) => option.value)
+                            .join(', '),
+                          { shouldValidate: true }
+                        );
+                      } else {
+                        setInvestedInMultiChainSelectedOptions([]);
+                        setValue('invested_in_multi_chain_names', '', {
+                          shouldValidate: true,
+                        });
+                        setError('invested_in_multi_chain_names', {
+                          type: 'required',
+                          message: 'Atleast one chain name required',
+                        });
+                      }
+                    }}
+                  />
+                </div>
+              ) : (
+                <div className='flex overflow-hidden overflow-x-auto  gap-2 cursor-pointer py-1'>
+                  {project_on_multichain &&
+                  typeof project_on_multichain[0] === 'string' ? (
+                    project_on_multichain[0]
+                      .split(', ')
+                      .map((projects, index) => (
+                        <span
+                          key={index}
+                          className='border-2 border-gray-500 min-w-[80px] truncate text-center rounded-full text-gray-700 text-xs px-2 py-1'
+                        >
+                          {projects}
+                        </span>
+                      ))
+                  ) : (
+                    <span className='border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1'></span>
+                  )}
+                  {errors.invested_in_multi_chain_names && (
+                    <p className='mt-1 text-sm text-red-500 font-bold text-left'>
+                      {errors.invested_in_multi_chain_names.message}
+                    </p>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+
+          <div className='group relative hover:bg-gray-100 rounded-lg my-3 p-2 px-3'>
+            <div className='flex justify-between items-center'>
+              <label className='font-semibold  text-xs text-gray-500 uppercase mb-1'>
+                Category of investment
+              </label>
+              <img
+                src={editp}
+                className='visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
+'
+                alt='edit'
+                onClick={() => handleEditClick('category_of_investment')}
+                loading='lazy'
+                draggable={false}
+              />
+            </div>
+            {edit.category_of_investment ? (
+              <div>
+                <Select
+                  isMulti
+                  menuPortalTarget={document.body}
+                  menuPosition={'fixed'}
+                  styles={getReactSelectUpdateStyles(
+                    errors?.investment_categories
+                  )}
+                  value={investmentCategoriesSelectedOptions}
+                  options={investmentCategoriesOptions}
+                  classNamePrefix='select'
+                  className='basic-multi-select w-full text-start'
+                  placeholder='Select categories of investment'
+                  name='investment_categories'
+                  onChange={(selectedOptions) => {
+                    if (selectedOptions && selectedOptions.length > 0) {
+                      const selectedString = selectedOptions
+                        .map((option) => option.value)
+                        .join(', ');
+                      setInvestmentCategoriesSelectedOptions(selectedOptions);
+                      clearErrors('investment_categories');
+                      setValue('investment_categories', selectedString, {
+                        shouldValidate: true,
+                      });
+                    } else {
+                      setInvestmentCategoriesSelectedOptions([]);
+                      setValue('investment_categories', '', {
+                        shouldValidate: true,
+                      });
+                      setError('investment_categories', {
+                        type: 'required',
+                        message: 'Selecting a category is required',
+                      });
+                    }
+                  }}
+                />
+              </div>
             ) : (
               <div className='flex overflow-hidden overflow-x-auto gap-2 cursor-pointer py-1'>
-                {investor_type && typeof investor_type[0] === 'string' ? (
-                  investor_type[0].split(', ').map((type, index) => (
+                {category_of_investment &&
+                typeof category_of_investment === 'string' ? (
+                  category_of_investment.split(', ').map((category, index) => (
                     <span
                       key={index}
-                      className='border-2 border-gray-500 min-w-[80px] truncate text-center rounded-full text-gray-700 text-xs px-2 py-1'
+                      className='border-2 border-gray-500 text-center min-w-[80px] truncate rounded-full text-gray-700 text-xs px-2 py-1'
                     >
-                      {type}
+                      {category}
+                    </span>
+                  ))
+                ) : (
+                  <span className='border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1'>
+                    tooling
+                  </span>
+                )}
+              </div>
+            )}
+          </div>
+
+          <div className='group relative hover:bg-gray-100 rounded-lg my-3 p-2 px-3'>
+            <div className='flex justify-between items-center'>
+              <label className='font-semibold  text-xs text-gray-500 uppercase mb-1'>
+                Website Link
+              </label>
+              <img
+                src={editp}
+                className='visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
+'
+                alt='edit'
+                onClick={() => handleEditClick('website_link')}
+                loading='lazy'
+                draggable={false}
+              />
+            </div>
+            {edit.website_link ? (
+              <div>
+                <input
+                  type='text'
+                  {...register('investor_website_url')}
+                  className={`bg-gray-50 border-2 ${
+                    errors.investor_website_url
+                      ? 'border-red-500 '
+                      : 'border-[#737373]'
+                  } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w/full p-2.5`}
+                  placeholder='Enter your website url'
+                />
+              </div>
+            ) : (
+              <div className='flex justify-between items-center cursor-pointer py-1'>
+                <span className='mr-2 text-sm truncate break-all'>
+                  {website_link}
+                </span>
+              </div>
+            )}
+            {errors.investor_website_url && (
+              <span className='mt-1 text-sm text-red-500 font-bold flex justify-start'>
+                {errors.investor_website_url.message}
+              </span>
+            )}
+          </div>
+
+          <div className='group relative hover:bg-gray-100 rounded-lg my-3 p-2 px-3'>
+            <div className='flex justify-between items-center'>
+              <label className='font-semibold text-xs text-gray-500 uppercase mb-1'>
+                Which stage(s) do you invest at?{' '}
+              </label>
+              <img
+                src={editp}
+                className='visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
+'
+                alt='edit'
+                onClick={() => handleEditClick('stage')}
+                loading='lazy'
+                draggable={false}
+              />
+            </div>
+            {edit.stage ? (
+              <div>
+                <Select
+                  isMulti
+                  menuPortalTarget={document.body}
+                  menuPosition={'fixed'}
+                  styles={getReactSelectUpdateStyles(errors?.investment_stage)}
+                  value={investStageSelectedOptions}
+                  options={investStageOptions}
+                  classNamePrefix='select'
+                  className='basic-multi-select w-full text-start'
+                  placeholder='Select a stage'
+                  name='investment_stage'
+                  onChange={(selectedOptions) => {
+                    if (selectedOptions && selectedOptions.length > 0) {
+                      setInvestStageSelectedOptions(selectedOptions);
+                      clearErrors('investment_stage');
+                      setValue(
+                        'investment_stage',
+                        selectedOptions
+                          .map((option) => option.value)
+                          .join(', '),
+                        { shouldValidate: true }
+                      );
+                    } else {
+                      setInvestStageSelectedOptions([]);
+                      setValue('investment_stage', '', {
+                        shouldValidate: true,
+                      });
+                      setError('investment_stage', {
+                        type: 'required',
+                        message: 'Atleast one stage required',
+                      });
+                    }
+                  }}
+                />
+              </div>
+            ) : (
+              <div className='flex overflow-hidden overflow-x-auto gap-2 cursor-pointer py-1'>
+                {stage && typeof stage[0] === 'string' ? (
+                  stage[0].split(', ').map((value, index) => (
+                    <span
+                      key={index}
+                      className='border-2 text-center min-w-[80px] truncate border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1'
+                    >
+                      {value}
                     </span>
                   ))
                 ) : (
@@ -872,696 +1321,257 @@ const InvestorDetail = () => {
                 )}
               </div>
             )}
+            {errors.investment_stage && (
+              <p className='mt-1 text-sm text-red-500 font-bold text-left'>
+                {errors.investment_stage.message}
+              </p>
+            )}
           </div>
-        )}
 
-        <div className='group relative hover:bg-gray-100 rounded-lg my-3 p-2 px-3'>
-          <div className='flex justify-between items-center'>
-            <label className='font-semibold  text-xs text-gray-500 uppercase mb-1'>
-              Portfolio Link
-            </label>
-            <img
-              src={editp}
-              className='visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
-'
-              alt='edit'
-              onClick={() => handleEditClick('portfolio_link')}
-              loading='lazy'
-              draggable={false}
-            />
-          </div>
-          {edit.portfolio_link ? (
-            <div>
-              <input
-                type='text'
-                {...register('investor_portfolio_link')}
-                className={`bg-gray-50 border-2 ${
-                  errors.investor_portfolio_link
-                    ? 'border-red-500 '
-                    : 'border-[#737373]'
-                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                placeholder='Enter your portfolio url'
-              />
-            </div>
-          ) : (
-            <div className='flex justify-between items-center cursor-pointer py-1 '>
-              <span className='mr-2 text-sm truncate break-all'>
-                {portfolio_link}
-              </span>
-            </div>
-          )}
-          {errors.investor_portfolio_link && (
-            <span className='mt-1 text-sm text-red-500 font-bold flex justify-start'>
-              {errors.investor_portfolio_link.message}
-            </span>
-          )}
-        </div>
-
-        <div className='group relative hover:bg-gray-100 rounded-lg my-3 p-2 px-3'>
-          <div className='flex justify-between items-center'>
-            <label className='font-semibold text-xs text-gray-500 uppercase mb-1'>
-              Fund Name
-            </label>
-            <img
-              src={editp}
-              className='visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
-'
-              alt='edit'
-              onClick={() => handleEditClick('name_of_fund')}
-              loading='lazy'
-              draggable={false}
-            />
-          </div>
-          {edit.name_of_fund ? (
-            <div>
-              <input
-                type='text'
-                {...register('investor_fund_name')}
-                className={`bg-gray-50 border-2 ${
-                  errors.investor_fund_name
-                    ? 'border-red-500 '
-                    : 'border-[#737373]'
-                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                placeholder='Enter your fund name'
-              />
-            </div>
-          ) : (
-            <div className='flex justify-between items-center cursor-pointer py-1'>
-              <span className='mr-2 text-sm truncate break-all'>
-                {name_of_fund}
-              </span>
-            </div>
-          )}
-          {errors.investor_fund_name && (
-            <span className='mt-1 text-sm text-red-500 font-bold flex justify-start'>
-              {errors.investor_fund_name.message}
-            </span>
-          )}
-        </div>
-
-        <div className='group relative hover:bg-gray-100 rounded-lg my-3 p-2 px-3'>
-          <div className='flex justify-between items-center'>
-            <label className='font-semibold  text-xs text-gray-500 uppercase mb-1'>
-              Fund size (in million USD)
-            </label>
-            <img
-              src={editp}
-              className='visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
-'
-              alt='edit'
-              onClick={() => handleEditClick('fund_size')}
-              loading='lazy'
-              draggable={false}
-            />
-          </div>
-          {edit.fund_size ? (
-            <div>
-              <input
-                type='number'
-                {...register('investor_fund_size')}
-                className={`bg-gray-50 border-2 ${
-                  errors.investor_fund_size
-                    ? 'border-red-500 '
-                    : 'border-[#737373]'
-                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                placeholder='Enter fund size in Millions'
-                onWheel={(e) => e.target.blur()}
-                min={0}
-              />
-            </div>
-          ) : (
-            <div className='flex justify-between items-center cursor-pointer py-1'>
-              <span className='mr-2 text-sm truncate break-all'>
-                {fund_size}
-              </span>
-            </div>
-          )}
-          {errors.investor_fund_size && (
-            <span className='mt-1 text-sm text-red-500 font-bold flex justify-start'>
-              {errors.investor_fund_size.message}
-            </span>
-          )}
-        </div>
-
-        <div className='group relative hover:bg-gray-100 rounded-lg my-3 p-2 px-3'>
-          <div className='flex justify-between items-center'>
-            <label className='font-semibold  text-xs text-gray-500 uppercase mb-1'>
-              Do you invest in multiple ecosystems{' '}
-            </label>
-            <img
-              src={editp}
-              className='absolute right-2 top-2 visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
-'
-              alt='edit'
-              onClick={() => handleEditClick('invested_in_multi_chain')}
-              loading='lazy'
-              draggable={false}
-            />
-          </div>
-          {edit.invested_in_multi_chain ? (
-            <div className=''>
-              <select
-                {...register('invested_in_multi_chain')}
-                className={`bg-gray-50 border-2 ${
-                  errors.invested_in_multi_chain
-                    ? 'border-red-500'
-                    : 'border-[#737373]'
-                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-              >
-                <option className='text-lg font-bold' value='false'>
-                  No
-                </option>
-                <option className='text-lg font-bold' value='true'>
-                  Yes
-                </option>
-              </select>
-            </div>
-          ) : (
-            <div className='flex justify-between items-center cursor-pointer py-1'>
-              <span className='mr-2 text-sm truncate break-all'>
-                {getValues('invested_in_multi_chain') === 'true' ? 'Yes' : 'No'}
-              </span>
-            </div>
-          )}
-          {errors.invested_in_multi_chain && (
-            <p className='mt-1 text-sm text-red-500 font-bold text-left'>
-              {errors.invested_in_multi_chain.message}
-            </p>
-          )}
-        </div>
-        {watch('invested_in_multi_chain') === 'true' && (
           <div className='group relative hover:bg-gray-100 rounded-lg my-3 p-2 px-3'>
-            <div className=''>
+            <div className='flex justify-between items-center'>
               <label className='font-semibold  text-xs text-gray-500 uppercase mb-1'>
-                Please select the chains
+                What is the range of your check size?
               </label>
               <img
                 src={editp}
-                className='absolute right-2 top-2  visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
+                className='visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
 '
                 alt='edit'
-                onClick={() => handleEditClick('project_on_multichain')}
+                onClick={() => handleEditClick('range_of_check_size')}
                 loading='lazy'
                 draggable={false}
               />
             </div>
-            {edit.project_on_multichain ? (
-              <div className=''>
-                <ReactSelect
+            {edit.range_of_check_size ? (
+              <div>
+                <Select
                   isMulti
                   menuPortalTarget={document.body}
                   menuPosition={'fixed'}
                   styles={getReactSelectUpdateStyles(
-                    errors?.invested_in_multi_chain_names
+                    errors?.investment_stage_range
                   )}
-                  value={investedInMultiChainSelectedOptions}
-                  options={investedInmultiChainOptions}
+                  value={investStageRangeSelectedOptions}
+                  options={investStageRangeOptions}
                   classNamePrefix='select'
                   className='basic-multi-select w-full text-start'
-                  placeholder='Select a chain'
-                  name='invested_in_multi_chain_names'
+                  placeholder='Select a range'
+                  name='investment_stage_range'
                   onChange={(selectedOptions) => {
                     if (selectedOptions && selectedOptions.length > 0) {
-                      setInvestedInMultiChainSelectedOptions(selectedOptions);
-                      clearErrors('invested_in_multi_chain_names');
+                      setInvestStageRangeSelectedOptions(selectedOptions);
+                      clearErrors('investment_stage_range');
                       setValue(
-                        'invested_in_multi_chain_names',
+                        'investment_stage_range',
                         selectedOptions
                           .map((option) => option.value)
                           .join(', '),
                         { shouldValidate: true }
                       );
                     } else {
-                      setInvestedInMultiChainSelectedOptions([]);
-                      setValue('invested_in_multi_chain_names', '', {
+                      setInvestStageRangeSelectedOptions([]);
+                      setValue('investment_stage_range', '', {
                         shouldValidate: true,
                       });
-                      setError('invested_in_multi_chain_names', {
+                      setError('investment_stage_range', {
                         type: 'required',
-                        message: 'Atleast one chain name required',
+                        message: 'At least one stage required',
                       });
                     }
                   }}
                 />
               </div>
             ) : (
-              <div className='flex overflow-hidden overflow-x-auto  gap-2 cursor-pointer py-1'>
-                {project_on_multichain &&
-                typeof project_on_multichain[0] === 'string' ? (
-                  project_on_multichain[0]
-                    .split(', ')
-                    .map((projects, index) => (
-                      <span
-                        key={index}
-                        className='border-2 border-gray-500 min-w-[80px] truncate text-center rounded-full text-gray-700 text-xs px-2 py-1'
-                      >
-                        {projects}
-                      </span>
-                    ))
+              <div className='flex overflow-hidden overflow-x-auto gap-2 cursor-pointer py-1'>
+                {range_of_check_size &&
+                typeof range_of_check_size[0] === 'string' ? (
+                  range_of_check_size[0].split(', ').map((range, index) => (
+                    <span
+                      key={index}
+                      className='border-2 text-center min-w-[80px] truncate border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1'
+                    >
+                      {range}
+                    </span>
+                  ))
                 ) : (
-                  <span className='border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1'></span>
-                )}
-                {errors.invested_in_multi_chain_names && (
-                  <p className='mt-1 text-sm text-red-500 font-bold text-left'>
-                    {errors.invested_in_multi_chain_names.message}
-                  </p>
+                  <span className='border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1'>
+                    tooling
+                  </span>
                 )}
               </div>
             )}
+            {errors.investment_stage_range && (
+              <p className='mt-1 text-sm text-red-500 font-bold text-left'>
+                {errors.investment_stage_range.message}
+              </p>
+            )}
           </div>
-        )}
-
-        <div className='group relative hover:bg-gray-100 rounded-lg my-3 p-2 px-3'>
-          <div className='flex justify-between items-center'>
-            <label className='font-semibold  text-xs text-gray-500 uppercase mb-1'>
-              Category of investment
-            </label>
-            <img
-              src={editp}
-              className='visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
-'
-              alt='edit'
-              onClick={() => handleEditClick('category_of_investment')}
-              loading='lazy'
-              draggable={false}
-            />
-          </div>
-          {edit.category_of_investment ? (
-            <div>
-              <Select
-                isMulti
-                menuPortalTarget={document.body}
-                menuPosition={'fixed'}
-                styles={getReactSelectUpdateStyles(
-                  errors?.investment_categories
-                )}
-                value={investmentCategoriesSelectedOptions}
-                options={investmentCategoriesOptions}
-                classNamePrefix='select'
-                className='basic-multi-select w-full text-start'
-                placeholder='Select categories of investment'
-                name='investment_categories'
-                onChange={(selectedOptions) => {
-                  if (selectedOptions && selectedOptions.length > 0) {
-                    const selectedString = selectedOptions
-                      .map((option) => option.value)
-                      .join(', ');
-                    setInvestmentCategoriesSelectedOptions(selectedOptions);
-                    clearErrors('investment_categories');
-                    setValue('investment_categories', selectedString, {
-                      shouldValidate: true,
-                    });
-                  } else {
-                    setInvestmentCategoriesSelectedOptions([]);
-                    setValue('investment_categories', '', {
-                      shouldValidate: true,
-                    });
-                    setError('investment_categories', {
-                      type: 'required',
-                      message: 'Selecting a category is required',
-                    });
-                  }
-                }}
-              />
-            </div>
-          ) : (
-            <div className='flex overflow-hidden overflow-x-auto gap-2 cursor-pointer py-1'>
-              {category_of_investment &&
-              typeof category_of_investment === 'string' ? (
-                category_of_investment.split(', ').map((category, index) => (
-                  <span
-                    key={index}
-                    className='border-2 border-gray-500 text-center min-w-[80px] truncate rounded-full text-gray-700 text-xs px-2 py-1'
-                  >
-                    {category}
-                  </span>
-                ))
-              ) : (
-                <span className='border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1'>
-                  tooling
-                </span>
-              )}
-            </div>
-          )}
-        </div>
-
-        <div className='group relative hover:bg-gray-100 rounded-lg my-3 p-2 px-3'>
-          <div className='flex justify-between items-center'>
-            <label className='font-semibold  text-xs text-gray-500 uppercase mb-1'>
-              Website Link
-            </label>
-            <img
-              src={editp}
-              className='visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
-'
-              alt='edit'
-              onClick={() => handleEditClick('website_link')}
-              loading='lazy'
-              draggable={false}
-            />
-          </div>
-          {edit.website_link ? (
-            <div>
-              <input
-                type='text'
-                {...register('investor_website_url')}
-                className={`bg-gray-50 border-2 ${
-                  errors.investor_website_url
-                    ? 'border-red-500 '
-                    : 'border-[#737373]'
-                } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w/full p-2.5`}
-                placeholder='Enter your website url'
-              />
-            </div>
-          ) : (
-            <div className='flex justify-between items-center cursor-pointer py-1'>
-              <span className='mr-2 text-sm truncate break-all'>
-                {website_link}
-              </span>
-            </div>
-          )}
-          {errors.investor_website_url && (
-            <span className='mt-1 text-sm text-red-500 font-bold flex justify-start'>
-              {errors.investor_website_url.message}
-            </span>
-          )}
-        </div>
-
-        <div className='group relative hover:bg-gray-100 rounded-lg my-3 p-2 px-3'>
-          <div className='flex justify-between items-center'>
-            <label className='font-semibold text-xs text-gray-500 uppercase mb-1'>
-              Which stage(s) do you invest at?{' '}
-            </label>
-            <img
-              src={editp}
-              className='visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
-'
-              alt='edit'
-              onClick={() => handleEditClick('stage')}
-              loading='lazy'
-              draggable={false}
-            />
-          </div>
-          {edit.stage ? (
-            <div>
-              <Select
-                isMulti
-                menuPortalTarget={document.body}
-                menuPosition={'fixed'}
-                styles={getReactSelectUpdateStyles(errors?.investment_stage)}
-                value={investStageSelectedOptions}
-                options={investStageOptions}
-                classNamePrefix='select'
-                className='basic-multi-select w-full text-start'
-                placeholder='Select a stage'
-                name='investment_stage'
-                onChange={(selectedOptions) => {
-                  if (selectedOptions && selectedOptions.length > 0) {
-                    setInvestStageSelectedOptions(selectedOptions);
-                    clearErrors('investment_stage');
-                    setValue(
-                      'investment_stage',
-                      selectedOptions.map((option) => option.value).join(', '),
-                      { shouldValidate: true }
-                    );
-                  } else {
-                    setInvestStageSelectedOptions([]);
-                    setValue('investment_stage', '', {
-                      shouldValidate: true,
-                    });
-                    setError('investment_stage', {
-                      type: 'required',
-                      message: 'Atleast one stage required',
-                    });
-                  }
-                }}
-              />
-            </div>
-          ) : (
-            <div className='flex overflow-hidden overflow-x-auto gap-2 cursor-pointer py-1'>
-              {stage && typeof stage[0] === 'string' ? (
-                stage[0].split(', ').map((value, index) => (
-                  <span
-                    key={index}
-                    className='border-2 text-center min-w-[80px] truncate border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1'
-                  >
-                    {value}
-                  </span>
-                ))
-              ) : (
-                <span className='border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1'></span>
-              )}
-            </div>
-          )}
-          {errors.investment_stage && (
-            <p className='mt-1 text-sm text-red-500 font-bold text-left'>
-              {errors.investment_stage.message}
-            </p>
-          )}
-        </div>
-
-        <div className='group relative hover:bg-gray-100 rounded-lg my-3 p-2 px-3'>
-          <div className='flex justify-between items-center'>
-            <label className='font-semibold  text-xs text-gray-500 uppercase mb-1'>
-              What is the range of your check size?
-            </label>
-            <img
-              src={editp}
-              className='visible lgx:invisible lgx:group-hover:visible text-gray-500 hover:underline text-xs h-4 w-4 transition-opacity duration-300
-'
-              alt='edit'
-              onClick={() => handleEditClick('range_of_check_size')}
-              loading='lazy'
-              draggable={false}
-            />
-          </div>
-          {edit.range_of_check_size ? (
-            <div>
-              <Select
-                isMulti
-                menuPortalTarget={document.body}
-                menuPosition={'fixed'}
-                styles={getReactSelectUpdateStyles(
-                  errors?.investment_stage_range
-                )}
-                value={investStageRangeSelectedOptions}
-                options={investStageRangeOptions}
-                classNamePrefix='select'
-                className='basic-multi-select w-full text-start'
-                placeholder='Select a range'
-                name='investment_stage_range'
-                onChange={(selectedOptions) => {
-                  if (selectedOptions && selectedOptions.length > 0) {
-                    setInvestStageRangeSelectedOptions(selectedOptions);
-                    clearErrors('investment_stage_range');
-                    setValue(
-                      'investment_stage_range',
-                      selectedOptions.map((option) => option.value).join(', '),
-                      { shouldValidate: true }
-                    );
-                  } else {
-                    setInvestStageRangeSelectedOptions([]);
-                    setValue('investment_stage_range', '', {
-                      shouldValidate: true,
-                    });
-                    setError('investment_stage_range', {
-                      type: 'required',
-                      message: 'At least one stage required',
-                    });
-                  }
-                }}
-              />
-            </div>
-          ) : (
-            <div className='flex overflow-hidden overflow-x-auto gap-2 cursor-pointer py-1'>
-              {range_of_check_size &&
-              typeof range_of_check_size[0] === 'string' ? (
-                range_of_check_size[0].split(', ').map((range, index) => (
-                  <span
-                    key={index}
-                    className='border-2 text-center min-w-[80px] truncate border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1'
-                  >
-                    {range}
-                  </span>
-                ))
-              ) : (
-                <span className='border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1'>
-                  tooling
-                </span>
-              )}
-            </div>
-          )}
-          {errors.investment_stage_range && (
-            <p className='mt-1 text-sm text-red-500 font-bold text-left'>
-              {errors.investment_stage_range.message}
-            </p>
-          )}
-        </div>
-        <h3 className='mb-2 text-xs text-gray-500 px-3'>LINKS</h3>
-        <div className='relative px-3'>
-          <div className='flex flex-wrap gap-5'>
-            {Object.keys(socialLinks)
-              .filter((key) => socialLinks[key]) // Only show links with valid URLs
-              .map((key, index) => {
-                const url = socialLinks[key];
-                const Icon = getSocialLogo(url); // Get the corresponding social icon
-                return (
-                  <div
-                    className='group relative flex items-center mb-3'
-                    key={key}
-                  >
-                    {isEditingLink[key] ? (
-                      <div className='flex w-full'>
-                        <div className='flex items-center w-full'>
-                          <div className='flex items-center space-x-2 w-full'>
-                            <div className='flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full'>
-                              {Icon} {/* Display the icon */}
+          <h3 className='mb-2 text-xs text-gray-500 px-3'>LINKS</h3>
+          <div className='relative px-3'>
+            <div className='flex flex-wrap gap-5'>
+              {Object.keys(socialLinks)
+                .filter((key) => socialLinks[key]) // Only show links with valid URLs
+                .map((key, index) => {
+                  const url = socialLinks[key];
+                  const Icon = getSocialLogo(url); // Get the corresponding social icon
+                  return (
+                    <div
+                      className='group relative flex items-center mb-3'
+                      key={key}
+                    >
+                      {isEditingLink[key] ? (
+                        <div className='flex w-full'>
+                          <div className='flex items-center w-full'>
+                            <div className='flex items-center space-x-2 w-full'>
+                              <div className='flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full'>
+                                {Icon} {/* Display the icon */}
+                              </div>
+                              <input
+                                type='text'
+                                value={url}
+                                onChange={(e) => handleLinkChange(e, key)}
+                                className='border p-2 rounded-md w-full'
+                                placeholder='Enter your social media URL'
+                              />
                             </div>
-                            <input
-                              type='text'
-                              value={url}
-                              onChange={(e) => handleLinkChange(e, key)}
-                              className='border p-2 rounded-md w-full'
-                              placeholder='Enter your social media URL'
-                            />
+                            <button
+                              type='button'
+                              onClick={() => handleSaveLink(key)} // Save the link
+                              className='ml-2 text-green-500 hover:text-green-700'
+                            >
+                              <FaSave />
+                            </button>
+                            <button
+                              type='button'
+                              onClick={() => handleLinkDelete(key)} // Delete the link
+                              className='ml-2 text-red-500 hover:text-red-700'
+                            >
+                              <FaTrash />
+                            </button>
                           </div>
-                          <button
-                            type='button'
-                            onClick={() => handleSaveLink(key)} // Save the link
-                            className='ml-2 text-green-500 hover:text-green-700'
-                          >
-                            <FaSave />
-                          </button>
-                          <button
-                            type='button'
-                            onClick={() => handleLinkDelete(key)} // Delete the link
-                            className='ml-2 text-red-500 hover:text-red-700'
-                          >
-                            <FaTrash />
-                          </button>
                         </div>
-                      </div>
-                    ) : (
-                      <>
-                        <a
-                          href={url}
-                          target='_blank'
-                          rel='noopener noreferrer'
-                          className='flex items-center'
-                        >
-                          {Icon} {/* Display the icon */}
-                        </a>
+                      ) : (
+                        <>
+                          <a
+                            href={url}
+                            target='_blank'
+                            rel='noopener noreferrer'
+                            className='flex items-center'
+                          >
+                            {Icon} {/* Display the icon */}
+                          </a>
+                          <button
+                            type='button'
+                            className='absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 ease-in-out transform opacity-0 group-hover:opacity-100 group-hover:translate-x-6 h-10 w-7'
+                            onClick={() => handleLinkEditToggle(key)} // Toggle editing mode for this link
+                          >
+                            <img
+                              src={editp}
+                              alt='edit'
+                              loading='lazy'
+                              draggable={false}
+                            />
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  );
+                })}
+            </div>
+            {fields.map((item, index) => (
+              <div key={item.id} className='flex flex-col'>
+                <div className='flex items-center mb-2 pb-1'>
+                  <Controller
+                    name={`links[${index}].link`}
+                    control={control}
+                    render={({ field, fieldState }) => (
+                      <div className='flex items-center w-full'>
+                        <div className='flex items-center space-x-2 w-full'>
+                          <div className='flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full'>
+                            {field.value && getSocialLogo(field.value)}{' '}
+                            {/* Display logo for new link */}
+                          </div>
+                          <input
+                            type='text'
+                            placeholder='Enter your social media URL'
+                            className={`p-2 border ${
+                              fieldState.error
+                                ? 'border-red-500'
+                                : 'border-[#737373]'
+                            } rounded-md w-full bg-gray-50 border-2 border-[#D1D5DB]`}
+                            {...field}
+                          />
+                        </div>
                         <button
                           type='button'
-                          className='absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 ease-in-out transform opacity-0 group-hover:opacity-100 group-hover:translate-x-6 h-10 w-7'
-                          onClick={() => handleLinkEditToggle(key)} // Toggle editing mode for this link
+                          onClick={() => handleSaveNewLink(field.value, index)} // Save the new link
+                          className='ml-2 text-green-500 hover:text-green-700'
                         >
-                          <img
-                            src={editp}
-                            alt='edit'
-                            loading='lazy'
-                            draggable={false}
-                          />
+                          <FaSave />
                         </button>
-                      </>
-                    )}
-                  </div>
-                );
-              })}
-          </div>
-          {fields.map((item, index) => (
-            <div key={item.id} className='flex flex-col'>
-              <div className='flex items-center mb-2 pb-1'>
-                <Controller
-                  name={`links[${index}].link`}
-                  control={control}
-                  render={({ field, fieldState }) => (
-                    <div className='flex items-center w-full'>
-                      <div className='flex items-center space-x-2 w-full'>
-                        <div className='flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full'>
-                          {field.value && getSocialLogo(field.value)}{' '}
-                          {/* Display logo for new link */}
-                        </div>
-                        <input
-                          type='text'
-                          placeholder='Enter your social media URL'
-                          className={`p-2 border ${
-                            fieldState.error
-                              ? 'border-red-500'
-                              : 'border-[#737373]'
-                          } rounded-md w-full bg-gray-50 border-2 border-[#D1D5DB]`}
-                          {...field}
-                        />
+                        <button
+                          type='button'
+                          onClick={() => remove(index)} // Remove link field
+                          className='ml-2 text-red-500 hover:text-red-700'
+                        >
+                          <FaTrash />
+                        </button>
                       </div>
-                      <button
-                        type='button'
-                        onClick={() => handleSaveNewLink(field.value, index)} // Save the new link
-                        className='ml-2 text-green-500 hover:text-green-700'
-                      >
-                        <FaSave />
-                      </button>
-                      <button
-                        type='button'
-                        onClick={() => remove(index)} // Remove link field
-                        className='ml-2 text-red-500 hover:text-red-700'
-                      >
-                        <FaTrash />
-                      </button>
-                    </div>
-                  )}
-                />
+                    )}
+                  />
+                </div>
               </div>
+            ))}
+            {fields.length < 10 && (
+              <button
+                type='button'
+                onClick={() => {
+                  if (fields.length < 10) {
+                    append({ link: '' });
+                  }
+                }}
+                className='flex items-center p-1 text-[#155EEF]'
+              >
+                <FaPlus className='mr-1' /> Add Another Link
+              </button>
+            )}
+          </div>
+          {Object.values(edit).some((value) => value) && showbtn && (
+            <div className='flex justify-end gap-4 mt-4'>
+              <button
+                type='button'
+                onClick={handleCancel}
+                className='bg-gray-300 text-gray-700 py-2 px-4 rounded'
+              >
+                Cancel
+              </button>
+              <button
+                disabled={isSubmitting}
+                type='submit'
+                className='bg-blue-600 text-white py-2 px-4 rounded'
+              >
+                {isSubmitting ? (
+                  <ThreeDots
+                    visible={true}
+                    height='35'
+                    width='35'
+                    color='#FFFEFF'
+                    radius='9'
+                    ariaLabel='three-dots-loading'
+                    wrapperStyle={{}}
+                    wrapperclassName=''
+                  />
+                ) : edit ? (
+                  'Update'
+                ) : (
+                  'Submit'
+                )}
+              </button>
             </div>
-          ))}
-          {fields.length < 10 && (
-            <button
-              type='button'
-              onClick={() => {
-                if (fields.length < 10) {
-                  append({ link: '' });
-                }
-              }}
-              className='flex items-center p-1 text-[#155EEF]'
-            >
-              <FaPlus className='mr-1' /> Add Another Link
-            </button>
           )}
         </div>
-        {Object.values(edit).some((value) => value) && showbtn && (
-          <div className='flex justify-end gap-4 mt-4'>
-            <button
-              type='button'
-              onClick={handleCancel}
-              className='bg-gray-300 text-gray-700 py-2 px-4 rounded'
-            >
-              Cancel
-            </button>
-            <button
-              disabled={isSubmitting}
-              type='submit'
-              className='bg-blue-600 text-white py-2 px-4 rounded'
-            >
-              {isSubmitting ? (
-                <ThreeDots
-                  visible={true}
-                  height='35'
-                  width='35'
-                  color='#FFFEFF'
-                  radius='9'
-                  ariaLabel='three-dots-loading'
-                  wrapperStyle={{}}
-                  wrapperclassName=''
-                />
-              ) : edit ? (
-                'Update'
-              ) : (
-                'Submit'
-              )}
-            </button>
-          </div>
-        )}
-      </div>
-}
+      )}
     </form>
   );
 };

@@ -3,7 +3,6 @@ import SkeletonThemeMain from '../../../Common/SkeletonTheme';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import ArrowOutwardOutlinedIcon from '@mui/icons-material/ArrowOutwardOutlined';
 
-
 const DiscoverProjectProfileSkeleton = () => {
   return (
     <SkeletonThemeMain>
@@ -55,10 +54,7 @@ const DiscoverProjectProfileSkeleton = () => {
           {/* <button className="bg-transparent border border-[#3505B2] text-[#3505B2] text-sm font-[950] px-2 py-1 rounded-md">
             Get in touch{" "}
           </button> */}
-          <a
-            
-            className='w-full h-[#155EEF] bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 mb-6 flex items-center justify-center'
-          >
+          <a className='w-full h-[#155EEF] bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 mb-6 flex items-center justify-center'>
             Get in touch
             <ArrowOutwardOutlinedIcon className='ml-1' fontSize='small' />
           </a>

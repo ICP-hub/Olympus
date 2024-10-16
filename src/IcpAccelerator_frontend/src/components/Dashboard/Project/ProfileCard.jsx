@@ -342,7 +342,9 @@ function ProfileCard({ cardData }) {
                 <h3 className='font-normal mb-2 text-xs text-gray-500 uppercase'>
                   About
                 </h3>
-                <p className='text-sm line-clamp-2 break-all'>{parse(projectDescription)}</p>
+                <p className='text-sm line-clamp-2 break-all'>
+                  {parse(projectDescription)}
+                </p>
               </div>
 
               <div className='mb-4'>

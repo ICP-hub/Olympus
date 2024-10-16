@@ -9,9 +9,9 @@ const DiscoverMoneyRaising = ({ cardData, projectId }) => {
     ? cardData.money_raised
     : [];
 
-    const [isLoading,setIsLoading]=useState(true)
+  const [isLoading, setIsLoading] = useState(true);
 
-    useTimeout(()=>setIsLoading(false))
+  useTimeout(() => setIsLoading(false));
 
   console.log('Money Raised Data:', moneyRaisedData);
   console.log('Store money-raising data', cardData);
@@ -20,24 +20,28 @@ const DiscoverMoneyRaising = ({ cardData, projectId }) => {
     <div>
       <div className='flex flex-col items-end mb-4 max-w-7xl pt-4'></div>
       <div className='max-w-7xl mx-auto bg-white'>
-        {moneyRaisedData.length > 0 ? isLoading ? <>
-        <div className="flex justify-end">
-        <button
-              className='bg-blue-600 text-white px-4 py-2 rounded-lg mb-4  '
-              
-            >
-              Request Access
-            </button>
-        </div>
-          
-        {[...Array(5)].map((_,index)=><DiscoverFundingCardSkeleton/>)}</>: (
-          moneyRaisedData.map((data, index) => (
-            <DiscoverFundingCard
-              key={index}
-              data={data}
-              projectId={projectId}
-            />
-          ))
+        {moneyRaisedData.length > 0 ? (
+          isLoading ? (
+            <>
+              <div className='flex justify-end'>
+                <button className='bg-blue-600 text-white px-4 py-2 rounded-lg mb-4  '>
+                  Request Access
+                </button>
+              </div>
+
+              {[...Array(5)].map((_, index) => (
+                <DiscoverFundingCardSkeleton />
+              ))}
+            </>
+          ) : (
+            moneyRaisedData.map((data, index) => (
+              <DiscoverFundingCard
+                key={index}
+                data={data}
+                projectId={projectId}
+              />
+            ))
+          )
         ) : (
           // <p>No funding data available.</p>
           <>

@@ -10,33 +10,33 @@ const DiscoverDocumentSkeleton = () => {
       >
         {/* Image Section with Background */}
         <div className='bg-gray-100 px-3 py-4 rounded-lg flex-shrink-0 flex flex-col items-center'>
-        <Skeleton height={60} width={100}  />
-        <Skeleton height={16} width={100}  />  
+          <Skeleton height={60} width={100} />
+          <Skeleton height={16} width={100} />
         </div>
 
         {/* Details Section */}
         <div className='ml-4 mt-3 sm4:mt-0 flex-grow transition-all duration-300'>
           <div className='flex justify-between flex-wrap'>
-            <div className="w-[60%]">
-            <Skeleton height={15}  />
+            <div className='w-[60%]'>
+              <Skeleton height={15} />
             </div>
-            <div className="sm:w-[10%] w-[50px]">
-            <Skeleton height={15}  />
+            <div className='sm:w-[10%] w-[50px]'>
+              <Skeleton height={15} />
             </div>
           </div>
           <p className={`text-gray-600 mt-3 `}>
-          <div class='space-y-2.5 animate-pulse w-full '>
-            <div class='flex items-center w-full'>
-              <div class='h-2.5 bg-gray-200 rounded-full  w-32'></div>
-              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
-              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
+            <div class='space-y-2.5 animate-pulse w-full '>
+              <div class='flex items-center w-full'>
+                <div class='h-2.5 bg-gray-200 rounded-full  w-32'></div>
+                <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
+                <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
+              </div>
+              <div class='flex items-center w-full '>
+                <div class='h-2.5 bg-gray-200 rounded-full  w-full'></div>
+                <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
+                <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
+              </div>
             </div>
-            <div class='flex items-center w-full '>
-              <div class='h-2.5 bg-gray-200 rounded-full  w-full'></div>
-              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
-              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
-            </div>
-          </div>
           </p>
         </div>
       </div>

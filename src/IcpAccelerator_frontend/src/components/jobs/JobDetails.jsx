@@ -67,7 +67,7 @@ const JobDetails = ({ setOpen, uid }) => {
 
   const [loading, setLoading] = useState(true);
 
-  useTimeout(()=>setLoading(false))
+  useTimeout(() => setLoading(false));
 
   const [showDetails, setShowDetails] = useState(false);
 

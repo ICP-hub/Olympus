@@ -57,12 +57,17 @@ const MoneyRaisedCard = ({ data }) => {
   } = data[0].params.money_raised[0]; // Destructure the necessary fields
   console.log('data kya kya aa rha h', data);
 
-  const [isLoading,setIsLoading]=useState(true)
-  
-  useTimeout(()=>setIsLoading(false))
+  const [isLoading, setIsLoading] = useState(true);
 
-  return (
-    isLoading ? <>{[...Array(5)].map((_,index)=><MoneyRaisedCardSkeleton/>)} </>: 
+  useTimeout(() => setIsLoading(false));
+
+  return isLoading ? (
+    <>
+      {[...Array(5)].map((_, index) => (
+        <MoneyRaisedCardSkeleton />
+      ))}{' '}
+    </>
+  ) : (
     <div className='space-y-4'>
       <FundingCard
         title='ICP Grants'

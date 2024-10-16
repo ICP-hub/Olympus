@@ -12,7 +12,6 @@ import NewEventSkeleton from './DashboardEventSkeletons/NewEventSkeleton';
 import { formatFullDateFromSimpleDate } from '../../Utils/formatter/formatDateFromBigInt';
 import useTimeout from '../../hooks/TimeOutHook';
 
-
 const NewEvent = ({ event }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [editMode, setEditMode] = useState(false); // State to track if we are in edit mode
@@ -28,10 +27,9 @@ const NewEvent = ({ event }) => {
     setEditMode(false); // When creating a new cohort, edit mode is false
     setSelectedEvent(null);
   };
-  useTimeout(()=> setLoading(false))
+  useTimeout(() => setLoading(false));
   const fetchCohorts = async () => {
     if (actor && principal) {
-
       try {
         const covertedPrincipal = Principal.fromText(principal);
         const data = await actor.get_cohorts_by_principal(covertedPrincipal);
@@ -71,7 +69,7 @@ const NewEvent = ({ event }) => {
         }
       } catch (error) {
         console.error('Error fetching cohort data:', error);
-      }   finally {
+      } finally {
         // setLoading(false); // Loading stops after data fetch
       }
     }
@@ -93,16 +91,16 @@ const NewEvent = ({ event }) => {
   };
   return (
     <>
-    {/* {loading ? (
+      {/* {loading ? (
         <NewEventSkeleton eventsCount={cohortEvents.length}/>
       ) : cohortEvents.length === 0 ? (
         <EventSection />
       ) : ( */}
       {loading && cohortEvents.length > 0 ? (
-    <NewEventSkeleton eventsCount={cohortEvents.length} />
-  ) : cohortEvents.length === 0 ? (
-    <EventSection />
-  ) : (
+        <NewEventSkeleton eventsCount={cohortEvents.length} />
+      ) : cohortEvents.length === 0 ? (
+        <EventSection />
+      ) : (
         <>
           {/* Add new cohort button */}
           <div className='hidden md:flex flex-col r md:items-end mb-8 max-w-7xl pt-4'>

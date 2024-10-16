@@ -10,8 +10,8 @@ import DiscoverMentorEventSkeleton from './discoverMentorSkeleton/DiscoverMentor
 const DiscoverMentorEvent = ({ principal }) => {
   const [mentorEvents, setMentorEvents] = useState([]);
   const actor = useSelector((currState) => currState.actors.actor);
-  const [isLoading,setIsLoading]=useState(true)
-  useTimeout(()=>setIsLoading(false))
+  const [isLoading, setIsLoading] = useState(true);
+  useTimeout(() => setIsLoading(false));
 
   useEffect(() => {
     const fetchCohorts = async () => {
@@ -61,7 +61,7 @@ const DiscoverMentorEvent = ({ principal }) => {
   // return (
   //   <div className='w-full mb-4 lg1:pb-2 pb-4'>
   //     <h2 className='text-lg font-semibold text-gray-800 mb-4'>Events</h2>
-  //     {mentorEvents.length === 0 ? 
+  //     {mentorEvents.length === 0 ?
   //       <p>
   //         <NoData message={'No Events posted Yet'} />
   //       </p>
@@ -182,7 +182,6 @@ const DiscoverMentorEvent = ({ principal }) => {
       )}
     </div>
   );
-  
 };
 
 export default DiscoverMentorEvent;

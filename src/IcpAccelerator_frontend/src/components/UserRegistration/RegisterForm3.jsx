@@ -146,7 +146,7 @@ const RegisterForm3 = React.memo(({ setImageData }) => {
         Tell about yourself
       </h2>
       <label className='block text-sm font-medium mb-2'>Upload a photo</label>
-      <div className='flex flex-wrap justify-center sm0:justify-start gap-2 mb-3'>
+      <div className='flex flex-wrap justify-around sm0:justify-start gap-2 mb-3'>
         <div className='h-24 w-24 rounded-2xl border-2 border-dashed border-gray-300 items-center justify-center overflow-hidden flex'>
           {imagePreview && !errors.image ? (
             <img

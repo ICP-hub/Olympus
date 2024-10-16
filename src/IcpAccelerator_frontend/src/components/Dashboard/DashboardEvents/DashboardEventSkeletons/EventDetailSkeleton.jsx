@@ -14,8 +14,8 @@ import FAQ from '../../Project/Faq';
 import Attendees from '../Attendees';
 import NoDataFound from '../NoDataFound';
 import EventRequestCard from '../EventRequestCard';
-import AOS from "aos";
-import "aos/dist/aos.css";
+import AOS from 'aos';
+import 'aos/dist/aos.css';
 
 const EventDetailSkeleton = ({
   userCurrentRoleStatusActiveRole,
@@ -58,7 +58,10 @@ const EventDetailSkeleton = ({
           </button>
         </div>
 
-        <div className='flex flex-col gap-4 md:gap-10 md:flex-row'  data-aos="fade-up">
+        <div
+          className='flex flex-col gap-4 md:gap-10 md:flex-row'
+          data-aos='fade-up'
+        >
           <div className='w-full md:w-[30%] bg-white rounded-lg shadow-md pt-2 md:ml-1'>
             <div className='bg-gray-100 p-4'>
               <div className='flex items-start mb-4'>
@@ -314,9 +317,7 @@ const EventDetailSkeleton = ({
 
                 {/* Centered text */}
                 <div className='flex items-center justify-center absolute inset-0'>
-                  <h2 className='text-6xl font-bold text-gray-500'>
-                    Banner
-                  </h2>
+                  <h2 className='text-6xl font-bold text-gray-500'>Banner</h2>
                 </div>
               </div>
             </SkeletonTheme>
@@ -375,39 +376,39 @@ const EventDetailSkeleton = ({
                             count={5}
                             className='rounded-md mb-2'
                           /> */}
-                          <div role="status" class="space-y-2.5 animate-pulse ">
-    <div class="flex items-center w-full">
-        <div class="h-2.5 bg-gray-200 rounded-full  w-32"></div>
-        <div class="h-2.5 ms-2 bg-gray-300 rounded-full w-24"></div>
-        <div class="h-2.5 ms-2 bg-gray-300 rounded-full w-full"></div>
-    </div>
-    <div class="flex items-center w-full">
-        <div class="h-2.5 bg-gray-200 rounded-full  w-full"></div>
-                <div class="h-2.5 ms-2 bg-gray-300 rounded-full w-full"></div>
-        <div class="h-2.5 ms-2 bg-gray-300 rounded-full w-24"></div>
-    </div>
-    <div class="flex items-center w-full ">
-        <div class="h-2.5 bg-gray-300 rounded-full w-full"></div>
-        <div class="h-2.5 ms-2 bg-gray-200 rounded-full  w-80"></div>
-        <div class="h-2.5 ms-2 bg-gray-300 rounded-full w-full"></div>
-    </div>
-    <div class="flex items-center w-full ">
-        <div class="h-2.5  bg-gray-200 rounded-full  w-full"></div>
-                <div class="h-2.5 ms-2 bg-gray-300 rounded-full w-full"></div>
-        <div class="h-2.5 ms-2 bg-gray-300 rounded-full w-24"></div>
-    </div>
-    <div class="flex items-center w-full">
-        <div class="h-2.5  bg-gray-300 rounded-full w-32"></div>
-        <div class="h-2.5 ms-2 bg-gray-300 rounded-full w-24"></div>
-        <div class="h-2.5 ms-2 bg-gray-200 rounded-full  w-full"></div>
-    </div>
-    <div class="flex items-center w-full ">
-        <div class="h-2.5  bg-gray-300 rounded-full w-full"></div>
-        <div class="h-2.5 ms-2 bg-gray-200 rounded-full  w-80"></div>
-        <div class="h-2.5 ms-2 bg-gray-300 rounded-full w-full"></div>
-    </div>
-    <span class="sr-only">Loading...</span>
-</div>
+                          <div role='status' class='space-y-2.5 animate-pulse '>
+                            <div class='flex items-center w-full'>
+                              <div class='h-2.5 bg-gray-200 rounded-full  w-32'></div>
+                              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
+                              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
+                            </div>
+                            <div class='flex items-center w-full'>
+                              <div class='h-2.5 bg-gray-200 rounded-full  w-full'></div>
+                              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
+                              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
+                            </div>
+                            <div class='flex items-center w-full '>
+                              <div class='h-2.5 bg-gray-300 rounded-full w-full'></div>
+                              <div class='h-2.5 ms-2 bg-gray-200 rounded-full  w-80'></div>
+                              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
+                            </div>
+                            <div class='flex items-center w-full '>
+                              <div class='h-2.5  bg-gray-200 rounded-full  w-full'></div>
+                              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
+                              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
+                            </div>
+                            <div class='flex items-center w-full'>
+                              <div class='h-2.5  bg-gray-300 rounded-full w-32'></div>
+                              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
+                              <div class='h-2.5 ms-2 bg-gray-200 rounded-full  w-full'></div>
+                            </div>
+                            <div class='flex items-center w-full '>
+                              <div class='h-2.5  bg-gray-300 rounded-full w-full'></div>
+                              <div class='h-2.5 ms-2 bg-gray-200 rounded-full  w-80'></div>
+                              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
+                            </div>
+                            <span class='sr-only'>Loading...</span>
+                          </div>
                         </div>
                         <div className='absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-white to-transparent pointer-events-none'></div>
                       </div>

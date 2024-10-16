@@ -40,23 +40,23 @@ const UserProjectCardSkeleton = () => {
             <Skeleton height={15} />
           </h3>
           <p className='text-gray-500 text-sm'>
-            <Skeleton height={15} width={"50%"} />
+            <Skeleton height={15} width={'50%'} />
           </p>
           <div className='text-gray-600 text-sm mt-2 overflow-hidden text-ellipsis max-h-14 line-clamp-3 break-all'>
             {/* {description ? parse(description) : 'No description available.'} */}
             {/* <Skeleton height={18} style={{ borderRadius: '18px' }} count={2} /> */}
             <div class='space-y-2.5 animate-pulse w-full '>
-            <div class='flex items-center w-full'>
-              <div class='h-2.5 bg-gray-200 rounded-full  w-32'></div>
-              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
-              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
+              <div class='flex items-center w-full'>
+                <div class='h-2.5 bg-gray-200 rounded-full  w-32'></div>
+                <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
+                <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
+              </div>
+              <div class='flex items-center w-full '>
+                <div class='h-2.5 bg-gray-200 rounded-full  w-full'></div>
+                <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
+                <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
+              </div>
             </div>
-            <div class='flex items-center w-full '>
-              <div class='h-2.5 bg-gray-200 rounded-full  w-full'></div>
-              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
-              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
-            </div>
-          </div>
           </div>
           <div className='flex space-x-2 mt-2 overflow-x-auto w-full max-w-full'>
             <div className='flex gap-2'>

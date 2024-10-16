@@ -14,7 +14,6 @@ import {
 const JobsSkeleton = () => {
   return (
     <SkeletonThemeMain color='#e3e3e3' highlightColor='#f0f0f0'>
-
       <div className='flex flex-col my-8 shadow-md  rounded-md p-4'>
         <div className='flex justify-between'>
           <div className='flex flex-col  sm5:w-[70%] w-full '>
@@ -29,7 +28,11 @@ const JobsSkeleton = () => {
                 <SkeletonTheme color='#e3e3e3'>
                   <div className='relative flex flex-col items-center'>
                     <div className='rounded-lg  '>
-                      <Skeleton  height={48} width={48} style={{ borderRadius: '18px' }}/>
+                      <Skeleton
+                        height={48}
+                        width={48}
+                        style={{ borderRadius: '18px' }}
+                      />
                     </div>
 
                     <div
@@ -85,27 +88,22 @@ const JobsSkeleton = () => {
             <div className='flex items-center gap-2'>
               {' '}
               {/* {lenseSvgIcon}{' '} */}
-              <Skeleton width={20} height={20} />
-              {' '}
+              <Skeleton width={20} height={20} />{' '}
               <span className=''>
                 <Skeleton width={65} height={20} />
               </span>{' '}
             </div>
             <div className='flex items-center gap-2'>
               {/* {locationSvgIcon} */}
-              <Skeleton width={20} height={20} />
-
-              {' '}
+              <Skeleton width={20} height={20} />{' '}
               <span className=''>
                 <Skeleton width={65} height={20} />
               </span>{' '}
             </div>
             <div className='flex items-center gap-2'>
               {/* {clockSvgIcon} */}
-              <Skeleton width={20} height={20} />
-
-              {' '}
-              <span >
+              <Skeleton width={20} height={20} />{' '}
+              <span>
                 <Skeleton width={65} height={20} />
               </span>{' '}
             </div>
@@ -113,7 +111,6 @@ const JobsSkeleton = () => {
               <span className='flex'>
                 {/* <LinkIcon />/ */}
                 <Skeleton width={20} height={20} />
-
               </span>{' '}
             </div>
           </div>

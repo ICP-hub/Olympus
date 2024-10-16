@@ -490,8 +490,9 @@ const MentorEdit = () => {
     mentorFullData[0]?.profile?.years_of_mentoring ?? '';
   const multichain = multi_chain === true ? 'Yes' : 'No';
   console.log('domains_interested_in', area_of_expertise);
-  return (
-    isLoading ? <MentorEditSkeleton /> :
+  return isLoading ? (
+    <MentorEditSkeleton />
+  ) : (
     <div ref={editableRef} className='bg-white p-2 '>
       <form onSubmit={handleSubmit(onSubmitHandler, onErrorHandler)}>
         <div className='my-1 relative group  hover:bg-gray-100 rounded-lg p-2 px-3'>
@@ -1228,7 +1229,6 @@ const MentorEdit = () => {
         )}
       </form>
     </div>
-      
   );
 };
 

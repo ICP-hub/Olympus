@@ -25,9 +25,15 @@ const TeamCard = ({ member }) => {
       </div>
 
       <div className='ml-4'>
-        <h4 className='text-base font-semibold line-clamp-1 break-all'>{member?.full_name}</h4>
-        <p className='text-gray-500 text-sm line-clamp-1 break-all'>{member?.openchat_username}</p>
-        <p className='text-gray-600 text-base mt-2 line-clamp-2 break-all'>{member?.bio[0]}</p>
+        <h4 className='text-base font-semibold line-clamp-1 break-all'>
+          {member?.full_name}
+        </h4>
+        <p className='text-gray-500 text-sm line-clamp-1 break-all'>
+          {member?.openchat_username}
+        </p>
+        <p className='text-gray-600 text-base mt-2 line-clamp-2 break-all'>
+          {member?.bio[0]}
+        </p>
 
         {links?.link.map((alllink, i) => {
           const icon = getSocialLogo(alllink);
@@ -50,9 +56,9 @@ const TeamCard = ({ member }) => {
 
 const DiscoverTeam = ({ projectDetails }) => {
   const members = projectDetails.project_team?.[0] || [];
-  const [isLoading,setIsLoading]=useState(true)
+  const [isLoading, setIsLoading] = useState(true);
 
-  useTimeout(()=>setIsLoading(false))
+  useTimeout(() => setIsLoading(false));
 
   return (
     <>
@@ -66,10 +72,17 @@ const DiscoverTeam = ({ projectDetails }) => {
               </a>
             </div>
           </div>
-          {isLoading ? <>{[...Array(members.length)].map((_,index)=><DiscoverTeamSkeleton/>)} </>:
-          members.map((member, ind) => (
-            <TeamCard key={ind} member={member?.member_data} />
-          ))}
+          {isLoading ? (
+            <>
+              {[...Array(members.length)].map((_, index) => (
+                <DiscoverTeamSkeleton />
+              ))}{' '}
+            </>
+          ) : (
+            members.map((member, ind) => (
+              <TeamCard key={ind} member={member?.member_data} />
+            ))
+          )}
         </div>
       ) : (
         <NoDataFound message='No Team Member found' />

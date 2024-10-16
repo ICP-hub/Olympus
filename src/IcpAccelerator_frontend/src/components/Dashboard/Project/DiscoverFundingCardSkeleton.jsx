@@ -12,7 +12,6 @@ const DiscoverFundingCardSkeleton = () => {
         <div className='flex-shrink-0 sm1:w-[30%] w-full'>
           <SkeletonTheme color='#e3e3e3'>
             <div className='relative flex flex-col items-center'>
-              
               <div className='rounded-lg  '>
                 <Skeleton height={96} width={110} />
               </div>
@@ -40,17 +39,18 @@ const DiscoverFundingCardSkeleton = () => {
         </div>
 
         {/* Details Section */}
-        <div className={`sm1:ml-6 flex-grow transition-all duration-300 sm1:w-[65%] w-full `}>
-          <SkeletonTheme color='#e3e3e3' >
-          <div className='flex sm1:justify-between justify-center gap-2 sm1:gap-0  items-center flex-wrap'>
-            <p className='text-lg font-semibold text-gray-900'>
+        <div
+          className={`sm1:ml-6 flex-grow transition-all duration-300 sm1:w-[65%] w-full `}
+        >
+          <SkeletonTheme color='#e3e3e3'>
+            <div className='flex sm1:justify-between justify-center gap-2 sm1:gap-0  items-center flex-wrap'>
+              <p className='text-lg font-semibold text-gray-900'>
                 <Skeleton height={20} width={100} />
-                </p>
-            <p className='text-sm text-gray-500 '>
-              
-            <Skeleton height={20} width={60} />
-            </p>
-          </div>
+              </p>
+              <p className='text-sm text-gray-500 '>
+                <Skeleton height={20} width={60} />
+              </p>
+            </div>
           </SkeletonTheme>
         </div>
       </div>

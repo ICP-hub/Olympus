@@ -25,14 +25,19 @@ const TeamMember = ({ cardData, onDelete }) => {
     projectTeam.some(
       (teamMember) => Array.isArray(teamMember) && teamMember.length > 0
     );
-    const [isLoading,setIsLoading]=useState(true)
+  const [isLoading, setIsLoading] = useState(true);
 
-    useTimeout(()=>setIsLoading(false))
+  useTimeout(() => setIsLoading(false));
 
   return (
     <>
-      {isLoading ? <>{[...Array(cardData.length)].map((_,index)=><TeamSectionSkeleton/>)} </>:
-      hasTeamMembers ? (
+      {isLoading ? (
+        <>
+          {[...Array(cardData.length)].map((_, index) => (
+            <TeamSectionSkeleton />
+          ))}{' '}
+        </>
+      ) : hasTeamMembers ? (
         projectTeam.map((teamMember, index) => {
           if (!teamMember || teamMember.length === 0 || !teamMember[0]) {
             return null;

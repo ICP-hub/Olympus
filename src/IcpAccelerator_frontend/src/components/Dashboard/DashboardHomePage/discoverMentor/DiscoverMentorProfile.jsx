@@ -6,9 +6,9 @@ import ArrowOutwardOutlinedIcon from '@mui/icons-material/ArrowOutwardOutlined';
 import uint8ArrayToBase64 from '../../../Utils/uint8ArrayToBase64';
 import getSocialLogo from '../../../Utils/navigationHelper/getSocialLogo';
 import useTimeout from '../../../hooks/TimeOutHook';
-import GeneralDetailsSkeleton from '../../../profile/skeletonProfile/GeneralDetailsSkeleton';
+import GeneralDetailsSkeleton from '../../../Profile/skeletonProfile/GeneralDetailsSkeleton';
 import DiscoverMentorProfileSkeleton from './discoverMentorSkeleton/DiscoverMentorProfileSkeleton';
-import UserGeneralDetailSkeleton from '../../../profile/skeletonProfile/UserGeneralDetailSkeleton';
+import UserGeneralDetailSkeleton from '../../../Profile/skeletonProfile/UserGeneralDetailSkeleton';
 
 const DiscoverMentorProfile = ({ mentorData }) => {
   const mentorProfile = mentorData?.[0];
@@ -46,7 +46,9 @@ const DiscoverMentorProfile = ({ mentorData }) => {
         <div className='relative h-1 bg-gray-200'>
           <div className='absolute left-0 top-0 h-full bg-green-500 w-1/3'></div>
         </div>
-        {isLoading ? <DiscoverMentorProfileSkeleton/>: (
+        {isLoading ? (
+          <DiscoverMentorProfileSkeleton />
+        ) : (
           <div className='p-6 bg-gray-50'>
             <img
               src={profilepic}
@@ -67,7 +69,7 @@ const DiscoverMentorProfile = ({ mentorData }) => {
               className='w-full h-[#155EEF] bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 mb-6 flex items-center justify-center'
             >
               Get in touch
-              <ArrowOutwardOutlinedIcon className='ml-1' fontSize='small' /> 
+              <ArrowOutwardOutlinedIcon className='ml-1' fontSize='small' />
             </a>
           </div>
         )}
@@ -119,8 +121,9 @@ const DiscoverMentorProfile = ({ mentorData }) => {
             </button>
           </div>
 
-          {isLoading ? <UserGeneralDetailSkeleton/>:
-          activeTab === 'general' ? (
+          {isLoading ? (
+            <UserGeneralDetailSkeleton />
+          ) : activeTab === 'general' ? (
             <div className=' px-1'>
               <div className='mb-4  group relative hover:bg-gray-100 rounded-lg p-2 '>
                 <div className='flex justify-between'>
@@ -463,8 +466,6 @@ export default DiscoverMentorProfile;
 //         <div className='relative h-1 bg-gray-200'>
 //           <div className='absolute left-0 top-0 h-full bg-green-500 w-1/3'></div>
 //         </div>
-
-        
 
 //         {isLoading ? <DiscoverMentorProfileSkeleton/>: (
 //           <div className='p-6 bg-white'>

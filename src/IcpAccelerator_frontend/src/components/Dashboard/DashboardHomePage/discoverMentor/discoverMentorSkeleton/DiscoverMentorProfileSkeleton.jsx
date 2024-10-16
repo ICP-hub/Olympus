@@ -1,13 +1,12 @@
-import React from 'react'
-import SkeletonThemeMain from '../../../../Common/SkeletonTheme'
-import   Skeleton from 'react-loading-skeleton'
+import React from 'react';
+import SkeletonThemeMain from '../../../../Common/SkeletonTheme';
+import Skeleton from 'react-loading-skeleton';
 import ArrowOutwardOutlinedIcon from '@mui/icons-material/ArrowOutwardOutlined';
-
 
 const DiscoverMentorProfileSkeleton = () => {
   return (
     <SkeletonThemeMain>
-        <div className='px-6 py-2 md:p-6 bg-gray-50'>
+      <div className='px-6 py-2 md:p-6 bg-gray-50'>
         {/* Skeleton for Profile Image */}
         <div className='relative w-24 h-24 mx-auto rounded-full mb-4'>
           <Skeleton circle={true} height={96} width={96} />
@@ -57,7 +56,7 @@ const DiscoverMentorProfileSkeleton = () => {
         </div>
       </div>
     </SkeletonThemeMain>
-  )
-}
+  );
+};
 
-export default DiscoverMentorProfileSkeleton
+export default DiscoverMentorProfileSkeleton;

@@ -6,7 +6,7 @@ import uint8ArrayToBase64 from '../../../Utils/uint8ArrayToBase64';
 import getSocialLogo from '../../../Utils/navigationHelper/getSocialLogo';
 import useTimeout from '../../../hooks/TimeOutHook';
 import DiscoverMentorProfileSkeleton from '../discoverMentor/discoverMentorSkeleton/DiscoverMentorProfileSkeleton';
-import UserGeneralDetailSkeleton from '../../../profile/skeletonProfile/UserGeneralDetailSkeleton';
+import UserGeneralDetailSkeleton from '../../../Profile/skeletonProfile/UserGeneralDetailSkeleton';
 
 const DiscoverInvestorAbout = ({ investorData }) => {
   const investorProfile = investorData?.[0]?.profile;
@@ -119,8 +119,9 @@ const DiscoverInvestorAbout = ({ investorData }) => {
             </button>
           </div>
 
-          {isLoading ? <UserGeneralDetailSkeleton/>:
-          activeTab === 'general' ? (
+          {isLoading ? (
+            <UserGeneralDetailSkeleton />
+          ) : activeTab === 'general' ? (
             <div className=' px-1'>
               <div className='mb-4  group relative hover:bg-gray-100 rounded-lg p-2 '>
                 <div className='flex justify-between'>
