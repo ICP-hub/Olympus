@@ -28,6 +28,8 @@ import Tooltip from "@mui/material/Tooltip";
 import NoData from "../NoDataCard/NoData";
 import JobFilterModal from "./JobFilterModal";
 import SpinnerLoader from "../Discover/SpinnerLoader";
+import useTimeout from "../hooks/TimeOutHook";
+import JobsSkeleton from "./JobsSkeleton/JobsSkeleton";
 const Jobs = () => {
   const actor = useSelector((currState) => currState.actors.actor);
 
@@ -40,6 +42,9 @@ const Jobs = () => {
   const [openJobUid, setOpenJobUid] = useState(null);
   const [hasMore, setHasMore] = useState(true);
   const [totalJobs, setTotalJobs] = useState([]);
+  const [skeletonLoading, setskeletonLoading] = useState(true);
+
+  useTimeout(() => setskeletonLoading(false));
 
   const fetchLatestJobs = async (caller, page, isRefresh = false) => {
     setIsLoading(true);
@@ -185,13 +190,21 @@ const Jobs = () => {
           </div>
         </div>
         <div className='flex mx-auto justify-evenly '>
+          <>
           <div className='mb-5 w-full md1:w-[65%] lg:w-full lgx:w-[65%] '>
             <div
               id="scrollableDiv"
               style={{ height: "100vh", overflowY: "auto" }}
               data-aos="fade-up"
             >
-              {latestJobs.length > 0 ? (
+               {skeletonLoading ? (
+          <>
+            {[...Array(latestJobs.length)].map((_, index) => (
+              <JobsSkeleton key={index} />
+            ))}
+          </>
+        ) : latestJobs.length > 0 ? (
+              
                 <InfiniteScroll
                   dataLength={latestJobs.length}
                   next={loadMore}
@@ -346,7 +359,7 @@ const Jobs = () => {
               )}
             </div>
           </div>
-
+          </>
           <div className='w-[30%] hidden md1:block lg:hidden lgx:block  '>
             <Tooltip title='Coming Soon'>
               <div className='p-4 bg-white sticky top-12  max-w-sm'>

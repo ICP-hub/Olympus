@@ -623,7 +623,7 @@ const EventRequestCard = () => {
           );
         })
       ) : (
-        <NoDataFound />
+        <NoDataFound message="No Request Found" />
       )}
       {isAddProjectModalOpen && (
         <AddAMentorRequestModal

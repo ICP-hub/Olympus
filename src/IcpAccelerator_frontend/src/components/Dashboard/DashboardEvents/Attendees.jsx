@@ -11,11 +11,12 @@ import NoData from "../../NoDataCard/NoData";
 import AttendeeCardSkeleton from "./DashboardEventSkeletons/AttendeesSkeleton";
 import useTimeout from "../../hooks/TimeOutHook";
 import { FaFilter } from 'react-icons/fa';
-
 const AttendeesCard = ({ member }) => {
+
   return (
-    <div className='flex  p-4 bg-white shadow-md rounded-lg mb-6 transition-all items-center hover:shadow-lg'>
-      <div className='flex-shrink-0 w-[70px] h-[70px]'>
+    <div className='md:flex  p-4 bg-white shadow-md rounded-lg mb-6 transition-all items-center hover:shadow-lg text-center md:text-left'>
+      <div className='flex justify-center '>
+        <div className="w-[70px] h-[70px]">
         <img
           src={member.profile_picture}
           alt={member.full_name}
@@ -23,20 +24,29 @@ const AttendeesCard = ({ member }) => {
           loading='lazy'
           draggable={false}
         />
+        </div>
       </div>
-      <div className='ml-6 flex-1'>
-        <h4 className='text-lg font-bold text-[#2C3E50]'>{member.full_name}</h4>
-        <p className='text-sm text-gray-500'>@{member.username}</p>
+      <div className='md:ml-6 flex-1'>
+        <h4 className='text-lg font-bold text-[#2C3E50] line-clamp-1 break-all truncate'>{member.full_name}</h4>
+        <p className='text-sm text-gray-500 line-clamp-1 break-all truncate'>@{member.username}</p>
         <div className='border-t border-gray-200 mt-2'></div>
 
-        <p className='text-sm text-gray-500 mt-2 max-w-[600px] line-clamp-2 break-all'>
+        <p className='text-sm text-left text-gray-500 mt-2 md:max-w-[600px] line-clamp-2 break-all'>
           {member.bio || 'No bio available'}
         </p>
 
         <div className='flex flex-wrap gap-2 mt-1'>
-          <p className='bg-[#F4F7FC] font-medium border border-[#CDD5DF] text-[#364152] px-3 py-1 rounded-full text-sm inline-block'>
-            {member.reason_to_join || 'No reason specified'}
-          </p>
+         
+          <div className='flex flex-wrap gap-2'>
+                  {member.reason_to_join?.map((reason) => (
+                    <span
+                      key={reason}
+                      className='bg-[#F4F7FC] font-medium border border-[#CDD5DF] text-[#364152] px-3 py-1 rounded-full text-sm inline-block '
+                    >
+                      {reason}
+                    </span>
+                  ))}
+                </div>
           <p className='bg-[#F4F7FC] font-medium border border-[#CDD5DF] text-[#364152] px-3 py-1 rounded-full text-sm inline-block'>
             {member.area_of_interest || 'No area specified'}
           </p>

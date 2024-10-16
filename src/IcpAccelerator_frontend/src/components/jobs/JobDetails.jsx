@@ -7,7 +7,7 @@ import { formatFullDateFromBigInt } from '../Utils/formatter/formatDateFromBigIn
 import parse from 'html-react-parser';
 import { TfiEmail } from 'react-icons/tfi';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
-import JobDetailsSkeleton from './JobDetailsSkeleton';
+import JobDetailsSkeleton from './JobsSkeleton/JobDetailsSkeleton';
 import useTimeout from '../hooks/TimeOutHook';
 const JobDetails = ({ setOpen, uid }) => {
   const actor = useSelector((currState) => currState.actors.actor);
