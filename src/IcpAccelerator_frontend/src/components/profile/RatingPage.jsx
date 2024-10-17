@@ -419,7 +419,7 @@ const RatingPage = () => {
   }
 
   return (
-    <div className=' sm0:p-6'>
+    <div className=''>
       <div className='flex flex-col mt-6 items-center'>
         <img
           src={userFullData?.profile_picture[0]}
@@ -522,7 +522,8 @@ const RatingPage = () => {
               key={indx}
               className='bg-gray-100 rounded-lg p-2 sm0:p-4 flex mt-4 flex-col gap-4 '
             >
-              <div className='flex gap-2 sm0:gap-4 flex-shrink-0'>
+              {/* <div className='flex gap-2 sm0:gap-4 flex-shrink-0'>
+                <div className="">
                 <img
                   src={profilepic}
                   alt='pic'
@@ -530,6 +531,7 @@ const RatingPage = () => {
                   loading='lazy'
                   draggable={false}
                 />
+                </div>
                 <div className='flex-grow'>
                   <h2 className='text-base font-semibold text-gray-800 mb-1'>
                     {review.name}
@@ -575,6 +577,62 @@ const RatingPage = () => {
                     <p className='text-xs sm0:text-sm font-normal break-all line-clamp-2 '>
                       {review.message}
                     </p>
+                  </div>
+                </div>
+              </div> */}
+              <div className='sm0:flex  items-center justify-center w-full  gap-4 flex-shrink-0'>
+                <div className="flex justify-center sm0:justify-start">
+                <img
+                  src={profilepic}
+                  alt='pic'
+                  className='rounded-full w-12 h-12 ss:w-16 ss:h-16 object-cover border border-gray-300'
+                  loading='lazy'
+                  draggable={false}
+                />
+                </div>
+                <div className='flex flex-col w-full items-center justify-center sm0:items-start'>
+                  <h2 className='text-base font-semibold text-gray-800 mb-1'>
+                    {review.name}
+                  </h2>
+                  <div className='flex gap-1 mb-2'>
+                    {[...Array(Math.floor(review.rating))]?.map((_, index) => (
+                      <svg
+                        key={index}
+                        xmlns='http://www.w3.org/2000/svg'
+                        viewBox='0 0 24 24'
+                        className='w-4 h-4 text-yellow-400'
+                        fill='currentColor'
+                      >
+                        <path d='M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z' />
+                      </svg>
+                    ))}
+                    {review.rating % 1 !== 0 && (
+                      <svg
+                        xmlns='http://www.w3.org/2000/svg'
+                        viewBox='0 0 24 24'
+                        className='w-4 h-4 text-yellow-400'
+                        fill='currentColor'
+                      >
+                        <path d='M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z' />
+                      </svg>
+                    )}
+                    {[...Array(5 - Math.ceil(review.rating))]?.map(
+                      (_, index) => (
+                        <svg
+                          key={index}
+                          xmlns='http://www.w3.org/2000/svg'
+                          viewBox='0 0 24 24'
+                          className='w-4 h-4 text-gray-400'
+                          fill='currentColor'
+                        >
+                          <path d='M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z' />
+                        </svg>
+                      )
+                    )}
+                  </div>
+
+                  <div className='text-gray-600 text-xs'>
+                    <p className='line-clamp-2 break-all'>{review.message}</p>
                   </div>
                 </div>
               </div>

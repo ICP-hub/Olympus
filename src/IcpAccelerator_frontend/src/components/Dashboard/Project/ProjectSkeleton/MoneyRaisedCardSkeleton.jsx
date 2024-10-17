@@ -22,11 +22,11 @@ const MoneyRaisedCardSkeleton = () => {
         >
           <div className='flex justify-between items-center'>
             <p className='text-xs xxs:text-base sm5:text-lg font-semibold text-gray-900'>
-              <Skeleton width={100} height={15} />
+              <Skeleton width={50} height={15} />
             </p>
           </div>
           <p className='text-xs xxs:text-sm text-gray-500 mt-1'>
-            <Skeleton width={100} height={15} />
+            <Skeleton width={50} height={15} />
           </p>
         </div>
       </div>

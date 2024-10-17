@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-const useTimeout = (callback, delay = 5000) => {
+const useTimeout = (callback, delay = 1000) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       callback();

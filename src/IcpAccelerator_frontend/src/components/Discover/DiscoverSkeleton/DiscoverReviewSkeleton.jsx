@@ -52,7 +52,7 @@ const DiscoverReviewSkeleton = () => {
       </div> */}
       <div className='bg-gray-100 rounded-lg p-2 sm0:p-4 flex mt-4 flex-col gap-4'>
         <div className='flex flex-col sm0:flex-row justify-center sm0:justify-normal items-center sm0:items-start gap-2 sm0:gap-4 flex-shrink-0'>
-          <div className='relative  mx-auto rounded-full mb-4'>
+          <div className='relative  mx-auto rounded-full mb-0 sm0:mb-4 '>
             <Skeleton circle={true} height={50} width={50} />
             <div className='absolute inset-0 flex items-center justify-center'>
               <div
@@ -74,12 +74,17 @@ const DiscoverReviewSkeleton = () => {
               </div>
             </div>
           </div>
-          <div className='flex-grow'>
+          <div className='flex-col sm0:flex-row justify-center items-center w-full '>
+            <div className="flex-col w-full items-center sm0:items-start">
+            <div className="w-full flex justify-center sm0:justify-start">
             <Skeleton height={20} width={120} className='mb-1' />
-            <div className='flex gap-1 mb-2'>
+            </div>
+            <div className='flex gap-1 justify-center sm0:justify-start mb-2'>
+            
               {[...Array(5)].map((_, i) => (
                 <Skeleton key={i} circle height={20} width={20} />
               ))}
+            </div>
             </div>
             <div class='space-y-2.5 animate-pulse w-full '>
               <div class='flex items-center w-full'>
