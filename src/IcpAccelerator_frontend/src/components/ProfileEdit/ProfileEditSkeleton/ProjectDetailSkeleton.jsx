@@ -45,16 +45,16 @@ const ProjectDetailSkeleton = () => {
             Project Description
           </label>
         </div>
-        <div class='space-y-2.5 animate-pulse w-full '>
-          <div class='flex items-center w-full'>
-            <div class='h-2.5 bg-gray-200 rounded-full  w-32'></div>
-            <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
-            <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
+        <div className='space-y-2.5 animate-pulse w-full '>
+          <div className='flex items-center w-full'>
+            <div className='h-2.5 bg-gray-200 rounded-full  w-32'></div>
+            <div className='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
+            <div className='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
           </div>
-          <div class='flex items-center w-full '>
-            <div class='h-2.5 bg-gray-200 rounded-full  w-full'></div>
-            <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
-            <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
+          <div className='flex items-center w-full '>
+            <div className='h-2.5 bg-gray-200 rounded-full  w-full'></div>
+            <div className='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
+            <div className='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
           </div>
         </div>
       </div>

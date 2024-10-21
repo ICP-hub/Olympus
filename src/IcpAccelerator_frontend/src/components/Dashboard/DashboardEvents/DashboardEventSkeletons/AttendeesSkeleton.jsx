@@ -53,11 +53,11 @@ const AttendeeCardSkeleton = () => {
               width='100%'
               className='rounded- my-0.5'
             />
-            <div class='flex flex-wrap gap-2 items-center mt-1'>
-              <div class='h-5 w-14 sm:w-16 md:w-20 lg:w-24 bg-gray-300 rounded-full'></div>
-              <div class='h-5 w-14 sm:w-16 md:w-20 lg:w-24 bg-gray-300 rounded-full'></div>
+            <div className='flex flex-wrap gap-2 items-center mt-1'>
+              <div className='h-5 w-14 sm:w-16 md:w-20 lg:w-24 bg-gray-300 rounded-full'></div>
+              <div className='h-5 w-14 sm:w-16 md:w-20 lg:w-24 bg-gray-300 rounded-full'></div>
 
-              <div class='h-5 w-14 sm:w-16 md:w-20 lg:w-24 bg-gray-300 rounded-full hidden sm:block'></div>
+              <div className='h-5 w-14 sm:w-16 md:w-20 lg:w-24 bg-gray-300 rounded-full hidden sm:block'></div>
             </div>
             <div className='flex items-center mt-1'>
               <Skeleton height={18} width={20} className='mr-2 rounded-full' />

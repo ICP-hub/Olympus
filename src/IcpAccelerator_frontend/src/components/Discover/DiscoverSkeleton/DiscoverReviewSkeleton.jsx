@@ -75,27 +75,26 @@ const DiscoverReviewSkeleton = () => {
             </div>
           </div>
           <div className='flex-col sm0:flex-row justify-center items-center w-full '>
-            <div className="flex-col w-full items-center sm0:items-start">
-            <div className="w-full flex justify-center sm0:justify-start">
-            <Skeleton height={20} width={120} className='mb-1' />
-            </div>
-            <div className='flex gap-1 justify-center sm0:justify-start mb-2'>
-            
-              {[...Array(5)].map((_, i) => (
-                <Skeleton key={i} circle height={20} width={20} />
-              ))}
-            </div>
-            </div>
-            <div class='space-y-2.5 animate-pulse w-full '>
-              <div class='flex items-center w-full'>
-                <div class='h-2.5 bg-gray-200 rounded-full  w-32'></div>
-                <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
-                <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
+            <div className='flex-col w-full items-center sm0:items-start'>
+              <div className='w-full flex justify-center sm0:justify-start'>
+                <Skeleton height={20} width={120} className='mb-1' />
               </div>
-              <div class='flex items-center w-full '>
-                <div class='h-2.5 bg-gray-200 rounded-full  w-full'></div>
-                <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
-                <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
+              <div className='flex gap-1 justify-center sm0:justify-start mb-2'>
+                {[...Array(5)].map((_, i) => (
+                  <Skeleton key={i} circle height={20} width={20} />
+                ))}
+              </div>
+            </div>
+            <div className='space-y-2.5 animate-pulse w-full '>
+              <div className='flex items-center w-full'>
+                <div className='h-2.5 bg-gray-200 rounded-full  w-32'></div>
+                <div className='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
+                <div className='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
+              </div>
+              <div className='flex items-center w-full '>
+                <div className='h-2.5 bg-gray-200 rounded-full  w-full'></div>
+                <div className='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
+                <div className='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
               </div>
             </div>
           </div>
