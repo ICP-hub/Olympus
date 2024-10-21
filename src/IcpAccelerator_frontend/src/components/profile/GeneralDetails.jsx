@@ -110,7 +110,6 @@
 
 // export default GeneralDetails;
 
-
 import React, { useState, useEffect } from 'react';
 import { profile } from '../jsondata/data/profileData';
 import VerifiedIcon from '@mui/icons-material/Verified';
@@ -119,18 +118,17 @@ import { LinkedIn, GitHub, Telegram, Add } from '@mui/icons-material';
 import GeneralDetailsSkeleton from './skeletonProfile/GeneralDetailsSkeleton';
 
 const GeneralDetails = () => {
-  const [isLoading, setIsLoading] = useState(true); 
+  const [isLoading, setIsLoading] = useState(true);
   const { profiledetails } = profile;
 
   useEffect(() => {
-    
     setTimeout(() => {
-      setIsLoading(false); 
+      setIsLoading(false);
     }, 2000);
   }, []);
 
   if (isLoading) {
-    return <GeneralDetailsSkeleton />; 
+    return <GeneralDetailsSkeleton />;
   }
 
   return (

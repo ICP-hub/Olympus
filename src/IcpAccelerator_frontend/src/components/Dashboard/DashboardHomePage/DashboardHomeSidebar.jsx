@@ -569,13 +569,14 @@ function DashboardSidebar({ isOpen, onClose, id, id2 }) {
 
   // Handle Toggle State changes
   const handleToggle = async (role) => {
+    console.log('Role toggled:', role);
     setToggleState((prevState) => {
       const newState = {
         mentor: role === 'mentor' ? !prevState.mentor : false,
         vc: role === 'vc' ? !prevState.vc : false,
         project: role === 'project' ? !prevState.project : false,
       };
-
+      console.log('New toggle state:', newState);
       localStorage.setItem('toggleState', JSON.stringify(newState));
 
       const newStatus = newState[role] ? 'active' : 'default';
@@ -597,6 +598,10 @@ function DashboardSidebar({ isOpen, onClose, id, id2 }) {
     const savedState = localStorage.getItem('toggleState');
 
     if (savedState) {
+      console.log(
+        'Loaded toggle state from localStorage:',
+        JSON.parse(savedState)
+      );
       setToggleState(JSON.parse(savedState));
     } else {
       const initialState = { mentor: false, vc: false, project: false };
@@ -904,12 +909,7 @@ function DashboardSidebar({ isOpen, onClose, id, id2 }) {
               label='Discover'
               onClick={() => handleLinkClick('/dashboard/user')}
             />
-            <SidebarLink
-              path='/dashboard/event'
-              icon={calenderSvgIcon}
-              label='Cohorts'
-              onClick={() => handleLinkClick('/dashboard/event')}
-            />
+
             <div className='flex items-center justify-between'>
               <SidebarLink
                 path='/dashboard/profile'
@@ -953,6 +953,18 @@ function DashboardSidebar({ isOpen, onClose, id, id2 }) {
               icon={briefcaseSvgIcon}
               label='Jobs'
               onClick={() => handleLinkClick('/dashboard/jobs')}
+            />
+            <SidebarLink
+              path='/dashboard/event'
+              icon={calenderSvgIcon}
+              label='Cohorts'
+              onClick={() => handleLinkClick('/dashboard/event')}
+            />
+            <SidebarLink
+              path='/dashboard/regional-hubs'
+              icon={locationHubSvgIcon}
+              label='Regional Hub'
+              onClick={() => handleLinkClick('/dashboard/regional-hubs')}
             />
           </div>
         </motion.div>

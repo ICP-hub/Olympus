@@ -28,11 +28,13 @@ import {
 // import RoleProfileCard from "./RoleProfileCard";
 import ProfileRoleNoDataCard from '../Common/ProfileRoleNoDataCard';
 import RoleProfileCard from './RoleProfileCard';
-import RoleSkeleton, { ProfileAddRoleSkeleton, ProfileRoleSkeleton } from './skeletonProfile/RoleSkeleton';
+import RoleSkeleton, {
+  ProfileAddRoleSkeleton,
+  ProfileRoleSkeleton,
+} from './skeletonProfile/RoleSkeleton';
 
 const FAQItem = ({ question, answer }) => {
   const [isOpen, setIsOpen] = useState(false);
-  
 
   return (
     <div className='border-b border-gray-200'>
@@ -76,13 +78,13 @@ const Role = () => {
   const userCurrentRoleStatusActiveRole = useSelector(
     (currState) => currState.currentRoleStatus.activeRole
   );
-  const [isLoading,setIsLoading]=useState(true)
+  const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(()=>{
-    setTimeout(()=>{
+  useEffect(() => {
+    setTimeout(() => {
       setIsLoading(false);
-    },1000);
-  },[])
+    }, 1000);
+  }, []);
 
   const roledata = [
     {
@@ -484,74 +486,83 @@ const Role = () => {
   return (
     <>
       <div className='flex flex-col'>
-        {isLoading ? <RoleSkeleton />:
-        <div className='flex justify-center items-center w-full mt-[2%]'>
-          <div className='border-2 rounded-lg shadow-md md:shadow-none pb-5 text-center   md:min-w-[280px] w-full md:max-w-[350px] mb-6 md:mb-0 md:mt-6'>
-            <div className='w-full bg-[#EEF2F6] rounded-l-xl rounded-r-full h-1.5 mb- dark:bg-[#EEF2F6]'>
-              <div className='relative h-1 bg-gray-200'>
-                <div className='absolute left-0 top-0 h-full bg-green-500 w-1/3'></div>
+        {isLoading ? (
+          <RoleSkeleton />
+        ) : (
+          <div className='flex justify-center items-center w-full mt-[2%]'>
+            <div className='border-2 rounded-lg shadow-md md:shadow-none pb-5 text-center   md:min-w-[280px] w-full md:max-w-[350px] mb-6 md:mb-0 md:mt-6'>
+              <div className='w-full bg-[#EEF2F6] rounded-l-xl rounded-r-full h-1.5 mb- dark:bg-[#EEF2F6]'>
+                <div className='relative h-1 bg-gray-200'>
+                  <div className='absolute left-0 top-0 h-full bg-green-500 w-1/3'></div>
+                </div>
               </div>
-            </div>
-            <div className='flex justify-center'>
-              <div className='bg-gray-200 rounded-full mb-4 mt-2'>
-                <img
-                  src={userFullData?.profile_picture[0]}
-                  alt='Profile'
-                  className='w-20 h-20 mx-auto rounded-full'
-                  loading='lazy'
-                  draggable={false}
-                />
+              <div className='flex justify-center'>
+                <div className='bg-gray-200 rounded-full mb-4 mt-2'>
+                  <img
+                    src={userFullData?.profile_picture[0]}
+                    alt='Profile'
+                    className='w-20 h-20 mx-auto rounded-full'
+                    loading='lazy'
+                    draggable={false}
+                  />
+                </div>
               </div>
-            </div>
-            <div className='mb-1 text-center'>
-              <button className='text-[#026AA2] border rounded-md text-xs p-1 font-semibold bg-[#F0F9FF]'>
-                {roles.profile.roles.label}
-              </button>
-            </div>
-            <div className='flex flex-col justify-center items-center mb-3'>
-              <h2 className='font-bold text-lg line-clamp-1 break-all'>
-                <span>
-                  <VerifiedIcon sx={{ fontSize: 'medium', color: '#155EEF' }} />
-                </span>
-                {userFullData?.full_name}
-              </h2>
-              <p className='line-clamp-1 break-all'>
-                {userFullData?.openchat_username[0]}
-              </p>
-            </div>
-            <div className='flex justify-center items-center'>
-              <p className='font-normal'>
-                {roles.profile.roles.role}{' '}
-                <span className='font-medium text-sm'>
-                  {userCurrentRoleStatus &&
-                    userCurrentRoleStatus.map((role) =>
-                      role?.approval_status === 'approved' ? (
-                        <button
-                          className='text-[#026AA2] border rounded-md text-xs p-1 mx-1 font-semibold bg-[#F0F9FF] capitalize'
-                          key={role.name}
-                        >
-                          {role?.name}
-                        </button>
-                      ) : (
-                        ''
-                      )
-                    )}
-                </span>
-              </p>
+              <div className='mb-1 text-center'>
+                <button className='text-[#026AA2] border rounded-md text-xs p-1 font-semibold bg-[#F0F9FF]'>
+                  {roles.profile.roles.label}
+                </button>
+              </div>
+              <div className='flex flex-col justify-center items-center mb-3'>
+                <h2 className='font-bold text-lg line-clamp-1 break-all'>
+                  <span>
+                    <VerifiedIcon
+                      sx={{ fontSize: 'medium', color: '#155EEF' }}
+                    />
+                  </span>
+                  {userFullData?.full_name}
+                </h2>
+                <p className='line-clamp-1 break-all'>
+                  {userFullData?.openchat_username[0]}
+                </p>
+              </div>
+              <div className='flex justify-center items-center'>
+                <p className='font-normal'>
+                  {roles.profile.roles.role}{' '}
+                  <span className='font-medium text-sm'>
+                    {userCurrentRoleStatus &&
+                      userCurrentRoleStatus.map((role) =>
+                        role?.approval_status === 'approved' ? (
+                          <button
+                            className='text-[#026AA2] border rounded-md text-xs p-1 mx-1 font-semibold bg-[#F0F9FF] capitalize'
+                            key={role.name}
+                          >
+                            {role?.name}
+                          </button>
+                        ) : (
+                          ''
+                        )
+                      )}
+                  </span>
+                </p>
+              </div>
             </div>
           </div>
-        </div>
-}
+        )}
         {userCurrentRoleStatus && userCurrentRoleStatus.length > 0 && (
           <div className='hidden md:block'>
             {renderRoleSvgsOnce(userCurrentRoleStatus)}
           </div>
         )}
-        
+
         <div className='flex flex-col md:flex-row justify-around items-center gap-[12%]'>
-        {isLoading ? <><ProfileRoleSkeleton /><ProfileRoleSkeleton /></>:
-          mergedData && renderRoleCards(mergedData)
-        }
+          {isLoading ? (
+            <>
+              <ProfileRoleSkeleton />
+              <ProfileRoleSkeleton />
+            </>
+          ) : (
+            mergedData && renderRoleCards(mergedData)
+          )}
         </div>
         <FAQ />
       </div>

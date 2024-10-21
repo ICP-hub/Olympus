@@ -7,6 +7,10 @@ import parse from 'html-react-parser';
 import Avatar from '@mui/material/Avatar';
 import UserDetail from '../UserDetail';
 import getSocialLogo from '../../../Utils/navigationHelper/getSocialLogo';
+import useTimeout from '../../../hooks/TimeOutHook';
+import UserGeneralDetailSkeleton from '../../../profile/skeletonProfile/UserGeneralDetailSkeleton';
+import DiscoverProjectProfileSkeleton from '../DiscoverProjectSkeleton/DiscoverProjectProfileSkeleton';
+
 const DiscoverMentorDetail = ({ projectDetails, userData }) => {
   const projectDetail = projectDetails;
   console.log('projectdetails ', projectDetail);
@@ -133,44 +137,51 @@ const DiscoverMentorDetail = ({ projectDetails, userData }) => {
     setActiveTab(tab);
   };
 
+  const [isLoading, setIsLoading] = useState(true);
+
+  useTimeout(() => setIsLoading(false));
+
   return (
     <div className='bg-white shadow-lg rounded-lg w-full lg1:pb-3 '>
-      <div className='bg-slate-200 p-6'>
-        <div className='flex justify-center'>
-          <img
-            src={projectlogo}
-            alt='Profile'
-            className='rounded-lg w-24 h-24'
-            loading='lazy'
-            draggable={false}
-          />
-        </div>
+      {isLoading ? (
+        <DiscoverProjectProfileSkeleton />
+      ) : (
+        <div className='bg-slate-200 p-6'>
+          <div className='flex justify-center'>
+            <img
+              src={projectlogo}
+              alt='Profile'
+              className='rounded-lg w-24 h-24'
+              loading='lazy'
+              draggable={false}
+            />
+          </div>
 
-        <div className='text-center mt-2'>
-          <span className='text-xs font-medium text-[#3538CD] border bg-blue-50 rounded-lg px-3 py-1'>
-            Looking for funding
-          </span>
-        </div>
+          <div className='text-center mt-2'>
+            <span className='text-xs font-medium text-[#3538CD] border bg-blue-50 rounded-lg px-3 py-1'>
+              Looking for funding
+            </span>
+          </div>
 
-        <div className='text-center mt-4'>
-          <h2 className='text-xl font-semibold text-gray-800'>{full_name}</h2>
-          {/* <p className="text-gray-500">@cypherpunklabs</p> */}
-        </div>
+          <div className='text-center mt-4'>
+            <h2 className='text-xl font-semibold text-gray-800'>{full_name}</h2>
+            {/* <p className="text-gray-500">@cypherpunklabs</p> */}
+          </div>
 
-        <div className='text-center w-full mt-6'>
-          {/* <button className="bg-transparent border border-[#3505B2] text-[#3505B2] text-sm font-[950] px-2 py-1 rounded-md">
+          <div className='text-center w-full mt-6'>
+            {/* <button className="bg-transparent border border-[#3505B2] text-[#3505B2] text-sm font-[950] px-2 py-1 rounded-md">
             Get in touch{" "}
           </button> */}
-          <a
-            href={project_website}
-            className='w-full h-[#155EEF] bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 mb-6 flex items-center justify-center'
-          >
-            Get in touch
-            <ArrowOutwardOutlinedIcon className='ml-1' fontSize='small' />
-          </a>
+            <a
+              href={project_website}
+              className='w-full h-[#155EEF] bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 mb-6 flex items-center justify-center'
+            >
+              Get in touch
+              <ArrowOutwardOutlinedIcon className='ml-1' fontSize='small' />
+            </a>
+          </div>
         </div>
-      </div>
-
+      )}
       <div className='flex justify-start border-b'>
         <button
           className={`px-4 py-2 focus:outline-none font-medium  ${
@@ -194,7 +205,9 @@ const DiscoverMentorDetail = ({ projectDetails, userData }) => {
         </button>
       </div>
 
-      {activeTab === 'general' ? (
+      {isLoading ? (
+        <UserGeneralDetailSkeleton />
+      ) : activeTab === 'general' ? (
         <div className='p-4'>
           <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-2 '>
             <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
@@ -229,7 +242,7 @@ const DiscoverMentorDetail = ({ projectDetails, userData }) => {
               About
             </h3>
 
-            <p className='text-sm'>{userData?.bio[0]}</p>
+            <p className='text-sm line-clamp-2 break-all'>{userData?.bio[0]}</p>
           </div>
 
           <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-2 '>

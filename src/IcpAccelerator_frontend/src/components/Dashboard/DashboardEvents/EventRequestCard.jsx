@@ -18,6 +18,8 @@ import toast, { Toaster } from 'react-hot-toast';
 import { RiSendPlaneLine } from 'react-icons/ri';
 import AddAMentorRequestModal from '../../../models/AddAMentorRequestModal';
 import { loginFailure } from '../../StateManagement/Redux/Reducers/InternetIdentityReducer';
+import useTimeout from '../../hooks/TimeOutHook';
+import EventRequestCardSkeleton from './DashboardEventSkeletons/EventRequestCardSkeleton';
 
 const EventRequestCard = () => {
   const [filterOpen, setFilterOpen] = useState(false);
@@ -37,7 +39,8 @@ const EventRequestCard = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [listProjectId, setListProjectId] = useState(null);
   const [listCohortId, setListCohortId] = useState(null);
-
+  const [loading, setLoading] = useState(true);
+  useTimeout(() => setLoading(false));
   const toggleFilter = () => {
     setFilterOpen(!filterOpen);
   };
@@ -155,6 +158,7 @@ const EventRequestCard = () => {
   };
 
   const fetchRequests = async (category, type) => {
+    setLoading(true); // Start loading
     let result = [];
 
     try {
@@ -163,23 +167,19 @@ const EventRequestCard = () => {
           result = await actor.get_pending_cohort_enrollment_requests(
             Principal.fromText(principal)
           );
-          console.log('kya kya aaya pending me', result);
-
           break;
         case 'approved':
           result = await actor.get_accepted_cohort_enrollment_requests(
             Principal.fromText(principal)
           );
-          console.log('kya kya aaya accept me', result);
-
           break;
         case 'rejected':
           result = await actor.get_rejected_cohort_enrollment_requests(
             Principal.fromText(principal)
           );
-          console.log('kya kya aaya reject me', result);
           break;
       }
+
       if (category && category !== 'all') {
         result = result.filter(
           (event) => event.enroller_data?.[category]?.length > 0
@@ -191,10 +191,12 @@ const EventRequestCard = () => {
         status: event.status || 'pending',
       }));
 
-      setEvents(eventsWithStatus || []);
+      setEvents(eventsWithStatus);
     } catch (error) {
       console.error('Error fetching requests:', error);
       setEvents([]);
+    } finally {
+      setLoading(false); // Stop loading regardless of success or failure
     }
   };
 
@@ -383,7 +385,9 @@ const EventRequestCard = () => {
         </div>
       )}
 
-      {events.length > 0 ? (
+      {loading ? (
+        <EventRequestCardSkeleton /> // Show the skeleton when loading
+      ) : events.length > 0 ? (
         events.map((event, index) => {
           console.log('event', event);
           const title = event.cohort_details.cohort.title;
@@ -617,7 +621,7 @@ const EventRequestCard = () => {
           );
         })
       ) : (
-        <NoDataFound />
+        <NoDataFound message='No Request Found' />
       )}
       {isAddProjectModalOpen && (
         <AddAMentorRequestModal

@@ -4,12 +4,18 @@ import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined';
 import ArrowOutwardOutlinedIcon from '@mui/icons-material/ArrowOutwardOutlined';
 import uint8ArrayToBase64 from '../../../Utils/uint8ArrayToBase64';
 import getSocialLogo from '../../../Utils/navigationHelper/getSocialLogo';
+import useTimeout from '../../../hooks/TimeOutHook';
+import DiscoverMentorProfileSkeleton from '../discoverMentor/discoverMentorSkeleton/DiscoverMentorProfileSkeleton';
+import UserGeneralDetailSkeleton from '../../../profile/skeletonProfile/UserGeneralDetailSkeleton';
 
 const DiscoverInvestorAbout = ({ investorData }) => {
   const investorProfile = investorData?.[0]?.profile;
   const investorDetail = investorData?.[1]?.params;
   console.log('investorProfile', investorProfile);
   console.log('investorDetails', investorDetail);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useTimeout(() => setIsLoading(false));
 
   const profilepic =
     investorDetail?.profile_picture && investorDetail?.profile_picture[0]
@@ -38,30 +44,33 @@ const DiscoverInvestorAbout = ({ investorData }) => {
         <div className='relative h-1 bg-gray-200'>
           <div className='absolute left-0 top-0 h-full bg-green-500 w-1/3'></div>
         </div>
-        <div className='p-6 bg-gray-50'>
-          <img
-            src={profilepic}
-            alt='Matt Bowers'
-            className='w-24 h-24 mx-auto rounded-full mb-4'
-            loading='lazy'
-            draggable={false}
-          />
-          <div className='flex items-center justify-center mb-1'>
-            <VerifiedIcon className='text-blue-500 mr-1' fontSize='small' />
-            <h2 className='text-xl font-semibold'>{full_name}</h2>
+        {isLoading ? (
+          <DiscoverMentorProfileSkeleton />
+        ) : (
+          <div className='p-6 bg-gray-50'>
+            <img
+              src={profilepic}
+              alt='Matt Bowers'
+              className='w-24 h-24 mx-auto rounded-full mb-4'
+              loading='lazy'
+              draggable={false}
+            />
+            <div className='flex items-center justify-center mb-1'>
+              <VerifiedIcon className='text-blue-500 mr-1' fontSize='small' />
+              <h2 className='text-xl font-semibold'>{full_name}</h2>
+            </div>
+            <p className='text-gray-600 text-center mb-4'>
+              {'openchat_username'}
+            </p>
+            <a
+              href={`mailto:${email}`}
+              className='w-full h-[#155EEF] bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 mb-6 flex items-center justify-center'
+            >
+              Get in touch
+              <ArrowOutwardOutlinedIcon className='ml-1' fontSize='small' />
+            </a>
           </div>
-          <p className='text-gray-600 text-center mb-4'>
-            {'openchat_username'}
-          </p>
-          <a
-            href={`mailto:${email}`}
-            className='w-full h-[#155EEF] bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 mb-6 flex items-center justify-center'
-          >
-            Get in touch
-            <ArrowOutwardOutlinedIcon className='ml-1' fontSize='small' />
-          </a>
-        </div>
-
+        )}
         <div className='p-6 bg-white'>
           <div className='mb-4'>
             <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
@@ -110,7 +119,9 @@ const DiscoverInvestorAbout = ({ investorData }) => {
             </button>
           </div>
 
-          {activeTab === 'general' ? (
+          {isLoading ? (
+            <UserGeneralDetailSkeleton />
+          ) : activeTab === 'general' ? (
             <div className=' px-1'>
               <div className='mb-4  group relative hover:bg-gray-100 rounded-lg p-2 '>
                 <div className='flex justify-between'>
@@ -119,7 +130,7 @@ const DiscoverInvestorAbout = ({ investorData }) => {
                   </h3>
                 </div>
                 <div className='flex flex-wrap items-center'>
-                  <p className='mr-2 text-sm'>{email}</p>
+                  <p className='mr-2 line-clamp-1 break-all text-sm'>{email}</p>
                   <VerifiedIcon
                     className='text-blue-500 mr-2 w-2 h-2'
                     fontSize='small'
@@ -136,7 +147,7 @@ const DiscoverInvestorAbout = ({ investorData }) => {
                     About
                   </h3>
                 </div>
-                <p className='text-sm'>{bio}</p>
+                <p className='line-clamp-2 break-all text-sm'>{bio}</p>
               </div>
 
               {/* Location Section */}

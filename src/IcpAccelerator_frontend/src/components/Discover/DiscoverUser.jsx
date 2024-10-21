@@ -179,7 +179,7 @@ const DiscoverUser = ({ onUserCountChange }) => {
                         USER
                       </div>
                       <div className='border-t border-gray-200 my-1'></div>
-                      <p className='text-gray-600 mb-4 overflow-hidden text-ellipsis max-h-12 line-clamp-2'>
+                      <p className='text-gray-600 mb-4 overflow-hidden line-clamp-2 break-all'>
                         {bio}
                       </p>
                       <div className='flex items-center text-sm text-gray-500 flex-wrap'>

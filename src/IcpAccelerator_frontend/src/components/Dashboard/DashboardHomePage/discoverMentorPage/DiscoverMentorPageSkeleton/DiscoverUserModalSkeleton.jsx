@@ -19,12 +19,12 @@ export default function DiscoverUserModalSkeleton({
                 <div className='relative flex flex-col items-center'>
                   {/* Profile circle skeleton */}
                   <div className='rounded-full  '>
-                    <Skeleton circle={true} height={56} width={56} />
+                    <Skeleton circle={true} height={96} width={96} />
                   </div>
 
                   {/* Icon in the center of the circle */}
                   <div
-                    className='flex items-center justify-center border-2 rounded-full border-gray-300 w-10 h-10 absolute mt-0.5'
+                    className='flex items-center justify-center border-2 rounded-full border-gray-300 w-12 h-12 absolute mt-0.5'
                     style={{
                       top: '50%',
                       left: '50%',
@@ -33,7 +33,7 @@ export default function DiscoverUserModalSkeleton({
                     }}
                   >
                     <svg
-                      className='w-6 h-6 text-gray-400'
+                      className='w-8 h-8 text-gray-400'
                       fill='currentColor'
                       viewBox='0 0 24 24'
                     >
@@ -68,7 +68,7 @@ export default function DiscoverUserModalSkeleton({
             <hr />
 
             <div className=' '>
-              <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-2 '>
+              <div className='mb-2 group relative  rounded-lg p-2 '>
                 <h3 className='font-semibold mb-1 text-xs text-gray-500 uppercase'>
                   Email
                 </h3>
@@ -86,17 +86,28 @@ export default function DiscoverUserModalSkeleton({
               </div>
 
               {/* About Section */}
-              <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-2 '>
+              <div className='mb-2 group relative  rounded-lg p-2 '>
                 <h3 className='font-semibold mb-1 text-xs text-gray-500 uppercase'>
                   About
                 </h3>
                 <div>
                   <p className='text-sm line-clamp-3 hover:line-clamp-6'>
-                    <Skeleton count={3} height={15} />
+                    <div class='space-y-2.5 animate-pulse w-full '>
+                      <div class='flex items-center w-full'>
+                        <div class='h-2.5 bg-gray-200 rounded-full  w-32'></div>
+                        <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
+                        <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
+                      </div>
+                      <div class='flex items-center w-full '>
+                        <div class='h-2.5 bg-gray-200 rounded-full  w-full'></div>
+                        <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
+                        <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
+                      </div>
+                    </div>
                   </p>
                 </div>
               </div>
-              <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-2 '>
+              <div className='mb-2 group relative  rounded-lg p-2 '>
                 <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
                   Type of Profile
                 </h3>
@@ -105,7 +116,7 @@ export default function DiscoverUserModalSkeleton({
                   <Skeleton width={100} />
                 </div>
               </div>
-              <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-2 '>
+              <div className='mb-2 group relative  rounded-lg p-2 '>
                 <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
                   Reason to Join Platform
                 </h3>
@@ -115,7 +126,7 @@ export default function DiscoverUserModalSkeleton({
                   </div>
                 </div>
               </div>
-              <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-2 '>
+              <div className='mb-2 group relative  rounded-lg p-2 '>
                 <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
                   Area of Interest
                 </h3>
@@ -127,7 +138,7 @@ export default function DiscoverUserModalSkeleton({
               </div>
 
               {/* Location Section */}
-              <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-2 '>
+              <div className='mb-2 group relative  rounded-lg p-2 '>
                 <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
                   Location
                 </h3>
@@ -137,7 +148,7 @@ export default function DiscoverUserModalSkeleton({
                 </div>
               </div>
 
-              <div className='p-2 group relative hover:bg-gray-100 rounded-lg'>
+              <div className='p-2 group relative  rounded-lg'>
                 <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase '>
                   LINKS
                 </h3>

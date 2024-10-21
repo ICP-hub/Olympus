@@ -376,6 +376,9 @@ import DiscoverMoneyRaising from '../Project/DiscoverMoneyRais';
 import DiscoverMentorEvent from '../DashboardHomePage/discoverMentor/DiscoverMentorEvent';
 import Nodata from '../Project/Nodata';
 import NoData from '../../NoDataCard/NoData';
+import DiscoverRatingforAssociation from '../../Discover/DiscoverRatingsforAssociation';
+import parse from 'html-react-parser';
+import NoDataCard from '../../NoDataCard/NoData';
 
 const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
   console.log('user data.................... =>', user);
@@ -435,7 +438,7 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
   let recieverDataUser = user?.reciever_data?.[0][1] ?? {}; // User data at index 1
   console.log('mentor detail on page ', recieverDataProject);
   let recieverYearsOfMentoring =
-    recieverDataProject?.profile?.years_of_mentoring ?? "No Experience";
+    recieverDataProject?.profile?.years_of_mentoring ?? 'No Experience';
   let recieverIcpHubOrSpoke =
     recieverDataProject?.profile?.icp_hub_or_spoke ?? false;
   let recieverHubOwner =
@@ -475,7 +478,7 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
   // Sender Data
   let senderDataProject = user?.sender_data?.[0][0] ?? {}; // Project data at index 0
   let senderDataUser = user?.sender_data?.[0][1] ?? {}; // User data at index 1
-  console.log('sender user data ', senderDataUser);
+  console.log('sender user data 478 ', senderDataUser);
   console.log('project data', senderDataProject);
 
   let projectid = senderDataProject.uid;
@@ -528,12 +531,11 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
   let uploadPrivateDocuments =
     senderDataProject?.params?.upload_private_documents?.[0] ?? false;
   let typeOfRegistration =
-    senderDataProject?.params?.type_of_registration?.[0] ?? "N/A";
+    senderDataProject?.params?.type_of_registration?.[0] ?? 'N/A';
   let projectAreaOfFocus =
-    senderDataProject?.params?.project_area_of_focus ??
-    'Area of Focus not available';
+    senderDataProject?.params?.project_area_of_focus ?? ' Not Available';
   let reasontojoinincubator =
-    senderDataProject?.params?.reason_to_join_incubator ?? 'not available';
+    senderDataProject?.params?.reason_to_join_incubator ?? 'Not Available';
 
   let projectCover = senderDataProject?.params?.project_cover?.[0]
     ? uint8ArrayToBase64(senderDataProject?.params?.project_cover?.[0])
@@ -542,25 +544,21 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
     ? uint8ArrayToBase64(senderDataProject?.params?.project_logo?.[0])
     : '../../../assets/Logo/CypherpunkLabLogo.png';
   let countryofregistration =
-    senderDataProject?.params?.country_of_registration?.[0] ?? 'not available';
+    senderDataProject?.params?.country_of_registration?.[0] ?? 'Not Available';
   // User Details within Sender Data (Index 1)
-  let senderFullName =
-    senderDataUser?.params?.full_name ?? 'Sender Name not available';
+  let senderFullName = senderDataUser?.params?.full_name ?? 'Not Available';
   let senderProfilePicture = senderDataUser?.params?.profile_picture?.[0]
     ? uint8ArrayToBase64(senderDataUser?.params?.profile_picture?.[0])
     : '../../../assets/Logo/CypherpunkLabLogo.png';
   let senderUserName =
-    senderDataUser?.params?.openchat_username?.[0] ?? 'Username not available';
+    senderDataUser?.params?.openchat_username?.[0] ?? 'Not Available';
   let senderEmail = senderDataUser?.params?.email?.[0] ?? 'sender@example.com';
-  let senderCountry =
-    senderDataUser?.params?.country ?? 'Country not available';
-  let senderBio = senderDataUser?.params?.bio?.[0] ?? 'Bio not available';
+  let senderCountry = senderDataUser?.params?.country ?? 'Not Available';
+  let senderBio = senderDataUser?.params?.bio?.[0] ?? 'Not Available';
   let senderAreaOfInterest =
-    senderDataUser?.params?.area_of_interest ??
-    'Area of Interest not available';
+    senderDataUser?.params?.area_of_interest ?? 'Not Available';
   let senderReasonToJoin =
-    senderDataUser?.params?.reason_to_join?.[0] ??
-    'Reason to join not available';
+    senderDataUser?.params?.reason_to_join?.[0] ?? 'Not Available';
   let senderTypeOfProfile =
     senderDataUser?.params?.type_of_profile?.[0] ?? 'individual';
   let senderSocialLinks = senderDataUser?.params?.social_links?.[0];
@@ -582,7 +580,7 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
   let senderIcpHubOrSpoke =
     senderDataProject?.profile?.icp_hub_or_spoke ?? false;
   let senderLinks = senderDataProject?.profile?.links ?? [];
-  let senderMultichain = senderDataProject?.profile?.multichain ?? [];
+  let senderMultichain = senderDataProject?.profile?.multichain[0] ?? [];
   let senderPreferredIcpHub =
     senderDataProject?.profile?.preferred_icp_hub ?? [];
   let senderReasonForJoining =
@@ -727,15 +725,17 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
                   </div>
 
                   {/* General Tab Content */}
-                  {activeSideTab === "general" && (
-                    <div className="p-4">
-                      <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-1 ">
-                        <h3 className="font-semibold mb-2 text-[14px] text-gray-500 uppercase">
+                  {activeSideTab === 'general' && (
+                    <div className='p-4'>
+                      <div className='mb-4 group relative hover:bg-gray-100 rounded-lg p-1 '>
+                        <h3 className='font-semibold mb-2 text-[14px] text-gray-500 uppercase'>
                           Email
                         </h3>
 
-                        <div className="flex items-center flex-wrap line-clamp-1 break-all truncate">
-                          <p className="mr-2 text-[14px] line-clamp-1 break-all truncate">{senderEmail}</p>
+                        <div className='flex items-center flex-wrap line-clamp-1 break-all truncate'>
+                          <p className='mr-2 text-[14px] line-clamp-1 break-all truncate'>
+                            {senderEmail}
+                          </p>
                           <VerifiedIcon
                             className='text-blue-500 mr-2 w-2 h-2'
                             fontSize='small'
@@ -746,19 +746,19 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
                         </div>
                       </div>
 
-                      <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-1  ">
-                        <h3 className="font-semibold mb-2 text-[14px] text-gray-500 uppercase">
+                      <div className='mb-4 group relative hover:bg-gray-100 rounded-lg p-1  '>
+                        <h3 className='font-semibold mb-2 text-[14px] text-gray-500 uppercase'>
                           About
                         </h3>
                         <div>
-                          <p className="text-[14px] overflow-hidden line-clamp-2 text-ellipsis max-h-[1.75rem]">
+                          <p className='text-[14px] overflow-hidden line-clamp-2 text-ellipsis max-h-[1.75rem]'>
                             {senderBio}
                           </p>
                         </div>
                       </div>
 
-                      <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-1 ">
-                        <h3 className="font-semibold mb-2 text-[14px] text-gray-500 uppercase">
+                      <div className='mb-4 group relative hover:bg-gray-100 rounded-lg p-1 '>
+                        <h3 className='font-semibold mb-2 text-[14px] text-gray-500 uppercase'>
                           Reason to Join Platform
                         </h3>
                         <div>
@@ -766,7 +766,7 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
                             {senderReasonToJoin.map((reason) => (
                               <span
                                 key={reason}
-                                className="border-2 border-gray-500 rounded-full text-gray-700 text-[13px] px-2 py-1 "
+                                className='border-2 border-gray-500 rounded-full text-gray-700 text-[13px] px-2 py-1 '
                               >
                                 {reason}
                               </span>
@@ -775,21 +775,21 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
                         </div>
                       </div>
 
-                      <div className="mb-4 group relative hover:bg-gray-100 rounded-lg p-1 mt-2">
-                        <h3 className="font-semibold mb-2 text-[14px] text-gray-500 uppercase">
+                      <div className='mb-4 group relative hover:bg-gray-100 rounded-lg p-1 mt-2'>
+                        <h3 className='font-semibold mb-2 text-[14px] text-gray-500 uppercase'>
                           Location
                         </h3>
-                        <div className="flex gap-2">
+                        <div className='flex gap-2'>
                           <PlaceOutlinedIcon
                             sx={{ fontSize: 'medium', marginTop: '3px' }}
                           />
-                          <p className="text-[14px]">{senderCountry}</p>
+                          <p className='text-[14px]'>{senderCountry}</p>
                         </div>
                       </div>
 
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1'>
                         {senderSocialLinks && (
-                          <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all ">
+                          <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all '>
                             Links
                           </h3>
                         )}
@@ -815,89 +815,89 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
                               : ''}
                           </div>
                         </div>
-                       
                       </div>
-                       <div className="my-2 group relative hover:bg-gray-100 rounded-lg p-1 ">
-                          <h3 className="font-semibold mb-2 text-[14px] text-gray-500 uppercase line-clamp-1 break-all truncate">
-                            Proposed By {senderFullName}
-                          </h3>
-                          <div>
-                            <p className="text-[14px] overflow-hidden line-clamp-2 text-ellipsis break-all ">
-                              {offer}
-                            </p>
-                          </div>
+                      <div className='my-2 group relative hover:bg-gray-100 rounded-lg p-1 '>
+                        <h3 className='font-semibold mb-2 text-[14px] text-gray-500 uppercase line-clamp-1 break-all truncate'>
+                          Proposed By {senderFullName}
+                        </h3>
+                        <div>
+                          <p className='text-[14px] overflow-hidden line-clamp-2 text-ellipsis break-all '>
+                            {offer}
+                          </p>
                         </div>
+                      </div>
                     </div>
                   )}
 
                   {/* Project Tab Content */}
-                  {activeSideTab === "project" && (
-                    <div className="p-4">
-                      <div className="mt-4 group relative hover:bg-gray-100 rounded-lg p-1">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                  {activeSideTab === 'project' && (
+                    <div className='p-4'>
+                      <div className='mt-4 group relative hover:bg-gray-100 rounded-lg p-1'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all'>
                           Project Name
                         </h3>
-                        <p className="text-[14px] line-clamp-3">{projectName} </p>
-                      </div>
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-4">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start">
-                          Project Description
-                        </h3>
-                        <p className="text-[14px] line-clamp-3 break-all">
-                          {projectDescription}{" "}
+                        <p className='text-[14px] line-clamp-3'>
+                          {projectName}{' '}
                         </p>
                       </div>
-                      <div className="mt-6">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-4'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start'>
+                          Project Description
+                        </h3>
+                        <p className='text-[14px] line-clamp-3 break-all'>
+                          {parse(projectDescription)}{' '}
+                        </p>
+                      </div>
+                      <div className='mt-6'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start'>
                           Prefered Icp Hub
                         </h3>
-                        <p className="text-[14px]">{preferredIcpHub}</p>
+                        <p className='text-[14px]'>{preferredIcpHub}</p>
                       </div>
-                      <div className="mt-6">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start">
+                      <div className='mt-6'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start'>
                           Project Elevator Pitch
                         </h3>
-                        <p className="text-[14px] line-clamp-1 break-all truncate">
+                        <p className='text-[14px] line-clamp-1 break-all truncate'>
                           {projectElevatorPitch}
                         </p>
                       </div>
-                      <div className="mt-6">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start">
+                      <div className='mt-6'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start'>
                           Project Website
                         </h3>
-                        <p className="text-[14px] line-clamp-1 break-all truncate">
+                        <p className='text-[14px] line-clamp-1 break-all truncate'>
                           {projectWebsite}
                         </p>
                       </div>
-
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-4">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-4'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start'>
                           PROJECT FOCUS AREA
                         </h3>
                         {projectAreaOfFocus?.split(', ').map((focus, index) => (
                           <span
                             key={index}
-                            className="border-2 border-gray-500 rounded-full text-gray-700 text-[13px] px-2 py-1 inline-block mr-2 mb-2 mt-1"
+                            className='border-2 border-gray-500 rounded-full text-gray-700 text-[13px] px-2 py-1 inline-block mr-2 mb-2 mt-1'
                           >
                             {focus}
                           </span>
                         ))}
                       </div>
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-2 ">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-2 '>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start'>
                           MULTI-CHAIN NAMES
                         </h3>
                         {supportsMultichain?.split(', ').map((chain, index) => (
                           <span
                             key={index}
-                            className="border-2 border-gray-500 rounded-full text-gray-700 text-[13px] px-2 py-1 inline-block mr-2 mb-2 mt-1"
+                            className='border-2 border-gray-500 rounded-full text-gray-700 text-[13px] px-2 py-1 inline-block mr-2 mb-2 mt-1'
                           >
                             {chain}
                           </span>
                         ))}
                       </div>
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-2 ">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-2 '>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start'>
                           REASON TO JOIN
                         </h3>
                         {reasontojoinincubator
@@ -905,65 +905,65 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
                           .map((goal, index) => (
                             <span
                               key={index}
-                              className="border-2 border-gray-500 rounded-full text-gray-700 text-[13px] px-2 py-1 inline-block mr-2 mb-2 mt-1"
+                              className='border-2 border-gray-500 rounded-full text-gray-700 text-[13px] px-2 py-1 inline-block mr-2 mb-2 mt-1'
                             >
                               {goal}
                             </span>
                           ))}
                       </div>
 
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-2">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-2'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start'>
                           TYPE OF REGISTRATION
                         </h3>
-                        <span className=" border-2 border-gray-500 rounded-full text-gray-700 text-[13px] px-2 py-1 inline-block mr-2 mb-2 mt-1">
-                          {typeOfRegistration}{" "}
+                        <span className=' border-2 border-gray-500 rounded-full text-gray-700 text-[13px] px-2 py-1 inline-block mr-2 mb-2 mt-1'>
+                          {typeOfRegistration}{' '}
                         </span>
                       </div>
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-2">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-2'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start'>
                           COUNTRY OF REGISTRATION
                         </h3>
-                        <span className=" text-[14px]">
-                          {countryofregistration}{" "}
+                        <span className=' text-[14px]'>
+                          {countryofregistration}{' '}
                         </span>
                       </div>
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-4">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-4'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start'>
                           DAPP LINK
                         </h3>
-                        <span className=" text-[14px] line-clamp-1 break-all truncate">
-                          {dappLink}{" "}
+                        <span className=' text-[14px] line-clamp-1 break-all truncate'>
+                          {dappLink}{' '}
                         </span>
                       </div>
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-4">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-4'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start'>
                           WEEKLY ACTIVE USERS
                         </h3>
-                        <span className=" text-[14px] line-clamp-1 break-all truncate">
+                        <span className=' text-[14px] line-clamp-1 break-all truncate'>
                           {Number(weeklyActiveUsers)}
                         </span>
                       </div>
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-4">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-4'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start'>
                           REVENUE
                         </h3>
-                        <span className=" text-[14px] line-clamp-1 break-all truncate">
-                          {Number(revenue)}{" "}
+                        <span className=' text-[14px] line-clamp-1 break-all truncate'>
+                          {Number(revenue)}{' '}
                         </span>
                       </div>
 
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-4">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-4'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start'>
                           TOKEN ECONOMICS
                         </h3>
-                        <span className=" text-[14px] line-clamp-1 break-all truncate">
-                          {tokenEconomics}{" "}
+                        <span className=' text-[14px] line-clamp-1 break-all truncate'>
+                          {tokenEconomics}{' '}
                         </span>
                       </div>
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-4">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-4'>
                         {senderSocialLinks && (
-                          <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all ">
+                          <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all '>
                             LINKS
                           </h3>
                         )}
@@ -994,45 +994,51 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
                   )}
 
                   {/* Mentor Tab Content  */}
-                  {activeSideTab === "mentor" && (
-                    <div className="p-4">
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-4">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                  {activeSideTab === 'mentor' && (
+                    <div className='p-4'>
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-4'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all'>
                           Years of Mentoring
                         </h3>
-                        <span className="text-[14px] line-clamp-1 break-all truncate">{Number(senderYearsOfMentoring)}</span>
+                        <span className='text-[14px] line-clamp-1 break-all truncate'>
+                          {Number(senderYearsOfMentoring)}
+                        </span>
                       </div>
 
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-4">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-4'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all'>
                           Area of Expertise
                         </h3>
                         {senderAreaOfExpertise.map((expertise, index) => (
                           <span
                             key={index}
-                            className="border-2 border-gray-500 rounded-full text-gray-700 text-[13px] px-2 py-1 inline-block mr-2 mb-2 mt-1"
+                            className='border-2 border-gray-500 rounded-full text-gray-700 text-[13px] px-2 py-1 inline-block mr-2 mb-2 mt-1'
                           >
                             {expertise}
                           </span>
                         ))}
                       </div>
 
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-2 ">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-2 '>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all'>
                           Category of Mentoring Service
                         </h3>
-                        <span className="text-[14px] line-clamp-1 break-all truncate">{senderCategoryOfMentoringService}</span>
+                        <span className='text-[14px] line-clamp-1 break-all truncate'>
+                          {senderCategoryOfMentoringService}
+                        </span>
                       </div>
 
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-4">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-4'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all'>
                           Existing ICP Mentor
                         </h3>
-                        <span className="text-[14px] line-clamp-1 break-all truncate">{senderExistingIcpMentor ? "Yes" : "No"}</span>
+                        <span className='text-[14px] line-clamp-1 break-all truncate'>
+                          {senderExistingIcpMentor ? 'Yes' : 'No'}
+                        </span>
                       </div>
 
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-4">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-4'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all'>
                           Existing ICP Project Portfolio
                         </h3>
                         {senderExistingIcpProjectPortfolio.length > 0 ? (
@@ -1040,94 +1046,105 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
                             (portfolio, index) => (
                               <span
                                 key={index}
-                                className="border-2 border-gray-500 rounded-full text-gray-700 text-[13px] px-2 py-1 inline-block mr-2 mb-2 mt-1"
+                                className='border-2 border-gray-500 rounded-full text-gray-700 text-[13px] px-2 py-1 inline-block mr-2 mb-2 mt-1'
                               >
                                 {portfolio}
                               </span>
                             )
                           )
                         ) : (
-                          <span className="text-[14px] line-clamp-1 break-all truncate">No Project Portfolio</span>
+                          <span className='text-[14px] line-clamp-1 break-all truncate'>
+                            No Project Portfolio
+                          </span>
                         )}
                       </div>
 
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-2 ">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-2 '>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all'>
                           Hub Owner
                         </h3>
                         {senderHubOwner.length > 0 ? (
                           senderHubOwner.map((hub, index) => (
                             <span
                               key={index}
-                              className="mr-2 text-[14px] line-clamp-1 break-all truncate"
+                              className='mr-2 text-[14px] line-clamp-1 break-all truncate'
                             >
                               {hub}
                             </span>
                           ))
                         ) : (
-                          <span className="text-[14px] line-clamp-1 break-all truncate">No Hub Ownership</span>
+                          <span className='text-[14px] line-clamp-1 break-all truncate'>
+                            No Hub Ownership
+                          </span>
                         )}
                       </div>
 
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-2">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-2'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all'>
                           ICP Hub or Spoke
                         </h3>
-                        <span className="text-[14px] line-clamp-1 break-all truncate">{senderIcpHubOrSpoke ? "Yes" : "No"}</span>
+                        <span className='text-[14px] line-clamp-1 break-all truncate'>
+                          {senderIcpHubOrSpoke ? 'Yes' : 'No'}
+                        </span>
                       </div>
 
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-4">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-4'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all'>
                           Preferred ICP Hub
                         </h3>
                         {senderPreferredIcpHub.length > 0 ? (
                           senderPreferredIcpHub.map((hub, index) => (
                             <span
                               key={index}
-                              className="mr-2 text-[14px] line-clamp-1 break-all truncate"
+                              className='mr-2 text-[14px] line-clamp-1 break-all truncate'
                             >
                               {hub}
                             </span>
                           ))
                         ) : (
-                          <span className="text-[14px] line-clamp-1 break-all truncate">No Preferred Hub</span>
+                          <span className='text-[14px] line-clamp-1 break-all truncate'>
+                            No Preferred Hub
+                          </span>
                         )}
                       </div>
 
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-2 ">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-2 '>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all'>
                           Multichain
                         </h3>
+
                         {senderMultichain.length > 0 ? (
                           senderMultichain.map((chain, index) => (
                             <span
                               key={index}
-                              className="border-2 border-gray-500 rounded-full text-gray-700 text-[13px] px-2 py-1 inline-block mr-2 mb-2 mt-1"
+                              className='border-2 border-gray-500 rounded-full text-gray-700 text-[13px] px-2 py-1 inline-block mr-2 mb-2 mt-1'
                             >
                               {chain}
                             </span>
                           ))
                         ) : (
-                          <span className="text-[14px] line-clamp-1 break-all truncate">No Multichain Support</span>
+                          <span className='text-[14px] line-clamp-1 break-all truncate'>
+                            No Multichain Support
+                          </span>
                         )}
                       </div>
 
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-2 ">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-2 '>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all'>
                           Website
                         </h3>
                         <a
                           href={senderWebsite}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-[14px] line-clamp-1 break-all truncate"
+                          target='_blank'
+                          rel='noopener noreferrer'
+                          className='text-[14px] line-clamp-1 break-all truncate'
                         >
                           {senderWebsite}
                         </a>
                       </div>
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-4">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-4'>
                         {senderSocialLinks && (
-                          <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                          <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all'>
                             LINKS
                           </h3>
                         )}
@@ -1157,21 +1174,19 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
                     </div>
                   )}
                   {/* Investor Tab Content */}
-                  {activeSideTab === "investor" && (
-                    <div className="p-4">
-                      
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-4">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                  {activeSideTab === 'investor' && (
+                    <div className='p-4'>
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-4'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all'>
                           Name of Fund
                         </h3>
-                        <span className="text-[14px] line-clamp-1 break-all truncate">
+                        <span className='text-[14px] line-clamp-1 break-all truncate'>
                           {fundName}
                         </span>
                       </div>
 
-                      
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-4">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-4'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all'>
                           Category of Investment
                         </h3>
 
@@ -1181,36 +1196,33 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
                             .map((category, index) => (
                               <div
                                 key={index}
-                                className="border-2 border-gray-500 rounded-full text-gray-700 text-[13px] px-2 py-1 inline-block mr-2 mb-2 mt-1"
+                                className='border-2 border-gray-500 rounded-full text-gray-700 text-[13px] px-2 py-1 inline-block mr-2 mb-2 mt-1'
                               >
                                 {category.trim()}
                               </div>
                             ))}
                       </div>
 
-                     
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-2 ">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-2 '>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all'>
                           Fund Size
                         </h3>
-                        <span className="text-[14px] line-clamp-1 break-all truncate">
+                        <span className='text-[14px] line-clamp-1 break-all truncate'>
                           {Number(fundSize)}
                         </span>
                       </div>
 
-                  
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-4">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-4'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all'>
                           Money Invested
                         </h3>
-                        <span className="text-[14px] line-clamp-1 break-all truncate">
+                        <span className='text-[14px] line-clamp-1 break-all truncate'>
                           {Number(moneyInvested)}
                         </span>
                       </div>
 
-                     
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-4">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-4'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all'>
                           Investor Type
                         </h3>
 
@@ -1218,31 +1230,29 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
                           investorType[0].split(',').map((type, index) => (
                             <div
                               key={index}
-                              className="border-2 border-gray-500 rounded-full text-gray-700 text-[13px] px-2 py-1 inline-block mr-2 mb-2 mt-1"
+                              className='border-2 border-gray-500 rounded-full text-gray-700 text-[13px] px-2 py-1 inline-block mr-2 mb-2 mt-1'
                             >
                               {type.trim()}
                             </div>
                           ))}
                       </div>
 
-                     
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-2">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-2'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all'>
                           Portfolio Link
                         </h3>
                         <a
                           href={portfolioLink}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-[14px] line-clamp-1 break-all truncate"
+                          target='_blank'
+                          rel='noopener noreferrer'
+                          className='text-[14px] line-clamp-1 break-all truncate'
                         >
                           {portfolioLink}
                         </a>
                       </div>
 
-                     
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-4">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-4'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all'>
                           Stage
                         </h3>
 
@@ -1250,25 +1260,24 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
                           stage[0].split(',').map((stagel, index) => (
                             <div
                               key={index}
-                              className="border-2 border-gray-500 rounded-full text-gray-700 text-[13px] px-2 py-1 inline-block mr-2 mb-2 mt-1"
+                              className='border-2 border-gray-500 rounded-full text-gray-700 text-[13px] px-2 py-1 inline-block mr-2 mb-2 mt-1'
                             >
                               {stagel.trim()}
                             </div>
                           ))}
                       </div>
 
-                   
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-2">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-2'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all'>
                           Preferred ICP Hub
                         </h3>
-                        <span className="text-[14px] line-clamp-1 break-all truncate">
+                        <span className='text-[14px] line-clamp-1 break-all truncate'>
                           {preferredIcpHubforInvestor}
                         </span>
                       </div>
 
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-4">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-4'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all'>
                           Projects on Multichain
                         </h3>
 
@@ -1279,7 +1288,7 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
                               .map((chain, index) => (
                                 <div
                                   key={index}
-                                  className="border-2 border-gray-500 rounded-full text-gray-700 text-[13px] px-2 py-1 inline-block mr-2 mb-2 mt-1"
+                                  className='border-2 border-gray-500 rounded-full text-gray-700 text-[13px] px-2 py-1 inline-block mr-2 mb-2 mt-1'
                                 >
                                   {chain.trim()}
                                 </div>
@@ -1287,17 +1296,15 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
                         </div>
                       </div>
 
-                      
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-2">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-2'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all'>
                           Average Check Size
                         </h3>
-                        <span className="text-[14px] line-clamp-1 break-all truncate">
+                        <span className='text-[14px] line-clamp-1 break-all truncate'>
                           {Number(averageCheckSize)}
                         </span>
                       </div>
 
-                     
                       {/* <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-4">
                         <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
                           Range of Check Size
@@ -1314,63 +1321,58 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
                           ))}
                       </div> */}
 
-                    
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-4">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-4'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all'>
                           Number of Portfolio Companies
                         </h3>
-                        <span className="text-[14px] line-clamp-1 break-all truncate">
+                        <span className='text-[14px] line-clamp-1 break-all truncate'>
                           {Number(numberOfPortfolioCompanies)}
                         </span>
                       </div>
 
-                     
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-4">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-4'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all'>
                           Registered
                         </h3>
-                        <span className="text-[14px] line-clamp-1 break-all truncate">
-                          {registered ? "Yes" : "No"}
+                        <span className='text-[14px] line-clamp-1 break-all truncate'>
+                          {registered ? 'Yes' : 'No'}
                         </span>
                       </div>
 
-                     
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-4">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-4'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all'>
                           Registered Country
                         </h3>
-                        <span className="text-[14px] line-clamp-1 break-all truncate">
+                        <span className='text-[14px] line-clamp-1 break-all truncate'>
                           {registeredCountry}
                         </span>
                       </div>
 
-                     
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-4">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-4'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all'>
                           Type of Investment
                         </h3>
-                        <span className="text-[14px] line-clamp-1 break-all truncate">
+                        <span className='text-[14px] line-clamp-1 break-all truncate'>
                           {typeOfInvestment}
                         </span>
                       </div>
 
-                      
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-4">
-                        <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-4'>
+                        <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all'>
                           Website Link
                         </h3>
                         <a
                           href={websiteLink}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-[14px] line-clamp-1 break-all truncate"
+                          target='_blank'
+                          rel='noopener noreferrer'
+                          className='text-[14px] line-clamp-1 break-all truncate'
                         >
                           {websiteLink}
                         </a>
                       </div>
-                      <div className="group relative hover:bg-gray-100 rounded-lg p-1 mt-4">
+                      <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-4'>
                         {senderSocialLinks && (
-                          <h3 className="block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all ">
+                          <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all '>
                             LINKS
                           </h3>
                         )}
@@ -1424,7 +1426,7 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
                       {activeMobileTab === 'document' && (
                         <div className='px-2 py-2'>
                           <DiscoverDocument
-                            projectDetails={senderDataProject}
+                            projectDetails={senderDataProject?.params}
                             projectId={projectid}
                           />
                         </div>
@@ -1447,7 +1449,9 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
                       </button>
                       {activeMobileTab === 'team' && (
                         <div className='px-2 py-2'>
-                          <DiscoverTeam projectDetails={senderDataProject} />
+                          <DiscoverTeam
+                            projectDetails={senderDataProject?.params}
+                          />
                         </div>
                       )}
                     </div>
@@ -1468,9 +1472,9 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
                       </button>
                       {activeMobileTab === 'ratings' && (
                         <div className='px-2 py-2'>
-                          <DiscoverRatings
+                          <DiscoverRatingforAssociation
                             userData={senderDataUser}
-                            principalId={senderPrincipal}
+                            senderPrincipal={senderPrincipal}
                           />
                         </div>
                       )}
@@ -1516,10 +1520,11 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
                       </button>
                       {activeMobileTab === 'review' && (
                         <div className='px-2 py-2'>
-                          <DiscoverReview
+                          {/* <DiscoverReview
                             userData={senderDataUser}
                             principalId={senderPrincipal}
-                          />
+                          /> */}
+                          <NoDataCard message={'No Review Available'} />
                         </div>
                       )}
                     </div>
@@ -1596,17 +1601,17 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
                 <div className='hidden md1:block mb-4'>
                   {activeTab === 'document' && (
                     <DiscoverDocument
-                      projectDetails={senderDataProject}
+                      projectDetails={senderDataProject?.params}
                       projectId={projectid}
                     />
                   )}
                   {activeTab === 'team' && (
-                    <DiscoverTeam projectDetails={senderDataProject} />
+                    <DiscoverTeam projectDetails={senderDataProject?.params} />
                   )}
                   {activeTab === 'ratings' && (
-                    <DiscoverRatings
+                    <DiscoverRatingforAssociation
                       userData={senderDataUser}
-                      principalId={senderPrincipal}
+                      senderprincipal={senderPrincipal}
                     />
                   )}
                   {activeTab === 'moneyraised' && (
@@ -1616,10 +1621,11 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
                     />
                   )}
                   {activeTab === 'review' && (
-                    <DiscoverReview
-                      userData={senderDataUser}
-                      principalId={senderPrincipal}
-                    />
+                    // <DiscoverReview
+                    //   userData={senderDataUser}
+                    //   principalId={senderPrincipal}
+                    // />
+                    <NoDataCard message={'No Review Available'} />
                   )}
                 </div>
                 {/* project content end  */}

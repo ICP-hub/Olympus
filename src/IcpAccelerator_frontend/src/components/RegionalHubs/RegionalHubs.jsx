@@ -302,12 +302,15 @@ import RegionalHubModal from './RegionalHubModal';
 import NoData from '../NoDataCard/NoData';
 import { MdArrowOutward } from 'react-icons/md';
 import getSocialLogo from '../Utils/navigationHelper/getSocialLogo';
+import RegionalHubSkeleton from './RegionalHubSkeleton/RegionalHubSkeleton';
+import useTimeout from '../hooks/TimeOutHook';
 
 const DiscoverRegionalHubs = () => {
   const actor = useSelector((currState) => currState.actors.actor);
   const [allHubsData, setAllHubsData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
   console.log('hub data ', allHubsData);
   const getAllHubs = async (caller, isMounted) => {
     try {
@@ -323,6 +326,8 @@ const DiscoverRegionalHubs = () => {
       }
     }
   };
+
+  useTimeout(() => setLoading(false));
 
   useEffect(() => {
     let isMounted = true;
@@ -341,24 +346,28 @@ const DiscoverRegionalHubs = () => {
   return (
     <div className='container mx-auto mb-5 px-6 bg-white'>
       <div className='flex justify-start items-center h-11 bg-opacity-95 -top-[.60rem] p-10 px-1 sticky bg-white z-20'>
-        <div className='flex justify-between w-full'>
-          <h2 className='text-3xl font-bold'>Discover Regional Hubs</h2>
+        <div className='flex justify-between items-center gap-2 w-full'>
+          <h2 className='text-2xl font-semibold sm:text-3xl sm:font-bold'>Discover Regional Hubs</h2>
           <button
             onClick={() => setIsModalOpen(true)}
-            className='border-2 px-2 border-black py-1'
+            className='border-2 px-2 min-w-[90px] max-h-[38px] border-black py-1'
           >
             Add Hub
           </button>
         </div>
       </div>
-      {isLoading ? (
-        <p>Loading...</p>
-      ) : allHubsData.length === 0 ? (
+      {allHubsData.length === 0 ? (
         <div className='flex items-center justify-center'>
           <NoData message={'No Hubs Data Available'} />
         </div>
+      ) : loading ? (
+        <>
+          {[...Array(allHubsData.length)].map((_, index) => (
+            <RegionalHubSkeleton />
+          ))}{' '}
+        </>
       ) : (
-        <div className='grid md:grid-cols-3 gap-6'>
+        <div className='grid sm:grid-cols-2 dxl:grid-cols-3 gap-6'>
           {allHubsData.map((hub, index) => {
             // Safely access the data from params[0]
             const hubParams = hub?.params?.[0] || {};
@@ -383,10 +392,10 @@ const DiscoverRegionalHubs = () => {
                     />
                   )}
                   <div>
-                    <h3 className='text-lg font-semibold line-clamp-1 truncate'>
+                    <h3 className='text-lg font-semibold line-clamp-1 break-all'>
                       {name}
                     </h3>
-                    <p className='text-sm text-gray-600 mt-2  line-clamp-2 max-h-10 min-h-10'>
+                    <p className='text-sm text-gray-600 mt-2  line-clamp-2 break-all'>
                       {desc}
                     </p>
                   </div>

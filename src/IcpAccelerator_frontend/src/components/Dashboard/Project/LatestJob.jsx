@@ -27,6 +27,8 @@ import { AiFillDelete } from 'react-icons/ai';
 import JobDetails from '../../jobs/JobDetails';
 import editp from '../../../../assets/Logo/edit.png';
 import DeleteModel from './DeleteModel';
+import useTimeout from '../../hooks/TimeOutHook';
+import LatestJobSkeleton from './Skeleton/LatestJobSkeleton';
 const NewJob = ({ latestJobs }) => {
   const actor = useSelector((currState) => currState.actors.actor);
   const [currentJobData, setCurrentJobData] = useState(null);
@@ -36,6 +38,8 @@ const NewJob = ({ latestJobs }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [openJobUid, setOpenJobUid] = useState(null);
+  const [loading, setLoading] = useState(true);
+  useTimeout(() => setLoading(false));
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const principal = useSelector((currState) => currState.internet.principal);
   const handleJobsOpenModal = (jobData) => {
@@ -160,7 +164,7 @@ const NewJob = ({ latestJobs }) => {
   };
   return (
     <React.Fragment>
-      {!noData && latestJobs && latestJobs.length > 0 && (
+      {latestJob && latestJob.length > 0 && (
         <div className='hidden md:block'>
           <div className='flex flex-col items-end mb-8 max-w-7xl pt-4 '>
             <button
@@ -173,7 +177,11 @@ const NewJob = ({ latestJobs }) => {
         </div>
       )}
       <div className='max-w-7xl mx-auto bg-white'>
-        {latestJob.length === 0 ? (
+        {/* {latestJob.length === 0 ? ( */}
+
+        {loading && latestJob.length > 0 ? (
+          <LatestJobSkeleton jobCount={latestJob.length} />
+        ) : latestJob.length === 0 ? (
           <>
             <div className=' md:p-6'>
               {/* Content */}

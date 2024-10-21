@@ -11,6 +11,8 @@ import { useSelector } from 'react-redux';
 import uint8ArrayToBase64 from '../../Utils/uint8ArrayToBase64';
 import { FaChevronRight } from 'react-icons/fa';
 import NoDataFound from '../DashboardEvents/NoDataFound';
+import useTimeout from '../../hooks/TimeOutHook';
+import ProjectCardSkeleton from './ProjectSkeleton/ProjectCardSkeleton';
 const ProjectCard = () => {
   const [isopen, setModalOpen] = useState(false);
   const [cardData, setCardData] = useState([]);
@@ -45,6 +47,11 @@ const ProjectCard = () => {
       cardData.length > 0 ? cardData[0][0].uid : 'No UID available';
     navigate('/dashboard/document', { state: { projectId, cardData } });
   };
+
+  const [isLoading, setIsLoading] = useState(true);
+
+  useTimeout(() => setIsLoading(false));
+
   return (
     <div className='pt-12'>
       <div className='hidden md:block'>
@@ -58,7 +65,9 @@ const ProjectCard = () => {
         </div>
       </div>
 
-      {cardData && cardData.length > 0 ? (
+      {isLoading ? (
+        <ProjectCardSkeleton />
+      ) : cardData && cardData.length > 0 ? (
         cardData.map((data, index) => {
           const projectDescription =
             data[0]?.params?.project_description[0] ??
@@ -103,15 +112,15 @@ const ProjectCard = () => {
                     ></div>
                     <img
                       src={projectLogo}
-                      alt={projectName ?? "ICP"}
-                      className=" sm2:w-3/4 h-28 rounded-2xl border-4 border-[#FFFFFF] relative z-10 object-cover object-center"
-                      loading="lazy"
+                      alt={projectName ?? 'ICP'}
+                      className=' sm2:w-3/4 h-28 rounded-2xl border-4 border-[#FFFFFF] relative z-10 object-cover object-center'
+                      loading='lazy'
                       draggable={false}
                     />
                   </div>
                   <div className='ml-4 w-full pt-4 sm2:pt-0 sm2:w-2/3 relative'>
                     <button className='absolute right-0 text-gray-400 hover:text-gray-600'>
-                      <MoreVert fontSize='small' />
+                      {/* <MoreVert fontSize='small' /> */}
                     </button>
                     <h2 className='text-xl font-semibold text-gray-900'>
                       {projectName ?? 'ICP'}

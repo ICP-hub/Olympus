@@ -26,10 +26,8 @@ import { useNavigate } from 'react-router-dom';
 import DiscoverUserModal from '../DashboardHomePage/discoverMentorPage/DiscoverUserModal';
 import EventDetailSkeleton from './DashboardEventSkeletons/EventDetailSkeleton';
 import useTimeout from '../../hooks/TimeOutHook';
-
 const FAQItem = ({ question, answer }) => {
   const [isOpen, setIsOpen] = useState(false);
-
   return (
     <div className='border-b border-gray-200'>
       <button
@@ -90,8 +88,8 @@ const EventDetails = () => {
   const scrollTabs = (direction) => {
     if (tabsContainerRef.current) {
       tabsContainerRef.current.scrollBy({
-        left: direction === 'left' ? -100 : 100, // Adjust scroll amount as needed
-        behavior: 'smooth', // Smooth scroll
+        left: direction === 'left' ? -100 : 100,
+        behavior: 'smooth',
       });
     }
   };
@@ -102,7 +100,7 @@ const EventDetails = () => {
     setShowDetails(!showDetails);
   };
   const [cohortData, setCohortData] = useState(null);
-  const [isLoading, setIsLoading] = useState(true); // Add a loading state
+  const [isLoading, setIsLoading] = useState(true);
   const actor = useSelector((currState) => currState.actors.actor);
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
@@ -140,35 +138,73 @@ const EventDetails = () => {
     setCurrentTab(tab);
   };
 
+  // useEffect(() => {
+  //   const fetchCohortData = async () => {
+  //     if (actor && cohort_id) {
+  //       try {
+  //         const result = await actor.get_cohort(cohort_id);
+  //         console.log('result', result);
+  //         if (result && Object.keys(result).length > 0) {
+  //           setCohortData(result);
+  //           calculateTimeLeft(result.cohort.cohort_launch_date);
+  //         } else {
+  //           setCohortData(null);
+  //         }
+  //       } catch (error) {
+  //         console.log('error-in-get_my_cohort', error);
+  //         setCohortData(null);
+  //       } finally {
+  //         // setTimeout(() => {
+  //         //   setIsLoading(false);
+  //         // }, 1000);
+  //       }
+  //     }
+  //   };
+
+  //   fetchCohortData();
+  // }, [actor, cohort_id]);
   useEffect(() => {
+    const fetchDataWithTimeout = (timeout = 1000) => {
+      return Promise.race([
+        actor.get_cohort(cohort_id),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Request timed out')), timeout)
+        ),
+      ]);
+    };
+
     const fetchCohortData = async () => {
-      if (actor && cohort_id) {
-        try {
-          const result = await actor.get_cohort(cohort_id);
-          console.log('result', result);
-          if (result && Object.keys(result).length > 0) {
-            setCohortData(result);
-            calculateTimeLeft(result.cohort.cohort_launch_date);
-          } else {
-            setCohortData(null);
-          }
-        } catch (error) {
-          console.log('error-in-get_my_cohort', error);
+      setIsLoading(true); // Show skeleton
+      const startTime = Date.now(); // Track the start time
+
+      try {
+        const result = await fetchDataWithTimeout();
+        if (result && Object.keys(result).length > 0) {
+          setCohortData(result);
+          calculateTimeLeft(result.cohort.cohort_launch_date);
+        } else {
           setCohortData(null);
-        } finally {
-          // setTimeout(() => {
-          //   setIsLoading(false);
-          // }, 1000);
         }
+      } catch (error) {
+        console.log('Error:', error);
+        setCohortData(null);
+      } finally {
+        const timeElapsed = Date.now() - startTime;
+        const minimumTime = Math.max(1000 - timeElapsed, 0); // Ensure the minimum time is non-negative
+
+        // Only hide skeleton if data has been fetched or an error occurred
+        setTimeout(() => {
+          setIsLoading(false); // Hide skeleton once data fetch is done
+        }, minimumTime);
       }
     };
 
     fetchCohortData();
   }, [actor, cohort_id]);
 
+  // useTimeout(() => setIsLoading(false),1000);
   const timeoutRef = useRef(null);
 
-  useTimeout(() => setIsLoading(false));
   useEffect(() => {
     if (cohortData) {
       const calculateRemainingTime = () => {
@@ -338,6 +374,7 @@ const EventDetails = () => {
   };
 
   const shareUrl = `${window.location.origin}/dashboard/single-event${cohort_id}`;
+
   return (
     <div className='flex flex-col'>
       <div className='flex   w-full justify-between  my-2 py-3  -top-[1.2rem] md:-top-[0.2rem] bg-white sticky z-40'>
@@ -410,7 +447,7 @@ const EventDetails = () => {
               </div>
             </div>
 
-            {userCurrentRoleStatusActiveRole !== null && (
+            {userCurrentRoleStatusActiveRole !== 'user' && (
               <button
                 className='w-full flex justify-center bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-300 mb-2 text-sm'
                 onClick={registerHandler}

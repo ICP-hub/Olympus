@@ -13,11 +13,11 @@ const AboutcardSkeleton = ({ getAllData }) => {
 
   return (
     <SkeletonTheme baseColor='#e3e3e3' highlightColor='#c8c8c873'>
-      <div className='w-full overflow-hidden h-[95vh] bg-gradient-to-r from-[#ECE9FE] to-[#FFFFFF] items-center justify-center rounded-2xl'>
-        <div className='bg-white mx-auto h-[83vh] my-10 rounded-lg shadow-md w-[90%]'>
-          <div className='w-full bg-gray-200 rounded-full h-1.5 mb-4 dark:bg-gray-700'>
+      <div className='w-full overflow-hidden bg-gradient-to-r from-[#ECE9FE] to-[#FFFFFF] items-center justify-center rounded-2xl'>
+        <div className='bg-white rounded-lg shadow-md m-8'>
+          <div className='w-full bg-gray-200 rounded-full h-1.5 mb-4 '>
             <div
-              className='bg-green-500 h-1.5 rounded-full dark:bg-gray-700'
+              className='bg-green-500 h-1.5 rounded-full '
               style={{ width: '20%' }}
             ></div>
           </div>
@@ -102,12 +102,24 @@ const AboutcardSkeleton = ({ getAllData }) => {
                   </p>
                 ) : (
                   <>
-                    <Skeleton
+                    {/* <Skeleton
                       height={20}
                       width='full'
                       className='rounded-3xl'
                     />
-                    <Skeleton height={20} width={150} className='rounded-3xl' />
+                    <Skeleton height={20} width={150} className='rounded-3xl' /> */}
+                    <div role='status' class='space-y-2.5 animate-pulse '>
+                      <div class='flex items-center w-full'>
+                        <div class='h-2.5 bg-gray-200 rounded-full  w-32'></div>
+                        <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
+                        <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
+                      </div>
+                      <div class='flex items-center w-full'>
+                        <div class='h-2.5 bg-gray-200 rounded-full  w-full'></div>
+                        <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
+                        <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
+                      </div>
+                    </div>
                   </>
                 )}
               </div>
@@ -160,17 +172,17 @@ const AboutcardSkeleton = ({ getAllData }) => {
 
               <div className=''>
                 <label className='block font-medium text-gray-600 pb-1'>
-                  <LocationOnOutlinedIcon
-                    sx={{
-                      fontSize: 'lage',
-                      marginRight: '5px',
-                      marginTop: '-4px',
-                    }}
-                  />
                   Location
                 </label>
                 {getAllData?.country ? (
                   <p className='sm:max-w-[11rem] text-base   truncate break-all font-normal'>
+                    <LocationOnOutlinedIcon
+                      sx={{
+                        fontSize: 'lage',
+                        marginRight: '5px',
+                        marginTop: '-4px',
+                      }}
+                    />
                     {getAllData?.country}
                   </p>
                 ) : (

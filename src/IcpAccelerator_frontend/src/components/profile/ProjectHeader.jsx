@@ -10,8 +10,9 @@ const ProfileHeader = ({ ProfileImage, Fullname, openchat_username }) => {
       setIsLoading(false);
     }, 1000);
   }, []);
-  return (
-    isLoading ? <ProjectHeaderSkeleton/>:
+  return isLoading ? (
+    <ProjectHeaderSkeleton />
+  ) : (
     <div className='p-6 bg-gray-50'>
       <div className='relative w-24 h-24 mx-auto rounded-full mb-4 group'>
         <img

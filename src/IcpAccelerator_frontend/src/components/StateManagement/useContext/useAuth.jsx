@@ -9,7 +9,7 @@ import {
   logoutSuccess,
   logoutFailure,
 } from '../Redux/Reducers/InternetIdentityReducer';
-
+import { useNavigate } from 'react-router-dom';
 const AuthContext = createContext();
 
 const defaultOptions = {
@@ -17,10 +17,6 @@ const defaultOptions = {
    *  @type {import("@dfinity/auth-client").AuthClientCreateOptions}
    */
   createOptions: {
-    // idleOptions: {
-    //   // Set to true if you do not want idle functionality
-    //   disableIdle: true,
-    // },
     idleOptions: {
       idleTimeout: 1000 * 60 * 30, // set to 30 minutes
       disableDefaultIdleCallback: true, // disable the default reload behavior
@@ -34,15 +30,11 @@ const defaultOptions = {
       process.env.DFX_NETWORK === 'ic'
         ? 'https://identity.ic0.app/#authorize'
         : `http://rdmx6-jaaaa-aaaaa-aaadq-cai.localhost:4943`,
-    // : `https://nfid.one/authenticate/?applicationName=my-ic-app#authorize`,
-    // :`https://nfid.one/authenticate/?applicationName=my-ic-app#authorize`
   },
   loginOptionsnfid: {
     identityProvider:
       process.env.DFX_NETWORK === 'ic'
-        ? // ? "https://identity.ic0.app/#authorize"
-          // : `http://rdmx6-jaaaa-aaaaa-aaadq-cai.localhost:4943`,
-          `https://nfid.one/authenticate/?applicationName=my-ic-app#authorize`
+        ? `https://nfid.one/authenticate/?applicationName=my-ic-app#authorize`
         : `https://nfid.one/authenticate/?applicationName=my-ic-app#authorize`,
   },
 };
@@ -60,16 +52,34 @@ export const useAuthClient = (options = defaultOptions) => {
   const [identity, setIdentity] = useState(null);
   const [principal, setPrincipal] = useState(null);
   const [backendActor, setBackendActor] = useState(null);
-
   const dispatch = useDispatch();
+
   useEffect(() => {
-    AuthClient.create(options.createOptions).then((client) => {
-      setAuthClient(client);
-    });
+    const initializeAuthClient = async () => {
+      try {
+        const client = await AuthClient.create(options.createOptions);
+        if (client) {
+          console.log('client', client);
+          setAuthClient(client);
+          console.log('AuthClient initialized');
+        } else {
+          console.error('AuthClient initialization failed', error);
+          window.location.href = '/';
+        }
+      } catch (error) {
+        console.error('AuthClient initialization failed', error);
+        window.location.href = '/';
+      }
+    };
+    initializeAuthClient();
   }, []);
 
   const login = (val) => {
     return new Promise(async (resolve, reject) => {
+      if (!authClient) {
+        reject(new Error('AuthClient is not initialized yet'));
+        return;
+      }
       try {
         if (
           authClient.isAuthenticated() &&
@@ -82,7 +92,11 @@ export const useAuthClient = (options = defaultOptions) => {
           let opt = val === 'ii' ? 'loginOptionsii' : 'loginOptionsnfid';
           authClient.login({
             ...options[opt],
-            onError: (error) => reject(error),
+            onError: (error) => {
+              console.error('Login error', error);
+              window.location.href = '/';
+              reject(error);
+            },
             onSuccess: () => {
               updateClient(authClient);
               resolve(authClient);
@@ -113,24 +127,19 @@ export const useAuthClient = (options = defaultOptions) => {
   };
 
   async function updateClient(client) {
-    // console.log("client-use-Auth", client)
     const isAuthenticated = await client.isAuthenticated();
     setIsAuthenticated(isAuthenticated);
-    // console.log("isAuthenticated-use-Auth", isAuthenticated)
 
     const identity = client.getIdentity();
     setIdentity(identity);
-    // console.log("identity-use-Auth", identity)
 
     const principal = identity.getPrincipal().toText();
     setPrincipal(principal);
 
-    // console.log("principal-use-Auth", principal)
-
     setAuthClient(client);
     const agent = new HttpAgent({
       identity,
-      verifyQuerySignatures: process.env.DFX_NETWORK === 'ic', // Enable signature verification only in production
+      verifyQuerySignatures: process.env.DFX_NETWORK === 'ic' ? true : false,
     });
 
     if (process.env.DFX_NETWORK !== 'ic') {
@@ -142,7 +151,6 @@ export const useAuthClient = (options = defaultOptions) => {
     const actor = createActor(process.env.CANISTER_ID_ICPACCELERATOR_BACKEND, {
       agent,
     });
-    // console.log("actor-use-Auth", actor)
 
     if (isAuthenticated === true) {
       dispatch(
@@ -170,7 +178,8 @@ export const useAuthClient = (options = defaultOptions) => {
 
   const canisterId =
     process.env.CANISTER_ID_ICPACCELERATOR_BACKEND ||
-    process.env.ICPACCELERATOR_BACKEND_CANISTER_ID;
+    process.env.ICPACCELERATOR_BACKEND_CANISTER_ID ||
+    'default_canister_id';
 
   const actor = createActor(canisterId, {
     agentOptions: { identity, verifyQuerySignatures: false },

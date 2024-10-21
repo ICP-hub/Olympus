@@ -120,9 +120,16 @@ const DiscoverMentor = ({ onMentorCountChange }) => {
       let mentor_id = Principal.fromText(mentorId);
       let msg = message;
       let project_id = projectId;
-
+      let is_cohort_association = false;
+      let cohort_id = [];
       await actor
-        .send_offer_to_mentor_from_project(mentor_id, msg, project_id)
+        .send_offer_to_mentor_from_project(
+          mentor_id,
+          msg,
+          project_id,
+          is_cohort_association,
+          cohort_id
+        )
         .then((result) => {
           console.log('result', result);
           if (result) {

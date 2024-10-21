@@ -172,7 +172,7 @@ const AssociationRecieverProjectSideDataFromMentor = ({
 
   // POST API HANDLER TO SELF-REJECT A REQUEST WHERE MENTOR APPROCHES PROJECT
   return (
-    <div className='md:p-6 w-full flex flex-wrap md:flex-nowrap rounded-lg shadow-sm'>
+    <div className='md:py-6 w-full flex flex-wrap md:flex-nowrap rounded-lg shadow-sm'>
       <div className='w-full flex justify-center md:w-[272px]'>
         <div className='min-w-[200px] h-40 dxs:min-w-[236px] w-full md:max-w-[250px] bg-gray-100 rounded-lg flex flex-col justify-between dxs:h-60 relative overflow-hidden cursor-pointer'>
           <div
@@ -201,41 +201,38 @@ const AssociationRecieverProjectSideDataFromMentor = ({
             <h3 className='text-xl line-clamp-1 break-all font-bold'>
               {senderFullName}
             </h3>
-
-            {/* <span className="flex py-2">
-                <Avatar
-                  alt="Mentor"
-                  src={userProfilePicture}
-                  className=" mr-2"
-                  sx={{ width: 24, height: 24 }}
-                />
-                <span className="text-gray-500">{userUserName}</span>
-              </span> */}
-            <span className='text-gray-500 line-clamp-1 break-all'>
-              @{senderEmail}
+          </div>
+          <div>
+            <span className='mr-2 mb-2 text-[#016AA2] px-3 py-1 rounded-full bg-gray-100 text-sm'>
+              {activeTabData === 'pending' ? (
+                <span className='font-semibold'>{timestampAgo(sentAt)}</span>
+              ) : activeTabData === 'approved' ? (
+                <span className='font-semibold'>
+                  {timestampAgo(acceptedAt)}
+                </span>
+              ) : activeTabData === 'declined' ? (
+                <span className='font-semibold'>
+                  {timestampAgo(declinedAt)}
+                </span>
+              ) : activeTabData === 'self-reject' ? (
+                <span className='font-semibold'>
+                  {timestampAgo(selfDeclinedAt)}
+                </span>
+              ) : null}
             </span>
           </div>
-          <span className='mr-2 mb-2 text-[#016AA2] px-3 py-1 rounded-full bg-gray-100 text-sm'>
-            {activeTabData === 'pending' ? (
-              <span className='font-semibold'>{timestampAgo(sentAt)}</span>
-            ) : activeTabData === 'approved' ? (
-              <span className='font-semibold'>{timestampAgo(acceptedAt)}</span>
-            ) : activeTabData === 'declined' ? (
-              <span className='font-semibold'>{timestampAgo(declinedAt)}</span>
-            ) : activeTabData === 'self-reject' ? (
-              <span className='font-semibold'>
-                {timestampAgo(selfDeclinedAt)}
-              </span>
-            ) : null}
-          </span>
         </div>
 
-        <div className='border-t border-gray-200 mt-3'></div>
+        <span className='text-gray-500 line-clamp-1 break-all'>
+          @{senderEmail}
+        </span>
 
-        <p className='text-gray-600 my-2 break-all line-clamp-2  '>
+        <div className='border-t border-gray-200 mt-1'></div>
+
+        <p className='text-gray-600 my-1 break-all line-clamp-2  '>
           {parse(userBio)}
         </p>
-        <div className='flex items-center text-sm text-gray-500 flex-wrap py-2'>
+        <div className='flex items-center text-sm text-gray-500 flex-wrap py-1'>
           {senderAreaOfInterest &&
             senderAreaOfInterest
               .split(',')
@@ -249,7 +246,7 @@ const AssociationRecieverProjectSideDataFromMentor = ({
                 </span>
               ))}
 
-          <span className='mr-2 mb-2 flex text-[#121926] items-center'>
+          <span className='mr-2 mb-1 flex text-[#121926] items-center'>
             <PlaceOutlinedIcon className='text-[#364152] mr-1 w-4 h-4' />{' '}
             {senderCountry}
           </span>
@@ -273,14 +270,14 @@ const AssociationRecieverProjectSideDataFromMentor = ({
               <div className='flex flex-wrap sm:flex-nowrap'>
                 {/* Handle Mentor Reject */}
                 <button
-                  className='mr-2 mb-2 border border-[#C11574] bg-[#FDF2FA] text-[#C11574] px-3 py-1 rounded-full'
+                  className='mr-2 mb-1 border border-[#C11574] bg-[#FDF2FA] text-[#C11574] px-3 py-1 rounded-full'
                   onClick={() => handleMentorDeclineModalOpenHandler(offerId)}
                 >
                   Reject
                 </button>
                 {/* Handle Mentor Approve */}
                 <button
-                  className='mr-2 mb-2 border border-[#097647] bg-[#EBFDF3] text-[#097647] px-3 py-1 rounded-full'
+                  className='mr-2 mb-1 border border-[#097647] bg-[#EBFDF3] text-[#097647] px-3 py-1 rounded-full'
                   onClick={() => handleMentorAcceptModalOpenHandler(offerId)}
                 >
                   Approve
@@ -290,14 +287,14 @@ const AssociationRecieverProjectSideDataFromMentor = ({
               <>
                 {/* Handle Investor Reject */}
                 <button
-                  className='mr-2 mb-2 border border-[#C11574] bg-[#FDF2FA] text-[#C11574] px-3 py-1 rounded-full'
+                  className='mr-2 mb-1 border border-[#C11574] bg-[#FDF2FA] text-[#C11574] px-3 py-1 rounded-full'
                   onClick={() => handleInvestorDeclineModalOpenHandler(offerId)}
                 >
                   Reject
                 </button>
                 {/* Handle Investor Approve */}
                 <button
-                  className='mr-2 mb-2 border border-[#097647] bg-[#EBFDF3] text-[#097647] px-3 py-1 rounded-full'
+                  className='mr-2 mb-1 border border-[#097647] bg-[#EBFDF3] text-[#097647] px-3 py-1 rounded-full'
                   onClick={() => handleInvestorAcceptModalOpenHandler(offerId)}
                 >
                   Approve
@@ -306,20 +303,20 @@ const AssociationRecieverProjectSideDataFromMentor = ({
             )}
           </div>
         ) : activeTabData === 'approved' ? (
-          <div className='py-2 flex justify-end'>
-            <span className='mr-2 mb-2 border border-[#097647] bg-[#EBFDF3] text-[#097647]  px-3 py-1 rounded-full capitalize'>
+          <div className=' flex '>
+            <span className='mr-2 mb-1 border border-[#097647] bg-[#EBFDF3] text-[#097647]  px-3 py-1 rounded-full capitalize'>
               {requestStatus}
             </span>
           </div>
         ) : activeTabData === 'declined' ? (
-          <div className='py-2 flex justify-end'>
-            <span className='mr-2 mb-2 border border-[#C11574] bg-[#FDF2FA] text-[#C11574]  px-3 py-1 rounded-full capitalize'>
+          <div className='flex '>
+            <span className='mr-2 mb-1 border border-[#C11574] bg-[#FDF2FA] text-[#C11574]  px-3 py-1 rounded-full capitalize'>
               {requestStatus}
             </span>
           </div>
         ) : activeTabData === 'self-reject' ? (
-          <div className='py-2 flex justify-end'>
-            <span className='mr-2 mb-2 border border-[#C11574] bg-[#FDF2FA] text-[#C11574]  px-3 py-1 rounded-full capitalize '>
+          <div className=' flex '>
+            <span className='mr-2 mb-1 border border-[#C11574] bg-[#FDF2FA] text-[#C11574]  px-3 py-1 rounded-full capitalize '>
               {requestStatus}
             </span>
           </div>

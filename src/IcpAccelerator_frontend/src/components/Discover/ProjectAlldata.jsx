@@ -83,10 +83,18 @@ const DiscoverProject = ({ onProjectCountChange }) => {
       let project_id = listProjectId;
       let msg = message;
       let mentor_id = Principal.fromText(mentorPrincipal);
+      let is_cohort_association = false;
+      let cohort_id = [];
       console.log('Data before sending', project_id, msg, mentor_id);
 
       await actor
-        .send_offer_to_project_by_mentor(project_id, msg, mentor_id)
+        .send_offer_to_project_by_mentor(
+          project_id,
+          msg,
+          mentor_id,
+          is_cohort_association,
+          cohort_id
+        )
         .then((result) => {
           console.log('result-in-send_offer_to_project_by_mentor', result);
           if (result) {

@@ -1,33 +1,35 @@
-import React, { useState, useEffect, useLayoutEffect } from "react";
-import { useSelector } from "react-redux";
-import { IcpAccelerator_backend } from "../../../../declarations/IcpAccelerator_backend/index";
-import CenterFocusStrongOutlinedIcon from "@mui/icons-material/CenterFocusStrongOutlined";
-import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
-import FmdGoodOutlinedIcon from "@mui/icons-material/FmdGoodOutlined";
-import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
-import JobDetails from "./JobDetails";
-import awtar from "../../../assets/images/icons/_Avatar.png";
-import Select from "react-select";
-import InfiniteScroll from "react-infinite-scroll-component";
-import TuneIcon from "@mui/icons-material/Tune";
-import { FaSliders } from "react-icons/fa6";
+import React, { useState, useEffect, useLayoutEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { IcpAccelerator_backend } from '../../../../declarations/IcpAccelerator_backend/index';
+import CenterFocusStrongOutlinedIcon from '@mui/icons-material/CenterFocusStrongOutlined';
+import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
+import FmdGoodOutlinedIcon from '@mui/icons-material/FmdGoodOutlined';
+import AccessTimeOutlinedIcon from '@mui/icons-material/AccessTimeOutlined';
+import JobDetails from './JobDetails';
+import awtar from '../../../assets/images/icons/_Avatar.png';
+import Select from 'react-select';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import TuneIcon from '@mui/icons-material/Tune';
+import { FaSliders } from 'react-icons/fa6';
 import {
   clockSvgIcon,
   coinStackedSvgIcon,
   lenseSvgIcon,
   locationSvgIcon,
-} from "../Utils/Data/SvgData";
-import useFormatDateFromBigInt from "../../components/hooks/useFormatDateFromBigInt";
-import AOS from "aos";
-import "aos/dist/aos.css";
-import { formatFullDateFromBigInt } from "../Utils/formatter/formatDateFromBigInt";
-import LinkIcon from "@mui/icons-material/Link";
-import uint8ArrayToBase64 from "../Utils/uint8ArrayToBase64";
-import parse from "html-react-parser";
-import Tooltip from "@mui/material/Tooltip";
-import NoData from "../NoDataCard/NoData";
-import JobFilterModal from "./JobFilterModal";
-import SpinnerLoader from "../Discover/SpinnerLoader";
+} from '../Utils/Data/SvgData';
+import useFormatDateFromBigInt from '../../components/hooks/useFormatDateFromBigInt';
+import AOS from 'aos';
+import 'aos/dist/aos.css';
+import { formatFullDateFromBigInt } from '../Utils/formatter/formatDateFromBigInt';
+import LinkIcon from '@mui/icons-material/Link';
+import uint8ArrayToBase64 from '../Utils/uint8ArrayToBase64';
+import parse from 'html-react-parser';
+import Tooltip from '@mui/material/Tooltip';
+import NoData from '../NoDataCard/NoData';
+import JobFilterModal from './JobFilterModal';
+import SpinnerLoader from '../Discover/SpinnerLoader';
+import useTimeout from '../hooks/TimeOutHook';
+import JobsSkeleton from './JobsSkeleton/JobsSkeleton';
 const Jobs = () => {
   const actor = useSelector((currState) => currState.actors.actor);
 
@@ -40,6 +42,9 @@ const Jobs = () => {
   const [openJobUid, setOpenJobUid] = useState(null);
   const [hasMore, setHasMore] = useState(true);
   const [totalJobs, setTotalJobs] = useState([]);
+  const [skeletonLoading, setskeletonLoading] = useState(true);
+
+  useTimeout(() => setskeletonLoading(false));
 
   const fetchLatestJobs = async (caller, page, isRefresh = false) => {
     setIsLoading(true);
@@ -53,7 +58,7 @@ const Jobs = () => {
           setLatestJobs(result);
           setTotalJobs(result.length);
         } else {
-          console.log("Refresh", "false");
+          console.log('Refresh', 'false');
           setLatestJobs(result);
           setTotalJobs(latestJobs.length + result.length);
         }
@@ -185,168 +190,175 @@ const Jobs = () => {
           </div>
         </div>
         <div className='flex mx-auto justify-evenly '>
-          <div className='mb-5 w-full md1:w-[65%] lg:w-full lgx:w-[65%] '>
-            <div
-              id="scrollableDiv"
-              style={{ height: "100vh", overflowY: "auto" }}
-              data-aos="fade-up"
-            >
-              {latestJobs.length > 0 ? (
-                <InfiniteScroll
-                  dataLength={latestJobs.length}
-                  next={loadMore}
-                  hasMore={hasMore}
-                  loader={
-                    <>
-                      <SpinnerLoader />
-                    </>
-                  }
-                  endMessage={
-                    <p className='flex justify-center mt-4'>
-                      No more data available...
-                    </p>
-                  }
-                  scrollableTarget='scrollableDiv'
-                >
-                  {latestJobs.map((card, index) => {
-                    // console.log( " card?.job_poster.profile_picture",card?.job_poster?.profile_picture)
-                    let job_name = card?.job_data?.title ?? '';
-                    let job_category = card?.job_data?.category ?? '';
-                    let job_description = card?.job_data?.description ?? '';
-                    let job_location = card?.job_data?.location ?? '';
-                    let job_link = card?.job_data?.link ?? '';
-                    let job_project_logo = card?.job_poster[0]
-                      ?.profile_picture[0]
-                      ? uint8ArrayToBase64(
-                          card?.job_poster[0]?.profile_picture[0]
-                        )
-                      : null;
-                    let job_type = card?.job_data?.job_type ?? '';
-                    let job_project_name = card?.project_name ?? '';
-                    let job_project_desc = card?.project_desc ?? '';
-                    let job_post_time = card?.timestamp
-                      ? formatFullDateFromBigInt(card?.timestamp)
-                      : '';
-                    // console.log("cardids", card.job_id);
-                    return (
-                      <div key={index}>
-                        <div className="flex flex-col gap-3 my-8 shadow-md  rounded-md p-4">
-                          <div className="flex justify-between">
-                            <div
-                              onClick={() => openJobDetails(card.job_id)}
-                              className='flex flex-col gap-3 sm5:w-[70%] w-full '
-                            >
-                              <p className='text-sm xxs:text-base text-gray-400'>
-                                {job_post_time}{' '}
-                              </p>
-                              <h3 className="text-xl line-clamp-1 break-all font-bold">
-                                {job_name}{" "}
-                              </h3>
-                              <p className="flex items-center">
-                                <span className="mr-3">
-                                  <img
-                                    src={job_project_logo}
-                                    className='w-8 h-8 rounded-lg'
-                                    alt='icon'
-                                    loading='lazy'
-                                    draggable={false}
-                                  />
-                                </span>
-                                <span className='line-clamp-2 break-all'>
+          <>
+            <div className='mb-5 w-full md1:w-[65%] lg:w-full lgx:w-[65%] '>
+              <div
+                id='scrollableDiv'
+                style={{ height: '100vh', overflowY: 'auto' }}
+                data-aos='fade-up'
+              >
+                {skeletonLoading ? (
+                  <>
+                    {[...Array(latestJobs.length)].map((_, index) => (
+                      <JobsSkeleton key={index} />
+                    ))}
+                  </>
+                ) : latestJobs.length > 0 ? (
+                  <InfiniteScroll
+                    dataLength={latestJobs.length}
+                    next={loadMore}
+                    hasMore={hasMore}
+                    loader={
+                      <>
+                        <SpinnerLoader />
+                      </>
+                    }
+                    endMessage={
+                      <p className='flex justify-center mt-4'>
+                        No more data available...
+                      </p>
+                    }
+                    scrollableTarget='scrollableDiv'
+                  >
+                    {latestJobs.map((card, index) => {
+                      // console.log( " card?.job_poster.profile_picture",card?.job_poster?.profile_picture)
+                      let job_name = card?.job_data?.title ?? '';
+                      let job_category = card?.job_data?.category ?? '';
+                      let job_description = card?.job_data?.description ?? '';
+                      let job_location = card?.job_data?.location ?? '';
+                      let job_link = card?.job_data?.link ?? '';
+                      let job_project_logo = card?.job_poster[0]
+                        ?.profile_picture[0]
+                        ? uint8ArrayToBase64(
+                            card?.job_poster[0]?.profile_picture[0]
+                          )
+                        : null;
+                      let job_type = card?.job_data?.job_type ?? '';
+                      let job_project_name = card?.project_name ?? '';
+                      let job_project_desc = card?.project_desc ?? '';
+                      let job_post_time = card?.timestamp
+                        ? formatFullDateFromBigInt(card?.timestamp)
+                        : '';
+                      // console.log("cardids", card.job_id);
+                      return (
+                        <div key={index}>
+                          <div className='flex flex-col gap-3 my-8 shadow-md  rounded-md p-4'>
+                            <div className='flex justify-between'>
+                              <div
+                                onClick={() => openJobDetails(card.job_id)}
+                                className='flex flex-col gap-3 sm5:w-[70%] w-full '
+                              >
+                                <p className='text-sm xxs:text-base text-gray-400'>
+                                  {job_post_time}{' '}
+                                </p>
+                                <h3 className='text-xl line-clamp-1 break-all font-bold'>
                                   {job_name}{' '}
-                                </span>
-                              </p>
-                            </div>
-                            <div className='hidden sm5:block'>
-                              <div className='flex flex-col gap-4 items-center'>
-                                <a
-                                  href={job_link}
-                                  target='_blank'
-                                  className='border rounded-md bg-[#155EEF] py-2 px-1 dxs:px-4 text-white text-center text-xs dxs:text-sm xxs:text-base'
-                                >
-                                  Apply{' '}
-                                  <span className='pl-1 text-white'></span>
-                                  <ArrowOutwardIcon
-                                    sx={{
-                                      marginTop: '-2px',
-                                      fontSize: 'medium',
-                                    }}
-                                  />
-                                </a>
-                                <button
-                                  onClick={() => openJobDetails(card.job_id)}
-                                  className='hover:bg-slate-300 py-2 px-3 text-[#155EEF] font-medium flex'
-                                >
-                                  view details
-                                </button>
+                                </h3>
+                                <p className='flex items-center'>
+                                  <span className='mr-3'>
+                                    <img
+                                      src={job_project_logo}
+                                      className='w-8 h-8 rounded-lg'
+                                      alt='icon'
+                                      loading='lazy'
+                                      draggable={false}
+                                    />
+                                  </span>
+                                  <span className='line-clamp-2 break-all'>
+                                    {job_name}{' '}
+                                  </span>
+                                </p>
                               </div>
-                            </div>
-                          </div>
-                          <div className='flex flex-col gap-3'>
-                            <p className='text-gray-600  overflow-hidden text-ellipsis max-h-12 line-clamp-2 break-all'>
-                              {parse(job_description)}{' '}
-                            </p>
-                            <div className='flex gap-5 items-center flex-wrap'>
-                              <div className='flex items-center gap-2'>
-                                {' '}
-                                {lenseSvgIcon}{' '}
-                                <span className=''>{job_category}</span>{' '}
-                              </div>
-                              <div className='flex items-center gap-2'>
-                                {locationSvgIcon}{' '}
-                                <span className=''>{job_location}</span>{' '}
-                              </div>
-                              <div className='flex items-center gap-2'>
-                                {clockSvgIcon}{' '}
-                                <span className='ml-2'>{job_type}</span>{' '}
-                              </div>
-                              <div className='flex items-center gap-2'>
-                                <a href={job_link} target='_blank'>
-                                  <span className='flex'>
-                                    <LinkIcon />
-                                  </span>{' '}
-                                </a>
-                              </div>
-                            </div>
-                            {/* Action Buttons */}
-                            <div className='sm5:hidden'>
-                              {' '}
-                              <div className='flex justify-between flex-col sm1:flex-row w-full'>
-                                <button className='bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition w-full'>
-                                  Apply{' '}
-                                  <span className='ml-2 material-icons'>
+                              <div className='hidden sm5:block'>
+                                <div className='flex flex-col gap-4 items-center'>
+                                  <a
+                                    href={job_link}
+                                    target='_blank'
+                                    className='border rounded-md bg-[#155EEF] py-2 px-1 dxs:px-4 text-white text-center text-xs dxs:text-sm xxs:text-base'
+                                  >
+                                    Apply{' '}
+                                    <span className='pl-1 text-white'></span>
                                     <ArrowOutwardIcon
                                       sx={{
                                         marginTop: '-2px',
                                         fontSize: 'medium',
                                       }}
                                     />
-                                  </span>
-                                </button>
-                                <button
-                                  onClick={() => openJobDetails(card.job_id)}
-                                  className='hover:bg-slate-300 py-2 px-3 text-[#155EEF] shadow-lg my-1 sm1:my-0 font-medium w-full'
-                                >
-                                  view details
-                                </button>
+                                  </a>
+                                  <button
+                                    onClick={() => openJobDetails(card.job_id)}
+                                    className='hover:bg-slate-300 py-2 px-3 text-[#155EEF] font-medium flex'
+                                  >
+                                    view details
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                            <div className='flex flex-col gap-3'>
+                              <p className='text-gray-600  overflow-hidden text-ellipsis max-h-12 line-clamp-2 break-all'>
+                                {parse(job_description)}{' '}
+                              </p>
+                              <div className='flex gap-5 items-center flex-wrap'>
+                                <div className='flex items-center gap-2'>
+                                  {' '}
+                                  {lenseSvgIcon}{' '}
+                                  <span className=''>{job_category}</span>{' '}
+                                </div>
+                                <div className='flex items-center gap-2'>
+                                  {locationSvgIcon}{' '}
+                                  <span className=''>{job_location}</span>{' '}
+                                </div>
+                                <div className='flex items-center gap-2'>
+                                  {clockSvgIcon}{' '}
+                                  <span className='ml-2'>{job_type}</span>{' '}
+                                </div>
+                                <div className='flex items-center gap-2'>
+                                  <a href={job_link} target='_blank'>
+                                    <span className='flex'>
+                                      <LinkIcon />
+                                    </span>{' '}
+                                  </a>
+                                </div>
+                              </div>
+                              {/* Action Buttons */}
+                              <div className='sm5:hidden'>
+                                {' '}
+                                <div className='flex justify-between flex-col sm1:flex-row w-full'>
+                                  <button className='bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition w-full'>
+                                    Apply{' '}
+                                    <span className='ml-2 material-icons'>
+                                      <ArrowOutwardIcon
+                                        sx={{
+                                          marginTop: '-2px',
+                                          fontSize: 'medium',
+                                        }}
+                                      />
+                                    </span>
+                                  </button>
+                                  <button
+                                    onClick={() => openJobDetails(card.job_id)}
+                                    className='hover:bg-slate-300 py-2 px-3 text-[#155EEF] shadow-lg my-1 sm1:my-0 font-medium w-full'
+                                  >
+                                    view details
+                                  </button>
+                                </div>
                               </div>
                             </div>
                           </div>
+
+                          {/* <hr /> */}
                         </div>
-
-                        {/* <hr /> */}
-                      </div>
-                    );
-                  })}
-                </InfiniteScroll>
-              ) : (
-                <div className='flex items-center justify-center'>
-                  <NoData message={'No Jobs Data Available'} />
-                </div>
-              )}
+                      );
+                    })}
+                  </InfiniteScroll>
+                ) : (
+                  <div className='flex items-center justify-center'>
+                    <NoData message={'No Jobs Data Available'} />
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-
+          </>
           <div className='w-[30%] hidden md1:block lg:hidden lgx:block  '>
             <Tooltip title='Coming Soon'>
               <div className='p-4 bg-white sticky top-12  max-w-sm'>
