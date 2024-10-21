@@ -376,38 +376,41 @@ const EventDetailSkeleton = ({
                             count={5}
                             className='rounded-md mb-2'
                           /> */}
-                          <div role='status' class='space-y-2.5 animate-pulse '>
-                            <div class='flex items-center w-full'>
-                              <div class='h-2.5 bg-gray-200 rounded-full  w-32'></div>
-                              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
-                              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
+                          <div
+                            role='status'
+                            className='space-y-2.5 animate-pulse '
+                          >
+                            <div className='flex items-center w-full'>
+                              <div className='h-2.5 bg-gray-200 rounded-full  w-32'></div>
+                              <div className='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
+                              <div className='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
                             </div>
-                            <div class='flex items-center w-full'>
-                              <div class='h-2.5 bg-gray-200 rounded-full  w-full'></div>
-                              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
-                              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
+                            <div className='flex items-center w-full'>
+                              <div className='h-2.5 bg-gray-200 rounded-full  w-full'></div>
+                              <div className='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
+                              <div className='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
                             </div>
-                            <div class='flex items-center w-full '>
-                              <div class='h-2.5 bg-gray-300 rounded-full w-full'></div>
-                              <div class='h-2.5 ms-2 bg-gray-200 rounded-full  w-80'></div>
-                              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
+                            <div className='flex items-center w-full '>
+                              <div className='h-2.5 bg-gray-300 rounded-full w-full'></div>
+                              <div className='h-2.5 ms-2 bg-gray-200 rounded-full  w-80'></div>
+                              <div className='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
                             </div>
-                            <div class='flex items-center w-full '>
-                              <div class='h-2.5  bg-gray-200 rounded-full  w-full'></div>
-                              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
-                              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
+                            <div className='flex items-center w-full '>
+                              <div className='h-2.5  bg-gray-200 rounded-full  w-full'></div>
+                              <div className='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
+                              <div className='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
                             </div>
-                            <div class='flex items-center w-full'>
-                              <div class='h-2.5  bg-gray-300 rounded-full w-32'></div>
-                              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
-                              <div class='h-2.5 ms-2 bg-gray-200 rounded-full  w-full'></div>
+                            <div className='flex items-center w-full'>
+                              <div className='h-2.5  bg-gray-300 rounded-full w-32'></div>
+                              <div className='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
+                              <div className='h-2.5 ms-2 bg-gray-200 rounded-full  w-full'></div>
                             </div>
-                            <div class='flex items-center w-full '>
-                              <div class='h-2.5  bg-gray-300 rounded-full w-full'></div>
-                              <div class='h-2.5 ms-2 bg-gray-200 rounded-full  w-80'></div>
-                              <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
+                            <div className='flex items-center w-full '>
+                              <div className='h-2.5  bg-gray-300 rounded-full w-full'></div>
+                              <div className='h-2.5 ms-2 bg-gray-200 rounded-full  w-80'></div>
+                              <div className='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
                             </div>
-                            <span class='sr-only'>Loading...</span>
+                            <span className='sr-only'>Loading...</span>
                           </div>
                         </div>
                         <div className='absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-white to-transparent pointer-events-none'></div>

@@ -19,7 +19,7 @@ const EventCardSkeleton = () => {
 
                   <div className='flex items-center justify-center absolute inset-0 rounded-md'>
                     <svg
-                      class='w-14 h-14 text-gray-400 '
+                      className='w-14 h-14 text-gray-400 '
                       aria-hidden='true'
                       xmlns='http://www.w3.org/2000/svg'
                       fill='currentColor'
@@ -44,30 +44,33 @@ const EventCardSkeleton = () => {
                   width='100%'
                   className='rounded-md mb-1'
                 /> */}
-                <div role='status' class='space-y-2.5 animate-pulse max-w-lg'>
-                  <div class='flex items-center w-full'>
-                    <div class='h-2.5 bg-gray-200 rounded-full  w-32'></div>
-                    <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
-                    <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
+                <div
+                  role='status'
+                  className='space-y-2.5 animate-pulse max-w-lg'
+                >
+                  <div className='flex items-center w-full'>
+                    <div className='h-2.5 bg-gray-200 rounded-full  w-32'></div>
+                    <div className='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
+                    <div className='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
                   </div>
-                  <div class='flex items-center w-full max-w-[480px]'>
-                    <div class='h-2.5 bg-gray-200 rounded-full  w-full'></div>
-                    <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
-                    <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
-                  </div>
-
-                  <div class='flex items-center w-full max-w-[440px]'>
-                    <div class='h-2.5  bg-gray-300 rounded-full w-32'></div>
-                    <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
-                    <div class='h-2.5 ms-2 bg-gray-200 rounded-full  w-full'></div>
-                  </div>
-                  <div class='flex items-center w-full max-w-[480px]'>
-                    <div class='h-2.5 bg-gray-200 rounded-full  w-full'></div>
-                    <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
-                    <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
+                  <div className='flex items-center w-full max-w-[480px]'>
+                    <div className='h-2.5 bg-gray-200 rounded-full  w-full'></div>
+                    <div className='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
+                    <div className='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
                   </div>
 
-                  <span class='sr-only'>Loading...</span>
+                  <div className='flex items-center w-full max-w-[440px]'>
+                    <div className='h-2.5  bg-gray-300 rounded-full w-32'></div>
+                    <div className='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
+                    <div className='h-2.5 ms-2 bg-gray-200 rounded-full  w-full'></div>
+                  </div>
+                  <div className='flex items-center w-full max-w-[480px]'>
+                    <div className='h-2.5 bg-gray-200 rounded-full  w-full'></div>
+                    <div className='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
+                    <div className='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
+                  </div>
+
+                  <span className='sr-only'>Loading...</span>
                 </div>
                 <div className='flex gap-3 items-center mt-2'>
                   <Skeleton height={20} width={60} className='rounded-md' />
