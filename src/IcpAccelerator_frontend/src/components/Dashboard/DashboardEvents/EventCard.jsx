@@ -191,8 +191,8 @@ const EventCard = ({ selectedEventType }) => {
                         <div className='bg-[#c8eaef] border-[#45b0c1] border text-[#090907] text-xs px-2 py-1 rounded-full w-[70px]'>
                           COHORT
                         </div>
-                        <h3 className='text-lg font-bold mt-2'>{name}</h3>
-                        <p className='text-sm text-gray-500 mb-4 overflow-hidden text-ellipsis max-h-12 line-clamp-2 mt-2'>
+                        <h3 className='text-lg font-bold mt-2 break-all line-clamp-1'>{name}</h3>
+                        <p className='text-sm text-gray-500 mb-4 overflow-hidden  line-clamp-2 mt-2 break-all '>
                           {parse(desc)}
                         </p>
                       </div>
