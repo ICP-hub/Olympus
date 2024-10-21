@@ -133,7 +133,7 @@ function DashboardHomeProfileCards(percentage) {
               style={{ width: percentage }}
             ></div>
             <div className='flex flex-col items-center pt-2'>
-              <div className='w-20 h-20 bg-gray-300 rounded-full mb-3 overflow-hidden'>
+              <div className=' bg-gray-300 rounded-full mb-3 overflow-hidden'>
                 <img
                   src={userFullData?.profile_picture[0]}
                   alt='Profile Image'
