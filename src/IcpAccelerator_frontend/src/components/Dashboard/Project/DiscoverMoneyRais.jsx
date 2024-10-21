@@ -122,12 +122,12 @@ const DiscoverMoneyRaising = ({ cardData, projectId }) => {
               <h2 className='text-xl font-semibold mb-2'>
                 You haven't Raised any Money yet
               </h2>
-              <p className='text-gray-600 mb-2'>
+              {/* <p className='text-gray-600 mb-2'>
                 Any amount of Money Raised will live here.
               </p>
               <p className='text-gray-600 mb-6'>
                 Start raising by demanding your Requirement
-              </p>
+              </p> */}
             </div>
           </>
         )}

@@ -162,7 +162,7 @@ const Attendees = (cohortData) => {
   return (
     <div className='rounded-xl '>
       <div className='mx-2'>
-        <div className='flex justify-end items-center mb-6'>
+        <div className=' justify-end items-center mb-6'>
           {/* <h2 className="text-xl font-semibold text-gray-900">Attendees</h2> */}
 
           <div className='flex items-center justify-between  gap-6 my-4'>

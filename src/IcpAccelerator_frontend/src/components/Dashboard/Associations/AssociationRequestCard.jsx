@@ -265,7 +265,7 @@ const AssociationRequestCard = () => {
           className="text-gray-400 text-2xl cursor-pointer"
         />
       </div> */}
-      <div className='flex items-center justify-between md:p-6 w-full  gap-6'>
+      <div className='flex items-center justify-between md:py-6 w-full  gap-6'>
         <div className='flex items-center border-2 border-gray-400 rounded-lg overflow-hidden flex-grow  h-[38px] md:h-[50px]'>
           <div className='flex items-center px-3 md:px-4'>
             <svg

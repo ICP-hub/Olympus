@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import docu1 from '../../../../assets/images/docu.png';
 import docu2 from '../../../../assets/images/docu.png';
 import docu3 from '../../../../assets/images/docu.png';
@@ -6,6 +6,7 @@ import docu4 from '../../../../assets/images/docu.png';
 import docu5 from '../../../../assets/images/docu.png';
 import toast, { Toaster } from 'react-hot-toast';
 import { useSelector } from 'react-redux';
+import { ThreeDots } from 'react-loader-spinner';
 
 const DiscoverFundingCard = ({ title, value, imageSrc, isPrivate }) => {
   return (
@@ -47,11 +48,13 @@ const DiscoverMoneyRaising = ({ data, projectId }) => {
   const userCurrentRoleStatusActiveRole = useSelector(
     (currState) => currState.currentRoleStatus.activeRole
   );
+  const [loading, setLoading] = useState(false);
   const sendMoneyRaisingRequest = async () => {
     if (!projectId) {
       // setDocuments([]);
       return;
     }
+    setLoading(true);
     try {
       const result = await actor.send_money_access_request(projectId);
       console.log('result-in-send-access-private-docs', result);
@@ -62,6 +65,8 @@ const DiscoverMoneyRaising = ({ data, projectId }) => {
       }
     } catch (error) {
       console.log('error-in-send-access-private-docs', error);
+    } finally {
+      setLoading(false); // Stop loading
     }
   };
   const {
@@ -80,8 +85,22 @@ const DiscoverMoneyRaising = ({ data, projectId }) => {
             <button
               className='bg-blue-600 text-white px-4 py-2 rounded-lg mb-4  self-end'
               onClick={sendMoneyRaisingRequest}
+              disabled={loading} // Disable the button while loading
             >
-              Request Access
+              {loading ? (
+                <ThreeDots
+                  visible={true}
+                  height='24'
+                  width='60'
+                  color='#FFFFFF'
+                  radius='9'
+                  ariaLabel='three-dots-loading'
+                  wrapperStyle={{}}
+                  wrapperClassName=''
+                />
+              ) : (
+                'Request Access'
+              )}
             </button>
           )}
 

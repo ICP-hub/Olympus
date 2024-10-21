@@ -238,16 +238,26 @@ const UserRegistration = () => {
           <div className='py-6 w-full flex items-center justify-center rounded-xl lg:max-w-[50%] h-full'>
             <div className='bg-white shadow-xl w-full rounded-2xl flex max-w-6xl h-full'>
               <div className='flex-1 w-full pb-8 p-[5%]  lg:h-[89vh] overflow-y-scroll'>
-                <img
+                {/* <img
                   src={Layer1}
                   alt='logo'
                   className=' text-start w-1/3 lg:w-1/3'
                   loading='lazy'
                   draggable={false}
-                />
-                <h2 className='text-[#364152] px-4 mb-3 text-sm font-semibold mt-8 text-start md:text-left'>
-                  Step {index + 1} of 3
-                </h2>
+                /> */}
+                <div className='sticky top-0 bg-white z-10 py-2'>
+                  <img
+                    src={Layer1}
+                    alt='logo'
+                    className='text-start w-1/3 lg:w-1/3'
+                    loading='lazy'
+                    draggable={false}
+                  />
+
+                  <h2 className='text-[#364152] px-4 mb-3 text-sm font-semibold mt-8 text-start md:text-left'>
+                    Step {index + 1} of 3
+                  </h2>
+                </div>
                 <div className='overflow-hidden max-h-[75vh] overflow-y-scroll'>
                   <form
                     onSubmit={handleSubmit(onSubmitHandler, onErrorHandler)}
@@ -394,7 +404,7 @@ const UserRegistration = () => {
               </div>
             </div>
           </div>
-          <div className='hidden w-1/2 justify-center lg:flex lg:max-w-[50%] lg:h-full items-center'>
+          <div className='hidden w-1/2 justify-center lg:flex lg:max-w-[50%] lg:h-[89vh] items-center'>
             <div className='bg-[#EDEAFF]  shadow-xl w-full rounded-2xl flex max-w-6xl h-full'>
               <AboutcardSkeleton getAllData={getAllData} />
             </div>

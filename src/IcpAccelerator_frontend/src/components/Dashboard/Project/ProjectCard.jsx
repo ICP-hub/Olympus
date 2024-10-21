@@ -120,7 +120,7 @@ const ProjectCard = () => {
                   </div>
                   <div className='ml-4 w-full pt-4 sm2:pt-0 sm2:w-2/3 relative'>
                     <button className='absolute right-0 text-gray-400 hover:text-gray-600'>
-                      <MoreVert fontSize='small' />
+                      {/* <MoreVert fontSize='small' /> */}
                     </button>
                     <h2 className='text-xl font-semibold text-gray-900'>
                       {projectName ?? 'ICP'}
