@@ -53,13 +53,18 @@ const RatingModal = ({
     let message = data.review;
     try {
       await actor.add_review(cardPrincipal, rating, message).then((result) => {
+        console.log('Review API response:', result);
         if (isMounted) {
           toast.success('Review added successfully');
           console.log('review from api', result);
-          console.log('review send Successfully');
+          console.warn('review send Successfully');
           setIsLoading(false);
           setShowReview(false);
           setShowRatingModal(false);
+        } else {
+          console.warn(
+            'Component is unmounted, skipping state updates and toast'
+          ); // Debugging line
         }
       });
     } catch (error) {
@@ -72,6 +77,12 @@ const RatingModal = ({
     } finally {
     }
   };
+  useEffect(() => {
+    isMounted.current = true;
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
 
   const getAllReview = async (caller, page) => {
     // setIsFetching(true);
@@ -209,6 +220,7 @@ const RatingModal = ({
           </div>
         </div>
       </div>
+      <Toaster />
     </div>
   );
 };

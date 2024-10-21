@@ -210,7 +210,7 @@ function ProfileCard({ cardData }) {
             <div className='p-6 bg-gray-50 relative'>
               {/* Three-dot menu button */}
               <button className='absolute top-2 right-2 text-gray-400 hover:text-gray-600'>
-                <MoreVert fontSize='small' />
+                {/* <MoreVert fontSize='small' /> */}
               </button>
 
               <div className='relative w-28 mx-auto mb-6'>

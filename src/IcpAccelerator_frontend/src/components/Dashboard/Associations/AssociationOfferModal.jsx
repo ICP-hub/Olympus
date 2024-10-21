@@ -376,6 +376,9 @@ import DiscoverMoneyRaising from '../Project/DiscoverMoneyRais';
 import DiscoverMentorEvent from '../DashboardHomePage/discoverMentor/DiscoverMentorEvent';
 import Nodata from '../Project/Nodata';
 import NoData from '../../NoDataCard/NoData';
+import DiscoverRatingforAssociation from '../../Discover/DiscoverRatingsforAssociation';
+import parse from 'html-react-parser';
+import NoDataCard from '../../NoDataCard/NoData';
 
 const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
   console.log('user data.................... =>', user);
@@ -475,7 +478,7 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
   // Sender Data
   let senderDataProject = user?.sender_data?.[0][0] ?? {}; // Project data at index 0
   let senderDataUser = user?.sender_data?.[0][1] ?? {}; // User data at index 1
-  console.log('sender user data ', senderDataUser);
+  console.log('sender user data 478 ', senderDataUser);
   console.log('project data', senderDataProject);
 
   let projectid = senderDataProject.uid;
@@ -530,10 +533,9 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
   let typeOfRegistration =
     senderDataProject?.params?.type_of_registration?.[0] ?? 'N/A';
   let projectAreaOfFocus =
-    senderDataProject?.params?.project_area_of_focus ??
-    'Area of Focus not available';
+    senderDataProject?.params?.project_area_of_focus ?? ' Not Available';
   let reasontojoinincubator =
-    senderDataProject?.params?.reason_to_join_incubator ?? 'not available';
+    senderDataProject?.params?.reason_to_join_incubator ?? 'Not Available';
 
   let projectCover = senderDataProject?.params?.project_cover?.[0]
     ? uint8ArrayToBase64(senderDataProject?.params?.project_cover?.[0])
@@ -542,25 +544,21 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
     ? uint8ArrayToBase64(senderDataProject?.params?.project_logo?.[0])
     : '../../../assets/Logo/CypherpunkLabLogo.png';
   let countryofregistration =
-    senderDataProject?.params?.country_of_registration?.[0] ?? 'not available';
+    senderDataProject?.params?.country_of_registration?.[0] ?? 'Not Available';
   // User Details within Sender Data (Index 1)
-  let senderFullName =
-    senderDataUser?.params?.full_name ?? 'Sender Name not available';
+  let senderFullName = senderDataUser?.params?.full_name ?? 'Not Available';
   let senderProfilePicture = senderDataUser?.params?.profile_picture?.[0]
     ? uint8ArrayToBase64(senderDataUser?.params?.profile_picture?.[0])
     : '../../../assets/Logo/CypherpunkLabLogo.png';
   let senderUserName =
-    senderDataUser?.params?.openchat_username?.[0] ?? 'Username not available';
+    senderDataUser?.params?.openchat_username?.[0] ?? 'Not Available';
   let senderEmail = senderDataUser?.params?.email?.[0] ?? 'sender@example.com';
-  let senderCountry =
-    senderDataUser?.params?.country ?? 'Country not available';
-  let senderBio = senderDataUser?.params?.bio?.[0] ?? 'Bio not available';
+  let senderCountry = senderDataUser?.params?.country ?? 'Not Available';
+  let senderBio = senderDataUser?.params?.bio?.[0] ?? 'Not Available';
   let senderAreaOfInterest =
-    senderDataUser?.params?.area_of_interest ??
-    'Area of Interest not available';
+    senderDataUser?.params?.area_of_interest ?? 'Not Available';
   let senderReasonToJoin =
-    senderDataUser?.params?.reason_to_join?.[0] ??
-    'Reason to join not available';
+    senderDataUser?.params?.reason_to_join?.[0] ?? 'Not Available';
   let senderTypeOfProfile =
     senderDataUser?.params?.type_of_profile?.[0] ?? 'individual';
   let senderSocialLinks = senderDataUser?.params?.social_links?.[0];
@@ -582,7 +580,7 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
   let senderIcpHubOrSpoke =
     senderDataProject?.profile?.icp_hub_or_spoke ?? false;
   let senderLinks = senderDataProject?.profile?.links ?? [];
-  let senderMultichain = senderDataProject?.profile?.multichain ?? [];
+  let senderMultichain = senderDataProject?.profile?.multichain[0] ?? [];
   let senderPreferredIcpHub =
     senderDataProject?.profile?.preferred_icp_hub ?? [];
   let senderReasonForJoining =
@@ -847,7 +845,7 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
                           Project Description
                         </h3>
                         <p className='text-[14px] line-clamp-3 break-all'>
-                          {projectDescription}{' '}
+                          {parse(projectDescription)}{' '}
                         </p>
                       </div>
                       <div className='mt-6'>
@@ -872,7 +870,6 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
                           {projectWebsite}
                         </p>
                       </div>
-
                       <div className='group relative hover:bg-gray-100 rounded-lg p-1 mt-4'>
                         <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start'>
                           PROJECT FOCUS AREA
@@ -1115,6 +1112,7 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
                         <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start line-clamp-1 break-all'>
                           Multichain
                         </h3>
+
                         {senderMultichain.length > 0 ? (
                           senderMultichain.map((chain, index) => (
                             <span
@@ -1428,7 +1426,7 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
                       {activeMobileTab === 'document' && (
                         <div className='px-2 py-2'>
                           <DiscoverDocument
-                            projectDetails={senderDataProject}
+                            projectDetails={senderDataProject?.params}
                             projectId={projectid}
                           />
                         </div>
@@ -1451,7 +1449,9 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
                       </button>
                       {activeMobileTab === 'team' && (
                         <div className='px-2 py-2'>
-                          <DiscoverTeam projectDetails={senderDataProject} />
+                          <DiscoverTeam
+                            projectDetails={senderDataProject?.params}
+                          />
                         </div>
                       )}
                     </div>
@@ -1472,9 +1472,9 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
                       </button>
                       {activeMobileTab === 'ratings' && (
                         <div className='px-2 py-2'>
-                          <DiscoverRatings
+                          <DiscoverRatingforAssociation
                             userData={senderDataUser}
-                            principalId={senderPrincipal}
+                            senderPrincipal={senderPrincipal}
                           />
                         </div>
                       )}
@@ -1520,10 +1520,11 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
                       </button>
                       {activeMobileTab === 'review' && (
                         <div className='px-2 py-2'>
-                          <DiscoverReview
+                          {/* <DiscoverReview
                             userData={senderDataUser}
                             principalId={senderPrincipal}
-                          />
+                          /> */}
+                          <NoDataCard message={'No Review Available'} />
                         </div>
                       )}
                     </div>
@@ -1600,17 +1601,17 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
                 <div className='hidden md1:block mb-4'>
                   {activeTab === 'document' && (
                     <DiscoverDocument
-                      projectDetails={senderDataProject}
+                      projectDetails={senderDataProject?.params}
                       projectId={projectid}
                     />
                   )}
                   {activeTab === 'team' && (
-                    <DiscoverTeam projectDetails={senderDataProject} />
+                    <DiscoverTeam projectDetails={senderDataProject?.params} />
                   )}
                   {activeTab === 'ratings' && (
-                    <DiscoverRatings
+                    <DiscoverRatingforAssociation
                       userData={senderDataUser}
-                      principalId={senderPrincipal}
+                      senderprincipal={senderPrincipal}
                     />
                   )}
                   {activeTab === 'moneyraised' && (
@@ -1620,10 +1621,11 @@ const AssociationOfferModal = ({ openDetail, setOpenDetail, user }) => {
                     />
                   )}
                   {activeTab === 'review' && (
-                    <DiscoverReview
-                      userData={senderDataUser}
-                      principalId={senderPrincipal}
-                    />
+                    // <DiscoverReview
+                    //   userData={senderDataUser}
+                    //   principalId={senderPrincipal}
+                    // />
+                    <NoDataCard message={'No Review Available'} />
                   )}
                 </div>
                 {/* project content end  */}

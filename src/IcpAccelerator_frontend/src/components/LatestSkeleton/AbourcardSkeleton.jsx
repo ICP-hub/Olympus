@@ -102,12 +102,24 @@ const AboutcardSkeleton = ({ getAllData }) => {
                   </p>
                 ) : (
                   <>
-                    <Skeleton
+                    {/* <Skeleton
                       height={20}
                       width='full'
                       className='rounded-3xl'
                     />
-                    <Skeleton height={20} width={150} className='rounded-3xl' />
+                    <Skeleton height={20} width={150} className='rounded-3xl' /> */}
+                    <div role='status' class='space-y-2.5 animate-pulse '>
+                      <div class='flex items-center w-full'>
+                        <div class='h-2.5 bg-gray-200 rounded-full  w-32'></div>
+                        <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
+                        <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
+                      </div>
+                      <div class='flex items-center w-full'>
+                        <div class='h-2.5 bg-gray-200 rounded-full  w-full'></div>
+                        <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-full'></div>
+                        <div class='h-2.5 ms-2 bg-gray-300 rounded-full w-24'></div>
+                      </div>
+                    </div>
                   </>
                 )}
               </div>
@@ -160,17 +172,17 @@ const AboutcardSkeleton = ({ getAllData }) => {
 
               <div className=''>
                 <label className='block font-medium text-gray-600 pb-1'>
-                  <LocationOnOutlinedIcon
-                    sx={{
-                      fontSize: 'lage',
-                      marginRight: '5px',
-                      marginTop: '-4px',
-                    }}
-                  />
                   Location
                 </label>
                 {getAllData?.country ? (
                   <p className='sm:max-w-[11rem] text-base   truncate break-all font-normal'>
+                    <LocationOnOutlinedIcon
+                      sx={{
+                        fontSize: 'lage',
+                        marginRight: '5px',
+                        marginTop: '-4px',
+                      }}
+                    />
                     {getAllData?.country}
                   </p>
                 ) : (

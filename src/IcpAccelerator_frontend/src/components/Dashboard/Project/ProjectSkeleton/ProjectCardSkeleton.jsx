@@ -54,7 +54,7 @@ const ProjectCardSkeleton = () => {
 
             <div className='ml-4 w-full pt-4 sm2:pt-0 sm2:w-2/3 relative'>
               <div className='absolute right-0 text-gray-400'>
-                <MoreVert fontSize='small' />
+                {/* <MoreVert fontSize='small' /> */}
               </div>
               <Skeleton width='50%' height={20} className='mb-2' />
               <Skeleton width='30%' height={15} className='mb-4' />

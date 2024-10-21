@@ -30,15 +30,18 @@ function DocumentSection() {
   };
   return (
     <div className='container mx-auto mb-5 bg-white'>
-      <div className='flex justify-between items-center mx-[3%] h-11 bg-opacity-95 -top-[1.1rem] md:-top-[1px] -mt-[1.1rem] md:mt-0 p-10 px-0 sticky bg-white z-20'>
+      <div className='flex justify-between items-center lg:mx-[3%] h-11 bg-opacity-95 -top-[1.60rem] md:-top-[.60rem] p-10 px-0 sticky bg-white z-20'>
         <button
           onClick={() => navigate(-1)}
           className='flex items-center justify-center mr-2 text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-2 rounded-md shadow-sm border border-gray-200'
         >
-          {backSvg} Back to profile
+          <span className='mr-1'>{backSvg}</span>
+
+          <span className='hidden xxs1:block'> Back to profile</span>
         </button>
         <button className='flex items-center text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-2 rounded-md shadow-sm border border-gray-200'>
-          Share this<span>{shareSvgIcon}</span>
+          <span className='hidden xxs1:block'>Share this</span>
+          <span className='ml-1'>{shareSvgIcon}</span>
         </button>
       </div>
       {/* <NotificationBanner message="Lorem ipsum dolor sit amet dolor."
