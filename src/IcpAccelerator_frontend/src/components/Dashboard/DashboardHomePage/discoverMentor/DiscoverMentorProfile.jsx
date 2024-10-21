@@ -132,7 +132,7 @@ const DiscoverMentorProfile = ({ mentorData }) => {
                   </h3>
                 </div>
                 <div className='flex flex-wrap items-center'>
-                  <p className='mr-2 text-sm'>{email}</p>
+                  <p className='mr-2 line-clamp-1 break-all text-sm'>{email}</p>
                   <VerifiedIcon
                     className='text-blue-500 mr-2 w-2 h-2'
                     fontSize='small'
@@ -150,7 +150,7 @@ const DiscoverMentorProfile = ({ mentorData }) => {
                     About
                   </h3>
                 </div>
-                <p className='text-sm'>{bio}</p>
+                <p className='text-sm line-clamp-2 break-all'>{bio}</p>
               </div>
 
               {/* Location Section */}

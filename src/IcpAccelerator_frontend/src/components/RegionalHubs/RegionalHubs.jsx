@@ -346,11 +346,11 @@ const DiscoverRegionalHubs = () => {
   return (
     <div className='container mx-auto mb-5 px-6 bg-white'>
       <div className='flex justify-start items-center h-11 bg-opacity-95 -top-[.60rem] p-10 px-1 sticky bg-white z-20'>
-        <div className='flex justify-between w-full'>
-          <h2 className='text-3xl font-bold'>Discover Regional Hubs</h2>
+        <div className='flex justify-between items-center gap-2 w-full'>
+          <h2 className='text-2xl font-semibold sm:text-3xl sm:font-bold'>Discover Regional Hubs</h2>
           <button
             onClick={() => setIsModalOpen(true)}
-            className='border-2 px-2 border-black py-1'
+            className='border-2 px-2 min-w-[90px] max-h-[38px] border-black py-1'
           >
             Add Hub
           </button>
@@ -367,7 +367,7 @@ const DiscoverRegionalHubs = () => {
           ))}{' '}
         </>
       ) : (
-        <div className='grid md:grid-cols-3 gap-6'>
+        <div className='grid sm:grid-cols-2 dxl:grid-cols-3 gap-6'>
           {allHubsData.map((hub, index) => {
             // Safely access the data from params[0]
             const hubParams = hub?.params?.[0] || {};

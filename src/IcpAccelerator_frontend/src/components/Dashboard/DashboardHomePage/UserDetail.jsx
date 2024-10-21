@@ -144,7 +144,7 @@ const UserDetail = (projectData) => {
                     About
                   </h3>
 
-                  <p className='text-sm'>{bio}</p>
+                  <p className='text-sm line-clamp-2 break-all'>{bio}</p>
                 </div>
 
                 <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-2 '>
