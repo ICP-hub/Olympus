@@ -799,11 +799,13 @@ const ProfileDetail = () => {
                       </>
                     ) : (
                       <div className='flex items-center'>
-                        <p className='mr-2 text-sm truncate'>{full_name}</p>
+                        <p className='mr-2 text-sm truncate break -all'>
+                          {full_name}
+                        </p>
                       </div>
                     )}
                   </div>
-                  {/* full name  */}
+
                   <div className='mb-4 group relative hover:bg-gray-100 rounded-lg p-2 px-3'>
                     <div className='flex justify-between'>
                       <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>

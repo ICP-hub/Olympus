@@ -1058,7 +1058,7 @@ const MentorEdit = () => {
             </div>
           )}
           {errors?.years_of_mentoring && (
-            <span className='mt-1 text-sm text-red-500 font-bold flex justify-start'>
+            <span className='mt-1 text-sm text-red-500 font-bold flex justify-start line-clamp-1 break-all'>
               {errors?.years_of_mentoring?.message}
             </span>
           )}
