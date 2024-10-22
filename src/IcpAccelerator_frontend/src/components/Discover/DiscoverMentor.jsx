@@ -287,10 +287,11 @@ const DiscoverMentor = ({ onMentorCountChange }) => {
                         </span>
                       )} */}
                     </div>
-                    <div className='border-t border-gray-200 my-3 mb-2 break-all line-clamp-1 '>
+                    {/* <div className='border-t border-gray-200 my-3 mb-2 break-all line-clamp-1 '>
                       {email}
-                    </div>
+                    </div> */}
 
+                    <div className='border-t border-gray-200 mt-3'></div>
                     <p className='text-gray-600 mb-2 break-all line-clamp-3'>
                       {bio}
                     </p>

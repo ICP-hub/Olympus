@@ -342,15 +342,19 @@ const DiscoverProject = ({ onProjectCountChange }) => {
                     <div className='flex justify-between items-start mb-2'>
                       <div>
                         <div>
-                          <h3 className='text-xl font-bold'>{projectname}</h3>
-                          <span className='flex py-2'>
+                          <h3 className='text-xl font-bold line-clamp-1 text-ellipsis break-all'>
+                            {projectname}
+                          </h3>
+                          <span className='flex '>
                             <Avatar
                               alt='Mentor'
                               src={profile}
                               className=' mr-2'
                               sx={{ width: 24, height: 24 }}
                             />
-                            <span className='text-gray-500'>{full_name}</span>
+                            <span className='text-gray-500 line-clamp-1 break-all'>
+                              {full_name}
+                            </span>
                           </span>
                           {/* <span className="text-gray-500">@{openchat_name}</span> */}
                         </div>
@@ -407,7 +411,7 @@ const DiscoverProject = ({ onProjectCountChange }) => {
 
                     {/* <div className="border-t border-gray-200 my-3">{email}</div> */}
 
-                    <p className='text-gray-600 mb-4 line-clamp-3 break-all '>
+                    <p className='text-gray-600 mb-2 line-clamp-3 break-all '>
                       {' '}
                       {parse(projectdescription)}
                     </p>

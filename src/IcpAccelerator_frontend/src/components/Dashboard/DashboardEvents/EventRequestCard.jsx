@@ -480,13 +480,14 @@ const EventRequestCard = () => {
                 {/* Content Section */}
                 <div className='w-full'>
                   <div className='flex justify-between'>
-                    <h3 className='text-base md:text-lg font-bold mt-2 md:mt-0'>
+                    <h3 className='text-base md:text-lg font-bold mt-2 md:mt-0 line-clamp-1 break-all'>
                       {title}
                     </h3>
 
                     {userCurrentRoleStatusActiveRole === 'mentor' ||
                     userCurrentRoleStatusActiveRole === 'vc' ? (
                       <button
+                        className='mt-2'
                         data-tooltip-id='registerTip'
                         onClick={() => {
                           if (userCurrentRoleStatusActiveRole === 'mentor') {
@@ -513,20 +514,22 @@ const EventRequestCard = () => {
                       ''
                     )}
                   </div>
-                  <span className='flex py-2'>
+                  <span className='flex '>
                     <Avatar
                       alt='Mentor'
                       src={profileImageSrc}
                       className='mr-2'
                       sx={{ width: 24, height: 24 }}
                     />
-                    <span className='text-sm text-gray-500'>{fullname}</span>
+                    <span className='text-sm text-gray-500 line-clamp-1 break-all'>
+                      {fullname}
+                    </span>
                   </span>
-                  <div className='border-t border-gray-200 '></div>
+                  <div className='border-t border-gray-200 my-0.5'></div>
 
                   {/* Description */}
                   <p
-                    className='text-sm text-gray-500 overflow-hidden text-ellipsis break-all line-clamp-3 mt-2'
+                    className='text-sm text-gray-500 overflow-hidden text-ellipsis break-all line-clamp-2 mt-2'
                     style={{ maxHeight: '3em', lineHeight: '1em' }}
                   >
                     {parse(description)}
@@ -554,18 +557,21 @@ const EventRequestCard = () => {
 
                   {/* Tags */}
                   <div className='flex flex-wrap gap-2 items-center mt-2'>
-                    {tags?.split(',').map((interest, index) => (
-                      <span
-                        key={index}
-                        className='border-2 border-gray-500 rounded-full text-xs text-gray-700 px-2 py-1'
-                      >
-                        {interest.trim()}
-                      </span>
-                    ))}
+                    {tags
+                      ?.split(',')
+                      .slice(0, 2)
+                      .map((interest, index) => (
+                        <span
+                          key={index}
+                          className='border-2 border-gray-500 rounded-full text-xs text-gray-700 px-2 py-1'
+                        >
+                          {interest.trim()}
+                        </span>
+                      ))}
                   </div>
 
                   {/* Action Buttons */}
-                  <div className='flex flex-wrap gap-2 mt-4'>
+                  <div className='flex flex-wrap gap-2 mt-2'>
                     {appliedType === 'pending' &&
                       event.status === 'pending' && (
                         <>
