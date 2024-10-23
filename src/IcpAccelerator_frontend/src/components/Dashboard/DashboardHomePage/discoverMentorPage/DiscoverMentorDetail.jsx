@@ -8,7 +8,7 @@ import Avatar from '@mui/material/Avatar';
 import UserDetail from '../UserDetail';
 import getSocialLogo from '../../../Utils/navigationHelper/getSocialLogo';
 import useTimeout from '../../../hooks/TimeOutHook';
-import UserGeneralDetailSkeleton from '../../../Profile/skeletonProfile/UserGeneralDetailSkeleton';
+import UserGeneralDetailSkeleton from '../../../profile/skeletonProfile/UserGeneralDetailSkeleton';
 import DiscoverProjectProfileSkeleton from '../DiscoverProjectSkeleton/DiscoverProjectProfileSkeleton';
 
 const DiscoverMentorDetail = ({ projectDetails, userData }) => {
@@ -215,7 +215,9 @@ const DiscoverMentorDetail = ({ projectDetails, userData }) => {
             </h3>
 
             <div className='flex flex-wrap items-center'>
-              <p className='mr-2 text-sm'>{userData?.email[0]}</p>
+              <p className='mr-2 text-sm line-clamp-1 break-all'>
+                {userData?.email[0]}
+              </p>
               <VerifiedIcon
                 className='text-blue-500 mr-2 w-2 h-2'
                 fontSize='small'
@@ -370,13 +372,15 @@ const DiscoverMentorDetail = ({ projectDetails, userData }) => {
             <h3 className='block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start'>
               Project Name
             </h3>
-            <p className='text-sm line-clamp-3'>{projectname} </p>
+            <p className='text-sm line-clamp-1 break-all'>{projectname} </p>
           </div>
           <div className='mt-4'>
             <h3 className='block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start'>
               Project Description
             </h3>
-            <p className='text-sm line-clamp-3'>{projectdescription} </p>
+            <p className='text-sm line-clamp-3 break-all'>
+              {projectdescription}{' '}
+            </p>
           </div>
           <div className='mt-6'>
             <h3 className='block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start'>
@@ -388,13 +392,15 @@ const DiscoverMentorDetail = ({ projectDetails, userData }) => {
             <h3 className='block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start'>
               Project Elevator Pitch
             </h3>
-            <p className='text-sm'>{project_elevator_pitch}</p>
+            <p className='text-sm line-clamp-1 break-all'>
+              {project_elevator_pitch}
+            </p>
           </div>
           <div className='mt-6'>
             <h3 className='block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start'>
               Project Website
             </h3>
-            <p className='text-sm'>{project_website}</p>
+            <p className='text-sm line-clamp-1 break-all'>{project_website}</p>
           </div>
 
           <div className='mt-4'>
@@ -456,19 +462,25 @@ const DiscoverMentorDetail = ({ projectDetails, userData }) => {
             <h3 className='block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start'>
               DAPP LINK
             </h3>
-            <span className=' text-sm'>{dapp_link} </span>
+            <span className=' text-sm line-clamp-1 break-all'>
+              {dapp_link}{' '}
+            </span>
           </div>
           <div className='mt-4'>
             <h3 className='block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start'>
               WEEKLY ACTIVE USERS
             </h3>
-            <span className=' text-sm'>{Number(weekly_active_users)}</span>
+            <span className=' text-sm line-clamp-1 break-all'>
+              {Number(weekly_active_users)}
+            </span>
           </div>
           <div className='mt-4'>
             <h3 className='block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start'>
               REVENUE
             </h3>
-            <span className=' text-sm'>{Number(revenue)} </span>
+            <span className=' text-sm line-clamp-1 break-all'>
+              {Number(revenue)}{' '}
+            </span>
           </div>
           {/* <div className="mt-4">
           <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
@@ -505,7 +517,9 @@ const DiscoverMentorDetail = ({ projectDetails, userData }) => {
             <h3 className='block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start'>
               PROMOTIONAL VIDEO
             </h3>
-            <span className=' text-sm'>{promotional_video} </span>
+            <span className=' text-sm line-clamp-1 break-all'>
+              {promotional_video}{' '}
+            </span>
           </div>
 
           <div className='mt-6'>

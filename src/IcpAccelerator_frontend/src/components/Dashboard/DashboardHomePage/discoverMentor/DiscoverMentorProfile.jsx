@@ -8,7 +8,7 @@ import getSocialLogo from '../../../Utils/navigationHelper/getSocialLogo';
 import useTimeout from '../../../hooks/TimeOutHook';
 // import GeneralDetailsSkeleton from '../../../profile/skeletonProfile/GeneralDetailsSkeleton';
 import DiscoverMentorProfileSkeleton from './discoverMentorSkeleton/DiscoverMentorProfileSkeleton';
-import UserGeneralDetailSkeleton from '../../../Profile/skeletonProfile/UserGeneralDetailSkeleton';
+import UserGeneralDetailSkeleton from '../../../profile/skeletonProfile/UserGeneralDetailSkeleton';
 
 const DiscoverMentorProfile = ({ mentorData }) => {
   const mentorProfile = mentorData?.[0];
@@ -59,9 +59,11 @@ const DiscoverMentorProfile = ({ mentorData }) => {
             />
             <div className='flex items-center justify-center mb-1'>
               <VerifiedIcon className='text-blue-500 mr-1' fontSize='small' />
-              <h2 className='text-xl font-semibold'>{full_name}</h2>
+              <h2 className='text-xl font-semibold line-clamp-1 break-all'>
+                {full_name}
+              </h2>
             </div>
-            <p className='text-gray-600 text-center mb-4'>
+            <p className='text-gray-600 text-center mb-4 line-clamp-1 break-all'>
               {openchat_username}
             </p>
             <a
@@ -293,7 +295,7 @@ const DiscoverMentorProfile = ({ mentorData }) => {
                   </h3>
                 </div>
                 <div className='flex items-center'>
-                  <p className='mr-2 text-sm'>
+                  <p className='mr-2 text-sm line-clamp-1 break-all'>
                     {mentorProfile?.profile?.website[0]}
                   </p>
                 </div>
@@ -307,7 +309,7 @@ const DiscoverMentorProfile = ({ mentorData }) => {
                   </h3>
                 </div>
                 <div className='flex'>
-                  <p className='text-sm'>
+                  <p className='text-sm line-clamp-1 break-all'>
                     {mentorProfile?.profile?.years_of_mentoring}
                   </p>
                 </div>
