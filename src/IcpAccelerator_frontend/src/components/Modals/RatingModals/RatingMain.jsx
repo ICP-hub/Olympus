@@ -136,7 +136,7 @@ const RatingMain = () => {
         </div>
 
         {!isContinueClicked && selectedStep !== null && (
-          <div className='flex justify-end mt-4'>
+          <div className='flex justify-end my-4'>
             <button
               className='py-2 px-4 bg-blue-600 text-white rounded'
               onClick={handleContinueFromSelection}

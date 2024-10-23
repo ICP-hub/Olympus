@@ -19,6 +19,7 @@ import {
 import DashboardHomeWelcomeSectionSkeleton from './DashbooardHomepageSkeletons/DashboardHomeWelcomeSectionSkeleton';
 import useTimeout from '../../hooks/TimeOutHook';
 import RatingMain from '../../Modals/RatingModals/RatingMain';
+import Rating1 from '../../Modals/RatingModals/Rating1';
 
 const styles = {
   circularChart: {
