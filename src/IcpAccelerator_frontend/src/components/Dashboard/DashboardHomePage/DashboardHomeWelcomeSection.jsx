@@ -393,6 +393,7 @@ function DashboardHomeWelcomeSection({ userName, profileCompletion }) {
         />
       )}
       {/* <RatingMain /> */}
+      <Rating1 />
     </>
   );
 }
