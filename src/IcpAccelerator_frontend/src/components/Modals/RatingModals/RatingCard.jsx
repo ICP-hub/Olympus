@@ -19,7 +19,7 @@ const RatingCard = ({
   return (
     <div>
       {/* Rating Buttons */}
-      <div className='flex space-x-2 justify-center mb-6'>
+      <div className='flex space-x-2 gap-0.5 flex-wrap justify-center mb-6'>
         {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
           <button
             key={num}
@@ -37,7 +37,7 @@ const RatingCard = ({
 
       {/* Level and Description */}
       <div className='bg-gray-100 p-4 rounded-lg mb-6'>
-        <h3 className='text-blue-600 font-semibold inline'>Level {step} - </h3>
+        <h3 className='text-blue-600 font-semibold inline'>Level {step} -</h3>
         <span className='text-gray-700 font-medium inline'>{title}</span>
         <p className='text-gray-500 mt-2'>{description}</p>
       </div>

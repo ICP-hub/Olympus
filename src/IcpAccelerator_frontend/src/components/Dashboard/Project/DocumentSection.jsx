@@ -242,7 +242,7 @@ function DocumentSection() {
           {activeMobileTab === 'rating' && (
             <>
               <>
-                <h1>Rating </h1>
+                <RatingComponent />
               </>
               <FAQ />
             </>
