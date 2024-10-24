@@ -32,8 +32,6 @@ const DiscoverProject = ({ onProjectCountChange }) => {
   const [isLoading, setIsLoading] = useState(true);
   const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
-  const [userData, setUserData] = useState([]);
-  const [cardDetail, setCadDetail] = useState(null);
   const [principal, setprincipal] = useState(null);
   const [listProjectId, setListProjectId] = useState(null);
   const [showRatingModal, setShowRatingModal] = useState(false);
@@ -44,6 +42,10 @@ const DiscoverProject = ({ onProjectCountChange }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentPrincipal, setCurrentPrincipal] = useState([]);
   const [userRatingDetail, setUserRatingDetail] = useState(null);
+  const [selectedAssociationType, setSelectedAssociationType] = useState(null);
+  const [projectProfile, setProjectProfile] = useState(null);
+  const [projectName, setProjectName] = useState(null);
+
   useTimeout(() => setIsLoading(false));
   const mentorPrincipal = useSelector(
     (currState) => currState.internet.principal
@@ -69,10 +71,25 @@ const DiscoverProject = ({ onProjectCountChange }) => {
   }, [isAuthenticated, dispatch]);
   const [isAddProjectModalOpen, setIsAddProjectModalOpen] = useState(false);
 
-  const handleProjectCloseModal = () => setIsAddProjectModalOpen(false);
-  const handleProjectOpenModal = (val) => {
-    setListProjectId(val);
-    setIsAddProjectModalOpen(true);
+  const handleProjectCloseModal = () => {
+    if (selectedAssociationType && selectedAssociationType.value === 'mentor') {
+      setIsAddProjectModalOpen(false);
+    } else {
+      setIsAddProjectModalOpenAsInvestor(false);
+    }
+  };
+  const handleProjectOpenModal = (val, profile, name) => {
+    if (selectedAssociationType && selectedAssociationType.value === 'mentor') {
+      setListProjectId(val);
+      setProjectProfile(profile);
+      setProjectName(name);
+      setIsAddProjectModalOpen(true);
+    } else {
+      setListProjectId(val);
+      setProjectProfile(profile);
+      setProjectName(name);
+      setIsAddProjectModalOpenAsInvestor(true);
+    }
   };
 
   // ASSOCIATE IN A PROJECT HANDLER AS A MENTOR
@@ -119,14 +136,6 @@ const DiscoverProject = ({ onProjectCountChange }) => {
   const [isAddProjectModalOpenAsInvestor, setIsAddProjectModalOpenAsInvestor] =
     useState(false);
 
-  const handleProjectCloseModalAsInvestor = () => {
-    setIsAddProjectModalOpenAsInvestor(false);
-  };
-  const handleProjectOpenModalAsInvestor = (val) => {
-    setListProjectId(val);
-    setIsAddProjectModalOpenAsInvestor(true);
-  };
-
   // ASSOCIATE IN A PROJECT HANDLER AS A Investor
   const handleAddProjectAsInvestor = async ({ message }) => {
     setIsSubmitting(true);
@@ -146,19 +155,19 @@ const DiscoverProject = ({ onProjectCountChange }) => {
         .then((result) => {
           console.log('result-in-send_offer_to_project_by_investor', result);
           if (result) {
-            handleProjectCloseModalAsInvestor();
+            handleProjectCloseModal();
             setIsSubmitting(false);
             // fetchProjectData();
             toast.success('offer sent to project successfully');
           } else {
-            handleProjectCloseModalAsInvestor();
+            handleProjectCloseModal();
             setIsSubmitting(false);
             toast.error('something got wrong');
           }
         })
         .catch((error) => {
           console.log('error-in-send_offer_to_project_by_investor', error);
-          handleProjectCloseModalAsInvestor();
+          handleProjectCloseModal();
           setIsSubmitting(false);
           toast.error('something got wrong');
         });
@@ -367,13 +376,11 @@ const DiscoverProject = ({ onProjectCountChange }) => {
                         <button
                           data-tooltip-id='registerTip'
                           onClick={() => {
-                            if (userCurrentRoleStatusActiveRole === 'mentor') {
-                              handleProjectOpenModal(project_id);
-                            } else if (
-                              userCurrentRoleStatusActiveRole === 'vc'
-                            ) {
-                              handleProjectOpenModalAsInvestor(project_id);
-                            }
+                            handleProjectOpenModal(
+                              project_id,
+                              projectlogo,
+                              projectname
+                            );
                           }}
                         >
                           <RiSendPlaneLine />
@@ -451,18 +458,26 @@ const DiscoverProject = ({ onProjectCountChange }) => {
       )}
       {isAddProjectModalOpen && (
         <AddAMentorRequestModal
-          title={'Associate Project'}
+          title={'Request to Associate a Project'}
           onClose={handleProjectCloseModal}
           onSubmitHandler={handleAddProject}
           isSubmitting={isSubmitting}
+          selectedAssociationType={selectedAssociationType}
+          setSelectedAssociationType={setSelectedAssociationType}
+          projectProfile={projectProfile}
+          projectName={projectName}
         />
       )}
       {isAddProjectModalOpenAsInvestor && (
         <AddAMentorRequestModal
-          title={'Associate Project'}
-          onClose={handleProjectCloseModalAsInvestor}
+          title={'Request to Associate a Project'}
+          onClose={handleProjectCloseModal}
           onSubmitHandler={handleAddProjectAsInvestor}
           isSubmitting={isSubmitting}
+          selectedAssociationType={selectedAssociationType}
+          setSelectedAssociationType={setSelectedAssociationType}
+          projectProfile={projectProfile}
+          projectName={projectName}
         />
       )}
       <Toaster />

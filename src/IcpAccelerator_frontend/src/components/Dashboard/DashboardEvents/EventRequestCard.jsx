@@ -82,7 +82,7 @@ const EventRequestCard = () => {
       let mentor_id = Principal.fromText(principal);
       let is_cohort_association = true;
       let cohort_id = listCohortId;
-      console.log('Data before sending', project_id, msg, mentor_id);
+      console.log('Data before sending', project_id, msg, mentor_id.toText());
 
       await actor
         .send_offer_to_project_by_mentor(

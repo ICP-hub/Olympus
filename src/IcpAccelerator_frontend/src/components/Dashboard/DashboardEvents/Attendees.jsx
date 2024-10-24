@@ -10,6 +10,7 @@ import NoData from '../../NoDataCard/NoData';
 import AttendeeCardSkeleton from './DashboardEventSkeletons/AttendeesSkeleton';
 import useTimeout from '../../hooks/TimeOutHook';
 import { FaFilter } from 'react-icons/fa';
+
 const AttendeesCard = ({ member }) => {
   return (
     <div className='md:flex  p-4 bg-white shadow-md rounded-lg mb-6 transition-all items-center hover:shadow-lg text-center md:text-left'>
@@ -71,7 +72,7 @@ const Attendees = (cohortData) => {
   console.log('cohort data 70', cohortData);
   console.log('cohort data 71', cohortData?.cohortData?.cohort_id);
   const [showMenu, setShowMenu] = useState(false);
-  const [selectedRole, setSelectedRole] = useState('');
+  const [selectedRole, setSelectedRole] = useState('All');
   const [appliedRole, setAppliedRole] = useState('');
   const [attendees, setAttendees] = useState([]);
   const [noData, setNoData] = useState(null);
@@ -96,53 +97,67 @@ const Attendees = (cohortData) => {
     setSelectedRole(e.target.value);
   };
 
+  const fetchDataForRole = async (role) => {
+    if (!cohortid) {
+      toast.error('Cohort ID is not available.');
+      return [];
+    }
+    let result;
+    switch (role) {
+      case 'Project':
+        result = await actor.get_projects_applied_for_cohort(cohortid);
+        break;
+      case 'Mentor':
+        result = await actor.get_mentors_applied_for_cohort(cohortid);
+        break;
+      case 'Investor':
+        result = await actor.get_vcs_applied_for_cohort(cohortid);
+        break;
+      default:
+        return [];
+    }
+
+    if (result?.Ok && Array.isArray(result.Ok)) {
+      return result.Ok.map((item) => ({
+        full_name: item[1].params.full_name,
+        username: item[1].params.openchat_username[0],
+        area_of_interest: item[1].params.area_of_interest,
+        bio: item[1].params.bio,
+        country: item[1].params.country,
+        email: item[1].params.email[0],
+        profile_picture: item[1].params.profile_picture[0]
+          ? uint8ArrayToBase64(item[1].params.profile_picture[0])
+          : [],
+        reason_to_join: item[1].params.reason_to_join[0],
+        social_links: item[1].params.social_links[0],
+        badges: item[1].params.badges || [],
+      }));
+    } else {
+      return [];
+    }
+  };
+
   const handleApply = async () => {
     setShowMenu(false);
     setAppliedRole(selectedRole);
 
-    if (!cohortid) {
-      toast.error('Cohort ID is not available.');
-      return;
-    }
+    setLoading(true);
+    let data = [];
 
     try {
-      let data = [];
-      let result = null;
+      if (selectedRole === 'All') {
+        const projectData = await fetchDataForRole('Project');
+        const mentorData = await fetchDataForRole('Mentor');
+        const investorData = await fetchDataForRole('Investor');
 
-      if (selectedRole === 'Project') {
-        result = await actor.get_projects_applied_for_cohort(cohortid);
-      } else if (selectedRole === 'Mentor') {
-        result = await actor.get_mentors_applied_for_cohort(cohortid);
-      } else if (selectedRole === 'Investor') {
-        result = await actor.get_vcs_applied_for_cohort(cohortid);
-      }
-
-      if (result?.Ok && Array.isArray(result.Ok)) {
-        data = result.Ok.map((item) => ({
-          full_name: item[1].params.full_name,
-          username: item[1].params.openchat_username[0],
-          area_of_interest: item[1].params.area_of_interest,
-          bio: item[1].params.bio,
-          country: item[1].params.country,
-          email: item[1].params.email[0],
-          profile_picture: item[1].params.profile_picture[0]
-            ? uint8ArrayToBase64(item[1].params.profile_picture[0])
-            : [],
-          reason_to_join: item[1].params.reason_to_join[0],
-          social_links: item[1].params.social_links[0],
-          badges: item[1].params.badges || [],
-        }));
-        setNoData(false);
+        data = [...projectData, ...mentorData, ...investorData];
       } else {
-        toast.error(
-          `Invalid data format received for ${selectedRole.toLowerCase()}`
-        );
-        setNoData(true);
+        data = await fetchDataForRole(selectedRole);
       }
 
       setAttendees(data);
+      setNoData(data.length === 0);
       if (data.length === 0) {
-        setNoData(true);
         toast.error(`No ${selectedRole.toLowerCase()} data available`);
       }
     } catch (error) {
@@ -152,6 +167,7 @@ const Attendees = (cohortData) => {
       );
       toast.error(`Failed to fetch ${selectedRole.toLowerCase()} data`);
     }
+    setLoading(false);
   };
 
   const handleCancel = () => {
@@ -160,12 +176,10 @@ const Attendees = (cohortData) => {
   };
 
   return (
-    <div className='rounded-xl '>
+    <div className='rounded-xl'>
       <div className='mx-2'>
-        <div className=' justify-end items-center mb-6'>
-          {/* <h2 className="text-xl font-semibold text-gray-900">Attendees</h2> */}
-
-          <div className='flex items-center justify-between  gap-6 my-4'>
+        <div className='justify-end items-center mb-6'>
+          <div className='flex items-center justify-between gap-6 my-4'>
             <div className='flex items-center border-2 border-gray-400 rounded-lg overflow-hidden flex-grow h-[38px] md:h-[50px]'>
               <div className='flex items-center px-3 md:px-4'>
                 <svg
@@ -267,6 +281,17 @@ const Attendees = (cohortData) => {
                         />
                         Investor
                       </label>
+                      <label>
+                        <input
+                          type='radio'
+                          name='role'
+                          value='All'
+                          checked={selectedRole === 'All'}
+                          onChange={handleRoleChange}
+                          className='h-4 w-4 text-blue-600 form-radio checked:bg-blue-600 border border-black rounded-full cursor-pointer mr-2'
+                        />
+                        All
+                      </label>
                     </div>
                   </div>
                 </div>
@@ -283,14 +308,6 @@ const Attendees = (cohortData) => {
           )}
 
           <div>
-            {/* {attendees && attendees.length === 0 ? (
-            // <p>No attendees available for the selected role.</p>
-            <NoData message={'No attendees available for the selected role.'} />
-          ) : (
-            attendees.map((member, idx) => (
-              <AttendeesCard key={idx} member={member} />
-            ))
-          )} */}
             {loading ? (
               attendees.length > 0 ? (
                 attendees.map((_, idx) => <AttendeeCardSkeleton key={idx} />)

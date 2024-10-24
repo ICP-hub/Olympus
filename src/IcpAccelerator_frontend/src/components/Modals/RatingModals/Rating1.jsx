@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import CloseIcon from '@mui/icons-material/Close';
 import { Toaster } from 'react-hot-toast';
 import RatingMain from './RatingMain'; // Import the RatingMain component
@@ -22,8 +22,8 @@ const Rating1 = () => {
     <>
       {/* Only show Rating1 if isModalOpen is true */}
       {isModalOpen && (
-        <div className='fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50'>
-          <div className='relative bg-white rounded-lg shadow-lg w-[500px] mx-4 p-6 pt-4 max-h-[90vh]'>
+        <div className='fixed inset-0 z-50 flex items-center justify-start bg-black bg-opacity-50'>
+          <div className='relative bg-white rounded-lg shadow-lg w-[500px] p-6'>
             {/* Close Button */}
             <button
               className='absolute top-3 right-3 text-gray-500 hover:text-gray-700'
@@ -105,7 +105,7 @@ const Rating1 = () => {
               </div>
 
               {/* Continue Button */}
-              <div className='flex justify-center mt-6'>
+              <div className='flex justify-center my-6'>
                 <button
                   onClick={handleContinue}
                   className='py-2 px-4 bg-blue-600 text-white rounded'

@@ -5,9 +5,8 @@ import ArrowOutwardOutlinedIcon from '@mui/icons-material/ArrowOutwardOutlined';
 import uint8ArrayToBase64 from '../../Utils/uint8ArrayToBase64';
 import getSocialLogo from '../../Utils/navigationHelper/getSocialLogo';
 import useTimeout from '../../hooks/TimeOutHook';
-import UserGeneralDetailSkeleton from '../../profile/skeletonProfile/UserGeneralDetailSkeleton';
+import UserGeneralDetailSkeleton from '../../Profile/skeletonProfile/UserGeneralDetailSkeleton';
 import DiscoverMentorProfileSkeleton from './discoverMentor/discoverMentorSkeleton/DiscoverMentorProfileSkeleton';
-
 const UserDetail = (projectData) => {
   const userData = projectData?.projectData?.[0]?.[1]?.params;
   console.log('PROJECT DATA ON USER DETAILS PAGE', projectData);
