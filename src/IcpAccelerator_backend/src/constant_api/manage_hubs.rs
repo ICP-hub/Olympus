@@ -30,6 +30,7 @@ pub struct IcpHubDetails{
 pub async fn add_hubs_images(caller: Principal, mut data: IcpHubDetails)->IcpHubDetails{
     let hub_flag = data.flag.clone();
     let canister_id = crate::asset_manager::get_asset_canister();
+    let name = data.name.clone().unwrap();
 
     if hub_flag.is_none(){
         let full_url = canister_id.to_string() + "/uploads/default_hub_logo.jpeg";
@@ -37,7 +38,7 @@ pub async fn add_hubs_images(caller: Principal, mut data: IcpHubDetails)->IcpHub
     }else if hub_flag.clone().unwrap().len() < 300 {
         ic_cdk::println!("Project logo is already uploaded");
     }else {
-        let hub_logo_key = "/uploads/".to_owned() + &caller.to_string() + "_hub_logo.jpeg";
+        let hub_logo_key = "/uploads/".to_owned() + &name + "_hub_logo.jpeg";
 
         let project_logo_arg = StoreArg {
             key: hub_logo_key.clone(),
