@@ -35,9 +35,8 @@ const RatingCard = ({
         ))}
       </div>
 
-      {/* Level and Description */}
       <div className='bg-gray-100 p-4 rounded-lg mb-6'>
-        <h3 className='text-blue-600 font-semibold inline'>Level {step} -</h3>
+        <h3 className='text-blue-600 font-semibold inline'>Level {step} - </h3>
         <span className='text-gray-700 font-medium inline'>{title}</span>
         <p className='text-gray-500 mt-2'>{description}</p>
       </div>

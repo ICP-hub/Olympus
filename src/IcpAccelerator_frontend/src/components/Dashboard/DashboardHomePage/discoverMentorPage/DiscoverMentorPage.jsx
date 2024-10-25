@@ -308,6 +308,7 @@ import MoneyRaising from '../../Project/NoMoneyRaisingCard';
 import DiscoverMoneyRaising from '../../Project/DiscoverMoneyRais';
 import DiscoverReview from '../../../Discover/DiscoverReview';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
+import RatingComponent from '../../../../Rating/ProjectRating';
 
 const DiscoverMentorPage = ({
   openDetail,
@@ -338,7 +339,7 @@ const DiscoverMentorPage = ({
   const [activeTab, setActiveTab] = useState('document');
 
   // Define available tabs
-  const tabs = ['document', 'team', 'ratings', 'moneyraised'];
+  const tabs = ['document', 'team', 'ratings', 'moneyraised', 'rubricrating'];
 
   const uniqueActiveTabs = [...new Set(tabs)];
 
@@ -473,6 +474,27 @@ const DiscoverMentorPage = ({
                     )}
                   </div>
                 )}
+
+                {uniqueActiveTabs.includes('rubricrating') && (
+                  <div className='border-b'>
+                    <button
+                      className='flex justify-between items-center w-full px-2 py-3 text-left text-gray-800'
+                      onClick={() => handleMobileTabToggle('rubricrating')}
+                    >
+                      Rubric Rating
+                      {activeMobileTab === 'rubricrating' ? (
+                        <FaChevronUp />
+                      ) : (
+                        <FaChevronDown />
+                      )}
+                    </button>
+                    {activeMobileTab === 'rubricrating' && (
+                      <div className='px-2 py-2'>
+                        <RatingComponent />
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
 
               {/* Desktop Tabs */}
@@ -528,6 +550,18 @@ const DiscoverMentorPage = ({
                     Money Raised
                   </button>
                 )}
+                {uniqueActiveTabs.includes('rubricrating') && (
+                  <button
+                    className={`px-4 py-2 focus:outline-none font-medium ${
+                      activeTab === 'rubricrating'
+                        ? 'border-b-2 border-blue-500 text-blue-500 font-medium'
+                        : 'text-gray-400'
+                    }`}
+                    onClick={() => handleChange('rubricrating')}
+                  >
+                    Rubric Rating
+                  </button>
+                )}
               </div>
 
               {/* Desktop Tab Content */}
@@ -550,6 +584,7 @@ const DiscoverMentorPage = ({
                     projectId={projectId}
                   />
                 )}
+                {activeTab === 'rubricrating' && <RatingComponent />}
               </div>
             </div>
           </div>

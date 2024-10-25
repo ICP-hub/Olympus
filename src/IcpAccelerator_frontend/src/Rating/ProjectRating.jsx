@@ -108,6 +108,7 @@
 
 // export default RatingComponent;
 import React, { useState } from 'react';
+import RadarChart from './RadarChart';
 
 const RatingComponent = () => {
   const [activeTab, setActiveTab] = useState('scores');
@@ -158,9 +159,9 @@ const RatingComponent = () => {
   };
 
   return (
-    <div className='w-full p-5 mt-2 bg-white border border-gray-200 rounded-lg shadow-md'>
-      <div className='flex justify-between items-center'>
-        <h2 className='text-[15px] xxs:text-lg font-semibold mb-4'>
+    <div className='w-full p-5 mt-8 bg-white border border-gray-200 rounded-lg shadow-md'>
+      <div className='xxs:flex justify-between items-center mb-4'>
+        <h2 className='text-[15px] xxs:text-lg font-semibold '>
           Maturity level
         </h2>
         <p className='font-semibold  text-[14px] xxs:text-[16px] text-gray-400'>
@@ -183,7 +184,7 @@ const RatingComponent = () => {
           Scores
         </button>
         <button
-          className={`pb-2 text-[18px] font-medium ${
+          className={`py-2 text-[18px] font-medium ${
             activeTab === 'chart'
               ? 'text-blue-500 border-b-2 border-blue-500'
               : 'text-gray-500'
@@ -205,9 +206,9 @@ const RatingComponent = () => {
               <span className='text-[16px] font-medium text-gray-700 w-1/2'>
                 {item.category}:
               </span>
-              <div className='flex'>
+              <div className='flex justify-between mt-1'>
                 {renderScoreBoxes(item.score)}
-                <span className='text-[16px] font-medium text-gray-700 ml-2 xxs:ml-4 -mt-1'>
+                <span className='text-[16px] font-bold text-gray-700 xxs:ml-4 -mt-1'>
                   {item.score}
                 </span>
               </div>
@@ -218,10 +219,8 @@ const RatingComponent = () => {
 
       {activeTab === 'chart' && (
         <div>
-          <h3 className='text-sm font-medium text-gray-700'>
-            This is the chart view
-          </h3>
           {/* Replace with your chart component */}
+          <RadarChart />
         </div>
       )}
     </div>
