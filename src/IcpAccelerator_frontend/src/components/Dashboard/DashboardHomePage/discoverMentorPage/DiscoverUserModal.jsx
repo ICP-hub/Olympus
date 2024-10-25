@@ -31,14 +31,14 @@ const DiscoverUserModal = ({ openDetail, setOpenDetail, userData }) => {
       ? uint8ArrayToBase64(userData.profile_picture[0])
       : 'default-profile.png';
   console.log('userData', userData);
-  console.log(userData?.social_links[0]);
-  const full_name = userData.full_name || 'Unknown User';
-  const email = userData.email || 'N/A';
-  const bio = userData.bio[0] || 'No bio available.';
-  const area_of_interest = userData.area_of_interest || 'N/A';
-  const location = userData.country || 'Unknown Location';
-  const openchat_username = userData.openchat_username[0] ?? 'N/A';
-  const type_of_profile = userData.type_of_profile[0] ?? 'N/A';
+  console.log(userData?.social_links?.[0]);
+  const full_name = userData?.full_name || 'Unknown User';
+  const email = userData?.email || 'N/A';
+  const bio = userData?.bio?.[0] || 'No bio available.';
+  const area_of_interest = userData?.area_of_interest || 'N/A';
+  const location = userData?.country || 'Unknown Location';
+  const openchat_username = userData?.openchat_username?.[0] ?? 'N/A';
+  const type_of_profile = userData?.type_of_profile?.[0] ?? 'N/A';
 
   return (
     <div
@@ -117,7 +117,9 @@ const DiscoverUserModal = ({ openDetail, setOpenDetail, userData }) => {
                         </h3>
 
                         <div className='flex flex-wrap items-center'>
-                          <p className='mr-2 text-sm line-clamp-1 break-all'>{email}</p>
+                          <p className='mr-2 text-sm line-clamp-1 break-all'>
+                            {email}
+                          </p>
                           <VerifiedIcon
                             className='text-blue-500 mr-2 w-2 h-2'
                             fontSize='small'
