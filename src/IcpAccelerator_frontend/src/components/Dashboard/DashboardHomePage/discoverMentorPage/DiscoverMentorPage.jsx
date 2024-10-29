@@ -376,6 +376,7 @@ const DiscoverMentorPage = ({
               <DiscoverMentorDetail
                 projectDetails={projectDetails}
                 userData={userData}
+                projectId={projectId}
               />
             </div>
 

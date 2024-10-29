@@ -8,16 +8,16 @@ import Avatar from '@mui/material/Avatar';
 import UserDetail from '../UserDetail';
 import getSocialLogo from '../../../Utils/navigationHelper/getSocialLogo';
 import useTimeout from '../../../hooks/TimeOutHook';
-import UserGeneralDetailSkeleton from '../../../profile/skeletonProfile/UserGeneralDetailSkeleton';
+import UserGeneralDetailSkeleton from '../../../Profile/skeletonProfile/UserGeneralDetailSkeleton';
 import DiscoverProjectProfileSkeleton from '../DiscoverProjectSkeleton/DiscoverProjectProfileSkeleton';
 import StarIcon from '@mui/icons-material/Star';
 import Rating1 from '../../../Modals/RatingModals/Rating1';
 
-const DiscoverMentorDetail = ({ projectDetails, userData }) => {
+const DiscoverMentorDetail = ({ projectDetails, userData, projectId }) => {
   const projectDetail = projectDetails;
   console.log('projectdetails ', projectDetail);
   console.log('userdetails ', userData);
-
+  console.log('projectId', projectId);
   let full_name = projectDetail?.full_name;
 
   let icphub = projectDetail?.preferred_icp_hub?.[0];
@@ -201,7 +201,7 @@ const DiscoverMentorDetail = ({ projectDetails, userData }) => {
                     color: 'transparent',
                     stroke: 'black',
                     strokeWidth: 2,
-                  }} // Only border black
+                  }}
                 />
               </button>
             </div>
@@ -569,7 +569,7 @@ const DiscoverMentorDetail = ({ projectDetails, userData }) => {
           </div>
         )}
       </div>
-      {isRating && <Rating1 />}
+      {isRating && <Rating1 position={'start'} projectId={projectId} />}
     </>
   );
 };
