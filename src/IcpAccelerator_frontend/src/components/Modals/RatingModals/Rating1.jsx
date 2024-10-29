@@ -3,7 +3,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { Toaster } from 'react-hot-toast';
 import RatingMain from './RatingMain'; // Import the RatingMain component
 
-const Rating1 = () => {
+const Rating1 = ({ position, projectId }) => {
   const [isModalOpen, setIsModalOpen] = useState(true); // Controls visibility of Rating1 modal
   const [isRatingMainOpen, setIsRatingMainOpen] = useState(false); // Controls visibility of RatingMain modal
 
@@ -22,7 +22,9 @@ const Rating1 = () => {
     <>
       {/* Only show Rating1 if isModalOpen is true */}
       {isModalOpen && (
-        <div className='fixed inset-0 z-50 flex items-center justify-start bg-black bg-opacity-50'>
+        <div
+          className={`fixed inset-0 z-50 flex items-center justify-${position} bg-black bg-opacity-50`}
+        >
           <div className='relative bg-white rounded-lg shadow-lg w-[500px] p-6'>
             {/* Close Button */}
             <button
@@ -121,7 +123,9 @@ const Rating1 = () => {
       )}
 
       {/* Show RatingMain if isRatingMainOpen is true */}
-      {isRatingMainOpen && <RatingMain />}
+      {isRatingMainOpen && (
+        <RatingMain position={position} projectId={projectId} />
+      )}
     </>
   );
 };
