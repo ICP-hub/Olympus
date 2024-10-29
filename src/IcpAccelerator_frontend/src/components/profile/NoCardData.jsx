@@ -86,10 +86,10 @@ const NoCardData = ({}) => {
           You haven't posted any Announcement yet
         </h2>
         <p className='text-gray-600 mb-2'>
-          Any assets used in projects will live here.
+          Any assets used in Announcement will live here.
         </p>
         <p className='text-gray-600 mb-6'>
-          Start creating by uploading your files.
+          Start creating by uploading your Announcemnt.
         </p>
         {/* <button
           className="bg-[#155EEF] text-white px-4 py-2 rounded-md flex items-center justify-center mx-auto"
