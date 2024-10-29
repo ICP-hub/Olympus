@@ -13,7 +13,16 @@ import getSocialLogo from '../Utils/navigationHelper/getSocialLogo';
 const validationSchema = Yup.object().shape({
   name: Yup.string().required('Project name is required'),
   flag: Yup.mixed().required('Banner image is required'),
-  website: Yup.mixed().required('Website Link is required'),
+  // website: Yup.mixed().required('Website Link is required'),
+  website: Yup.string()
+    .nullable(true)
+    .optional()
+    .matches(/^[a-zA-Z0-9@.\/:\-]*$/, 'Website Link should be valid')
+    .test(
+      'is-url-valid',
+      'Invalid URL',
+      (value) => !value || Yup.string().url().isValidSync(value)
+    ),
   description: Yup.string()
     .required('Description is required')
     .max(300, 'Description cannot exceed 300 characters'),
