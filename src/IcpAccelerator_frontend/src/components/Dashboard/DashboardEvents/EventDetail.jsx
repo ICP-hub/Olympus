@@ -26,6 +26,7 @@ import { useNavigate } from 'react-router-dom';
 import DiscoverUserModal from '../DashboardHomePage/discoverMentorPage/DiscoverUserModal';
 import EventDetailSkeleton from './DashboardEventSkeletons/EventDetailSkeleton';
 import useTimeout from '../../hooks/TimeOutHook';
+import CohortAnnouncement from './CohortAnnouncement';
 const FAQItem = ({ question, answer }) => {
   const [isOpen, setIsOpen] = useState(false);
   return (
@@ -875,7 +876,8 @@ const EventDetails = () => {
 
               {currentTab === 'Announcements' &&
                 (userCurrentRoleStatusActiveRole !== 'user' ? (
-                  <NoDataFound message='No active announcements found' />
+                  // <NoDataFound message='No active announcements found' />
+                  <CohortAnnouncement />
                 ) : (
                   <NoDataFound message='You do not have access to view this tab.' />
                 ))}
