@@ -215,10 +215,12 @@ type NotificationInternal = record {
   money_noti : opt AccessRequest;
 };
 type NotificationStructure = record {
-  sender : principal;
+  receiver_principal : principal;
   notification_data : NotificationInternal;
+  receiver_data : UserInfoInternal;
+  sender_data : UserInfoInternal;
   sent_at : nat64;
-  receiver : principal;
+  sender_principal : principal;
 };
 type OfferToInvestor = record {
   request_status : text;
