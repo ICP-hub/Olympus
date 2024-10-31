@@ -2,7 +2,7 @@ use crate::cohort_module::get_cohort::{check_cohort_mebership, get_cohort};
 use crate::project_module::get_project::get_project_info_using_principal;
 use crate::project_module::post_project::find_project_owner_principal;
 use crate::vc_module::get_vc::get_vc_info;
-use crate::{state_handler::*, CohortDetails, ProjectInfoInternal, UserInfoInternal, VentureCapitalist};
+use crate::{add_notification, state_handler::*, AssociationNotification, AssociationNotificationInvestorToProject, CohortDetails, NotificationInternal, ProjectInfoInternal, UserInfoInternal, VentureCapitalist};
 use candid::{CandidType, Principal};
 use ic_cdk::api::management_canister::main::raw_rand;
 use ic_cdk::{api::time, caller};
@@ -175,6 +175,29 @@ pub async fn send_offer_to_project_by_investor(project_id: String, msg: String, 
         is_cohort_association: is_cohort_association,
         cohort_data: cohort_data_for_association.clone()
     };
+
+    let association_noti_to_project = AssociationNotificationInvestorToProject{
+        sender_data: vc_data.clone(),
+        reciever_data: project_info.clone(),
+        offer: msg.clone(),
+        sent_at: time()
+    };
+
+    let assciation_noti_internal = AssociationNotification{
+        project_to_investor_noti: None,
+        project_to_mentor_noti: None,
+        investor_to_project_noti: Some(association_noti_to_project),
+        mentor_to_project_noti: None,
+    };
+
+    let noti_to_send = NotificationInternal{
+        cohort_noti: None,
+        docs_noti: None,
+        money_noti: None,
+        association_noti: Some(assciation_noti_internal),
+    };
+
+    let _ = add_notification(investor_id, project_principal, noti_to_send);
 
     notify_project_with_offer(project_id.clone(), offer_to_send_to_project);
     format!("offer sent sucessfully to {}", project_id)

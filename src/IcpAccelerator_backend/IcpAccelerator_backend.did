@@ -20,6 +20,36 @@ type AnnouncementsInternal = record {
   announcement_id : text;
 };
 type Areas = record { id : int32; name : text };
+type AssociationNotification = record {
+  project_to_investor_noti : opt AssociationNotificationProjectToInvestor;
+  project_to_mentor_noti : opt AssociationNotificationProjectToMentor;
+  mentor_to_project_noti : opt AssociationNotificationMentorToProject;
+  investor_to_project_noti : opt AssociationNotificationInvestorToProject;
+};
+type AssociationNotificationInvestorToProject = record {
+  offer : text;
+  reciever_data : opt record { ProjectInfoInternal; UserInfoInternal };
+  sender_data : opt record { VentureCapitalist; UserInfoInternal };
+  sent_at : nat64;
+};
+type AssociationNotificationMentorToProject = record {
+  offer : text;
+  reciever_data : opt record { ProjectInfoInternal; UserInfoInternal };
+  sender_data : opt record { MentorInternal; UserInfoInternal };
+  sent_at : nat64;
+};
+type AssociationNotificationProjectToInvestor = record {
+  offer : text;
+  reciever_data : opt record { VentureCapitalist; UserInfoInternal };
+  sender_data : opt record { ProjectInfoInternal; UserInfoInternal };
+  sent_at : nat64;
+};
+type AssociationNotificationProjectToMentor = record {
+  offer : text;
+  reciever_data : opt record { MentorInternal; UserInfoInternal };
+  sender_data : opt record { ProjectInfoInternal; UserInfoInternal };
+  sent_at : nat64;
+};
 type CanisterStatusResponse = record {
   status : CanisterStatusType;
   memory_size : nat;
@@ -36,7 +66,7 @@ type Cohort = record {
   title : text;
   country : text;
   tags : text;
-  contact_links : opt vec SocialLinks_2;
+  contact_links : opt vec SocialLinks;
   description : text;
   deadline : text;
   start_date : text;
@@ -158,7 +188,7 @@ type MentorProfile = record {
   existing_icp_mentor : bool;
   preferred_icp_hub : opt text;
   website : opt text;
-  links : opt vec SocialLinks_2;
+  links : opt vec SocialLinks;
   multichain : opt vec text;
   area_of_expertise : vec text;
   category_of_mentoring_service : text;
@@ -177,6 +207,18 @@ type MoneyRaised = record {
   raised_from_other_ecosystem : text;
   target_amount : float64;
   icp_grants : text;
+};
+type NotificationInternal = record {
+  docs_noti : opt AccessRequest;
+  association_noti : opt AssociationNotification;
+  cohort_noti : opt CohortEnrollmentRequest;
+  money_noti : opt AccessRequest;
+};
+type NotificationStructure = record {
+  sender : principal;
+  notification_data : NotificationInternal;
+  sent_at : nat64;
+  receiver : principal;
 };
 type OfferToInvestor = record {
   request_status : text;
@@ -312,7 +354,7 @@ type ProjectInfo = record {
   token_economics : opt text;
   self_rating_of_project : float64;
   preferred_icp_hub : opt text;
-  links : opt vec SocialLinks_2;
+  links : opt vec SocialLinks;
   mentors_assigned : opt vec record { MentorProfile; UserInfoInternal };
   country_of_registration : opt text;
   target_market : opt text;
@@ -341,7 +383,7 @@ type ProjectInfoForUser = record {
   community_rating : opt RatingAverages;
   team_member_info : opt vec TeamMember;
   date_of_joining : opt nat64;
-  links : opt vec SocialLinks_2;
+  links : opt vec SocialLinks;
   country_of_project : opt text;
   project_cover : opt blob;
   project_website : opt text;
@@ -374,7 +416,7 @@ type ProjectPublicInfo = record {
   token_economics : opt text;
   self_rating_of_project : float64;
   preferred_icp_hub : opt text;
-  links : opt vec SocialLinks_2;
+  links : opt vec SocialLinks;
   target_market : opt text;
   long_term_goals : opt text;
   project_area_of_focus : text;
@@ -445,16 +487,20 @@ type RatingView = record {
 };
 type Result = variant { Ok : text; Err : text };
 type Result_1 = variant { Ok : MoneyRaised; Err : CustomError };
-type Result_10 = variant { Ok : vec RatingView; Err : text };
-type Result_11 = variant { Ok : vec Review; Err : text };
-type Result_12 = variant { Ok : record { vec Review; nat64 }; Err : text };
-type Result_13 = variant { Ok : vec Testimonial; Err : text };
-type Result_14 = variant { Ok : UserInformation; Err : text };
-type Result_15 = variant {
+type Result_10 = variant {
+  Ok : vec record { ProjectInfoInternal; UserInfoInternal; principal };
+  Err : text;
+};
+type Result_11 = variant { Ok : vec RatingView; Err : text };
+type Result_12 = variant { Ok : vec Review; Err : text };
+type Result_13 = variant { Ok : record { vec Review; nat64 }; Err : text };
+type Result_14 = variant { Ok : vec Testimonial; Err : text };
+type Result_15 = variant { Ok : UserInformation; Err : text };
+type Result_16 = variant {
   Ok : vec record { VentureCapitalistInternal; UserInfoInternal; principal };
   Err : text;
 };
-type Result_16 = variant { Ok; Err : text };
+type Result_17 = variant { Ok; Err : text };
 type Result_2 = variant { Ok : vec Docs; Err : CustomError };
 type Result_3 = variant { Ok : float64; Err : text };
 type Result_4 = variant { Ok : CanisterStatusResponse; Err : text };
@@ -464,12 +510,9 @@ type Result_5 = variant {
 };
 type Result_6 = variant { Ok : InviteRequest; Err : text };
 type Result_7 = variant { Ok : nat8; Err : text };
-type Result_8 = variant {
-  Ok : record { opt vec record { principal; ProjectReview }; float32; bool };
-  Err : text;
-};
+type Result_8 = variant { Ok : vec NotificationStructure; Err : text };
 type Result_9 = variant {
-  Ok : vec record { ProjectInfoInternal; UserInfoInternal; principal };
+  Ok : record { opt vec record { principal; ProjectReview }; float32; bool };
   Err : text;
 };
 type Review = record {
@@ -490,8 +533,6 @@ type Role = record {
   requested_on : opt nat64;
 };
 type SocialLinks = record { link : opt text };
-type SocialLinks_1 = record { link : opt text };
-type SocialLinks_2 = record { link : opt text };
 type Sociallinks = record { links : opt text };
 type TeamMember = record {
   member_data : UserInformation;
@@ -521,7 +562,7 @@ type UserInformation = record {
   email : opt text;
   reason_to_join : opt vec text;
   full_name : text;
-  social_links : opt vec SocialLinks_2;
+  social_links : opt vec SocialLinks;
 };
 type UserType = record { id : int32; role_type : text };
 type VcFilterCriteria = record {
@@ -548,7 +589,7 @@ type VentureCapitalist = record {
   project_on_multichain : opt text;
   investor_type : opt text;
   website_link : opt text;
-  links : opt vec SocialLinks_2;
+  links : opt vec SocialLinks;
   stage : opt text;
   number_of_portfolio_companies : nat16;
   assets_under_management : opt text;
@@ -580,6 +621,7 @@ service : {
   add_announcement : (Announcements) -> (text);
   add_data_checking : () -> (text);
   add_icp_hub_details : (IcpHubDetails) -> (text);
+  add_notification : (principal, principal, NotificationInternal) -> (Result);
   add_project_rating : (ProjectRatingStruct) -> (Result);
   add_review : (principal, float32, text) -> (text);
   add_testimonial : (text) -> (text);
@@ -771,6 +813,7 @@ service : {
   get_no_of_individuals_applied_for_cohort_using_id : (text) -> (
       Result_7,
     ) query;
+  get_notifications_by_principal : (principal) -> (Result_8) query;
   get_pending_cohort_enrollment_requests : (principal) -> (
       vec CohortEnrollmentRequest,
     ) query;
@@ -798,9 +841,9 @@ service : {
   get_project_public_information_using_id : (text) -> (
       ProjectPublicInfoInternal,
     ) query;
-  get_project_ratings : (text) -> (Result_8) query;
+  get_project_ratings : (text) -> (Result_9) query;
   get_project_using_id : (text) -> (opt ProjectInfoInternal) query;
-  get_projects_applied_for_cohort : (text) -> (Result_9) query;
+  get_projects_applied_for_cohort : (text) -> (Result_10) query;
   get_projects_associated_with_investor : (principal) -> (
       vec ProjectInfoInternal,
     ) query;
@@ -808,12 +851,12 @@ service : {
       vec ProjectInfoInternal,
     ) query;
   get_range_of_check_size : () -> (vec text) query;
-  get_ratings_by_principal : (text) -> (Result_10) query;
+  get_ratings_by_principal : (text) -> (Result_11) query;
   get_rejected_cohort_enrollment_requests : (principal) -> (
       vec CohortEnrollmentRequest,
     ) query;
-  get_review : (principal) -> (Result_11) query;
-  get_review_with_count : (principal) -> (Result_12) query;
+  get_review : (principal) -> (Result_12) query;
+  get_review_with_count : (principal) -> (Result_13) query;
   get_role_status : () -> (vec Role) query;
   get_roles_for_principal : (principal) -> (vec Role) query;
   get_self_declined_requests_for_investor : () -> (vec OfferToInvestor) query;
@@ -821,18 +864,18 @@ service : {
   get_self_declined_requests_for_project : () -> (vec OfferToMentor) query;
   get_self_declined_requests_of_project : (text) -> (vec OfferToInvestor) query;
   get_stored_average_rating : (text, text) -> (Result_3) query;
-  get_testimonials : (principal) -> (Result_13) query;
+  get_testimonials : (principal) -> (Result_14) query;
   get_user_info_struct : () -> (opt UserInformation) query;
   get_user_info_using_principal : (principal) -> (opt UserInfoInternal) query;
-  get_user_information : () -> (Result_14) query;
-  get_user_information_using_uid : (text) -> (Result_14) query;
+  get_user_information : () -> (Result_15) query;
+  get_user_information_using_uid : (text) -> (Result_15) query;
   get_vc_info : (principal) -> (
       opt record { VentureCapitalist; UserInfoInternal },
     ) query;
   get_vc_info_using_principal : (principal) -> (
       opt record { VentureCapitalistAll; UserInfoInternal },
     ) query;
-  get_vcs_applied_for_cohort : (text) -> (Result_15) query;
+  get_vcs_applied_for_cohort : (text) -> (Result_16) query;
   greet : (text) -> (text) query;
   list_all_projects : () -> (
       vec record { ProjectInfoInternal; UserInfoInternal },
@@ -903,7 +946,7 @@ service : {
   update_project_private_docs : (text, Docs, bool) -> (Result);
   update_rating : (RatingUpdate) -> (text);
   update_team_member : (text, principal) -> (text);
-  update_user_data : (principal, UserInformation) -> (Result_16);
+  update_user_data : (principal, UserInformation) -> (Result_17);
   update_vc_ratings : (text, RatingMentorInvestor) -> ();
   update_venture_capitalist : (VentureCapitalist) -> (text);
 }
