@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import mentor from '../../../../assets/Logo/talent.png';
+import uint8ArrayToBase64 from '../../Utils/uint8ArrayToBase64';
 
 const NotificationDropdown = ({ closeDropdown, notifications }) => {
   const navigate = useNavigate();
@@ -8,9 +9,10 @@ const NotificationDropdown = ({ closeDropdown, notifications }) => {
 
   const handleViewAll = () => {
     closeDropdown();
-    if (notifications && notifications.length > 0) {
+    const notificationArray = notifications.Ok || [];
+    if (Array.isArray(notificationArray) && notificationArray.length > 0) {
       navigate('/dashboard/dashboard-notification', {
-        state: { notifications },
+        state: { notifications: notificationArray },
       });
     } else {
       console.log('No project data available');
@@ -30,13 +32,55 @@ const NotificationDropdown = ({ closeDropdown, notifications }) => {
     };
   }, [closeDropdown]);
 
+  const timestampAgo = (timestamp) => {
+    // Convert BigInt timestamp to a valid number (milliseconds)
+    const timestampAsNumber = Number(timestamp / 1_000_000n); // assuming timestamp is in nanoseconds
+    const now = Date.now();
+    const timeDiff = Math.floor((now - timestampAsNumber) / 1000);
+
+    if (timeDiff < 60) return `${timeDiff} seconds ago`;
+    if (timeDiff < 3600) return `${Math.floor(timeDiff / 60)} minutes ago`;
+    if (timeDiff < 86400) return `${Math.floor(timeDiff / 3600)} hours ago`;
+    return `${Math.floor(timeDiff / 86400)} days ago`;
+  };
+
+  const formatNotificationMessage = (notification) => {
+    const sendername = notification.sender_data.params.full_name;
+    if (
+      notification.notification_data &&
+      notification.notification_data.cohort_noti.length > 0
+    ) {
+      return `${sendername} wants to join your cohort.`;
+    }
+    if (
+      notification.notification_data &&
+      notification.notification_data.docs_noti.length > 0
+    ) {
+      return `${sendername} wants to access your documents.`;
+    }
+    if (
+      notification.notification_data &&
+      notification.notification_data.association_noti.length > 0
+    ) {
+      return `${sendername} wants to associate with you.`;
+    }
+    if (
+      notification.notification_data &&
+      notification.notification_data.money_noti.length > 0
+    ) {
+      return `${sendername} is requesting access to fundraising information.`;
+    }
+    return 'You have a new notification.';
+  };
+
+  const notificationArray = notifications.Ok || [];
+
   return (
     <div
       ref={dropdownRef}
       className='absolute top-14 right-0 md:right-40 bg-white shadow-lg rounded-lg w-full md:max-w-md z-50'
     >
       <div className='flex flex-col h-full'>
-        {/* Fixed Header */}
         <div className='flex justify-between items-center p-4 border-b'>
           <h2 className='text-lg font-bold'>Notifications</h2>
           <button onClick={handleViewAll} className='text-blue-500 text-sm'>
@@ -44,72 +88,46 @@ const NotificationDropdown = ({ closeDropdown, notifications }) => {
           </button>
         </div>
 
-        {/* Scrollable Content */}
         <div className='flex-grow overflow-y-auto max-h-96 mb-2'>
           <div className='p-4 space-y-6'>
-            {notifications.length === 0 ? (
-              <p className='text-sm text-gray-500'>No new notifications</p>
+            {Array.isArray(notificationArray) &&
+            notificationArray.length === 0 ? (
+              <p className='text-sm text-gray-500'>
+                No notifications found for this principal
+              </p>
             ) : (
-              notifications.map((notification, index) => (
-                <div
-                  className='flex items-start space-x-4 p-4 bg-gray-100 rounded-lg mb-4'
-                  key={index}
-                >
-                  {/* Image on the left */}
-                  <img
-                    src={mentor}
-                    alt='Notification sender avatar'
-                    className='h-[30px] w-[30px] rounded-full'
-                    loading='lazy'
-                    draggable={false}
-                  />
+              notificationArray.map((notification, index) => {
+                // Define the ProfilePicture for each notification
+                const profilePictureData =
+                  notification.sender_data.params.profile_picture;
+                const ProfilePicture =
+                  profilePictureData && profilePictureData.length > 0
+                    ? uint8ArrayToBase64(profilePictureData[0])
+                    : [];
 
-                  {/* Notification content */}
-                  <div className='flex-1'>
-                    <p className='text-sm text-gray-800 mb-1'>
-                      <strong>{notification.sender}</strong>{' '}
-                      {notification.message}
-                    </p>
-
-                    {/* Extra Content based on the notification type */}
-                    {notification.extra && (
-                      <div className='border border-gray-300 rounded-lg p-2 mb-3 bg-white'>
-                        {notification.extra.type === 'text' ? (
-                          <p className='text-sm'>
-                            {notification.extra.content}
-                          </p>
-                        ) : (
-                          <p className='text-sm font-semibold'>
-                            {notification.extra.content}
-                          </p>
-                        )}
-                      </div>
-                    )}
-
-                    {/* Action Buttons */}
-                    <div className='flex space-x-2 mt-2'>
-                      {notification.accept && (
-                        <button className='bg-blue-500 text-white px-3 py-1 rounded-md text-sm'>
-                          Accept
-                        </button>
-                      )}
-                      {notification.decline && (
-                        <button className='bg-gray-300 text-gray-700 px-3 py-1 rounded-md text-sm'>
-                          Decline
-                        </button>
-                      )}
-                      {notification.seeMore && (
-                        <button className='text-blue-500 text-sm'>
-                          See more
-                        </button>
-                      )}
+                return (
+                  <div
+                    className='flex items-start space-x-4 p-4 bg-gray-100 rounded-lg mb-4'
+                    key={index}
+                  >
+                    <img
+                      src={ProfilePicture}
+                      alt='Notification sender avatar'
+                      className='h-[30px] w-[30px] rounded-full'
+                      loading='lazy'
+                      draggable={false}
+                    />
+                    <div className='flex-1'>
+                      <p className='text-sm text-gray-800 mb-1'>
+                        {formatNotificationMessage(notification)}
+                      </p>
+                      <p className='text-xs text-gray-400 mt-2'>
+                        {timestampAgo(notification.sent_at) || 'Just now'}
+                      </p>
                     </div>
-                    <p className='text-xs text-gray-400 mt-2'>
-                      {notification.timeAgo}
-                    </p>
                   </div>
-                </div>
-              ))
+                );
+              })
             )}
           </div>
         </div>

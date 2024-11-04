@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
 
 const BellIconWithBadge = ({ notificationCount, onClick }) => {
+  console.log('line number 4', notificationCount);
   const [checked, setChecked] = useState(false);
 
-  // Handle the internal animation and also trigger the external onClick event
+  // Handle animation and trigger onClick
   const handleToggle = () => {
     setChecked(!checked);
-    if (onClick) {
-      onClick(); // This ensures your external event (e.g., opening the dropdown) still works
-    }
+    if (onClick) onClick(); // Ensures the dropdown opens or any external action happens
   };
 
   return (
@@ -20,7 +19,7 @@ const BellIconWithBadge = ({ notificationCount, onClick }) => {
       {/* Bell Icon */}
       <svg
         xmlns='http://www.w3.org/2000/svg'
-        className={`h-7 w-7 text-gray-700`}
+        className='h-7 w-7 text-gray-700'
         fill='none'
         viewBox='0 0 24 24'
         stroke='currentColor'
@@ -38,7 +37,7 @@ const BellIconWithBadge = ({ notificationCount, onClick }) => {
 
       {/* Notification Badge */}
       {notificationCount > 0 && (
-        <span className='absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full transform translate-x-1/2 -translate-y-1/2'>
+        <span className='absolute top-0 right-0 flex items-center justify-center px-1.5 py-0.5 text-xs font-bold leading-none text-white bg-red-600 rounded-full transform translate-x-1/2 -translate-y-1/2'>
           {notificationCount}
         </span>
       )}
