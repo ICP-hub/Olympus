@@ -12,13 +12,13 @@ import useTimeout from '../../hooks/TimeOutHook';
 import { FaFilter } from 'react-icons/fa';
 import StarIcon from '@mui/icons-material/Star';
 import DiscoverUserModal from '../DashboardHomePage/discoverMentorPage/DiscoverUserModal';
-const AttendeesCard = ({ member, appliedRole }) => {
-  const [openDetail, setOpenDetail] = useState(false);
-  const [cardDetail, setCardDetail] = useState(null);
-  const handleClick = (member) => {
-    setOpenDetail(true);
-    setCardDetail(member);
-  };
+const AttendeesCard = ({ member, appliedRole, handleClick }) => {
+  // const [openDetail, setOpenDetail] = useState(false);
+  // const [cardDetail, setCardDetail] = useState(null);
+  // const handleClick = (member) => {
+  //   setOpenDetail(true);
+  //   setCardDetail(member);
+  // };
   console.log('member-450 ', member);
   return (
     <div className='flex flex-col md:flex-row items-center p-4 bg-white shadow-md rounded-lg mb-6 transition-all hover:shadow-lg'>
@@ -189,10 +189,10 @@ const Attendees = (cohortData) => {
     }
   };
 
-  // const handleClick = (member) => {
-  //   setOpenDetail(true);
-  //   setCardDetail(member);
-  // };
+  const handleClick = (member) => {
+    setOpenDetail(true);
+    setCardDetail(member);
+  };
 
   const handleApply = async () => {
     setShowMenu(false);
@@ -386,6 +386,7 @@ const Attendees = (cohortData) => {
                 key={idx}
                 member={member}
                 appliedRole={appliedRole}
+                handleClick={handleClick}
               />
             ))
           )}

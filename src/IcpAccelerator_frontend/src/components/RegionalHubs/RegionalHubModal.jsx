@@ -8,24 +8,32 @@ import toast, { Toaster } from 'react-hot-toast';
 import { useSelector, useDispatch } from 'react-redux';
 import { FaPlus, FaTrash } from 'react-icons/fa';
 import getSocialLogo from '../Utils/navigationHelper/getSocialLogo';
-
+const urlValidation = Yup.string()
+  .nullable(true)
+  .optional()
+  .matches(/^[a-zA-Z0-9@./:\-]*$/, 'Website Link should be valid')
+  .test(
+    'is-url-valid',
+    'Invalid URL',
+    (value) =>
+      !value ||
+      /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:[0-9]{1,5})?(\/.*)?$/.test(
+        value
+      )
+  );
 // Validation schema using Yup
 const validationSchema = Yup.object().shape({
   name: Yup.string().required('Project name is required'),
   flag: Yup.mixed().required('Banner image is required'),
-  // website: Yup.mixed().required('Website Link is required'),
-  website: Yup.string()
-    .nullable(true)
-    .optional()
-    .matches(/^[a-zA-Z0-9@.\/:\-]*$/, 'Website Link should be valid')
-    .test(
-      'is-url-valid',
-      'Invalid URL',
-      (value) => !value || Yup.string().url().isValidSync(value)
-    ),
+  website: urlValidation, // Apply URL validation to website field
   description: Yup.string()
     .required('Description is required')
     .max(300, 'Description cannot exceed 300 characters'),
+  links: Yup.array().of(
+    Yup.object().shape({
+      link: urlValidation.required('Social link is required'), // Reuse URL validation for each link
+    })
+  ),
 });
 
 const RegionalHubModal = ({ onClose }) => {
@@ -40,6 +48,7 @@ const RegionalHubModal = ({ onClose }) => {
     trigger,
   } = useForm({
     resolver: yupResolver(validationSchema),
+    mode: 'onChange',
   });
 
   const { fields, append, remove } = useFieldArray({
