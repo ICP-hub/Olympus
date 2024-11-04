@@ -1,3 +1,4 @@
+use crate::notifications::notification::NotificationStructure;
 use crate::{jobs::job_types::JobsInternal, user_modules::user_types::*};
 use crate::vc_module::vc_types::*;
 use crate::mentor_module::mentor_types::*;
@@ -197,6 +198,9 @@ const RATE_LIMIT_MEMORY_ID: MemoryId = MemoryId::new(48);
 type CaptchaStorage = StableBTreeMap<String, Candid<String>, VMem>; // Stores CAPTCHA ID and Text
 const CAPTCHA_STORAGE_MEMORY_ID: MemoryId = MemoryId::new(49);
 
+pub type NotificationStorage = StableBTreeMap<StoredPrincipal, Candid<Vec<NotificationStructure>>, VMem>;
+const NOTIFICATION_STORAGE_MEMORY_ID: MemoryId = MemoryId::new(50);
+
 pub struct State {
     pub rate_limiting: RateLimitMap,
     pub captcha_storage: CaptchaStorage,
@@ -248,6 +252,7 @@ pub struct State {
     pub mentor_invite_request: MentorsInviteRequest,
     pub asset_canister_storage: AssetManager,
     pub hubs_data: HubsData,
+    pub notification_data: NotificationStorage,
 }
 
 thread_local! {
@@ -310,6 +315,7 @@ thread_local! {
             mentor_removed_from_cohort: MentorsRemovedFromCohort::init(mm.borrow().get(MENTOR_REMOVED_FROM_COHORT_MEMORY_ID)),
             mentor_invite_request: MentorsInviteRequest::init(mm.borrow().get(PENDING_MENTOR_CONFIRMATION_TO_REJOIN_MEMORY_ID)),
             hubs_data: HubsData::init(mm.borrow().get(HUBS_DATA_STORAGE_MEMORY_ID)),
+            notification_data: NotificationStorage::init(mm.borrow().get(NOTIFICATION_STORAGE_MEMORY_ID)),
         })
     );
 }
