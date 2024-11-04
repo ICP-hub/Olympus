@@ -1,9 +1,12 @@
+use crate::add_notification;
+use crate::project_module::post_project::find_project_owner_principal;
 use crate::state_handler::*;
 use crate::user_modules::get_user::*;
 use crate::user_modules::user_types::*;
 use crate::project_module::project_types::*;
 use crate::types::individual_types::*;
 use crate::guard::*;
+use crate::NotificationInternal;
 use candid::Principal;
 use ic_cdk::api::time;
 use ic_cdk_macros::*;
@@ -92,6 +95,16 @@ pub async fn send_private_docs_access_request(project_id: String) -> String {
         request_type: "private_docs_access".to_string(),
         status: "pending".to_string(),
     };
+
+    let noti_to_send = NotificationInternal{
+        cohort_noti: None,
+        docs_noti: Some(access_request.clone()),
+        money_noti: None,
+        association_noti: None,
+    };
+    let reciever_principal = find_project_owner_principal(&project_id.clone()).unwrap();
+
+    let _ = add_notification(caller, reciever_principal, noti_to_send);
 
     mutate_state(|state| {
         if let Some(mut request_vec) = state

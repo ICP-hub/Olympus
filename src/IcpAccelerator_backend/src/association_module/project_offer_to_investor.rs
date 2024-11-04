@@ -2,7 +2,7 @@ use crate::project_module::get_project::get_project_info_using_principal;
 use crate::project_module::post_project::find_project_owner_principal;
 use crate::cohort_module::get_cohort::{check_cohort_mebership, get_cohort};
 use crate::vc_module::get_vc::get_vc_info;
-use crate::{state_handler::*, CohortDetails, ProjectInfoInternal, UserInfoInternal, VentureCapitalist};
+use crate::{add_notification, state_handler::*, AssociationNotification, AssociationNotificationProjectToInvestor, CohortDetails, NotificationInternal, ProjectInfoInternal, UserInfoInternal, VentureCapitalist};
 use candid::{CandidType, Principal};
 use ic_cdk::api::management_canister::main::raw_rand;
 use ic_cdk::{api::time, caller};
@@ -146,13 +146,36 @@ pub async fn send_offer_to_investor_by_project(
         self_declined_at: 0,
         request_status: "pending".to_string(),
         response: "".to_string(),
-        sender_data: project_info,
-        reciever_data: vc_data,
+        sender_data: project_info.clone(),
+        reciever_data: vc_data.clone(),
         sender_principal: project_principal,
         receiever_principal: investor_id,
         is_cohort_association: is_cohort_association,
         cohort_data: cohort_data_for_association.clone()
     };
+
+    let association_noti_to_investor = AssociationNotificationProjectToInvestor{
+        sender_data: project_info.clone(),
+        reciever_data: vc_data.clone(),
+        offer: msg.clone(),
+        sent_at: time()
+    };
+
+    let assciation_noti_internal = AssociationNotification{
+        project_to_investor_noti: Some(association_noti_to_investor),
+        project_to_mentor_noti: None,
+        investor_to_project_noti: None,
+        mentor_to_project_noti: None,
+    };
+
+    let noti_to_send = NotificationInternal{
+        cohort_noti: None,
+        docs_noti: None,
+        money_noti: None,
+        association_noti: Some(assciation_noti_internal),
+    };
+
+    let _ = add_notification(project_principal, investor_id, noti_to_send);
 
     notify_investor_with_offer(investor_id, offer_to_send_to_investor);
     format!("offer sent sucessfully to {}", investor_id)

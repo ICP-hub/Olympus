@@ -176,7 +176,7 @@
 // }
 
 // export default DashboardHomeNavbar;
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { dashboard } from '../../Utils/jsondata/data/dashboardData';
 import project from '../../../../assets/Logo/founder.png';
@@ -185,6 +185,7 @@ import mentor from '../../../../assets/Logo/talent.png';
 import vc from '../../../../assets/Logo/Avatar3.png';
 import { useDispatch, useSelector } from 'react-redux';
 import { SearchOutlined, Menu } from '@mui/icons-material';
+import { Principal } from '@dfinity/principal';
 import {
   afterCopySvg,
   beforeCopySvg,
@@ -196,20 +197,22 @@ import Tooltip from '@mui/material/Tooltip';
 import CloseIcon from '@mui/icons-material/Close';
 import DashboardSidebar from './DashboardHomeSidebar';
 import BellIconWithBadge from './NotificationBell';
-import NotificationDropdown from './NotificationDropdown'; // Import the new component
+import NotificationDropdown from './NotificationDropdown';
 
 function DashboardHomeNavbar({ id, id2 }) {
   const principal = useSelector((currState) => currState.internet.principal);
+  const actor = useSelector((state) => state.actors.actor);
+
   const userCurrentRoleStatusActiveRole = useSelector(
     (currState) => currState.currentRoleStatus.activeRole
   );
   const dispatch = useDispatch();
 
-  // New States for Dropdown and Notifications
+  // States for Dropdown and Notifications
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const [notifications, setNotifications] = useState([]);
   const [customSvg, setCustomSvg] = useState(beforeCopySvg);
-  const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
   const [isOpen, setIsOpen] = useState(false);
 
   const copyToClipboard = () => {
@@ -252,41 +255,36 @@ function DashboardHomeNavbar({ id, id2 }) {
   const principalLabel =
     dashboard?.dashboardhomenavbar?.navbarTexts?.principalLabel;
 
-  const notifications = [
-    {
-      sender: 'Michael Stanne',
-      message: 'wants to be associated with Cypherpunk Labs',
-      extra: {
-        type: 'text',
-        content:
-          'Hey! I want to contribute to your project as an independent consultant. Check out my profile to get more details or let’s hop on a quick call!',
-      },
-      accept: true,
-      timeAgo: '1 hour ago',
-    },
-    {
-      sender: 'Anna Boone',
-      message: 'requests access to the document',
-      extra: {
-        type: 'file',
-        content: 'Pitchdeck in Cypherpunk Labs',
-      },
-      accept: true,
-      decline: true,
-      seeMore: true,
-      timeAgo: '1 hour ago',
-    },
-    {
-      sender: 'Michael Stanne',
-      message:
-        'accepted your invitation to an event Masterclass: How to build a robust community',
-      timeAgo: '1 hour ago',
-    },
-  ];
+  // Function to fetch notifications
+  const fetchNotifications = async () => {
+    console.log('API call initiated inside fetchNotifications function');
+    console.log('principal 260', principal);
 
+    const principal1 = Principal.fromText(principal);
+    if (actor && principal) {
+      try {
+        console.log('Inside try block of fetchNotifications');
+        const fetchedNotifications =
+          await actor.get_notifications_by_principal(principal1);
+        setNotifications(fetchedNotifications);
+        console.log(
+          'Notifications fetched successfully:',
+          fetchedNotifications
+        );
+      } catch (error) {
+        console.error('Error fetching notifications:', error);
+      }
+    }
+  };
+  console.log('line 275', notifications?.Ok?.length);
   // Handle toggling the notification dropdown
   const toggleNotificationDropdown = () => {
-    setIsNotificationOpen(!isNotificationOpen);
+    setIsNotificationOpen((prevState) => !prevState);
+
+    // Call the API only if we're opening the dropdown
+    if (!isNotificationOpen) {
+      fetchNotifications();
+    }
   };
 
   // Close dropdown
@@ -328,7 +326,7 @@ function DashboardHomeNavbar({ id, id2 }) {
       <div className='flex items-center space-x-4 mr-6 md:mr-0 '>
         <span className='mr-3 mt-2'>
           <BellIconWithBadge
-            notificationCount={notifications.length}
+            notificationCount={notifications?.Ok?.length}
             onClick={toggleNotificationDropdown}
           />
         </span>
@@ -357,7 +355,7 @@ function DashboardHomeNavbar({ id, id2 }) {
           src={logoutIcon}
           alt='User'
           className='h-[40px] w-[40px] rounded-full z-30 py-1 px-1'
-          onClick={toggleDropdown}
+          onClick={() => setDropdownOpen(!dropdownOpen)}
           loading='lazy'
           draggable={false}
         />
@@ -369,7 +367,7 @@ function DashboardHomeNavbar({ id, id2 }) {
             <div className='px-4 py-3 text-sm text-gray-900 '>
               <div className='flex flex-row justify-between w-full'>
                 <button
-                  onClick={toggleDropdown}
+                  onClick={() => setDropdownOpen(false)}
                   type='button'
                   className='bg-transparent hover:text-black rounded-lg text-2xl text-black'
                 >

@@ -56,7 +56,7 @@ pub struct CohortRequest {
     pub request_status: String,
 }
 
-#[derive(Clone, CandidType, Deserialize, Debug)]
+#[derive(Clone, CandidType, Deserialize, Debug, Serialize)]
 pub struct EnrollerDataInternal {
     pub project_data: Option<ProjectInfoInternal>,
     pub mentor_data: Option<MentorInternal>,
@@ -64,7 +64,7 @@ pub struct EnrollerDataInternal {
     pub user_data: Option<UserInfoInternal>,
 }
 
-#[derive(Clone, CandidType, Deserialize, Debug)]
+#[derive(Clone, CandidType, Deserialize, Debug, Serialize)]
 pub struct CohortEnrollmentRequest {
     pub cohort_details: CohortDetails,
     pub sent_at: u64,

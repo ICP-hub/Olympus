@@ -12,7 +12,7 @@ pub mod constant_api;
 pub mod types;
 pub mod association_module;
 pub mod ratings_module;
-
+pub mod notifications;
 
 use ic_cdk::api::management_canister::main::CanisterStatusResponse;
 use std::collections::HashMap;
@@ -45,6 +45,7 @@ use crate::cohort_module::cohort_rating::*;
 use crate::types::ratings_types::*;
 use crate::ratings_module::rubric_ratings::*;
 use crate::guard::*;
+use crate::notifications::notification::*;
 
 #[query(guard = "combined_guard")]
 fn greet(name: String) -> String {
