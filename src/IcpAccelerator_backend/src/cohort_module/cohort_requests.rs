@@ -1,3 +1,4 @@
+use crate::add_notification;
 use crate::state_handler::*;
 use crate::cohort_module::cohort_types::*;
 use crate::vc_module::vc_types::*;
@@ -8,6 +9,7 @@ use crate::mentor_module::get_mentor::*;
 use crate::cohort_module::get_cohort::*;
 use crate::project_module::get_project::*;
 use crate::guard::*;
+use crate::NotificationInternal;
 use crate::UserInformation;
 use candid::Principal;
 use ic_cdk_macros::*;
@@ -84,6 +86,17 @@ pub fn send_enrollment_request_as_mentor(cohort_id: String, user_info: MentorInt
         },
         enroller_principal: caller,
     };
+
+    let noti_to_send = NotificationInternal{
+        cohort_noti: Some(enrollment_request.clone()),
+        docs_noti: None,
+        money_noti: None,
+        association_noti: None,
+    };
+    let reciever_principal = enrollment_request.cohort_details.cohort_creator;
+
+    let _ = add_notification(caller, reciever_principal, noti_to_send);
+
 
     mutate_state(|state| {
         let stored_principal = StoredPrincipal(cohort_creator_principal);
@@ -194,6 +207,16 @@ pub fn send_enrollment_request_as_investor(
         },
         enroller_principal: caller,
     };
+
+    let noti_to_send = NotificationInternal{
+        cohort_noti: Some(enrollment_request.clone()),
+        docs_noti: None,
+        money_noti: None,
+        association_noti: None,
+    };
+    let reciever_principal = enrollment_request.cohort_details.cohort_creator;
+
+    let _ = add_notification(caller, reciever_principal, noti_to_send);
 
     ic_cdk::println!("Created enrollment request: {:?}", enrollment_request);
 
@@ -306,6 +329,16 @@ pub fn send_enrollment_request_as_project(
         },
         enroller_principal: caller,
     };
+
+    let noti_to_send = NotificationInternal{
+        cohort_noti: Some(enrollment_request.clone()),
+        docs_noti: None,
+        money_noti: None,
+        association_noti: None,
+    };
+    let reciever_principal = enrollment_request.cohort_details.cohort_creator;
+
+    let _ = add_notification(caller, reciever_principal, noti_to_send);
 
     ic_cdk::println!("enrollment request {:?}", enrollment_request);
 

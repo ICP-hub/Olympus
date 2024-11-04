@@ -8,7 +8,7 @@ use crate::cohort_module::get_cohort::{check_cohort_mebership, get_cohort};
 use crate::mentor_module::get_mentor::get_mentor_info_using_principal;
 use crate::project_module::get_project::get_project_info_using_principal;
 use crate::project_module::post_project::find_project_owner_principal;
-use crate::{state_handler::*, CohortDetails, MentorInternal, ProjectInfoInternal, UserInfoInternal};
+use crate::{add_notification, state_handler::*, AssociationNotification, AssociationNotificationMentorToProject, CohortDetails, MentorInternal, NotificationInternal, ProjectInfoInternal, UserInfoInternal};
 use crate::guard::*;
 
 #[derive(Clone, CandidType, Deserialize, Serialize, Debug)]
@@ -170,13 +170,36 @@ pub async fn send_offer_to_project_by_mentor(
         self_declined_at: 0,
         request_status: "pending".to_string(),
         response: "".to_string(),
-        sender_data: mentor_data,
-        reciever_data: project_info,
+        sender_data: mentor_data.clone(),
+        reciever_data: project_info.clone(),
         sender_principal: mentor_id,
         receiever_principal: project_principal,
         is_cohort_association: is_cohort_association,
         cohort_data: cohort_data_for_association.clone()
     };
+
+    let association_noti_to_project = AssociationNotificationMentorToProject{
+        sender_data: mentor_data.clone(),
+        reciever_data: project_info.clone(),
+        offer: msg.clone(),
+        sent_at: time()
+    };
+
+    let assciation_noti_internal = AssociationNotification{
+        project_to_investor_noti: None,
+        project_to_mentor_noti: None,
+        investor_to_project_noti: None,
+        mentor_to_project_noti: Some(association_noti_to_project),
+    };
+
+    let noti_to_send = NotificationInternal{
+        cohort_noti: None,
+        docs_noti: None,
+        money_noti: None,
+        association_noti: Some(assciation_noti_internal),
+    };
+
+    let _ = add_notification(mentor_id, project_principal, noti_to_send);
 
     notify_project_with_offer(project_id.clone(), offer_to_send_to_project);
     format!("offer sent sucessfully to {}", project_id)
