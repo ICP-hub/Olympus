@@ -124,14 +124,14 @@ const DiscoverReview = (userData, principalId) => {
               className='bg-gray-100 rounded-lg p-4 flex md1:mt-4 flex-col gap-4 '
             >
               <div className='sm0:flex  items-center justify-center w-full  gap-4 flex-shrink-0'>
-                <div className="flex justify-center sm0:justify-start">
-                <img
-                  src={profilepic}
-                  alt='pic'
-                  className='rounded-full w-12 h-12 ss:w-16 ss:h-16 object-cover border border-gray-300'
-                  loading='lazy'
-                  draggable={false}
-                />
+                <div className='flex justify-center sm0:justify-start'>
+                  <img
+                    src={profilepic}
+                    alt='pic'
+                    className='rounded-full w-12 h-12 ss:w-16 ss:h-16 object-cover border border-gray-300'
+                    loading='lazy'
+                    draggable={false}
+                  />
                 </div>
                 <div className='flex flex-col w-full items-center justify-center sm0:items-start'>
                   <h2 className='text-base font-semibold text-gray-800 mb-1'>

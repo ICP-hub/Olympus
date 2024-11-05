@@ -8,38 +8,75 @@ import getSocialLogo from '../../../Utils/navigationHelper/getSocialLogo';
 import useTimeout from '../../../hooks/TimeOutHook';
 import DiscoverUserModalSkeleton from './DiscoverMentorPageSkeleton/DiscoverUserModalSkeleton';
 
-const DiscoverUserModal = ({ openDetail, setOpenDetail, userData }) => {
+const DiscoverUserModal = ({ openDetail, setOpenDetail, userData, value }) => {
   console.log('user data =>', userData);
   const [loading, setIsLoading] = useState(true);
   useTimeout(() => setIsLoading(false));
+
   useEffect(() => {
     if (openDetail) {
-      // Prevent background from scrolling when modal is open
       document.body.style.overflow = 'hidden';
     } else {
-      // Restore background scroll when modal is closed
       document.body.style.overflow = 'auto';
     }
-    // Cleanup when the component is unmounted
     return () => {
       document.body.style.overflow = 'auto';
     };
   }, [openDetail]);
 
   const profilepic =
-    userData.profile_picture && userData.profile_picture[0]
-      ? uint8ArrayToBase64(userData.profile_picture[0])
-      : 'default-profile.png';
-  console.log('userData', userData);
-  console.log(userData?.social_links?.[0]);
-  const full_name = userData?.full_name || 'Unknown User';
-  const email = userData?.email || 'N/A';
-  const bio = userData?.bio?.[0] || 'No bio available.';
-  const area_of_interest = userData?.area_of_interest || 'N/A';
-  const location = userData?.country || 'Unknown Location';
-  const openchat_username = userData?.openchat_username?.[0] ?? 'N/A';
-  const type_of_profile = userData?.type_of_profile?.[0] ?? 'N/A';
+    value === true
+      ? userData?.profile_picture
+      : userData.profile_picture &&
+          Array.isArray(userData.profile_picture) &&
+          userData.profile_picture[0]
+        ? uint8ArrayToBase64(userData.profile_picture[0])
+        : userData.profile_picture[0];
 
+  const full_name = userData?.full_name || 'Unknown User';
+  const email =
+    value === true
+      ? userData?.email
+      : Array.isArray(userData?.email)
+        ? userData.email[0]
+        : userData?.email || 'N/A';
+  const bio =
+    value === true
+      ? userData?.bio
+      : Array.isArray(userData?.bio)
+        ? userData.bio[0]
+        : 'No bio available.';
+  const area_of_interest =
+    value === true
+      ? userData?.area_of_interest
+      : userData?.area_of_interest || 'N/A';
+  const reason_to_join =
+    value === true
+      ? userData?.reason_to_join
+      : userData?.reason_to_join || 'N/A';
+
+  const location =
+    value === true
+      ? userData?.country
+      : userData?.country || 'Unknown Location';
+  const openchat_username =
+    value === true
+      ? userData?.username
+      : Array.isArray(userData?.openchat_username)
+        ? userData.openchat_username[0]
+        : 'N/A';
+  const type_of_profile =
+    value === true
+      ? userData?.type_of_profile
+      : Array.isArray(userData?.type_of_profile)
+        ? userData.type_of_profile[0]
+        : 'N/A';
+  const social_links =
+    value === true
+      ? userData?.social_links
+      : Array.isArray(userData?.social_links)
+        ? userData.social_links[0]
+        : 'N/A';
   return (
     <div
       className={`w-full h-screen fixed inset-0 bg-black bg-opacity-30 backdrop-blur-xs z-50 transition-opacity duration-[4000ms] ease-in-out ${
@@ -48,7 +85,7 @@ const DiscoverUserModal = ({ openDetail, setOpenDetail, userData }) => {
     >
       {openDetail && userData && (
         <div
-          className={`mx-auto w-full pb-4  sm:w-[60%] lg:w-[40%] absolute right-0 top-0 bg-white h-screen transform transition-transform duration-[4000ms] ease-[cubic-bezier(0.4, 0, 0.2, 1)] ${
+          className={`mx-auto w-full pb-4 sm:w-[60%] lg:w-[40%] absolute right-0 top-0 bg-white h-screen transform transition-transform duration-[4000ms] ease-[cubic-bezier(0.4, 0, 0.2, 1)] ${
             openDetail ? 'translate-x-0' : 'translate-x-full'
           } z-20`}
         >
@@ -58,7 +95,7 @@ const DiscoverUserModal = ({ openDetail, setOpenDetail, userData }) => {
               onClick={() => setOpenDetail(false)}
             />
           </div>
-          <div className='container mx-auto justify-center w-full h-full overflow-y-scroll pb-8 '>
+          <div className='container mx-auto justify-center w-full h-full overflow-y-scroll pb-8'>
             {loading ? (
               <DiscoverUserModalSkeleton
                 openDetail={openDetail}
@@ -66,11 +103,11 @@ const DiscoverUserModal = ({ openDetail, setOpenDetail, userData }) => {
               />
             ) : (
               <div className='flex justify-center p-6'>
-                <div className='container border bg-white rounded-lg shadow-sm h-full overflow-y-scroll w-full '>
+                <div className='container border bg-white rounded-lg shadow-sm h-full overflow-y-scroll w-full'>
                   <div className='flex flex-col w-full p-6 bg-gray-100'>
                     <img
                       src={profilepic}
-                      alt='Matt Bowers'
+                      alt='User Profile'
                       className='w-24 h-24 mx-auto rounded-full mb-2'
                       loading='lazy'
                       draggable={false}
@@ -83,11 +120,11 @@ const DiscoverUserModal = ({ openDetail, setOpenDetail, userData }) => {
                       <h2 className='text-xl font-semibold'>{full_name}</h2>
                     </div>
                     <p className='text-gray-600 text-center mb-2'>
-                      @{openchat_username}{' '}
+                      @{openchat_username}
                     </p>
                     <a
                       href={`mailto:${email}`}
-                      className='w-full h-[#155EEF] bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 mb-6 flex items-center justify-center'
+                      className='w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 mb-6 flex items-center justify-center'
                     >
                       Get in touch
                       <ArrowOutwardOutlinedIcon
@@ -152,23 +189,24 @@ const DiscoverUserModal = ({ openDetail, setOpenDetail, userData }) => {
                           </p>
                         </div>
                       </div>
-                      <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-2 '>
-                        <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
-                          Reason to Join Platform
-                        </h3>
-                        <div>
-                          <div className='flex flex-wrap gap-2'>
-                            {userData?.reason_to_join[0]?.map(
-                              (reason, index) => (
+                    </div>
+
+                    <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-2'>
+                      <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
+                        Reason to Join Platform
+                      </h3>
+                      <div>
+                        <div className='flex flex-wrap gap-2'>
+                          {reason_to_join
+                            ? reason_to_join.map((reason, index) => (
                                 <span
                                   key={index}
                                   className='border-2 border-gray-500 rounded-full text-gray-700 text-xs px-3 py-1 bg-gray-100'
                                 >
                                   {reason}
                                 </span>
-                              )
-                            )}
-                          </div>
+                              ))
+                            : 'No reason provided.'}
                         </div>
                       </div>
                       <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-2 '>
@@ -177,8 +215,8 @@ const DiscoverUserModal = ({ openDetail, setOpenDetail, userData }) => {
                         </h3>
                         <div>
                           <div className='flex flex-wrap gap-2'>
-                            {userData?.area_of_interest &&
-                              userData.area_of_interest
+                            {area_of_interest &&
+                              area_of_interest
                                 .split(', ')
                                 ?.map((interest, index) => (
                                   <span
@@ -192,8 +230,7 @@ const DiscoverUserModal = ({ openDetail, setOpenDetail, userData }) => {
                         </div>
                       </div>
 
-                      {/* Location Section */}
-                      <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-2 '>
+                      <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-2'>
                         <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
                           Location
                         </h3>
@@ -206,29 +243,29 @@ const DiscoverUserModal = ({ openDetail, setOpenDetail, userData }) => {
                       </div>
 
                       <div className='p-2 group relative hover:bg-gray-100 rounded-lg'>
-                        {userData?.social_links[0] && (
-                          <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase '>
+                        {social_links && (
+                          <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
                             LINKS
                           </h3>
                         )}
-
-                        <div className='flex items-center '>
+                        <div className='flex items-center'>
                           <div className='flex gap-3'>
-                            {userData?.social_links[0]?.map((linkObj, i) => {
-                              const link = linkObj.link[0]; // Assuming the link is in this format
-                              const icon = getSocialLogo(link);
-                              return (
-                                <a
-                                  key={i}
-                                  href={link}
-                                  target='_blank'
-                                  rel='noopener noreferrer'
-                                  className='flex items-center space-x-2'
-                                >
-                                  {icon}
-                                </a>
-                              );
-                            })}
+                            {social_links &&
+                              social_links.map((linkObj, i) => {
+                                const link = linkObj.link[0];
+                                const icon = getSocialLogo(link);
+                                return (
+                                  <a
+                                    key={i}
+                                    href={link}
+                                    target='_blank'
+                                    rel='noopener noreferrer'
+                                    className='flex items-center space-x-2'
+                                  >
+                                    {icon}
+                                  </a>
+                                );
+                              })}
                           </div>
                         </div>
                       </div>

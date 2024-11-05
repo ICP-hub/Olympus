@@ -76,8 +76,15 @@ const AssociationRecieverProjectSideDataFromMentor = ({
     'No social links available';
 
   // Sender Data
-  let senderDataProject = user?.sender_data?.[0][0] ?? {}; // Project data at index 0
-  let senderDataUser = user?.sender_data?.[0][1] ?? {}; // User data at index 1
+  let senderDataProject =
+    Array.isArray(user?.sender_data) && user.sender_data[0]?.[0]
+      ? user.sender_data[0][0]
+      : {}; // Project data at index 0
+  let senderDataUser =
+    Array.isArray(user?.sender_data) && user.sender_data[0]?.[1]
+      ? user.sender_data[0][1]
+      : {}; // Project data at index 0
+  // User data at index 1
 
   // Project Details (Index 0)
   let projectName =

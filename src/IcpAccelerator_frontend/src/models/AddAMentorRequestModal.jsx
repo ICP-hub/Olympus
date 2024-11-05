@@ -7,6 +7,8 @@ import Select from 'react-select';
 import Avatar from '@mui/material/Avatar';
 import mentor from '../../assets/Logo/talent.png';
 import vc from '../../assets/Logo/Avatar3.png';
+import project from '../../assets/Logo/founder.png';
+import { useDispatch, useSelector } from 'react-redux';
 import RequestSuccessModal from '../components/Modals/RequestSuccessModal';
 const schema = yup
   .object({
@@ -24,6 +26,23 @@ const AddAMentorRequestModal = ({
   projectProfile,
   projectName,
 }) => {
+  const userCurrentRoleStatusActiveRole = useSelector(
+    (currState) => currState.currentRoleStatus.activeRole
+  );
+  const userCurrentRoleStatus = useSelector(
+    (currState) => currState.currentRoleStatus.rolesStatusArray
+  );
+
+  const isMentorApproved = userCurrentRoleStatus.some(
+    (role) => role.name === 'mentor' && role.approval_status === 'approved'
+  );
+  const isVcApproved = userCurrentRoleStatus.some(
+    (role) => role.name === 'vc' && role.approval_status === 'approved'
+  );
+  const isProjectApproved = userCurrentRoleStatus.some(
+    (role) => role.name === 'project' && role.approval_status === 'approved'
+  );
+  console.log('userCurrentRoleStatus', userCurrentRoleStatus);
   const {
     register,
     handleSubmit,
@@ -33,35 +52,109 @@ const AddAMentorRequestModal = ({
     mode: 'all',
   });
   const associationOptions = [
-    {
-      value: 'mentor',
-      label: (
-        <div className='flex items-center justify-start'>
-          <Avatar
-            alt='Mentor'
-            src={mentor}
-            style={{ width: '24px', height: '24px' }}
-            className='mr-2'
-          />
-          <span className='font-semibold'>Mentor</span>
-        </div>
-      ),
-    },
-    {
-      value: 'vc',
-      label: (
-        <div className='flex items-center justify-start'>
-          <Avatar
-            alt='Investor'
-            src={vc}
-            style={{ width: '24px', height: '24px' }}
-            className='mr-2'
-          />
-          <span className='font-semibold'>Investor</span>
-        </div>
-      ),
-    },
+    ...(userCurrentRoleStatusActiveRole === 'mentor' ||
+    userCurrentRoleStatusActiveRole === 'vc'
+      ? [
+          // Case 1: If mentor is approved and vc is not approved, show mentor only
+          ...(isMentorApproved && !isVcApproved
+            ? [
+                {
+                  value: 'mentor',
+                  label: (
+                    <div className='flex items-center justify-start'>
+                      <Avatar
+                        alt='Mentor'
+                        src={mentor}
+                        style={{ width: '24px', height: '24px' }}
+                        className='mr-2'
+                      />
+                      <span className='font-semibold'>Mentor</span>
+                    </div>
+                  ),
+                },
+              ]
+            : []),
+
+          // Case 2: If vc is approved and mentor is not approved, show vc only
+          ...(!isMentorApproved && isVcApproved
+            ? [
+                {
+                  value: 'vc',
+                  label: (
+                    <div className='flex items-center justify-start'>
+                      <Avatar
+                        alt='Investor'
+                        src={vc}
+                        style={{ width: '24px', height: '24px' }}
+                        className='mr-2'
+                      />
+                      <span className='font-semibold'>Investor</span>
+                    </div>
+                  ),
+                },
+              ]
+            : []),
+
+          // Case 3: If both mentor and vc are approved, show both
+          ...(isMentorApproved && isVcApproved
+            ? [
+                {
+                  value: 'mentor',
+                  label: (
+                    <div className='flex items-center justify-start'>
+                      <Avatar
+                        alt='Mentor'
+                        src={mentor}
+                        style={{ width: '24px', height: '24px' }}
+                        className='mr-2'
+                      />
+                      <span className='font-semibold'>Mentor</span>
+                    </div>
+                  ),
+                },
+                {
+                  value: 'vc',
+                  label: (
+                    <div className='flex items-center justify-start'>
+                      <Avatar
+                        alt='Investor'
+                        src={vc}
+                        style={{ width: '24px', height: '24px' }}
+                        className='mr-2'
+                      />
+                      <span className='font-semibold'>Investor</span>
+                    </div>
+                  ),
+                },
+              ]
+            : []),
+        ]
+      : []),
+
+    // Case 4: If project is approved, show project only if the active role is 'project'
+    ...(userCurrentRoleStatusActiveRole === 'project' && isProjectApproved
+      ? [
+          {
+            value: 'project',
+            label: (
+              <div className='flex items-center justify-start'>
+                <Avatar
+                  alt='Project'
+                  src={project}
+                  style={{ width: '24px', height: '24px' }}
+                  className='mr-2'
+                />
+                <span className='font-semibold'>Project</span>
+              </div>
+            ),
+          },
+        ]
+      : []),
+
+    // Case 5: If project is not approved, do not show it
+    ...(!isProjectApproved ? [] : []),
   ];
+
   const handleAssociationTypeChange = (selectedOption) => {
     setSelectedAssociationType(selectedOption);
   };
@@ -121,7 +214,7 @@ const AddAMentorRequestModal = ({
                 value={selectedAssociationType}
                 onChange={handleAssociationTypeChange}
                 className='w-full'
-                placeholder='Request as'
+                placeholder='Request to'
                 menuPortalTarget={document.body}
                 menuPlacement='auto'
                 styles={{

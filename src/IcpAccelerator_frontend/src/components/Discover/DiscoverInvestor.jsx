@@ -36,7 +36,9 @@ const DiscoverInvestor = ({ onInvestorCountChange }) => {
   const [hasMore, setHasMore] = useState(true);
   const [isFetching, setIsFetching] = useState(false);
   const [currentPrincipal, setCurrentPrincipal] = useState([]);
-
+  const [selectedAssociationType, setSelectedAssociationType] = useState(null);
+  const [projectProfile, setProjectProfile] = useState(null);
+  const [projectName, setProjectName] = useState(null);
   const isAuthenticated = useSelector(
     (currState) => currState.internet.isAuthenticated
   );
@@ -59,8 +61,10 @@ const DiscoverInvestor = ({ onInvestorCountChange }) => {
     setInvestorId(null);
     setIsAddInvestorModalOpen(false);
   };
-  const handleInvestorOpenModal = (val) => {
+  const handleInvestorOpenModal = (val, profile, full_name) => {
     setInvestorId(val);
+    setProjectProfile(profile);
+    setProjectName(full_name);
     setIsAddInvestorModalOpen(true);
   };
 
@@ -265,7 +269,13 @@ const DiscoverInvestor = ({ onInvestorCountChange }) => {
                       {userCurrentRoleStatusActiveRole === 'project' ? (
                         <button
                           data-tooltip-id='registerTip'
-                          onClick={() => handleInvestorOpenModal(investor_id)}
+                          onClick={() =>
+                            handleInvestorOpenModal(
+                              investor_id,
+                              profile,
+                              full_name
+                            )
+                          }
                         >
                           <RiSendPlaneLine />
                           <Tooltip
@@ -331,10 +341,14 @@ const DiscoverInvestor = ({ onInvestorCountChange }) => {
       </div>
       {isAddInvestorModalOpen && (
         <AddAMentorRequestModal
-          title={'Associate Investor'}
+          title={'Request to Associate a Investor'}
           onClose={handleInvestorCloseModal}
           onSubmitHandler={handleAddInvestor}
           isSubmitting={isSubmitting}
+          selectedAssociationType={selectedAssociationType}
+          setSelectedAssociationType={setSelectedAssociationType}
+          projectProfile={projectProfile}
+          projectName={projectName}
         />
       )}
       {openDetail && (

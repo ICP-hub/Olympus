@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined';
 import { useSelector } from 'react-redux';
@@ -12,14 +12,10 @@ import useTimeout from '../../hooks/TimeOutHook';
 import { FaFilter } from 'react-icons/fa';
 import StarIcon from '@mui/icons-material/Star';
 import DiscoverUserModal from '../DashboardHomePage/discoverMentorPage/DiscoverUserModal';
-const AttendeesCard = ({ member, appliedRole, handleClick }) => {
-  // const [openDetail, setOpenDetail] = useState(false);
-  // const [cardDetail, setCardDetail] = useState(null);
-  // const handleClick = (member) => {
-  //   setOpenDetail(true);
-  //   setCardDetail(member);
-  // };
-  console.log('member-450 ', member);
+import Rating1 from '../../Modals/RatingModals/Rating1';
+const AttendeesCard = ({ member, appliedRole, handleClick, handleRating }) => {
+  const onRateClick = () => handleRating(member?.role, member?.uid);
+
   return (
     <div className='flex flex-col md:flex-row items-center p-4 bg-white shadow-md rounded-lg mb-6 transition-all hover:shadow-lg'>
       <div className='flex justify-center md:justify-start mb-4 md:mb-0'>
@@ -55,15 +51,19 @@ const AttendeesCard = ({ member, appliedRole, handleClick }) => {
                 >
                   View Profile
                 </button>
-
-                <button className='w-full md:w-auto flex items-center justify-center text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-1 rounded-md shadow-sm border border-gray-200 hover:border-gray-700'>
-                  <StarIcon
-                    className='mr-1 text-white'
-                    fontSize='small'
-                    style={{ stroke: 'black', strokeWidth: 1 }}
-                  />
-                  Rate
-                </button>
+                {member.role === 'Project' && (
+                  <button
+                    className='w-full md:w-auto flex items-center justify-center text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-1 rounded-md shadow-sm border border-gray-200 hover:border-gray-700'
+                    onClick={onRateClick}
+                  >
+                    <StarIcon
+                      className='mr-1 text-white'
+                      fontSize='small'
+                      style={{ stroke: 'black', strokeWidth: 1 }}
+                    />
+                    Rate
+                  </button>
+                )}
               </div>
             </div>
 
@@ -101,15 +101,19 @@ const AttendeesCard = ({ member, appliedRole, handleClick }) => {
               >
                 View Profile
               </button>
-
-              <button className='w-full md:w-auto flex items-center justify-center text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-1 rounded-md shadow-sm border border-gray-200 hover:border-gray-700'>
-                <StarIcon
-                  className='mr-1 text-white'
-                  fontSize='small'
-                  style={{ stroke: 'black', strokeWidth: 1 }}
-                />
-                Rate
-              </button>
+              {member.role === 'Project' && (
+                <button
+                  className='w-full md:w-auto flex items-center justify-center text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-1 rounded-md shadow-sm border border-gray-200 hover:border-gray-700'
+                  onClick={onRateClick}
+                >
+                  <StarIcon
+                    className='mr-1 text-white'
+                    fontSize='small'
+                    style={{ stroke: 'black', strokeWidth: 1 }}
+                  />
+                  Rate
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -127,6 +131,8 @@ const Attendees = (cohortData) => {
   const [loading, setLoading] = useState(false);
   const [openDetail, setOpenDetail] = useState(false);
   const [cardDetail, setCardDetail] = useState(null);
+  const [projectId, setProjectId] = useState(null);
+  const [attendeeRole, setAttendeeRole] = useState(null);
   const actor = useSelector((currState) => currState.actors.actor);
   const location = useLocation();
   useTimeout(() => setLoading(false));
@@ -167,7 +173,7 @@ const Attendees = (cohortData) => {
       default:
         return [];
     }
-
+    console.log('result: ', result);
     if (result?.Ok && Array.isArray(result.Ok)) {
       console.log('my attendees data in result 145', result);
       return result.Ok.map((item) => ({
@@ -182,7 +188,10 @@ const Attendees = (cohortData) => {
           : [],
         reason_to_join: item[1].params.reason_to_join[0],
         social_links: item[1].params.social_links[0],
+        type_of_profile: item[1].params.type_of_profile[0],
         badges: item[1].params.badges || [],
+        uid: item[0]?.uid || '',
+        userPrincipal: item[2] || '',
       }));
     } else {
       return [];
@@ -193,6 +202,13 @@ const Attendees = (cohortData) => {
     setOpenDetail(true);
     setCardDetail(member);
   };
+  const [isRating, setIsRating] = useState(false);
+  console.log('isRating', isRating);
+  const handleRating = useCallback((member, projectId) => {
+    setIsRating(true);
+    setAttendeeRole(member);
+    setProjectId(projectId);
+  }, []);
 
   const handleApply = async () => {
     setShowMenu(false);
@@ -224,7 +240,7 @@ const Attendees = (cohortData) => {
           role: selectedRole,
         }));
       }
-
+      console.log('attendes', data);
       setAttendees(data);
       setNoData(data.length === 0);
       if (data.length === 0) {
@@ -387,6 +403,7 @@ const Attendees = (cohortData) => {
                 member={member}
                 appliedRole={appliedRole}
                 handleClick={handleClick}
+                handleRating={handleRating}
               />
             ))
           )}
@@ -396,6 +413,15 @@ const Attendees = (cohortData) => {
               openDetail={openDetail}
               setOpenDetail={setOpenDetail}
               userData={cardDetail}
+              value={true}
+            />
+          )}
+          {isRating && (
+            <Rating1
+              position={'center'}
+              projectId={projectId}
+              isRating={isRating}
+              setIsRating={setIsRating}
             />
           )}
         </div>

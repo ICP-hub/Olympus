@@ -39,7 +39,11 @@ const EventRequestCard = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [listProjectId, setListProjectId] = useState(null);
   const [listCohortId, setListCohortId] = useState(null);
+  const [listEnrollmentPrincipal, setListEnrollmentPrincipal] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [selectedAssociationType, setSelectedAssociationType] = useState(null);
+  const [projectProfile, setProjectProfile] = useState(null);
+  const [projectName, setProjectName] = useState(null);
   useTimeout(() => setLoading(false));
   const toggleFilter = () => {
     setFilterOpen(!filterOpen);
@@ -58,105 +62,186 @@ const EventRequestCard = () => {
     setSelectedUserData(userData);
     setOpenUserModal(true);
   };
-  // console.log("data user ka ",selectedUserData);
-  const handleCloseModal = () => {
-    setOpenUserModal(false);
-    setSelectedUserData(null);
-  };
 
+  const [isAddProjectModalOpenAsInvestor, setIsAddProjectModalOpenAsInvestor] =
+    useState(false);
+  const [isAddMentorModalOpen, setIsAddMentorModalOpen] = useState(false);
+  const [isAddInvestorModalOpen, setIsAddInvestorModalOpen] = useState(false);
   const [isAddProjectModalOpen, setIsAddProjectModalOpen] = useState(false);
 
-  const handleProjectCloseModal = () => setIsAddProjectModalOpen(false);
-  const handleProjectOpenModal = (val) => {
-    setListProjectId(val);
-    setIsAddProjectModalOpen(true);
+  const handleProjectCloseModal = () => {
+    if (selectedAssociationType && selectedAssociationType.value === 'mentor') {
+      setIsAddProjectModalOpen(false);
+    } else {
+      setIsAddProjectModalOpenAsInvestor(false);
+    }
   };
+  const handleProjectOpenModal = (
+    val,
+    cohortId,
+    profile,
+    name,
+    enroller_principal
+  ) => {
+    if (appliedCategory === 'project_data') {
+      setListProjectId(val);
+      setListCohortId(cohortId);
+      setListEnrollmentPrincipal(enroller_principal);
+      setProjectProfile(profile);
+      setProjectName(name);
+      setIsAddProjectModalOpen(true);
+    } else if (appliedCategory === 'mentor_data') {
+      setListProjectId(val);
+      setListCohortId(cohortId);
+      setListEnrollmentPrincipal(enroller_principal);
+      setProjectProfile(profile);
+      setProjectName(name);
+      setIsAddMentorModalOpen(true);
+    } else if (appliedCategory === 'vc_data') {
+      setListProjectId(val);
+      setListCohortId(cohortId);
+      setListEnrollmentPrincipal(enroller_principal);
+      setProjectProfile(profile);
+      setProjectName(name);
+      setIsAddInvestorModalOpen(true);
+    }
+  };
+  console.log('listEnrollmentPrincipal', listEnrollmentPrincipal);
 
-  // ASSOCIATE IN A PROJECT HANDLER AS A MENTOR
-  const handleAddProject = async ({ message }) => {
+  const handleAddProjectByType = async ({ message }) => {
     setIsSubmitting(true);
-    console.log('add into a project');
-    if (actor && principal) {
-      let project_id = listProjectId;
-      let msg = message;
-      let mentor_id = Principal.fromText(principal);
-      let is_cohort_association = true;
-      let cohort_id = listCohortId;
-      console.log('Data before sending', project_id, msg, mentor_id.toText());
 
-      await actor
-        .send_offer_to_project_by_mentor(
+    const project_id = listProjectId;
+    const msg = message;
+    const is_cohort_association = true;
+    const cohort_id =
+      selectedAssociationType.value === 'mentor'
+        ? listCohortId
+        : [listCohortId];
+    const mentor_id = listEnrollmentPrincipal
+      ? Principal.fromText(listEnrollmentPrincipal)
+      : '';
+
+    try {
+      if (
+        selectedAssociationType &&
+        selectedAssociationType.value === 'mentor' &&
+        actor &&
+        mentor_id
+      ) {
+        console.log('add into a project AS MENTOR');
+
+        const result = await actor.send_offer_to_project_by_mentor(
           project_id,
           msg,
           mentor_id,
           is_cohort_association,
           cohort_id
-        )
-        .then((result) => {
-          console.log('result-in-send_offer_to_project_by_mentor', result);
-          if (result) {
-            handleProjectCloseModal();
-            setIsSubmitting(false);
-            toast.success('offer sent to project successfully');
-          } else {
-            handleProjectCloseModal();
-            setIsSubmitting(false);
-            toast.error('something got wrong');
-          }
-        })
-        .catch((error) => {
-          console.log('error-in-send_offer_to_project_by_mentor', error);
-          setIsSubmitting(false);
-          handleProjectCloseModal();
-          toast.error('something got wrong');
-        });
-    }
-  };
+        );
 
-  const [isAddProjectModalOpenAsInvestor, setIsAddProjectModalOpenAsInvestor] =
-    useState(false);
-
-  const handleProjectCloseModalAsInvestor = () => {
-    setIsAddProjectModalOpenAsInvestor(false);
-  };
-  const handleProjectOpenModalAsInvestor = (project_id, cohort_id) => {
-    setListProjectId(project_id);
-    setListCohortId(cohort_id);
-    setIsAddProjectModalOpenAsInvestor(true);
-  };
-
-  // ASSOCIATE IN A PROJECT HANDLER AS A Investor
-  const handleAddProjectAsInvestor = async ({ message }) => {
-    setIsSubmitting(true);
-    console.log('add into a project AS INVESTOR');
-    if (actor) {
-      let project_id = listProjectId;
-      let msg = message;
-      let is_cohort_association = true;
-      let cohort_id = listCohortId ? [listCohortId] : [];
-      await actor
-        .send_offer_to_project_by_investor(
+        if (result) {
+          toast.success('Offer sent to project successfully');
+        } else {
+          toast.error('Something went wrong');
+        }
+      } else if (
+        selectedAssociationType &&
+        selectedAssociationType.value === 'vc' &&
+        actor
+      ) {
+        console.log('add into a project AS INVESTOR');
+        const result = await actor.send_offer_to_project_by_investor(
           project_id,
           msg,
           is_cohort_association,
           cohort_id
+        );
+
+        if (result) {
+          toast.success('Offer sent to project successfully');
+        } else {
+          toast.error('Something went wrong');
+        }
+      } else {
+        throw new Error('Invalid association type or missing data');
+      }
+    } catch (error) {
+      console.log('error-in-send_offer', error);
+      toast.error('Something went wrong');
+    } finally {
+      handleProjectCloseModal();
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleAddMentor = async ({ message }) => {
+    setIsSubmitting(true);
+    if (actor && listEnrollmentPrincipal) {
+      let mentor_id = Principal.fromText(listEnrollmentPrincipal);
+      let msg = message;
+      let project_id = listProjectId;
+      let is_cohort_association = true;
+      let cohort_id = listCohortId ? [listCohortId] : [];
+      await actor
+        .send_offer_to_mentor_from_project(
+          mentor_id,
+          msg,
+          project_id,
+          is_cohort_association,
+          cohort_id
         )
         .then((result) => {
-          console.log('result-in-send_offer_to_project_by_investor', result);
+          console.log('result', result);
           if (result) {
-            handleProjectCloseModalAsInvestor();
             setIsSubmitting(false);
-            // fetchProjectData();
-            toast.success('offer sent to project successfully');
+            handleMentorCloseModal();
+            toast.success(result);
           } else {
-            handleProjectCloseModalAsInvestor();
+            setIsSubmitting(false);
+            handleMentorCloseModal();
+            toast.error('something went wrong');
+          }
+        })
+        .catch((error) => {
+          console.error('error-in-send_offer_to_mentor_from_project', error);
+          handleMentorCloseModal();
+          setIsSubmitting(false);
+          toast.error('something went wrong');
+        });
+    }
+  };
+  const handleAddInvestor = async ({ message }) => {
+    setIsSubmitting(true);
+    console.log('add a investor');
+    if (actor && listEnrollmentPrincipal) {
+      let investor_id = Principal.fromText(listEnrollmentPrincipal);
+      let msg = message;
+      let project_id = listProjectId;
+      let is_cohort_association = true;
+      let cohort_id = listCohortId ? [listCohortId] : [];
+      await actor
+        .send_offer_to_investor_by_project(
+          investor_id,
+          msg,
+          project_id,
+          is_cohort_association,
+          cohort_id
+        )
+        .then((result) => {
+          console.log('result-in-send_offer_to_investor', result);
+          if (result) {
+            handleInvestorCloseModal();
+            setIsSubmitting(false);
+            toast.success(result);
+          } else {
+            handleInvestorCloseModal();
             setIsSubmitting(false);
             toast.error('something got wrong');
           }
         })
         .catch((error) => {
-          console.log('error-in-send_offer_to_project_by_investor', error);
-          handleProjectCloseModalAsInvestor();
+          console.log('error-in-send_offer_to_investor', error);
+          handleInvestorCloseModal();
           setIsSubmitting(false);
           toast.error('something got wrong');
         });
@@ -427,7 +512,16 @@ const EventRequestCard = () => {
           const reason =
             event.enroller_data.user_data[0]?.params.reason_to_join;
           const project_id = event.enroller_data?.project_data?.[0]?.uid;
+          const projectname =
+            event.enroller_data?.project_data?.[0]?.params?.project_name;
+          const projectlogo = event.enroller_data?.project_data?.[0]?.params
+            ?.project_logo[0]
+            ? uint8ArrayToBase64(
+                event.enroller_data?.project_data?.[0]?.params?.project_logo[0]
+              )
+            : ProfileImage;
           const cohort_id = event?.cohort_details?.cohort_id;
+          const enrollerPrincipal = event?.enroller_principal;
 
           const userData = {
             profileImage: profileImageSrc,
@@ -484,20 +578,20 @@ const EventRequestCard = () => {
                       {title}
                     </h3>
 
-                    {userCurrentRoleStatusActiveRole === 'mentor' ||
-                    userCurrentRoleStatusActiveRole === 'vc' ? (
+                    {(userCurrentRoleStatusActiveRole === 'mentor' ||
+                      userCurrentRoleStatusActiveRole === 'vc') &&
+                    appliedCategory === 'project_data' ? (
                       <button
                         className='mt-2'
                         data-tooltip-id='registerTip'
                         onClick={() => {
-                          if (userCurrentRoleStatusActiveRole === 'mentor') {
-                            handleProjectOpenModal(project_id, cohort_id);
-                          } else if (userCurrentRoleStatusActiveRole === 'vc') {
-                            handleProjectOpenModalAsInvestor(
-                              project_id,
-                              cohort_id
-                            );
-                          }
+                          handleProjectOpenModal(
+                            project_id,
+                            cohort_id,
+                            projectlogo,
+                            projectname,
+                            enrollerPrincipal
+                          );
                         }}
                       >
                         <RiSendPlaneLine />
@@ -506,6 +600,52 @@ const EventRequestCard = () => {
                           place='top'
                           effect='solid'
                           className='rounded-full z-10'
+                        >
+                          Send Association Request
+                        </Tooltip>
+                      </button>
+                    ) : appliedCategory === 'mentor_data' ? (
+                      <button
+                        data-tooltip-id='registerTip'
+                        onClick={() =>
+                          handleProjectOpenModal(
+                            project_id,
+                            cohort_id,
+                            profileImageSrc,
+                            fullname,
+                            enrollerPrincipal
+                          )
+                        }
+                      >
+                        <RiSendPlaneLine />
+                        <Tooltip
+                          id='registerTip'
+                          place='top'
+                          effect='solid'
+                          className='rounded-full z-50'
+                        >
+                          Send Association Request
+                        </Tooltip>
+                      </button>
+                    ) : appliedCategory === 'vc_data' ? (
+                      <button
+                        data-tooltip-id='registerTip'
+                        onClick={() =>
+                          handleProjectOpenModal(
+                            project_id,
+                            cohort_id,
+                            profileImageSrc,
+                            fullname,
+                            enrollerPrincipal
+                          )
+                        }
+                      >
+                        <RiSendPlaneLine />
+                        <Tooltip
+                          id='registerTip'
+                          place='top'
+                          effect='solid'
+                          className='rounded-full z-50'
                         >
                           Send Association Request
                         </Tooltip>
@@ -637,18 +777,39 @@ const EventRequestCard = () => {
       )}
       {isAddProjectModalOpen && (
         <AddAMentorRequestModal
-          title={'Associate Project'}
+          title={'Request to Associate a Project'}
           onClose={handleProjectCloseModal}
-          onSubmitHandler={handleAddProject}
+          onSubmitHandler={handleAddProjectByType}
           isSubmitting={isSubmitting}
+          selectedAssociationType={selectedAssociationType}
+          setSelectedAssociationType={setSelectedAssociationType}
+          projectProfile={projectProfile}
+          projectName={projectName}
         />
       )}
-      {isAddProjectModalOpenAsInvestor && (
+
+      {isAddInvestorModalOpen && (
         <AddAMentorRequestModal
-          title={'Associate Project'}
-          onClose={handleProjectCloseModalAsInvestor}
-          onSubmitHandler={handleAddProjectAsInvestor}
+          title={'Request to Associate a Investor'}
+          onClose={handleInvestorCloseModal}
+          onSubmitHandler={handleAddInvestor}
           isSubmitting={isSubmitting}
+          selectedAssociationType={selectedAssociationType}
+          setSelectedAssociationType={setSelectedAssociationType}
+          projectProfile={projectProfile}
+          projectName={projectName}
+        />
+      )}
+      {isAddMentorModalOpen && (
+        <AddAMentorRequestModal
+          title={'Request to Associate a Mentor'}
+          onClose={handleMentorCloseModal}
+          onSubmitHandler={handleAddMentor}
+          isSubmitting={isSubmitting}
+          selectedAssociationType={selectedAssociationType}
+          setSelectedAssociationType={setSelectedAssociationType}
+          projectProfile={projectProfile}
+          projectName={projectName}
         />
       )}
       {openUserModal && (

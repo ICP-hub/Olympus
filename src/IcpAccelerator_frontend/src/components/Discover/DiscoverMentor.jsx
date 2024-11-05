@@ -41,6 +41,9 @@ const DiscoverMentor = ({ onMentorCountChange }) => {
   const userCurrentRoleStatusActiveRole = useSelector(
     (currState) => currState.currentRoleStatus.activeRole
   );
+  const [selectedAssociationType, setSelectedAssociationType] = useState(null);
+  const [projectProfile, setProjectProfile] = useState(null);
+  const [projectName, setProjectName] = useState(null);
   useTimeout(() => setIsLoading(false));
   const projectFullData = useSelector(
     (currState) => currState.projectData.data
@@ -109,8 +112,10 @@ const DiscoverMentor = ({ onMentorCountChange }) => {
     setMentorId(null);
     setIsAddMentorModalOpen(false);
   };
-  const handleMentorOpenModal = (val) => {
+  const handleMentorOpenModal = (val, profile, full_name) => {
     setMentorId(val);
+    setProjectProfile(profile);
+    setProjectName(full_name);
     setIsAddMentorModalOpen(true);
   };
 
@@ -258,7 +263,9 @@ const DiscoverMentor = ({ onMentorCountChange }) => {
                       {userCurrentRoleStatusActiveRole === 'project' ? (
                         <button
                           data-tooltip-id='registerTip'
-                          onClick={() => handleMentorOpenModal(mentor_id)}
+                          onClick={() =>
+                            handleMentorOpenModal(mentor_id, profile, full_name)
+                          }
                         >
                           <RiSendPlaneLine />
                           <Tooltip
@@ -343,10 +350,14 @@ const DiscoverMentor = ({ onMentorCountChange }) => {
       )}
       {isAddMentorModalOpen && (
         <AddAMentorRequestModal
-          title={'Associate Mentor'}
+          title={'Request to Associate a Mentor'}
           onClose={handleMentorCloseModal}
           onSubmitHandler={handleAddMentor}
           isSubmitting={isSubmitting}
+          selectedAssociationType={selectedAssociationType}
+          setSelectedAssociationType={setSelectedAssociationType}
+          projectProfile={projectProfile}
+          projectName={projectName}
         />
       )}
     </>

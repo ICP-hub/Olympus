@@ -3,25 +3,24 @@ import CloseIcon from '@mui/icons-material/Close';
 import { Toaster } from 'react-hot-toast';
 import RatingMain from './RatingMain'; // Import the RatingMain component
 
-const Rating1 = ({ position, projectId }) => {
-  const [isModalOpen, setIsModalOpen] = useState(true); // Controls visibility of Rating1 modal
+const Rating1 = ({ position, projectId, isRating, setIsRating }) => {
   const [isRatingMainOpen, setIsRatingMainOpen] = useState(false); // Controls visibility of RatingMain modal
 
   // Close the current modal
   const handleCloseModal = () => {
-    setIsModalOpen(false);
+    setIsRating(false);
   };
 
   // Handle continue button to switch from Rating1 to RatingMain
   const handleContinue = () => {
-    setIsModalOpen(false); // Close Rating1 modal
+    setIsRating(false); // Close Rating1 modal
     setIsRatingMainOpen(true); // Open RatingMain modal
   };
 
   return (
     <>
-      {/* Only show Rating1 if isModalOpen is true */}
-      {isModalOpen && (
+      {/* Only show Rating1 if isRating is true */}
+      {isRating && (
         <div
           className={`fixed inset-0 z-50 flex items-center justify-${position} bg-black bg-opacity-50`}
         >

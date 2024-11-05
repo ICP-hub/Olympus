@@ -225,6 +225,7 @@ const DiscoverUser = ({ onUserCountChange }) => {
           openDetail={openDetail}
           setOpenDetail={setOpenDetail}
           userData={cardDetail}
+          value={false}
         />
       )}
     </>

@@ -22,6 +22,7 @@ const AssociationDetailsProjectCard = ({
   selectedTypeData,
   activeTabData,
 }) => {
+  console.log('user', user);
   console.log('selectedTypeData', selectedTypeData);
   const actor = useSelector((currState) => currState.actors.actor);
   const [openDetail, setOpenDetail] = useState(false);
