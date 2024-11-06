@@ -197,9 +197,12 @@ const MentorEdit = () => {
       ],
       category_of_mentoring_service: data?.category_of_mentoring_service,
       years_of_mentoring: data.years_of_mentoring.toString(),
-      multichain: Array.isArray(data.multi_chain_names)
-        ? data.multi_chain_names
+      multichain: data.multi_chain_names
+        ? [data.multi_chain_names.split(',').map((chain) => chain.trim())]
         : [],
+      // multichain: data.multichain === true
+      // ? data.multi_chain_names.split(',').map((chain) => chain.trim())
+      // : [],
       website: [data?.mentor_website_url || ''],
       existing_icp_mentor: false,
       existing_icp_project_porfolio: data.existing_icp_project_porfolio
@@ -488,7 +491,7 @@ const MentorEdit = () => {
   const mentor_website_url = mentorFullData[0]?.profile?.website?.[0] ?? '';
   const years_of_mentoring =
     mentorFullData[0]?.profile?.years_of_mentoring ?? '';
-  const multichain = multi_chain === true ? 'Yes' : 'No';
+  const multichain = multi_chain ? 'Yes' : 'No';
   console.log('domains_interested_in', area_of_expertise);
   return isLoading ? (
     <MentorEditSkeleton />
