@@ -298,7 +298,7 @@ function DashboardHomeNavbar({ id, id2 }) {
   };
 
   return (
-    <nav className='bg-[#FFF4ED] py-3 px-4 md:px-12 md:pl-1 flex items-center justify-end relative lg:pb-8'>
+    <nav className='bg-[#FFF4ED] py-3 px-4 md:px-8 dlg:px-12 md:pl-1 dlg:pl-1 xl2:px-16 xl2:pl-1 flex items-center justify-end relative lg:pb-8'>
       <button
         onClick={() => setIsOpen(!isOpen)}
         className='lg:hidden absolute right-2'
@@ -324,7 +324,7 @@ function DashboardHomeNavbar({ id, id2 }) {
       </div>
 
       <div className='flex items-center space-x-4 mr-6 md:mr-0 '>
-        <span className='mr-3 mt-2'>
+        <span className='mr-2 mt-2'>
           <BellIconWithBadge
             notificationCount={notifications?.Ok?.length}
             onClick={toggleNotificationDropdown}
