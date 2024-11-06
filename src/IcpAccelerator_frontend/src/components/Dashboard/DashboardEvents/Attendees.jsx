@@ -34,26 +34,26 @@ const AttendeesCard = ({ member, appliedRole, handleClick, handleRating }) => {
         <div className='flex flex-col md:flex-row md:items-center'>
           <div className='flex-1'>
             <div className='flex justify-between items-center'>
-              <h4 className='text-lg font-bold text-[#2C3E50] truncate flex'>
-                <span className='inline-block max-w-[70%] md:max-w-none truncate'>
+              <h4 className='text-lg font-bold text-[#2C3E50]  items-center'>
+                <span className='inline-block max-w-[150px] md:max-w-[200px] truncate'>
                   {member.full_name}
                 </span>
-                <span className='bg-[#eff3f5] border-[#70b2e9] border font-normal text-[#181b1e] rounded-md text-sm px-3 py-1 mx-2 mb-2 inline-block'>
+                <span className='bg-[#eff3f5] border-[#70b2e9] border font-normal text-[#181b1e] rounded-md text-sm px-3 py-0.5 mx-2  inline-block line-clamp-1 break-all'>
                   Level 4
                 </span>
               </h4>
 
               {/* Buttons for large screens */}
-              <div className='hidden dlg2:flex space-x-2'>
+              <div className='hidden dxl0:flex space-x-2'>
                 <button
-                  className='block w-full md:w-auto text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-1 rounded-md shadow-sm border border-gray-200 hover:border-gray-700'
+                  className='block w-full md:w-auto text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-0.5 rounded-md shadow-sm border border-gray-200 hover:border-gray-700 line-clamp-1 break-all'
                   onClick={() => handleClick(member)}
                 >
                   View Profile
                 </button>
                 {member.role === 'Project' && (
                   <button
-                    className='w-full md:w-auto flex items-center justify-center text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-1 rounded-md shadow-sm border border-gray-200 hover:border-gray-700'
+                    className='w-full md:w-auto flex items-center justify-center text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-0.5 rounded-md shadow-sm border border-gray-200 hover:border-gray-700'
                     onClick={onRateClick}
                   >
                     <StarIcon
@@ -74,36 +74,36 @@ const AttendeesCard = ({ member, appliedRole, handleClick, handleRating }) => {
 
             {/* Project and User Labels */}
             <div className='flex justify-center md:justify-start space-x-2 mt-2'>
-              <div className='bg-[#fff0eb] border-[#f35454] border text-[#090907] rounded-md text-sm px-3 py-1'>
+              <div className='bg-[#fff0eb] border-[#f35454] border text-[#090907] rounded-md text-sm px-3 py-0.5'>
                 User
               </div>
               {member.role === 'Project' && (
-                <div className='bg-[#daebf3] border-[#70b2e9] border text-[#144579] rounded-md text-sm px-3 py-1'>
+                <div className='bg-[#daebf3] border-[#70b2e9] border text-[#144579] rounded-md text-sm px-3 py-0.5'>
                   Project
                 </div>
               )}
               {member.role === 'Mentor' && (
-                <div className='bg-[#ecf5e7] border-[#5ff470] border text-[#366e1f] rounded-md text-sm px-3 py-1'>
+                <div className='bg-[#ecf5e7] border-[#5ff470] border text-[#366e1f] rounded-md text-sm px-3 py-0.5'>
                   Mentor
                 </div>
               )}
               {member.role === 'Investor' && (
-                <div className='bg-[#f5f5c1] border-[#cbdb42] border text-[#0d0f04] rounded-md text-sm px-3 py-1'>
+                <div className='bg-[#f5f5c1] border-[#cbdb42] border text-[#0d0f04] rounded-md text-sm px-3 py-0.5'>
                   Investor
                 </div>
               )}
             </div>
 
-            <div className='mt-4 space-y-2 md:space-y-0 md:flex md:space-x-2 dlg2:hidden'>
+            <div className='mt-4 space-y-2 md:space-y-0 md:flex md:space-x-2 dxl0:hidden'>
               <button
-                className='block w-full md:w-auto text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-1 rounded-md shadow-sm border border-gray-200 hover:border-gray-700'
+                className='block w-full md:w-auto text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-0.5 rounded-md shadow-sm border border-gray-200 hover:border-gray-700 '
                 onClick={() => handleClick(member)}
               >
                 View Profile
               </button>
               {member.role === 'Project' && (
                 <button
-                  className='w-full md:w-auto flex items-center justify-center text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-1 rounded-md shadow-sm border border-gray-200 hover:border-gray-700'
+                  className='w-full md:w-auto flex items-center justify-center text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-0.5 rounded-md shadow-sm border border-gray-200 hover:border-gray-700'
                   onClick={onRateClick}
                 >
                   <StarIcon
