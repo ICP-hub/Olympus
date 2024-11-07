@@ -69,9 +69,10 @@ function DashboardHomeWelcomeSection({ userName, profileCompletion }) {
   const investorFullData = useSelector(
     (currState) => currState.investorData.data[0]
   );
+  console.log('investorFullData', investorFullData);
   const mentorCompletion = mentorFullData?.[0].profile_completion;
   const projectCompletion = projectFullData?.[0].profile_completion;
-  const investorCompletion = investorFullData?.[0].profile_completion;
+  const investorCompletion = investorFullData?.[1].profile_completion;
   const actor = useSelector((currState) => currState.actors.actor);
   const principal = useSelector((currState) => currState.internet.principal);
   const userCurrentRoleStatus = useSelector(

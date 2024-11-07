@@ -107,11 +107,49 @@
 // };
 
 // export default RatingComponent;
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import RadarChart from './RadarChart';
+import { useSelector } from 'react-redux';
 
-const RatingComponent = () => {
+const RatingComponent = ({ projectId }) => {
   const [activeTab, setActiveTab] = useState('scores');
+  const [rubricRatingData, setRubricRatingData] = useState([]);
+  const [noData, setNoData] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const actor = useSelector((currState) => currState.actors.actor);
+
+  const fetchRubricRating = async () => {
+    if (projectId) {
+      setIsLoading(true);
+
+      try {
+        const result = await actor.get_ratings_by_principal(projectId);
+        console.log('result', result);
+
+        if (!result || result.length === 0) {
+          setNoData(true);
+          setRubricRatingData([]);
+        } else {
+          setRubricRatingData(result?.Ok);
+          setNoData(false);
+        }
+      } catch (error) {
+        setNoData(true);
+        setRubricRatingData([]);
+        console.error('Error fetching rubric:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    } else {
+      console.error('Error fetching rubric:');
+    }
+  };
+
+  useEffect(() => {
+    if (actor) {
+      fetchRubricRating();
+    }
+  }, [actor]);
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
@@ -130,7 +168,7 @@ const RatingComponent = () => {
   ];
 
   const renderScoreBoxes = (score) => {
-    const totalBoxes = 10; // Total boxes to represent score
+    const totalBoxes = 9; // Total boxes to represent score
     const filledBoxes = score; // Number of filled boxes
     const emptyBoxes = totalBoxes - filledBoxes;
 
@@ -198,18 +236,18 @@ const RatingComponent = () => {
       {/* Tab content */}
       {activeTab === 'scores' && (
         <div>
-          {scoresData.map((item, index) => (
+          {rubricRatingData.map((item, index) => (
             <div
               key={index}
               className='md:flex mt-2 md:mt-0 items-center justify-between mb-4'
             >
               <span className='text-[16px] font-medium text-gray-700 w-1/2'>
-                {item.category}:
+                {item?.level_name}:
               </span>
               <div className='flex justify-between mt-1'>
-                {renderScoreBoxes(item.score)}
+                {renderScoreBoxes(item?.rating)}
                 <span className='text-[16px] font-bold text-gray-700 xxs:ml-4 -mt-1'>
-                  {item.score}
+                  {item?.rating}
                 </span>
               </div>
             </div>
@@ -220,7 +258,7 @@ const RatingComponent = () => {
       {activeTab === 'chart' && (
         <div>
           {/* Replace with your chart component */}
-          <RadarChart />
+          <RadarChart rubricRatingData={rubricRatingData} />
         </div>
       )}
     </div>

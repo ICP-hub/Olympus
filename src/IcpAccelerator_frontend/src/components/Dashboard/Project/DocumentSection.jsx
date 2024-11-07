@@ -143,7 +143,7 @@ function DocumentSection() {
             {activeTab === 'rating' && (
               <>
                 <>
-                  <RatingComponent />
+                  <RatingComponent projectId={projectId} />
                 </>
                 <FAQ />
               </>

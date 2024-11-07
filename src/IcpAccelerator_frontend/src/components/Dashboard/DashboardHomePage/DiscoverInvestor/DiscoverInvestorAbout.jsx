@@ -6,7 +6,7 @@ import uint8ArrayToBase64 from '../../../Utils/uint8ArrayToBase64';
 import getSocialLogo from '../../../Utils/navigationHelper/getSocialLogo';
 import useTimeout from '../../../hooks/TimeOutHook';
 import DiscoverMentorProfileSkeleton from '../discoverMentor/discoverMentorSkeleton/DiscoverMentorProfileSkeleton';
-import UserGeneralDetailSkeleton from '../../../profile/skeletonProfile/UserGeneralDetailSkeleton';
+import UserGeneralDetailSkeleton from '../../../Profile/skeletonProfile/UserGeneralDetailSkeleton';
 
 const DiscoverInvestorAbout = ({ investorData }) => {
   const investorProfile = investorData?.[0]?.profile;

@@ -62,19 +62,19 @@ const EventRequestCard = () => {
     setSelectedUserData(userData);
     setOpenUserModal(true);
   };
+  const handleCloseModal = () => {
+    setSelectedUserData('');
+    setOpenUserModal(false);
+  };
 
-  const [isAddProjectModalOpenAsInvestor, setIsAddProjectModalOpenAsInvestor] =
-    useState(false);
   const [isAddMentorModalOpen, setIsAddMentorModalOpen] = useState(false);
   const [isAddInvestorModalOpen, setIsAddInvestorModalOpen] = useState(false);
   const [isAddProjectModalOpen, setIsAddProjectModalOpen] = useState(false);
 
   const handleProjectCloseModal = () => {
-    if (selectedAssociationType && selectedAssociationType.value === 'mentor') {
-      setIsAddProjectModalOpen(false);
-    } else {
-      setIsAddProjectModalOpenAsInvestor(false);
-    }
+    setIsAddProjectModalOpen(false);
+    setIsAddInvestorModalOpen(false);
+    setIsAddMentorModalOpen(false);
   };
   const handleProjectOpenModal = (
     val,
@@ -111,66 +111,66 @@ const EventRequestCard = () => {
   const handleAddProjectByType = async ({ message }) => {
     setIsSubmitting(true);
 
-    const project_id = listProjectId;
-    const msg = message;
-    const is_cohort_association = true;
-    const cohort_id =
-      selectedAssociationType.value === 'mentor'
-        ? listCohortId
-        : [listCohortId];
-    const mentor_id = listEnrollmentPrincipal
-      ? Principal.fromText(listEnrollmentPrincipal)
-      : '';
-
     try {
-      if (
-        selectedAssociationType &&
-        selectedAssociationType.value === 'mentor' &&
-        actor &&
-        mentor_id
-      ) {
-        console.log('add into a project AS MENTOR');
-
-        const result = await actor.send_offer_to_project_by_mentor(
-          project_id,
-          msg,
-          mentor_id,
-          is_cohort_association,
-          cohort_id
-        );
-
-        if (result) {
-          toast.success('Offer sent to project successfully');
-        } else {
-          toast.error('Something went wrong');
-        }
-      } else if (
-        selectedAssociationType &&
-        selectedAssociationType.value === 'vc' &&
-        actor
-      ) {
-        console.log('add into a project AS INVESTOR');
-        const result = await actor.send_offer_to_project_by_investor(
-          project_id,
-          msg,
-          is_cohort_association,
-          cohort_id
-        );
-
-        if (result) {
-          toast.success('Offer sent to project successfully');
-        } else {
-          toast.error('Something went wrong');
-        }
-      } else {
+      if (!selectedAssociationType || !actor) {
         throw new Error('Invalid association type or missing data');
       }
+
+      // Define common parameters
+      const project_id = listProjectId || '';
+      const msg = message;
+      const is_cohort_association = true;
+      const cohort_id = listCohortId ? [listCohortId] : [];
+
+      // Determine function and additional parameters based on association type
+      const associationFunctions = {
+        mentor: {
+          method: actor.send_offer_to_project_by_mentor,
+          params: [
+            project_id,
+            msg,
+            Principal.fromText(principal),
+            is_cohort_association,
+            cohort_id,
+          ],
+          successMessage: 'Offer sent to project as mentor successfully',
+        },
+        vc: {
+          method: actor.send_offer_to_project_by_investor,
+          params: [project_id, msg, is_cohort_association, cohort_id],
+          successMessage: 'Offer sent to project as investor successfully',
+        },
+      };
+
+      const associationType = selectedAssociationType.value;
+      const selectedFunction = associationFunctions[associationType];
+
+      if (!selectedFunction) {
+        throw new Error('Unsupported association type');
+      }
+
+      // Call the selected function with the relevant parameters
+      console.log(
+        `Adding project as ${associationType.toUpperCase()}`,
+        ...selectedFunction.params
+      );
+
+      const result = await selectedFunction.method(...selectedFunction.params);
+      console.log('result', result);
+      if (result) {
+        toast.success(selectedFunction.successMessage);
+      } else {
+        toast.error('Something went wrong');
+      }
     } catch (error) {
-      console.log('error-in-send_offer', error);
+      console.error(
+        `Error in ${selectedAssociationType.value} association:`,
+        error
+      );
       toast.error('Something went wrong');
     } finally {
-      handleProjectCloseModal();
       setIsSubmitting(false);
+      handleProjectCloseModal();
     }
   };
 
@@ -194,11 +194,11 @@ const EventRequestCard = () => {
           console.log('result', result);
           if (result) {
             setIsSubmitting(false);
-            handleMentorCloseModal();
+            handleProjectCloseModal();
             toast.success(result);
           } else {
             setIsSubmitting(false);
-            handleMentorCloseModal();
+            handleProjectCloseModal();
             toast.error('something went wrong');
           }
         })
@@ -230,18 +230,18 @@ const EventRequestCard = () => {
         .then((result) => {
           console.log('result-in-send_offer_to_investor', result);
           if (result) {
-            handleInvestorCloseModal();
+            handleProjectCloseModal();
             setIsSubmitting(false);
             toast.success(result);
           } else {
-            handleInvestorCloseModal();
+            handleProjectCloseModal();
             setIsSubmitting(false);
             toast.error('something got wrong');
           }
         })
         .catch((error) => {
           console.log('error-in-send_offer_to_investor', error);
-          handleInvestorCloseModal();
+          handleProjectCloseModal();
           setIsSubmitting(false);
           toast.error('something got wrong');
         });
@@ -791,7 +791,7 @@ const EventRequestCard = () => {
       {isAddInvestorModalOpen && (
         <AddAMentorRequestModal
           title={'Request to Associate a Investor'}
-          onClose={handleInvestorCloseModal}
+          onClose={handleProjectCloseModal}
           onSubmitHandler={handleAddInvestor}
           isSubmitting={isSubmitting}
           selectedAssociationType={selectedAssociationType}
@@ -803,7 +803,7 @@ const EventRequestCard = () => {
       {isAddMentorModalOpen && (
         <AddAMentorRequestModal
           title={'Request to Associate a Mentor'}
-          onClose={handleMentorCloseModal}
+          onClose={handleProjectCloseModal}
           onSubmitHandler={handleAddMentor}
           isSubmitting={isSubmitting}
           selectedAssociationType={selectedAssociationType}

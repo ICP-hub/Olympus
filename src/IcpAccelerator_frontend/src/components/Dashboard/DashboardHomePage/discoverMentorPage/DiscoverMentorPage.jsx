@@ -491,7 +491,7 @@ const DiscoverMentorPage = ({
                     </button>
                     {activeMobileTab === 'rubricrating' && (
                       <div className='px-2 py-2'>
-                        <RatingComponent />
+                        <RatingComponent projectId={projectId} />
                       </div>
                     )}
                   </div>
@@ -585,7 +585,9 @@ const DiscoverMentorPage = ({
                     projectId={projectId}
                   />
                 )}
-                {activeTab === 'rubricrating' && <RatingComponent />}
+                {activeTab === 'rubricrating' && (
+                  <RatingComponent projectId={projectId} />
+                )}
               </div>
             </div>
           </div>

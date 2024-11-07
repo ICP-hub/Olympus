@@ -718,31 +718,49 @@ const EventDetails = () => {
           ) : (
             <>
               <div className='p-4'>
-                <div className='mb-4 hover:bg-[#e4e3e2b1] cursor-not-allowed opacity-50'>
+                <div className='mb-4'>
                   <h3 className='text-[12px] font-medium text-[#697586] mb-2'>
-                    GUEST
+                    COHORT ASSOCIATE MEMBERS
                   </h3>
-                  <div className='flex flex-wrap justify-start'>
-                    {[...Array(11)].map((_, i) => (
-                      <img
-                        key={i}
-                        src={GuestProfile1}
-                        alt={`Guest ${i + 1}`}
-                        className='w-8 h-8 rounded-full mr-1 mb-1'
-                        loading='lazy'
-                        draggable={false}
-                      />
+                  <div className='flex flex-wrap items-start space-x-2 max-h-10'>
+                    {associatedCohortData.map((association, index) => (
+                      <div
+                        key={index}
+                        className='relative flex items-center transition-all duration-600 ease-cubic-bezier(0.25, 0.1, 0.25, 1)'
+                        onMouseEnter={() => handleMouseEnter(index)}
+                        onMouseLeave={handleMouseLeave}
+                        onTransitionEnd={handleTransitionEnd}
+                        onClick={() => handleClick(association)}
+                      >
+                        <span
+                          className={`absolute left-12 transition-all duration-600 ease-cubic-bezier(0.25, 0.1, 0.25, 1) transform ${
+                            activeIndex === index
+                              ? 'translate-x-0 opacity-100 delay-100'
+                              : '-translate-x-4 opacity-0'
+                          }`}
+                        >
+                          <span className='line-clamp-1 font-semibold'>
+                            {association?.full_name}
+                          </span>
+                          <span className='text-gray-500 text-sm'>
+                            {' '}
+                            ({association?.role})
+                          </span>
+                        </span>
+
+                        <Avatar
+                          src={association.profile_picture}
+                          alt={`Avatar of ${association.name}`}
+                          draggable={false}
+                          loading='lazy'
+                          className={`h-12 w-12 rounded-full transition-transform duration-600 ease-cubic-bezier(0.25, 0.1, 0.25, 1) hover:scale-105 ${
+                            activeIndex === index ? 'mr-16 delay-100' : 'mr-0'
+                          }`}
+                        />
+                      </div>
                     ))}
                   </div>
                 </div>
-                <Tooltip
-                  id='registerTip'
-                  place='top'
-                  effect='solid'
-                  className='rounded-full z-10'
-                >
-                  Comming Soon
-                </Tooltip>
                 <div className='space-y-3 text-sm'>
                   <div>
                     <span className='text-[#697586] text-[12px] block mb-2'>

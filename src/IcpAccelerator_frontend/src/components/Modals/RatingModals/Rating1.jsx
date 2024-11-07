@@ -13,7 +13,7 @@ const Rating1 = ({ position, projectId, isRating, setIsRating }) => {
 
   // Handle continue button to switch from Rating1 to RatingMain
   const handleContinue = () => {
-    setIsRating(false); // Close Rating1 modal
+    // setIsRating(false); // Close Rating1 modal
     setIsRatingMainOpen(true); // Open RatingMain modal
   };
 

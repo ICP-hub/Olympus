@@ -192,6 +192,8 @@ const Attendees = (cohortData) => {
         badges: item[1].params.badges || [],
         uid: item[0]?.uid || '',
         userPrincipal: item[2] || '',
+        roleData: item[0],
+        cohortid: cohortid,
       }));
     } else {
       return [];
