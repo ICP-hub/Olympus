@@ -14,7 +14,7 @@ import StarIcon from '@mui/icons-material/Star';
 import DiscoverUserModal from '../DashboardHomePage/discoverMentorPage/DiscoverUserModal';
 import Rating1 from '../../Modals/RatingModals/Rating1';
 const AttendeesCard = ({ member, appliedRole, handleClick, handleRating }) => {
-  const onRateClick = () => handleRating(member?.role, member?.uid);
+  const onRateClick = () => handleRating(member?.uid);
 
   return (
     <div className='flex flex-col md:flex-row items-center p-4 bg-white shadow-md rounded-lg mb-6 transition-all hover:shadow-lg'>
@@ -206,9 +206,8 @@ const Attendees = (cohortData) => {
   };
   const [isRating, setIsRating] = useState(false);
   console.log('isRating', isRating);
-  const handleRating = useCallback((member, projectId) => {
+  const handleRating = useCallback((projectId) => {
     setIsRating(true);
-    setAttendeeRole(member);
     setProjectId(projectId);
   }, []);
 
@@ -424,6 +423,7 @@ const Attendees = (cohortData) => {
               projectId={projectId}
               isRating={isRating}
               setIsRating={setIsRating}
+              cohortid={cohortid}
             />
           )}
         </div>

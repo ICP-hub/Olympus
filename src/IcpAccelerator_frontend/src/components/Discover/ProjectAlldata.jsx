@@ -45,6 +45,7 @@ const DiscoverProject = ({ onProjectCountChange }) => {
   const [selectedAssociationType, setSelectedAssociationType] = useState(null);
   const [projectProfile, setProjectProfile] = useState(null);
   const [projectName, setProjectName] = useState(null);
+  const [ratingProjectId, setRatingProjectId] = useState(null);
 
   useTimeout(() => setIsLoading(false));
   const mentorPrincipal = useSelector(
@@ -230,10 +231,11 @@ const DiscoverProject = ({ onProjectCountChange }) => {
     setUserDataToSend(user);
     console.log('passed principle', principal);
   };
-  const handleRating = (ratings, principalId) => {
+  const handleRating = (ratings, principalId, project_id) => {
     setShowRatingModal(true);
     setUserRatingDetail(ratings);
     setCurrentPrincipal(principalId);
+    setRatingProjectId(project_id);
   };
   async function convertBufferToImageBlob(buffer) {
     try {
@@ -339,7 +341,9 @@ const DiscoverProject = ({ onProjectCountChange }) => {
                       </div>
                     </div>
                     <div
-                      onClick={() => handleRating(user, principle_id)}
+                      onClick={() =>
+                        handleRating(user, principle_id, project_id)
+                      }
                       className='absolute cursor-pointer bottom-0 right-[6px] flex items-center bg-gray-100 p-1'
                     >
                       <Star className='text-yellow-400 w-4 h-4' />
@@ -454,6 +458,8 @@ const DiscoverProject = ({ onProjectCountChange }) => {
           setShowRatingModal={setShowRatingModal}
           userRatingDetail={userRatingDetail}
           cardPrincipal={currentPrincipal}
+          role={'project'}
+          ratingProjectId={ratingProjectId}
         />
       )}
       {isAddProjectModalOpen && (

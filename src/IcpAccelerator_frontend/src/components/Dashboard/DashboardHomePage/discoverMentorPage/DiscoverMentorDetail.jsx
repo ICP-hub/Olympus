@@ -8,12 +8,16 @@ import Avatar from '@mui/material/Avatar';
 import UserDetail from '../UserDetail';
 import getSocialLogo from '../../../Utils/navigationHelper/getSocialLogo';
 import useTimeout from '../../../hooks/TimeOutHook';
-import UserGeneralDetailSkeleton from '../../../profile/skeletonProfile/UserGeneralDetailSkeleton';
+import UserGeneralDetailSkeleton from '../../../Profile/skeletonProfile/UserGeneralDetailSkeleton';
 import DiscoverProjectProfileSkeleton from '../DiscoverProjectSkeleton/DiscoverProjectProfileSkeleton';
 import StarIcon from '@mui/icons-material/Star';
 import Rating1 from '../../../Modals/RatingModals/Rating1';
+import { useSelector } from 'react-redux';
 
 const DiscoverMentorDetail = ({ projectDetails, userData, projectId }) => {
+  const userCurrentRoleStatusActiveRole = useSelector(
+    (currState) => currState.currentRoleStatus.activeRole
+  );
   const projectDetail = projectDetails;
   console.log('projectdetails ', projectDetail);
   console.log('userdetails ', userData);
@@ -189,21 +193,26 @@ const DiscoverMentorDetail = ({ projectDetails, userData, projectId }) => {
                 Get in touch
                 <ArrowOutwardOutlinedIcon className='ml-1' fontSize='small' />
               </a>
-              <button
-                className='w-full h-[#155EEF] bg-white border-gray-300 text-black py-2 px-4 rounded-lg mb-4 flex items-center justify-center'
-                onClick={() => handleRating()}
-              >
-                Rate
-                <StarIcon
-                  className='ml-1'
-                  fontSize='small'
-                  style={{
-                    color: 'transparent',
-                    stroke: 'black',
-                    strokeWidth: 2,
-                  }}
-                />
-              </button>
+              {userCurrentRoleStatusActiveRole === 'mentor' ||
+              userCurrentRoleStatusActiveRole === 'vc' ? (
+                <button
+                  className='w-full h-[#155EEF] bg-white border-gray-300 text-black py-2 px-4 rounded-lg mb-4 flex items-center justify-center'
+                  onClick={() => handleRating()}
+                >
+                  Rate
+                  <StarIcon
+                    className='ml-1'
+                    fontSize='small'
+                    style={{
+                      color: 'transparent',
+                      stroke: 'black',
+                      strokeWidth: 2,
+                    }}
+                  />
+                </button>
+              ) : (
+                ''
+              )}
             </div>
           </div>
         )}

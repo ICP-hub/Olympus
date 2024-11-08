@@ -7,6 +7,9 @@ const RatingComponent = ({ projectId }) => {
   const [rubricRatingData, setRubricRatingData] = useState([]);
   const [noData, setNoData] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [averageRatingData, setAverageRatingData] = useState([]);
+  const [averageNoData, setAverageNoData] = useState(false);
+  const [isAverageLoading, setIsAverageLoading] = useState(true);
   const [showOverallRating, setShowOverallRating] = useState(false);
   const actor = useSelector((currState) => currState.actors.actor);
 
@@ -34,11 +37,39 @@ const RatingComponent = ({ projectId }) => {
     }
   };
 
-  useEffect(() => {
-    if (actor) {
-      fetchRubricRating();
+  const fetchAveragerating = async () => {
+    if (projectId) {
+      setIsAverageLoading(true);
+
+      try {
+        const result = await actor.calculate_average(projectId);
+        console.log('result average', result);
+
+        if (!result || result.length === 0) {
+          setAverageNoData(true);
+          setAverageRatingData([]);
+        } else {
+          setAverageRatingData(result?.Ok);
+          setAverageNoData(false);
+        }
+      } catch (error) {
+        setAverageNoData(true);
+        setAverageRatingData([]);
+        console.error('Error fetching rubric:', error);
+      } finally {
+        setIsAverageLoading(false);
+      }
+    } else {
+      console.error('Error fetching rubric:');
     }
-  }, [actor]);
+  };
+
+  useEffect(() => {
+    if (actor && projectId) {
+      fetchRubricRating();
+      fetchAveragerating();
+    }
+  }, [actor, projectId]);
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
@@ -243,22 +274,24 @@ const RatingComponent = ({ projectId }) => {
       {/* Tab content */}
       {activeTab === 'scores' && (
         <div>
-          {rubricRatingData.map((item, index) => (
-            <div
-              key={index}
-              className='md:flex mt-2 md:mt-0 items-center justify-between mb-4'
-            >
-              <span className='text-[16px] font-medium text-gray-700 w-1/2'>
-                {item?.level_name}:
-              </span>
-              <div className='flex justify-between mt-1'>
-                {renderScoreBoxes(item?.rating)}
-                <span className='text-[16px] font-bold text-gray-700 xxs:ml-4 -mt-1'>
-                  {item?.rating}
-                </span>
-              </div>
-            </div>
-          ))}
+          {rubricRatingData && rubricRatingData.length > 0
+            ? rubricRatingData.map((item, index) => (
+                <div
+                  key={index}
+                  className='md:flex mt-2 md:mt-0 items-center justify-between mb-4'
+                >
+                  <span className='text-[16px] font-medium text-gray-700 w-1/2'>
+                    {item?.level_name}:
+                  </span>
+                  <div className='flex justify-between mt-1'>
+                    {renderScoreBoxes(item?.rating)}
+                    <span className='text-[16px] font-bold text-gray-700 xxs:ml-4 -mt-1'>
+                      {item?.rating}
+                    </span>
+                  </div>
+                </div>
+              ))
+            : ''}
         </div>
       )}
 

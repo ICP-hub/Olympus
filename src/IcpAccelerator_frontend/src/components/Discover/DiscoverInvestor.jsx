@@ -365,6 +365,7 @@ const DiscoverInvestor = ({ onInvestorCountChange }) => {
           setShowRatingModal={setShowRatingModal}
           userRatingDetail={userRatingDetail}
           cardPrincipal={currentPrincipal}
+          role={'vc'}
         />
       )}
     </>

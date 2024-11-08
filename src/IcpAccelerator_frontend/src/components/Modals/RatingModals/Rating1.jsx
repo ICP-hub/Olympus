@@ -1,20 +1,28 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import CloseIcon from '@mui/icons-material/Close';
 import { Toaster } from 'react-hot-toast';
 import RatingMain from './RatingMain'; // Import the RatingMain component
 
-const Rating1 = ({ position, projectId, isRating, setIsRating }) => {
+const Rating1 = ({
+  position,
+  projectId,
+  isRating,
+  setIsRating,
+  cohortid,
+  setShowRatingModal,
+}) => {
   const [isRatingMainOpen, setIsRatingMainOpen] = useState(false); // Controls visibility of RatingMain modal
 
   // Close the current modal
   const handleCloseModal = () => {
     setIsRating(false);
+    setIsRatingMainOpen(false); // Ensure RatingMain is also closed
+    setShowRatingModal(false);
   };
 
   // Handle continue button to switch from Rating1 to RatingMain
   const handleContinue = () => {
-    // setIsRating(false); // Close Rating1 modal
-    setIsRatingMainOpen(true); // Open RatingMain modal
+    setIsRatingMainOpen(true);
   };
 
   return (
@@ -34,7 +42,7 @@ const Rating1 = ({ position, projectId, isRating, setIsRating }) => {
             </button>
 
             <div className='flex flex-col items-center mt-14'>
-              <div className='relative '>
+              <div className='relative'>
                 <div className='flex items-center justify-center mt-14'>
                   {Array.from({ length: 5 }).map((_, index) => {
                     let sizeClasses = 'text-[#FDB022]';
@@ -123,7 +131,14 @@ const Rating1 = ({ position, projectId, isRating, setIsRating }) => {
 
       {/* Show RatingMain if isRatingMainOpen is true */}
       {isRatingMainOpen && (
-        <RatingMain position={position} projectId={projectId} />
+        <RatingMain
+          position={position}
+          projectId={projectId}
+          cohortid={cohortid}
+          setIsRating={setIsRating}
+          setIsRatingMainOpen={setIsRatingMainOpen}
+          setShowRatingModal={setShowRatingModal}
+        />
       )}
     </>
   );

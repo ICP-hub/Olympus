@@ -346,6 +346,7 @@ const DiscoverMentor = ({ onMentorCountChange }) => {
           setShowRatingModal={setShowRatingModal}
           userRatingDetail={userRatingDetail}
           cardPrincipal={currentPrincipal}
+          role={'mentor'}
         />
       )}
       {isAddMentorModalOpen && (

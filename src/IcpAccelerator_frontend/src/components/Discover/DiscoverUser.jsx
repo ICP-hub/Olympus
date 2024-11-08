@@ -218,6 +218,7 @@ const DiscoverUser = ({ onUserCountChange }) => {
           setShowRatingModal={setShowRatingModal}
           userRatingDetail={userRatingDetail}
           cardPrincipal={currentPrincipal}
+          role={'user'}
         />
       )}
       {openDetail && (

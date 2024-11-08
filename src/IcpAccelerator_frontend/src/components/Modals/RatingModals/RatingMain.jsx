@@ -9,7 +9,14 @@ import { useSelector } from 'react-redux';
 import { rubric_table_data } from '../../Utils/jsondata/data/projectRatingsRubrics';
 import toast, { Toaster } from 'react-hot-toast';
 
-const RatingMain = ({ position, projectId }) => {
+const RatingMain = ({
+  position,
+  projectId,
+  cohortid,
+  setIsRating,
+  setIsRatingMainOpen,
+  setShowRatingModal,
+}) => {
   const [currentRubricId, setCurrentRubricId] = useState(null);
   const [ratings, setRatings] = useState([]);
   const [selectedRubricId, setSelectedRubricId] = useState(null);
@@ -62,36 +69,82 @@ const RatingMain = ({ position, projectId }) => {
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
+    setIsRatingMainOpen(false);
+    setIsRating(false);
+    setShowRatingModal(false);
   };
 
   const handleSubmit = async () => {
     console.log('Form submitted:', ratings);
     if (actor) {
-      let argument = {
-        project_id: projectId,
-        current_role: userCurrentRoleStatusActiveRole,
-        ratings,
-      };
-      if (
-        userCurrentRoleStatusActiveRole &&
-        userCurrentRoleStatusActiveRole !== 'user'
-      ) {
+      if (cohortid) {
+        let argument = {
+          cohort_id: cohortid,
+          project_id: projectId,
+          ratings,
+        };
         console.log(argument);
         await actor
-          .update_rating(argument)
+          .update_peer_rating_api(argument)
           .then((result) => {
-            console.log('result-in-update_rating', result);
-            // if (result && result.includes(`Ratings updated successfully`)) {
-            //   // toast.success(result);
-            //   setIsModalOpen(false);
-            // } else {
-            //   // toast.error(result);
-            // }
+            console.log('result-in-update_peer_rating_api', result);
+            if (result && result.includes(`Ratings updated successfully`)) {
+              toast.success(result);
+              setIsModalOpen(false);
+              setIsRatingMainOpen(false);
+              setIsRating(false);
+              setShowRatingModal(false);
+            } else {
+              toast.error(result);
+              setIsModalOpen(false);
+              setIsRatingMainOpen(false);
+              setIsRating(false);
+              setShowRatingModal(false);
+            }
           })
           .catch((error) => {
             console.log('error-in-update_rating', error);
-            // toast.error("Something went wrong");
+            toast.error('Something went wrong');
+            setIsModalOpen(false);
+            setIsRatingMainOpen(false);
+            setIsRating(false);
+            setShowRatingModal(false);
           });
+      } else {
+        let argument = {
+          project_id: projectId,
+          current_role: userCurrentRoleStatusActiveRole,
+          ratings,
+        };
+        if (
+          userCurrentRoleStatusActiveRole &&
+          userCurrentRoleStatusActiveRole !== 'user'
+        ) {
+          console.log(argument);
+          await actor
+            .update_rating(argument)
+            .then((result) => {
+              console.log('result-in-update_rating', result);
+              if (result && result.includes(`Ratings updated successfully`)) {
+                toast.success(result);
+                setIsModalOpen(false);
+                setIsRatingMainOpen(false);
+                setIsRating(false);
+              } else {
+                toast.error(result);
+                setIsModalOpen(false);
+                setIsRatingMainOpen(false);
+                setIsRating(false);
+              }
+            })
+            .catch((error) => {
+              console.log('error-in-update_rating', error);
+              toast.error('Something went wrong');
+              setIsModalOpen(false);
+              setIsRatingMainOpen(false);
+              setIsRating(false);
+            });
+        }
       }
     } else {
       toast.error('No Authorization !!');
