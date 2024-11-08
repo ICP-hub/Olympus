@@ -62,6 +62,7 @@ const MentorEdit = () => {
     setInterestedDomainsSelectedOptions,
   ] = useState([]);
   const [typeOfProfileOptions, setTypeOfProfileOptions] = useState([]);
+  const [initialValues, setInitialValues] = useState({});
 
   // Mentor from states
   const [multiChainOptions, setMultiChainOptions] = useState([]);
@@ -124,7 +125,23 @@ const MentorEdit = () => {
   });
 
   const handleEditClick = (field) => {
-    setEdit({ ...edit, [field]: true });
+    const originalData = getValues(field); // Capture the latest data from the form
+
+    setEdit((prev) => ({ ...prev, [field]: true }));
+    setInitialValues((prev) => ({
+      ...prev,
+      [field]: originalData, // Store the original data only once when edit mode is activated
+    }));
+    setValue(field, originalData); // Reset to original data on each edit click
+  };
+
+  const handleCancel = () => {
+    Object.keys(edit).forEach((field) => {
+      if (edit[field]) {
+        setValue(field, initialValues[field]); // Reset the edited field to its original value
+      }
+    });
+    setEdit({});
   };
 
   const [socialLinks, setSocialLinks] = useState({});
@@ -179,50 +196,8 @@ const MentorEdit = () => {
   };
 
   const onSubmitHandler = async (data) => {
-    console.log('my submit data on submit', data);
-
-    const updatedSocialLinks = Object.entries(socialLinks).map(
-      ([key, url]) => ({
-        link: url ? [url] : [],
-      })
-    );
-
-    const mentorData = {
-      preferred_icp_hub: [data?.preferred_icp_hub || ''],
-      icp_hub_or_spoke: data?.icp_hub_or_spoke === 'true',
-      hub_owner: [
-        data?.icp_hub_or_spoke === 'true' && data?.hub_owner
-          ? data?.hub_owner
-          : '',
-      ],
-      category_of_mentoring_service: data?.category_of_mentoring_service,
-      years_of_mentoring: data.years_of_mentoring.toString(),
-      multichain: Array.isArray(data.multi_chain_names)
-        ? data.multi_chain_names
-        : [],
-      website: [data?.mentor_website_url || ''],
-      existing_icp_mentor: false,
-      existing_icp_project_porfolio: data.existing_icp_project_porfolio
-        ? [data.existing_icp_project_porfolio]
-        : [],
-      area_of_expertise: Array.isArray(data.area_of_expertise)
-        ? data.area_of_expertise
-        : [data.area_of_expertise || ''],
-      links: updatedSocialLinks.length > 0 ? [updatedSocialLinks] : [],
-
-      reason_for_joining: data.reasons_to_join_platform
-        ? [data.reasons_to_join_platform]
-        : [],
-    };
-
-    console.log('my submit mentorData on submit', mentorData);
-
     try {
-      const result = await actor.update_mentor(mentorData);
-      console.log(
-        'on submit mera result update data ja raha hai  ....',
-        result
-      );
+      const result = await actor.update_mentor(data);
       if (result) {
         toast.success('Update successfully');
         dispatch(mentorRegisteredHandlerRequest());
@@ -234,10 +209,8 @@ const MentorEdit = () => {
       }
     } catch (error) {
       toast.error(error.message || 'An unexpected error occurred');
-      console.error('Error sending data to the backend:', error);
     }
     setEdit(false);
-    setIsLinkBeingEdited(false);
   };
 
   const setReasonOfJoiningSelectedOptionsHandler = (val) => {
@@ -348,19 +321,19 @@ const MentorEdit = () => {
       }
     }
   };
-  const handleCancel = () => {
-    setEdit({
-      preferred_icp_hub: false,
-      multichain: false,
-      category_of_mentoring_service: false,
-      icp_hub_or_spoke: false,
-      hub_owner: false,
-      years_of_mentoring: false,
-      mentor_linkedin_url: false,
-      website: false,
-      reason_for_joining: false,
-    });
-  };
+  // const handleCancel = () => {
+  //   setEdit({
+  //     preferred_icp_hub: false,
+  //     multichain: false,
+  //     category_of_mentoring_service: false,
+  //     icp_hub_or_spoke: false,
+  //     hub_owner: false,
+  //     years_of_mentoring: false,
+  //     mentor_linkedin_url: false,
+  //     website: false,
+  //     reason_for_joining: false,
+  //   });
+  // };
 
   const editableRef = useRef(null);
 
@@ -372,9 +345,7 @@ const MentorEdit = () => {
 
   useEffect(() => {
     document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   // form error handler func
@@ -488,7 +459,7 @@ const MentorEdit = () => {
   const mentor_website_url = mentorFullData[0]?.profile?.website?.[0] ?? '';
   const years_of_mentoring =
     mentorFullData[0]?.profile?.years_of_mentoring ?? '';
-  const multichain = multi_chain === true ? 'Yes' : 'No';
+  const multichain = multi_chain ? 'Yes' : 'No';
   console.log('domains_interested_in', area_of_expertise);
   return isLoading ? (
     <MentorEditSkeleton />
@@ -1058,7 +1029,7 @@ const MentorEdit = () => {
             </div>
           )}
           {errors?.years_of_mentoring && (
-            <span className='mt-1 text-sm text-red-500 font-bold flex justify-start'>
+            <span className='mt-1 text-sm text-red-500 font-bold flex justify-start line-clamp-1 break-all'>
               {errors?.years_of_mentoring?.message}
             </span>
           )}

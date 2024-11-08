@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import GuestProfile1 from '../../../../assets/Logo/GuestProfile1.png';
 import CapacityGroupIcon from '../../../../assets/Logo/CapacityGroupIcon.png';
 import StartDateCalender from '../../../../assets/Logo/StartDateCalender.png';
@@ -26,6 +26,9 @@ import { useNavigate } from 'react-router-dom';
 import DiscoverUserModal from '../DashboardHomePage/discoverMentorPage/DiscoverUserModal';
 import EventDetailSkeleton from './DashboardEventSkeletons/EventDetailSkeleton';
 import useTimeout from '../../hooks/TimeOutHook';
+import CohortAnnouncement from './CohortAnnouncement';
+import Avatar from '@mui/material/Avatar';
+
 const FAQItem = ({ question, answer }) => {
   const [isOpen, setIsOpen] = useState(false);
   return (
@@ -114,8 +117,9 @@ const EventDetails = () => {
   const handleClick = (cohortData) => {
     setOpenDetail(true);
     setCadDetail(cohortData);
-    console.log('cardDetail => ', cardDetail);
   };
+  console.log('cardDetail => ', cardDetail);
+  const [associatedCohortData, setAssociatedCohortData] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentTab, setCurrentTab] = useState('Summary');
   const cohortCreator = cohortData?.cohort_creator.toText() === principal;
@@ -138,31 +142,6 @@ const EventDetails = () => {
     setCurrentTab(tab);
   };
 
-  // useEffect(() => {
-  //   const fetchCohortData = async () => {
-  //     if (actor && cohort_id) {
-  //       try {
-  //         const result = await actor.get_cohort(cohort_id);
-  //         console.log('result', result);
-  //         if (result && Object.keys(result).length > 0) {
-  //           setCohortData(result);
-  //           calculateTimeLeft(result.cohort.cohort_launch_date);
-  //         } else {
-  //           setCohortData(null);
-  //         }
-  //       } catch (error) {
-  //         console.log('error-in-get_my_cohort', error);
-  //         setCohortData(null);
-  //       } finally {
-  //         // setTimeout(() => {
-  //         //   setIsLoading(false);
-  //         // }, 1000);
-  //       }
-  //     }
-  //   };
-
-  //   fetchCohortData();
-  // }, [actor, cohort_id]);
   useEffect(() => {
     const fetchDataWithTimeout = (timeout = 1000) => {
       return Promise.race([
@@ -209,7 +188,7 @@ const EventDetails = () => {
     if (cohortData) {
       const calculateRemainingTime = () => {
         calculateTimeLeft(cohortData.cohort.cohort_launch_date);
-        timeoutRef.current = setTimeout(calculateRemainingTime, 1000);
+        timeoutRef.current = setTimeout(calculateRemainingTime, 60000);
       };
       calculateRemainingTime(); // Initial call
       return () => clearTimeout(timeoutRef.current);
@@ -236,6 +215,83 @@ const EventDetails = () => {
 
     setTimeLeft(timeLeft);
     setDifference(difference);
+  };
+
+  const fetchDataForAllRoles = async (cohortId) => {
+    if (!cohortId) {
+      toast.error('Cohort ID is not available.');
+      return [];
+    }
+
+    try {
+      // Fetch data for all roles in parallel
+      const [projectsResult, mentorsResult, investorsResult] =
+        await Promise.all([
+          actor.get_projects_applied_for_cohort(cohortId),
+          actor.get_mentors_applied_for_cohort(cohortId),
+          actor.get_vcs_applied_for_cohort(cohortId),
+        ]);
+
+      const formatResult = (result, role) =>
+        result?.Ok && Array.isArray(result.Ok)
+          ? result.Ok.map((item) => ({
+              role,
+              full_name: item[1].params.full_name,
+              username: item[1].params.openchat_username[0],
+              area_of_interest: item[1].params.area_of_interest,
+              bio: item[1].params.bio,
+              country: item[1].params.country,
+              email: item[1].params.email[0],
+              profile_picture: item[1].params.profile_picture[0]
+                ? uint8ArrayToBase64(item[1].params.profile_picture[0])
+                : [],
+              reason_to_join: item[1].params.reason_to_join[0],
+              social_links: item[1].params.social_links[0],
+              type_of_profile: item[1].params.type_of_profile[0],
+            }))
+          : [];
+
+      // Merge the formatted results with their respective roles
+      const allData = [
+        ...formatResult(projectsResult, 'Project'),
+        ...formatResult(mentorsResult, 'Mentor'),
+        ...formatResult(investorsResult, 'Investor'),
+      ];
+      setAssociatedCohortData(allData);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      toast.error('Failed to fetch data.');
+    }
+  };
+
+  useEffect(() => {
+    if (cohortData) {
+      fetchDataForAllRoles(cohortData?.cohort_id);
+    }
+  }, [cohortData]);
+
+  const [hoveredIndex, setHoveredIndex] = useState(null);
+  const [activeIndex, setActiveIndex] = useState(null);
+
+  const handleMouseEnter = useCallback(
+    (index) => {
+      if (hoveredIndex !== index) {
+        setHoveredIndex(index);
+        setActiveIndex(index);
+      }
+    },
+    [hoveredIndex]
+  );
+
+  const handleMouseLeave = useCallback(() => {
+    setHoveredIndex(null);
+    setActiveIndex(null);
+  }, []);
+
+  const handleTransitionEnd = () => {
+    if (hoveredIndex === null) {
+      setActiveIndex(null);
+    }
   };
 
   if (isLoading) {
@@ -270,8 +326,7 @@ const EventDetails = () => {
     tags,
     title,
   } = cohortData.cohort;
-  console.log('Line 215..............', cohortData.cohort_creator_data.email);
-  console.log('Line 214', cohortData.cohort_creator_data.profile_picture);
+
   const Seats = Number(no_of_seats);
   const bannerImage =
     cohort_banner && cohort_banner.length > 0
@@ -483,31 +538,49 @@ const EventDetails = () => {
 
           {/* laptop screen  */}
           <div className='p-4 hidden md:block'>
-            <div className='mb-4 hover:bg-[#e4e3e2b1] cursor-not-allowed opacity-50'>
+            <div className='mb-4 '>
               <h3 className='text-[12px] font-medium text-[#697586] mb-2'>
-                GUEST
+                COHORT ASSOCIATE MEMBERS
               </h3>
-              <div className='flex flex-wrap justify-start'>
-                {[...Array(11)].map((_, i) => (
-                  <img
-                    key={i}
-                    src={GuestProfile1}
-                    alt={`Guest ${i + 1}`}
-                    className='w-8 h-8 rounded-full mr-1 mb-1'
-                    loading='lazy'
-                    draggable={false}
-                  />
+              <div className='flex flex-wrap items-start space-x-2 max-h-10'>
+                {associatedCohortData.map((association, index) => (
+                  <div
+                    key={index}
+                    className='relative flex items-center transition-all duration-600 ease-cubic-bezier(0.25, 0.1, 0.25, 1)'
+                    onMouseEnter={() => handleMouseEnter(index)}
+                    onMouseLeave={handleMouseLeave}
+                    onTransitionEnd={handleTransitionEnd}
+                    onClick={() => handleClick(association)}
+                  >
+                    <span
+                      className={`absolute left-12 transition-all duration-600 ease-cubic-bezier(0.25, 0.1, 0.25, 1) transform ${
+                        activeIndex === index
+                          ? 'translate-x-0 opacity-100 delay-100'
+                          : '-translate-x-4 opacity-0'
+                      }`}
+                    >
+                      <span className='line-clamp-1 font-semibold'>
+                        {association?.full_name}
+                      </span>
+                      <span className='text-gray-500 text-sm'>
+                        {' '}
+                        ({association?.role})
+                      </span>
+                    </span>
+
+                    <Avatar
+                      src={association.profile_picture}
+                      alt={`Avatar of ${association.name}`}
+                      draggable={false}
+                      loading='lazy'
+                      className={`h-12 w-12 rounded-full transition-transform duration-600 ease-cubic-bezier(0.25, 0.1, 0.25, 1) hover:scale-105 ${
+                        activeIndex === index ? 'mr-16 delay-100' : 'mr-0'
+                      }`}
+                    />
+                  </div>
                 ))}
               </div>
             </div>
-            <Tooltip
-              id='registerTip'
-              place='top'
-              effect='solid'
-              className='rounded-full z-10'
-            >
-              Comming Soon
-            </Tooltip>
             <div className='space-y-3 text-sm'>
               <div>
                 <span className='text-[#697586] text-[12px] block mb-2'>
@@ -645,31 +718,49 @@ const EventDetails = () => {
           ) : (
             <>
               <div className='p-4'>
-                <div className='mb-4 hover:bg-[#e4e3e2b1] cursor-not-allowed opacity-50'>
+                <div className='mb-4'>
                   <h3 className='text-[12px] font-medium text-[#697586] mb-2'>
-                    GUEST
+                    COHORT ASSOCIATE MEMBERS
                   </h3>
-                  <div className='flex flex-wrap justify-start'>
-                    {[...Array(11)].map((_, i) => (
-                      <img
-                        key={i}
-                        src={GuestProfile1}
-                        alt={`Guest ${i + 1}`}
-                        className='w-8 h-8 rounded-full mr-1 mb-1'
-                        loading='lazy'
-                        draggable={false}
-                      />
+                  <div className='flex flex-wrap items-start space-x-2 max-h-10'>
+                    {associatedCohortData.map((association, index) => (
+                      <div
+                        key={index}
+                        className='relative flex items-center transition-all duration-600 ease-cubic-bezier(0.25, 0.1, 0.25, 1)'
+                        onMouseEnter={() => handleMouseEnter(index)}
+                        onMouseLeave={handleMouseLeave}
+                        onTransitionEnd={handleTransitionEnd}
+                        onClick={() => handleClick(association)}
+                      >
+                        <span
+                          className={`absolute left-12 transition-all duration-600 ease-cubic-bezier(0.25, 0.1, 0.25, 1) transform ${
+                            activeIndex === index
+                              ? 'translate-x-0 opacity-100 delay-100'
+                              : '-translate-x-4 opacity-0'
+                          }`}
+                        >
+                          <span className='line-clamp-1 font-semibold'>
+                            {association?.full_name}
+                          </span>
+                          <span className='text-gray-500 text-sm'>
+                            {' '}
+                            ({association?.role})
+                          </span>
+                        </span>
+
+                        <Avatar
+                          src={association.profile_picture}
+                          alt={`Avatar of ${association.name}`}
+                          draggable={false}
+                          loading='lazy'
+                          className={`h-12 w-12 rounded-full transition-transform duration-600 ease-cubic-bezier(0.25, 0.1, 0.25, 1) hover:scale-105 ${
+                            activeIndex === index ? 'mr-16 delay-100' : 'mr-0'
+                          }`}
+                        />
+                      </div>
                     ))}
                   </div>
                 </div>
-                <Tooltip
-                  id='registerTip'
-                  place='top'
-                  effect='solid'
-                  className='rounded-full z-10'
-                >
-                  Comming Soon
-                </Tooltip>
                 <div className='space-y-3 text-sm'>
                   <div>
                     <span className='text-[#697586] text-[12px] block mb-2'>
@@ -875,7 +966,8 @@ const EventDetails = () => {
 
               {currentTab === 'Announcements' &&
                 (userCurrentRoleStatusActiveRole !== 'user' ? (
-                  <NoDataFound message='No active announcements found' />
+                  // <NoDataFound message='No active announcements found' />
+                  <CohortAnnouncement />
                 ) : (
                   <NoDataFound message='You do not have access to view this tab.' />
                 ))}
@@ -906,6 +998,7 @@ const EventDetails = () => {
           openDetail={openDetail}
           setOpenDetail={setOpenDetail}
           userData={cardDetail}
+          value={true}
         />
       )}
     </div>

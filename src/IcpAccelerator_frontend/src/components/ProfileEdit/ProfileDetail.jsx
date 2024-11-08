@@ -32,6 +32,7 @@ const ProfileDetail = () => {
     handleSubmit,
     clearErrors,
     setValue,
+    getValues,
     control,
     setError,
     trigger,
@@ -90,6 +91,7 @@ const ProfileDetail = () => {
   const [reasonOfJoiningSelectedOptions, setReasonOfJoiningSelectedOptions] =
     useState([]);
   const [typeOfProfileOptions, setTypeOfProfileOptions] = useState([]);
+  const [initialValues, setInitialValues] = useState({});
   useEffect(() => {
     if (typeOfProfile) {
       setTypeOfProfileOptions(
@@ -165,10 +167,43 @@ const ProfileDetail = () => {
 
   const containerRef = useRef(null);
 
-  const handleEditToggle = (field) => {
-    setIsEditing({ ...isEditing, [field]: !isEditing[field] });
-  };
+  // const handleEditToggle = (field) => {
+  //   setIsEditing({ ...isEditing, [field]: !isEditing[field] });
+  // };
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target)
+      ) {
+        // Iterate over all editing fields to reset them
+        Object.keys(isEditing).forEach((field) => {
+          if (isEditing[field]) {
+            resetField(field); // Reset only the currently edited field
+          }
+        });
+      }
+    };
 
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isEditing, initialValues]);
+  const resetField = (field) => {
+    setValue(field, initialValues[field]); // Reset field value
+    setIsEditing((prev) => ({ ...prev, [field]: false })); // Exit edit mode
+  };
+  const handleEditToggle = (field) => {
+    setIsEditing((prev) => ({ ...prev, [field]: !prev[field] }));
+    if (!isEditing[field]) {
+      // Save the current field value when entering edit mode
+      setInitialValues((prev) => ({
+        ...prev,
+        [field]: getValues(field), // Capture the current form value
+      }));
+    }
+  };
   const areaOfExpertise = useSelector(
     (currState) => currState.expertiseIn.expertise
   );
@@ -240,17 +275,18 @@ const ProfileDetail = () => {
             .split(',')
             .map((val) => val.trim()) || [''],
         ],
+
         profile_picture: imageData ? [imageData] : [],
         social_links: [updatedSocialLinks],
       };
-
-      // console.log("Sending user_data to backend:", user_data); // Debugging line
+      console.log('image 239', imageData);
+      console.log('Sending user_data to backend: 240', user_data); // Debugging line
 
       const result = await actor.update_user_data(
         convertedPrincipal,
         user_data
       );
-      console.log('Sending user_data to backend using api:', result);
+      console.log('Sending user_data to backend using api255:', result);
       if ('Ok' in result) {
         toast.success('User profile updated successfully');
         dispatch(userRegisteredHandlerRequest());
@@ -270,6 +306,10 @@ const ProfileDetail = () => {
   };
 
   const handleCancel = () => {
+    Object.keys(initialValues).forEach((key) =>
+      setValue(key, initialValues[key])
+    );
+
     setIsEditing({
       email: false,
       tagline: false,
@@ -278,10 +318,15 @@ const ProfileDetail = () => {
       country: false,
       reason_to_join: false,
       links: false,
+      full_name: false,
+      openchat_username: false,
+      social_links: false,
+      profile_picture: false,
     });
-    // setTempData(profileData);
+
     setIsLinkBeingEdited(false);
-    setIsEditingLink(false);
+    setIsEditingLink({});
+    setImagePreview(initialValues.profile_picture); //extra
   };
 
   useEffect(() => {
@@ -296,19 +341,7 @@ const ProfileDetail = () => {
         containerRef.current &&
         !containerRef.current.contains(event.target)
       ) {
-        // Trigger validation manually before saving
-        trigger().then((isValid) => {
-          if (isValid) {
-            handleSubmit(handleSave, onErrorHandler)();
-          } else {
-            toast.error(
-              'Form contains errors, please correct them before saving.'
-            );
-          }
-        });
-
-        // Close the editing state
-        setIsEditingLink({});
+        handleCancel();
       }
     };
 
@@ -316,7 +349,7 @@ const ProfileDetail = () => {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isEditing, isEditingLink, trigger, handleSubmit]);
+  }, [isEditing, isEditingLink, handleCancel]);
 
   const [activeTab, setActiveTab] = useState('general');
 
@@ -353,7 +386,6 @@ const ProfileDetail = () => {
       setValue('domains_interested_in', val?.area_of_interest ?? '');
       setInterestedDomainsSelectedOptionsHandler(val?.area_of_interest ?? null);
       setImagePreview(val?.profile_picture?.[0] ?? '');
-      // setImageData(val?.profile_picture?.[0] ?? "")
       setValue('type_of_profile', val?.type_of_profile?.[0]);
       setValue(
         'reasons_to_join_platform',
@@ -799,11 +831,13 @@ const ProfileDetail = () => {
                       </>
                     ) : (
                       <div className='flex items-center'>
-                        <p className='mr-2 text-sm truncate'>{full_name}</p>
+                        <p className='mr-2 text-sm truncate break -all'>
+                          {full_name}
+                        </p>
                       </div>
                     )}
                   </div>
-                  {/* full name  */}
+
                   <div className='mb-4 group relative hover:bg-gray-100 rounded-lg p-2 px-3'>
                     <div className='flex justify-between'>
                       <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
@@ -1044,7 +1078,7 @@ const ProfileDetail = () => {
                     )}
                   </div>
                   {/* Reasons to Join Platform Section */}
-                  <div className='mb-4 group relative hover:bg-gray-100 rounded-lg p-2 px-3'>
+                  <div className=' group relative hover:bg-gray-100 rounded-lg p-2 px-3'>
                     <div className='flex justify-between'>
                       <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
                         Reasons to Join Platform
@@ -1101,7 +1135,7 @@ const ProfileDetail = () => {
                         }}
                       />
                     ) : (
-                      <div className='flex gap-2 overflow-x-auto'>
+                      <div className='flex space-x-2 overflow-x-auto'>
                         {(userFullData?.reason_to_join || [])
                           .flat()
                           .map((reason, index) => (
@@ -1734,7 +1768,7 @@ const ProfileDetail = () => {
                 )}
               </div>
               {/* Reasons to Join Platform Section */}
-              <div className='mb-4 group relative hover:bg-gray-100 rounded-lg p-2 px-3'>
+              <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-2 px-3'>
                 <div className='flex justify-between'>
                   <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
                     Reasons to Join Platform

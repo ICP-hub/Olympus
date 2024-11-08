@@ -10,7 +10,6 @@
 // import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 // import RatingPageProfileSkeleton from './skeletonProfile/RatingPageProfileSkeleton';
 
-
 // const RatingPage = () => {
 //   const [rating, setRating] = useState(0);
 //   const [showReview, setShowReview] = useState(false);
@@ -209,7 +208,7 @@
 //         )}
 //       </div>
 //       <hr className='mt-4' />
-//       {reviews && 
+//       {reviews &&
 //         reviews.map((review, indx) => {
 //           console.log('review', review);
 //           const profilepic =
@@ -280,7 +279,6 @@
 //             </div>
 //           );
 //         })}
-       
 
 //     </div>
 //   );
@@ -297,15 +295,16 @@ import { Principal } from '@dfinity/principal';
 import uint8ArrayToBase64 from '../Utils/uint8ArrayToBase64';
 import toast from 'react-hot-toast';
 import { ThreeDots } from 'react-loader-spinner';
-import { ProfileSkeleton } from './skeletonProfile/RatingPageProfileSkeleton'; 
-import { ReviewSkeleton } from './skeletonProfile/RatingPageProfileSkeleton';  
+import { ProfileSkeleton } from './skeletonProfile/RatingPageProfileSkeleton';
+import { ReviewSkeleton } from './skeletonProfile/RatingPageProfileSkeleton';
 import RatingPageProfileSkeleton from './skeletonProfile/RatingPageProfileSkeleton';
 
 const RatingPage = () => {
   const [rating, setRating] = useState(0);
   const [showReview, setShowReview] = useState(false);
   const [currentUserHasRated, setCurrentUserHasRated] = useState(null);
-  const [showRatingProfileSkeleton, setShowRatingProfileSkeleton] = useState(true); // Control for initial profile skeleton
+  const [showRatingProfileSkeleton, setShowRatingProfileSkeleton] =
+    useState(true); // Control for initial profile skeleton
   const [showProfileSkeleton, setShowProfileSkeleton] = useState(false); // Control for profile skeleton when reviews are loaded
   const [showReviewSkeleton, setShowReviewSkeleton] = useState(false); // Control for review skeleton when reviews are fetched
   const actor = useSelector((currState) => currState.actors.actor);
@@ -322,7 +321,12 @@ const RatingPage = () => {
       .min(10, 'Review must be at least 10 characters'),
   });
 
-  const { register, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+  } = useForm({
     resolver: yupResolver(schema),
   });
 
@@ -506,12 +510,14 @@ const RatingPage = () => {
       {showProfileSkeleton && <ProfileSkeleton />}
 
       {/* Show ReviewSkeleton for 1 second before reviews */}
-      {showReviewSkeleton && reviews.length > 0 && (
-        reviews.map((_, index) => <ReviewSkeleton key={index} />)
-      )}
+      {showReviewSkeleton &&
+        reviews.length > 0 &&
+        reviews.map((_, index) => <ReviewSkeleton key={index} />)}
 
       {/* Show reviews after skeletons */}
-      {!showProfileSkeleton && !showReviewSkeleton && reviews.length > 0 &&
+      {!showProfileSkeleton &&
+        !showReviewSkeleton &&
+        reviews.length > 0 &&
         reviews.map((review, indx) => {
           const profilepic =
             review?.profile_pic && review?.profile_pic
@@ -581,14 +587,14 @@ const RatingPage = () => {
                 </div>
               </div> */}
               <div className='sm0:flex  items-center justify-center w-full  gap-4 flex-shrink-0'>
-                <div className="flex justify-center sm0:justify-start">
-                <img
-                  src={profilepic}
-                  alt='pic'
-                  className='rounded-full w-12 h-12 ss:w-16 ss:h-16 object-cover border border-gray-300'
-                  loading='lazy'
-                  draggable={false}
-                />
+                <div className='flex justify-center sm0:justify-start'>
+                  <img
+                    src={profilepic}
+                    alt='pic'
+                    className='rounded-full w-12 h-12 ss:w-16 ss:h-16 object-cover border border-gray-300'
+                    loading='lazy'
+                    draggable={false}
+                  />
                 </div>
                 <div className='flex flex-col w-full items-center justify-center sm0:items-start'>
                   <h2 className='text-base font-semibold text-gray-800 mb-1'>
@@ -644,6 +650,3 @@ const RatingPage = () => {
 };
 
 export default RatingPage;
-
-
-

@@ -64,7 +64,7 @@ const ConnectWallet = ({ isModalOpen, onClose, modalRef }) => {
               {closeModalSvg}
             </button>
             <h3 className='text-lg font-semibold text-gray-900 grow text-center absolute left-0 right-0'>
-              Signup / Signin
+              Sign up / Sign in
             </h3>
           </div>
           <div className='p-4 md:p-5'>

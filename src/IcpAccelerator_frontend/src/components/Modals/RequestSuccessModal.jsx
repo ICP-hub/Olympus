@@ -57,7 +57,7 @@ const RequestSuccessModal = ({ openDetail, setOpenDetail }) => {
           </div>
 
           <p className='text-lg font-semibold'>Success message</p>
-          <p className='mt-2 text-gray-600'>
+          <p className='mt-2 text-gray-600 text-center'>
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquid
             pariatur, ipsum dolor.
           </p>

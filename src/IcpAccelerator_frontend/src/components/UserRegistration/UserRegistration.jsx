@@ -5,6 +5,8 @@ import { ThreeDots } from 'react-loader-spinner';
 import toast, { Toaster } from 'react-hot-toast';
 import { useSelector } from 'react-redux';
 import Layer1 from '../../../assets/Logo/Layer1.png';
+import topLogo from '../../../assets/Logo/topLogo.png';
+
 import AboutcardSkeleton from '../LatestSkeleton/AbourcardSkeleton';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
@@ -247,9 +249,9 @@ const UserRegistration = () => {
                 /> */}
                 <div className='sticky top-0 bg-white z-10 py-2'>
                   <img
-                    src={Layer1}
+                    src={topLogo}
                     alt='logo'
-                    className='text-start w-1/3 lg:w-1/3'
+                    className='text-start w-1/3 lg:w-1/3 lg:h-11'
                     loading='lazy'
                     draggable={false}
                   />
@@ -327,13 +329,17 @@ const UserRegistration = () => {
                       </div>
                     )}
 
-                    <div className='flex pb-2 px-4 mb-4 justify-between mt-8'>
+                    <div
+                      className={`flex pb-2 px-4 mb-4 mt-8 ${
+                        index === 0 ? 'justify-end' : 'justify-between'
+                      }`}
+                    >
                       <button
                         type='button'
                         className='py-2 px-2 pr-3 text-sm sm:text-sm md:text-base text-gray-600 rounded hover:text-black border-gray-300 border-2'
                         onClick={handleBack}
                         style={{
-                          visibility: isInitialSubmit ? 'hidden' : 'visible',
+                          display: index > 0 ? 'inline-flex' : 'none',
                         }}
                         disabled={index === 0 || isInitialSubmit}
                       >

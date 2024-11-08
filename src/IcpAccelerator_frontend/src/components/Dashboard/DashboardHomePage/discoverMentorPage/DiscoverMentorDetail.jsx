@@ -10,12 +10,18 @@ import getSocialLogo from '../../../Utils/navigationHelper/getSocialLogo';
 import useTimeout from '../../../hooks/TimeOutHook';
 import UserGeneralDetailSkeleton from '../../../Profile/skeletonProfile/UserGeneralDetailSkeleton';
 import DiscoverProjectProfileSkeleton from '../DiscoverProjectSkeleton/DiscoverProjectProfileSkeleton';
+import StarIcon from '@mui/icons-material/Star';
+import Rating1 from '../../../Modals/RatingModals/Rating1';
+import { useSelector } from 'react-redux';
 
-const DiscoverMentorDetail = ({ projectDetails, userData }) => {
+const DiscoverMentorDetail = ({ projectDetails, userData, projectId }) => {
+  const userCurrentRoleStatusActiveRole = useSelector(
+    (currState) => currState.currentRoleStatus.activeRole
+  );
   const projectDetail = projectDetails;
   console.log('projectdetails ', projectDetail);
   console.log('userdetails ', userData);
-
+  console.log('projectId', projectId);
   let full_name = projectDetail?.full_name;
 
   let icphub = projectDetail?.preferred_icp_hub?.[0];
@@ -141,336 +147,380 @@ const DiscoverMentorDetail = ({ projectDetails, userData }) => {
 
   useTimeout(() => setIsLoading(false));
 
+  const [isRating, setIsRating] = useState(false);
+  const handleRating = () => {
+    setIsRating(true);
+  };
+
   return (
-    <div className='bg-white shadow-lg rounded-lg w-full lg1:pb-3 '>
-      {isLoading ? (
-        <DiscoverProjectProfileSkeleton />
-      ) : (
-        <div className='bg-slate-200 p-6'>
-          <div className='flex justify-center'>
-            <img
-              src={projectlogo}
-              alt='Profile'
-              className='rounded-lg w-24 h-24'
-              loading='lazy'
-              draggable={false}
-            />
-          </div>
-
-          <div className='text-center mt-2'>
-            <span className='text-xs font-medium text-[#3538CD] border bg-blue-50 rounded-lg px-3 py-1'>
-              Looking for funding
-            </span>
-          </div>
-
-          <div className='text-center mt-4'>
-            <h2 className='text-xl font-semibold text-gray-800'>{full_name}</h2>
-            {/* <p className="text-gray-500">@cypherpunklabs</p> */}
-          </div>
-
-          <div className='text-center w-full mt-6'>
-            {/* <button className="bg-transparent border border-[#3505B2] text-[#3505B2] text-sm font-[950] px-2 py-1 rounded-md">
-            Get in touch{" "}
-          </button> */}
-            <a
-              href={project_website}
-              className='w-full h-[#155EEF] bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 mb-6 flex items-center justify-center'
-            >
-              Get in touch
-              <ArrowOutwardOutlinedIcon className='ml-1' fontSize='small' />
-            </a>
-          </div>
-        </div>
-      )}
-      <div className='flex justify-start border-b'>
-        <button
-          className={`px-4 py-2 focus:outline-none font-medium  ${
-            activeTab === 'general'
-              ? 'border-b-2 border-blue-500 text-blue-500 font-medium'
-              : 'text-gray-400'
-          }`}
-          onClick={() => handleChange('general')}
-        >
-          General
-        </button>
-        <button
-          className={`px-4 py-2 focus:outline-none font-medium  ${
-            activeTab === 'project'
-              ? 'border-b-2 border-blue-500 text-blue-500 font-medium'
-              : 'text-gray-400'
-          }`}
-          onClick={() => handleChange('project')}
-        >
-          Project
-        </button>
-      </div>
-
-      {isLoading ? (
-        <UserGeneralDetailSkeleton />
-      ) : activeTab === 'general' ? (
-        <div className='p-4'>
-          <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-2 '>
-            <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
-              Email
-            </h3>
-
-            <div className='flex flex-wrap items-center'>
-              <p className='mr-2 text-sm'>{userData?.email[0]}</p>
-              <VerifiedIcon
-                className='text-blue-500 mr-2 w-2 h-2'
-                fontSize='small'
+    <>
+      <div className='bg-white shadow-lg rounded-lg w-full lg1:pb-3 '>
+        {isLoading ? (
+          <DiscoverProjectProfileSkeleton />
+        ) : (
+          <div className='bg-slate-200 p-6'>
+            <div className='flex justify-center'>
+              <img
+                src={projectlogo}
+                alt='Profile'
+                className='rounded-lg w-24 h-24'
+                loading='lazy'
+                draggable={false}
               />
-              <span className='bg-[#F8FAFC] border border-[#E3E8EF] text-[#364152] px-2 py-0.5 rounded text-xs'>
-                HIDDEN
+            </div>
+
+            <div className='text-center mt-2'>
+              <span className='text-xs font-medium text-[#3538CD] border bg-blue-50 rounded-lg px-3 py-1'>
+                Looking for funding
               </span>
             </div>
-          </div>
 
-          <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-2 '>
-            <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
-              Type of Profile
-            </h3>
-            <div className='flex items-center'>
-              <p className='border-2 border-gray-500 rounded-full text-gray-700 text-xs px-3 py-1 bg-gray-100'>
-                {userData?.type_of_profile?.[0]}
+            <div className='text-center mt-4'>
+              <h2 className='text-xl font-semibold text-gray-800'>
+                {full_name}
+              </h2>
+              {/* <p className="text-gray-500">@cypherpunklabs</p> */}
+            </div>
+
+            <div className='text-center w-full mt-6'>
+              {/* <button className="bg-transparent border border-[#3505B2] text-[#3505B2] text-sm font-[950] px-2 py-1 rounded-md">
+            Get in touch{" "}
+          </button> */}
+              <a
+                href={project_website}
+                className='w-full h-[#155EEF] bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 mb-4 flex items-center justify-center'
+              >
+                Get in touch
+                <ArrowOutwardOutlinedIcon className='ml-1' fontSize='small' />
+              </a>
+              {userCurrentRoleStatusActiveRole === 'mentor' ||
+              userCurrentRoleStatusActiveRole === 'vc' ? (
+                <button
+                  className='w-full h-[#155EEF] bg-white border-gray-300 text-black py-2 px-4 rounded-lg mb-4 flex items-center justify-center'
+                  onClick={() => handleRating()}
+                >
+                  Rate
+                  <StarIcon
+                    className='ml-1'
+                    fontSize='small'
+                    style={{
+                      color: 'transparent',
+                      stroke: 'black',
+                      strokeWidth: 2,
+                    }}
+                  />
+                </button>
+              ) : (
+                ''
+              )}
+            </div>
+          </div>
+        )}
+        <div className='flex justify-start border-b'>
+          <button
+            className={`px-4 py-2 focus:outline-none font-medium  ${
+              activeTab === 'general'
+                ? 'border-b-2 border-blue-500 text-blue-500 font-medium'
+                : 'text-gray-400'
+            }`}
+            onClick={() => handleChange('general')}
+          >
+            General
+          </button>
+          <button
+            className={`px-4 py-2 focus:outline-none font-medium  ${
+              activeTab === 'project'
+                ? 'border-b-2 border-blue-500 text-blue-500 font-medium'
+                : 'text-gray-400'
+            }`}
+            onClick={() => handleChange('project')}
+          >
+            Project
+          </button>
+        </div>
+
+        {isLoading ? (
+          <UserGeneralDetailSkeleton />
+        ) : activeTab === 'general' ? (
+          <div className='p-4'>
+            <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-2 '>
+              <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
+                Email
+              </h3>
+
+              <div className='flex flex-wrap items-center'>
+                <p className='mr-2 text-sm line-clamp-1 break-all'>
+                  {userData?.email[0]}
+                </p>
+                <VerifiedIcon
+                  className='text-blue-500 mr-2 w-2 h-2'
+                  fontSize='small'
+                />
+                <span className='bg-[#F8FAFC] border border-[#E3E8EF] text-[#364152] px-2 py-0.5 rounded text-xs'>
+                  HIDDEN
+                </span>
+              </div>
+            </div>
+
+            <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-2 '>
+              <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
+                Type of Profile
+              </h3>
+              <div className='flex items-center'>
+                <p className='border-2 border-gray-500 rounded-full text-gray-700 text-xs px-3 py-1 bg-gray-100'>
+                  {userData?.type_of_profile?.[0]}
+                </p>
+              </div>
+            </div>
+
+            <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-2 '>
+              <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
+                About
+              </h3>
+
+              <p className='text-sm line-clamp-2 break-all'>
+                {userData?.bio[0]}
               </p>
             </div>
-          </div>
 
-          <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-2 '>
-            <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
-              About
-            </h3>
+            <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-2 '>
+              <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
+                Location
+              </h3>
 
-            <p className='text-sm line-clamp-2 break-all'>{userData?.bio[0]}</p>
-          </div>
-
-          <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-2 '>
-            <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
-              Location
-            </h3>
-
-            <div className='flex'>
-              <PlaceOutlinedIcon
-                className='text-gray-500 mr-1'
-                fontSize='small'
-              />
-              <p className='text-sm'>{userData?.country}</p>
+              <div className='flex'>
+                <PlaceOutlinedIcon
+                  className='text-gray-500 mr-1'
+                  fontSize='small'
+                />
+                <p className='text-sm'>{userData?.country}</p>
+              </div>
             </div>
-          </div>
 
-          <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-2'>
-            <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
-              Area of Interest
-            </h3>
-            <div>
+            <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-2'>
+              <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
+                Area of Interest
+              </h3>
+              <div>
+                <div className='flex flex-wrap gap-2'>
+                  {userData?.area_of_interest &&
+                    userData.area_of_interest
+                      .split(', ')
+                      .map((interest, index) => (
+                        <span
+                          key={index}
+                          className='border-2 border-gray-500 rounded-full text-gray-700 text-xs px-3 py-1 bg-gray-100'
+                        >
+                          {interest}
+                        </span>
+                      ))}
+                </div>
+              </div>
+            </div>
+
+            <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-2 '>
+              <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
+                Reasons to Join Platform
+              </h3>
+
               <div className='flex flex-wrap gap-2'>
-                {userData?.area_of_interest &&
-                  userData.area_of_interest
-                    .split(', ')
-                    .map((interest, index) => (
-                      <span
-                        key={index}
-                        className='border-2 border-gray-500 rounded-full text-gray-700 text-xs px-3 py-1 bg-gray-100'
+                {userData?.reason_to_join[0]?.map((reason) => (
+                  <span
+                    key={reason}
+                    className='border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1'
+                  >
+                    {reason}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <div className='p-2 group relative hover:bg-gray-100 rounded-lg'>
+              {userData?.social_links[0] && (
+                <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase '>
+                  LINKS
+                </h3>
+              )}
+
+              <div className='flex items-center '>
+                <div className='flex gap-3'>
+                  {userData?.social_links[0]?.map((linkObj, i) => {
+                    const link = linkObj.link[0]; // Assuming the link is in this format
+                    const icon = getSocialLogo(link);
+                    return (
+                      <a
+                        key={i}
+                        href={link}
+                        target='_blank'
+                        rel='noopener noreferrer'
+                        className='flex items-center space-x-2'
                       >
-                        {interest}
-                      </span>
-                    ))}
+                        {icon}
+                      </a>
+                    );
+                  })}
+                </div>
               </div>
             </div>
           </div>
+        ) : (
+          <div className='p-6'>
+            {mergedProfiles && mergedProfiles.length > 0 && (
+              <>
+                <h3 className='text-gray-600 text-sm font-medium'>
+                  ASSOCIATIONS
+                </h3>
+                <div className='flex items-center space-x-2'>
+                  {mergedProfiles
+                    .filter((association) => association.profile_picture)
+                    .map((association, index) => (
+                      <div
+                        key={index}
+                        className='relative flex items-center transition-all duration-600 ease-cubic-bezier(0.25, 0.1, 0.25, 1)'
+                        onMouseEnter={() => handleMouseEnter(index)}
+                        onMouseLeave={handleMouseLeave}
+                        onTransitionEnd={handleTransitionEnd}
+                      >
+                        <span
+                          className={`absolute left-12 transition-all duration-600 ease-cubic-bezier(0.25, 0.1, 0.25, 1) transform ${
+                            activeIndex === index
+                              ? 'translate-x-0 opacity-100 delay-100'
+                              : '-translate-x-4 opacity-0'
+                          }`}
+                        >
+                          {association?.role}
+                        </span>
 
-          <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-2 '>
-            <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
-              Reasons to Join Platform
-            </h3>
+                        <Avatar
+                          src={association.profile_picture}
+                          alt={`Avatar of ${association.name}`}
+                          className={`h-12 w-12 rounded-full transition-transform duration-600 ease-cubic-bezier(0.25, 0.1, 0.25, 1) hover:scale-105 ${
+                            activeIndex === index ? 'mr-16 delay-100' : 'mr-0'
+                          }`}
+                        />
+                      </div>
+                    ))}
+                </div>
+              </>
+            )}
 
-            <div className='flex flex-wrap gap-2'>
-              {userData?.reason_to_join[0]?.map((reason) => (
+            <div className='mt-4'>
+              <h3 className='block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start'>
+                Project Name
+              </h3>
+              <p className='text-sm line-clamp-1 break-all'>{projectname} </p>
+            </div>
+            <div className='mt-4'>
+              <h3 className='block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start'>
+                Project Description
+              </h3>
+              <p className='text-sm line-clamp-3 break-all'>
+                {projectdescription}{' '}
+              </p>
+            </div>
+            <div className='mt-6'>
+              <h3 className='block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start'>
+                Prefered Icp Hub
+              </h3>
+              <p className='text-sm'>{icphub}</p>
+            </div>
+            <div className='mt-6'>
+              <h3 className='block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start'>
+                Project Elevator Pitch
+              </h3>
+              <p className='text-sm line-clamp-1 break-all'>
+                {project_elevator_pitch}
+              </p>
+            </div>
+            <div className='mt-6'>
+              <h3 className='block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start'>
+                Project Website
+              </h3>
+              <p className='text-sm line-clamp-1 break-all'>
+                {project_website}
+              </p>
+            </div>
+
+            <div className='mt-4'>
+              <h3 className='block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start'>
+                PROJECT FOCUS AREA
+              </h3>
+              {projectFocus?.split(', ').map((focus, index) => (
                 <span
-                  key={reason}
-                  className='border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1'
+                  key={index}
+                  className='border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 inline-block mr-2 mb-2 mt-1'
                 >
-                  {reason}
+                  {focus}
                 </span>
               ))}
             </div>
-          </div>
-
-          <div className='p-2 group relative hover:bg-gray-100 rounded-lg'>
-            {userData?.social_links[0] && (
-              <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase '>
-                LINKS
+            <div className='mt-4'>
+              <h3 className='block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start'>
+                MULTI-CHAIN NAMES
               </h3>
-            )}
-
-            <div className='flex items-center '>
-              <div className='flex gap-3'>
-                {userData?.social_links[0]?.map((linkObj, i) => {
-                  const link = linkObj.link[0]; // Assuming the link is in this format
-                  const icon = getSocialLogo(link);
-                  return (
-                    <a
-                      key={i}
-                      href={link}
-                      target='_blank'
-                      rel='noopener noreferrer'
-                      className='flex items-center space-x-2'
-                    >
-                      {icon}
-                    </a>
-                  );
-                })}
-              </div>
+              {multi_chain_names?.split(', ').map((chain, index) => (
+                <span
+                  key={index}
+                  className='border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 inline-block mr-2 mb-2 mt-1'
+                >
+                  {chain}
+                </span>
+              ))}
             </div>
-          </div>
-        </div>
-      ) : (
-        <div className='p-6'>
-          {mergedProfiles && mergedProfiles.length > 0 && (
-            <>
-              <h3 className='text-gray-600 text-sm font-medium'>
-                ASSOCIATIONS
+            <div className='mt-4'>
+              <h3 className='block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start'>
+                REASON TO JOIN
               </h3>
-              <div className='flex items-center space-x-2'>
-                {mergedProfiles
-                  .filter((association) => association.profile_picture)
-                  .map((association, index) => (
-                    <div
-                      key={index}
-                      className='relative flex items-center transition-all duration-600 ease-cubic-bezier(0.25, 0.1, 0.25, 1)'
-                      onMouseEnter={() => handleMouseEnter(index)}
-                      onMouseLeave={handleMouseLeave}
-                      onTransitionEnd={handleTransitionEnd}
-                    >
-                      <span
-                        className={`absolute left-12 transition-all duration-600 ease-cubic-bezier(0.25, 0.1, 0.25, 1) transform ${
-                          activeIndex === index
-                            ? 'translate-x-0 opacity-100 delay-100'
-                            : '-translate-x-4 opacity-0'
-                        }`}
-                      >
-                        {association?.role}
-                      </span>
 
-                      <Avatar
-                        src={association.profile_picture}
-                        alt={`Avatar of ${association.name}`}
-                        className={`h-12 w-12 rounded-full transition-transform duration-600 ease-cubic-bezier(0.25, 0.1, 0.25, 1) hover:scale-105 ${
-                          activeIndex === index ? 'mr-16 delay-100' : 'mr-0'
-                        }`}
-                      />
-                    </div>
-                  ))}
-              </div>
-            </>
-          )}
+              {reason_to_join_incubator?.split(', ').map((chain, index) => (
+                <span
+                  key={index}
+                  className='border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 inline-block mr-2 mb-2 mt-1'
+                >
+                  {chain}
+                </span>
+              ))}
+            </div>
 
-          <div className='mt-4'>
-            <h3 className='block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start'>
-              Project Name
-            </h3>
-            <p className='text-sm line-clamp-3'>{projectname} </p>
-          </div>
-          <div className='mt-4'>
-            <h3 className='block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start'>
-              Project Description
-            </h3>
-            <p className='text-sm line-clamp-3'>{projectdescription} </p>
-          </div>
-          <div className='mt-6'>
-            <h3 className='block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start'>
-              Prefered Icp Hub
-            </h3>
-            <p className='text-sm'>{icphub}</p>
-          </div>
-          <div className='mt-6'>
-            <h3 className='block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start'>
-              Project Elevator Pitch
-            </h3>
-            <p className='text-sm'>{project_elevator_pitch}</p>
-          </div>
-          <div className='mt-6'>
-            <h3 className='block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start'>
-              Project Website
-            </h3>
-            <p className='text-sm'>{project_website}</p>
-          </div>
-
-          <div className='mt-4'>
-            <h3 className='block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start'>
-              PROJECT FOCUS AREA
-            </h3>
-            {projectFocus?.split(', ').map((focus, index) => (
-              <span
-                key={index}
-                className='border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 inline-block mr-2 mb-2 mt-1'
-              >
-                {focus}
+            <div className='mt-4'>
+              <h3 className='block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start'>
+                TYPE OF REGISTRATION
+              </h3>
+              <span className=' border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 inline-block mr-2 mb-2 mt-1'>
+                {regestrationType}{' '}
               </span>
-            ))}
-          </div>
-          <div className='mt-4'>
-            <h3 className='block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start'>
-              MULTI-CHAIN NAMES
-            </h3>
-            {multi_chain_names?.split(', ').map((chain, index) => (
-              <span
-                key={index}
-                className='border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 inline-block mr-2 mb-2 mt-1'
-              >
-                {chain}
+            </div>
+            <div className='mt-4'>
+              <h3 className='block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start'>
+                COUNTRY OF REGISTRATION
+              </h3>
+              <span className=' text-sm'>{country_of_registration} </span>
+            </div>
+            <div className='mt-4'>
+              <h3 className='block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start'>
+                DAPP LINK
+              </h3>
+              <span className=' text-sm line-clamp-1 break-all'>
+                {dapp_link}{' '}
               </span>
-            ))}
-          </div>
-          <div className='mt-4'>
-            <h3 className='block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start'>
-              REASON TO JOIN
-            </h3>
-
-            {reason_to_join_incubator?.split(', ').map((chain, index) => (
-              <span
-                key={index}
-                className='border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 inline-block mr-2 mb-2 mt-1'
-              >
-                {chain}
+            </div>
+            <div className='mt-4'>
+              <h3 className='block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start'>
+                WEEKLY ACTIVE USERS
+              </h3>
+              <span className=' text-sm line-clamp-1 break-all'>
+                {Number(weekly_active_users)}
               </span>
-            ))}
-          </div>
-
-          <div className='mt-4'>
-            <h3 className='block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start'>
-              TYPE OF REGISTRATION
-            </h3>
-            <span className=' border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 inline-block mr-2 mb-2 mt-1'>
-              {regestrationType}{' '}
-            </span>
-          </div>
-          <div className='mt-4'>
-            <h3 className='block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start'>
-              COUNTRY OF REGISTRATION
-            </h3>
-            <span className=' text-sm'>{country_of_registration} </span>
-          </div>
-          <div className='mt-4'>
-            <h3 className='block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start'>
-              DAPP LINK
-            </h3>
-            <span className=' text-sm'>{dapp_link} </span>
-          </div>
-          <div className='mt-4'>
-            <h3 className='block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start'>
-              WEEKLY ACTIVE USERS
-            </h3>
-            <span className=' text-sm'>{Number(weekly_active_users)}</span>
-          </div>
-          <div className='mt-4'>
-            <h3 className='block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start'>
-              REVENUE
-            </h3>
-            <span className=' text-sm'>{Number(revenue)} </span>
-          </div>
-          {/* <div className="mt-4">
+            </div>
+            <div className='mt-4'>
+              <h3 className='block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start'>
+                REVENUE
+              </h3>
+              <span className=' text-sm line-clamp-1 break-all'>
+                {Number(revenue)}{' '}
+              </span>
+            </div>
+            {/* <div className="mt-4">
           <h3 className="block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start">
             ICP GRANTS
           </h3>
@@ -501,31 +551,42 @@ const DiscoverMentorDetail = ({ projectDetails, userData }) => {
           </h3>
           <span className=" text-sm">{target_amount} </span>
         </div> */}
-          <div className='mt-4'>
-            <h3 className='block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start'>
-              PROMOTIONAL VIDEO
-            </h3>
-            <span className=' text-sm'>{promotional_video} </span>
-          </div>
-
-          <div className='mt-6'>
-            <div>
-              <h3 className='block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start '>
-                LINKS
+            <div className='mt-4'>
+              <h3 className='block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start'>
+                PROMOTIONAL VIDEO
               </h3>
-              {links?.link.map((alllink, i) => {
-                const icon = getSocialLogo(alllink);
-                return (
-                  <div key={i} className='flex items-center space-x-2'>
-                    {icon ? <a href={`${alllink}`}>{icon}</a> : ''}
-                  </div>
-                );
-              })}
+              <span className=' text-sm line-clamp-1 break-all'>
+                {promotional_video}{' '}
+              </span>
+            </div>
+
+            <div className='mt-6'>
+              <div>
+                <h3 className='block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start '>
+                  LINKS
+                </h3>
+                {links?.link.map((alllink, i) => {
+                  const icon = getSocialLogo(alllink);
+                  return (
+                    <div key={i} className='flex items-center space-x-2'>
+                      {icon ? <a href={`${alllink}`}>{icon}</a> : ''}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
-        </div>
+        )}
+      </div>
+      {isRating && (
+        <Rating1
+          position={'start'}
+          projectId={projectId}
+          isRating={isRating}
+          setIsRating={setIsRating}
+        />
       )}
-    </div>
+    </>
   );
 };
 

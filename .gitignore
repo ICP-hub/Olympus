@@ -26,5 +26,5 @@ package-lock.json
 
 canister_ids.json
 
-#maindata
-main data
+exported_identity.pem
+

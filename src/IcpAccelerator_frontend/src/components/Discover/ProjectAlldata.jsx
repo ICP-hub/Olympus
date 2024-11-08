@@ -32,8 +32,6 @@ const DiscoverProject = ({ onProjectCountChange }) => {
   const [isLoading, setIsLoading] = useState(true);
   const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
-  const [userData, setUserData] = useState([]);
-  const [cardDetail, setCadDetail] = useState(null);
   const [principal, setprincipal] = useState(null);
   const [listProjectId, setListProjectId] = useState(null);
   const [showRatingModal, setShowRatingModal] = useState(false);
@@ -44,6 +42,11 @@ const DiscoverProject = ({ onProjectCountChange }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentPrincipal, setCurrentPrincipal] = useState([]);
   const [userRatingDetail, setUserRatingDetail] = useState(null);
+  const [selectedAssociationType, setSelectedAssociationType] = useState(null);
+  const [projectProfile, setProjectProfile] = useState(null);
+  const [projectName, setProjectName] = useState(null);
+  const [ratingProjectId, setRatingProjectId] = useState(null);
+
   useTimeout(() => setIsLoading(false));
   const mentorPrincipal = useSelector(
     (currState) => currState.internet.principal
@@ -69,10 +72,25 @@ const DiscoverProject = ({ onProjectCountChange }) => {
   }, [isAuthenticated, dispatch]);
   const [isAddProjectModalOpen, setIsAddProjectModalOpen] = useState(false);
 
-  const handleProjectCloseModal = () => setIsAddProjectModalOpen(false);
-  const handleProjectOpenModal = (val) => {
-    setListProjectId(val);
-    setIsAddProjectModalOpen(true);
+  const handleProjectCloseModal = () => {
+    if (selectedAssociationType && selectedAssociationType.value === 'mentor') {
+      setIsAddProjectModalOpen(false);
+    } else {
+      setIsAddProjectModalOpenAsInvestor(false);
+    }
+  };
+  const handleProjectOpenModal = (val, profile, name) => {
+    if (selectedAssociationType && selectedAssociationType.value === 'mentor') {
+      setListProjectId(val);
+      setProjectProfile(profile);
+      setProjectName(name);
+      setIsAddProjectModalOpen(true);
+    } else {
+      setListProjectId(val);
+      setProjectProfile(profile);
+      setProjectName(name);
+      setIsAddProjectModalOpenAsInvestor(true);
+    }
   };
 
   // ASSOCIATE IN A PROJECT HANDLER AS A MENTOR
@@ -119,14 +137,6 @@ const DiscoverProject = ({ onProjectCountChange }) => {
   const [isAddProjectModalOpenAsInvestor, setIsAddProjectModalOpenAsInvestor] =
     useState(false);
 
-  const handleProjectCloseModalAsInvestor = () => {
-    setIsAddProjectModalOpenAsInvestor(false);
-  };
-  const handleProjectOpenModalAsInvestor = (val) => {
-    setListProjectId(val);
-    setIsAddProjectModalOpenAsInvestor(true);
-  };
-
   // ASSOCIATE IN A PROJECT HANDLER AS A Investor
   const handleAddProjectAsInvestor = async ({ message }) => {
     setIsSubmitting(true);
@@ -146,19 +156,19 @@ const DiscoverProject = ({ onProjectCountChange }) => {
         .then((result) => {
           console.log('result-in-send_offer_to_project_by_investor', result);
           if (result) {
-            handleProjectCloseModalAsInvestor();
+            handleProjectCloseModal();
             setIsSubmitting(false);
             // fetchProjectData();
             toast.success('offer sent to project successfully');
           } else {
-            handleProjectCloseModalAsInvestor();
+            handleProjectCloseModal();
             setIsSubmitting(false);
             toast.error('something got wrong');
           }
         })
         .catch((error) => {
           console.log('error-in-send_offer_to_project_by_investor', error);
-          handleProjectCloseModalAsInvestor();
+          handleProjectCloseModal();
           setIsSubmitting(false);
           toast.error('something got wrong');
         });
@@ -221,10 +231,11 @@ const DiscoverProject = ({ onProjectCountChange }) => {
     setUserDataToSend(user);
     console.log('passed principle', principal);
   };
-  const handleRating = (ratings, principalId) => {
+  const handleRating = (ratings, principalId, project_id) => {
     setShowRatingModal(true);
     setUserRatingDetail(ratings);
     setCurrentPrincipal(principalId);
+    setRatingProjectId(project_id);
   };
   async function convertBufferToImageBlob(buffer) {
     try {
@@ -330,7 +341,9 @@ const DiscoverProject = ({ onProjectCountChange }) => {
                       </div>
                     </div>
                     <div
-                      onClick={() => handleRating(user, principle_id)}
+                      onClick={() =>
+                        handleRating(user, principle_id, project_id)
+                      }
                       className='absolute cursor-pointer bottom-0 right-[6px] flex items-center bg-gray-100 p-1'
                     >
                       <Star className='text-yellow-400 w-4 h-4' />
@@ -342,15 +355,19 @@ const DiscoverProject = ({ onProjectCountChange }) => {
                     <div className='flex justify-between items-start mb-2'>
                       <div>
                         <div>
-                          <h3 className='text-xl font-bold'>{projectname}</h3>
-                          <span className='flex py-2'>
+                          <h3 className='text-xl font-bold line-clamp-1 text-ellipsis break-all'>
+                            {projectname}
+                          </h3>
+                          <span className='flex '>
                             <Avatar
                               alt='Mentor'
                               src={profile}
                               className=' mr-2'
                               sx={{ width: 24, height: 24 }}
                             />
-                            <span className='text-gray-500'>{full_name}</span>
+                            <span className='text-gray-500 line-clamp-1 break-all'>
+                              {full_name}
+                            </span>
                           </span>
                           {/* <span className="text-gray-500">@{openchat_name}</span> */}
                         </div>
@@ -363,13 +380,11 @@ const DiscoverProject = ({ onProjectCountChange }) => {
                         <button
                           data-tooltip-id='registerTip'
                           onClick={() => {
-                            if (userCurrentRoleStatusActiveRole === 'mentor') {
-                              handleProjectOpenModal(project_id);
-                            } else if (
-                              userCurrentRoleStatusActiveRole === 'vc'
-                            ) {
-                              handleProjectOpenModalAsInvestor(project_id);
-                            }
+                            handleProjectOpenModal(
+                              project_id,
+                              projectlogo,
+                              projectname
+                            );
                           }}
                         >
                           <RiSendPlaneLine />
@@ -407,7 +422,7 @@ const DiscoverProject = ({ onProjectCountChange }) => {
 
                     {/* <div className="border-t border-gray-200 my-3">{email}</div> */}
 
-                    <p className='text-gray-600 mb-4 line-clamp-3 break-all '>
+                    <p className='text-gray-600 mb-2 line-clamp-3 break-all '>
                       {' '}
                       {parse(projectdescription)}
                     </p>
@@ -443,22 +458,32 @@ const DiscoverProject = ({ onProjectCountChange }) => {
           setShowRatingModal={setShowRatingModal}
           userRatingDetail={userRatingDetail}
           cardPrincipal={currentPrincipal}
+          role={'project'}
+          ratingProjectId={ratingProjectId}
         />
       )}
       {isAddProjectModalOpen && (
         <AddAMentorRequestModal
-          title={'Associate Project'}
+          title={'Request to Associate a Project'}
           onClose={handleProjectCloseModal}
           onSubmitHandler={handleAddProject}
           isSubmitting={isSubmitting}
+          selectedAssociationType={selectedAssociationType}
+          setSelectedAssociationType={setSelectedAssociationType}
+          projectProfile={projectProfile}
+          projectName={projectName}
         />
       )}
       {isAddProjectModalOpenAsInvestor && (
         <AddAMentorRequestModal
-          title={'Associate Project'}
-          onClose={handleProjectCloseModalAsInvestor}
+          title={'Request to Associate a Project'}
+          onClose={handleProjectCloseModal}
           onSubmitHandler={handleAddProjectAsInvestor}
           isSubmitting={isSubmitting}
+          selectedAssociationType={selectedAssociationType}
+          setSelectedAssociationType={setSelectedAssociationType}
+          projectProfile={projectProfile}
+          projectName={projectName}
         />
       )}
       <Toaster />

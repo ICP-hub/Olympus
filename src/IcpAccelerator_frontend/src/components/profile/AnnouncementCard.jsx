@@ -159,12 +159,12 @@
 //   const fetchLatestAnnouncement = async () => {
 //     setIsLoading(true);
 //     let convertedId = Principal.fromText(principal);
-  
+
 //     setTimeout(async () => {
 //       try {
 //         const result = await actor.get_announcements_by_principal(convertedId);
 //         console.log('RESULT FROM ANN API', result);
-  
+
 //         if (!result || result.length === 0) {
 //           setNoData(true);
 //           setLatestAnnouncementData([]);
@@ -179,9 +179,8 @@
 //       } finally {
 //         setIsLoading(false);
 //       }
-//     }, 1000); 
+//     }, 1000);
 //   };
-  
 
 //   useEffect(() => {
 //     if (actor) {
@@ -224,7 +223,7 @@
 //       )}
 //       {latestAnnouncementData.length === 0 ? (
 //         <div className='md:py-4 py-12'>
-//           {/* {noData===true ? <NoCardData />: 
+//           {/* {noData===true ? <NoCardData />:
 //             <AnnouncementCardSkeleton />
 //           }
 //           {noData && <button
@@ -326,7 +325,7 @@
 //               <AnnouncementCardSkeleton key={index} />
 //             ))}
 //           </>
-           
+
 //           );
 //         })
 //       )}

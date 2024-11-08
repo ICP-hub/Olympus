@@ -18,7 +18,6 @@ import {
 } from '../../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer';
 import DashboardHomeWelcomeSectionSkeleton from './DashbooardHomepageSkeletons/DashboardHomeWelcomeSectionSkeleton';
 import useTimeout from '../../hooks/TimeOutHook';
-import RatingMain from '../../Modals/RatingModals/RatingMain';
 
 const styles = {
   circularChart: {
@@ -70,9 +69,10 @@ function DashboardHomeWelcomeSection({ userName, profileCompletion }) {
   const investorFullData = useSelector(
     (currState) => currState.investorData.data[0]
   );
+  console.log('investorFullData', investorFullData);
   const mentorCompletion = mentorFullData?.[0].profile_completion;
   const projectCompletion = projectFullData?.[0].profile_completion;
-  const investorCompletion = investorFullData?.[0].profile_completion;
+  const investorCompletion = investorFullData?.[1].profile_completion;
   const actor = useSelector((currState) => currState.actors.actor);
   const principal = useSelector((currState) => currState.internet.principal);
   const userCurrentRoleStatus = useSelector(
@@ -392,7 +392,6 @@ function DashboardHomeWelcomeSection({ userName, profileCompletion }) {
           onClose={() => setRoleModalOpen(false)}
         />
       )}
-      {/* <RatingMain /> */}
     </>
   );
 }

@@ -153,19 +153,23 @@ const ProjectCard = () => {
                 key={index}
               >
                 <div className='bg-[#F8FAFC] rounded-lg shadow-lg w-full p-4 flex items-center mb-6 justify-between  md:hidden'>
-                  <div className='flex items-center'>
-                    <img
-                      src={projectLogo}
-                      alt={projectName ?? 'ICP'}
-                      className='w-12 h-12 rounded-lg'
-                      loading='lazy'
-                      draggable={false}
-                    />
-                    <div className='ml-4'>
-                      <h3 className='text-lg font-bold'>
+                  <div className='sxs2:flex items-center'>
+                    <div className='flex justify-center items-center'>
+                      <img
+                        src={projectLogo}
+                        alt={projectName ?? 'ICP'}
+                        className='w-12 h-12 rounded-lg'
+                        loading='lazy'
+                        draggable={false}
+                      />
+                    </div>
+                    <div className='sxs2:ml-4 mt-2 sxs2:mt-0'>
+                      <h3 className='text-lg font-bold line-clamp-1 break-all'>
                         {projectName ?? 'ICP'}
                       </h3>
-                      <p className='text-gray-500'>@{fullName ?? 'ICP'}</p>
+                      <p className='text-gray-500 line-clamp-1 break-all'>
+                        @{fullName ?? 'ICP'}
+                      </p>
                     </div>
                   </div>
                   <div>

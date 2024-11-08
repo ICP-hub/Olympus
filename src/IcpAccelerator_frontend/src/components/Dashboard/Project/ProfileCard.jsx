@@ -223,10 +223,12 @@ function ProfileCard({ cardData }) {
                 />
               </div>
 
-              <h2 className='text-2xl font-semibold text-center mb-1'>
+              <h2 className='text-2xl font-semibold text-center mb-1 line-clamp-1 break-all'>
                 {projectName}
               </h2>
-              <p className='text-gray-600 text-center mb-4'>@{fullName}</p>
+              <p className='text-gray-600 text-center mb-4 line-clamp-1 break-before-all'>
+                @{fullName}
+              </p>
               <button
                 onClick={handleGetInTouchClick}
                 className='w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 mb-6 flex items-center justify-center'
