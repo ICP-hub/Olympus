@@ -83,11 +83,11 @@ pub async fn send_money_access_request(project_id: String) -> String {
         status: "pending".to_string(),
     };
 
-    let noti_to_send = NotificationInternal{
-        cohort_noti: None,
-        docs_noti: None,
-        money_noti: Some(access_request.clone()),
-        association_noti: None,
+    let noti_to_send = NotificationInternal {
+        cohort_noti: Some(Vec::new()),  
+        docs_noti: Some(Vec::new()),  
+        money_noti: vec![access_request.clone()].into(),  
+        association_noti: Some(Vec::new()), 
     };
     let reciever_principal = find_project_owner_principal(&project_id.clone()).unwrap();
 

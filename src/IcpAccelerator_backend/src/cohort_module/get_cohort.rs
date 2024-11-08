@@ -186,22 +186,40 @@ pub fn get_projects_applied_for_cohort(
     cohort_id: String,
 ) -> Result<Vec<(ProjectInfoInternal, UserInfoInternal, Principal)>, String> {
     let projects_in_cohort_with_users: Vec<(ProjectInfoInternal, UserInfoInternal, Principal)> = read_state(|state| {
-        let mut results : Vec<(ProjectInfoInternal, UserInfoInternal, Principal)> = Vec::new();
+        let mut results: Vec<(ProjectInfoInternal, UserInfoInternal, Principal)> = Vec::new();
+
+        ic_cdk::println!("Debug: Total projects applied for all cohorts: {}", state.project_applied_for_cohort.len());
 
         if let Some(candid_projects) = state.project_applied_for_cohort.get(&cohort_id) {
             for project in &candid_projects.0 {
-                if let Some((principal, _)) = state.project_storage.iter().find(|(_, stored_project)| {
-                    stored_project.0.iter().any(|stored| stored.uid == project.0.uid) 
-                }) {
-                    if let Some(user_info) = state.user_storage.get(&principal) {
-                        results.push((project.0.clone(), user_info.0.clone(), principal.0));
+                // Change from find to filter_map to collect all matches
+                let matched_projects: Vec<Principal> = state.project_storage.iter()
+                    .filter_map(|(principal, stored_project)| {
+                        if stored_project.0.iter().any(|stored| stored.uid == project.0.uid) {
+                            Some(principal.0)
+                        } else {
+                            None
+                        }
+                    }).collect();
+
+                for principal in matched_projects {
+                    if let Some(user_info) = state.user_storage.get(&StoredPrincipal(principal)) {
+                        results.push((project.0.clone(), user_info.0.clone(), principal));
                     }
                 }
+
+                ic_cdk::println!("Debug: Project ID {}, Results collected: {}", project.0.uid, results.len()); // Debugging output
             }
+        } else {
+            ic_cdk::println!("No projects found for cohort ID {}", cohort_id); // Debugging output if no cohort data is found
         }
 
         results
     });
+
+    if projects_in_cohort_with_users.is_empty() {
+        ic_cdk::println!("No data returned for cohort ID {}", cohort_id); // Debugging output if results are empty
+    }
 
     Ok(projects_in_cohort_with_users)
 }

@@ -88,11 +88,13 @@ pub fn send_enrollment_request_as_mentor(cohort_id: String, user_info: MentorInt
     };
 
     let noti_to_send = NotificationInternal{
-        cohort_noti: Some(enrollment_request.clone()),
-        docs_noti: None,
-        money_noti: None,
-        association_noti: None,
+        cohort_noti: vec![enrollment_request.clone()].into(), // Wrap the request in a vector
+        docs_noti: vec![].into(),
+        money_noti: vec![].into(),
+        association_noti: vec![].into(),
     };
+
+
     let reciever_principal = enrollment_request.cohort_details.cohort_creator;
 
     let _ = add_notification(caller, reciever_principal, noti_to_send);
@@ -209,11 +211,13 @@ pub fn send_enrollment_request_as_investor(
     };
 
     let noti_to_send = NotificationInternal{
-        cohort_noti: Some(enrollment_request.clone()),
-        docs_noti: None,
-        money_noti: None,
-        association_noti: None,
+        cohort_noti: vec![enrollment_request.clone()].into(), // Wrap the request in a vector
+        docs_noti: vec![].into(),
+        money_noti: vec![].into(),
+        association_noti: vec![].into(),
     };
+
+
     let reciever_principal = enrollment_request.cohort_details.cohort_creator;
 
     let _ = add_notification(caller, reciever_principal, noti_to_send);
@@ -331,10 +335,10 @@ pub fn send_enrollment_request_as_project(
     };
 
     let noti_to_send = NotificationInternal{
-        cohort_noti: Some(enrollment_request.clone()),
-        docs_noti: None,
-        money_noti: None,
-        association_noti: None,
+        cohort_noti: vec![enrollment_request.clone()].into(), // Wrap the request in a vector
+        docs_noti: vec![].into(),
+        money_noti: vec![].into(),
+        association_noti: vec![].into(),
     };
     let reciever_principal = enrollment_request.cohort_details.cohort_creator;
 
@@ -428,34 +432,19 @@ pub fn approve_enrollment_request(cohort_id: String, enroller_principal: Princip
                 if request.enroller_principal == enroller_principal {
                     match &request.enroller_data {
                         EnrollerDataInternal { project_data: Some(project_data), .. } => {
-                            if let Some(mut projects) = state.project_applied_for_cohort.get(&cohort_id) {
-                                projects.0.push((project_data.clone(), user_data.unwrap().params.clone())); 
-                            } else {
-                                state.project_applied_for_cohort.insert(
-                                    cohort_id.clone(),
-                                    Candid(vec![(project_data.clone(), user_data.unwrap().params.clone())])
-                                );
-                            }
+                            let mut projects = state.project_applied_for_cohort.remove(&cohort_id).unwrap_or_else(|| Candid(Vec::new()));
+                            projects.0.push((project_data.clone(), user_data.unwrap().params.clone()));
+                            state.project_applied_for_cohort.insert(cohort_id.clone(), projects);
                         },
                         EnrollerDataInternal { mentor_data: Some(mentor_data), .. } => {
-                            if let Some(mut mentors) = state.mentor_applied_for_cohort.get(&cohort_id) {
-                                mentors.0.push((mentor_data.clone(), user_data.unwrap().params.clone())); 
-                            } else {
-                                state.mentor_applied_for_cohort.insert(
-                                    cohort_id.clone(),
-                                    Candid(vec![(mentor_data.clone(), user_data.unwrap().params.clone())])
-                                );
-                            }
+                            let mut mentors = state.mentor_applied_for_cohort.remove(&cohort_id).unwrap_or_else(|| Candid(Vec::new()));
+                            mentors.0.push((mentor_data.clone(), user_data.unwrap().params.clone()));
+                            state.mentor_applied_for_cohort.insert(cohort_id.clone(), mentors);
                         },
                         EnrollerDataInternal { vc_data: Some(vc_data), .. } => {
-                            if let Some(mut vcs) = state.vc_applied_for_cohort.get(&cohort_id) {
-                                vcs.0.push((vc_data.clone(), user_data.unwrap().params.clone())); 
-                            } else {
-                                state.vc_applied_for_cohort.insert(
-                                    cohort_id.clone(),
-                                    Candid(vec![(vc_data.clone(), user_data.unwrap().params.clone())])
-                                );
-                            }
+                            let mut vcs = state.vc_applied_for_cohort.remove(&cohort_id).unwrap_or_else(|| Candid(Vec::new()));
+                            vcs.0.push((vc_data.clone(), user_data.unwrap().params.clone()));
+                            state.vc_applied_for_cohort.insert(cohort_id.clone(), vcs);
                         },
                         _ => {}
                     }
