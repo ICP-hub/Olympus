@@ -192,11 +192,11 @@ pub async fn send_offer_to_project_by_mentor(
         mentor_to_project_noti: Some(association_noti_to_project),
     };
 
-    let noti_to_send = NotificationInternal{
-        cohort_noti: None,
-        docs_noti: None,
-        money_noti: None,
-        association_noti: Some(assciation_noti_internal),
+    let noti_to_send = NotificationInternal {
+        cohort_noti: Some(Vec::new()),  
+        docs_noti: Some(Vec::new()),    
+        money_noti: Some(Vec::new()),   
+        association_noti: vec![assciation_noti_internal].into(),
     };
 
     let _ = add_notification(mentor_id, project_principal, noti_to_send);

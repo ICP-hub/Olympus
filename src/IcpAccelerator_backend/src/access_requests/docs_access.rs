@@ -96,11 +96,11 @@ pub async fn send_private_docs_access_request(project_id: String) -> String {
         status: "pending".to_string(),
     };
 
-    let noti_to_send = NotificationInternal{
-        cohort_noti: None,
-        docs_noti: Some(access_request.clone()),
-        money_noti: None,
-        association_noti: None,
+    let noti_to_send = NotificationInternal {
+        cohort_noti: Some(Vec::new()),  
+        docs_noti: vec![access_request.clone()].into(), 
+        money_noti: Some(Vec::new()),  
+        association_noti: Some(Vec::new()), 
     };
     let reciever_principal = find_project_owner_principal(&project_id.clone()).unwrap();
 

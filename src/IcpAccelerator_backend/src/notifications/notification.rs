@@ -45,12 +45,11 @@ pub struct AssociationNotification{
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
 pub struct NotificationInternal{
-    pub cohort_noti: Option<CohortEnrollmentRequest>,
-    pub docs_noti: Option<AccessRequest>,
-    pub money_noti: Option<AccessRequest>,
-    pub association_noti: Option<AssociationNotification>
+    pub cohort_noti: Option<Vec<CohortEnrollmentRequest>>,
+    pub docs_noti: Option<Vec<AccessRequest>>,
+    pub money_noti: Option<Vec<AccessRequest>>,
+    pub association_noti: Option<Vec<AssociationNotification>>
 }
-
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
 pub struct NotificationStructure{
@@ -76,18 +75,14 @@ pub fn add_notification(sender_principal: Principal, receiver_principal: Princip
     };
 
     mutate_state(|state| {
-        // Attempt to retrieve the notifications vector for the receiver
-        if let Some(mut notifications) = state.notification_data.get(&StoredPrincipal(receiver_principal)) {
-            // If found, push the new notification into the existing vector
-            notifications.0.push(notification);
-            ic_cdk::println!("NOTI DATA PUSHED TO EXISTING StORAGE")
-        } else {
-            // If not found, create a new vector, push the notification, and insert it into the map
-            let mut new_notifications = Candid(Vec::new());
-            new_notifications.0.push(notification);
-            state.notification_data.insert(StoredPrincipal(receiver_principal), new_notifications);
-            ic_cdk::println!("NOTI DATA PUSHED TO NEW StORAGE")
-        }
+        // Remove the existing notifications vector to update it
+        let mut notifications = state.notification_data.remove(&StoredPrincipal(receiver_principal)).unwrap_or_else(|| Candid(Vec::new()));
+
+        // Append the new notification to the vector
+        notifications.0.push(notification);
+
+        // Re-insert the updated notifications vector back into the map
+        state.notification_data.insert(StoredPrincipal(receiver_principal), notifications);
     });
     Ok("Notification added successfully.".to_string())
 }

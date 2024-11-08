@@ -88,11 +88,13 @@ pub fn send_enrollment_request_as_mentor(cohort_id: String, user_info: MentorInt
     };
 
     let noti_to_send = NotificationInternal{
-        cohort_noti: Some(enrollment_request.clone()),
-        docs_noti: None,
-        money_noti: None,
-        association_noti: None,
+        cohort_noti: vec![enrollment_request.clone()].into(), // Wrap the request in a vector
+        docs_noti: vec![].into(),
+        money_noti: vec![].into(),
+        association_noti: vec![].into(),
     };
+
+
     let reciever_principal = enrollment_request.cohort_details.cohort_creator;
 
     let _ = add_notification(caller, reciever_principal, noti_to_send);
@@ -209,11 +211,13 @@ pub fn send_enrollment_request_as_investor(
     };
 
     let noti_to_send = NotificationInternal{
-        cohort_noti: Some(enrollment_request.clone()),
-        docs_noti: None,
-        money_noti: None,
-        association_noti: None,
+        cohort_noti: vec![enrollment_request.clone()].into(), // Wrap the request in a vector
+        docs_noti: vec![].into(),
+        money_noti: vec![].into(),
+        association_noti: vec![].into(),
     };
+
+
     let reciever_principal = enrollment_request.cohort_details.cohort_creator;
 
     let _ = add_notification(caller, reciever_principal, noti_to_send);
@@ -331,10 +335,10 @@ pub fn send_enrollment_request_as_project(
     };
 
     let noti_to_send = NotificationInternal{
-        cohort_noti: Some(enrollment_request.clone()),
-        docs_noti: None,
-        money_noti: None,
-        association_noti: None,
+        cohort_noti: vec![enrollment_request.clone()].into(), // Wrap the request in a vector
+        docs_noti: vec![].into(),
+        money_noti: vec![].into(),
+        association_noti: vec![].into(),
     };
     let reciever_principal = enrollment_request.cohort_details.cohort_creator;
 
