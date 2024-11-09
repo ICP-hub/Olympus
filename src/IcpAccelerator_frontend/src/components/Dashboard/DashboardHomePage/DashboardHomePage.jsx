@@ -5,7 +5,7 @@ import DashboardHomeWelcomeSection from './DashboardHomeWelcomeSection';
 import { Routes, Route } from 'react-router-dom';
 import ProjectProfile from './ProjectProfile';
 import Jobs from '../../jobs/Jobs';
-import ProfilePage from '../../profile/ProfilePage';
+import ProfilePage from '../../Profile/ProfilePage';
 import EventMain from '../DashboardEvents/EventMain';
 import ServiceDetailPage from './ServiceDetailPage';
 import AddNewWork from './AddNewWork';
@@ -19,7 +19,7 @@ import { useSelector } from 'react-redux';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
 import allfounder from '../../../../assets/images/image.png';
-import DashboardNotification from './DashboardNotification';
+import DashboardNotification from '../Notification/DashboardNotification';
 
 function DashboardHomePage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);

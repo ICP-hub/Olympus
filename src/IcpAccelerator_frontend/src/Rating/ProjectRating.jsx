@@ -43,6 +43,8 @@ const RatingComponent = ({ projectId }) => {
 
       try {
         const result = await actor.calculate_average(projectId);
+        // const result = await actor.get_stored_average_rating(cohort_id,projectId);
+
         console.log('result average', result);
 
         if (!result || result.length === 0) {
@@ -106,6 +108,28 @@ const RatingComponent = ({ projectId }) => {
     );
   };
 
+  const renderOverAllScoreBoxes = (score = 0) => {
+    const totalBoxes = 8;
+    const filledBoxes = Math.min(Math.max(Math.round(score), 0), totalBoxes);
+    const emptyBoxes = totalBoxes - filledBoxes;
+
+    return (
+      <div className='flex space-x-1'>
+        {Array.from({ length: filledBoxes }).map((_, idx) => (
+          <div
+            key={`filled-${idx}`}
+            className='w-2 xxs:w-3 h-4 xxs:h-5 bg-blue-500 rounded-sm'
+          ></div>
+        ))}
+        {Array.from({ length: emptyBoxes }).map((_, idx) => (
+          <div
+            key={`empty-${idx}`}
+            className='w-2 xxs:w-3 h-4 xxs:h-5 bg-gray-200 rounded-sm'
+          ></div>
+        ))}
+      </div>
+    );
+  };
   if (showOverallRating) {
     return (
       <div className='max-w-lg md:max-w-xl lg:max-w-3xl mx-auto bg-white p-4 md:p-6 border rounded-lg shadow-lg mt-5'>
@@ -237,11 +261,20 @@ const RatingComponent = ({ projectId }) => {
             Based on 15 votes
           </p>
         </div>
-        <div className='flex items-center'>
-          <div className='text-yellow-400 mr-2 text-sm md:text-lg lg:text-xl'>
-            ⭐⭐⭐⭐⭐
-          </div>
-          <span className='text-lg md:text-xl lg:text-2xl font-bold'>4.9</span>
+        <div className='flex justify-between mt-1'>
+          {renderOverAllScoreBoxes(
+            Array.isArray(averageRatingData?.overall_average) &&
+              averageRatingData.overall_average?.length > 0
+              ? Number(averageRatingData.overall_average[0])
+              : 0 // Default to 0 if data is missing or invalid
+          )}
+
+          <span className='text-[16px] font-bold text-gray-700 xxs:ml-4 -mt-1'>
+            {Array.isArray(averageRatingData?.overall_average) &&
+            averageRatingData.overall_average?.length > 0
+              ? Number(averageRatingData.overall_average[0]).toFixed(1) // Display 1 decimal if it’s a float
+              : 'No Data'}
+          </span>
         </div>
       </div>
 
