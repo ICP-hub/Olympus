@@ -36,7 +36,13 @@ const UserRegistration = () => {
   const [cooldown, setCooldown] = useState(0);
   const [isInitialSubmit, setIsInitialSubmit] = useState(false);
   const [isCaptchaFilled, setIsCaptchaFilled] = useState(false);
-
+  const [isFormTouched, setIsFormTouched] = useState({
+    reasons_to_join_platform: false,
+    bio: false,
+    domains_interested_in: false,
+    type_of_profile: false,
+    country: false,
+  });
   const captchaRef = useRef(null);
 
   const methods = useForm({
@@ -56,8 +62,16 @@ const UserRegistration = () => {
     },
   });
 
-  const { handleSubmit, trigger, getValues, formState, watch, resetField } =
-    methods;
+  const {
+    handleSubmit,
+    trigger,
+    getValues,
+    formState,
+    watch,
+    resetField,
+    clearErrors,
+    setError,
+  } = methods;
   const { errors } = formState;
 
   const formFields = {
@@ -268,7 +282,11 @@ const UserRegistration = () => {
                     {index === 0 && <RegisterForm1 />}
                     {index === 1 && <RegisterForm2 />}
                     {index === 2 && (
-                      <RegisterForm3 setImageData={setImageData} />
+                      <RegisterForm3
+                        setImageData={setImageData}
+                        isFormTouched={isFormTouched}
+                        setIsFormTouched={setIsFormTouched}
+                      />
                     )}
 
                     {captchaVisible && index === 2 && (

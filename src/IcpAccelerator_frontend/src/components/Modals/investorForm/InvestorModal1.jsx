@@ -127,7 +127,9 @@ const InvestorModal1 = ({ formData }) => {
         </label>
         <select
           {...register('investor_registered')}
-          className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+          className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline  ${
+            errors.investor_registered ? 'border-red-500' : 'border-gray-300'
+          }`}
         >
           <option className='text-lg' value='false'>
             No
@@ -152,13 +154,17 @@ const InvestorModal1 = ({ formData }) => {
           <select
             {...register('registered_country')}
             name='registered_country'
-            className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+            className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
+              errors.registered_country
+                ? 'border-red-500 border-2'
+                : 'border-gray-300'
+            }`}
           >
             <option value=''>Please choose an option</option>
             {countries?.map((country) => (
               <option
                 key={country.name}
-                value={`${country.name}`}
+                value={country.name}
                 className='text-lg'
               >
                 {country.name}

@@ -16,6 +16,7 @@ import { validationSchema } from './projectValidation';
 import ProjectRegister6 from './ProjectRegister6';
 import { founderRegisteredHandlerRequest } from '../../StateManagement/Redux/Reducers/founderRegisteredData';
 import { rolesHandlerRequest } from '../../StateManagement/Redux/Reducers/RoleReducer';
+import { switchRoleRequestHandler } from '../../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer';
 const ProjectRegisterMain = ({ isopen }) => {
   const actor = useSelector((currState) => currState.actors.actor);
   const [index, setIndex] = useState(0); // TRACKS THE CURRENT FORM PAGE
@@ -25,7 +26,7 @@ const ProjectRegisterMain = ({ isopen }) => {
   const [formData, setFormData] = useState({}); // STORES ACCUMULATED FORM DATA
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isfetchCall, setFetchCall] = useState(false);
+  const [isValid, setIsValid] = useState(false);
   const dispatch = useDispatch();
   // INITIALIZE REACT HOOK FORM WITH VALIDATION SCHEMA
   const methods = useForm({
@@ -89,7 +90,7 @@ const ProjectRegisterMain = ({ isopen }) => {
   // HANDLE FORM VALIDATION ERROR
   const onErrorHandler = (val) => {
     console.log('error', val);
-    toast.error('Empty fields or invalid values, please recheck the form');
+    // toast.error('Empty fields or invalid values, please recheck the form');
   };
 
   // HANDLE NEXT BUTTON CLICK
@@ -101,6 +102,8 @@ const ProjectRegisterMain = ({ isopen }) => {
         ...getValues(), // MERGE CURRENT STEP DATA WITH PREVIOUS DATA
       }));
       setIndex((prevIndex) => prevIndex + 1); // GO TO NEXT STEP
+    } else {
+      // toast.error('Please complete all required fields in this step');
     }
   };
 
@@ -113,10 +116,26 @@ const ProjectRegisterMain = ({ isopen }) => {
 
   // HANDLE FORM SUBMISSION
   const onSubmitHandler = async () => {
-    const data = { ...formData, ...getValues() };
-    console.log('data', data);
-    setIsSubmitting(true);
-    if (actor) {
+    try {
+      const isValid = await trigger(formFields[index]);
+      setIsValid(isValid); // VALIDATE CURRENT STEP
+      const data = { ...formData, ...getValues() };
+      console.log('isValid', isValid);
+      console.log('data', data);
+
+      if (!isValid) {
+        console.log('Form validation failed. Please check your inputs.');
+        return;
+      }
+
+      setIsSubmitting(true);
+
+      if (!actor) {
+        toast.error('Please sign up with Internet Identity first');
+        window.location.href = '/';
+        return;
+      }
+
       const projectData = {
         project_cover: coverData ? [coverData] : [],
         project_logo: logoData ? [logoData] : [],
@@ -190,12 +209,6 @@ const ProjectRegisterMain = ({ isopen }) => {
               data?.money_raising === 'true' && data?.target_amount
                 ? parseFloat(data.target_amount)
                 : 0,
-
-            // icp_grants: data.icp_grants ? data.icp_grants.toString() : null, // Convert to string or null
-            // investors: data?.investors ? data?.investors.toString() : null, // Convert to string or null
-            // raised_from_other_ecosystem: data.raised_from_other_ecosystem ? data.raised_from_other_ecosystem.toString() : null, // Convert to string or null
-            // target_amount: data.target_amount ? parseFloat(data.target_amount) : null, // Convert to float or null
-            // sns: data.valuation ? data.valuation.toString() : null,
           },
         ],
         promotional_video: [data?.promotional_video ?? ''],
@@ -223,48 +236,40 @@ const ProjectRegisterMain = ({ isopen }) => {
       };
 
       console.log('projectData', projectData);
+
       try {
         const result = await actor.register_project(projectData); // SUBMIT FORM DATA
         console.log('result', result);
-        if (
-          result.startsWith("You can't create more than one project") ||
-          result.startsWith(
-            'You are not eligible for this role because you have 2 or more roles'
-          ) ||
-          result.startsWith(
-            'Cannot set private documents unless upload private docs has been set to true'
-          ) ||
-          result.startsWith(
-            'You are not allowed to get this role because you already have the Venture Capitalist role'
-          ) ||
-          result.startsWith(
-            'You are not allowed to get this role because you already have the Mentor role.'
-          )
-        ) {
+        if (!result) {
           toast.error(result); // Show error toast with the returned message
           setModalOpen(false);
           setIsSubmitting(false);
           dispatch(rolesHandlerRequest());
-          // dispatch(founderRegisteredHandlerRequest());
-          navigate('/dashboard');
+          dispatch(founderRegisteredHandlerRequest());
+          navigate('/dashboard/profile');
         } else {
-          toast.success('Project registered successfully!'); // Show success message
+          toast.success(result); // Show success message
           setModalOpen(false);
           setIsSubmitting(false);
+          dispatch(
+            switchRoleRequestHandler({
+              roleName: 'project',
+              newStatus: 'active',
+            })
+          );
           dispatch(rolesHandlerRequest());
           dispatch(founderRegisteredHandlerRequest());
-          window.location.href = '/dashboard/profile';
-
-          // navigate('/dashboard');
+          navigate('/dashboard/profile');
         }
       } catch (error) {
-        console.log(error.message);
+        console.error('Submission error:', error.message);
         toast.error(`Error: ${error.message}`);
-      } finally {
       }
-    } else {
-      toast.error('Please signup with internet identity first');
-      window.location.href = '/';
+    } catch (error) {
+      console.error('Unexpected error:', error.message);
+      toast.error('An unexpected error occurred. Please try again.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 

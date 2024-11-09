@@ -4,6 +4,7 @@ import mentor from '../../../../assets/Logo/talent.png';
 import uint8ArrayToBase64 from '../../Utils/uint8ArrayToBase64';
 import timestampAgo from '../../Utils/navigationHelper/timeStampAgo';
 import DocsNotification from './DocsNotification';
+import MoneyRaiseNotification from './MoneyRaiseNotification';
 
 const NotificationDropdown = ({ closeDropdown, notifications }) => {
   const navigate = useNavigate();
@@ -126,9 +127,17 @@ const NotificationDropdown = ({ closeDropdown, notifications }) => {
         type: 'money_noti',
         details: {
           status: moneyStatus,
-          fundraising_goal: notificationData.money_noti[0].fundraising_goal,
-          project_name: notificationData.money_noti[0].project_name,
-          id: notificationData.money_noti[0].id,
+          // requestType: notificationData?.docs_noti[0][0]?.request_type,
+          // projectId: notificationData?.docs_noti[0][0]?.project_id,
+          // sender: {
+          //   name: senderName,
+          //   profilePicture: senderProfilePicture,
+          // },
+          // receiver: {
+          //   name: receiverName,
+          //   profilePicture: receiverProfilePicture,
+          // },
+          // sentAt: sentAt,
         },
       };
     }
@@ -161,12 +170,48 @@ const NotificationDropdown = ({ closeDropdown, notifications }) => {
               </p>
             ) : (
               notificationArray.map((notification, index) => {
-                return (
-                  <DocsNotification
-                    notification={notification}
-                    formatNotificationMessage={formatNotificationMessage}
-                  />
-                );
+                const notificationData = notification?.notification_data ?? {};
+                if (!notificationData)
+                  return {
+                    message: 'You have a new notification.',
+                    type: 'default',
+                  };
+
+                if (
+                  notificationData?.docs_noti &&
+                  notificationData?.docs_noti?.length > 0
+                ) {
+                  return (
+                    <DocsNotification
+                      notification={notification}
+                      formatNotificationMessage={formatNotificationMessage}
+                    />
+                  );
+                }
+                if (
+                  notificationData.cohort_noti &&
+                  notificationData.cohort_noti.length > 0
+                ) {
+                  return <></>;
+                }
+
+                if (
+                  notificationData.association_noti &&
+                  notificationData.association_noti.length > 0
+                ) {
+                  return <></>;
+                }
+                if (
+                  notificationData.money_noti &&
+                  notificationData.money_noti.length > 0
+                ) {
+                  return (
+                    <MoneyRaiseNotification
+                      notification={notification}
+                      formatNotificationMessage={formatNotificationMessage}
+                    />
+                  );
+                }
               })
             )}
           </div>

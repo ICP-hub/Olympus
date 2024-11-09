@@ -47,6 +47,8 @@ export const validationSchema = yup
         (value) => !value || value.trimStart() === value
       )
       .matches(/^[a-zA-Z0-9\s,]+$/, 'Please enter valid Project name')
+      .min(3, 'Project name must be at least 3 characters long')
+      .max(100, 'Project name cannot be more than 100 characters long')
       .required('Project name is required'),
 
     project_description: yup
@@ -67,9 +69,7 @@ export const validationSchema = yup
         'Project Description must contain non-space characters',
         (value) => !!value && value.trim().length > 0
       )
-      .optional(),
-
-    // .required("Project Description is required"),
+      .required('Project description is required'),
     project_elevator_pitch: yup
       .string()
       .nullable()
@@ -137,18 +137,6 @@ export const validationSchema = yup
       .string()
       .required('Required')
       .oneOf(['true', 'false'], 'Invalid value'),
-
-    // dapp_link: yup.string().when("live_on_icp_mainnet", (val, schema) =>
-    //   val && val[0] === "true"
-    //     ? schema
-    //       .test("is-non-empty", "dApp Link is required", (value) =>
-    //         /\S/.test(value)
-    //       )
-    //       .url("Invalid url")
-    //       .required("dApp Link is required")
-    //     : schema
-    // ),
-
     dapp_link: yup.string().when('live_on_icp_mainnet', (val, schema) =>
       val && val[0] === 'true'
         ? schema
@@ -160,19 +148,6 @@ export const validationSchema = yup
             .required('dApp Link is required')
         : schema
     ),
-
-    // weekly_active_users: yup.number().nullable(true).optional(),
-    // weekly_active_users: yup
-    // .number("Please enter a valid number")
-    // .nullable(false)
-    // .required('Weekly active users is a required field')
-    // .min(0, 'Weekly active users cannot be a negative number')
-    // .test(
-    //   'not-negative-zero',
-    //   'Weekly active users cannot be -0',
-    //   (value) => value !== -0
-    // ),
-
     weekly_active_users: yup
       .number('Please enter a valid number')
       .nullable(false)
@@ -319,24 +294,9 @@ export const validationSchema = yup
               .required('Target Amount is required')
           : schema
       ),
-    // reason_to_join_incubator: yup
-    //   .string()
-    //   .test("is-non-empty", "Select of at least one is required", (value) =>
-    //     /\S/.test(value)
-    //   )
-    //   .required(" selection is required"),
-    // reason_to_join_incubator: yup
-    // .string()
-    // .required("Selecting a reason is required")
-    // .test(
-    //   "at-least-one",
-    //   "You must select at least one reason",
-    //   (value) => value && value.split(", ").length > 0
-    // ),
     reason_to_join_incubator: yup
       .string()
       .transform((value) => {
-        // If the value is an array, join the elements into a string
         if (Array.isArray(value)) {
           return value.map((item) => item.value).join(', ');
         }
@@ -348,13 +308,6 @@ export const validationSchema = yup
         'You must select at least one reason',
         (value) => value && value.split(', ').length > 0
       ),
-
-    // project_area_of_focus: yup
-    //   .string()
-    //   .test("is-non-empty", "Select of at least one is required", (value) =>
-    //     /\S/.test(value)
-    //   )
-    //   .required(" project area of focus is required"),
     project_area_of_focus: yup
       .string()
       .required('Selecting a category is required')
@@ -363,13 +316,6 @@ export const validationSchema = yup
         'You must select at least one category',
         (value) => value && value.split(', ').length > 0
       ),
-
-    project_description: yup
-      .string()
-      .required('Project description is required')
-      .min(20, 'Project description must be at least 20 characters long')
-      .max(500, 'Project description cannot be more than 500 characters long'),
-
     multi_chain: yup
       .string()
       .required('Required')
@@ -392,21 +338,6 @@ export const validationSchema = yup
       .nullable(true)
       .optional()
       .url('Invalid url'),
-
-    project_linkedin: yup
-      .string()
-      .nullable(true)
-      .optional()
-      // .test("is-valid-linkedin", "Invalid LinkedIn URL", (value) => {
-      //   if (!value) return true;
-      //   const hasValidChars =
-      //     /^(https?:\/\/)?(www\.)?linkedin\.com\/in\/[a-zA-Z0-9_-]+\/?$/.test(
-      //       value
-      //     );
-      //   return hasValidChars;
-      // })
-      .url('Invalid url'),
-
     token_economics: yup.string().nullable(true).optional().url('Invalid url'),
     links: yup
       .array()

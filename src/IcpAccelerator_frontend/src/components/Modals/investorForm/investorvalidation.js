@@ -45,7 +45,6 @@ export const validationSchema = yup
       ),
     investor_portfolio_link: yup
       .string()
-      .nullable(true)
       .required('Portfolio link is required')
       .matches(/^[a-zA-Z0-9@.\/:\-]*$/, 'Portfolio Link should be valid')
       .test(
@@ -65,6 +64,8 @@ export const validationSchema = yup
         (value) => !value || value.trimStart() === value
       )
       .matches(/^[a-zA-Z0-9\s,]+$/, 'Please enter valid Fund name')
+      .min(3, 'Fund name must be at least 3 characters long')
+      .max(50, 'Fund name cannot be more than 50 characters long')
       .required('Fund name is required'),
 
     investor_fund_size: yup
@@ -101,13 +102,6 @@ export const validationSchema = yup
         /\S/.test(value)
       )
       .required('Selecting an category is required'),
-    // investor_website_url: yup
-    //   .string()
-    //   .nullable(true)
-    //   .optional()
-    //   .url("Invalid url")
-    //   .matches(/^[a-zA-Z0-9@.\/:\-]+$/, "Website Link should be valid")
-    //   .url("Invalid URL"),
     investor_website_url: yup
       .string()
       .nullable(true)
