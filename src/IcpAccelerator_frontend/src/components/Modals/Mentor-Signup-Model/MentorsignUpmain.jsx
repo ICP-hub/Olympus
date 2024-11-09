@@ -181,6 +181,7 @@ const MentorSignupMain = ({}) => {
             setModalOpen(false);
             setFetchCall(true);
             window.location.href = '/dashboard/profile';
+            dispatch(rolesHandlerRequest());
             // navigate("/dashboard")
           }
         } catch (error) {

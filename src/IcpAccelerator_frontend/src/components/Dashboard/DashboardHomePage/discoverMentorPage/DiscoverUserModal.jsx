@@ -12,6 +12,7 @@ import { useSelector } from 'react-redux';
 import AddAMentorRequestModal from '../../../../models/AddAMentorRequestModal';
 import toast, { Toaster } from 'react-hot-toast';
 import { Principal } from '@dfinity/principal';
+import GuestProfile1 from '../../../../../assets/Logo/GuestProfile1.png';
 
 const DiscoverUserModal = ({ openDetail, setOpenDetail, userData, value }) => {
   console.log('user data =>', userData);
@@ -228,7 +229,7 @@ const DiscoverUserModal = ({ openDetail, setOpenDetail, userData, value }) => {
       : userData.profile_picture && userData.profile_picture[0]
         ? uint8ArrayToBase64(userData.profile_picture[0])
         : userData.profile_picture[0];
-
+  console.log('my image of cohor 233', profilepic);
   const full_name = userData?.full_name || 'Unknown User';
   const email =
     value === true
@@ -272,7 +273,7 @@ const DiscoverUserModal = ({ openDetail, setOpenDetail, userData, value }) => {
       ? userData?.social_links
       : Array.isArray(userData?.social_links)
         ? userData.social_links[0]
-        : 'N/A';
+        : 'No link';
   const role = value === true ? userData?.role : '';
   const roleData = value === true ? userData?.roleData : '';
   const project_id = value === true && role === 'Project' ? roleData?.uid : '';
@@ -316,7 +317,7 @@ const DiscoverUserModal = ({ openDetail, setOpenDetail, userData, value }) => {
                   <div className='container border bg-white rounded-lg shadow-sm h-full overflow-y-scroll w-full'>
                     <div className='flex flex-col w-full p-6 bg-gray-100'>
                       <img
-                        src={profilepic}
+                        src={profilepic ? profilepic : GuestProfile1}
                         alt='User Profile'
                         className='w-24 h-24 mx-auto rounded-full mb-2'
                         loading='lazy'
@@ -398,7 +399,7 @@ const DiscoverUserModal = ({ openDetail, setOpenDetail, userData, value }) => {
                       <div className=' '>
                         <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-2 '>
                           <h3 className='font-semibold mb-1 text-xs text-gray-500 uppercase'>
-                            Email
+                            EmailABD
                           </h3>
 
                           <div className='flex flex-wrap items-center'>
@@ -437,24 +438,24 @@ const DiscoverUserModal = ({ openDetail, setOpenDetail, userData, value }) => {
                             </p>
                           </div>
                         </div>
-                      </div>
 
-                      <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-2'>
-                        <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
-                          Reason to Join Platform
-                        </h3>
-                        <div>
-                          <div className='flex flex-wrap gap-2'>
-                            {reason_to_join
-                              ? reason_to_join.map((reason, index) => (
-                                  <span
-                                    key={index}
-                                    className='border-2 border-gray-500 rounded-full text-gray-700 text-xs px-3 py-1 bg-gray-100'
-                                  >
-                                    {reason}
-                                  </span>
-                                ))
-                              : 'No reason provided.'}
+                        <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-2'>
+                          <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
+                            Reason to Join Platform
+                          </h3>
+                          <div>
+                            <div className='flex flex-wrap gap-2'>
+                              {reason_to_join
+                                ? reason_to_join.map((reason, index) => (
+                                    <span
+                                      key={index}
+                                      className='border-2 border-gray-500 rounded-full text-gray-700 text-xs px-3 py-1 bg-gray-100'
+                                    >
+                                      {reason}
+                                    </span>
+                                  ))
+                                : 'No reason provided.'}
+                            </div>
                           </div>
                         </div>
                         <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-2 '>

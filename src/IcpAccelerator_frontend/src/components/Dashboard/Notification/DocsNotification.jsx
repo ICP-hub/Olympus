@@ -43,108 +43,108 @@ const DocsNotification = ({ notification, formatNotificationMessage }) => {
   return (
     <div className='flex items-center space-x-4 p-4 bg-gray-100 rounded-lg mb-4 max-w-full'>
       <div className='flex-1 min-w-0'>
-        <p className='text-sm text-gray-800 mb-1 flex items-center space-x-1 whitespace-nowrap text-ellipsis'>
+        <p className='text-sm text-gray-800 mb-1  items-center space-x-1 whitespace-nowrap text-ellipsis'>
           {details?.status === 'pending' && (
             <>
-              <div className='flex items-center mb-2'>
+              <div className='flex flex-wrap items-center mb-2 space-x-2'>
                 <img
                   src={details?.sender?.profilePicture}
                   alt={`${details?.sender?.name || 'User'}'s avatar`}
-                  className='h-6 w-6 rounded-full flex-shrink-0 mr-2'
+                  className='h-8 w-8 rounded-full flex-shrink-0 mr-1'
                   loading='lazy'
                   draggable={false}
                 />
                 <span className='font-semibold'>{details?.sender?.name}</span>
-              </div>
-              <span className='mb-2'>requests access to the document from</span>
-              <div className='flex items-center mb-2'>
-                <img
-                  src={details?.receiver?.profilePicture}
-                  alt={`${details?.receiver?.name || 'User'}'s avatar`}
-                  className='h-6 w-6 rounded-full flex-shrink-0 mr-2'
-                  loading='lazy'
-                  draggable={false}
-                />
-                <span className='font-semibold'>{details?.receiver?.name}</span>
+                <span className='mr-1'>
+                  requests access to the document from
+                </span>
+                <div className='flex items-center flex-nowrap'>
+                  <img
+                    src={details?.receiver?.profilePicture}
+                    alt={`${details?.receiver?.name || 'User'}'s avatar`}
+                    className='h-8 w-8 rounded-full flex-shrink-0 mr-1'
+                    loading='lazy'
+                    draggable={false}
+                  />
+                  <span className='font-semibold'>
+                    {details?.receiver?.name}
+                  </span>
+                </div>
               </div>
             </>
           )}
           {details?.status === 'accepted' && (
             <>
-              <div className='flex items-center mb-2'>
+              <div className='flex flex-wrap items-center mb-2 space-x-2'>
                 <img
                   src={details?.receiver?.profilePicture}
                   alt={`${details?.receiver?.name || 'User'}'s avatar`}
-                  className='h-6 w-6 rounded-full flex-shrink-0 mr-2'
+                  className='h-8 w-8 rounded-full flex-shrink-0 mr-1'
                   loading='lazy'
                   draggable={false}
                 />
                 <span className='font-semibold'>{details?.receiver?.name}</span>
-              </div>
-              <span className='mb-2'>has accepted</span>
-              <div className='flex items-center mb-2'>
+                <span className='mr-1'>has accepted</span>
                 <img
                   src={details?.sender?.profilePicture}
                   alt={`${details?.sender?.name || 'User'}'s avatar`}
-                  className='h-6 w-6 rounded-full flex-shrink-0 mr-2'
+                  className='h-8 w-8 rounded-full flex-shrink-0 mr-1'
                   loading='lazy'
                   draggable={false}
                 />
                 <span className='font-semibold'>{details?.sender?.name}'s</span>
+                <span className='mr-2'>request to access the document.</span>
               </div>
-              <span className='mb-2'>request to access the document.</span>
             </>
           )}
           {details?.status === 'declined' && (
             <>
-              <div className='flex items-center mb-2'>
+              <div className='flex flex-wrap items-center mb-2 space-x-2'>
                 <img
                   src={details?.receiver?.profilePicture}
                   alt={`${details?.receiver?.name || 'User'}'s avatar`}
-                  className='h-6 w-6 rounded-full flex-shrink-0 mr-2'
+                  className='h-8 w-8 rounded-full flex-shrink-0 mr-1'
                   loading='lazy'
                   draggable={false}
                 />
                 <span className='font-semibold'>{details?.receiver?.name}</span>
-              </div>
-              <span className='mb-2'>has declined</span>
-              <div className='flex items-center mb-2'>
+                <span className='mr-1'>has declined</span>
                 <img
                   src={details?.sender?.profilePicture}
                   alt={`${details?.sender?.name || 'User'}'s avatar`}
-                  className='h-6 w-6 rounded-full flex-shrink-0 mr-2'
+                  className='h-8 w-8 rounded-full flex-shrink-0 mr-1'
                   loading='lazy'
                   draggable={false}
                 />
                 <span className='font-semibold'>{details?.sender?.name}'s</span>
+                <span className='mr-2'>request to access the document.</span>
               </div>
-              <span className='mb-2'>request to access the document.</span>
             </>
           )}
           {!['pending', 'accepted', 'declined'].includes(details?.status) && (
             <>
-              <div className='flex items-center mb-2'>
+              <div className='flex flex-wrap items-center mb-2 space-x-2'>
                 <img
                   src={details?.sender?.profilePicture}
                   alt={`${details?.sender?.name || 'User'}'s avatar`}
-                  className='h-6 w-6 rounded-full flex-shrink-0 mr-2'
+                  className='h-8 w-8 rounded-full flex-shrink-0 mr-1'
                   loading='lazy'
                   draggable={false}
                 />
                 <span className='font-semibold'>{details?.sender?.name}</span>
-              </div>
-              <span className='mb-2'>
-                has an update regarding the document access for
-              </span>
-              <div className='flex items-center mb-2'>
+                <span className='mr-1'>
+                  has an update regarding the document access for
+                </span>
                 <img
                   src={details?.receiver?.profilePicture}
                   alt={`${details?.receiver?.name || 'User'}'s avatar`}
-                  className='h-6 w-6 rounded-full flex-shrink-0 mr-2'
+                  className='h-8 w-8 rounded-full flex-shrink-0 mr-1'
                   loading='lazy'
                   draggable={false}
                 />
-                <span className='font-semibold'>{details?.receiver?.name}</span>
+                <span className='font-semibold'>
+                  {details?.receiver?.name}'s
+                </span>
               </div>
             </>
           )}

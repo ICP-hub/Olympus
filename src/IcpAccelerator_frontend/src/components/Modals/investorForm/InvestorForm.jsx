@@ -184,7 +184,10 @@ const InvestorForm = ({ isOpen }) => {
             setModalOpen(false);
             setIsSubmitting(false);
             setFetchCall(true);
-            navigate('/dashboard');
+            dispatch(rolesHandlerRequest());
+            window.location.href = '/dashboard/profile';
+
+            // navigate('/dashboard');
           }
         });
       } catch (error) {

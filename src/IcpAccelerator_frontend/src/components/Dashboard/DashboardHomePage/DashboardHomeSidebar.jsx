@@ -185,7 +185,7 @@ function DashboardSidebar({ isOpen, onClose, id, id2 }) {
         } ${disabled ? 'cursor-not-allowed opacity-50' : ''}`}
       >
         {icon}
-        <span className='ml-3'>{label}</span>
+        <span className='ml-3 truncate'>{label}</span>
       </div>
     </Tooltip>
   );
