@@ -245,7 +245,7 @@ const ProjectRegisterMain = ({ isopen }) => {
           setModalOpen(false);
           setIsSubmitting(false);
           dispatch(rolesHandlerRequest());
-          dispatch(founderRegisteredHandlerRequest());
+          // dispatch(founderRegisteredHandlerRequest());
           navigate('/dashboard');
         } else {
           toast.success('Project registered successfully!'); // Show success message
@@ -253,7 +253,9 @@ const ProjectRegisterMain = ({ isopen }) => {
           setIsSubmitting(false);
           dispatch(rolesHandlerRequest());
           dispatch(founderRegisteredHandlerRequest());
-          navigate('/dashboard');
+          window.location.href = '/dashboard/profile';
+
+          // navigate('/dashboard');
         }
       } catch (error) {
         console.log(error.message);

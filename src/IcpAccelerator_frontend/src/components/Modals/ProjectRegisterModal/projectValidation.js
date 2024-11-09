@@ -62,7 +62,13 @@ export const validationSchema = yup
         'Project Description must not exceed 500 characters',
         (value) => !value || value.length <= 500
       )
+      .test(
+        'notEmpty',
+        'Project Description must contain non-space characters',
+        (value) => !!value && value.trim().length > 0
+      )
       .optional(),
+
     // .required("Project Description is required"),
     project_elevator_pitch: yup
       .string()

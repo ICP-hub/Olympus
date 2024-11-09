@@ -209,10 +209,10 @@ type MoneyRaised = record {
   icp_grants : text;
 };
 type NotificationInternal = record {
-  docs_noti : opt AccessRequest;
-  association_noti : opt AssociationNotification;
-  cohort_noti : opt CohortEnrollmentRequest;
-  money_noti : opt AccessRequest;
+  docs_noti : opt vec AccessRequest;
+  association_noti : opt vec AssociationNotification;
+  cohort_noti : opt vec CohortEnrollmentRequest;
+  money_noti : opt vec AccessRequest;
 };
 type NotificationStructure = record {
   receiver_principal : principal;

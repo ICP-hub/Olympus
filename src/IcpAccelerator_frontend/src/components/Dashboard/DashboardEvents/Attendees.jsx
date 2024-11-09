@@ -245,7 +245,7 @@ const Attendees = (cohortData) => {
       setAttendees(data);
       setNoData(data.length === 0);
       if (data.length === 0) {
-        toast.error(`No ${selectedRole.toLowerCase()} data available`);
+        // toast.error(`No ${selectedRole.toLowerCase()} data available`);
       }
     } catch (error) {
       console.error(
