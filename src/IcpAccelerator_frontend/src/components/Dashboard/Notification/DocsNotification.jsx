@@ -85,15 +85,19 @@ const DocsNotification = ({ notification, formatNotificationMessage }) => {
                 />
                 <span className='font-semibold'>{details?.receiver?.name}</span>
                 <span className='mr-1'>has accepted</span>
-                <img
-                  src={details?.sender?.profilePicture}
-                  alt={`${details?.sender?.name || 'User'}'s avatar`}
-                  className='h-8 w-8 rounded-full flex-shrink-0 mr-1'
-                  loading='lazy'
-                  draggable={false}
-                />
-                <span className='font-semibold'>{details?.sender?.name}'s</span>
-                <span className='mr-2'>request to access the document.</span>
+                <div className='flex items-center flex-nowrap'>
+                  <img
+                    src={details?.sender?.profilePicture}
+                    alt={`${details?.sender?.name || 'User'}'s avatar`}
+                    className='h-8 w-8 rounded-full flex-shrink-0 mr-1'
+                    loading='lazy'
+                    draggable={false}
+                  />
+                  <span className='font-semibold'>
+                    {details?.sender?.name}'s
+                  </span>
+                  <span className='mr-2'>request to access the document.</span>
+                </div>
               </div>
             </>
           )}
@@ -109,15 +113,19 @@ const DocsNotification = ({ notification, formatNotificationMessage }) => {
                 />
                 <span className='font-semibold'>{details?.receiver?.name}</span>
                 <span className='mr-1'>has declined</span>
-                <img
-                  src={details?.sender?.profilePicture}
-                  alt={`${details?.sender?.name || 'User'}'s avatar`}
-                  className='h-8 w-8 rounded-full flex-shrink-0 mr-1'
-                  loading='lazy'
-                  draggable={false}
-                />
-                <span className='font-semibold'>{details?.sender?.name}'s</span>
-                <span className='mr-2'>request to access the document.</span>
+                <div className='flex items-center flex-nowrap'>
+                  <img
+                    src={details?.sender?.profilePicture}
+                    alt={`${details?.sender?.name || 'User'}'s avatar`}
+                    className='h-8 w-8 rounded-full flex-shrink-0 mr-1'
+                    loading='lazy'
+                    draggable={false}
+                  />
+                  <span className='font-semibold'>
+                    {details?.sender?.name}'s
+                  </span>
+                  <span className='mr-2'>request to access the document.</span>
+                </div>
               </div>
             </>
           )}
@@ -135,16 +143,18 @@ const DocsNotification = ({ notification, formatNotificationMessage }) => {
                 <span className='mr-1'>
                   has an update regarding the document access for
                 </span>
-                <img
-                  src={details?.receiver?.profilePicture}
-                  alt={`${details?.receiver?.name || 'User'}'s avatar`}
-                  className='h-8 w-8 rounded-full flex-shrink-0 mr-1'
-                  loading='lazy'
-                  draggable={false}
-                />
-                <span className='font-semibold'>
-                  {details?.receiver?.name}'s
-                </span>
+                <div className='flex items-center flex-nowrap'>
+                  <img
+                    src={details?.receiver?.profilePicture}
+                    alt={`${details?.receiver?.name || 'User'}'s avatar`}
+                    className='h-8 w-8 rounded-full flex-shrink-0 mr-1'
+                    loading='lazy'
+                    draggable={false}
+                  />
+                  <span className='font-semibold'>
+                    {details?.receiver?.name}'s
+                  </span>
+                </div>
               </div>
             </>
           )}
