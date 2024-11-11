@@ -84,6 +84,8 @@ export const validationSchema = yup.object({
       'Cohort Title should not start with a space',
       (value) => value && value[0] !== ' '
     )
+    .min(3, 'Eligibility must be at least 3 characters long')
+    .max(500, 'Eligibility cannot be more than 500 characters long')
     .required('Eligibility is required'),
 
   no_of_seats: yup

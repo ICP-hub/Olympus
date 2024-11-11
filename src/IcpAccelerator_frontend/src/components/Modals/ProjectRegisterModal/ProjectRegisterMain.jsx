@@ -257,6 +257,14 @@ const ProjectRegisterMain = ({ isopen }) => {
               newStatus: 'active',
             })
           );
+          localStorage.setItem(
+            'toggleState',
+            JSON.stringify({
+              mentor: false,
+              vc: false,
+              project: true,
+            })
+          );
           dispatch(rolesHandlerRequest());
           dispatch(founderRegisteredHandlerRequest());
           navigate('/dashboard/profile');

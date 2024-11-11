@@ -184,6 +184,14 @@ const InvestorForm = ({ isOpen }) => {
             dispatch(
               switchRoleRequestHandler({ roleName: 'vc', newStatus: 'active' })
             );
+            localStorage.setItem(
+              'toggleState',
+              JSON.stringify({
+                mentor: false,
+                vc: true,
+                project: false,
+              })
+            );
             dispatch(rolesHandlerRequest());
             dispatch(investorRegisteredHandlerRequest());
             navigate('/dashboard/profile');

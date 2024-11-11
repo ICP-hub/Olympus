@@ -22,14 +22,14 @@ const MoneyRaiseNotification = ({
               onClick={() => onAccept(details?.projectId)}
               className='px-3 py-1 text-sm text-white bg-blue-600 rounded-md hover:bg-blue-700'
             >
-              Accept
+              Fund Project
             </button>
           </div>
         );
       case 'approved':
         return (
           <button className='px-3 py-1 text-sm text-white bg-green-500 rounded-md cursor-default'>
-            Accepted
+            Funded
           </button>
         );
       case 'declined':
@@ -59,20 +59,17 @@ const MoneyRaiseNotification = ({
                 />
                 <span className='font-semibold'>{details?.sender?.name}</span>
               </div>
-              <span className='mb-2'>requests access to the document from</span>
+              <span className='mb-2'>
+                is requesting funds for the project named
+              </span>
               <div className='flex items-center mb-2'>
-                <img
-                  src={details?.receiver?.profilePicture}
-                  alt={`${details?.receiver?.name || 'User'}'s avatar`}
-                  className='h-6 w-6 rounded-full flex-shrink-0 mr-2'
-                  loading='lazy'
-                  draggable={false}
-                />
-                <span className='font-semibold'>{details?.receiver?.name}</span>
+                <span className='font-semibold'>
+                  {details?.projectName || 'Unknown Project'}
+                </span>
               </div>
             </>
           )}
-          {details?.status === 'accepted' && (
+          {details?.status === 'approved' && (
             <>
               <div className='flex items-center mb-2'>
                 <img
@@ -84,18 +81,12 @@ const MoneyRaiseNotification = ({
                 />
                 <span className='font-semibold'>{details?.receiver?.name}</span>
               </div>
-              <span className='mb-2'>has accepted</span>
+              <span className='mb-2'>has funded the project named</span>
               <div className='flex items-center mb-2'>
-                <img
-                  src={details?.sender?.profilePicture}
-                  alt={`${details?.sender?.name || 'User'}'s avatar`}
-                  className='h-6 w-6 rounded-full flex-shrink-0 mr-2'
-                  loading='lazy'
-                  draggable={false}
-                />
-                <span className='font-semibold'>{details?.sender?.name}'s</span>
+                <span className='font-semibold'>
+                  {details?.projectName || 'Unknown Project'}
+                </span>
               </div>
-              <span className='mb-2'>request to access the document.</span>
             </>
           )}
           {details?.status === 'declined' && (
@@ -110,44 +101,13 @@ const MoneyRaiseNotification = ({
                 />
                 <span className='font-semibold'>{details?.receiver?.name}</span>
               </div>
-              <span className='mb-2'>has declined</span>
-              <div className='flex items-center mb-2'>
-                <img
-                  src={details?.sender?.profilePicture}
-                  alt={`${details?.sender?.name || 'User'}'s avatar`}
-                  className='h-6 w-6 rounded-full flex-shrink-0 mr-2'
-                  loading='lazy'
-                  draggable={false}
-                />
-                <span className='font-semibold'>{details?.sender?.name}'s</span>
-              </div>
-              <span className='mb-2'>request to access the document.</span>
-            </>
-          )}
-          {!['pending', 'accepted', 'declined'].includes(details?.status) && (
-            <>
-              <div className='flex items-center mb-2'>
-                <img
-                  src={details?.sender?.profilePicture}
-                  alt={`${details?.sender?.name || 'User'}'s avatar`}
-                  className='h-6 w-6 rounded-full flex-shrink-0 mr-2'
-                  loading='lazy'
-                  draggable={false}
-                />
-                <span className='font-semibold'>{details?.sender?.name}</span>
-              </div>
               <span className='mb-2'>
-                has an update regarding the document access for
+                has declined to fund the project named
               </span>
               <div className='flex items-center mb-2'>
-                <img
-                  src={details?.receiver?.profilePicture}
-                  alt={`${details?.receiver?.name || 'User'}'s avatar`}
-                  className='h-6 w-6 rounded-full flex-shrink-0 mr-2'
-                  loading='lazy'
-                  draggable={false}
-                />
-                <span className='font-semibold'>{details?.receiver?.name}</span>
+                <span className='font-semibold'>
+                  {details?.projectName || 'Unknown Project'}
+                </span>
               </div>
             </>
           )}

@@ -129,35 +129,6 @@ const DocsNotification = ({ notification, formatNotificationMessage }) => {
               </div>
             </>
           )}
-          {!['pending', 'accepted', 'declined'].includes(details?.status) && (
-            <>
-              <div className='flex flex-wrap items-center mb-2 space-x-2'>
-                <img
-                  src={details?.sender?.profilePicture}
-                  alt={`${details?.sender?.name || 'User'}'s avatar`}
-                  className='h-8 w-8 rounded-full flex-shrink-0 mr-1'
-                  loading='lazy'
-                  draggable={false}
-                />
-                <span className='font-semibold'>{details?.sender?.name}</span>
-                <span className='mr-1'>
-                  has an update regarding the document access for
-                </span>
-                <div className='flex items-center flex-nowrap'>
-                  <img
-                    src={details?.receiver?.profilePicture}
-                    alt={`${details?.receiver?.name || 'User'}'s avatar`}
-                    className='h-8 w-8 rounded-full flex-shrink-0 mr-1'
-                    loading='lazy'
-                    draggable={false}
-                  />
-                  <span className='font-semibold'>
-                    {details?.receiver?.name}'s
-                  </span>
-                </div>
-              </div>
-            </>
-          )}
         </p>
         <p className='text-xs text-gray-400 mt-1 whitespace-nowrap'>
           {timestampAgo(details?.sentAt)}

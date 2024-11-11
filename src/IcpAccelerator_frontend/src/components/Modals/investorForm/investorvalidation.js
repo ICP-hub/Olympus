@@ -71,7 +71,8 @@ export const validationSchema = yup
     investor_fund_size: yup
       .number()
       .min(0, 'Must be a non-negative number')
-      .required(' Fund is required')
+      .max(1_000_000, 'Fund Size must be in millions (up to 1 million)')
+      .required('Fund is required')
       .typeError('You must enter a number')
       .test(
         'not-negative-zero',

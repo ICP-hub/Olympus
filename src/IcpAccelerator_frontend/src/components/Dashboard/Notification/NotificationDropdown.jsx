@@ -35,6 +35,51 @@ const NotificationDropdown = ({ closeDropdown, notifications }) => {
     };
   }, [closeDropdown]);
 
+  const renderNotification = (notification) => {
+    const { docs_noti, cohort_noti, association_noti, money_noti } =
+      notification.notification_data || {};
+
+    if (docs_noti && docs_noti[0].length > 0) {
+      return (
+        <DocsNotification
+          notification={notification}
+          formatNotificationMessage={formatNotificationMessage}
+        />
+      );
+    }
+
+    if (cohort_noti && cohort_noti[0].length > 0) {
+      // Replace the commented line with your CohortNotification component when ready
+      // <CohortNotification key={notification.sent_at} notification={notification} formatNotificationMessage={formatNotificationMessage} />
+      return (
+        <p key={notification.sent_at}>
+          Cohort notification component goes here.
+        </p>
+      );
+    }
+
+    if (association_noti && association_noti[0].length > 0) {
+      // Replace the commented line with your AssociationNotification component when ready
+      // <AssociationNotification key={notification.sent_at} notification={notification} formatNotificationMessage={formatNotificationMessage} />
+      return (
+        <p key={notification.sent_at}>
+          Association notification component goes here.
+        </p>
+      );
+    }
+
+    if (money_noti && money_noti[0].length > 0) {
+      return (
+        <MoneyRaiseNotification
+          notification={notification}
+          formatNotificationMessage={formatNotificationMessage}
+        />
+      );
+    }
+
+    return null; // Return null if no known notification type matches
+  };
+
   const formatNotificationMessage = (notification) => {
     const senderName =
       notification?.sender_data?.params?.full_name ?? 'Unknown Sender';
@@ -119,30 +164,42 @@ const NotificationDropdown = ({ closeDropdown, notifications }) => {
       };
     }
 
-    // Money Notification
-    if (notificationData.money_noti && notificationData.money_noti.length > 0) {
-      const moneyStatus = notificationData.money_noti[0].status;
-      return {
-        message: `${senderName} is requesting access to fundraising information.`,
-        type: 'money_noti',
-        details: {
-          status: moneyStatus,
-          // requestType: notificationData?.docs_noti[0][0]?.request_type,
-          // projectId: notificationData?.docs_noti[0][0]?.project_id,
-          // sender: {
-          //   name: senderName,
-          //   profilePicture: senderProfilePicture,
-          // },
-          // receiver: {
-          //   name: receiverName,
-          //   profilePicture: receiverProfilePicture,
-          // },
-          // sentAt: sentAt,
-        },
-      };
+    if (
+      notificationData.money_noti &&
+      notificationData.money_noti.length > 0 &&
+      notificationData.money_noti[0].length > 0
+    ) {
+      const moneyNoti = notificationData.money_noti[0][0];
+
+      if (moneyNoti) {
+        const moneyStatus = moneyNoti.status;
+        const senderData = notificationData.sender_data || {};
+        const receiverData = notificationData.receiver_data || {};
+        const sentAt = notificationData.sent_at;
+
+        return {
+          message: `${senderData.name || 'Someone'} is requesting access to fundraising information.`,
+          type: 'money_noti',
+          details: {
+            status: moneyStatus,
+            requestType: moneyNoti.request_type,
+            projectId: moneyNoti.project_id,
+            sender: {
+              name: senderData.name || 'Unknown Sender',
+              profilePicture: moneyNoti.image
+                ? `data:image/png;base64,${Buffer.from(moneyNoti.image).toString('base64')}`
+                : null,
+            },
+            receiver: {
+              name: receiverData.name || 'Unknown Receiver',
+              profilePicture: receiverData.profilePicture || null, // Adjust based on available data
+            },
+            sentAt: sentAt, // Convert nanoseconds to milliseconds
+          },
+        };
+      }
     }
 
-    // Default Notification
     return { message: 'You have a new notification.', type: 'default' };
   };
 
@@ -160,7 +217,6 @@ const NotificationDropdown = ({ closeDropdown, notifications }) => {
             View all
           </button>
         </div>
-
         <div className='flex-grow overflow-y-auto max-h-96 mb-2'>
           <div className='p-4 space-y-6'>
             {Array.isArray(notificationArray) &&
@@ -169,50 +225,9 @@ const NotificationDropdown = ({ closeDropdown, notifications }) => {
                 No notifications found for this principal
               </p>
             ) : (
-              notificationArray.map((notification, index) => {
-                const notificationData = notification?.notification_data ?? {};
-                if (!notificationData)
-                  return {
-                    message: 'You have a new notification.',
-                    type: 'default',
-                  };
-
-                if (
-                  notificationData?.docs_noti &&
-                  notificationData?.docs_noti?.length > 0
-                ) {
-                  return (
-                    <DocsNotification
-                      notification={notification}
-                      formatNotificationMessage={formatNotificationMessage}
-                    />
-                  );
-                }
-                if (
-                  notificationData.cohort_noti &&
-                  notificationData.cohort_noti.length > 0
-                ) {
-                  return <></>;
-                }
-
-                if (
-                  notificationData.association_noti &&
-                  notificationData.association_noti.length > 0
-                ) {
-                  return <></>;
-                }
-                if (
-                  notificationData.money_noti &&
-                  notificationData.money_noti.length > 0
-                ) {
-                  return (
-                    <MoneyRaiseNotification
-                      notification={notification}
-                      formatNotificationMessage={formatNotificationMessage}
-                    />
-                  );
-                }
-              })
+              notificationArray.map((notification) =>
+                renderNotification(notification)
+              )
             )}
           </div>
         </div>

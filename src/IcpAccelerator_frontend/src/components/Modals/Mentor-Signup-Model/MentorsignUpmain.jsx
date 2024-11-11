@@ -177,6 +177,14 @@ const MentorSignupMain = ({}) => {
                 newStatus: 'active',
               })
             );
+            localStorage.setItem(
+              'toggleState',
+              JSON.stringify({
+                mentor: true,
+                vc: false,
+                project: false,
+              })
+            );
             dispatch(rolesHandlerRequest());
             dispatch(mentorRegisteredHandlerRequest());
             navigate('/dashboard/profile');

@@ -25,6 +25,7 @@ import { FaChevronDown, FaChevronUp } from 'react-icons/fa'; // Icons for dropdo
 import { userRegisteredHandlerRequest } from '../StateManagement/Redux/Reducers/userRegisteredData';
 import uint8ArrayToBase64 from '../Utils/uint8ArrayToBase64';
 import getReactSelectUpdateStyles from '../Utils/navigationHelper/getReactSelectUpdateStyles';
+import { rolesHandlerRequest } from '../StateManagement/Redux/Reducers/RoleReducer';
 
 const ProfileDetail = () => {
   const {
@@ -118,6 +119,7 @@ const ProfileDetail = () => {
       ...prev,
       [key]: false,
     }));
+    setIsLinkBeingEdited(false); // End link editing mode if all links are saved
   };
 
   // Handle adding new link from form field
@@ -127,7 +129,12 @@ const ProfileDetail = () => {
       ...prevLinks,
       [linkKey]: data,
     }));
-    remove(index);
+    setIsLinkBeingEdited(true); // Ensure buttons show when a new link is added
+    setIsEditingLink((prev) => ({
+      ...prev,
+      [linkKey]: true, // Set the new link to editing mode by default
+    }));
+    remove(index); // Remove the field from the input after saving
   };
 
   // Toggle the editing of individual links
@@ -253,15 +260,18 @@ const ProfileDetail = () => {
   // }, [dispatchCompleted, navigate]);
 
   const handleSave = async (data) => {
-    console.log('data', data);
+    // Save any unsaved links in edit mode
+    const updatedLinks = { ...socialLinks };
+    Object.keys(isEditingLink).forEach((key) => {
+      if (isEditingLink[key] && updatedLinks[key]) {
+        // Save each unsaved link
+        handleSaveLink(key);
+      }
+    });
 
     try {
+      // Existing save logic
       const convertedPrincipal = await Principal.fromText(principal);
-      const updatedSocialLinks = Object.entries(socialLinks).map(
-        ([key, value]) => ({
-          link: value ? [value] : [],
-        })
-      );
       const user_data = {
         bio: [data?.bio],
         full_name: data?.full_name,
@@ -275,32 +285,34 @@ const ProfileDetail = () => {
             .split(',')
             .map((val) => val.trim()) || [''],
         ],
-
         profile_picture: imageData ? [imageData] : [],
-        social_links: [updatedSocialLinks],
+        social_links: [
+          Object.entries(updatedLinks).map(([key, value]) => ({
+            link: value ? [value] : [],
+          })),
+        ],
       };
-      console.log('image 239', imageData);
-      console.log('Sending user_data to backend: 240', user_data); // Debugging line
 
       const result = await actor.update_user_data(
         convertedPrincipal,
         user_data
       );
-      console.log('Sending user_data to backend using api255:', result);
       if ('Ok' in result) {
         toast.success('User profile updated successfully');
+        dispatch(rolesHandlerRequest());
         dispatch(userRegisteredHandlerRequest());
-        navigate('/dashboard/profile');
+        setTimeout(() => navigate('/dashboard/profile'), 100);
       } else {
         console.log('Error:', result);
         dispatch(userRegisteredHandlerRequest());
-        navigate('/dashboard/profile');
+        setTimeout(() => navigate('/dashboard/profile'), 100);
         toast.error('Failed to update profile');
       }
     } catch (error) {
       console.error('Error sending data to the backend:', error);
       toast.error('Failed to update profile');
     }
+
     setIsLinkBeingEdited(false);
     setIsEditingLink({});
   };
@@ -326,7 +338,7 @@ const ProfileDetail = () => {
 
     setIsLinkBeingEdited(false);
     setIsEditingLink({});
-    setImagePreview(initialValues.profile_picture); //extra
+    setImagePreview(initialValues.profile_picture);
   };
 
   useEffect(() => {
@@ -386,6 +398,7 @@ const ProfileDetail = () => {
       setValue('domains_interested_in', val?.area_of_interest ?? '');
       setInterestedDomainsSelectedOptionsHandler(val?.area_of_interest ?? null);
       setImagePreview(val?.profile_picture?.[0] ?? '');
+      setImageData(val?.profile_picture?.[0] ?? '');
       setValue('type_of_profile', val?.type_of_profile?.[0]);
       setValue(
         'reasons_to_join_platform',
@@ -426,19 +439,6 @@ const ProfileDetail = () => {
     console.log('Validation errors:', val); // Add this to log validation errors
     toast.error('Empty fields or invalid values, please recheck the form');
   };
-  // const handleReasonToJoinChange = (selectedOptions) => {
-  //   const selectedValues = selectedOptions.map((option) => option.value);
-
-  //   console.log("Selected Options:", selectedOptions); // Check what is being selected
-  //   console.log("Selected Values:", selectedValues); // Check the values
-
-  //   setReasonOfJoiningSelectedOptions(selectedOptions);
-  //   setValue("reason_to_join", selectedValues, { shouldValidate: true });
-  //   setReasonOfJoiningSelectedOptionsHandler((prev) => ({
-  //     ...prev,
-  //     reason_to_join: selectedValues,
-  //   }));
-  // };
 
   // default interests set function
   const setInterestedDomainsSelectedOptionsHandler = (val) => {
@@ -528,7 +528,7 @@ const ProfileDetail = () => {
               />
             ) : (
               <img
-                src={ProfileImage}
+                src={imagePreview}
                 alt={full_name}
                 className='w-full h-full rounded-full object-cover'
                 loading='lazy'
@@ -2044,6 +2044,7 @@ const ProfileDetail = () => {
                       onClick={() => {
                         if (fields.length < 10) {
                           append({ link: '' });
+                          setIsLinkBeingEdited(true);
                         }
                       }}
                       className='flex items-center p-1 text-[#155EEF]'
@@ -2052,9 +2053,6 @@ const ProfileDetail = () => {
                     </button>
                   )}
                 </div>
-
-                {/* Save/Cancel Section */}
-                {/* {Object.values(isEditing).some((value) => value) && ( */}
                 {(Object.values(isEditing).some((value) => value) ||
                   isLinkBeingEdited ||
                   isImageEditing) && (
