@@ -12,8 +12,13 @@ import useTimeout from '../../hooks/TimeOutHook';
 import { FaFilter } from 'react-icons/fa';
 import StarIcon from '@mui/icons-material/Star';
 import DiscoverUserModal from '../DashboardHomePage/discoverMentorPage/DiscoverUserModal';
+import DiscoverProjectModal from '../DashboardHomePage/discoverMentorPage/DiscoverProjectModal';
+import DiscoverMentorModal from '../DashboardHomePage/discoverMentorPage/DiscoverMentorModal';
+import DiscoverInvestorModal from '../DashboardHomePage/discoverMentorPage/DiscoverInvestorModal';
 import Rating1 from '../../Modals/RatingModals/Rating1';
+
 const AttendeesCard = ({ member, appliedRole, handleClick, handleRating }) => {
+  console.log('memeber at 21', member);
   const onRateClick = () => handleRating(member?.uid);
 
   return (
@@ -29,7 +34,6 @@ const AttendeesCard = ({ member, appliedRole, handleClick, handleRating }) => {
           />
         </div>
       </div>
-
       <div className='md:ml-6 flex-1 text-center md:text-left'>
         <div className='flex flex-col md:flex-row md:items-center'>
           <div className='flex-1'>
@@ -143,7 +147,7 @@ const Attendees = (cohortData) => {
     if (!cohortid) {
       console.error('Cohort ID is undefined.');
     } else {
-      handleApply(); // Fetch all attendees when the component mounts
+      handleApply();
     }
   }, [cohortid]);
 
@@ -153,6 +157,16 @@ const Attendees = (cohortData) => {
     setSelectedRole(e.target.value);
   };
 
+  const handleClick = (member) => {
+    setOpenDetail(true);
+    setCardDetail(member);
+    setAttendeeRole(member.role);
+  };
+  const [isRating, setIsRating] = useState(false);
+  const handleRating = useCallback((projectId) => {
+    setIsRating(true);
+    setProjectId(projectId);
+  }, []);
   const fetchDataForRole = async (role) => {
     if (!cohortid) {
       toast.error('Cohort ID is not available.');
@@ -173,9 +187,8 @@ const Attendees = (cohortData) => {
       default:
         return [];
     }
-    console.log('result: ', result);
+    console.log('result at 189 attendees', result);
     if (result?.Ok && Array.isArray(result.Ok)) {
-      console.log('my attendees data in result 145', result);
       return result.Ok.map((item) => ({
         full_name: item[1].params.full_name,
         username: item[1].params.openchat_username[0],
@@ -199,17 +212,6 @@ const Attendees = (cohortData) => {
       return [];
     }
   };
-
-  const handleClick = (member) => {
-    setOpenDetail(true);
-    setCardDetail(member);
-  };
-  const [isRating, setIsRating] = useState(false);
-  console.log('isRating', isRating);
-  const handleRating = useCallback((projectId) => {
-    setIsRating(true);
-    setProjectId(projectId);
-  }, []);
 
   const handleApply = async () => {
     setShowMenu(false);
@@ -241,11 +243,10 @@ const Attendees = (cohortData) => {
           role: selectedRole,
         }));
       }
-      console.log('attendes', data);
       setAttendees(data);
       setNoData(data.length === 0);
       if (data.length === 0) {
-        // toast.error(`No ${selectedRole.toLowerCase()} data available`);
+        toast.error(`No ${selectedRole.toLowerCase()} data available`);
       }
     } catch (error) {
       console.error(
@@ -257,8 +258,50 @@ const Attendees = (cohortData) => {
     setLoading(false);
   };
 
+  const renderModal = () => {
+    if (attendeeRole === 'Project') {
+      return (
+        <DiscoverProjectModal
+          openDetail={openDetail}
+          setOpenDetail={setOpenDetail}
+          userData={cardDetail}
+          value={true}
+        />
+      );
+    } else if (attendeeRole === 'Mentor') {
+      return (
+        <DiscoverMentorModal
+          openDetail={openDetail}
+          setOpenDetail={setOpenDetail}
+          userData={cardDetail}
+          value={true}
+          principal={attendees}
+        />
+      );
+    } else if (attendeeRole === 'Investor') {
+      return (
+        <DiscoverInvestorModal
+          openDetail={openDetail}
+          setOpenDetail={setOpenDetail}
+          userData={cardDetail}
+          value={true}
+        />
+      );
+    } else {
+      return (
+        <DiscoverUserModal
+          openDetail={openDetail}
+          setOpenDetail={setOpenDetail}
+          userData={cardDetail}
+          value={true}
+        />
+      );
+    }
+  };
+
   return (
     <div className='rounded-xl'>
+      {/* Search and Filter */}
       <div className='mx-2'>
         <div className='justify-end items-center mb-6'>
           <div className='flex items-center justify-between gap-6 my-4'>
@@ -409,14 +452,7 @@ const Attendees = (cohortData) => {
             ))
           )}
 
-          {openDetail && (
-            <DiscoverUserModal
-              openDetail={openDetail}
-              setOpenDetail={setOpenDetail}
-              userData={cardDetail}
-              value={true}
-            />
-          )}
+          {openDetail && renderModal()}
           {isRating && (
             <Rating1
               position={'center'}
@@ -431,4 +467,5 @@ const Attendees = (cohortData) => {
     </div>
   );
 };
+
 export default Attendees;
