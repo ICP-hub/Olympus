@@ -13,15 +13,32 @@ import AddAMentorRequestModal from '../../../../models/AddAMentorRequestModal';
 import toast, { Toaster } from 'react-hot-toast';
 import { Principal } from '@dfinity/principal';
 import GuestProfile1 from '../../../../../assets/Logo/GuestProfile1.png';
+import DiscoverMentorEvent from '../discoverMentor/DiscoverMentorEvent';
 
-const DiscoverUserModal = ({ openDetail, setOpenDetail, userData, value }) => {
-  console.log('user data =>', userData);
+const DiscoverMentorModal = ({
+  openDetail,
+  setOpenDetail,
+  userData,
+  value,
+  principal,
+}) => {
+  console.log('principal at 19', principal);
+  console.log('principal after principal', principal[0].userPrincipal);
+
+  const chiku = principal.map((user) => user.userPrincipal);
+
+  console.log('user data =>', chiku);
+
+  const mentorProfile = userData.roleData;
+
   const [loading, setIsLoading] = useState(true);
   const userCurrentRoleStatusActiveRole = useSelector(
     (currState) => currState.currentRoleStatus.activeRole
   );
   const actor = useSelector((state) => state.actors.actor);
-  const principal = useSelector((state) => state.internet.principal);
+
+  console.log('simple vala principal', principal);
+
   useTimeout(() => setIsLoading(false));
 
   const [isAddMentorModalOpen, setIsAddMentorModalOpen] = useState(false);
@@ -222,7 +239,7 @@ const DiscoverUserModal = ({ openDetail, setOpenDetail, userData, value }) => {
       document.body.style.overflow = 'auto';
     };
   }, [openDetail]);
-
+  console.log('userData line 236', userData);
   const profilepic =
     value === true
       ? userData?.profile_picture
@@ -290,13 +307,13 @@ const DiscoverUserModal = ({ openDetail, setOpenDetail, userData, value }) => {
   return (
     <>
       <div
-        className={`w-full h-screen fixed inset-0 bg-black bg-opacity-30 backdrop-blur-xs z-50 transition-opacity duration-[4000ms] ease-in-out ${
+        className={`w-full lg1:h-screen fixed inset-0 bg-black bg-opacity-30 backdrop-blur-xs z-50 transition-opacity duration-[4000ms] ease-in-out ${
           openDetail ? 'opacity-100 visible' : 'opacity-0 invisible'
         }`}
       >
         {openDetail && userData && (
           <div
-            className={`mx-auto w-full pb-4 sm:w-[60%] lg:w-[40%] absolute right-0 top-0 bg-white h-screen transform transition-transform duration-[4000ms] ease-[cubic-bezier(0.4, 0, 0.2, 1)] ${
+            className={`mx-auto w-full sm:w-[70%] absolute right-0 top-0 bg-white h-screen transform transition-transform duration-[4000ms] ease-[cubic-bezier(0.4, 0, 0.2, 1)] ${
               openDetail ? 'translate-x-0' : 'translate-x-full'
             } z-20`}
           >
@@ -306,225 +323,229 @@ const DiscoverUserModal = ({ openDetail, setOpenDetail, userData, value }) => {
                 onClick={() => setOpenDetail(false)}
               />
             </div>
-            <div className='container mx-auto justify-center w-full h-full overflow-y-scroll pb-8'>
-              {loading ? (
-                <DiscoverUserModalSkeleton
-                  openDetail={openDetail}
-                  setOpenDetail={setOpenDetail}
-                />
-              ) : (
-                <div className='flex justify-center p-6'>
-                  <div className='container border bg-white rounded-lg shadow-sm h-full overflow-y-scroll w-full'>
-                    <div className='flex flex-col w-full p-6 bg-gray-100'>
-                      <img
-                        src={profilepic ? profilepic : GuestProfile1}
-                        alt='User Profile'
-                        className='w-24 h-24 mx-auto rounded-full mb-2'
-                        loading='lazy'
-                        draggable={false}
+            <div className='container mx-auto h-full pb-8 px-[4%] sm:px-[2%] overflow-y-scroll'>
+              <div className='flex flex-col gap-4 lg1:py-3 lg1:gap-0 lg1:flex-row w-full lg1:justify-evenly '>
+                <div className='border rounded-lg w-full lg1:overflow-y-scroll lg1:w-[32%] '>
+                  <div className='bg-slate-200 p-6'>
+                    <img
+                      src={profilepic ? profilepic : GuestProfile1}
+                      alt='User Profile'
+                      className='w-24 h-24 mx-auto rounded-full mb-2'
+                      loading='lazy'
+                      draggable={false}
+                    />
+                    <div className='flex items-center justify-center mb-1'>
+                      <VerifiedIcon
+                        className='text-blue-500 mr-1'
+                        fontSize='small'
                       />
-                      <div className='flex items-center justify-center mb-1'>
-                        <VerifiedIcon
-                          className='text-blue-500 mr-1'
-                          fontSize='small'
-                        />
-                        <h2 className='text-xl font-semibold'>{full_name}</h2>
-                      </div>
-                      <p className='text-gray-600 text-center mb-2'>
-                        @{openchat_username}
-                      </p>
-                      <a
-                        href={`mailto:${email}`}
-                        className='w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 mb-6 flex items-center justify-center'
-                      >
-                        Get in touch
-                        <ArrowOutwardOutlinedIcon
-                          className='ml-1'
-                          fontSize='small'
-                        />
-                      </a>
-                      {value && (
-                        <>
-                          {userCurrentRoleStatusActiveRole === 'mentor' ||
-                          userCurrentRoleStatusActiveRole === 'vc' ? (
-                            <button
-                              className='w-full h-[#155EEF] bg-white border-gray-300 text-black py-2 px-4 rounded-lg mb-4 flex items-center justify-center'
-                              onClick={() =>
-                                handleProjectOpenModal(
-                                  project_id,
-                                  cohort_id,
-                                  profilepic,
-                                  full_name,
-                                  enrollerPrincipal
-                                )
-                              }
-                            >
-                              Send Association Request
-                              <RiSendPlaneLine className='ml-2' />
-                            </button>
-                          ) : userCurrentRoleStatusActiveRole === 'project' ? (
-                            <button
-                              className='w-full h-[#155EEF] bg-white border-gray-300 text-black py-2 px-4 rounded-lg mb-4 flex items-center justify-center'
-                              onClick={() =>
-                                handleProjectOpenModal(
-                                  project_id,
-                                  cohort_id,
-                                  projectlogo,
-                                  projectname,
-                                  enrollerPrincipal
-                                )
-                              }
-                            >
-                              Send Association Request
-                              <RiSendPlaneLine className='ml-2' />
-                            </button>
-                          ) : null}
-                        </>
-                      )}
+                      <h2 className='text-xl font-semibold'>{full_name}</h2>
                     </div>
+                    <p className='text-gray-600 text-center mb-2'>
+                      @{openchat_username}
+                    </p>
+                    <a
+                      href={`mailto:${email}`}
+                      className='w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 mb-6 flex items-center justify-center'
+                    >
+                      Get in touch
+                      <ArrowOutwardOutlinedIcon
+                        className='ml-1'
+                        fontSize='small'
+                      />
+                    </a>
+                    {value && (
+                      <>
+                        {userCurrentRoleStatusActiveRole === 'mentor' ||
+                        userCurrentRoleStatusActiveRole === 'vc' ? (
+                          <button
+                            className='w-full h-[#155EEF] bg-white border-gray-300 text-black py-2 px-4 rounded-lg mb-4 flex items-center justify-center'
+                            onClick={() =>
+                              handleProjectOpenModal(
+                                project_id,
+                                cohort_id,
+                                profilepic,
+                                full_name,
+                                enrollerPrincipal
+                              )
+                            }
+                          >
+                            Send Association Request
+                            <RiSendPlaneLine className='ml-2' />
+                          </button>
+                        ) : userCurrentRoleStatusActiveRole === 'project' ? (
+                          <button
+                            className='w-full h-[#155EEF] bg-white border-gray-300 text-black py-2 px-4 rounded-lg mb-4 flex items-center justify-center'
+                            onClick={() =>
+                              handleProjectOpenModal(
+                                project_id,
+                                cohort_id,
+                                projectlogo,
+                                projectname,
+                                enrollerPrincipal
+                              )
+                            }
+                          >
+                            Send Association Request
+                            <RiSendPlaneLine className='ml-2' />
+                          </button>
+                        ) : null}
+                      </>
+                    )}
+                  </div>
 
-                    <div className='p-6 bg-white'>
-                      <div className='mb-2 p-2'>
-                        <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
-                          Roles
-                        </h3>
-                        <div className='flex space-x-2'>
-                          <span className='bg-[#F0F9FF] border border-[#B9E6FE] text-[#026AA2] px-1 py-1 rounded-md text-xs font-normal'>
-                            OLYMPIAN
-                          </span>
-                        </div>
+                  <div className='p-6 bg-white'>
+                    <div className='mb-2 p-2'>
+                      <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
+                        Roles
+                      </h3>
+                      <div className='flex space-x-2'>
+                        <span className='bg-[#F0F9FF] border border-[#B9E6FE] text-[#026AA2] px-1 py-1 rounded-md text-xs font-normal'>
+                          OLYMPIAN
+                        </span>
                       </div>
-                      <hr />
+                    </div>
+                    <hr />
 
-                      <div className=' '>
-                        <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-2 '>
-                          <h3 className='font-semibold mb-1 text-xs text-gray-500 uppercase'>
-                            EmailABD
-                          </h3>
-
-                          <div className='flex flex-wrap items-center'>
-                            <p className='mr-2 text-sm line-clamp-1 break-all'>
-                              {email}
-                            </p>
-                            <VerifiedIcon
-                              className='text-blue-500 mr-2 w-2 h-2'
-                              fontSize='small'
-                            />
-                            {/* <span className=' dxs:flex bg-[#F8FAFC] border border-[#E3E8EF] text-[#364152] px-2 py-0.5 rounded text-xs'>
-                          HIDDEN
-                        </span> */}
-                          </div>
-                        </div>
-
-                        {/* About Section */}
-                        <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-2 '>
-                          <h3 className='font-semibold mb-1 text-xs text-gray-500 uppercase'>
-                            About
-                          </h3>
-                          <div>
-                            <p className='text-sm line-clamp-2 break-all'>
-                              {bio}
-                            </p>
-                          </div>
-                        </div>
-                        <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-2 '>
+                    <div className='px-1'>
+                      {mentorProfile?.profile?.preferred_icp_hub?.[0] && (
+                        <div className='mb-4 group relative hover:bg-gray-100 rounded-lg p-2 '>
                           <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
-                            Type of Profile
+                            Preferred ICP Hub
                           </h3>
-
-                          <div className='flex items-center'>
-                            <p className='border-2 border-gray-500 rounded-full text-gray-700 text-xs px-3 py-1 bg-gray-100'>
-                              {type_of_profile}
-                            </p>
-                          </div>
+                          <p className='text-sm'>
+                            {mentorProfile.profile.preferred_icp_hub[0]}
+                          </p>
                         </div>
+                      )}
 
-                        <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-2'>
-                          <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
-                            Reason to Join Platform
-                          </h3>
-                          <div>
-                            <div className='flex flex-wrap gap-2'>
-                              {reason_to_join
-                                ? reason_to_join.map((reason, index) => (
-                                    <span
-                                      key={index}
-                                      className='border-2 border-gray-500 rounded-full text-gray-700 text-xs px-3 py-1 bg-gray-100'
-                                    >
-                                      {reason}
-                                    </span>
-                                  ))
-                                : 'No reason provided.'}
-                            </div>
-                          </div>
-                        </div>
-                        <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-2 '>
-                          <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
-                            Area of Interest
-                          </h3>
-                          <div>
-                            <div className='flex flex-wrap gap-2'>
-                              {area_of_interest &&
-                                area_of_interest
-                                  .split(', ')
-                                  ?.map((interest, index) => (
-                                    <span
-                                      key={index}
-                                      className='border-2 border-gray-500 rounded-full text-gray-700 text-xs px-3 py-1 bg-gray-100'
-                                    >
-                                      {interest}
-                                    </span>
-                                  ))}
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-2'>
-                          <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
-                            Location
-                          </h3>
-                          <div className='flex gap-2'>
-                            <PlaceOutlinedIcon
-                              sx={{ fontSize: 'medium', marginTop: '3px' }}
-                            />
-                            <p className='text-sm'>{location}</p>
-                          </div>
-                        </div>
-
-                        <div className='p-2 group relative hover:bg-gray-100 rounded-lg'>
-                          {social_links && social_links.length > 0 && (
+                      {mentorProfile?.profile?.area_of_expertise &&
+                        mentorProfile.profile.area_of_expertise.length > 0 && (
+                          <div className='mb-4 group relative hover:bg-gray-100 rounded-lg p-2 '>
                             <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
-                              LINKS
+                              Area of Expertise
                             </h3>
-                          )}
-                          <div className='flex items-center'>
-                            <div className='flex gap-3'>
-                              {social_links &&
-                                social_links.map((linkObj, i) => {
-                                  const link = linkObj?.link && linkObj.link[0];
-                                  if (!link) return null;
-
-                                  const icon = getSocialLogo(link);
-                                  return (
-                                    <a
-                                      key={i}
-                                      href={link}
-                                      target='_blank'
-                                      rel='noopener noreferrer'
-                                      className='flex items-center space-x-2'
-                                    >
-                                      {icon}
-                                    </a>
-                                  );
-                                })}
+                            <div className='flex overflow-hidden overflow-x-auto gap-2'>
+                              {mentorProfile.profile.area_of_expertise.map(
+                                (expertise) => (
+                                  <span
+                                    key={expertise}
+                                    className='border-2 text-center min-w-[80px] truncate border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1'
+                                  >
+                                    {expertise}
+                                  </span>
+                                )
+                              )}
                             </div>
                           </div>
+                        )}
+
+                      {mentorProfile?.profile?.website?.[0] && (
+                        <div className='mb-4 group relative hover:bg-gray-100 rounded-lg p-2 '>
+                          <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
+                            Website Link
+                          </h3>
+                          <p className='text-sm line-clamp-1 break-all'>
+                            {mentorProfile.profile.website[0]}
+                          </p>
                         </div>
-                      </div>
+                      )}
+
+                      {mentorProfile?.profile?.years_of_mentoring && (
+                        <div className='mb-4 group relative hover:bg-gray-100 rounded-lg p-2 '>
+                          <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
+                            Years of Mentoring
+                          </h3>
+                          <p className='text-sm line-clamp-1 break-all'>
+                            {mentorProfile.profile.years_of_mentoring}
+                          </p>
+                        </div>
+                      )}
+
+                      {mentorProfile?.profile?.reason_for_joining?.[0] && (
+                        <div className='mb-4 group relative hover:bg-gray-100 rounded-lg p-2 '>
+                          <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
+                            Reasons to Join Platform
+                          </h3>
+                          <div className='flex overflow-hidden overflow-x-auto gap-2'>
+                            {mentorProfile.profile.reason_for_joining[0]
+                              .split(',')
+                              .map((reason, index) => (
+                                <span
+                                  key={index}
+                                  className='border-2 text-center min-w-[80px] truncate border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1'
+                                >
+                                  {reason.trim()}
+                                </span>
+                              ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {mentorProfile?.profile?.hub_owner?.[0] && (
+                        <div className='mb-4 group relative hover:bg-gray-100 rounded-lg p-2 '>
+                          <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
+                            ICP Hub Owner
+                          </h3>
+                          <p className='text-sm'>
+                            {mentorProfile.profile.hub_owner[0]}
+                          </p>
+                        </div>
+                      )}
+
+                      {mentorProfile?.profile
+                        ?.category_of_mentoring_service && (
+                        <div className='mb-4 group relative hover:bg-gray-100 rounded-lg p-2 '>
+                          <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
+                            Mentoring Services
+                          </h3>
+                          <div className='flex overflow-hidden overflow-x-auto gap-2'>
+                            {mentorProfile.profile.category_of_mentoring_service
+                              .split(',')
+                              .map((service, index) => (
+                                <span
+                                  key={index}
+                                  className='border-2 text-center min-w-[80px] truncate border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1'
+                                >
+                                  {service.trim()}
+                                </span>
+                              ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {mentorProfile?.profile?.links?.[0] && (
+                        <div className='mb-4 group relative hover:bg-gray-100 rounded-lg p-2 '>
+                          <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
+                            LINKS
+                          </h3>
+                          <div className='flex flex-wrap gap-2'>
+                            {mentorProfile.profile.links[0].map((linkObj) =>
+                              linkObj.link?.map((link, index) => {
+                                const icon = getSocialLogo(link);
+                                return (
+                                  <a
+                                    key={index}
+                                    href={link}
+                                    target='_blank'
+                                    rel='noopener noreferrer'
+                                    className='flex items-center space-x-2'
+                                  >
+                                    {icon}
+                                  </a>
+                                );
+                              })
+                            )}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
-              )}
+                <div className='px-3 py-4 lg1:py-0 w-full lg1:overflow-y-scroll lg1:w-[63%] '>
+                  <DiscoverMentorEvent principal={chiku} />
+                </div>
+              </div>
             </div>
           </div>
         )}
@@ -570,4 +591,4 @@ const DiscoverUserModal = ({ openDetail, setOpenDetail, userData, value }) => {
   );
 };
 
-export default DiscoverUserModal;
+export default DiscoverMentorModal;
