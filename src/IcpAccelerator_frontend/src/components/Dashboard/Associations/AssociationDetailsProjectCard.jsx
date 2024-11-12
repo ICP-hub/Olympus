@@ -337,6 +337,8 @@ const AssociationDetailsProjectCard = ({
           openDetail={openDetail}
           setOpenDetail={setOpenDetail}
           user={user}
+          selectedTypeData={selectedTypeData}
+          activeTabData={activeTabData}
         />
       )}
       {isAcceptMentorOfferModal && (
