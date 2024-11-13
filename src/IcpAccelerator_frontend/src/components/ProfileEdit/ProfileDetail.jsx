@@ -398,7 +398,6 @@ const ProfileDetail = () => {
       setValue('domains_interested_in', val?.area_of_interest ?? '');
       setInterestedDomainsSelectedOptionsHandler(val?.area_of_interest ?? null);
       setImagePreview(val?.profile_picture?.[0] ?? '');
-      setImageData(val?.profile_picture?.[0] ?? '');
       setValue('type_of_profile', val?.type_of_profile?.[0]);
       setValue(
         'reasons_to_join_platform',
