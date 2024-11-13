@@ -12,11 +12,7 @@ const MoneyRaiseRequestCard = ({ user, index, activeTabData }) => {
   const actor = useSelector((currState) => currState.actors.actor);
   const navigate = useNavigate();
 
-  const approveAndRejectPrivateDocument = async (
-    value,
-    projectId,
-    principal
-  ) => {
+  const approveAndRejectMonetRaise = async (value, projectId, principal) => {
     if (!actor) {
       console.log('Actor not found');
       return null;
@@ -116,11 +112,7 @@ const MoneyRaiseRequestCard = ({ user, index, activeTabData }) => {
               <button
                 className='mr-2 mb-2 border border-[#097647] bg-[#EBFDF3] text-[#097647]  px-3 py-1 rounded-full'
                 onClick={() =>
-                  approveAndRejectPrivateDocument(
-                    'Approve',
-                    project_id,
-                    principal
-                  )
+                  approveAndRejectMonetRaise('Approve', project_id, principal)
                 }
               >
                 Accept
@@ -128,11 +120,7 @@ const MoneyRaiseRequestCard = ({ user, index, activeTabData }) => {
               <button
                 className='mr-2 mb-2 border border-[#C11574] bg-[#FDF2FA] text-[#C11574]  px-3 py-1 rounded-full'
                 onClick={() =>
-                  approveAndRejectPrivateDocument(
-                    'Decline',
-                    project_id,
-                    principal
-                  )
+                  approveAndRejectMonetRaise('Decline', project_id, principal)
                 }
               >
                 Reject

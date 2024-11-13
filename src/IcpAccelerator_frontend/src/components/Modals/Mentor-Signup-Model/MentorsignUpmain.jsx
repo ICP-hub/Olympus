@@ -13,6 +13,8 @@ import MentorSignup2 from './MentorSignup2';
 import { validationSchema } from './mentorValidation';
 import { useNavigate } from 'react-router-dom';
 import { rolesHandlerRequest } from '../../StateManagement/Redux/Reducers/RoleReducer';
+import { mentorRegisteredHandlerRequest } from '../../StateManagement/Redux/Reducers/mentorRegisteredData';
+import { switchRoleRequestHandler } from '../../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer';
 // MAIN COMPONENT FOR MENTOR SIGNUP PROCESS
 const MentorSignupMain = ({}) => {
   const dispatch = useDispatch(); // INITIALIZING DISPATCH FUNCTION TO TRIGGER ACTIONS
@@ -53,7 +55,7 @@ const MentorSignupMain = ({}) => {
       'years_of_mentoring',
       'links',
       'area_of_expertise',
-      'reason_for_joining',
+      'reasons_to_join_platform',
     ], // FIELDS FOR STEP 2
   };
 
@@ -158,30 +160,34 @@ const MentorSignupMain = ({}) => {
         try {
           const result = await actor.register_mentor(mentorData);
           console.log('result', result); // Log backend response
-          if (
-            result.startsWith(
-              'You are not allowed to get this role because you already have the Project role.'
-            ) ||
-            result.startsWith(
-              'You are not eligible for this role because you have 2 or more roles'
-            ) ||
-            result.startsWith('You had got your request declined earlier') ||
-            result.startsWith('You are a Mentor Already') ||
-            result.startsWith('Profile image is already uploaded')
-          ) {
+          if (!result) {
             toast.error(result);
             setIsSubmitting(false);
             setModalOpen(false);
-            setFetchCall(false);
-            window.location.href = '/dashboard/profile';
-            // navigate("/dashboard")
+            dispatch(rolesHandlerRequest());
+            dispatch(mentorRegisteredHandlerRequest());
+            navigate('/dashboard/profile');
           } else {
             toast.success('Mentor registered successfully!');
             setIsSubmitting(false);
             setModalOpen(false);
-            setFetchCall(true);
-            window.location.href = '/dashboard/profile';
-            // navigate("/dashboard")
+            dispatch(
+              switchRoleRequestHandler({
+                roleName: 'mentor',
+                newStatus: 'active',
+              })
+            );
+            localStorage.setItem(
+              'toggleState',
+              JSON.stringify({
+                mentor: true,
+                vc: false,
+                project: false,
+              })
+            );
+            dispatch(rolesHandlerRequest());
+            dispatch(mentorRegisteredHandlerRequest());
+            navigate('/dashboard/profile');
           }
         } catch (error) {
           toast.error(error.message);

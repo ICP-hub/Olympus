@@ -55,6 +55,18 @@ const DiscoverProject = ({ onProjectCountChange }) => {
   const userCurrentRoleStatusActiveRole = useSelector(
     (currState) => currState.currentRoleStatus.activeRole
   );
+  const userCurrentRoleStatus = useSelector(
+    (currState) => currState.currentRoleStatus.rolesStatusArray
+  );
+  const isMentorApproved = userCurrentRoleStatus.some(
+    (role) => role.name === 'mentor' && role.approval_status === 'approved'
+  );
+  const isVcApproved = userCurrentRoleStatus.some(
+    (role) => role.name === 'vc' && role.approval_status === 'approved'
+  );
+  const isProjectApproved = userCurrentRoleStatus.some(
+    (role) => role.name === 'project' && role.approval_status === 'approved'
+  );
   const isAuthenticated = useSelector(
     (currState) => currState.internet.isAuthenticated
   );
@@ -73,26 +85,28 @@ const DiscoverProject = ({ onProjectCountChange }) => {
   const [isAddProjectModalOpen, setIsAddProjectModalOpen] = useState(false);
 
   const handleProjectCloseModal = () => {
-    if (selectedAssociationType && selectedAssociationType.value === 'mentor') {
-      setIsAddProjectModalOpen(false);
-    } else {
-      setIsAddProjectModalOpenAsInvestor(false);
-    }
+    setIsAddProjectModalOpen(false);
   };
   const handleProjectOpenModal = (val, profile, name) => {
-    if (selectedAssociationType && selectedAssociationType.value === 'mentor') {
-      setListProjectId(val);
-      setProjectProfile(profile);
-      setProjectName(name);
-      setIsAddProjectModalOpen(true);
-    } else {
-      setListProjectId(val);
-      setProjectProfile(profile);
-      setProjectName(name);
-      setIsAddProjectModalOpenAsInvestor(true);
-    }
+    console.log('val', val);
+    console.log('selectedAssociationType', selectedAssociationType);
+    setListProjectId(val);
+    setProjectProfile(profile);
+    setProjectName(name);
+    setIsAddProjectModalOpen(true);
   };
 
+  const handleProjectCloseModalForInvestor = () => {
+    setIsAddProjectModalOpenAsInvestor(false);
+  };
+  const handleProjectOpenModalForInvestor = (val, profile, name) => {
+    console.log('val', val);
+    console.log('selectedAssociationType', selectedAssociationType);
+    setListProjectId(val);
+    setProjectProfile(profile);
+    setProjectName(name);
+    setIsAddProjectModalOpenAsInvestor(true);
+  };
   // ASSOCIATE IN A PROJECT HANDLER AS A MENTOR
   const handleAddProject = async ({ message }) => {
     setIsSubmitting(true);
@@ -377,29 +391,77 @@ const DiscoverProject = ({ onProjectCountChange }) => {
                       </div>
                       {userCurrentRoleStatusActiveRole === 'mentor' ||
                       userCurrentRoleStatusActiveRole === 'vc' ? (
-                        <button
-                          data-tooltip-id='registerTip'
-                          onClick={() => {
-                            handleProjectOpenModal(
-                              project_id,
-                              projectlogo,
-                              projectname
-                            );
-                          }}
-                        >
-                          <RiSendPlaneLine />
-                          <Tooltip
-                            id='registerTip'
-                            place='top'
-                            effect='solid'
-                            className='rounded-full z-50'
+                        isMentorApproved && !isVcApproved ? (
+                          <button
+                            data-tooltip-id='registerTip'
+                            onClick={() => {
+                              handleProjectOpenModal(
+                                project_id,
+                                projectlogo,
+                                projectname
+                              );
+                            }}
                           >
-                            Send Association Request
-                          </Tooltip>
-                        </button>
-                      ) : (
-                        ''
-                      )}
+                            <RiSendPlaneLine />
+                            <Tooltip
+                              id='registerTip'
+                              place='top'
+                              effect='solid'
+                              className='rounded-full z-50'
+                            >
+                              Send Association Request
+                            </Tooltip>
+                          </button>
+                        ) : !isMentorApproved && isVcApproved ? (
+                          <button
+                            data-tooltip-id='registerTip'
+                            onClick={() => {
+                              handleProjectOpenModalForInvestor(
+                                project_id,
+                                projectlogo,
+                                projectname
+                              );
+                            }}
+                          >
+                            <RiSendPlaneLine />
+                            <Tooltip
+                              id='registerTip'
+                              place='top'
+                              effect='solid'
+                              className='rounded-full z-50'
+                            >
+                              Send Association Request
+                            </Tooltip>
+                          </button>
+                        ) : isMentorApproved && isVcApproved ? (
+                          <button
+                            data-tooltip-id='registerTip'
+                            onClick={() => {
+                              userCurrentRoleStatusActiveRole === 'mentor'
+                                ? handleProjectOpenModal(
+                                    project_id,
+                                    projectlogo,
+                                    projectname
+                                  )
+                                : handleProjectOpenModalForInvestor(
+                                    project_id,
+                                    projectlogo,
+                                    projectname
+                                  );
+                            }}
+                          >
+                            <RiSendPlaneLine />
+                            <Tooltip
+                              id='registerTip'
+                              place='top'
+                              effect='solid'
+                              className='rounded-full z-50'
+                            >
+                              Send Association Request
+                            </Tooltip>
+                          </button>
+                        ) : null
+                      ) : null}
                     </div>
                     <div className='bg-[#daebf3] border-[#70b2e9] border text-[#144579] rounded-md text-xs px-3 py-1 mr-2 mb-2 w-[4.9rem]'>
                       PROJECT
@@ -464,7 +526,7 @@ const DiscoverProject = ({ onProjectCountChange }) => {
       )}
       {isAddProjectModalOpen && (
         <AddAMentorRequestModal
-          title={'Request to Associate a Project'}
+          title={'Request to Associate a Project M'}
           onClose={handleProjectCloseModal}
           onSubmitHandler={handleAddProject}
           isSubmitting={isSubmitting}
@@ -477,7 +539,7 @@ const DiscoverProject = ({ onProjectCountChange }) => {
       {isAddProjectModalOpenAsInvestor && (
         <AddAMentorRequestModal
           title={'Request to Associate a Project'}
-          onClose={handleProjectCloseModal}
+          onClose={handleProjectCloseModalForInvestor}
           onSubmitHandler={handleAddProjectAsInvestor}
           isSubmitting={isSubmitting}
           selectedAssociationType={selectedAssociationType}

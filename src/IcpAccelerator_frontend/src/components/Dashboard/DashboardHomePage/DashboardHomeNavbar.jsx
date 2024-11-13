@@ -196,8 +196,8 @@ import toast from 'react-hot-toast';
 import Tooltip from '@mui/material/Tooltip';
 import CloseIcon from '@mui/icons-material/Close';
 import DashboardSidebar from './DashboardHomeSidebar';
-import BellIconWithBadge from './NotificationBell';
-import NotificationDropdown from './NotificationDropdown';
+import BellIconWithBadge from '../Notification/NotificationBell';
+import NotificationDropdown from '../Notification/NotificationDropdown';
 
 function DashboardHomeNavbar({ id, id2 }) {
   const principal = useSelector((currState) => currState.internet.principal);

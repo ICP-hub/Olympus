@@ -1,12 +1,8 @@
 import React from 'react';
-
-// IMPORTING REACT HOOK FORM CONTEXT TO ACCESS FORM METHODS
 import { useFormContext } from 'react-hook-form';
-// IMPORTING REDUX HOOK TO ACCESS GLOBAL STATE
 import { useSelector } from 'react-redux';
 
 const InvestorModal3 = () => {
-  // DESTRUCTURING METHODS FROM USEFORMCONTEXT HOOK
   const {
     watch,
     register,
@@ -14,41 +10,38 @@ const InvestorModal3 = () => {
     countries,
     formState: { errors },
     setValue,
-    setError, // FUNCTION TO WATCH SPECIFIC INPUT VALUES
+    setError,
   } = useFormContext();
 
-  // ACCESSING ALL ICP HUBS FROM REDUX STATE
   const getAllIcpHubs = useSelector((currState) => currState.hubs.allHubs);
-
-  // WATCHING FOR CHANGES IN THE PORTFOLIO LINK INPUT
-  // const watchedPortfolioLink = watch("investor_portfolio_link");
-  // console.log(watchedPortfolioLink);
 
   return (
     <>
-      {/* ICP HUB SELECTION */}
       <div className='mb-2'>
         <label className='block mb-1'>
-          Which ICP hub you will like to be associated{' '}
+          Which ICP hub would you like to be associated with?
           <span className='text-[red] ml-1'>*</span>
         </label>
         <select
           {...register('preferred_icp_hub')}
           name='preferred_icp_hub'
-          className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+          className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
+            errors.preferred_icp_hub
+              ? 'border-red-500 border-2'
+              : 'border-gray-300'
+          }`}
         >
           <option value=''>Please choose an option</option>
           {getAllIcpHubs?.map((hub) => (
             <option
               key={hub.id}
-              value={`${hub.name} ,${hub.region}`}
+              value={`${hub.name}, ${hub.region}`}
               className='text-lg font-bold'
             >
               {hub.name}, {hub.region}
             </option>
           ))}
         </select>
-
         {errors.preferred_icp_hub && (
           <p className='mt-1 text-sm text-red-500 font-bold text-left'>
             {errors.preferred_icp_hub.message}
@@ -65,14 +58,17 @@ const InvestorModal3 = () => {
           type='text'
           {...register('investor_portfolio_link', {
             required: 'Portfolio link is required',
-
             pattern: {
               value: /^(ftp|http|https):\/\/[^ "]+$/,
               message: 'Invalid URL format',
             },
           })}
-          placeholder='Enter your Portfolio url'
-          className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+          placeholder='Enter your Portfolio URL'
+          className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
+            errors.investor_portfolio_link
+              ? 'border-red-500 border-2'
+              : 'border-gray-300'
+          }`}
         />
 
         {errors.investor_portfolio_link && (
@@ -91,14 +87,18 @@ const InvestorModal3 = () => {
           {...register('investor_fund_name', {
             required: 'This field is required',
           })}
-          name='investor_fund_name' // REGISTERING THE INPUT
-          type='text' // SPECIFYING INPUT TYPE AS TEXT
-          placeholder='Enter your fund name' // PLACEHOLDER TEXT
-          className='block w-full border border-gray-300 rounded-md p-2'
+          name='investor_fund_name'
+          type='text'
+          placeholder='Enter your fund name'
+          className={`block w-full border rounded-md p-2 ${
+            errors.investor_fund_name
+              ? 'border-red-500 border-2'
+              : 'border-gray-300'
+          }`}
         />
         {errors?.investor_fund_name && (
           <span className='mt-1 text-sm text-red-500 font-bold flex justify-start'>
-            {errors?.investor_fund_name?.message} {/* ERROR MESSAGE DISPLAY */}
+            {errors?.investor_fund_name?.message}
           </span>
         )}
       </div>
@@ -116,12 +116,16 @@ const InvestorModal3 = () => {
               value: 0,
               message: 'Fund size must be at least 0',
             },
-            valueAsNumber: true, // Ensures the value is treated as a number
+            valueAsNumber: true,
           })}
           type='number'
           placeholder='Enter fund size in Millions'
-          className='block w-full border border-gray-300 rounded-md p-2'
-          onWheel={(e) => e.target.blur()} // Prevents scrolling on number input
+          className={`block w-full border rounded-md p-2 ${
+            errors.investor_fund_size
+              ? 'border-red-500 border-2'
+              : 'border-gray-300'
+          }`}
+          onWheel={(e) => e.target.blur()}
         />
         {errors?.investor_fund_size && (
           <span className='mt-1 text-sm text-red-500 font-bold flex justify-start'>

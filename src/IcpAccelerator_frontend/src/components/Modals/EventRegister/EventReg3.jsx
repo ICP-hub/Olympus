@@ -314,7 +314,9 @@ const EventReg3 = ({ formData, singleEventData }) => {
               required: 'Funding Amount is required',
             })}
             className={`bg-gray-50 border ${
-              errors.funding_amount ? 'border-red-500' : 'border-[#737373]'
+              errors.funding_amount
+                ? 'border-red-500 border-2'
+                : 'border-[#737373]'
             } text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
             onFocus={() => handleFocus('funding_amount')}
             onBlur={() => handleBlur('funding_amount')}

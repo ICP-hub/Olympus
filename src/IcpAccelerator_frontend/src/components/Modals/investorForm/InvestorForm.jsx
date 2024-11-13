@@ -14,6 +14,8 @@ import InvestorModal3 from './InvestorModal3';
 import { allHubHandlerRequest } from '../../StateManagement/Redux/Reducers/All_IcpHubReducer';
 import { validationSchema } from './investorvalidation';
 import { rolesHandlerRequest } from '../../StateManagement/Redux/Reducers/RoleReducer';
+import { switchRoleRequestHandler } from '../../StateManagement/Redux/Reducers/userCurrentRoleStatusReducer';
+import { investorRegisteredHandlerRequest } from '../../StateManagement/Redux/Reducers/investorRegisteredData';
 
 const InvestorForm = ({ isOpen }) => {
   const navigate = useNavigate();
@@ -99,9 +101,14 @@ const InvestorForm = ({ isOpen }) => {
 
   // FUNCTION TO HANDLE FORM SUBMISSION
   const onSubmitHandler = async () => {
+    const isValid = await trigger(formFields[index]);
     const data = { ...formData, ...getValues() }; // MERGE FINAL FORM DATA
     console.log('SPREAD OPERATOR SE DATA AAYA', data);
     console.log(data.investor_portfolio_link);
+    if (!isValid) {
+      console.log('Form validation failed. Please check your inputs.');
+      return;
+    }
     setIsSubmitting(true);
     if (actor) {
       const investorData = {
@@ -163,28 +170,31 @@ const InvestorForm = ({ isOpen }) => {
       try {
         await actor.register_venture_capitalist(investorData).then((result) => {
           console.log('result', result);
-          if (
-            result.startsWith(
-              'You are not allowed to get this role because you already have the Project role.'
-            ) ||
-            result.startsWith(
-              'You are not eligible for this role because you have 2 or more roles'
-            ) ||
-            result.startsWith('You had got your request declined earlier') ||
-            result.startsWith('This Principal is already registered') ||
-            result.startsWith('Profile image is already uploaded')
-          ) {
+          if (!result) {
             toast.error(result); // SHOW ERROR TOAST WITH RETURNED MESSAGE
             setIsSubmitting(false);
             setModalOpen(false);
-            setFetchCall(false);
-            navigate('/dashboard');
+            dispatch(rolesHandlerRequest());
+            dispatch(investorRegisteredHandlerRequest());
+            navigate('/dashboard/profile');
           } else {
-            toast.success('Investor registered successfully!'); // SHOW SUCCESS MESSAGE
+            toast.success(result); // SHOW SUCCESS MESSAGE
             setModalOpen(false);
             setIsSubmitting(false);
-            setFetchCall(true);
-            navigate('/dashboard');
+            dispatch(
+              switchRoleRequestHandler({ roleName: 'vc', newStatus: 'active' })
+            );
+            localStorage.setItem(
+              'toggleState',
+              JSON.stringify({
+                mentor: false,
+                vc: true,
+                project: false,
+              })
+            );
+            dispatch(rolesHandlerRequest());
+            dispatch(investorRegisteredHandlerRequest());
+            navigate('/dashboard/profile');
           }
         });
       } catch (error) {
@@ -208,11 +218,6 @@ const InvestorForm = ({ isOpen }) => {
   useEffect(() => {
     dispatch(allHubHandlerRequest());
   }, [actor, dispatch]);
-  useEffect(() => {
-    if (isfetchCall) {
-      dispatch(rolesHandlerRequest());
-    }
-  }, [actor, dispatch, isfetchCall]);
 
   return (
     // <>

@@ -6,11 +6,16 @@ import toast, { Toaster } from 'react-hot-toast';
 import { Principal } from '@dfinity/principal';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { ThreeDots } from 'react-loader-spinner';
 
 const DocumentRequestCard = ({ user, index, activeTabData }) => {
   console.log('activeTabData Docs', activeTabData);
   const actor = useSelector((currState) => currState.actors.actor);
   const navigate = useNavigate();
+
+  // Loading states for each button
+  const [loadingApprove, setLoadingApprove] = useState(false);
+  const [loadingDecline, setLoadingDecline] = useState(false);
 
   const approveAndRejectPrivateDocument = async (
     value,
@@ -21,6 +26,10 @@ const DocumentRequestCard = ({ user, index, activeTabData }) => {
       console.log('Actor not found');
       return null;
     }
+
+    if (value === 'Approve') setLoadingApprove(true);
+    if (value === 'Decline') setLoadingDecline(true);
+
     try {
       let result;
       switch (value) {
@@ -40,18 +49,19 @@ const DocumentRequestCard = ({ user, index, activeTabData }) => {
           console.log('Unknown action');
           return;
       }
-      console.log('result', result);
       if (result) {
-        // Assuming result contains some success indication
         toast.success(`Request ${value.toLowerCase()}ed successfully.`);
-        // navigate(0);
+        navigate('/dashboard/profile');
       } else {
         toast.error(`Failed to ${value.toLowerCase()} the request.`);
-        // navigate(0);
+        navigate('/dashboard/profile');
       }
     } catch (error) {
       console.error('Error processing document request action:', error);
       toast.error('An error occurred during processing.');
+    } finally {
+      setLoadingApprove(false);
+      setLoadingDecline(false);
     }
   };
 
@@ -113,30 +123,53 @@ const DocumentRequestCard = ({ user, index, activeTabData }) => {
           {activeTabData === 'pending' ? (
             <div className='flex mt-auto'>
               <div className='border-t border-gray-200 mt-3'></div>
-
               <button
-                className='mr-2 mb-2 border border-[#097647] bg-[#EBFDF3] text-[#097647]  px-3 py-1 rounded-full'
-                onClick={() =>
-                  approveAndRejectPrivateDocument(
-                    'Approve',
-                    project_id,
-                    principal
-                  )
-                }
-              >
-                Accept
-              </button>
-              <button
-                className='mr-2 mb-2 border border-[#C11574] bg-[#FDF2FA] text-[#C11574]  px-3 py-1 rounded-full'
                 onClick={() =>
                   approveAndRejectPrivateDocument(
                     'Decline',
-                    project_id,
-                    principal
+                    details?.projectId,
+                    details?.senderPrincipal
                   )
                 }
+                className='px-3 py-1 text-sm text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300'
+                disabled={loadingDecline}
               >
-                Reject
+                {loadingDecline ? (
+                  <ThreeDots
+                    visible={true}
+                    height='35'
+                    width='35'
+                    color='#4A5568'
+                    radius='9'
+                    ariaLabel='three-dots-loading'
+                  />
+                ) : (
+                  'Decline'
+                )}
+              </button>
+              <button
+                onClick={() =>
+                  approveAndRejectPrivateDocument(
+                    'Approve',
+                    details?.projectId,
+                    details?.senderPrincipal
+                  )
+                }
+                className='px-3 py-1 text-sm text-white bg-blue-600 rounded-md hover:bg-blue-700'
+                disabled={loadingApprove}
+              >
+                {loadingApprove ? (
+                  <ThreeDots
+                    visible={true}
+                    height='35'
+                    width='35'
+                    color='#FFFFFF'
+                    radius='9'
+                    ariaLabel='three-dots-loading'
+                  />
+                ) : (
+                  'Accept'
+                )}
               </button>
             </div>
           ) : activeTabData === 'approved' ? (
