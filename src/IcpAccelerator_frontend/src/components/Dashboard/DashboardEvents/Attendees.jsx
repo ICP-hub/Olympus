@@ -24,7 +24,7 @@ const AttendeesCard = ({ member, appliedRole, handleClick, handleRating }) => {
   return (
     <div className='flex flex-col md:flex-row items-center p-4 bg-white shadow-md rounded-lg mb-6 transition-all hover:shadow-lg'>
       <div className='flex justify-center md:justify-start mb-4 md:mb-0'>
-        <div className='w-[60px] h-[60px] sm:w-[70px] sm:h-[70px]'>
+        <div className='w-[60px] h-[60px] sm:w-[80px] sm:h-[80px]'>
           <img
             src={member.profile_picture}
             alt={member.full_name}
@@ -38,11 +38,11 @@ const AttendeesCard = ({ member, appliedRole, handleClick, handleRating }) => {
         <div className='flex flex-col md:flex-row md:items-center'>
           <div className='flex-1'>
             <div className='flex justify-between items-center'>
-              <h4 className='text-lg font-bold text-[#2C3E50]  items-center'>
+              <h4 className='flex items-center text-lg font-bold text-[#2C3E50]'>
                 <span className='inline-block max-w-[150px] md:max-w-[200px] truncate'>
                   {member.full_name}
                 </span>
-                <span className='bg-[#eff3f5] border-[#70b2e9] border font-normal text-[#181b1e] rounded-md text-sm px-3 py-0.5 mx-2  inline-block line-clamp-1 break-all'>
+                <span className='bg-[#eff3f5] border-[#70b2e9] border font-normal text-[#181b1e] rounded-md text-sm px-2 mx-2 inline-block'>
                   Level 4
                 </span>
               </h4>
@@ -50,7 +50,7 @@ const AttendeesCard = ({ member, appliedRole, handleClick, handleRating }) => {
               {/* Buttons for large screens */}
               <div className='hidden dxl0:flex space-x-2'>
                 <button
-                  className='block w-full md:w-auto text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-0.5 rounded-md shadow-sm border border-gray-200 hover:border-gray-700 line-clamp-1 break-all'
+                  className='block w-full md:w-auto text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-0.5 rounded-md shadow-sm border border-gray-200 hover:border-gray-700'
                   onClick={() => handleClick(member)}
                 >
                   View Profile
@@ -78,21 +78,21 @@ const AttendeesCard = ({ member, appliedRole, handleClick, handleRating }) => {
 
             {/* Project and User Labels */}
             <div className='flex justify-center md:justify-start space-x-2 mt-2'>
-              <div className='bg-[#fff0eb] border-[#f35454] border text-[#090907] rounded-md text-sm px-3 py-0.5'>
+              <div className='bg-[#fff0eb] border-[#f35454] border text-[#090907] rounded-md text-sm px-2'>
                 User
               </div>
               {member.role === 'Project' && (
-                <div className='bg-[#daebf3] border-[#70b2e9] border text-[#144579] rounded-md text-sm px-3 py-0.5'>
+                <div className='bg-[#daebf3] border-[#70b2e9] border text-[#144579] rounded-md text-sm px-2'>
                   Project
                 </div>
               )}
               {member.role === 'Mentor' && (
-                <div className='bg-[#ecf5e7] border-[#5ff470] border text-[#366e1f] rounded-md text-sm px-3 py-0.5'>
+                <div className='bg-[#ecf5e7] border-[#5ff470] border text-[#366e1f] rounded-md text-sm px-2'>
                   Mentor
                 </div>
               )}
               {member.role === 'Investor' && (
-                <div className='bg-[#f5f5c1] border-[#cbdb42] border text-[#0d0f04] rounded-md text-sm px-3 py-0.5'>
+                <div className='bg-[#f5f5c1] border-[#cbdb42] border text-[#0d0f04] rounded-md text-sm px-2'>
                   Investor
                 </div>
               )}
@@ -126,7 +126,7 @@ const AttendeesCard = ({ member, appliedRole, handleClick, handleRating }) => {
   );
 };
 
-const Attendees = (cohortData) => {
+const Attendees = ({ cohortData, updateAttendeeCount }) => {
   const [showMenu, setShowMenu] = useState(false);
   const [selectedRole, setSelectedRole] = useState('All');
   const [appliedRole, setAppliedRole] = useState('');
@@ -141,13 +141,14 @@ const Attendees = (cohortData) => {
   const location = useLocation();
   useTimeout(() => setLoading(false));
 
-  const cohortid = cohortData?.cohortData?.cohort_id;
+  const cohortid = cohortData?.cohort_id;
+  console.log('cohortid me kya hai', cohortid);
 
   useEffect(() => {
-    if (!cohortid) {
-      console.error('Cohort ID is undefined.');
-    } else {
+    if (cohortid) {
       handleApply();
+    } else {
+      console.error('Cohort ID is undefined.');
     }
   }, [cohortid]);
 
@@ -172,8 +173,8 @@ const Attendees = (cohortData) => {
       toast.error('Cohort ID is not available.');
       return [];
     }
-    let result;
 
+    let result;
     switch (role) {
       case 'Project':
         result = await actor.get_projects_applied_for_cohort(cohortid);
@@ -187,9 +188,9 @@ const Attendees = (cohortData) => {
       default:
         return [];
     }
-    console.log('result at 189 attendees', result);
+
     if (result?.Ok && Array.isArray(result.Ok)) {
-      return result.Ok.map((item) => ({
+      const attendees = result.Ok.map((item) => ({
         full_name: item[1].params.full_name,
         username: item[1].params.openchat_username[0],
         area_of_interest: item[1].params.area_of_interest,
@@ -208,18 +209,18 @@ const Attendees = (cohortData) => {
         roleData: item[0],
         cohortid: cohortid,
       }));
+      return attendees;
     } else {
       return [];
     }
   };
 
   const handleApply = async () => {
-    setShowMenu(false);
-    setAppliedRole(selectedRole);
     setLoading(true);
-    let data = [];
-
+    setAppliedRole(selectedRole);
+    setShowMenu(false);
     try {
+      let data = [];
       if (selectedRole === 'All') {
         const projectData = (await fetchDataForRole('Project')).map((item) => ({
           ...item,
@@ -243,19 +244,21 @@ const Attendees = (cohortData) => {
           role: selectedRole,
         }));
       }
+
       setAttendees(data);
+      console.log('kya data hai', data);
+
+      updateAttendeeCount(data.length); // Pass attendee count to parent
       setNoData(data.length === 0);
       if (data.length === 0) {
         toast.error(`No ${selectedRole.toLowerCase()} data available`);
       }
     } catch (error) {
-      console.error(
-        `Error fetching ${selectedRole.toLowerCase()} data:`,
-        error
-      );
-      toast.error(`Failed to fetch ${selectedRole.toLowerCase()} data`);
+      console.error('Error fetching attendees:', error);
+      toast.error('Failed to fetch attendee data.');
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const renderModal = () => {
