@@ -58,27 +58,16 @@ const DiscoverInvestorPage = ({ openDetail, setOpenDetail, principal }) => {
           <CloseIcon sx={{ cursor: 'pointer' }} />
         </button>
 
-        {/* <div className="container mx-auto  h-[calc(100%-50px)] ml-2 pb-8 overflow-y-auto">
-          <div className="container">
-            <div className="flex justify-evenly px-[1%] ">
-              <div className=" h-fit rounded-lg w-[32%]">
-                <DiscoverInvestorAbout investorData={allInvestorData} />
-              </div>
-              <div className="px-3 w-[63%] overflow-y-auto h-[84vh]">
-                <div>
-                  <DiscoverInvestorDetail investorData={allInvestorData} />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div> */}
         <div className='container mx-auto overflow-hidden overflow-y-scroll px-[4%] sm:px-[2%] h-full pb-8'>
           <div className='flex flex-col gap-4 lg1:py-3 lg1:gap-0 lg1:flex-row w-full lg1:justify-evenly h-full '>
             <div className=' rounded-lg w-full lg1:overflow-y-scroll lg1:w-[32%] '>
               <DiscoverInvestorAbout investorData={allInvestorData} />
             </div>
             <div className='px-3 py-4 lg1:py-0 w-full lg1:overflow-y-scroll lg1:w-[63%] '>
-              <DiscoverInvestorDetail investorData={allInvestorData} />
+              <div className='border-2'>
+                {' '}
+                <DiscoverInvestorDetail investorData={allInvestorData} />
+              </div>
             </div>
           </div>
         </div>

@@ -396,78 +396,80 @@ const DiscoverUserModal = ({ openDetail, setOpenDetail, userData, value }) => {
                       </div>
                       <hr />
 
-                      <div className=' '>
-                        <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-2 '>
-                          <h3 className='font-semibold mb-1 text-xs text-gray-500 uppercase'>
-                            EmailABD
-                          </h3>
-
-                          <div className='flex flex-wrap items-center'>
-                            <p className='mr-2 text-sm line-clamp-1 break-all'>
-                              {email}
-                            </p>
-                            <VerifiedIcon
-                              className='text-blue-500 mr-2 w-2 h-2'
-                              fontSize='small'
-                            />
-                            {/* <span className=' dxs:flex bg-[#F8FAFC] border border-[#E3E8EF] text-[#364152] px-2 py-0.5 rounded text-xs'>
-                          HIDDEN
-                        </span> */}
-                          </div>
-                        </div>
-
-                        {/* About Section */}
-                        <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-2 '>
-                          <h3 className='font-semibold mb-1 text-xs text-gray-500 uppercase'>
-                            About
-                          </h3>
-                          <div>
-                            <p className='text-sm line-clamp-2 break-all'>
-                              {bio}
-                            </p>
-                          </div>
-                        </div>
-                        <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-2 '>
-                          <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
-                            Type of Profile
-                          </h3>
-
-                          <div className='flex items-center'>
-                            <p className='border-2 border-gray-500 rounded-full text-gray-700 text-xs px-3 py-1 bg-gray-100'>
-                              {type_of_profile}
-                            </p>
-                          </div>
-                        </div>
-
-                        <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-2'>
-                          <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
-                            Reason to Join Platform
-                          </h3>
-                          <div>
-                            <div className='flex flex-wrap gap-2'>
-                              {reason_to_join
-                                ? reason_to_join.map((reason, index) => (
-                                    <span
-                                      key={index}
-                                      className='border-2 border-gray-500 rounded-full text-gray-700 text-xs px-3 py-1 bg-gray-100'
-                                    >
-                                      {reason}
-                                    </span>
-                                  ))
-                                : 'No reason provided.'}
+                      <div className=''>
+                        {email && (
+                          <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-2'>
+                            <h3 className='font-semibold mb-1 text-xs text-gray-500 uppercase'>
+                              EmailABD
+                            </h3>
+                            <div className='flex flex-wrap items-center'>
+                              <p className='mr-2 text-sm line-clamp-1 break-all'>
+                                {email}
+                              </p>
+                              <VerifiedIcon
+                                className='text-blue-500 mr-2 w-2 h-2'
+                                fontSize='small'
+                              />
                             </div>
                           </div>
-                        </div>
-                        <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-2 '>
-                          <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
-                            Area of Interest
-                          </h3>
-                          <div>
-                            <div className='flex flex-wrap gap-2'>
-                              {area_of_interest &&
-                                area_of_interest
+                        )}
+
+                        {bio && (
+                          <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-2'>
+                            <h3 className='font-semibold mb-1 text-xs text-gray-500 uppercase'>
+                              About
+                            </h3>
+                            <div>
+                              <p className='text-sm line-clamp-2 break-all'>
+                                {bio}
+                              </p>
+                            </div>
+                          </div>
+                        )}
+
+                        {type_of_profile && (
+                          <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-2'>
+                            <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
+                              Type of Profile
+                            </h3>
+                            <div className='flex items-center'>
+                              <p className='border-2 border-gray-500 rounded-full text-gray-700 text-xs px-3 py-1 bg-gray-100'>
+                                {type_of_profile}
+                              </p>
+                            </div>
+                          </div>
+                        )}
+
+                        {reason_to_join && reason_to_join.length > 0 && (
+                          <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-2'>
+                            <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
+                              Reason to Join Platform
+                            </h3>
+                            <div>
+                              <div className='flex flex-wrap gap-2'>
+                                {reason_to_join.map((reason, index) => (
+                                  <span
+                                    key={index}
+                                    className='border-2 border-gray-500 rounded-full text-gray-700 text-xs px-3 py-1 bg-gray-100'
+                                  >
+                                    {reason}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        {area_of_interest && (
+                          <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-2'>
+                            <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
+                              Area of Interest
+                            </h3>
+                            <div>
+                              <div className='flex flex-wrap gap-2'>
+                                {area_of_interest
                                   .split(', ')
-                                  ?.map((interest, index) => (
+                                  .map((interest, index) => (
                                     <span
                                       key={index}
                                       className='border-2 border-gray-500 rounded-full text-gray-700 text-xs px-3 py-1 bg-gray-100'
@@ -475,35 +477,35 @@ const DiscoverUserModal = ({ openDetail, setOpenDetail, userData, value }) => {
                                       {interest}
                                     </span>
                                   ))}
+                              </div>
                             </div>
                           </div>
-                        </div>
+                        )}
 
-                        <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-2'>
-                          <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
-                            Location
-                          </h3>
-                          <div className='flex gap-2'>
-                            <PlaceOutlinedIcon
-                              sx={{ fontSize: 'medium', marginTop: '3px' }}
-                            />
-                            <p className='text-sm'>{location}</p>
-                          </div>
-                        </div>
-
-                        <div className='p-2 group relative hover:bg-gray-100 rounded-lg'>
-                          {social_links && social_links.length > 0 && (
+                        {location && (
+                          <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-2'>
                             <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
-                              LINKS
+                              Location
                             </h3>
-                          )}
-                          <div className='flex items-center'>
-                            <div className='flex gap-3'>
-                              {social_links &&
-                                social_links.map((linkObj, i) => {
+                            <div className='flex gap-2'>
+                              <PlaceOutlinedIcon
+                                sx={{ fontSize: 'medium', marginTop: '3px' }}
+                              />
+                              <p className='text-sm'>{location}</p>
+                            </div>
+                          </div>
+                        )}
+
+                        {social_links && social_links.length > 0 && (
+                          <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-2'>
+                            <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
+                              Links
+                            </h3>
+                            <div className='flex items-center'>
+                              <div className='flex gap-3'>
+                                {social_links.map((linkObj, i) => {
                                   const link = linkObj?.link && linkObj.link[0];
                                   if (!link) return null;
-
                                   const icon = getSocialLogo(link);
                                   return (
                                     <a
@@ -517,9 +519,10 @@ const DiscoverUserModal = ({ openDetail, setOpenDetail, userData, value }) => {
                                     </a>
                                   );
                                 })}
+                              </div>
                             </div>
                           </div>
-                        </div>
+                        )}
                       </div>
                     </div>
                   </div>
