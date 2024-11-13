@@ -501,6 +501,7 @@ const ProfileDetail = () => {
       alert('Contact information is not available.');
     }
   };
+  console.log('kya hai role', userCurrentRoleStatusActiveRole);
   return (
     <div
       ref={containerRef}
@@ -658,81 +659,161 @@ const ProfileDetail = () => {
         </div>
       )}
       {userRole === 'project' && activeTab === 'project' && (
-        <div
-          className=' px-6 py-2 md:p-6 bg-gray-50 relative cursor-pointer'
-          style={{
-            backgroundImage: `url(${coverPreview ? coverPreview : images})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-          }}
-        >
-          <div className='absolute top-0 right-0 p-2  cursor-pointer'>
-            <img
-              src={edit}
-              className='size-4'
-              loading='lazy'
-              draggable={false}
-              onClick={() => inputRef.current.click()}
-            />
-            <input
-              type='file'
-              className='hidden'
-              id='cover'
-              name='cover'
-              ref={inputRef}
-              onChange={(e) => {
-                handleChangeCover(e.target.files[0]);
-              }}
-              accept='.jpg, .jpeg, .png'
-            />
+        // <div
+        //   className=' px-6 py-2 md:p-6 bg-gray-50 relative cursor-pointer'
+        //   style={{
+        //     backgroundImage: `url(${coverPreview ? coverPreview : images})`,
+        //     backgroundSize: 'cover',
+        //     backgroundPosition: 'center',
+        //   }}
+        // >
+        //   <div className='absolute top-0 right-0 p-2  cursor-pointer'>
+        //     <img
+        //       src={edit}
+        //       className='size-4'
+        //       loading='lazy'
+        //       draggable={false}
+        //       onClick={() => inputRef.current.click()}
+        //     />
+        //     <input
+        //       type='file'
+        //       className='hidden'
+        //       id='cover'
+        //       name='cover'
+        //       ref={inputRef}
+        //       onChange={(e) => {
+        //         handleChangeCover(e.target.files[0]);
+        //       }}
+        //       accept='.jpg, .jpeg, .png'
+        //     />
+        //   </div>
+        //   <div className='relative w-24 h-24 mx-auto rounded-full mb-4 group'>
+        //     <img
+        //       src={logoPreview}
+        //       alt={full_name}
+        //       className='w-full h-full rounded-full object-cover'
+        //       loading='lazy'
+        //       draggable={false}
+        //     />
+        //     <div className='absolute inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300'>
+        //       <>
+        //         <input
+        //           type='file'
+        //           className='hidden'
+        //           id='logo'
+        //           name='logo'
+        //           onChange={(e) => {
+        //             handleChangeLogo(e.target.files[0]);
+        //           }}
+        //           accept='.jpg, .jpeg, .png'
+        //         />
+        //         <label
+        //           htmlFor='logo'
+        //           className='p-2  items-center rounded-md text-md bg-transparent cursor-pointer font-semibold'
+        //         >
+        //           <FaPlus className='text-white text-xl' />
+        //         </label>
+        //       </>
+        //     </div>
+        //   </div>
+
+        //   <div className='flex items-center justify-center mb-1'>
+        //     <VerifiedIcon className='text-blue-500 mr-1' fontSize='small' />
+        //     <h2 className='text-xl font-semibold truncate break-all'>
+        //       {full_name}
+        //     </h2>
+        //   </div>
+        //   <p className='text-gray-600 text-center mb-4 truncate break-all'>
+        //     {openchat_username}
+        //   </p>
+        //   <button
+        //     type='button'
+        //     onClick={handleGetInTouchClick}
+        //     className='w-full h-[#155EEF] bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 mb-6 flex items-center justify-center'
+        //   >
+        //     Get in touch
+        //     <ArrowOutwardOutlinedIcon className='ml-1' fontSize='small' />
+        //   </button>
+        // </div>
+        <div className='max-w-sm mx-auto bg-white rounded-t-lg shadow-md overflow-hidden cursor-pointer'>
+          {/* Cover Image */}
+          <div
+            className='h-48 relative'
+            style={{
+              backgroundImage: `url(${coverPreview ? coverPreview : images})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            }}
+          >
+            <div className='absolute top-2 right-2 p-2 z-50 visible lgx:invisible lgx:hover:visible'>
+              <img
+                src={edit}
+                alt='Edit Cover'
+                className='w-6 h-6 cursor-pointer'
+                draggable={false}
+                onClick={() => inputRef.current.click()}
+              />
+              <input
+                type='file'
+                className='hidden'
+                id='cover'
+                name='cover'
+                ref={inputRef}
+                onChange={(e) => handleChangeCover(e.target.files[0])}
+                accept='.jpg, .jpeg, .png'
+              />
+            </div>
           </div>
-          <div className='relative w-24 h-24 mx-auto rounded-full mb-4 group'>
-            <img
-              src={logoPreview}
-              alt={full_name}
-              className='w-full h-full rounded-full object-cover'
-              loading='lazy'
-              draggable={false}
-            />
-            <div className='absolute inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300'>
-              <>
+
+          {/* Profile Section */}
+          <div className='flex flex-col items-center mt-[-3rem]  bg-gray-50'>
+            <div className='relative w-24 h-24 rounded-full border-[8px] border-white overflow-hidden'>
+              <img
+                src={logoPreview}
+                alt={full_name}
+                className='w-full h-full object-cover'
+                draggable={false}
+                loading='lazy'
+              />
+              <div className='absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-300'>
                 <input
                   type='file'
                   className='hidden'
                   id='logo'
                   name='logo'
-                  onChange={(e) => {
-                    handleChangeLogo(e.target.files[0]);
-                  }}
+                  onChange={(e) => handleChangeLogo(e.target.files[0])}
                   accept='.jpg, .jpeg, .png'
                 />
                 <label
                   htmlFor='logo'
-                  className='p-2  items-center rounded-md text-md bg-transparent cursor-pointer font-semibold'
+                  className='p-2 bg-white rounded-md cursor-pointer'
                 >
-                  <FaPlus className='text-white text-xl' />
+                  <FaPlus className='text-black text-lg' />
                 </label>
-              </>
+              </div>
             </div>
-          </div>
 
-          <div className='flex items-center justify-center mb-1'>
-            <VerifiedIcon className='text-blue-500 mr-1' fontSize='small' />
-            <h2 className='text-xl font-semibold truncate break-all'>
+            {/* Name and Username */}
+          </div>
+          <div className=' bg-gray-50'>
+            <h2 className='font-semibold line-clamp-1 mx-6 text-center text-lg truncate'>
               {full_name}
             </h2>
+            <p className='text-gray-500 text-sm font-semibold line-clamp-1 mx-6 text-center  truncate '>
+              @{openchat_username}
+            </p>
+            {/* Buttons */}
+            <div className=' my-2 mx-6 text-center truncate line-clamp-1 '>
+              <button
+                type='button'
+                onClick={handleGetInTouchClick}
+                className='w-full h-[#155EEF] bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 mb-6 flex items-center justify-center'
+              >
+                Get in touch
+                <ArrowOutwardOutlinedIcon className='ml-1' fontSize='small' />
+              </button>
+            </div>
           </div>
-          <p className='text-gray-600 text-center mb-4 truncate break-all'>
-            {openchat_username}
-          </p>
-          <button
-            type='button'
-            onClick={handleGetInTouchClick}
-            className='w-full h-[#155EEF] bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 mb-6 flex items-center justify-center'
-          >
-            Get in touch
-            <ArrowOutwardOutlinedIcon className='ml-1' fontSize='small' />
-          </button>
         </div>
       )}
 
@@ -748,7 +829,7 @@ const ProfileDetail = () => {
           </button>
         ) : (
           <>
-            <div className='mb-4 '>
+            {/* <div className='mb-4 '>
               <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
                 Roles
               </h3>
@@ -761,6 +842,26 @@ const ProfileDetail = () => {
                     ? 'INVESTOR'
                     : userCurrentRoleStatusActiveRole}
                 </span>
+              </div>
+            </div> */}
+            <div className='mb-4'>
+              <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
+                Roles
+              </h3>
+              <div className='flex space-x-2'>
+                {/* First Box */}
+                <span className='bg-[#F0F9FF] border border-[#B9E6FE] text-[#026AA2] px-3 py-1 rounded-md text-xs font-medium'>
+                  OLYMPIAN
+                </span>
+
+                {/* Conditionally Render Second Box */}
+                {userCurrentRoleStatusActiveRole && (
+                  <span className='bg-[#F0F9FF] border border-[#B9E6FE] text-[#026AA2] px-3 py-1 rounded-md text-xs font-medium uppercase'>
+                    {userCurrentRoleStatusActiveRole === 'vc'
+                      ? 'INVESTOR'
+                      : userCurrentRoleStatusActiveRole}
+                  </span>
+                )}
               </div>
             </div>
 
@@ -1449,14 +1550,19 @@ const ProfileDetail = () => {
             Roles
           </h3>
           <div className='flex space-x-2'>
+            {/* First Box */}
             <span className='bg-[#F0F9FF] border border-[#B9E6FE] text-[#026AA2] px-3 py-1 rounded-md text-xs font-medium'>
               OLYMPIAN
             </span>
-            <span className='bg-[#F0F9FF] border border-[#B9E6FE] text-[#026AA2] px-3 py-1 rounded-md text-xs font-medium uppercase'>
-              {userCurrentRoleStatusActiveRole === 'vc'
-                ? 'INVESTOR'
-                : userCurrentRoleStatusActiveRole}
-            </span>
+
+            {/* Conditionally Render Second Box */}
+            {userCurrentRoleStatusActiveRole && (
+              <span className='bg-[#F0F9FF] border border-[#B9E6FE] text-[#026AA2] px-3 py-1 rounded-md text-xs font-medium uppercase'>
+                {userCurrentRoleStatusActiveRole === 'vc'
+                  ? 'INVESTOR'
+                  : userCurrentRoleStatusActiveRole}
+              </span>
+            )}
           </div>
         </div>
 
