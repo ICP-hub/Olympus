@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import timestampAgo from '../../Utils/navigationHelper/timeStampAgo';
 import toast, { Toaster } from 'react-hot-toast';
-import { Principal } from '@dfinity/principal';
 import { useSelector } from 'react-redux';
 import { ThreeDots } from 'react-loader-spinner';
 import { useNavigate } from 'react-router-dom';
 
-const DocsNotification = ({ notification, formatNotificationMessage }) => {
+const CohortNotification = ({ notification, formatNotificationMessage }) => {
   const { details } = formatNotificationMessage(notification);
   const actor = useSelector((currState) => currState.actors.actor);
   const navigate = useNavigate();
@@ -15,11 +14,7 @@ const DocsNotification = ({ notification, formatNotificationMessage }) => {
   const [loadingApprove, setLoadingApprove] = useState(false);
   const [loadingDecline, setLoadingDecline] = useState(false);
 
-  const approveAndRejectPrivateDocument = async (
-    value,
-    projectId,
-    principal
-  ) => {
+  const approveAndRejectCohortRequest = async (value, projectId, principal) => {
     if (!actor) {
       console.log('Actor not found');
       return null;
@@ -32,16 +27,10 @@ const DocsNotification = ({ notification, formatNotificationMessage }) => {
       let result;
       switch (value) {
         case 'Approve':
-          result = await actor.approve_private_docs_access_request(
-            projectId,
-            Principal.fromText(principal)
-          );
+          result = await actor.approve_enrollment_request(projectId, principal);
           break;
         case 'Decline':
-          result = await actor.decline_private_docs_access_request(
-            projectId,
-            Principal.fromText(principal)
-          );
+          result = await actor.reject_enrollment_request(projectId, principal);
           break;
         default:
           console.log('Unknown action');
@@ -69,10 +58,10 @@ const DocsNotification = ({ notification, formatNotificationMessage }) => {
         <div className='flex space-x-2'>
           <button
             onClick={() =>
-              approveAndRejectPrivateDocument(
+              approveAndRejectCohortRequest(
                 'Decline',
-                details?.projectId,
-                details?.senderPrincipal
+                details?.cohortCreatorPrincipal,
+                details?.enrollerPrincipal
               )
             }
             className='px-3 py-1 text-sm text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300'
@@ -93,10 +82,10 @@ const DocsNotification = ({ notification, formatNotificationMessage }) => {
           </button>
           <button
             onClick={() =>
-              approveAndRejectPrivateDocument(
+              approveAndRejectCohortRequest(
                 'Approve',
-                details?.projectId,
-                details?.senderPrincipal
+                details?.cohortId,
+                details?.enrollerPrincipal
               )
             }
             className='px-3 py-1 text-sm text-white bg-blue-600 rounded-md hover:bg-blue-700'
@@ -130,40 +119,40 @@ const DocsNotification = ({ notification, formatNotificationMessage }) => {
   };
 
   return (
-    <div className='flex items-center space-x-4 p-4 bg-gray-100 rounded-lg mb-4 max-w-full'>
-      <div className='flex-1 min-w-0'>
-        <p className='text-sm text-gray-800 mb-1 items-center space-x-1 whitespace-nowrap text-ellipsis'>
-          {details?.status === 'pending' && (
-            <div className='flex flex-wrap items-center mb-2 space-x-2'>
-              <img
-                src={details?.sender?.profilePicture}
-                alt={`${details?.sender?.name || 'User'}'s avatar`}
-                className='h-8 w-8 rounded-full flex-shrink-0 mr-1'
-                loading='lazy'
-                draggable={false}
-              />
-              <span className='font-semibold'>{details?.sender?.name}</span>
-              <span className='mr-1'>requests access to the document from</span>
-              <div className='flex items-center flex-nowrap'>
-                <img
-                  src={details?.receiver?.profilePicture}
-                  alt={`${details?.receiver?.name || 'User'}'s avatar`}
-                  className='h-8 w-8 rounded-full flex-shrink-0 mr-1'
-                  loading='lazy'
-                  draggable={false}
-                />
-                <span className='font-semibold'>{details?.receiver?.name}</span>
-              </div>
-            </div>
-          )}
-        </p>
-        <p className='text-xs text-gray-400 mt-1 whitespace-nowrap'>
-          {timestampAgo(details?.sentAt)}
-        </p>
-        <div className='mt-2 flex space-x-2'>{renderStatusButton(details)}</div>
+    <div className='flex flex-col justify-between space-y-4 p-4 bg-gray-100 rounded-lg mb-4 max-w-full'>
+      <div className='flex items-center space-x-2 flex-wrap'>
+        <img
+          src={
+            details?.status === 'pending'
+              ? details?.sender?.profilePicture
+              : details?.receiver?.profilePicture
+          }
+          alt={`${details?.status === 'pending' ? details?.sender?.name : details?.receiver?.name || 'User'}'s avatar`}
+          className='h-8 w-8 rounded-full'
+          loading='lazy'
+          draggable={false}
+        />
+        <span className='text-sm font-semibold text-gray-800 text-nowrap'>
+          {details?.status === 'pending'
+            ? details?.sender?.name
+            : details?.receiver?.name || 'Unknown User'}
+        </span>
+        <span className='text-sm text-gray-800 text-nowrap'>
+          {details?.status === 'accepted' && `accepted your invitation to `}
+          {details?.status === 'pending' &&
+            `has sent you an invitation request for `}
+          {details?.status === 'declined' && `declined your invitation to `}
+          <span className='font-semibold'>
+            {details?.cohortName || 'Untitled Cohort'}
+          </span>
+        </span>
+      </div>
+      <p className='text-xs text-gray-400'>{timestampAgo(details?.sentAt)}</p>
+      <div className='mt-2 flex justify-start'>
+        {renderStatusButton(details)}
       </div>
     </div>
   );
 };
 
-export default DocsNotification;
+export default CohortNotification;
