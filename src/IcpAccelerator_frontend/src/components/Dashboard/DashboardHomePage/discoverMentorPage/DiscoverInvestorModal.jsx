@@ -307,7 +307,7 @@ const DiscoverInvestorModal = ({
               openDetail ? 'translate-x-0' : 'translate-x-full'
             } z-20`}
           >
-            <div className='py-2 mb-2'>
+            <div className='p-2 mb-2'>
               <CloseIcon
                 sx={{ cursor: 'pointer' }}
                 onClick={() => setOpenDetail(false)}
@@ -389,7 +389,7 @@ const DiscoverInvestorModal = ({
                       <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
                         Roles
                       </h3>
-                      <div className='flex space-x-2'>
+                      <div className='flex space-x-2 mb-2'>
                         <span className='bg-[#F0F9FF] border border-[#B9E6FE] text-[#026AA2] px-1 py-1 rounded-md text-xs font-normal'>
                           OLYMPIAN
                         </span>
@@ -421,7 +421,7 @@ const DiscoverInvestorModal = ({
                         )}
 
                         {investorProfile?.params?.investor_type?.[0] && (
-                          <div className='mb-2 group relative hover:bg-gray-100 rounded-lg py-2 '>
+                          <div className=' group relative hover:bg-gray-100 rounded-lg py-2 '>
                             <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
                               Type of Investment
                             </h3>
@@ -474,7 +474,7 @@ const DiscoverInvestorModal = ({
                         )}
 
                         {investorProfile?.params?.website_link && (
-                          <div className='mb-2 group relative hover:bg-gray-100 rounded-lg py-2 '>
+                          <div className=' group relative hover:bg-gray-100 rounded-lg py-2 '>
                             <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
                               Website Link
                             </h3>
@@ -486,7 +486,7 @@ const DiscoverInvestorModal = ({
 
                         {investorProfile?.params
                           ?.project_on_multichain?.[0] && (
-                          <div className='mb-2 group relative hover:bg-gray-100 rounded-lg py-2 '>
+                          <div className=' group relative hover:bg-gray-100 rounded-lg py-2 '>
                             <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
                               Selected Multi-Chains
                             </h3>
@@ -506,7 +506,7 @@ const DiscoverInvestorModal = ({
                         )}
 
                         {investorProfile?.params?.category_of_investment && (
-                          <div className='mb-2 group relative hover:bg-gray-100 rounded-lg py-2 '>
+                          <div className=' group relative hover:bg-gray-100 rounded-lg py-2 '>
                             <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
                               Category of Investment
                             </h3>
@@ -526,7 +526,7 @@ const DiscoverInvestorModal = ({
                         )}
 
                         {investorProfile?.params?.stage?.[0] && (
-                          <div className='mb-2 group relative hover:bg-gray-100 rounded-lg py-2 '>
+                          <div className=' group relative hover:bg-gray-100 rounded-lg py-2 '>
                             <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
                               Stage(s) You Invest At
                             </h3>
@@ -546,7 +546,7 @@ const DiscoverInvestorModal = ({
                         )}
 
                         {investorProfile?.params?.range_of_check_size?.[0] && (
-                          <div className='mb-2 group relative hover:bg-gray-100 rounded-lg py-2 '>
+                          <div className=' group relative hover:bg-gray-100 rounded-lg py-2 '>
                             <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
                               Checksize Range
                             </h3>
@@ -595,7 +595,10 @@ const DiscoverInvestorModal = ({
                   </div>
                 </div>
                 <div className='px-3 py-4 lg1:py-0 w-full lg1:overflow-y-scroll lg1:w-[63%] '>
-                  <DiscoverInvestorDetail />
+                  <div className='border-2'>
+                    {' '}
+                    <DiscoverInvestorDetail />
+                  </div>
                 </div>
               </div>
             </div>
