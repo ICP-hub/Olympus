@@ -149,29 +149,40 @@ export const validationSchema = yup
         : schema
     ),
     weekly_active_users: yup
-      .number('Please enter a valid number')
+      .number()
       .nullable(false)
       .test(
-        'is-required-or-nullable',
-        'You must enter a valid number',
+        'is-required-when-live',
+        'Weekly active users is required and must be a valid number when the project is live on ICP mainnet',
         function (value) {
           const { live_on_icp_mainnet } = this.parent;
           if (live_on_icp_mainnet === 'true') {
-            return yup
-              .number()
-              .min(0, 'Weekly active users cannot be a negative number')
-              .required('Weekly active users is a required field')
-              .test(
-                'not-negative-zero',
-                'Negative zero (-0) is not allowed',
-                (value) => Object.is(value, -0) === false
-              )
-              .isValidSync(value);
+            if (value === undefined || value === null || value === '') {
+              return this.createError({
+                message:
+                  'Weekly active users is required when the project is live on ICP mainnet',
+              });
+            }
+            if (typeof value !== 'number') {
+              return this.createError({
+                message: 'Weekly active users must be a number',
+              });
+            }
+            if (value < 0) {
+              return this.createError({
+                message: 'Weekly active users cannot be a negative number',
+              });
+            }
+            if (Object.is(value, -0)) {
+              return this.createError({
+                message:
+                  'Negative zero (-0) is not allowed for weekly active users',
+              });
+            }
           }
-          return value === null || value === '' || value === 0;
+          return true;
         }
       ),
-
     revenue: yup
       .number()
       .nullable(true)

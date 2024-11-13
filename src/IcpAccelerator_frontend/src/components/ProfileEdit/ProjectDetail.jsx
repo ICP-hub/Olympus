@@ -50,6 +50,8 @@ const ProjectDetail = forwardRef(
       setError,
       watch,
       control,
+      getValues,
+      trigger,
       formState: { errors, isSubmitting },
     } = useForm({
       resolver: yupResolver(validationSchema),
@@ -210,7 +212,7 @@ const ProjectDetail = forwardRef(
           project_elevator_pitch: [data?.project_elevator_pitch ?? ''],
           project_website: [data?.project_website ?? ''],
           is_your_project_registered: [
-            data?.is_your_project_registered === 'true' ? true : false,
+            data?.is_your_project_registered === true ? true : false,
           ],
           type_of_registration: [
             data?.is_your_project_registered === 'true' &&
@@ -233,7 +235,9 @@ const ProjectDetail = forwardRef(
               : '',
           ],
           weekly_active_users: [
-            data?.live_on_icp_mainnet === 'true' && data?.weekly_active_users
+            data?.live_on_icp_mainnet === 'true' &&
+            data?.weekly_active_users &&
+            !isNaN(Number(data.weekly_active_users))
               ? Number(data.weekly_active_users)
               : 0,
           ],
@@ -429,6 +433,18 @@ const ProjectDetail = forwardRef(
       setCoverData(null);
       setCoverPreview(null);
     };
+
+    const handleSaveDescription = () => {
+      // Save the updated description to the form state or backend
+      const description = getValues('project_description'); // Retrieve updated description
+      setValue('project_description', description); // Update in the form state
+      console.log('Saved Description:', description);
+      setEditMode((prevEditMode) => ({
+        ...prevEditMode,
+        project_description: true, // Turn off edit mode for description
+      }));
+    };
+
     const setProjectValuesHandler = (val) => {
       console.log('val', val);
       if (val) {
@@ -757,6 +773,10 @@ const ProjectDetail = forwardRef(
       }, 500);
     }, []);
 
+    console.log(
+      'multichain',
+      projectFullData[0]?.[0]?.params.supports_multichain?.[0]
+    );
     const preferred_icp_hub =
       projectFullData[0]?.[0]?.params.preferred_icp_hub?.[0] ?? '';
     const project_name = projectFullData[0]?.[0]?.params.project_name ?? '';
@@ -768,9 +788,10 @@ const ProjectDetail = forwardRef(
       projectFullData[0]?.[0]?.params.project_website?.[0] ?? '';
     const is_your_project_registered = projectFullData[0]?.[0]?.params
       .is_your_project_registered?.[0]
-      ? 'true'
-      : 'false';
-    const isyourprojectregistered = is_your_project_registered ? 'Yes' : 'No';
+      ? true
+      : false;
+    const isyourprojectregistered =
+      is_your_project_registered === true ? 'Yes' : 'No';
     const type_of_registration =
       projectFullData[0]?.[0]?.params.type_of_registration?.[0] ?? '';
     const country_of_registration =
@@ -779,15 +800,15 @@ const ProjectDetail = forwardRef(
       .live_on_icp_mainnet?.[0]
       ? 'true'
       : 'false';
-    const liveonicpmainnet = live_on_icp_mainnet ? 'Yes' : 'No';
+    const liveonicpmainnet = live_on_icp_mainnet === true ? 'Yes' : 'No';
     const dapp_link = projectFullData[0]?.[0]?.params.dapp_link?.[0] ?? '';
     const weekly_active_users =
-      projectFullData[0]?.[0]?.params.weekly_active_users?.[0] ?? '';
+      projectFullData[0]?.[0]?.params.weekly_active_users?.[0] ?? 0;
     const revenue = projectFullData[0]?.[0]?.params.revenue?.[0] ?? '';
     const multi_chain = projectFullData[0]?.[0]?.params.supports_multichain?.[0]
       ? 'true'
       : 'false';
-    const multichain = multi_chain ? 'Yes' : 'No';
+    const multichain = multi_chain === 'true' ? 'Yes' : 'No';
     const project_area_of_focus =
       projectFullData[0]?.[0]?.params.project_area_of_focus;
     const multi_chain_names =
@@ -862,7 +883,7 @@ const ProjectDetail = forwardRef(
                       )}
                     </div>
                   ) : (
-                    <div className='flex flex-wrap gap-2'>
+                    <div className='flex overflow-x-auto gap-2'>
                       {(reason_to_join_incubator || '')
                         .split(', ')
                         .map((reason, index) => (
@@ -993,7 +1014,7 @@ const ProjectDetail = forwardRef(
                   {!isModalOpen && (
                     <div className='flex justify-between items-center cursor-pointer py-1'>
                       <span className='mr-2 text-sm line-clamp-3 hover:line-clamp-6'>
-                        {parse(project_description)}
+                        {parse(watch('project_description'))}
                       </span>
                     </div>
                   )}
@@ -1113,10 +1134,10 @@ const ProjectDetail = forwardRef(
                             : 'border-[#737373]'
                         } text-gray-900 placeholder-gray-500 placeholder:font-bold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1  my-2`}
                       >
-                        <option className='text-lg font-bold' value='false'>
+                        <option className='text-lg font-bold' value={false}>
                           No
                         </option>
-                        <option className='text-lg font-bold' value='true'>
+                        <option className='text-lg font-bold' value={true}>
                           Yes
                         </option>
                       </select>
@@ -1909,9 +1930,11 @@ const ProjectDetail = forwardRef(
           <ProjectDescriptionEdit
             control={control}
             errors={errors}
+            trigger={trigger}
             isModalOpen={isModalOpen}
             setIsModalOpen={setIsModalOpen}
-            project_description={project_description}
+            project_description={watch('project_description')}
+            onSaveDescription={handleSaveDescription}
           />
         )}
       </>

@@ -6,9 +6,11 @@ import 'react-quill/dist/quill.snow.css'; // Import the Quill stylesheet
 const ProjectDescriptionEdit = ({
   control,
   errors,
+  trigger,
   isModalOpen,
   setIsModalOpen,
   project_description,
+  onSaveDescription,
 }) => {
   // Define the toolbar and formats for the ReactQuill editor
   const modules = useMemo(
@@ -38,6 +40,16 @@ const ProjectDescriptionEdit = ({
     'link',
   ];
 
+  const handleSave = async () => {
+    const isValid = await trigger('project_description'); // Validate the specific field
+    if (isValid) {
+      onSaveDescription(); // Call save function if validation passes
+      setIsModalOpen(false); // Close modal
+    }
+  };
+  const handleCancel = () => {
+    setIsModalOpen(false); // Simply close the modal
+  };
   return (
     <>
       <div
@@ -48,8 +60,8 @@ const ProjectDescriptionEdit = ({
         <div
           className='bg-white rounded-lg shadow-lg w-[500px] p-6 pt-4'
           style={{
-            height: 'calc(100vh - 30vh)', // Ensure the modal is 70% of the viewport height
-            maxHeight: 'calc(100vh - 30vh)', // Add a max height to prevent overflow
+            height: 'calc(100vh - 47vh)', // Ensure the modal is 70% of the viewport height
+            maxHeight: 'calc(100vh - 47vh)', // Add a max height to prevent overflow
             overflowY: 'auto', // Enable scrolling if content overflows
           }}
         >
@@ -87,6 +99,20 @@ const ProjectDescriptionEdit = ({
                 {errors?.project_description?.message}
               </span>
             )}
+          </div>
+          <div className='flex justify-end mt-20'>
+            <button
+              className='bg-gray-300 text-gray-700 py-2 px-4 rounded mr-2'
+              onClick={handleCancel}
+            >
+              Cancel
+            </button>
+            <button
+              className='bg-blue-600 text-white py-2 px-4 rounded'
+              onClick={handleSave}
+            >
+              Save
+            </button>
           </div>
         </div>
       </div>
