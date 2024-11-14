@@ -42,12 +42,18 @@ const HeroSection = () => {
                   {homepagedata.section1.content.mainHeading
                     .split(' ')
                     .map((word, index) => {
-                      const isHighlighted =
-                        word === homepagedata.section1.content.highlightedText;
+                      const isHighlighted = word === 'Web3';
+
                       return isHighlighted ? (
                         <span
                           key={index}
-                          className='bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-500 bg-clip-text text-transparent'
+                          className='text-transparent bg-clip-text'
+                          style={{
+                            backgroundImage:
+                              'linear-gradient(to right, #f59e0b, #ec4899, #8b5cf6)',
+                            WebkitBackgroundClip: 'text',
+                            color: 'transparent',
+                          }}
                         >
                           {word}{' '}
                         </span>
@@ -56,6 +62,7 @@ const HeroSection = () => {
                       );
                     })}
                 </h1>
+
                 <p className='text-xl font-medium text-[#364152] mb-6'>
                   {homepagedata.section1.content.description}
                 </p>

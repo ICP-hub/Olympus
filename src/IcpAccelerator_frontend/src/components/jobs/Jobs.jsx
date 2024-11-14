@@ -222,6 +222,7 @@ const Jobs = () => {
                   >
                     {latestJobs.map((card, index) => {
                       // console.log( " card?.job_poster.profile_picture",card?.job_poster?.profile_picture)
+                      let full_Name = card?.job_poster?.[0].full_name;
                       let job_name = card?.job_data?.title ?? '';
                       let job_category = card?.job_data?.category ?? '';
                       let job_description = card?.job_data?.description ?? '';
@@ -265,7 +266,7 @@ const Jobs = () => {
                                     />
                                   </span>
                                   <span className='line-clamp-2 break-all'>
-                                    {job_name}{' '}
+                                    {full_Name}{' '}
                                   </span>
                                 </p>
                               </div>

@@ -42,7 +42,7 @@ const Navbar = ({ setModalOpen }) => {
       <nav className=' h-20 flex items-center justify-center bg-[#FEF6EE]   py-10 '>
         <div className='container  bg-[#FEF6EE]'>
           <div className='max-w-7xl w-full mx-auto '>
-            <div className='  flex items-center justify-between    py-8 px-4 sm:px-6 lg:px-8  '>
+            <div className='  flex items-center justify-between   px-4 sm:px-6 lg:px-8  '>
               <div className=''>
                 <Link to='/'>
                   {' '}
