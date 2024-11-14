@@ -23,7 +23,13 @@ const schema = yup
         'no-leading-spaces',
         'Job Title should not have leading spaces',
         (value) => !value || value.trimStart() === value
-      ),
+      )
+      .test('max-50-words', 'Job Title must not exceed 50 words', (value) => {
+        if (!value) return true; // Skip validation for empty strings (handled by `.required`)
+        const wordCount = value.trim().split(/\s+/).length; // Count words
+        return wordCount <= 50;
+      }),
+
     jobLocation: yup
       .object()
       .shape({
@@ -38,7 +44,7 @@ const schema = yup
         value: yup.string().required('Job Type is required'),
         label: yup.string().required('Job Type is required'),
       })
-      .nullable()
+
       .required('Job Type is required'),
     jobLink: yup
       .string()
@@ -239,7 +245,7 @@ const JobRegister1 = ({ modalOpen, setModalOpen, fetchPostedJobs }) => {
                   type='text'
                   {...register('jobTitle')}
                   className={`border border-[#CDD5DF] rounded-md shadow-sm ${
-                    errors.jobTitle ? 'border-red-500 ' : 'border-[#737373]'
+                    errors.jobTitle ? 'border-[#ef4444] ' : 'border-[#737373]'
                   } text-gray-900 placeholder-gray-500  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                   placeholder='Job Title'
                 />
@@ -281,14 +287,15 @@ const JobRegister1 = ({ modalOpen, setModalOpen, fetchPostedJobs }) => {
                           ...provided,
                           paddingBlock: '2px',
                           borderRadius: '8px',
-                          border: errors.jobLocation
-                            ? '1px solid #ef4444'
-                            : '1px solid #CDD5DF',
+
                           backgroundColor: 'white',
                           display: 'flex',
                           overflowX: 'auto',
                           maxHeight: '43px',
                           '&::-webkit-scrollbar': { display: 'none' },
+                          borderColor: errors.jobLocation
+                            ? '#ef4444'
+                            : '#CDD5DF',
                         }),
                         valueContainer: (provided) => ({
                           ...provided,
@@ -336,21 +343,23 @@ const JobRegister1 = ({ modalOpen, setModalOpen, fetchPostedJobs }) => {
                   control={control}
                   render={({ field }) => (
                     <Select
-                      options={jobTypes.map((type) => ({
-                        label: type.label.job_type, // Extract the job type string
-                        value: type.value.job_type, // Extract the job type string
-                      }))}
                       {...field}
-                      className={`${
-                        errors.job_type ? 'border-red-500' : 'border-gray-300'
-                      }`}
+                      options={jobTypes.map((type) => ({
+                        label: type.label.job_type,
+                        value: type.value.job_type,
+                      }))}
+                      styles={{
+                        control: (provided) => ({
+                          ...provided,
+                          borderColor: errors.job_type ? '#ef4444' : '#CDD5DF',
+                        }),
+                      }}
                     />
                   )}
                 />
-
                 {errors.job_type && (
                   <span className='mt-1 text-sm text-red-500 font-bold'>
-                    {errors.job_type.message}
+                    {errors.job_type.message || errors.job_type.value?.message}
                   </span>
                 )}
               </div>
@@ -372,7 +381,7 @@ const JobRegister1 = ({ modalOpen, setModalOpen, fetchPostedJobs }) => {
                   type='text'
                   {...register('jobLink')}
                   className={`border border-[#CDD5DF] rounded-md shadow-sm ${
-                    errors.jobLink ? 'border-red-500 ' : 'border-[#737373]'
+                    errors.jobLink ? 'border-[#ef4444] ' : 'border-[#737373]'
                   } text-gray-900 placeholder-gray-500  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                   placeholder='Job Link'
                 />
@@ -397,8 +406,10 @@ const JobRegister1 = ({ modalOpen, setModalOpen, fetchPostedJobs }) => {
                 </label>
                 <select
                   {...register('jobCategory')}
-                  className={`border border-[#CDD5DF] rounded-md shadow-sm ${
-                    errors.jobsCategory ? 'border-red-500 ' : 'border-[#737373]'
+                  className={`border  rounded-md shadow-sm ${
+                    errors.jobCategory
+                      ? 'border-[#ef4444] '
+                      : 'border-[#737373]'
                   } text-gray-900 placeholder-gray-500  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
                 >
                   <option className='text-lg font-bold' value=''>
@@ -439,7 +450,14 @@ const JobRegister1 = ({ modalOpen, setModalOpen, fetchPostedJobs }) => {
                     *
                   </span>
                 </label>
-                {/* <textarea
+                <div
+                  className={`border rounded-md shadow-sm ${
+                    errors.jobDescription
+                      ? 'border-[#ef4444]'
+                      : 'border-[#737373]'
+                  }`}
+                >
+                  {/* <textarea
                   {...register("jobDescription")}
                   rows="4"
                   className={`border border-[#CDD5DF] rounded-md shadow-sm ${
@@ -449,20 +467,21 @@ const JobRegister1 = ({ modalOpen, setModalOpen, fetchPostedJobs }) => {
                   } text-gray-900 placeholder-gray-500  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 mb-2`}
                   placeholder="Job Description here"
                 ></textarea> */}
-                <Controller
-                  name='jobDescription'
-                  control={control}
-                  defaultValue=''
-                  render={({ field: { onChange, value } }) => (
-                    <ReactQuill
-                      value={value}
-                      onChange={onChange}
-                      modules={modules}
-                      formats={formats}
-                      placeholder='Enter your description here...'
-                    />
-                  )}
-                />
+                  <Controller
+                    name='jobDescription'
+                    control={control}
+                    defaultValue=''
+                    render={({ field: { onChange, value } }) => (
+                      <ReactQuill
+                        value={value}
+                        onChange={onChange}
+                        modules={modules}
+                        formats={formats}
+                        placeholder='Enter your description here...'
+                      />
+                    )}
+                  />
+                </div>
                 {errors.jobDescription && (
                   <span className='mt-1 text-sm text-red-500 font-bold'>
                     {errors.jobDescription.message}
