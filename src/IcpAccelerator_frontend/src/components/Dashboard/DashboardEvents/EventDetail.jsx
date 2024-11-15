@@ -96,6 +96,8 @@ const EventDetails = () => {
       });
     }
   };
+  const [attendeeCount, setAttendeeCount] = useState(0); // Declare attendeeCount
+  const [showCount, setShowCount] = useState(false); // Manage visibility of count
 
   const [showDetails, setShowDetails] = useState(false);
 
@@ -127,19 +129,36 @@ const EventDetails = () => {
     ?.profile_picture[0]
     ? uint8ArrayToBase64(cohortData?.cohort_creator_data?.profile_picture[0])
     : [];
+
   const tabs = [
     { label: 'Summary', value: 'Summary' },
     ...(userCurrentRoleStatusActiveRole !== 'user'
       ? [
           ...(cohortCreator ? [{ label: 'Request', value: 'Request' }] : []),
           { label: 'Announcements', value: 'Announcements' },
-          { label: 'Attendees', value: 'Attendees' },
+
+          {
+            label: (
+              <>
+                Attendees
+                {showCount && (
+                  <span className='border-2 rounded-full text-gray-700 text-xs px-1 inline-block mx-1'>
+                    {attendeeCount}
+                  </span>
+                )}
+              </>
+            ),
+            value: 'Attendees',
+          },
           { label: 'Reviews', value: 'Reviews' },
         ]
       : []),
   ];
   const handleTabChange = (tab) => {
     setCurrentTab(tab);
+    if (tab === 'Attendees') {
+      setShowCount(true); // Show count when Attendees tab is clicked
+    }
   };
 
   useEffect(() => {
@@ -959,7 +978,11 @@ const EventDetails = () => {
               )}
               {currentTab === 'Attendees' &&
                 (userCurrentRoleStatusActiveRole !== 'user' ? (
-                  <Attendees cohortData={cohortData} />
+                  // <Attendees cohortData={cohortData} />
+                  <Attendees
+                    cohortData={cohortData}
+                    updateAttendeeCount={setAttendeeCount}
+                  />
                 ) : (
                   <NoDataFound message='You do not have access to view this tab.' />
                 ))}

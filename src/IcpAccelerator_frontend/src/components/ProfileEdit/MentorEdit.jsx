@@ -155,25 +155,31 @@ const MentorEdit = () => {
   const handleSaveLink = (key) => {
     setIsEditingLink((prev) => ({
       ...prev,
-      [key]: false, // Exit editing mode for the saved link
+      [key]: false,
     }));
+    setIsLinkBeingEdited(false); // End link editing mode if all links are saved
   };
 
   // Handle adding new link from form field
   const handleSaveNewLink = (data, index) => {
-    const linkKey = `custom-link-${Date.now()}-${index}`; // Generate unique key
+    const linkKey = `custom-link-${Date.now()}-${index}`;
     setSocialLinks((prevLinks) => ({
       ...prevLinks,
-      [linkKey]: data, // Add new link to socialLinks state
+      [linkKey]: data,
     }));
-    remove(index); // Remove the field after saving
+    setIsLinkBeingEdited(true); // Ensure buttons show when a new link is added
+    setIsEditingLink((prev) => ({
+      ...prev,
+      [linkKey]: true, // Set the new link to editing mode by default
+    }));
+    remove(index); // Remove the field from the input after saving
   };
 
   // Toggle the editing of individual links
   const handleLinkEditToggle = (key) => {
     setIsEditingLink((prev) => ({
       ...prev,
-      [key]: !prev[key], // Toggle the edit state for each link
+      [key]: !prev[key],
     }));
     setIsLinkBeingEdited(!isLinkBeingEdited);
   };
@@ -182,7 +188,7 @@ const MentorEdit = () => {
   const handleLinkChange = (e, key) => {
     setSocialLinks((prev) => ({
       ...prev,
-      [key]: e.target.value, // Update the specific link's value
+      [key]: e.target.value,
     }));
   };
 
@@ -190,27 +196,86 @@ const MentorEdit = () => {
   const handleLinkDelete = (key) => {
     setSocialLinks((prev) => {
       const updatedLinks = { ...prev };
-      delete updatedLinks[key]; // Remove the link
+      delete updatedLinks[key];
       return updatedLinks;
     });
   };
 
-  const onSubmitHandler = async (data) => {
-    try {
-      const result = await actor.update_mentor(data);
-      if (result) {
-        toast.success('Update successfully');
-        dispatch(mentorRegisteredHandlerRequest());
-        navigate('/dashboard/profile');
-      } else {
-        toast.error(result);
-        dispatch(mentorRegisteredHandlerRequest());
-        navigate('/dashboard/profile');
+  const onSubmitHandler = async (formData) => {
+    const updatedLinks = { ...socialLinks };
+    Object.keys(isEditingLink).forEach((key) => {
+      if (isEditingLink[key] && updatedLinks[key]) {
+        // Save each unsaved link
+        handleSaveLink(key);
       }
-    } catch (error) {
-      toast.error(error.message || 'An unexpected error occurred');
+    });
+    console.log('updatedLinks', updatedLinks);
+    const isValid = await trigger(); // Validate all fields
+    if (!isValid) {
+      toast.error('Please fix validation errors.');
+      return;
     }
-    setEdit(false);
+
+    const data = { ...formData, ...getValues() };
+    console.log('data', data);
+    const multichainNames =
+      data.multi_chain === 'true'
+        ? Array.isArray(data.multi_chain_names)
+          ? data.multi_chain_names
+          : typeof data.multi_chain_names === 'string'
+            ? data.multi_chain_names.split(',').map((item) => item.trim())
+            : []
+        : null;
+
+    const area_of_expertise = Array.isArray(data.area_of_expertise)
+      ? data.area_of_expertise
+      : typeof data.area_of_expertise === 'string'
+        ? data.area_of_expertise.split(',').map((item) => item.trim())
+        : [];
+
+    if (actor) {
+      const mentorData = {
+        preferred_icp_hub: data.preferred_icp_hub
+          ? [data.preferred_icp_hub]
+          : null,
+        icp_hub_or_spoke: data.icp_hub_or_spoke === 'true',
+        hub_owner:
+          data.icp_hub_or_spoke === 'true' && data.hub_owner
+            ? [data.hub_owner]
+            : ['N/A'],
+        category_of_mentoring_service: data.category_of_mentoring_service,
+        years_of_mentoring: data.years_of_mentoring?.toString() || '0',
+        links: updatedLinks
+          ? [updatedLinks.map((val) => ({ link: val?.link ? [val.link] : [] }))]
+          : [],
+        multichain: multichainNames ? [multichainNames] : [],
+        website: data.mentor_website_url ? [data.mentor_website_url] : [],
+        existing_icp_mentor: false,
+        existing_icp_project_porfolio: data.existing_icp_project_porfolio
+          ? [data.existing_icp_project_porfolio]
+          : [],
+        area_of_expertise: area_of_expertise,
+        reason_for_joining: data.reasons_to_join_platform
+          ? [data.reasons_to_join_platform]
+          : [],
+      };
+      console.log('mentorData', mentorData);
+      try {
+        const result = await actor.update_mentor(mentorData);
+        if (result) {
+          toast.success('Update successfully');
+          dispatch(mentorRegisteredHandlerRequest());
+          navigate('/dashboard/profile');
+        } else {
+          toast.error(result);
+          dispatch(mentorRegisteredHandlerRequest());
+          navigate('/dashboard/profile');
+        }
+      } catch (error) {
+        toast.error(error.message || 'An unexpected error occurred');
+      }
+      setEdit(false);
+    }
   };
 
   const setReasonOfJoiningSelectedOptionsHandler = (val) => {
@@ -272,7 +337,6 @@ const MentorEdit = () => {
         'hub_owner',
         val[0]?.profile?.hub_owner ? val[0]?.profile?.hub_owner?.[0] : ''
       );
-      setValue('mentor_linkedin_url', val[0]?.profile?.linkedin_link ?? '');
       setValue(
         'multi_chain',
         val[0]?.profile?.multichain.length > 0 ? 'true' : 'false'
@@ -316,6 +380,7 @@ const MentorEdit = () => {
           }
         });
         setSocialLinks(links);
+        setValue('links', links);
       } else {
         setSocialLinks({});
       }
@@ -357,11 +422,7 @@ const MentorEdit = () => {
   // default interests set function
   const setInterestedDomainsSelectedOptionsHandler = (val) => {
     setInterestedDomainsSelectedOptions(
-      val
-        ? val?.[0]
-            .split(', ')
-            .map((interset) => ({ value: interset, label: interset }))
-        : []
+      val ? val.map((interset) => ({ value: interset, label: interset })) : []
     );
   };
 
@@ -437,6 +498,10 @@ const MentorEdit = () => {
     }, 500);
   }, []);
 
+  console.log(
+    ' mentorFullData[0]?.profile?.reason_for_joining',
+    mentorFullData[0]?.profile
+  );
   // data
   const reasons_to_join_platform =
     mentorFullData[0]?.profile?.reason_for_joining ?? '';
@@ -571,7 +636,7 @@ const MentorEdit = () => {
             </>
           ) : (
             <div className='flex gap-2 overflow-x-auto'>
-              {area_of_expertise[0].split(',').map((interest, index) => (
+              {area_of_expertise.map((interest, index) => (
                 <span
                   key={index}
                   className='border-2 border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1 break-words'

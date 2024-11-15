@@ -18,8 +18,6 @@ function* fetchMentorHandler() {
       [actor, actor.get_mentor_info_using_principal],
       covertedPrincipal
     );
-
-    // Convert any BigInt values to strings
     const serializedMentorData = JSON.parse(
       JSON.stringify(mentorData, (key, value) =>
         typeof value === 'bigint' ? value.toString() : value

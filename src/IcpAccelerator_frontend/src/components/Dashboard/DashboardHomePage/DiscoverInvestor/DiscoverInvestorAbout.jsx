@@ -51,7 +51,7 @@ const DiscoverInvestorAbout = ({ investorData }) => {
             <img
               src={profilepic}
               alt='Matt Bowers'
-              className='w-24 h-24 mx-auto rounded-full mb-4'
+              className='w-24 h-24 mx-auto rounded-full mb-2'
               loading='lazy'
               draggable={false}
             />
@@ -59,7 +59,7 @@ const DiscoverInvestorAbout = ({ investorData }) => {
               <VerifiedIcon className='text-blue-500 mr-1' fontSize='small' />
               <h2 className='text-xl font-semibold'>{full_name}</h2>
             </div>
-            <p className='text-gray-600 text-center mb-4'>
+            <p className='text-gray-600 text-center mb-2'>
               {'openchat_username'}
             </p>
             <a
@@ -72,7 +72,7 @@ const DiscoverInvestorAbout = ({ investorData }) => {
           </div>
         )}
         <div className='p-6 bg-white'>
-          <div className='mb-4'>
+          <div className='mb-2'>
             <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
               Roles
             </h3>
@@ -122,10 +122,10 @@ const DiscoverInvestorAbout = ({ investorData }) => {
           {isLoading ? (
             <UserGeneralDetailSkeleton />
           ) : activeTab === 'general' ? (
-            <div className=' px-1'>
-              <div className='mb-4  group relative hover:bg-gray-100 rounded-lg p-2 '>
+            <div className=' px-0.5'>
+              <div className='mb-2 group relative hover:bg-gray-100 rounded-lg py-2 '>
                 <div className='flex justify-between'>
-                  <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
+                  <h3 className='font-semibold my-2 text-xs text-gray-500 uppercase'>
                     Email
                   </h3>
                 </div>
@@ -141,7 +141,7 @@ const DiscoverInvestorAbout = ({ investorData }) => {
                 </div>
               </div>
 
-              <div className='mb-4 group relative hover:bg-gray-100 rounded-lg p-1 '>
+              <div className='mb-2 group relative hover:bg-gray-100 rounded-lg py-2 '>
                 <div className='flex justify-between'>
                   <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
                     About
@@ -151,7 +151,7 @@ const DiscoverInvestorAbout = ({ investorData }) => {
               </div>
 
               {/* Location Section */}
-              <div className='mb-4 group relative hover:bg-gray-100 rounded-lg p-1 '>
+              <div className='mb-2 group relative hover:bg-gray-100 rounded-lg py-2 '>
                 <div className='flex justify-between'>
                   <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
                     Location
@@ -167,7 +167,7 @@ const DiscoverInvestorAbout = ({ investorData }) => {
               </div>
 
               {/* Reasons to Join Platform Section */}
-              <div className='mb-4 group relative hover:bg-gray-100 rounded-lg p-1 '>
+              <div className='mb-2 group relative hover:bg-gray-100 rounded-lg py-2 '>
                 <div className='flex justify-between'>
                   <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
                     Reasons to Join Platform
@@ -186,7 +186,7 @@ const DiscoverInvestorAbout = ({ investorData }) => {
               </div>
 
               {/* Interests Section */}
-              <div className='mb-4 group relative hover:bg-gray-100 rounded-lg p-1'>
+              <div className='mb-2 group relative hover:bg-gray-100 rounded-lg py-2 '>
                 <div className='flex justify-between'>
                   <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
                     Area of Interests
@@ -207,7 +207,7 @@ const DiscoverInvestorAbout = ({ investorData }) => {
                 </div>
               </div>
 
-              <div>
+              <div className='mb-2 group relative hover:bg-gray-100 rounded-lg py-2 '>
                 <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase '>
                   LINKS
                 </h3>
@@ -232,197 +232,198 @@ const DiscoverInvestorAbout = ({ investorData }) => {
               </div>
             </div>
           ) : (
-            <div className='px-1'>
-              <div className='mb-4  group relative hover:bg-gray-100 rounded-lg p-2 '>
-                <div className='flex justify-between'>
-                  <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
+            <div className='px-0.5'>
+              {investorProfile?.params?.registered_country?.[0] && (
+                <div className='mb-2 group relative hover:bg-gray-100 rounded-lg py-2 '>
+                  <h3 className='font-semibold my-2 text-xs text-gray-500 uppercase'>
                     Registered Country
                   </h3>
-                </div>
-                <div className='flex items-center'>
-                  <p className='mr-2 text-sm'>
-                    {investorProfile?.params?.registered_country[0]}
+                  <p className='text-sm'>
+                    {investorProfile.params.registered_country[0]}
                   </p>
                 </div>
-              </div>
-              <div className='mb-4  group relative hover:bg-gray-100 rounded-lg p-2 '>
-                <div className='flex justify-between'>
+              )}
+
+              {investorProfile?.params?.preferred_icp_hub && (
+                <div className='mb-2 group relative hover:bg-gray-100 rounded-lg py-2 '>
                   <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
-                    Icp hub you will like to be associated
+                    ICP Hub You Would Like to Be Associated With
                   </h3>
-                </div>
-                <div className='flex items-center'>
-                  <p className='mr-2 text-sm'>
-                    {investorProfile?.params?.preferred_icp_hub}
+                  <p className='text-sm'>
+                    {investorProfile.params.preferred_icp_hub}
                   </p>
                 </div>
-              </div>
-              <div className='mb-4 group relative hover:bg-gray-100 rounded-lg p-1 '>
-                <div className='flex justify-between'>
+              )}
+
+              {investorProfile?.params?.investor_type?.[0] && (
+                <div className='mb-2 group relative hover:bg-gray-100 rounded-lg p-1 '>
                   <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
                     Type of Investment
                   </h3>
+                  <div className='flex overflow-hidden overflow-x-auto gapy-2'>
+                    {investorProfile.params.investor_type[0]
+                      .split(',')
+                      .map((interest, index) => (
+                        <span
+                          key={index}
+                          className='border-2 text-center min-w-[80px] truncate border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1'
+                        >
+                          {interest.trim()}
+                        </span>
+                      ))}
+                  </div>
                 </div>
-                <div className='flex overflow-hidden overflow-x-auto gap-2'>
-                  {investorProfile?.params?.investor_type[0]
-                    ?.split(',')
-                    .map((interest, index) => (
-                      <span
-                        key={index}
-                        className='border-2 text-center min-w-[80px] truncate border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1'
-                      >
-                        {interest.trim()}
-                      </span>
-                    ))}
-                </div>
-              </div>
-              <div className='mb-4  group relative hover:bg-gray-100 rounded-lg p-2 '>
-                <div className='flex justify-between'>
+              )}
+
+              {investorProfile?.params?.portfolio_link && (
+                <div className='mb-2 group relative hover:bg-gray-100 rounded-lg py-2 '>
                   <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
                     Portfolio Link
                   </h3>
-                </div>
-                <div className='flex items-center'>
-                  <p className='mr-2 text-sm'>
-                    {investorProfile?.params?.portfolio_link}
+                  <p className='text-sm'>
+                    {investorProfile.params.portfolio_link}
                   </p>
                 </div>
-              </div>
-              <div className='mb-4  group relative hover:bg-gray-100 rounded-lg p-2 '>
-                <div className='flex justify-between'>
+              )}
+
+              {investorProfile?.params?.name_of_fund && (
+                <div className='mb-2 group relative hover:bg-gray-100 rounded-lg py-2 '>
                   <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
                     Fund Name
                   </h3>
-                </div>
-                <div className='flex items-center'>
-                  <p className='mr-2 text-sm'>
-                    {investorProfile?.params?.name_of_fund}
+                  <p className='text-sm'>
+                    {investorProfile.params.name_of_fund}
                   </p>
                 </div>
-              </div>
-              <div className='mb-4  group relative hover:bg-gray-100 rounded-lg p-2 '>
-                <div className='flex justify-between'>
+              )}
+
+              {investorProfile?.params?.fund_size?.[0] && (
+                <div className='mb-2 group relative hover:bg-gray-100 rounded-lg py-2 '>
                   <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
                     Fund Size
                   </h3>
-                </div>
-                <div className='flex items-center'>
-                  <p className='mr-2 text-sm'>
-                    {investorProfile?.params?.fund_size[0]}
+                  <p className='text-sm'>
+                    {investorProfile.params.fund_size[0]}
                   </p>
                 </div>
-              </div>
-              <div className='mb-4  group relative hover:bg-gray-100 rounded-lg p-2 '>
-                <div className='flex justify-between'>
+              )}
+
+              {investorProfile?.params?.website_link && (
+                <div className='mb-2 group relative hover:bg-gray-100 rounded-lg py-2 '>
                   <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
                     Website Link
                   </h3>
-                </div>
-                <div className='flex items-center'>
-                  <p className='mr-2 text-sm'>
-                    {investorProfile?.params?.website_link}
+                  <p className='text-sm'>
+                    {investorProfile.params.website_link}
                   </p>
                 </div>
-              </div>
-              <div className='mb-4 group relative hover:bg-gray-100 rounded-lg p-1 '>
-                <div className='flex justify-between'>
+              )}
+
+              {investorProfile?.params?.project_on_multichain?.[0] && (
+                <div className='mb-2 group relative hover:bg-gray-100 rounded-lg py-2 '>
                   <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
-                    Selected Multi_Chains
+                    Selected Multi-Chains
                   </h3>
+                  <div className='flex overflow-hidden overflow-x-auto gap-2 '>
+                    {investorProfile.params.project_on_multichain[0]
+                      .split(',')
+                      .map((chain, index) => (
+                        <span
+                          key={index}
+                          className='border-2 text-center min-w-[80px] truncate border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1'
+                        >
+                          {chain.trim()}
+                        </span>
+                      ))}
+                  </div>
                 </div>
-                <div className='flex overflow-hidden overflow-x-auto gap-2'>
-                  {investorProfile?.params?.project_on_multichain[0]
-                    ?.split(',')
-                    .map((chain, index) => (
-                      <span
-                        key={index}
-                        className='border-2 text-center min-w-[80px] truncate border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1'
-                      >
-                        {chain.trim()}
-                      </span>
-                    ))}
-                </div>
-              </div>
-              <div className='mb-4 group relative hover:bg-gray-100 rounded-lg p-1 '>
-                <div className='flex justify-between'>
+              )}
+
+              {investorProfile?.params?.category_of_investment && (
+                <div className='mb-2 group relative hover:bg-gray-100 rounded-lg py-2 '>
                   <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
                     Category of Investment
                   </h3>
+                  <div className='flex overflow-hidden overflow-x-auto gapy-2'>
+                    {investorProfile.params.category_of_investment
+                      .split(',')
+                      .map((category, index) => (
+                        <span
+                          key={index}
+                          className='border-2 text-center min-w-[80px] truncate border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1'
+                        >
+                          {category.trim()}
+                        </span>
+                      ))}
+                  </div>
                 </div>
-                <div className='flex overflow-hidden overflow-x-auto gap-2'>
-                  {investorProfile?.params?.category_of_investment
-                    ?.split(',')
-                    .map((category, index) => (
-                      <span
-                        key={index}
-                        className='border-2 text-center min-w-[80px] truncate border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1'
-                      >
-                        {category.trim()}
-                      </span>
-                    ))}
-                </div>
-              </div>
-              <div className='mb-4 group relative hover:bg-gray-100 rounded-lg p-1 '>
-                <div className='flex justify-between'>
+              )}
+
+              {investorProfile?.params?.stage?.[0] && (
+                <div className='mb-2 group relative hover:bg-gray-100 rounded-lg py-2 '>
                   <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
-                    Stage(s) you Investment At
+                    Stage(s) You Invest At
                   </h3>
+                  <div className='flex overflow-hidden overflow-x-auto gapy-2'>
+                    {investorProfile.params.stage[0]
+                      .split(',')
+                      .map((stage, index) => (
+                        <span
+                          key={index}
+                          className='border-2 text-center min-w-[80px] truncate border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1'
+                        >
+                          {stage.trim()}
+                        </span>
+                      ))}
+                  </div>
                 </div>
-                <div className='flex overflow-hidden overflow-x-auto gap-2'>
-                  {investorProfile?.params?.stage[0]
-                    ?.split(',')
-                    .map((stage, index) => (
-                      <span
-                        key={index}
-                        className='border-2 text-center min-w-[80px] truncate border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1'
-                      >
-                        {stage.trim()}
-                      </span>
-                    ))}
-                </div>
-              </div>
-              <div className='mb-4 group relative hover:bg-gray-100 rounded-lg p-1 '>
-                <div className='flex justify-between'>
+              )}
+
+              {investorProfile?.params?.range_of_check_size?.[0] && (
+                <div className='mb-2 group relative hover:bg-gray-100 rounded-lg py-2 '>
                   <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
                     Checksize Range
                   </h3>
-                </div>
-                <div className='flex overflow-hidden overflow-x-auto gap-2'>
-                  {investorProfile?.params?.range_of_check_size[0]
-                    ?.split(',')
-                    .map((range, index) => (
-                      <span
-                        key={index}
-                        className='border-2 text-center min-w-[80px] truncate border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1'
-                      >
-                        {range.trim()}
-                      </span>
-                    ))}
-                </div>
-              </div>
-              <div>
-                <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
-                  LINKS
-                </h3>
-                <div className='flex flex-wrap gap-2'>
-                  {investorProfile?.params?.links[0]?.map((linkObj, i) =>
-                    linkObj.link?.map((link, index) => {
-                      const icon = getSocialLogo(link);
-                      return (
-                        <a
+                  <div className='flex overflow-hidden overflow-x-auto gapy-2'>
+                    {investorProfile.params.range_of_check_size[0]
+                      .split(',')
+                      .map((range, index) => (
+                        <span
                           key={index}
-                          href={link}
-                          target='_blank'
-                          rel='noopener noreferrer'
-                          className='flex items-center space-x-2'
+                          className='border-2 text-center min-w-[80px] truncate border-gray-500 rounded-full text-gray-700 text-xs px-2 py-1'
                         >
-                          {icon}
-                        </a>
-                      );
-                    })
-                  )}
+                          {range.trim()}
+                        </span>
+                      ))}
+                  </div>
                 </div>
-              </div>
+              )}
+
+              {investorProfile?.params?.links?.[0]?.length > 0 && (
+                <div className='mb-2 group relative hover:bg-gray-100 rounded-lg py-2 '>
+                  <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
+                    LINKS
+                  </h3>
+                  <div className='flex flex-wrap gapy-2'>
+                    {investorProfile.params.links[0].map((linkObj) =>
+                      linkObj.link.map((link, index) => {
+                        const icon = getSocialLogo(link);
+                        return (
+                          <a
+                            key={index}
+                            href={link}
+                            target='_blank'
+                            rel='noopener noreferrer'
+                            className='flex items-center space-x-2'
+                          >
+                            {icon}
+                          </a>
+                        );
+                      })
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>

@@ -1,40 +1,32 @@
 import { configureStore } from '@reduxjs/toolkit';
 import createSagaMiddleware from 'redux-saga';
-import rootReducer from './Reducers/RootReducer';
+import rootReducer from './Reducers/RootReducer'; // Combine all reducers here
 import rootSaga from './Saga/RootSaga';
-
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
+import { encryptTransform } from 'redux-persist-transform-encrypt';
 
-// import { encryptTransform } from 'redux-persist-transform-encrypt';
-
-// Configure your encryption transform
-// const encryptor = encryptTransform({
-//   secretKey: 'bjhcvdygvhnwoicbvyuridbiushvyudhbciu',
-//   onError: function(error) {
-//     console.error('Encryption Error:', error);
-//   },
-// });
+const encryptor = encryptTransform({
+  secretKey: process.env.REACT_APP_ENCRYPTION_KEY || 'defaultSecretKey',
+  onError: function (error) {
+    console.error('Encryption Error:', error);
+  },
+});
 
 const sagaMiddleware = createSagaMiddleware();
 
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: [],
-  // transforms: [encryptor], // encrypt k lie kia
+  transforms: [encryptor],
 };
-
-// Wrap kie rootReducer with persistReducer
 const persistedReducer = persistReducer(persistConfig, rootReducer);
-
 const store = configureStore({
   reducer: persistedReducer,
-  // devTools:false,
+  devTools: process.env.DFX_NETWORK !== 'ic',
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
-        // Ignore krne k lie these action types in serializability check
         ignoredActions: [
           'persist/PERSIST',
           'persist/REHYDRATE',
@@ -43,16 +35,14 @@ const store = configureStore({
           'internet/loginFailure',
         ],
         ignoredPaths: ['actors.actor', 'internet.identity'],
-
-        // // Ignore these field paths in all actions
         ignoredActionPaths: ['payload.identity', 'payload.actor'],
-        // // Ignore these paths in the state
       },
-    }).concat(sagaMiddleware),
-  // yae ek bouncer ki trah hai action k lie but , allow krega defaultMiddleWare(eg: dj) ko or dj friend ko i.e sagaMiddleware (dj friend)
+    }).concat(sagaMiddleware), // Add sagaMiddleware
 });
 
-sagaMiddleware.run(rootSaga); //  sagaMiddleware check krega actions ko before they reach the reducers.
+// Run the root saga
+sagaMiddleware.run(rootSaga);
 
+// Export the store and persistor
 export const persistor = persistStore(store);
 export default store;

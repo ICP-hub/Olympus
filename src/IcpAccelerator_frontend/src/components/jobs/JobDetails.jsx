@@ -101,7 +101,7 @@ const JobDetails = ({ setOpen, uid }) => {
                         draggable={false}
                       />
                     </span>
-                    <p className=''>{jobTitle}</p>
+                    <p className=' line-clamp-2 break-all'>{jobTitle}</p>
                   </div>
                   <div className='flex justify-center'>
                     <h2 className='text-xl font-bold my-3'>

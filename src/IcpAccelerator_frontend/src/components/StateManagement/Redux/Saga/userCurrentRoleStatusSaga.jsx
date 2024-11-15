@@ -9,8 +9,6 @@ import {
 } from '../Reducers/userCurrentRoleStatusReducer';
 
 const selectActor = (currState) => currState.actors.actor;
-
-// check if any role have status current ??
 function getNameOfCurrentStatus(rolesStatusArray) {
   const currentStatus = rolesStatusArray.find(
     (role) => role.status === 'active'

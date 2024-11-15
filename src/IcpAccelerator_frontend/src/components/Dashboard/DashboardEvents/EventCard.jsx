@@ -166,11 +166,11 @@ const EventCard = ({ selectedEventType }) => {
               >
                 <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center'>
                   <div className='relative w-full sm:flex items-start sm:items-center gap-3'>
-                    <div className='absolute top-1 left-1 bg-white p-2 rounded-lg max-w-[122px] sm:max-w-[160px]'>
+                    <div className='absolute top-1 left-1 bg-white p-2 rounded-lg max-w-[126px] sm:max-w-[160px]'>
                       <p className='text-sm sm:text-base font-bold'>
                         {launch_date} – {end_date}
                       </p>
-                      <p className='text-xs sm:text-sm font-normal'>
+                      <p className='text-xs sm:text-sm font-normal '>
                         Start at:{' '}
                         {new Date(data?.cohort?.start_date).toLocaleDateString(
                           'en-US'

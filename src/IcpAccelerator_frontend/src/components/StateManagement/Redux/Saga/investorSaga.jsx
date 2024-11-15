@@ -15,14 +15,10 @@ function* fetchInvestorHandler() {
     const actor = yield select(selectActor);
     const principal = yield select(selectPrincipal);
     const covertedPrincipal = Principal.fromText(principal);
-    console.log('actor in investor => => => ', actor);
-
     const investorData = yield call(
       [actor, actor.get_vc_info_using_principal],
       covertedPrincipal
     );
-
-    // Convert any BigInt values to strings
     const serializedInvestorData = JSON.parse(
       JSON.stringify(investorData, (key, value) =>
         typeof value === 'bigint' ? value.toString() : value

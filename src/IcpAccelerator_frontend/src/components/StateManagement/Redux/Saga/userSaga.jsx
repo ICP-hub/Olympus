@@ -45,11 +45,8 @@ function* fetchUserHandler() {
         const updatedProfileData = uint8ArrayToBase64(profile_picture);
         userData.Ok.profile_picture[0] = updatedProfileData;
       }
-
-      // Proceed with dispatching the success action
       yield put(userRegisteredHandlerSuccess(userData));
     } else if (userData?.Err) {
-      // Handle backend error
       throw new Error(userData.Err);
     } else {
       throw new Error('Invalid user data format');

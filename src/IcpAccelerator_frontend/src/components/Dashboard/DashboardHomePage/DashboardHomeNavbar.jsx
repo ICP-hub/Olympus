@@ -191,7 +191,7 @@ import {
   beforeCopySvg,
 } from '../../../components/Utils/Data/SvgData';
 import { changeHasSelectedRoleHandler } from '../../../components/StateManagement/Redux/Reducers/userRoleReducer';
-import { useAuth } from '../../../components/StateManagement/useContext/useAuth';
+import { useAuth } from '../../StateManagement/useContext/useAuthentication';
 import toast from 'react-hot-toast';
 import Tooltip from '@mui/material/Tooltip';
 import CloseIcon from '@mui/icons-material/Close';
@@ -227,10 +227,10 @@ function DashboardHomeNavbar({ id, id2 }) {
     );
   };
 
-  const { logout } = useAuth();
+  const { handleLogout } = useAuth();
   const logoutHandler = async () => {
     dispatch(changeHasSelectedRoleHandler(false));
-    await logout();
+    await handleLogout();
     window.location.href = '/';
   };
 
