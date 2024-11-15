@@ -69,10 +69,7 @@ const HeroSection = () => {
                   <p className='text-xl font-medium text-[#364152] mb-6'>
                     {homepagedata.section1.content.description}
                   </p>
-                  <button className='inline-flex items-center px-6 py-3 text-white bg-blue-600 rounded-[4px] hover:bg-blue-700 transition duration-300'>
-                    {homepagedata.section1.content.buttonText}{' '}
-                    <homepagedata.section1.arrowForwardIcon.ArrowForwardIcon className='ml-2' />
-                  </button>
+                  <ConnectWallet connectButtonComponent={ConnectBtn} />
                 </div>
               </div>
             </div>
@@ -85,7 +82,6 @@ const HeroSection = () => {
         </div>
         <div className='absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white to-transparent'></div>
       </section>
-      <ConnectWallet connectButtonComponent={ConnectBtn} />
     </>
   );
 };
