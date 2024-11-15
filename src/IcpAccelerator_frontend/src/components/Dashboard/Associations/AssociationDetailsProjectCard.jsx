@@ -15,7 +15,7 @@ import timestampAgo from '../../Utils/navigationHelper/timeStampAgo';
 import AssociationRecieverProjectSideDataToMentor from './AssociationRecieverProjectSideDataToMentor';
 import AssociationRecieverDataFromProject from './AssociationRecieverDataFromProject';
 import AssociationRecieverProjectSideDataFromMentor from './AssociationRecieverProjectSideDataFromMentor';
-
+import { toast } from 'react-hot-toast';
 const AssociationDetailsProjectCard = ({
   user,
   index,
@@ -102,26 +102,41 @@ const AssociationDetailsProjectCard = ({
 
   // POST API HANDLER TO SELF-REJECT A REQUEST WHERE PROJECT APPROCHES MENTOR
   const handleMentorSelfReject = async (offer_id) => {
+    setIsSubmitting(true);
     try {
       const result =
         await actor.self_decline_request_from_project_to_mentor(offer_id);
-      console.log(`result-in-self_decline_request`, result);
-      //   fetchPendingRequestFromProjectToMentor();
+      if (result) {
+        console.log(`result-in-self_decline_request`, result);
+        toast.success('Request successfully declined.');
+        setIsSubmitting(false);
+      } else {
+        console.log(`error-in-self_decline_request`, result);
+        toast.error(
+          'An error occurred while declining the request. Please try again.'
+        );
+        setIsSubmitting(false);
+      }
     } catch (error) {
       console.log(`error-in-self_decline_request`, error);
+      toast.error(
+        'An error occurred while declining the request. Please try again.'
+      );
     }
   };
-
   // POST API HANDLER TO SELF-REJECT A REQUEST WHERE PROJECT APPROCHES INVESTOR
   const handleInvestorSelfReject = async (offer_id) => {
+    setIsSubmitting(true);
     try {
       const result = await actor.self_decline_request_from_project_to_investor(
         offer_id,
         projectId
       );
       console.log(`result-in-self_decline_request_for_project`, result);
+      setIsSubmitting(false);
       //   fetchPendingRequestFromProjectToInvestor();
     } catch (error) {
+      setIsSubmitting(false);
       console.log(`error-in-self_decline_request_for_project`, error);
     }
   };
@@ -264,6 +279,7 @@ const AssociationDetailsProjectCard = ({
           handleInvestorAcceptModalOpenHandler={
             handleInvestorAcceptModalOpenHandler
           }
+          isSubmitting={isSubmitting}
           setOpenDetail={setOpenDetail}
         />
       ) : selectedTypeData === 'from-mentor' ? (
@@ -285,6 +301,7 @@ const AssociationDetailsProjectCard = ({
           handleInvestorAcceptModalOpenHandler={
             handleInvestorAcceptModalOpenHandler
           }
+          isSubmitting={isSubmitting}
           setOpenDetail={setOpenDetail}
         />
       ) : selectedTypeData === 'to-investor' ? (

@@ -1,5 +1,4 @@
 import { all } from 'redux-saga/effects';
-// import { walletSagas } from './AuthSaga';
 import { roleSaga } from './RoleSaga';
 import { allHubsSaga } from './AllHub';
 import { internetIdentitySaga } from './InternetIdentitySaga';
@@ -11,19 +10,13 @@ import { fetchInvestorSaga } from './investorSaga';
 import { fetchMentorSaga } from './mentorSaga';
 import { expertiseInSaga } from './areaOfExpertiseSaga';
 import { typeOfProfileSaga } from './typeOfProfileSaga';
-import { latestLiveProjectSaga } from './latestLiveSaga';
-import { latestListedProjectSaga } from './latestListedSaga';
-import { popularListedProjectSaga } from './popularListedSaga';
-import { popularLiveProjectSaga } from './popularLive';
 import { JobCategorySaga } from './jobCategorySaga';
 import { userCurrentRoleSaga } from './userCurrentRoleStatusSaga';
-
 import { fetchUserSaga } from './userSaga';
 import { chainsSaga } from './multiChainSaga';
 
 export default function* rootSaga() {
   yield all([
-    // walletSagas(),
     roleSaga(),
     allHubsSaga(),
     internetIdentitySaga(),
@@ -37,10 +30,6 @@ export default function* rootSaga() {
     expertiseInSaga(),
     typeOfProfileSaga(),
     chainsSaga(),
-    latestListedProjectSaga(),
-    latestLiveProjectSaga(),
-    popularListedProjectSaga(),
-    popularLiveProjectSaga(),
     userCurrentRoleSaga(),
     JobCategorySaga(),
   ]);

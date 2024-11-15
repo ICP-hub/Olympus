@@ -10,12 +10,7 @@ const selectActor = (currState) => currState.actors.actor;
 function* fetchHubHandler() {
   try {
     const actor = yield select(selectActor);
-    // console.log('actor => => => ', actor)
-
     const hubData = yield call([actor, actor.get_hub_organizer_candid]);
-
-    // console.log('roles in rolesaga => ', roles)
-
     yield put(hubRegisteredHandlerSuccess(hubData));
   } catch (error) {
     yield put(hubRegisteredHandlerFailure(error.toString()));

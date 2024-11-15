@@ -11,9 +11,6 @@ import projectReducer from './founderRegisteredData';
 import areaOfExpertiseReducer from './getAreaOfExpertise';
 import typeOfProfileSlice from './getTypeOfProfile';
 import multiChainReducer from './getMultiChainList';
-import latestListedReducer from './latestListed';
-import latestLiveReducer from './latestLive';
-import popularListedReducer from './popularListed';
 import userCurrentRoleStatusReducer from './userCurrentRoleStatusReducer';
 import getJobCategory from './getJobCategory';
 
@@ -22,7 +19,6 @@ const rootReducer = combineReducers({
   hubs: AllHubReducer,
   actors: actorReducer,
   internet: internetIdentityReducer,
-  current: userReducer,
   mentorData: mentorReducer,
   projectData: projectReducer,
   userData: userReducer,
@@ -31,9 +27,6 @@ const rootReducer = combineReducers({
   expertiseIn: areaOfExpertiseReducer,
   profileTypes: typeOfProfileSlice,
   chains: multiChainReducer,
-  latestListed: latestListedReducer,
-  latestLive: latestLiveReducer,
-  popularListed: popularListedReducer,
   currentRoleStatus: userCurrentRoleStatusReducer,
   jobsCategory: getJobCategory,
 });

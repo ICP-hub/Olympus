@@ -738,18 +738,18 @@ const ProfileDetail = () => {
         <div className='max-w-sm mx-auto bg-white rounded-t-lg shadow-md overflow-hidden cursor-pointer'>
           {/* Cover Image */}
           <div
-            className='h-48 relative'
+            className='h-36 relative'
             style={{
               backgroundImage: `url(${coverPreview ? coverPreview : images})`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
             }}
           >
-            <div className='absolute top-2 right-2 p-2 z-50 visible lgx:invisible lgx:hover:visible'>
+            <div className='absolute top-2 right-2 p-2 z-50'>
               <img
                 src={edit}
                 alt='Edit Cover'
-                className='w-6 h-6 cursor-pointer'
+                className='size-4 cursor-pointer'
                 draggable={false}
                 onClick={() => inputRef.current.click()}
               />
@@ -785,10 +785,10 @@ const ProfileDetail = () => {
                   accept='.jpg, .jpeg, .png'
                 />
                 <label
-                  htmlFor='logo'
-                  className='p-2 bg-white rounded-md cursor-pointer'
+                  htmlFor='image'
+                  className='p-2  items-center rounded-md text-md bg-transparent cursor-pointer font-semibold'
                 >
-                  <FaPlus className='text-black text-lg' />
+                  <FaPlus className='text-white text-xl' />
                 </label>
               </div>
             </div>

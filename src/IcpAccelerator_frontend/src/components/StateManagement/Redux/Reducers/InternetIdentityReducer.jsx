@@ -6,7 +6,6 @@ const initialState = {
   principal: null,
   loading: false,
   error: null,
-  // navi: null,
 };
 
 const internetIdentitySlice = createSlice({
@@ -22,29 +21,26 @@ const internetIdentitySlice = createSlice({
       state.error = null;
     },
     loginSuccess: (state, action) => {
-      // console.log("loginSuccess run =>", action);
-      // const { isAuthenticated, identity, principal, navi } = action.payload;
-      const { isAuthenticated, identity, principal } = action.payload;
+      const {
+        isAuthenticated = false,
+        identity = null,
+        principal = null,
+      } = action.payload || {};
       state.isAuthenticated = isAuthenticated;
       state.identity = identity;
       state.principal = principal;
       state.loading = false;
       state.error = null;
-      // state.navi = navi;
     },
     loginFailure: (state, action) => {
-      // console.log("loginFailure run =>", action);
       state.loading = false;
       state.error = action.payload;
     },
     logoutStart: (state) => {
-      // console.log("logoutStart run ");
       state.loading = true;
       state.error = null;
     },
     logoutSuccess: (state) => {
-      // console.log("logoutSuccess run ");
-
       state.isAuthenticated = false;
       state.identity = null;
       state.principal = null;
@@ -52,7 +48,6 @@ const internetIdentitySlice = createSlice({
       state.error = null;
     },
     logoutFailure: (state, action) => {
-      // console.log("logoutFailure run =>", action);
       state.loading = false;
       state.error = action.payload;
     },
@@ -60,14 +55,13 @@ const internetIdentitySlice = createSlice({
 });
 
 export const {
-  // setAuthClient,
   checkLoginOnStart,
   loginStart,
-  loginFailure,
   loginSuccess,
-  logoutFailure,
+  loginFailure,
   logoutStart,
   logoutSuccess,
+  logoutFailure,
 } = internetIdentitySlice.actions;
 
 export default internetIdentitySlice.reducer;

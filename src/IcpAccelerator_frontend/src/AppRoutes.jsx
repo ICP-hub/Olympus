@@ -1,7 +1,7 @@
 import React, { lazy, Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Loader from './components/Loader/Loader';
-import { useAuth } from './components/StateManagement/useContext/useAuth';
+import { useAuth } from './components/StateManagement/useContext/useAuthentication';
 const Home = lazy(() => import('./components/Home/Home'));
 const MainLayout = lazy(() => import('./components/Layout/MainLayout'));
 const DashboardHomePage = lazy(

@@ -133,6 +133,7 @@ type IcpHubDetails = record {
   website : opt text;
   links : opt vec Sociallinks;
 };
+type Icrc28TrustedOriginsResponse = record { trusted_origins : vec text };
 type InviteRequest = record {
   invite_message : text;
   cohort_id : text;
@@ -879,6 +880,7 @@ service : {
     ) query;
   get_vcs_applied_for_cohort : (text) -> (Result_16) query;
   greet : (text) -> (text) query;
+  icrc28_trusted_origins : () -> (Icrc28TrustedOriginsResponse);
   list_all_projects : () -> (
       vec record { ProjectInfoInternal; UserInfoInternal },
     ) query;

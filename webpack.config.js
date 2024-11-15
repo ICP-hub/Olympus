@@ -1,6 +1,5 @@
 require("dotenv").config();
 const path = require("path");
-const assert = require("assert");
 const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
@@ -9,7 +8,7 @@ const CopyPlugin = require("copy-webpack-plugin");
 const isDevelopment = process.env.NODE_ENV !== "production";
 
 module.exports = (env) => {
-  const frontendDirectory = env.frontend || "IcpAccelerator_frontend"; // Default to 'IcpAccelerator_frontend' if env.frontend is not set
+  const frontendDirectory = env?.frontend || "IcpAccelerator_frontend"; // Default directory
   const frontendEntry = path.join(
     "src",
     frontendDirectory,
@@ -49,18 +48,25 @@ module.exports = (env) => {
       },
     },
     output: {
-      filename: "index.[contenthash].js", // Cache-busting filename
+      filename: isDevelopment ? "[name].js" : "[name].[contenthash].js",
       path: path.join(__dirname, "dist", frontendDirectory),
-      clean: true, // Clean old assets in production
+      clean: true,
     },
     module: {
       rules: [
-        { test: /\.(ts|tsx|jsx)$/, loader: "ts-loader" },
+        {
+          test: /\.(ts|tsx|jsx)$/,
+          loader: "ts-loader",
+          exclude: /node_modules/,
+        },
         {
           test: /\.css$/,
           use: ["style-loader", "css-loader", "postcss-loader"],
         },
-        { test: /\.(png|jpe?g|gif|svg)$/, use: "file-loader" },
+        {
+          test: /\.(png|jpe?g|gif|svg|woff|woff2|eot|ttf|otf)$/,
+          type: "asset/resource",
+        },
         {
           test: /\.scss$/,
           use: ["style-loader", "css-loader", "sass-loader"],
@@ -82,11 +88,12 @@ module.exports = (env) => {
               minifyCSS: true,
             },
       }),
-      new webpack.EnvironmentPlugin(
-        Object.keys(process.env).filter(
-          (key) => key.includes("CANISTER") || key.includes("DFX"),
-        ),
-      ),
+      new webpack.EnvironmentPlugin({
+        NODE_ENV: isDevelopment ? "development" : "production",
+        FRONTEND_DIR: frontendDirectory,
+        API_URL: "http://127.0.0.1:4943/api",
+        ...process.env,
+      }),
       new webpack.ProvidePlugin({
         Buffer: [require.resolve("buffer/"), "Buffer"],
         process: require.resolve("process/browser"),
@@ -109,16 +116,26 @@ module.exports = (env) => {
         "/api": {
           target: "http://127.0.0.1:4943",
           changeOrigin: true,
-          pathRewrite: {
-            "^/api": "/api",
-          },
         },
       },
-      static: path.resolve(__dirname, "src", frontendDirectory, "assets"),
+      static: {
+        directory: path.resolve(__dirname, "src", frontendDirectory, "assets"),
+      },
+      historyApiFallback: true, // SPA fallback
       hot: true,
-      watchFiles: [path.resolve(__dirname, "src", frontendDirectory)],
-      liveReload: true,
+      allowedHosts: "all", // Allow connections from all hosts
       port: frontendDirectory === "IcpAccelerator_frontend" ? 8080 : 8081,
+      client: {
+        logging: "info", // Log info-level messages
+      },
+    },
+    stats: {
+      warnings: true,
+      errors: true,
+      errorDetails: true,
+      assets: true,
+      builtAt: true,
+      version: true,
     },
   };
 };

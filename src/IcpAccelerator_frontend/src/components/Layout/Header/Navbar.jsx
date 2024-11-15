@@ -8,35 +8,22 @@ import { homepagedata } from '../../Utils/jsondata/data/homepageData';
 import logo from '../../../../assets/images/navlogo.png';
 import logo1 from '../../../../assets/Logo/newLogo.png';
 import { useAuth } from '../../StateManagement/useContext/useAuth';
+import { ConnectWallet } from '@nfid/identitykit/react';
 
-const Navbar = ({ setModalOpen }) => {
+const Navbar = () => {
   const { navbar } = homepagedata;
-  const { logout } = useAuth();
 
-  const [discoverMenu, setDiscoverMenu] = useState(false);
-  const [companyMenu, setCompanyMenu] = useState(false);
-  const [openMenu, setOpenMenu] = useState(false);
-
-  const dispatch = useDispatch();
-  const principal = useSelector((currState) => currState.internet.principal);
-
-  const isAuthenticated = useSelector(
-    (currState) => currState.internet.isAuthenticated
+  const ConnectBtn = ({ onClick }) => (
+    <button
+      className='border px-4 rounded-md bg-[#155EEF] p-2 font-semibold text-white'
+      onClick={onClick}
+    >
+      {navbar.menuItems.getstartedButton}{' '}
+      <span className='pl-1 text-white'>
+        <navbar.forwardArrow.EastIcon />
+      </span>
+    </button>
   );
-  const userCurrentRoleStatus = useSelector(
-    (currState) => currState.currentRoleStatus.rolesStatusArray
-  );
-  const userCurrentRoleStatusActiveRole = useSelector(
-    (currState) => currState.currentRoleStatus.activeRole
-  );
-
-  const [showSwitchRole, setShowSwitchRole] = useState(false);
-  // console.log("principal in header", connectedWalletPrincipal);
-
-  const manageHandler = () => {
-    !principal ? setModalOpen(true) : setModalOpen(false);
-    // logout();
-  };
   return (
     <>
       <nav className=' h-20 flex items-center justify-center bg-[#FEF6EE]   py-10 '>
@@ -73,15 +60,7 @@ const Navbar = ({ setModalOpen }) => {
                     </div> */}
               <div className='flex gap-4'>
                 {/* <Link to='/dashboard'><button className=' p-2 font-semibold'>{navbar.menuItems.loginButton} </button></Link> */}
-                <button
-                  className='border px-4 rounded-md bg-[#155EEF] p-2 font-semibold text-white'
-                  onClick={manageHandler}
-                >
-                  {navbar.menuItems.getstartedButton}{' '}
-                  <span className='pl-1 text-white'>
-                    <navbar.forwardArrow.EastIcon />
-                  </span>
-                </button>
+                <ConnectWallet connectButtonComponent={ConnectBtn} />
               </div>
             </div>
           </div>

@@ -1,31 +1,29 @@
-import { takeLatest, call, put, select } from 'redux-saga/effects';
+import { takeLatest, call, put } from 'redux-saga/effects';
 import {
   setActor,
   handleActorRequest,
   actorError,
 } from '../Reducers/actorBindReducer';
 import { createActor } from '../../../../../../declarations/IcpAccelerator_backend/index';
-const selectedIdentity = (state) => state.internet.identity;
 
-function* initActorSaga() {
+function* initActorSaga(action) {
   try {
-    const identity = yield select(selectedIdentity);
-    // console.log('Identity in initActorSaga:', identity);
-
-    const canisterId =
-      process.env.CANISTER_ID_ICPACCELERATOR_BACKEND ||
-      process.env.ICPACCELERATOR_BACKEND_CANISTER_ID;
-
-    const actor = yield call(createActor, canisterId, {
-      agentOptions: { identity, verifyQuerySignatures: false },
-    });
-
-    // console.log('Actor initialized in initActorSaga:', actor);
-
+    const { identity } = action.payload || {};
+    if (!identity) {
+      yield put(actorError('Identity is not provided. Please log in first.'));
+      return;
+    }
+    const actor = yield call(
+      createActor,
+      process.env.CANISTER_ID_ICPACCELERATOR_BACKEND,
+      {
+        agentOptions: { identity, verifyQuerySignatures: false },
+      }
+    );
     yield put(setActor(actor));
   } catch (error) {
     console.error('Error in initActorSaga:', error);
-    yield put(actorError(error.toString()));
+    yield put(actorError(error.message));
   }
 }
 

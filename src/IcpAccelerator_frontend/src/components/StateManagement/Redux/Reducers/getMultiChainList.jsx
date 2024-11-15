@@ -15,7 +15,6 @@ const multiChainSlice = createSlice({
       state.error = null;
     },
     multiChainHandlerSuccess: (state, action) => {
-      // console.log("action.payload in multiChain reducer == >",action.payload)
       state.loading = false;
       state.chains = action.payload;
     },

@@ -32,15 +32,10 @@ function* fetchFounderHandler() {
     const actor = yield select(selectActor);
     const principal = yield select(selectPrincipal);
     const covertedPrincipal = Principal.fromText(principal);
-
-    console.log('actor => => => ', actor);
-    console.log('principal => => => ', principal);
-
     const founderData = yield call(
       [actor, actor.get_project_info_using_principal],
       covertedPrincipal
     );
-    console.log('founderData', founderData);
     const [
       { [0]: { params: { project_logo, project_cover } = {} } = {} } = {},
     ] = founderData;
@@ -54,15 +49,11 @@ function* fetchFounderHandler() {
       const updatedProfileData = uint8ArrayToBase64(project_cover);
       founderData[0]?.[0]?.params?.project_cover?.[0] = updatedProfileData;
     }
-    // Convert any BigInt values to strings
     const serializedFounderData = JSON.parse(
       JSON.stringify(founderData, (key, value) =>
         typeof value === 'bigint' ? value.toString() : value
       )
     );
-
-    console.log('get_my_project in FounderSaga => ', serializedFounderData);
-
     yield put(founderRegisteredHandlerSuccess(serializedFounderData));
   } catch (error) {
     yield put(founderRegisteredHandlerFailure(error.toString()));

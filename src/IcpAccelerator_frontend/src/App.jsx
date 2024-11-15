@@ -1,8 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import AppRoutes from './AppRoutes';
+import Loader from './components/Loader/Loader';
+import { useNavigate } from 'react-router-dom';
+import { useIdentityKit } from '@nfid/identitykit/react';
 import { handleActorRequest } from './components/StateManagement/Redux/Reducers/actorBindReducer';
 import { mentorRegisteredHandlerRequest } from './components/StateManagement/Redux/Reducers/mentorRegisteredData';
-import { useAuth } from './components/StateManagement/useContext/useAuth';
 import { areaOfExpertiseHandlerRequest } from './components/StateManagement/Redux/Reducers/getAreaOfExpertise';
 import { typeOfProfileSliceHandlerRequest } from './components/StateManagement/Redux/Reducers/getTypeOfProfile';
 import {
@@ -12,25 +15,23 @@ import {
 } from './components/StateManagement/Redux/Reducers/userCurrentRoleStatusReducer';
 import { userRegisteredHandlerRequest } from './components/StateManagement/Redux/Reducers/userRegisteredData';
 import { multiChainHandlerRequest } from './components/StateManagement/Redux/Reducers/getMultiChainList';
-import AppRoutes from './AppRoutes';
 import { founderRegisteredHandlerRequest } from './components/StateManagement/Redux/Reducers/founderRegisteredData';
 import { investorRegisteredHandlerRequest } from './components/StateManagement/Redux/Reducers/investorRegisteredData';
-import Loader from './components/Loader/Loader';
-import { useNavigate } from 'react-router-dom';
 
 const App = () => {
   const actor = useSelector((currState) => currState.actors.actor);
-  const identity = useSelector((currState) => currState.internet.identity);
+  const identitySaga = useSelector((currState) => currState.internet.identity);
   const isAuthenticated = useSelector(
     (currState) => currState.internet.isAuthenticated
   );
-  const { reloadLogin } = useAuth();
-  const dispatch = useDispatch();
   const userFullData = useSelector((currState) => currState.userData.data.Ok);
+
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { identity } = useIdentityKit();
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && identitySaga) {
       if (userFullData) {
         console.log('Navigating to dashboard');
         navigate('/dashboard'); // Navigate if data is available
@@ -111,42 +112,41 @@ const App = () => {
   };
 
   useEffect(() => {
-    if (actor) {
-      dispatch(mentorRegisteredHandlerRequest());
-    }
-    reloadLogin();
-  }, []);
-
-  useEffect(() => {
     if (actor && isAuthenticated && identity) {
       initialApi();
     }
   }, [actor, isAuthenticated, identity, dispatch]);
 
-  useEffect(() => {
-    const fetchDataSequentially = async () => {
-      if (isAuthenticated && identity) {
-        await dispatch(handleActorRequest());
-        await dispatch(multiChainHandlerRequest());
-        await dispatch(areaOfExpertiseHandlerRequest());
-        await dispatch(typeOfProfileSliceHandlerRequest());
-        await dispatch(userRegisteredHandlerRequest());
-        await dispatch(founderRegisteredHandlerRequest());
-        await dispatch(mentorRegisteredHandlerRequest());
-        await dispatch(investorRegisteredHandlerRequest());
+  const fetchDataSequentially = async () => {
+    if (isAuthenticated && identity) {
+      try {
+        await dispatch(handleActorRequest({ identity }));
+        await Promise.all([
+          dispatch(multiChainHandlerRequest()),
+          dispatch(areaOfExpertiseHandlerRequest()),
+          dispatch(typeOfProfileSliceHandlerRequest()),
+          dispatch(userRegisteredHandlerRequest()),
+          dispatch(founderRegisteredHandlerRequest()),
+          dispatch(mentorRegisteredHandlerRequest()),
+          dispatch(investorRegisteredHandlerRequest()),
+        ]);
+      } catch (error) {
+        console.error('Error fetching data:', error);
       }
-    };
+    }
+  };
 
-    fetchDataSequentially(); // Call the function to handle sequential dispatch
+  useEffect(() => {
+    fetchDataSequentially();
   }, [isAuthenticated, identity, dispatch]);
 
   const loading = useSelector(
     (currState) => currState.currentRoleStatus.loading
   );
 
-  // if (loading) {
-  //   return <Loader />
-  // }
+  if (loading) {
+    return <Loader />;
+  }
   return (
     <>
       <div className='bg-gray-100'>

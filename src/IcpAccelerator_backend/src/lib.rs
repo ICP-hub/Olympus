@@ -56,5 +56,25 @@ fn greet(name: String) -> String {
 fn get_my_id() -> Principal {
     caller()
 }
+use candid::{self, CandidType, Deserialize};
+ 
+#[derive(Clone, Debug, CandidType, Deserialize)]
+pub struct Icrc28TrustedOriginsResponse {
+    pub trusted_origins: Vec<String>
+}
+ 
+// list every base URL that users will authenticate to your app from
+#[update]
+fn icrc28_trusted_origins() -> Icrc28TrustedOriginsResponse {
+    let trusted_origins = vec![
+        String::from("https://hptzq-yaaaa-aaaam-adb5a-cai.icp0.io"),
+        String::from("http://localhost:8080/"),
+        String::from("http://127.0.0.1:4943/?canisterId=bd3sg-teaaa-aaaaa-qaaba-cai"),
+        String::from("http://bd3sg-teaaa-aaaaa-qaaba-cai.localhost:4943/"),
+        String::from("http://127.0.0.1:4200/"),
+    ];
+ 
+    return Icrc28TrustedOriginsResponse { trusted_origins }
+}
 //2vxsx-fae
 export_candid!();
