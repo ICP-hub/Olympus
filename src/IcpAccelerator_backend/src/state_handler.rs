@@ -201,6 +201,9 @@ const CAPTCHA_STORAGE_MEMORY_ID: MemoryId = MemoryId::new(49);
 pub type NotificationStorage = StableBTreeMap<StoredPrincipal, Candid<Vec<NotificationStructure>>, VMem>;
 const NOTIFICATION_STORAGE_MEMORY_ID: MemoryId = MemoryId::new(50);
 
+pub type RequestIdentifierMapping = StableBTreeMap<String, String, VMem>;
+const REQUEST_IDENTIFIER_MAPPING_ID: MemoryId = MemoryId::new(51);
+
 pub struct State {
     pub rate_limiting: RateLimitMap,
     pub captcha_storage: CaptchaStorage,
@@ -253,6 +256,7 @@ pub struct State {
     pub asset_canister_storage: AssetManager,
     pub hubs_data: HubsData,
     pub notification_data: NotificationStorage,
+    pub request_to_notification_map: RequestIdentifierMapping,
 }
 
 thread_local! {
@@ -316,6 +320,7 @@ thread_local! {
             mentor_invite_request: MentorsInviteRequest::init(mm.borrow().get(PENDING_MENTOR_CONFIRMATION_TO_REJOIN_MEMORY_ID)),
             hubs_data: HubsData::init(mm.borrow().get(HUBS_DATA_STORAGE_MEMORY_ID)),
             notification_data: NotificationStorage::init(mm.borrow().get(NOTIFICATION_STORAGE_MEMORY_ID)),
+            request_to_notification_map: RequestIdentifierMapping::init(mm.borrow().get(REQUEST_IDENTIFIER_MAPPING_ID)),
         })
     );
 }
