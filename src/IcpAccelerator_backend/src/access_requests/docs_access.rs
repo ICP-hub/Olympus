@@ -104,7 +104,7 @@ pub async fn send_private_docs_access_request(project_id: String) -> String {
     };
     let reciever_principal = find_project_owner_principal(&project_id.clone()).unwrap();
 
-    let _ = add_notification(caller, reciever_principal, noti_to_send, crate::NotificationApprovalStatus::Pending);
+    let _ = add_notification(caller, reciever_principal, noti_to_send);
 
     mutate_state(|state| {
         if let Some(mut request_vec) = state
