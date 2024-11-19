@@ -116,7 +116,28 @@ const UserRegistration = () => {
     }, 1000);
   };
 
+  const timeoutPromise = (promise, ms) =>
+    new Promise((resolve, reject) => {
+      const timeout = setTimeout(
+        () => reject(new Error('Request timed out')),
+        ms
+      );
+      promise
+        .then((res) => {
+          clearTimeout(timeout);
+          resolve(res);
+        })
+        .catch((err) => {
+          clearTimeout(timeout);
+          reject(err);
+        });
+    });
+
   const handleCheckboxChange = async () => {
+    if (!actor) {
+      toast.error('Actor not initialized. Please try again.');
+      return;
+    }
     const newCheckedState = !isChecked;
     setIsChecked(newCheckedState);
     setCaptchaSuccess(false);
@@ -126,8 +147,11 @@ const UserRegistration = () => {
       setRotating(true);
       setCaptchaVisible(true);
       try {
-        const result = await actor.generate_captcha_with_id();
-        if (result) {
+        const result = await timeoutPromise(
+          actor.generate_captcha_with_id(),
+          10000
+        );
+        if (result && result.length > 1) {
           setCaptcha(result);
           setCaptchaSuccess(true);
           startCooldown();
@@ -143,15 +167,24 @@ const UserRegistration = () => {
   };
 
   const refreshCaptcha = async () => {
+    if (!actor) {
+      toast.error('Actor not initialized. Please try again.');
+      return;
+    }
     if (cooldown > 0) return;
     setIsCaptchaLoading(true);
     try {
-      const result = await actor.generate_captcha_with_id();
+      const result = await timeoutPromise(
+        actor.generate_captcha_with_id(),
+        10000
+      );
       if (result) {
         setCaptcha(result);
         captchaRef.current.value = '';
         setCaptchaError('');
         startCooldown();
+      } else {
+        toast.error('Failed to generate captcha. Invalid response.');
       }
     } catch (error) {
       toast.error('Failed to generate captcha. Please try again.');
@@ -177,7 +210,7 @@ const UserRegistration = () => {
 
   const onFinalSubmit = async () => {
     const data = { ...formData, ...getValues() };
-    const captchaInputValue = captchaRef.current.value;
+    const captchaInputValue = captchaRef.current?.value || '';
 
     if (!captchaInputValue) {
       setCaptchaError('Captcha is required. Please enter the captcha.');
@@ -188,7 +221,10 @@ const UserRegistration = () => {
       setCaptchaError('Captcha does not match. Please try again.');
       return;
     }
-
+    if (!captcha || !captcha[1]) {
+      toast.error('Captcha data missing. Please refresh and try again.');
+      return;
+    }
     setIsSubmititng(true);
 
     if (actor) {

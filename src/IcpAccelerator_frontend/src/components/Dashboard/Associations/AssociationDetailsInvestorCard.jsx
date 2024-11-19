@@ -32,6 +32,7 @@ const AssociationDetailsInvestorCard = ({
   const [isAcceptOfferModal, setIsAcceptOfferModal] = useState(null);
   const [isDeclineOfferModal, setIsDeclineOfferModal] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(null);
+  const [associationProfileData, setAssociationProfileData] = useState(user);
 
   console.log('user', user);
   let projectImage = user?.project_info?.project_logo[0]
@@ -105,7 +106,6 @@ const AssociationDetailsInvestorCard = ({
       );
       if (result) {
         if (result) {
-          // handleAcceptModalCloseHandler();
           const response = fetchRequestAssociation(
             'self-reject',
             'from-project',
@@ -115,11 +115,10 @@ const AssociationDetailsInvestorCard = ({
             actor
           );
           const resultData = await response.api_data;
-          setAssociateData(resultData);
+          setAssociationProfileData(resultData[0]);
           setIsSubmitting(false);
         } else {
-          // handleAcceptModalCloseHandler();
-          setAssociateData([]);
+          setAssociationProfileData([]);
           setIsSubmitting(false);
         }
       }
@@ -150,15 +149,19 @@ const AssociationDetailsInvestorCard = ({
   // POST API HANDLER TO APPROVE THE PENDING REQUEST BY INVESTOR WHERE PROJECT APPROCHES INVESTOR
   const handleAcceptOffer = async ({ message }) => {
     setIsSubmitting(true);
+    const sanitizedMessage = message || 'Default message'; // Handle null or empty message
+    console.log(`Sanitized message:`, sanitizedMessage);
+
     try {
       const result = await actor.accept_offer_from_project_to_investor(
         offerDataId,
-        message
+        sanitizedMessage
       );
-      console.log(`result-in-accept_offer_from_project_to_investor`, result);
+      console.log(`Result in accept_offer_from_project_to_investor:`, result);
+
       if (result) {
         handleAcceptModalCloseHandler();
-        const response = fetchRequestAssociation(
+        const response = await fetchRequestAssociation(
           'approved',
           'from-project',
           'vc',
@@ -167,17 +170,20 @@ const AssociationDetailsInvestorCard = ({
           actor
         );
         const resultData = await response.api_data;
-        setAssociateData(resultData);
-        setIsSubmitting(false);
+        setAssociationProfileData(resultData[0]);
       } else {
         handleAcceptModalCloseHandler();
-        setAssociateData([]);
-        setIsSubmitting(false);
+        setAssociationProfileData([]);
       }
     } catch (error) {
-      console.log(`error-in-accept_offer_from_project_to_investor`, error);
+      console.log(`Error in accept_offer_from_project_to_investor`, {
+        message: sanitizedMessage,
+        offerDataId,
+        error,
+      });
       handleAcceptModalCloseHandler();
-      setIsSubmitting(false);
+    } finally {
+      setIsSubmitting(false); // Ensure spinner stops in all cases
     }
   };
 
@@ -201,11 +207,11 @@ const AssociationDetailsInvestorCard = ({
           actor
         );
         const resultData = await response.api_data;
-        setAssociateData(resultData);
+        setAssociationProfileData(resultData[0]);
         setIsSubmitting(false);
       } else {
         handleDeclineModalCloseHandler();
-        setAssociateData([]);
+        setAssociationProfileData([]);
         setIsSubmitting(false);
       }
     } catch (error) {
@@ -218,7 +224,7 @@ const AssociationDetailsInvestorCard = ({
     <>
       {selectedTypeData === 'to-project' ? (
         <AssociationRecieverDataToProject
-          user={user}
+          user={associationProfileData}
           activeTabData={activeTabData}
           selectedTypeData={selectedTypeData}
           handleSelfReject={handleSelfReject}
@@ -228,7 +234,7 @@ const AssociationDetailsInvestorCard = ({
         />
       ) : selectedTypeData === 'from-project' ? (
         <AssociationRecieverDataFromProject
-          user={user}
+          user={associationProfileData}
           activeTabData={activeTabData}
           selectedTypeData={selectedTypeData}
           handleSelfReject={handleSelfReject}
@@ -244,6 +250,8 @@ const AssociationDetailsInvestorCard = ({
           openDetail={openDetail}
           setOpenDetail={setOpenDetail}
           user={user}
+          selectedTypeData={selectedTypeData}
+          activeTabData={activeTabData}
         />
       )}
       {isAcceptOfferModal && (

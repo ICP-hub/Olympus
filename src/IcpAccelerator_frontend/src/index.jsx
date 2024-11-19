@@ -20,6 +20,16 @@ const root = createRoot(container);
 const singers = [NFIDW, Plug, InternetIdentity];
 const canisterID = process.env.CANISTER_ID_ICPACCELERATOR_BACKEND;
 
+const signerClientOptions = {
+  targets: [canisterID],
+  maxTimeToLive: BigInt(7 * 24 * 60 * 60 * 1000 * 1000 * 1000), // 1 week in nanoseconds
+  idleOptions: {
+    idleTimeout: 4 * 60 * 60 * 1000, // 4 hours in milliseconds
+    disableIdle: false, // Enable logout on idle timeout
+  },
+  keyType: 'Ed25519', // Use Ed25519 key type for compatibility
+  allowInternetIdentityPinAuthentication: true, // Enable PIN authentication
+};
 root.render(
   <IdentityKitProvider
     onConnectSuccess={(res) => {
@@ -31,9 +41,7 @@ root.render(
     signers={singers}
     theme={IdentityKitTheme.SYSTEM}
     authType={IdentityKitAuthType.DELEGATION}
-    signerClientOptions={{
-      targets: [canisterID],
-    }}
+    signerClientOptions={signerClientOptions}
   >
     <Provider store={store}>
       <AuthProvider>

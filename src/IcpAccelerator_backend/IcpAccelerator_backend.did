@@ -66,7 +66,7 @@ type Cohort = record {
   title : text;
   country : text;
   tags : text;
-  contact_links : opt vec SocialLinks;
+  contact_links : opt vec SocialLinks_2;
   description : text;
   deadline : text;
   start_date : text;
@@ -189,7 +189,7 @@ type MentorProfile = record {
   existing_icp_mentor : bool;
   preferred_icp_hub : opt text;
   website : opt text;
-  links : opt vec SocialLinks;
+  links : opt vec SocialLinks_2;
   multichain : opt vec text;
   area_of_expertise : vec text;
   category_of_mentoring_service : text;
@@ -209,18 +209,23 @@ type MoneyRaised = record {
   target_amount : float64;
   icp_grants : text;
 };
+type NotificationApprovalStatus = variant { Accepted; Declined; Pending };
 type NotificationInternal = record {
   docs_noti : opt vec AccessRequest;
   association_noti : opt vec AssociationNotification;
   cohort_noti : opt vec CohortEnrollmentRequest;
   money_noti : opt vec AccessRequest;
 };
+type NotificationStatus = variant { Read; Unread };
 type NotificationStructure = record {
+  status : NotificationStatus;
   receiver_principal : principal;
+  approval_status : NotificationApprovalStatus;
   notification_data : NotificationInternal;
   receiver_data : UserInfoInternal;
   sender_data : UserInfoInternal;
   sent_at : nat64;
+  unique_id : text;
   sender_principal : principal;
 };
 type OfferToInvestor = record {
@@ -357,7 +362,7 @@ type ProjectInfo = record {
   token_economics : opt text;
   self_rating_of_project : float64;
   preferred_icp_hub : opt text;
-  links : opt vec SocialLinks;
+  links : opt vec SocialLinks_2;
   mentors_assigned : opt vec record { MentorProfile; UserInfoInternal };
   country_of_registration : opt text;
   target_market : opt text;
@@ -386,7 +391,7 @@ type ProjectInfoForUser = record {
   community_rating : opt RatingAverages;
   team_member_info : opt vec TeamMember;
   date_of_joining : opt nat64;
-  links : opt vec SocialLinks;
+  links : opt vec SocialLinks_2;
   country_of_project : opt text;
   project_cover : opt blob;
   project_website : opt text;
@@ -419,7 +424,7 @@ type ProjectPublicInfo = record {
   token_economics : opt text;
   self_rating_of_project : float64;
   preferred_icp_hub : opt text;
-  links : opt vec SocialLinks;
+  links : opt vec SocialLinks_2;
   target_market : opt text;
   long_term_goals : opt text;
   project_area_of_focus : text;
@@ -536,6 +541,8 @@ type Role = record {
   requested_on : opt nat64;
 };
 type SocialLinks = record { link : opt text };
+type SocialLinks_1 = record { link : opt text };
+type SocialLinks_2 = record { link : opt text };
 type Sociallinks = record { links : opt text };
 type TeamMember = record {
   member_data : UserInformation;
@@ -565,7 +572,7 @@ type UserInformation = record {
   email : opt text;
   reason_to_join : opt vec text;
   full_name : text;
-  social_links : opt vec SocialLinks;
+  social_links : opt vec SocialLinks_2;
 };
 type UserType = record { id : int32; role_type : text };
 type VcFilterCriteria = record {
@@ -592,7 +599,7 @@ type VentureCapitalist = record {
   project_on_multichain : opt text;
   investor_type : opt text;
   website_link : opt text;
-  links : opt vec SocialLinks;
+  links : opt vec SocialLinks_2;
   stage : opt text;
   number_of_portfolio_companies : nat16;
   assets_under_management : opt text;
@@ -624,7 +631,6 @@ service : {
   add_announcement : (Announcements) -> (text);
   add_data_checking : () -> (text);
   add_icp_hub_details : (IcpHubDetails) -> (text);
-  add_notification : (principal, principal, NotificationInternal) -> (Result);
   add_project_rating : (ProjectRatingStruct) -> (Result);
   add_review : (principal, float32, text) -> (text);
   add_testimonial : (text) -> (text);
@@ -901,6 +907,8 @@ service : {
   make_project_active_inactive : (principal, text) -> (text);
   make_user_inactive : () -> (text);
   make_vc_active_inactive : (principal) -> (text);
+  mark_notification_as_read : (principal, nat64) -> (Result);
+  mark_notification_as_unread : (principal, nat64) -> (Result);
   post_job : (Jobs) -> (text);
   register_mentor : (MentorProfile) -> (text);
   register_project : (ProjectInfo) -> (text);

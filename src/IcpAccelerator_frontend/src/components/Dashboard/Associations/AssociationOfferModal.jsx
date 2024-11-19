@@ -18,6 +18,7 @@ const AssociationOfferModal = ({
   selectedTypeData,
   activeTabData,
 }) => {
+  console.log('user', user);
   const userCurrentRoleStatusActiveRole = useSelector(
     (state) => state.currentRoleStatus.activeRole
   );

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Star, PlaceOutlined as PlaceOutlinedIcon } from '@mui/icons-material';
 import timestampAgo from '../Utils/navigationHelper/timeStampAgo';
 import uint8ArrayToBase64 from '../Utils/uint8ArrayToBase64';
@@ -131,7 +131,7 @@ const DocumentRequestCard = ({ user, index, activeTabData }) => {
                     details?.senderPrincipal
                   )
                 }
-                className='px-3 py-1 text-sm text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300'
+                className='mr-2 mb-2 border border-[#C11574] bg-[#FDF2FA] text-[#C11574]  px-3 py-1 rounded-full'
                 disabled={loadingDecline}
               >
                 {loadingDecline ? (
@@ -155,7 +155,7 @@ const DocumentRequestCard = ({ user, index, activeTabData }) => {
                     details?.senderPrincipal
                   )
                 }
-                className='px-3 py-1 text-sm text-white bg-blue-600 rounded-md hover:bg-blue-700'
+                className='mr-2 mb-2 border border-[#097647] bg-[#EBFDF3] text-[#097647]  px-3 py-1 rounded-full'
                 disabled={loadingApprove}
               >
                 {loadingApprove ? (
