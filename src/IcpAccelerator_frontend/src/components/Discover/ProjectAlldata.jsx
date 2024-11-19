@@ -336,7 +336,7 @@ const DiscoverProject = ({ onProjectCountChange }) => {
               const principle_id = projectArray[0];
               return (
                 <div
-                  className='sm:pr-6 sm:pt-6 sm:pb-6  my-10 md1:my-0 w-full  rounded-lg shadow-sm mb-4 flex flex-col sm:flex-row '
+                  className='sm:pr-6 sm:pt-6 sm:pb-6  my-10 md1:my-0 w-full  rounded-lg shadow-sm mb-4 flex flex-col sm:flex-row p-4'
                   key={index}
                 >
                   <div className='w-full sm:w-[272px] relative'>
@@ -383,11 +383,7 @@ const DiscoverProject = ({ onProjectCountChange }) => {
                               {full_name}
                             </span>
                           </span>
-                          {/* <span className="text-gray-500">@{openchat_name}</span> */}
                         </div>
-                        {/* <h3 className="text-xl font-bold">{projectname}</h3> */}
-                        {/* <h3 className="text-xl font-bold">{full_name}</h3> */}
-                        {/* <p className="text-gray-500">@{openchat_name}</p> */}
                       </div>
                       {userCurrentRoleStatusActiveRole === 'mentor' ||
                       userCurrentRoleStatusActiveRole === 'vc' ? (
@@ -466,7 +462,7 @@ const DiscoverProject = ({ onProjectCountChange }) => {
                     <div className='bg-[#daebf3] border-[#70b2e9] border text-[#144579] rounded-md text-xs px-3 py-1 mr-2 mb-2 w-[4.9rem]'>
                       PROJECT
                     </div>
-                    <div className='border-t border-gray-200 mt-3'></div>
+                    <div className='border-t border-gray-200 mt-3 hidden sm:block'></div>
 
                     <div className='mb-2'>
                       {activeRole && (
@@ -482,14 +478,12 @@ const DiscoverProject = ({ onProjectCountChange }) => {
                       )}
                     </div>
 
-                    {/* <div className="border-t border-gray-200 my-3">{email}</div> */}
-
-                    <p className='text-gray-600 mb-2 line-clamp-3 break-all '>
+                    <p className='text-gray-600 mb-2 overflow-hidden line-clamp-2 break-all sm:h-12'>
                       {' '}
                       {parse(projectdescription)}
                     </p>
                     <div className='flex items-center text-sm text-gray-500 flex-wrap'>
-                      {randomSkills?.map((skill, index) => (
+                      {randomSkills?.slice(0, 3).map((skill, index) => (
                         <span
                           key={index}
                           className='mr-2 mb-2 border boder-[#CDD5DF] bg-white text-[#364152] px-3 py-1 rounded-full'
@@ -497,12 +491,11 @@ const DiscoverProject = ({ onProjectCountChange }) => {
                           {skill}
                         </span>
                       ))}
-
-                      <span className='mr-2 mb-2 flex text-[#121926] items-center'>
-                        <PlaceOutlinedIcon className='text-[#364152] mr-1 w-4 h-4' />
-                        {country}
-                      </span>
                     </div>
+                    <span className='mr-2 mb-2 flex text-[#121926] items-center'>
+                      <PlaceOutlinedIcon className='text-[#364152] mr-1 w-4 h-4' />
+                      {country}
+                    </span>
                   </div>
                 </div>
               );

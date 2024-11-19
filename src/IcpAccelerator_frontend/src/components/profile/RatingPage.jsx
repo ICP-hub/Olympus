@@ -428,7 +428,7 @@ const RatingPage = () => {
         <img
           src={userFullData?.profile_picture[0]}
           alt='Profile'
-          className='rounded-full w-16 h-16 sm:w-16 sm:h-16 md:w-28 md:h-28 mb-4'
+          className='rounded-full w-20 h-20 md:w-28 md:h-28 mb-4'
           loading='lazy'
           draggable={false}
         />
@@ -440,7 +440,7 @@ const RatingPage = () => {
         </p>
 
         {!currentUserHasRated && (
-          <button className='flex gap-2 my-5'>
+          <button className='flex gap-1 sm3:gap-2 my-5'>
             {[...Array(5)].map((_, index) => (
               <svg
                 key={index}
@@ -504,7 +504,7 @@ const RatingPage = () => {
           </form>
         )}
       </div>
-      <hr className='mt-4' />
+      <hr className='mt-4 hidden lgx:block' />
 
       {/* Show ProfileSkeleton for 1 second when reviews are loading */}
       {showProfileSkeleton && <ProfileSkeleton />}

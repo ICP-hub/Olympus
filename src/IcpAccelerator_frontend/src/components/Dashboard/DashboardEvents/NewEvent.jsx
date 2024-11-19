@@ -219,6 +219,7 @@ const NewEvent = ({ event }) => {
           singleEventData={selectedEvent}
           cohortId={selectedEvent?.cohort_id}
           fetchCohorts={fetchCohorts}
+          setCohortEvents={setCohortEvents}
         />
       )}
     </>

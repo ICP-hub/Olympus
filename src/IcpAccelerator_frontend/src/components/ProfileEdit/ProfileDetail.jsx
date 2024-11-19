@@ -745,7 +745,7 @@ const ProfileDetail = () => {
               backgroundPosition: 'center',
             }}
           >
-            <div className='absolute top-2 right-2 p-2 z-50'>
+            <div className='absolute top-2 right-2 p-2 z-1 '>
               <img
                 src={edit}
                 alt='Edit Cover'
@@ -785,7 +785,7 @@ const ProfileDetail = () => {
                   accept='.jpg, .jpeg, .png'
                 />
                 <label
-                  htmlFor='image'
+                  htmlFor='logo'
                   className='p-2  items-center rounded-md text-md bg-transparent cursor-pointer font-semibold'
                 >
                   <FaPlus className='text-white text-xl' />
