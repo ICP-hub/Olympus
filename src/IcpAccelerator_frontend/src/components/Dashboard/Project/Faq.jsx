@@ -52,7 +52,7 @@ const FAQ = () => {
   };
 
   return (
-    <div className='mt-14 text-[#121926] text-[18px] font-medium border-gray-200'>
+    <div className='mt-4 mb-6 text-[#121926] text-[18px] font-medium border-gray-200'>
       {faqData.map((item, index) => (
         <FAQItem
           key={index}

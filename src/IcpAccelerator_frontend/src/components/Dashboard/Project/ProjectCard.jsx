@@ -13,6 +13,8 @@ import { FaChevronRight } from 'react-icons/fa';
 import NoDataFound from '../DashboardEvents/NoDataFound';
 import useTimeout from '../../hooks/TimeOutHook';
 import ProjectCardSkeleton from './ProjectSkeleton/ProjectCardSkeleton';
+import Tooltip from '@mui/material/Tooltip';
+
 const ProjectCard = () => {
   const [isopen, setModalOpen] = useState(false);
   const [cardData, setCardData] = useState([]);
@@ -53,15 +55,26 @@ const ProjectCard = () => {
   useTimeout(() => setIsLoading(false));
 
   return (
-    <div className='pt-12'>
+    <div className='pt-4 md:pt-12'>
       <div className='hidden md:block'>
         <div className='flex flex-col items-end mb-8 '>
-          <button
+          {/* <button
             className='px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700'
             onClick={handleOpenModal}
           >
             + Add new project
-          </button>
+          </button> */}
+          <Tooltip title='Coming Soon' arrow>
+            <span>
+              <button
+                className='px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md disabled:bg-gray-400 disabled:cursor-not-allowed'
+                disabled
+                onClick={handleOpenModal}
+              >
+                + Add new project
+              </button>
+            </span>
+          </Tooltip>
         </div>
       </div>
 
@@ -122,23 +135,24 @@ const ProjectCard = () => {
                     <button className='absolute right-0 text-gray-400 hover:text-gray-600'>
                       {/* <MoreVert fontSize='small' /> */}
                     </button>
-                    <h2 className='text-xl font-semibold text-gray-900'>
+                    <h2 className='text-xl font-semibold text-gray-900 line-clamp-1 break-all truncate'>
                       {projectName ?? 'ICP'}
                     </h2>
-                    <p className='text-sm text-gray-500 mb-4'>
+                    <p className='text-sm text-gray-500 mb-2 line-clamp-1 break-all truncate'>
                       @{fullName ?? 'ICP'}
                     </p>
                     <hr />
-                    <p className='mt-4 text-sm text-gray-700'>
+                    {/* <p className='mt-2 text-sm text-gray-700'>
                       Bringing privacy back to users
+                    </p> */}
+                    <p className='mt-1 text-sm text-gray-500 line-clamp-2 break-all md:h-12 '>
+                      {parse(projectDescription) ??
+                        'This is Project Description'}
                     </p>
-                    <p className='mt-1 text-sm text-gray-500 line-clamp-3'>
-                      {parse(projectDescription) ?? 'This is ICP'}
-                    </p>
-                    {areaOfInterest.map((interest, i) => (
+                    {areaOfInterest.slice(0, 3).map((interest, i) => (
                       <span
                         key={i}
-                        className='inline-block px-2 py-1 mt-2 text-xs font-medium text-gray-800 bg-gray-100 rounded-full'
+                        className='mr-2 my-1 border boder-[#CDD5DF] bg-white text-[#364152] px-3 py-1 rounded-full'
                       >
                         {interest}
                       </span>
@@ -181,12 +195,21 @@ const ProjectCard = () => {
                   </div>
                 </div>
 
-                <button
+                {/* <button
                   className='bg-blue-500 text-white  px-4 py-2 w-full md:hidden '
                   onClick={handleOpenModal}
                 >
                   + Add new project
-                </button>
+                </button> */}
+
+                <Tooltip title='Coming Soon' arrow>
+                  <button
+                    className='px-4 py-2 w-full md:hidden  text-white bg-blue-600 rounded-md disabled:bg-gray-400 disabled:cursor-not-allowed'
+                    disabled
+                  >
+                    + Add new project
+                  </button>
+                </Tooltip>
               </div>
             </>
           );

@@ -142,7 +142,7 @@ const DiscoverUser = ({ onUserCountChange }) => {
 
                 return (
                   <div
-                    className='sm:pr-6 sm:pt-6 sm:pb-6 my-10 md1:my-0 w-full  rounded-lg shadow-sm mb-4 flex flex-col sm:flex-row'
+                    className='sm:pr-6 sm:pt-6 sm:pb-6 my-10 md1:my-0 w-full  rounded-lg shadow-sm mb-4 flex flex-col sm:flex-row p-4'
                     key={index}
                   >
                     <div className=' w-full sm:w-[272px] relative'>
@@ -171,21 +171,26 @@ const DiscoverUser = ({ onUserCountChange }) => {
                     <div className='flex-grow mt-5 md1:mt-0 sm:ml-[25px] w-full'>
                       <div className='flex justify-between items-start mb-2'>
                         <div>
-                          <h3 className='text-xl font-bold'>{full_name}</h3>
-                          <p className='text-gray-500'>@{openchat_username}</p>
+                          <h3 className='text-xl font-bold line-clamp-1 truncate break-all'>
+                            {full_name}
+                          </h3>
+                          <p className='text-gray-500 line-clamp-1 truncate break-all'>
+                            @{openchat_username}
+                          </p>
                         </div>
                       </div>
                       <div className='bg-[#fff0eb] border-[#f35454] border text-[#090907] rounded-md text-xs px-3 py-1 mr-2 mb-2 w-[3.4rem]'>
                         USER
                       </div>
-                      <div className='border-t border-gray-200 my-1'></div>
-                      <p className='text-gray-600 mb-4 overflow-hidden line-clamp-2 break-all'>
+                      <div className='border-t border-gray-200 my-1 hidden sm:block'></div>
+                      <p className='text-gray-600 mb-2 overflow-hidden line-clamp-2 break-all sm:h-12'>
                         {bio}
                       </p>
                       <div className='flex items-center text-sm text-gray-500 flex-wrap'>
                         <div className='flex flex-wrap'>
                           {area_of_interest
                             .split(',')
+                            .slice(0, 3)
                             .map((interest, index) => (
                               <div
                                 key={index}
@@ -195,11 +200,11 @@ const DiscoverUser = ({ onUserCountChange }) => {
                               </div>
                             ))}
                         </div>
-                        <span className='mr-2 mb-2 flex text-[#121926] items-center'>
-                          <PlaceOutlinedIcon className='text-[#364152] mr-1 w-4 h-4' />
-                          {location}
-                        </span>
                       </div>
+                      <span className='mr-2 mb-2 flex text-[#121926] items-center'>
+                        <PlaceOutlinedIcon className='text-[#364152] mr-1 w-4 h-4' />
+                        {location}
+                      </span>
                     </div>
                   </div>
                 );
