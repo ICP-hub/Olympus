@@ -1,6 +1,5 @@
-use candid::CandidType;
+use candid::{CandidType, Principal};
 use serde::{Deserialize, Serialize};
-use crate::user_modules::user_types::*;
 
 #[derive(Serialize, Deserialize, Clone, Debug, CandidType, PartialEq)]
 pub struct Jobs {
@@ -18,5 +17,5 @@ pub struct JobsInternal {
     pub job_id: String,
     pub job_data: Jobs,
     pub timestamp: u64,
-    pub job_poster : Option<UserInformation>,
+    pub job_poster : Principal,
 }

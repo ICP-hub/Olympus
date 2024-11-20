@@ -469,23 +469,33 @@ pub fn reject_enrollment_request(
     enroller_principal: Principal,
 ) -> String {
     mutate_state(|state| {
-        if let Some(mut request_list) = state
+        if let Some(request_list) = state
             .cohort_enrollment_request
             .get(&StoredPrincipal(cohort_creator_principal))
+            .map(|candid_list| candid_list.0.clone()) 
         {
-            for request in request_list.0.iter_mut() {
-                if request.enroller_principal == enroller_principal
-                    && request.request_status == "pending"
-                {
+            let mut found = false;
+            let requests = request_list.into_iter().map(|mut request| {
+                if request.enroller_principal == enroller_principal && request.request_status == "pending" {
                     request.request_status = "rejected".to_string();
                     request.rejected_at = ic_cdk::api::time();
-                    return "Request rejected successfully".to_string();
+                    found = true;
                 }
+                request
+            }).collect::<Vec<_>>();
+
+            if found {
+                state.cohort_enrollment_request.insert(
+                    StoredPrincipal(cohort_creator_principal),
+                    Candid(requests)
+                );
+                return "Request rejected successfully".to_string();
             }
         }
         "Request not found or already processed".to_string()
     })
 }
+
 
 #[update(guard = "is_admin")]
 pub fn send_rejoin_invitation_to_mentor(

@@ -114,6 +114,7 @@ pub async fn update_mentor(updated_profile: MentorProfile) -> String {
                 mentor_internal.0.profile.reason_for_joining = updated_profile.reason_for_joining.clone();
                 mentor_internal.0.profile.hub_owner = updated_profile.hub_owner.clone()
                     .or(mentor_internal.0.profile.hub_owner.clone());
+                mentor_internal.0.profile.multichain = updated_profile.multichain.clone();
 
             state.mentor_storage.insert(StoredPrincipal(caller), mentor_internal);
             Ok("Mentor profile for has been approved and updated.")
