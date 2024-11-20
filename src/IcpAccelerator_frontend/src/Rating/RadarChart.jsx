@@ -47,8 +47,8 @@ const RadarChart = ({ rubricRatingData }) => {
     descriptions[item.title] = item.desc;
   });
 
-  const labels = rubricRatingData.map((item) => item.level_name);
-  const ratings = rubricRatingData.map((item) => item.rating);
+  const labels = rubricRatingData?.map((item) => item.level_name) || [];
+  const ratings = rubricRatingData?.map((item) => item.rating) || [];
 
   const data = {
     labels,
