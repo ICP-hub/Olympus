@@ -97,7 +97,7 @@ pub fn send_enrollment_request_as_mentor(cohort_id: String, user_info: MentorInt
 
     let reciever_principal = enrollment_request.cohort_details.cohort_creator;
 
-    let _ = add_notification(caller, reciever_principal, noti_to_send, crate::NotificationApprovalStatus::Pending);
+    let _ = add_notification(caller, reciever_principal, noti_to_send);
 
 
     mutate_state(|state| {
@@ -220,7 +220,7 @@ pub fn send_enrollment_request_as_investor(
 
     let reciever_principal = enrollment_request.cohort_details.cohort_creator;
 
-    let _ = add_notification(caller, reciever_principal, noti_to_send, crate::NotificationApprovalStatus::Pending);
+    let _ = add_notification(caller, reciever_principal, noti_to_send);
 
     ic_cdk::println!("Created enrollment request: {:?}", enrollment_request);
 
@@ -342,7 +342,7 @@ pub fn send_enrollment_request_as_project(
     };
     let reciever_principal = enrollment_request.cohort_details.cohort_creator;
 
-    let _ = add_notification(caller, reciever_principal, noti_to_send, crate::NotificationApprovalStatus::Pending);
+    let _ = add_notification(caller, reciever_principal, noti_to_send);
 
     ic_cdk::println!("enrollment request {:?}", enrollment_request);
 

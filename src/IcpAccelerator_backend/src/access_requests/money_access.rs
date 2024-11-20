@@ -91,7 +91,7 @@ pub async fn send_money_access_request(project_id: String) -> String {
     };
     let reciever_principal = find_project_owner_principal(&project_id.clone()).unwrap();
 
-    let _ = add_notification(caller, reciever_principal, noti_to_send, crate::NotificationApprovalStatus::Pending);
+    let _ = add_notification(caller, reciever_principal, noti_to_send);
 
     ic_cdk::println!("Access request created for project {}", project_id);
 
