@@ -11,95 +11,106 @@ use serde::{Deserialize, Serialize};
 #[update(guard = "combined_guard")]
 pub fn update_peer_rating_api(rating_data: PeerRatingUpdate) -> String {
     let caller = caller();
+    ic_cdk::println!("Caller: {:?}", caller);
+
     if rating_data.ratings.is_empty() {
+        ic_cdk::println!("No ratings provided, nothing updated.");
         return "No ratings provided, nothing updated.".to_string();
     }
 
     let current_timestamp = time();
-    let thirteen_days_in_seconds: u64 = 13 * 24 * 60 * 60;
+    ic_cdk::println!("Current timestamp: {:?}", current_timestamp);
 
-    // let can_rate = read_state(|state| {
-    //     let system = state
-    //         .cohort_rating_system
-    //         .get(&rating_data.cohort_id)
-    //         .map(|candid_vec| candid_vec.0)
-    //         .and_then(|cohort| cohort.get(&rating_data.project_id))
-    //         .and_then(|project| project.get(&caller))
-    //         .map_or(true, |ratings| {
-    //             ratings.last().map_or(true, |(_, last_rating)| {
-    //                 current_timestamp > last_rating.timestamp + thirteen_days_in_seconds
-    //             })
-    //         });
-    //     system
-    // });
+    let thirteen_days_in_seconds: u64 = 13 * 24 * 60 * 60;
+    ic_cdk::println!("Thirteen days in seconds: {:?}", thirteen_days_in_seconds);
 
     let can_rate = read_state(|state| {
-        state
+        let can_rate = state
             .cohort_rating_system
             .get(&rating_data.cohort_id)
             .and_then(|candid_vec| {
                 candid_vec.0.get(&rating_data.project_id).map(|project| {
                     project.get(&caller).map_or(true, |ratings| {
                         ratings.last().map_or(true, |(_, last_rating)| {
-                            current_timestamp > last_rating.timestamp + thirteen_days_in_seconds
+                            let can_rate = current_timestamp > last_rating.timestamp + thirteen_days_in_seconds;
+                            ic_cdk::println!("Last rating timestamp: {:?}, can rate: {:?}", last_rating.timestamp, can_rate);
+                            can_rate
                         })
                     })
                 })
             })
-            .unwrap_or(true) // Ensure default to true if any of the gets are None
+            .unwrap_or(true); // Ensure default to true if any of the gets are None
+        ic_cdk::println!("Can rate: {:?}", can_rate);
+        can_rate
     });
 
     if !can_rate {
+        ic_cdk::println!("Rating not allowed within the 13-day window.");
         return "You cannot rate this project for the next 13 days.".to_string();
     }
 
-    mutate_state(|state| {
-        // Ensure `cohort_rating` is a mutable reference to the actual data structure that can be modified
+     mutate_state(|state| {
+        // Retrieve or initialize the cohort rating
         let mut cohort_rating = state
             .cohort_rating_system
-            .get(&rating_data.cohort_id.clone())
-            .map(|candid_res| candid_res.0)
+            .get(&rating_data.cohort_id)
+            .map(|candid_res| candid_res.0.clone())
             .unwrap_or_default();
+        ic_cdk::println!("Cohort rating retrieved or default initialized.");
 
-        // Create or get the mutable reference to the project rating
+        // Retrieve or initialize the project rating
         let project_rating = cohort_rating
             .entry(rating_data.project_id.clone())
             .or_default();
+        ic_cdk::println!("Project rating for project ID {:?} accessed or initialized.", rating_data.project_id);
 
-        // Create or get the mutable reference for ratings by the caller
+        // Retrieve or initialize the ratings for the caller
         let project_ratings = project_rating.entry(caller).or_default();
+        ic_cdk::println!("Project ratings for caller accessed or initialized.");
 
-        // Process each rating provided in `rating_data.ratings`
+        // Add new ratings
         for rating in rating_data.ratings {
             let timestamped_rating = TimestampedRating {
-                rating,
+                rating: rating.clone(),
                 timestamp: current_timestamp,
             };
-
-            // Push new rating into `project_ratings`
+            ic_cdk::println!("Adding rating: {:?} at timestamp: {:?}", rating, current_timestamp);
             project_ratings.push(("peer".to_string(), timestamped_rating));
         }
 
-        // Return success message
+        // You need to write back the modified cohort_rating map into the state
+        state.cohort_rating_system.insert(rating_data.cohort_id.clone(), Candid(cohort_rating));
+
+        ic_cdk::println!("Ratings updated successfully.");
         "Ratings updated successfully.".to_string()
-    })
+    });
+
+    read_state(|state| {
+        ic_cdk::println!("Logging cohort IDs and project IDs after update...");
+        for (cohort_id, projects) in state.cohort_rating_system.iter() {
+            ic_cdk::println!("Cohort ID: {}", cohort_id);
+            for (project_id, _) in projects.0.iter() {
+                ic_cdk::println!("  Project ID: {}", project_id);
+            }
+        }
+    });
+    "Data updated and logged successfully".to_string()
 }
+
 
 #[update(guard = "combined_guard")]
 pub fn calculate_and_store_average_rating(
     cohort_id: String,
     project_id: String,
 ) -> Result<f64, String> {
-    read_state(|system| {
+    let average = read_state(|system| {
         let system = &system.cohort_rating_system;
         if let Some(cohort_ratings) = system.get(&cohort_id) {
             if let Some(project_ratings) = cohort_ratings.0.get(&project_id) {
                 let total_ratings = project_ratings
                     .values()
                     .flat_map(|ratings| {
-                        ratings
-                            .iter()
-                            .map(|(_, rating)| rating.rating.sub_level_number)
+                        ratings.iter().map(|(_, rating)| rating.rating.sub_level_number)
                     })
                     .collect::<Vec<_>>();
 
@@ -109,28 +120,29 @@ pub fn calculate_and_store_average_rating(
 
                 let sum: f64 = total_ratings.iter().sum();
                 let count = total_ratings.len() as f64;
-                let average = sum / count;
-
-                // Store the calculated average in the AVERAGE_RATINGS storage
-                mutate_state(|avg_ratings| {
-                    let avg_ratings = &mut avg_ratings.cohort_average_ratings;
-                    let mut cohort_avg = avg_ratings
-                        .get(&cohort_id.clone())
-                        .map(|cohort_avg_rating| cohort_avg_rating.0.clone())
-                        .unwrap_or_default();
-
-                    cohort_avg.insert(project_id.clone(), average);
-                });
-
-                Ok(average)
+                Ok(sum / count)  // Calculate the average and return it
             } else {
                 Err("No ratings found for the specified project in this cohort.".to_string())
             }
         } else {
             Err("Specified cohort not found.".to_string())
         }
-    })
+    })?;
+
+    mutate_state(|state| {
+        let avg_ratings = &mut state.cohort_average_ratings;
+        let mut cohort_avg = avg_ratings
+            .get(&cohort_id)
+            .map(|cohort_avg_rating| cohort_avg_rating.0.clone())
+            .unwrap_or_default();
+
+        cohort_avg.insert(project_id.clone(), average);
+        avg_ratings.insert(cohort_id, Candid(cohort_avg));  
+    });
+
+    Ok(average)  
 }
+
 
 #[query(guard="combined_guard")]
 pub fn get_stored_average_rating(cohort_id: String, project_id: String) -> Result<f64, String> {

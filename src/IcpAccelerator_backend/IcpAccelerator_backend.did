@@ -150,7 +150,7 @@ type Jobs = record {
   job_type : text;
 };
 type JobsInternal = record {
-  job_poster : opt UserInformation;
+  job_poster : principal;
   job_id : text;
   timestamp : nat64;
   job_data : Jobs;
@@ -680,7 +680,9 @@ service : {
   get_all_approved_docs_access_requests : () -> (vec ProjectNotification) query;
   get_all_cohorts : (Pagination) -> (PaginationReturnCohort) query;
   get_all_declined_docs_access_requests : () -> (vec ProjectNotification) query;
-  get_all_jobs : (nat64, nat64) -> (vec JobsInternal) query;
+  get_all_jobs : (nat64, nat64) -> (
+      vec record { JobsInternal; UserInformation },
+    ) query;
   get_all_mentor_notification : (principal) -> (vec OfferToSendToMentor) query;
   get_all_mentors : () -> (
       vec record {
@@ -791,7 +793,9 @@ service : {
   get_investment_stage : () -> (vec text) query;
   get_job_category : () -> (vec Areas) query;
   get_job_details_using_uid : (text) -> (opt JobsInternal) query;
-  get_jobs_posted_by_principal : (principal) -> (vec JobsInternal) query;
+  get_jobs_posted_by_principal : (principal) -> (
+      vec record { JobsInternal; UserInformation },
+    ) query;
   get_latest_announcements : (nat64, nat64) -> (
       vec record { principal; vec AnnouncementsInternal },
     ) query;
