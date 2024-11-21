@@ -830,9 +830,8 @@ const ProjectDetail = forwardRef(
               <ProjectDetailSkeleton />
             ) : (
               <form onSubmit={handleSubmit(onSubmitHandler, onErrorHandler)}>
-                {/* Preferred ICP Hub */}
                 {/* Reason for Joining This Platform */}
-                <div className='group relative hover:bg-gray-100 rounded-lg p-2 px-3 mb-2'>
+                <div className='group relative hover:bg-gray-100 rounded-lg p-2  mt-4 mb-1'>
                   <div className='flex justify-between items-center'>
                     <label className='block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start mb-2'>
                       Reason for joining this platform
@@ -898,7 +897,7 @@ const ProjectDetail = forwardRef(
                   )}
                 </div>
 
-                <div className='group relative hover:bg-gray-100 rounded-lg p-2 px-3 mb-2'>
+                <div className='group relative hover:bg-gray-100 rounded-lg p-2  mb-2'>
                   <div className='flex justify-between items-center'>
                     <label className='block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start'>
                       Preferred ICP Hub you would like to be associated with
@@ -954,7 +953,7 @@ const ProjectDetail = forwardRef(
                 </div>
 
                 {/* Project Name */}
-                <div className='group relative hover:bg-gray-100 rounded-lg p-2 px-3 mb-2'>
+                <div className='group relative hover:bg-gray-100 rounded-lg p-2  mb-2'>
                   <div className='flex justify-between items-center'>
                     <label className='block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start'>
                       Project Name
@@ -996,7 +995,7 @@ const ProjectDetail = forwardRef(
                 </div>
 
                 {/* Project Description */}
-                <div className='group relative hover:bg-gray-100 rounded-lg p-2 px-3 mb-2'>
+                <div className='group relative hover:bg-gray-100 rounded-lg p-2  mb-2'>
                   <div className='flex justify-between items-center'>
                     <label className='block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start'>
                       Project Description
@@ -1021,7 +1020,7 @@ const ProjectDetail = forwardRef(
                 </div>
 
                 {/* Project Elevator Pitch */}
-                <div className='group relative hover:bg-gray-100 rounded-lg p-2 px-3 mb-2'>
+                <div className='group relative hover:bg-gray-100 rounded-lg p-2  mb-2'>
                   <div className='flex justify-between items-center'>
                     <label className='block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start'>
                       Project Elevator Pitch
@@ -1065,7 +1064,7 @@ const ProjectDetail = forwardRef(
                 </div>
 
                 {/* Project Website */}
-                <div className='group relative hover:bg-gray-100 rounded-lg p-2 px-3 mb-2'>
+                <div className='group relative hover:bg-gray-100 rounded-lg p-2  mb-2'>
                   <div className='flex justify-between items-center'>
                     <label className='block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start'>
                       Project Website
@@ -1107,7 +1106,7 @@ const ProjectDetail = forwardRef(
                 </div>
 
                 {/* Is Your Project Registered */}
-                <div className='group relative hover:bg-gray-100 rounded-lg p-2 px-3 mb-2'>
+                <div className='group relative hover:bg-gray-100 rounded-lg p-2  mb-2'>
                   <div className='flex justify-between items-center'>
                     <label className='block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start'>
                       Is Your Project Registered?
@@ -1161,7 +1160,7 @@ const ProjectDetail = forwardRef(
                 {watch('is_your_project_registered') === 'true' && (
                   <>
                     {/* Type of Registration */}
-                    <div className='group relative hover:bg-gray-100 rounded-lg p-2 px-3 mb-2'>
+                    <div className='group relative hover:bg-gray-100 rounded-lg p-2  mb-2'>
                       <div className='flex justify-between items-center'>
                         <label className='block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start'>
                           Type of Registration
@@ -1217,7 +1216,7 @@ const ProjectDetail = forwardRef(
                     </div>
 
                     {/* Country of Registration */}
-                    <div className='group relative hover:bg-gray-100 rounded-lg p-2 px-3 mb-2'>
+                    <div className='group relative hover:bg-gray-100 rounded-lg p-2  mb-2'>
                       <div className='flex justify-between items-center'>
                         <label className='block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start'>
                           Country of Registration
@@ -1275,7 +1274,7 @@ const ProjectDetail = forwardRef(
                 )}
 
                 {/* Are you also multi-chain */}
-                <div className='group relative hover:bg-gray-100 rounded-lg p-2 px-3 mb-2'>
+                <div className='group relative hover:bg-gray-100 rounded-lg p-2  mb-2'>
                   <div className='flex justify-between items-center'>
                     <label className='font-semibold text-xs text-gray-500 uppercase'>
                       Are you also multi-chain
@@ -1327,7 +1326,7 @@ const ProjectDetail = forwardRef(
                 </div>
 
                 {watch('multi_chain') === 'true' && (
-                  <div className='group relative hover:bg-gray-100 rounded-lg p-2 px-3 mb-2'>
+                  <div className='group relative hover:bg-gray-100 rounded-lg p-2  mb-2'>
                     <div className='flex justify-between items-center'>
                       <label className='font-semibold text-xs text-gray-500 uppercase mb-1 '>
                         Please select the chains
@@ -1407,7 +1406,7 @@ const ProjectDetail = forwardRef(
                 )}
 
                 {/* Live on ICP Mainnet */}
-                <div className='group relative hover:bg-gray-100 rounded-lg p-2 px-3 mb-2'>
+                <div className='group relative hover:bg-gray-100 rounded-lg p-2  mb-2'>
                   <div className='flex justify-between items-center'>
                     <label className='block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start'>
                       Live on ICP Mainnet?
@@ -1458,7 +1457,7 @@ const ProjectDetail = forwardRef(
                 {watch('live_on_icp_mainnet') === 'true' && (
                   <>
                     {/* dApp Link */}
-                    <div className='group relative hover:bg-gray-100 rounded-lg p-2 px-3 mb-2'>
+                    <div className='group relative hover:bg-gray-100 rounded-lg p-2  mb-2'>
                       <div className='flex justify-between items-center'>
                         <label className='block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start'>
                           dApp Link
@@ -1500,7 +1499,7 @@ const ProjectDetail = forwardRef(
                     </div>
 
                     {/* Weekly Active Users */}
-                    <div className='group relative hover:bg-gray-100 rounded-lg p-2 px-3 mb-2'>
+                    <div className='group relative hover:bg-gray-100 rounded-lg p-2  mb-2'>
                       <div className='flex justify-between items-center'>
                         <label className='block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start'>
                           Weekly Active Users
@@ -1546,7 +1545,7 @@ const ProjectDetail = forwardRef(
                     </div>
 
                     {/* Revenue */}
-                    <div className='group relative hover:bg-gray-100 rounded-lg p-2 px-3 mb-2'>
+                    <div className='group relative hover:bg-gray-100 rounded-lg p-2  mb-2'>
                       <div className='flex justify-between items-center'>
                         <label className='block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start'>
                           Revenue (in Million USD)
@@ -1590,7 +1589,7 @@ const ProjectDetail = forwardRef(
                     </div>
                   </>
                 )}
-                <div className='mb-4 group relative hover:bg-gray-100 rounded-lg p-2 px-3 '>
+                <div className='mb-4 group relative hover:bg-gray-100 rounded-lg p-2  '>
                   <div className='flex justify-between'>
                     <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
                       Interests
@@ -1670,7 +1669,7 @@ const ProjectDetail = forwardRef(
                 </div>
 
                 {/* Promotional Video */}
-                <div className='group relative hover:bg-gray-100 rounded-lg p-2 px-3 mb-2'>
+                <div className='group relative hover:bg-gray-100 rounded-lg p-2  mb-2'>
                   <div className='flex justify-between items-center'>
                     <label className='block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start'>
                       Promotional Video
@@ -1710,7 +1709,7 @@ const ProjectDetail = forwardRef(
                     </div>
                   )}
                 </div>
-                <div className='group relative hover:bg-gray-100 rounded-lg p-2 px-3 mb-2'>
+                <div className='group relative hover:bg-gray-100 rounded-lg p-2  mb-2'>
                   <div className='flex justify-between items-center'>
                     <label className='block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start'>
                       Tokenomics
@@ -1752,175 +1751,182 @@ const ProjectDetail = forwardRef(
                     </div>
                   )}
                 </div>
-                <h3 className='mb-2 text-xs text-gray-500 px-3'>LINKS</h3>
-                <div className='relative px-3'>
-                  <div className='flex flex-wrap gap-5'>
-                    {Object.keys(socialLinks)
-                      .filter((key) => socialLinks[key]) // Only show links with valid URLs
-                      .map((key, index) => {
-                        const url = socialLinks[key];
-                        const Icon = getSocialLogo(url); // Get the corresponding social icon
-                        return (
-                          <div
-                            className='group relative flex items-center mb-3'
-                            key={key}
-                          >
-                            {isEditingLink[key] ? (
-                              <div className='flex w-full'>
-                                <div className='flex items-center w-full'>
-                                  <div className='flex items-center space-x-2 w-full'>
-                                    <div className='flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full'>
-                                      {Icon} {/* Display the icon */}
+                <div className='group relative hover:bg-gray-100 rounded-lg p-2  mb-2'>
+                  {/* <h3 className='mb-2 text-xs text-gray-500 '>LINKS</h3> */}
+                  <label className='block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start'>
+                    Links
+                  </label>
+                  <div className='relative '>
+                    <div className='flex flex-wrap gap-5'>
+                      {Object.keys(socialLinks)
+                        .filter((key) => socialLinks[key]) // Only show links with valid URLs
+                        .map((key, index) => {
+                          const url = socialLinks[key];
+                          const Icon = getSocialLogo(url); // Get the corresponding social icon
+                          return (
+                            <div
+                              className='group relative flex items-center mb-3'
+                              key={key}
+                            >
+                              {isEditingLink[key] ? (
+                                <div className='flex w-full'>
+                                  <div className='flex items-center w-full'>
+                                    <div className='flex items-center space-x-2 w-full'>
+                                      <div className='flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full'>
+                                        {Icon} {/* Display the icon */}
+                                      </div>
+                                      <input
+                                        type='text'
+                                        value={url}
+                                        onChange={(e) =>
+                                          handleLinkChange(e, key)
+                                        }
+                                        className='border p-2 rounded-md w-full'
+                                        placeholder='Enter your social media URL'
+                                      />
                                     </div>
-                                    <input
-                                      type='text'
-                                      value={url}
-                                      onChange={(e) => handleLinkChange(e, key)}
-                                      className='border p-2 rounded-md w-full'
-                                      placeholder='Enter your social media URL'
-                                    />
+                                    <button
+                                      type='button'
+                                      onClick={() => handleSaveLink(key)} // Save the link
+                                      className='ml-2 text-green-500 hover:text-green-700'
+                                    >
+                                      <FaSave />
+                                    </button>
+                                    <button
+                                      type='button'
+                                      onClick={() => handleLinkDelete(key)} // Delete the link
+                                      className='ml-2 text-red-500 hover:text-red-700'
+                                    >
+                                      <FaTrash />
+                                    </button>
                                   </div>
-                                  <button
-                                    type='button'
-                                    onClick={() => handleSaveLink(key)} // Save the link
-                                    className='ml-2 text-green-500 hover:text-green-700'
-                                  >
-                                    <FaSave />
-                                  </button>
-                                  <button
-                                    type='button'
-                                    onClick={() => handleLinkDelete(key)} // Delete the link
-                                    className='ml-2 text-red-500 hover:text-red-700'
-                                  >
-                                    <FaTrash />
-                                  </button>
                                 </div>
-                              </div>
-                            ) : (
-                              <>
-                                <a
-                                  href={url}
-                                  target='_blank'
-                                  rel='noopener noreferrer'
-                                  className='flex items-center'
-                                >
-                                  {Icon} {/* Display the icon */}
-                                </a>
+                              ) : (
+                                <>
+                                  <a
+                                    href={url}
+                                    target='_blank'
+                                    rel='noopener noreferrer'
+                                    className='flex items-center'
+                                  >
+                                    {Icon} {/* Display the icon */}
+                                  </a>
+                                  <button
+                                    type='button'
+                                    className='absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 translate-x-6 ease-in-out transform opacity-100 lgx:opacity-0 lgx:group-hover:opacity-100 md:group-hover:translate-x-6 h-10 w-7'
+                                    onClick={() => handleLinkEditToggle(key)} // Toggle editing mode for this link
+                                  >
+                                    <img
+                                      src={editp}
+                                      alt='edit'
+                                      loading='lazy'
+                                      draggable={false}
+                                    />
+                                  </button>
+                                </>
+                              )}
+                            </div>
+                          );
+                        })}
+                    </div>
+                    {fields.map((item, index) => (
+                      <div key={item.id} className='flex flex-col'>
+                        <div className='flex items-center mb-2 pb-1'>
+                          <Controller
+                            name={`links[${index}].link`}
+                            control={control}
+                            render={({ field, fieldState }) => (
+                              <div className='flex items-center w-full'>
+                                <div className='flex items-center space-x-2 w-full'>
+                                  <div className='flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full'>
+                                    {field.value && getSocialLogo(field.value)}{' '}
+                                    {/* Display logo for new link */}
+                                  </div>
+                                  <input
+                                    type='text'
+                                    placeholder='Enter your social media URL'
+                                    className={`p-2 border ${
+                                      fieldState.error
+                                        ? 'border-red-500'
+                                        : 'border-[#737373]'
+                                    } rounded-md w-full bg-gray-50 border-2 border-[#D1D5DB]`}
+                                    {...field}
+                                  />
+                                </div>
                                 <button
                                   type='button'
-                                  className='absolute right-0 p-1 text-gray-500 text-xs transition-all duration-300 translate-x-6 ease-in-out transform opacity-100 lgx:opacity-0 lgx:group-hover:opacity-100 md:group-hover:translate-x-6 h-10 w-7'
-                                  onClick={() => handleLinkEditToggle(key)} // Toggle editing mode for this link
+                                  onClick={() =>
+                                    handleSaveNewLink(field.value, index)
+                                  } // Save the new link
+                                  className='ml-2 text-green-500 hover:text-green-700'
                                 >
-                                  <img
-                                    src={editp}
-                                    alt='edit'
-                                    loading='lazy'
-                                    draggable={false}
-                                  />
+                                  <FaSave />
                                 </button>
-                              </>
-                            )}
-                          </div>
-                        );
-                      })}
-                  </div>
-                  {fields.map((item, index) => (
-                    <div key={item.id} className='flex flex-col'>
-                      <div className='flex items-center mb-2 pb-1'>
-                        <Controller
-                          name={`links[${index}].link`}
-                          control={control}
-                          render={({ field, fieldState }) => (
-                            <div className='flex items-center w-full'>
-                              <div className='flex items-center space-x-2 w-full'>
-                                <div className='flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full'>
-                                  {field.value && getSocialLogo(field.value)}{' '}
-                                  {/* Display logo for new link */}
-                                </div>
-                                <input
-                                  type='text'
-                                  placeholder='Enter your social media URL'
-                                  className={`p-2 border ${
-                                    fieldState.error
-                                      ? 'border-red-500'
-                                      : 'border-[#737373]'
-                                  } rounded-md w-full bg-gray-50 border-2 border-[#D1D5DB]`}
-                                  {...field}
-                                />
+                                <button
+                                  type='button'
+                                  onClick={() => remove(index)} // Remove link field
+                                  className='ml-2 text-red-500 hover:text-red-700'
+                                >
+                                  <FaTrash />
+                                </button>
                               </div>
-                              <button
-                                type='button'
-                                onClick={() =>
-                                  handleSaveNewLink(field.value, index)
-                                } // Save the new link
-                                className='ml-2 text-green-500 hover:text-green-700'
-                              >
-                                <FaSave />
-                              </button>
-                              <button
-                                type='button'
-                                onClick={() => remove(index)} // Remove link field
-                                className='ml-2 text-red-500 hover:text-red-700'
-                              >
-                                <FaTrash />
-                              </button>
-                            </div>
-                          )}
-                        />
+                            )}
+                          />
+                        </div>
                       </div>
+                    ))}
+                    {fields.length < 10 && (
+                      <button
+                        type='button'
+                        onClick={() => {
+                          if (fields.length < 10) {
+                            append({ link: '' });
+                          }
+                        }}
+                        className='flex items-center p-1 text-[#155EEF]'
+                      >
+                        <FaPlus className='mr-1' /> Add Another Link
+                      </button>
+                    )}
+                  </div>
+
+                  {(Object.values(editMode).some((value) => value) ||
+                    isLinkBeingEdited ||
+                    isLogoEditing ||
+                    isCoverEditing) && (
+                    <div className='flex justify-end gap-4 mt-4'>
+                      <button
+                        type='button'
+                        onClick={handleCancel}
+                        className='bg-gray-300 text-gray-700 py-2 px-4 rounded mb-4'
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        disabled={isSubmitting}
+                        type='submit'
+                        className='text-white font-bold bg-blue-800 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-md w-auto sm:w-auto px-5 py-2 text-center mb-4'
+                      >
+                        {isSubmitting ? (
+                          <ThreeDots
+                            visible={true}
+                            height='35'
+                            width='35'
+                            color='#FFFEFF'
+                            radius='9'
+                            ariaLabel='three-dots-loading'
+                            wrapperStyle={{}}
+                            wrapperclassName=''
+                          />
+                        ) : editMode ? (
+                          'Update'
+                        ) : (
+                          'Submit'
+                        )}
+                      </button>
                     </div>
-                  ))}
-                  {fields.length < 10 && (
-                    <button
-                      type='button'
-                      onClick={() => {
-                        if (fields.length < 10) {
-                          append({ link: '' });
-                        }
-                      }}
-                      className='flex items-center p-1 text-[#155EEF]'
-                    >
-                      <FaPlus className='mr-1' /> Add Another Link
-                    </button>
                   )}
                 </div>
-
-                {(Object.values(editMode).some((value) => value) ||
-                  isLinkBeingEdited ||
-                  isLogoEditing ||
-                  isCoverEditing) && (
-                  <div className='flex justify-end gap-4 mt-4'>
-                    <button
-                      type='button'
-                      onClick={handleCancel}
-                      className='bg-gray-300 text-gray-700 py-2 px-4 rounded mb-4'
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      disabled={isSubmitting}
-                      type='submit'
-                      className='text-white font-bold bg-blue-800 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-md w-auto sm:w-auto px-5 py-2 text-center mb-4'
-                    >
-                      {isSubmitting ? (
-                        <ThreeDots
-                          visible={true}
-                          height='35'
-                          width='35'
-                          color='#FFFEFF'
-                          radius='9'
-                          ariaLabel='three-dots-loading'
-                          wrapperStyle={{}}
-                          wrapperclassName=''
-                        />
-                      ) : editMode ? (
-                        'Update'
-                      ) : (
-                        'Submit'
-                      )}
-                    </button>
-                  </div>
-                )}
               </form>
             )}
           </div>
