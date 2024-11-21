@@ -83,7 +83,7 @@ const DiscoverMoneyRaising = ({ data, projectId }) => {
         ? ''
         : data && (
             <button
-              className='bg-blue-600 text-white px-4 py-2 rounded-lg mb-4  self-end'
+              className='bg-blue-600 text-white px-4 py-2 rounded-lg my-4  self-end'
               onClick={sendMoneyRaisingRequest}
               disabled={loading} // Disable the button while loading
             >
