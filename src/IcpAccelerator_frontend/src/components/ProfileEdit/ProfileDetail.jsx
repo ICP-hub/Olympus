@@ -735,8 +735,7 @@ const ProfileDetail = () => {
         //     <ArrowOutwardOutlinedIcon className='ml-1' fontSize='small' />
         //   </button>
         // </div>
-        <div className='max-w-sm mx-auto bg-white rounded-t-lg shadow-md overflow-hidden cursor-pointer'>
-          {/* Cover Image */}
+        <div className=' mx-auto bg-white rounded-t-lg shadow-md overflow-hidden cursor-pointer'>
           <div
             className='h-36 relative'
             style={{
