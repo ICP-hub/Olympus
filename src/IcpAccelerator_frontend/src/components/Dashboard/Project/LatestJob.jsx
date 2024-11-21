@@ -70,6 +70,7 @@ const NewJob = ({ latestJobs }) => {
     let principles = Principal.fromText(principal);
     try {
       const result = await actor.get_jobs_posted_by_principal(principles);
+      console.log('result job', result);
       if (!result || result.length === 0 || result[0].length === 0) {
         setNoData(true);
         setLatestJob([]);
@@ -280,28 +281,28 @@ const NewJob = ({ latestJobs }) => {
           </>
         ) : (
           latestJob.map((card, index) => {
-            const fullname = card?.job_poster[0]?.full_name ?? '';
-            const job_name = card?.job_data?.title ?? '';
-            const job_category = card?.job_data?.category ?? '';
-            const job_description = card?.job_data?.description ?? '';
-            const job_location = card?.job_data?.location ?? '';
-            const job_link = card?.job_data?.link ?? '';
-            const job_project_logo = card?.job_poster[0]?.profile_picture[0]
-              ? uint8ArrayToBase64(card?.job_poster[0]?.profile_picture[0])
+            const fullname = card[1]?.full_name ?? '';
+            const job_name = card[0]?.job_data?.title ?? '';
+            const job_category = card[0]?.job_data?.category ?? '';
+            const job_description = card[0]?.job_data?.description ?? '';
+            const job_location = card[0]?.job_data?.location ?? '';
+            const job_link = card[0]?.job_data?.link ?? '';
+            const job_project_logo = card[1]?.profile_picture[0]
+              ? uint8ArrayToBase64(card[1]?.profile_picture[0])
               : null;
-            const job_type = card?.job_data?.job_type ?? '';
+            const job_type = card[0]?.job_data?.job_type ?? '';
             const job_project_name = card?.project_name ?? '';
             const job_project_desc = card?.project_desc ?? '';
-            const job_post_time = card?.timestamp
-              ? formatFullDateFromBigInt(card?.timestamp)
+            const job_post_time = card[0]?.timestamp
+              ? formatFullDateFromBigInt(card[0]?.timestamp)
               : '';
 
             return (
               <>
                 <div
-                  key={card.job_id || index}
+                  key={card[0]?.job_id || index}
                   className='flex flex-col gap-3 my-4 bg-white rounded-lg shadow p-4'
-                  onClick={() => openJobDetails(card.job_id)}
+                  onClick={() => openJobDetails(card[0]?.job_id)}
                 >
                   <div className='flex justify-between'>
                     <div className='flex flex-col gap-3 w-full '>
@@ -318,7 +319,7 @@ const NewJob = ({ latestJobs }) => {
                             // onClick={() => handleJobsOpenModal(card)}
                             onClick={(e) => {
                               e.stopPropagation();
-                              handleJobsOpenModal(card);
+                              handleJobsOpenModal(card[0]);
                             }}
                             loading='lazy'
                             draggable={false}
@@ -329,7 +330,7 @@ const NewJob = ({ latestJobs }) => {
                               // onClick={() => handleOpenDeleteModal(card)}
                               onClick={(e) => {
                                 e.stopPropagation();
-                                handleOpenDeleteModal(card);
+                                handleOpenDeleteModal(card[0]);
                               }}
                             />
                           </span>

@@ -143,7 +143,7 @@ function DocumentSection() {
             {activeTab === 'rating' && (
               <>
                 <>
-                  <RatingComponent projectId={projectId} />
+                  <RatingComponent projectId={projectId} value={true} />
                 </>
                 <FAQ />
               </>
@@ -242,7 +242,7 @@ function DocumentSection() {
           {activeMobileTab === 'rating' && (
             <>
               <>
-                <RatingComponent />
+                <RatingComponent projectId={projectId} value={true} />
               </>
               <FAQ />
             </>

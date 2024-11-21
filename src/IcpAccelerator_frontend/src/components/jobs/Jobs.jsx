@@ -222,23 +222,21 @@ const Jobs = () => {
                   >
                     {latestJobs.map((card, index) => {
                       // console.log( " card?.job_poster.profile_picture",card?.job_poster?.profile_picture)
-                      let full_Name = card?.job_poster?.[0].full_name;
-                      let job_name = card?.job_data?.title ?? '';
-                      let job_category = card?.job_data?.category ?? '';
-                      let job_description = card?.job_data?.description ?? '';
-                      let job_location = card?.job_data?.location ?? '';
-                      let job_link = card?.job_data?.link ?? '';
-                      let job_project_logo = card?.job_poster[0]
-                        ?.profile_picture[0]
-                        ? uint8ArrayToBase64(
-                            card?.job_poster[0]?.profile_picture[0]
-                          )
+                      let full_Name = card[1]?.full_name ?? '';
+                      let job_name = card[0]?.job_data?.title ?? '';
+                      let job_category = card[0]?.job_data?.category ?? '';
+                      let job_description =
+                        card[0]?.job_data?.description ?? '';
+                      let job_location = card[0]?.job_data?.location ?? '';
+                      let job_link = card[0]?.job_data?.link ?? '';
+                      let job_project_logo = card[1]?.profile_picture[0]
+                        ? uint8ArrayToBase64(card[1]?.profile_picture[0])
                         : null;
-                      let job_type = card?.job_data?.job_type ?? '';
+                      let job_type = card[0]?.job_data?.job_type ?? '';
                       let job_project_name = card?.project_name ?? '';
                       let job_project_desc = card?.project_desc ?? '';
-                      let job_post_time = card?.timestamp
-                        ? formatFullDateFromBigInt(card?.timestamp)
+                      let job_post_time = card[0]?.timestamp
+                        ? formatFullDateFromBigInt(card[0]?.timestamp)
                         : '';
                       // console.log("cardids", card.job_id);
                       return (
@@ -287,7 +285,9 @@ const Jobs = () => {
                                     />
                                   </a>
                                   <button
-                                    onClick={() => openJobDetails(card.job_id)}
+                                    onClick={() =>
+                                      openJobDetails(card[0].job_id)
+                                    }
                                     className='hover:bg-slate-300 py-2 px-3 text-[#155EEF] font-medium flex'
                                   >
                                     view details
@@ -337,7 +337,9 @@ const Jobs = () => {
                                     </span>
                                   </button>
                                   <button
-                                    onClick={() => openJobDetails(card.job_id)}
+                                    onClick={() =>
+                                      openJobDetails(card[0].job_id)
+                                    }
                                     className='hover:bg-slate-300 py-2 px-3 text-[#155EEF] shadow-lg my-1 sm1:my-0 font-medium w-full'
                                   >
                                     view details

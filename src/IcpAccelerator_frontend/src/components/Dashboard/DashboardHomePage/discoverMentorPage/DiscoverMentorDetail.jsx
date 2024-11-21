@@ -8,7 +8,7 @@ import Avatar from '@mui/material/Avatar';
 import UserDetail from '../UserDetail';
 import getSocialLogo from '../../../Utils/navigationHelper/getSocialLogo';
 import useTimeout from '../../../hooks/TimeOutHook';
-import UserGeneralDetailSkeleton from '../../../profile/skeletonProfile/UserGeneralDetailSkeleton';
+import UserGeneralDetailSkeleton from '../../../Profile/skeletonProfile/UserGeneralDetailSkeleton';
 import DiscoverProjectProfileSkeleton from '../DiscoverProjectSkeleton/DiscoverProjectProfileSkeleton';
 import StarIcon from '@mui/icons-material/Star';
 import Rating1 from '../../../Modals/RatingModals/Rating1';
@@ -148,6 +148,7 @@ const DiscoverMentorDetail = ({ projectDetails, userData, projectId }) => {
   useTimeout(() => setIsLoading(false));
 
   const [isRating, setIsRating] = useState(false);
+  const [showRatingModal, setShowRatingModal] = useState(false);
   const handleRating = () => {
     setIsRating(true);
   };
@@ -584,6 +585,7 @@ const DiscoverMentorDetail = ({ projectDetails, userData, projectId }) => {
           projectId={projectId}
           isRating={isRating}
           setIsRating={setIsRating}
+          setShowRatingModal={setShowRatingModal}
         />
       )}
     </>

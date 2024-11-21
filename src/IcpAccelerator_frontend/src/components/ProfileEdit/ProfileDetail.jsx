@@ -122,8 +122,11 @@ const ProfileDetail = () => {
     setIsLinkBeingEdited(false); // End link editing mode if all links are saved
   };
 
-  // Handle adding new link from form field
   const handleSaveNewLink = (data, index) => {
+    if (!data.trim()) {
+      remove(index); // Remove the new link field if it's empty
+      return;
+    }
     const linkKey = `custom-link-${Date.now()}-${index}`;
     setSocialLinks((prevLinks) => ({
       ...prevLinks,
@@ -137,7 +140,6 @@ const ProfileDetail = () => {
     remove(index); // Remove the field from the input after saving
   };
 
-  // Toggle the editing of individual links
   const handleLinkEditToggle = (key) => {
     setIsEditingLink((prev) => ({
       ...prev,
@@ -146,7 +148,6 @@ const ProfileDetail = () => {
     setIsLinkBeingEdited(!isLinkBeingEdited);
   };
 
-  // Handle changes to individual links
   const handleLinkChange = (e, key) => {
     setSocialLinks((prev) => ({
       ...prev,
@@ -154,7 +155,6 @@ const ProfileDetail = () => {
     }));
   };
 
-  // Handle deletion of existing links
   const handleLinkDelete = (key) => {
     setSocialLinks((prev) => {
       const updatedLinks = { ...prev };
@@ -251,13 +251,6 @@ const ProfileDetail = () => {
       console.log('ERROR--imageCreationFunc-file', file);
     }
   };
-  // useEffect(() => {
-  //   console.log("dispatchCompleted value:", dispatchCompleted);
-  //   if (dispatchCompleted) {
-  //     console.log("Navigation triggered: /dashboard/profile");
-
-  //   }
-  // }, [dispatchCompleted, navigate]);
 
   const handleSave = async (data) => {
     // Save any unsaved links in edit mode
@@ -269,8 +262,18 @@ const ProfileDetail = () => {
       }
     });
 
+    // Validate if there are meaningful updates
+    const validLinks = Object.entries(updatedLinks).filter(
+      ([key, value]) => value.trim() // Ensure non-empty links
+    );
+
+    if (validLinks.length === 0) {
+      toast.error('No valid updates to save.');
+      return; // Exit without making an API call
+    }
+
     try {
-      // Existing save logic
+      // Prepare the user data payload for the update API
       const convertedPrincipal = await Principal.fromText(principal);
       const user_data = {
         bio: [data?.bio],
@@ -287,12 +290,13 @@ const ProfileDetail = () => {
         ],
         profile_picture: imageData ? [imageData] : [],
         social_links: [
-          Object.entries(updatedLinks).map(([key, value]) => ({
-            link: value ? [value] : [],
+          validLinks.map(([key, value]) => ({
+            link: [value],
           })),
         ],
       };
 
+      // Call the update API
       const result = await actor.update_user_data(
         convertedPrincipal,
         user_data
@@ -313,15 +317,19 @@ const ProfileDetail = () => {
       toast.error('Failed to update profile');
     }
 
+    // Reset states after successful save
     setIsLinkBeingEdited(false);
     setIsEditingLink({});
   };
 
   const handleCancel = () => {
-    Object.keys(initialValues).forEach((key) =>
-      setValue(key, initialValues[key])
-    );
+    setSocialLinks((prev) => {
+      const originalLinks = { ...prev };
+      return originalLinks;
+    });
 
+    setIsEditingLink({});
+    setIsLinkBeingEdited(false);
     setIsEditing({
       email: false,
       tagline: false,
@@ -329,16 +337,11 @@ const ProfileDetail = () => {
       area_of_interest: false,
       country: false,
       reason_to_join: false,
-      links: false,
       full_name: false,
       openchat_username: false,
       social_links: false,
       profile_picture: false,
     });
-
-    setIsLinkBeingEdited(false);
-    setIsEditingLink({});
-    setImagePreview(initialValues.profile_picture);
   };
 
   useEffect(() => {
@@ -1341,7 +1344,7 @@ const ProfileDetail = () => {
                             const Icon = getSocialLogo(url); // Get the corresponding social icon
                             return (
                               <div
-                                className='group relative flex items-center mb-3'
+                                className={`group relative flex items-center ${isEditingLink[key] ? '' : 'mb-3'}`}
                                 key={key}
                               >
                                 {isEditingLink[key] ? (
