@@ -357,7 +357,7 @@ function DashboardHomeNavbar({ id, id2 }) {
             draggable={false}
           />
         </Tooltip>
-        ;
+
         <img
           id={id2}
           src={logoutIcon}
