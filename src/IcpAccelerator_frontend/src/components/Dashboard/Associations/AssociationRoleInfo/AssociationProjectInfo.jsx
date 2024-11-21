@@ -211,7 +211,7 @@ const AssociationProjectInfo = ({ key, user }) => {
   let response = user?.response ?? '';
   return (
     <div className='p-4' key={key}>
-      <div className='mt-4 group relative hover:bg-gray-100 rounded-lg p-1'>
+      <div className=' group relative hover:bg-gray-100 rounded-lg p-1'>
         <h3 className='block font-semibold text-[14px] text-gray-500 uppercase truncate overflow-hidden text-start'>
           Project Name
         </h3>

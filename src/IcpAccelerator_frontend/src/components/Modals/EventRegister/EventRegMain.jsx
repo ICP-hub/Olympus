@@ -172,7 +172,7 @@ const EventRegMain = ({
               fetchCohorts();
             }, 1000);
           } else if (result && result.Err) {
-            toast.error(result.Err);
+            // toast.error(result.Err);
             setModalOpen(false);
             setTimeout(() => {
               fetchCohorts();
