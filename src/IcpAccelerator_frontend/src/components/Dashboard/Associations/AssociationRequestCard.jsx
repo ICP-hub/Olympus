@@ -220,51 +220,6 @@ const AssociationRequestCard = () => {
 
   return (
     <div className='space-y-4 relative'>
-      {/* <div className="flex gap-3 items-center p-6 w-[650px]">
-        <div className="flex items-center border-2 border-gray-400 rounded-lg overflow-hidden w-full h-[50px]">
-          <div className="flex items-center px-4">
-            <svg
-              className="h-5 w-5 text-gray-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 103.5 3.5a7.5 7.5 0 0013.65 13.65z"
-              ></path>
-            </svg>
-          </div>
-          <input
-            type="text"
-            placeholder="Search people, projects, jobs, events"
-            className="w-full py-2 px-4 text-gray-700 focus:outline-none"
-          />
-          <div className="px-4">
-            <svg
-              className="h-5 w-5 text-gray-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M3 6h18M3 12h18m-7 6h7"
-              ></path>
-            </svg>
-          </div>
-        </div>
-        <FaFilter
-          onClick={toggleFilter}
-          className="text-gray-400 text-2xl cursor-pointer"
-        />
-      </div> */}
       <div className='flex items-center justify-between md:py-6 w-full  gap-6'>
         <div className='flex items-center border-2 border-gray-400 rounded-lg overflow-hidden flex-grow  h-[38px] md:h-[50px]'>
           <div className='flex items-center px-3 md:px-4'>

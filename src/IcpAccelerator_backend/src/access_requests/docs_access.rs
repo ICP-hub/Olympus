@@ -104,7 +104,7 @@ pub async fn send_private_docs_access_request(project_id: String) -> String {
     };
     let reciever_principal = find_project_owner_principal(&project_id.clone()).unwrap();
 
-    let _ = add_notification(caller, reciever_principal, noti_to_send, crate::NotificationApprovalStatus::Pending);
+    let _ = add_notification(caller, reciever_principal, noti_to_send);
 
     mutate_state(|state| {
         if let Some(mut request_vec) = state
@@ -340,12 +340,13 @@ pub fn get_all_declined_docs_access_requests() -> Vec<ProjectNotification> {
 }
 
 #[query(guard = "combined_guard")]
-pub fn access_private_docs(project_id: String) -> Result<Vec<Docs>, CustomError> {
-    let caller = ic_cdk::api::caller();
-
+pub fn access_private_docs(
+    project_id: String,
+    id: Principal,
+) -> Result<Vec<Docs>, CustomError> {
     let is_owner = read_state(|state| {
         state.project_storage.iter().any(|(principal, projects)| {
-            principal == StoredPrincipal(caller) && projects.0.iter().any(|p| p.uid == project_id)
+            principal == StoredPrincipal(id) && projects.0.iter().any(|p| p.uid == project_id)
         })
     });
 
@@ -355,7 +356,7 @@ pub fn access_private_docs(project_id: String) -> Result<Vec<Docs>, CustomError>
                 .private_docs_access
                 .get(&project_id)
                 .map_or(false, |principals| {
-                    principals.0.contains(&Principal::from(caller))
+                    principals.0.contains(&id)
                 })
         });
 

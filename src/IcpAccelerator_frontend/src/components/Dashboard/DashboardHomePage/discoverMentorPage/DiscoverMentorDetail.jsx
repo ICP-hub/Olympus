@@ -148,6 +148,7 @@ const DiscoverMentorDetail = ({ projectDetails, userData, projectId }) => {
   useTimeout(() => setIsLoading(false));
 
   const [isRating, setIsRating] = useState(false);
+  const [showRatingModal, setShowRatingModal] = useState(false);
   const handleRating = () => {
     setIsRating(true);
   };
@@ -584,6 +585,7 @@ const DiscoverMentorDetail = ({ projectDetails, userData, projectId }) => {
           projectId={projectId}
           isRating={isRating}
           setIsRating={setIsRating}
+          setShowRatingModal={setShowRatingModal}
         />
       )}
     </>

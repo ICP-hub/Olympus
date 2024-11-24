@@ -15,6 +15,8 @@ const JobDetails = ({ setOpen, uid }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [show, setShow] = useState(false);
+
+  console.log('jobDetails', jobDetails);
   const jobTitle = jobDetails?.job_data?.title ?? 'Title not available';
   const category = jobDetails?.job_data?.category ?? 'category not available';
   const description =

@@ -6,9 +6,9 @@ const ProjectDetailSkeleton = () => {
   return (
     <SkeletonThemeMain>
       {/* Reason for Joining This Platform */}
-      <div className='group relative rounded-lg p-2 px-3 mb-2'>
+      <div className='group relative rounded-lg p-2  mt-4 mb-2'>
         <div className='flex justify-between items-center'>
-          <label className='block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start mb-2'>
+          <label className='block font-semibold text-xs text-gray-500 uppercase truncate overflow-hidden text-start mb-2 '>
             Reason for joining this platform
           </label>
         </div>
@@ -19,7 +19,7 @@ const ProjectDetailSkeleton = () => {
       </div>
 
       {/* Preferred ICP Hub */}
-      <div className='group relative  rounded-lg p-2 px-3 mb-2'>
+      <div className='group relative  rounded-lg p-2  mb-2'>
         <div className='flex justify-between items-center'>
           <label className='block font-semibold text-xs text-gray-500 uppercase'>
             Preferred ICP Hub you would like to be associated with
@@ -29,7 +29,7 @@ const ProjectDetailSkeleton = () => {
       </div>
 
       {/* Project Name */}
-      <div className='group relative  rounded-lg p-2 px-3 mb-2'>
+      <div className='group relative  rounded-lg p-2  mb-2'>
         <div className='flex justify-between items-center'>
           <label className='block font-semibold text-xs text-gray-500 uppercase'>
             Project Name
@@ -39,7 +39,7 @@ const ProjectDetailSkeleton = () => {
       </div>
 
       {/* Project Description */}
-      <div className='group relative  rounded-lg p-2 px-3 mb-2'>
+      <div className='group relative  rounded-lg p-2  mb-2'>
         <div className='flex justify-between items-center'>
           <label className='block font-semibold text-xs text-gray-500 uppercase'>
             Project Description
@@ -59,7 +59,7 @@ const ProjectDetailSkeleton = () => {
         </div>
       </div>
 
-      <div className='group relative  rounded-lg p-2 px-3 mb-2'>
+      <div className='group relative  rounded-lg p-2  mb-2'>
         <div className='flex justify-between items-center'>
           <label className='block font-semibold text-xs text-gray-500 uppercase'>
             Project Elevator pitch
@@ -68,7 +68,7 @@ const ProjectDetailSkeleton = () => {
         <Skeleton height={20} />
       </div>
 
-      <div className='group relative  rounded-lg p-2 px-3 mb-2'>
+      <div className='group relative  rounded-lg p-2  mb-2'>
         <div className='flex justify-between items-center'>
           <label className='block font-semibold text-xs text-gray-500 uppercase'>
             Project Website
@@ -77,7 +77,7 @@ const ProjectDetailSkeleton = () => {
         <Skeleton height={20} />
       </div>
 
-      <div className='group relative  rounded-lg p-2 px-3 mb-2'>
+      <div className='group relative  rounded-lg p-2  mb-2'>
         <div className='flex justify-between items-center'>
           <label className='block font-semibold text-xs text-gray-500 uppercase'>
             Is your Project registered
@@ -86,7 +86,7 @@ const ProjectDetailSkeleton = () => {
         <Skeleton height={20} />
       </div>
 
-      <div className='group relative  rounded-lg p-2 px-3 mb-2'>
+      <div className='group relative  rounded-lg p-2  mb-2'>
         <div className='flex justify-between items-center'>
           <label className='block font-semibold text-xs text-gray-500 uppercase'>
             Type of registration
@@ -95,7 +95,7 @@ const ProjectDetailSkeleton = () => {
         <Skeleton height={20} />
       </div>
 
-      <div className='group relative rounded-lg p-2 px-3 mb-2'>
+      <div className='group relative rounded-lg p-2  mb-2'>
         <div className='flex justify-between items-center'>
           <label className='block font-semibold text-xs text-gray-500 uppercase'>
             Country of registration
@@ -104,7 +104,7 @@ const ProjectDetailSkeleton = () => {
         <Skeleton height={20} />
       </div>
 
-      <div className='group relative  rounded-lg p-2 px-3 mb-2'>
+      <div className='group relative  rounded-lg p-2  mb-2'>
         <div className='flex justify-between items-center'>
           <label className='block font-semibold text-xs text-gray-500 uppercase'>
             Are you also multichain
@@ -113,7 +113,7 @@ const ProjectDetailSkeleton = () => {
         <Skeleton height={20} />
       </div>
 
-      <div className='group relative rounded-lg p-2 px-3 mb-2'>
+      <div className='group relative rounded-lg p-2  mb-2'>
         <div className='flex justify-between items-center'>
           <label className='block font-semibold text-xs text-gray-500 uppercase'>
             Please select the chains
@@ -125,7 +125,7 @@ const ProjectDetailSkeleton = () => {
         </div>
       </div>
 
-      <div className='group relative  rounded-lg p-2 px-3 mb-2'>
+      <div className='group relative  rounded-lg p-2  mb-2'>
         <div className='flex justify-between items-center'>
           <label className='block font-semibold text-xs text-gray-500 uppercase'>
             Live on icp Mainnet
@@ -134,7 +134,7 @@ const ProjectDetailSkeleton = () => {
         <Skeleton height={20} />
       </div>
 
-      <div className='group relative rounded-lg p-2 px-3 mb-2'>
+      <div className='group relative rounded-lg p-2  mb-2'>
         <div className='flex justify-between items-center'>
           <label className='block font-semibold text-xs text-gray-500 uppercase'>
             DApp link
@@ -143,7 +143,7 @@ const ProjectDetailSkeleton = () => {
         <Skeleton height={20} />
       </div>
 
-      <div className='group relative  rounded-lg p-2 px-3 mb-2'>
+      <div className='group relative  rounded-lg p-2  mb-2'>
         <div className='flex justify-between items-center'>
           <label className='block font-semibold text-xs text-gray-500 uppercase'>
             Weekly active users
@@ -152,7 +152,7 @@ const ProjectDetailSkeleton = () => {
         <Skeleton height={20} />
       </div>
 
-      <div className='group relative  rounded-lg p-2 px-3 mb-2'>
+      <div className='group relative  rounded-lg p-2  mb-2'>
         <div className='flex justify-between items-center'>
           <label className='block font-semibold text-xs text-gray-500 uppercase'>
             Revenue (in million usd)
@@ -161,7 +161,7 @@ const ProjectDetailSkeleton = () => {
         <Skeleton height={20} />
       </div>
 
-      <div className='group relative  rounded-lg p-2 px-3 mb-2'>
+      <div className='group relative  rounded-lg p-2  mb-2'>
         <div className='flex justify-between items-center'>
           <label className='block font-semibold text-xs text-gray-500 uppercase'>
             Interests
@@ -173,7 +173,7 @@ const ProjectDetailSkeleton = () => {
         </div>
       </div>
 
-      <div className='group relative  rounded-lg p-2 px-3 mb-2'>
+      <div className='group relative  rounded-lg p-2  mb-2'>
         <div className='flex justify-between items-center'>
           <label className='block font-semibold text-xs text-gray-500 uppercase'>
             Promotional video
@@ -182,7 +182,7 @@ const ProjectDetailSkeleton = () => {
         <Skeleton height={20} />
       </div>
 
-      <div className='group relative  rounded-lg p-2 px-3 mb-2'>
+      <div className='group relative  rounded-lg p-2  mb-2'>
         <div className='flex justify-between items-center'>
           <label className='block font-semibold text-xs text-gray-500 uppercase'>
             Toconomics
@@ -192,11 +192,11 @@ const ProjectDetailSkeleton = () => {
       </div>
 
       {/* Social Links */}
-      <div className='mb-4 group  rounded-lg p-2 px-3'>
+      <div className='group relative  rounded-lg p-2  mb-2'>
         <div className='flex justify-between'>
-          <h3 className='font-semibold mb-2 text-xs text-gray-500 uppercase'>
+          <label className='block font-semibold text-xs text-gray-500 uppercase'>
             Links
-          </h3>
+          </label>
         </div>
         <div className='flex gap-3 rounded-full'>
           <Skeleton circle={true} height={30} width={30} />

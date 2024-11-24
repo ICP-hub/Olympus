@@ -150,7 +150,7 @@ type Jobs = record {
   job_type : text;
 };
 type JobsInternal = record {
-  job_poster : opt UserInformation;
+  job_poster : principal;
   job_id : text;
   timestamp : nat64;
   job_data : Jobs;
@@ -619,8 +619,8 @@ service : {
   accept_offer_from_project_to_investor : (text, text) -> (text);
   accept_offer_from_project_to_mentor : (text, text) -> (text);
   accept_rejoin_invitation : (text) -> (Result);
-  access_money_details : (text) -> (Result_1) query;
-  access_private_docs : (text) -> (Result_2) query;
+  access_money_details : (text, principal) -> (Result_1) query;
+  access_private_docs : (text, principal) -> (Result_2) query;
   add_announcement : (Announcements) -> (text);
   add_data_checking : () -> (text);
   add_icp_hub_details : (IcpHubDetails) -> (text);
@@ -674,7 +674,9 @@ service : {
   get_all_approved_docs_access_requests : () -> (vec ProjectNotification) query;
   get_all_cohorts : (Pagination) -> (PaginationReturnCohort) query;
   get_all_declined_docs_access_requests : () -> (vec ProjectNotification) query;
-  get_all_jobs : (nat64, nat64) -> (vec JobsInternal) query;
+  get_all_jobs : (nat64, nat64) -> (
+      vec record { JobsInternal; UserInformation },
+    ) query;
   get_all_mentor_notification : (principal) -> (vec OfferToSendToMentor) query;
   get_all_mentors : () -> (
       vec record {
@@ -785,7 +787,9 @@ service : {
   get_investment_stage : () -> (vec text) query;
   get_job_category : () -> (vec Areas) query;
   get_job_details_using_uid : (text) -> (opt JobsInternal) query;
-  get_jobs_posted_by_principal : (principal) -> (vec JobsInternal) query;
+  get_jobs_posted_by_principal : (principal) -> (
+      vec record { JobsInternal; UserInformation },
+    ) query;
   get_latest_announcements : (nat64, nat64) -> (
       vec record { principal; vec AnnouncementsInternal },
     ) query;

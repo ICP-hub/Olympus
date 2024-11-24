@@ -330,7 +330,6 @@ function DashboardHomeNavbar({ id, id2 }) {
             onClick={toggleNotificationDropdown}
           />
         </span>
-
         {/* Render Notification Dropdown when bell is clicked */}
         {isNotificationOpen && (
           <NotificationDropdown
@@ -340,15 +339,24 @@ function DashboardHomeNavbar({ id, id2 }) {
             closeDropdown={toggleNotificationDropdown}
           />
         )}
-
-        <img
-          id={id}
-          src={currentImage}
-          alt={userCurrentRoleStatusActiveRole}
-          className='h-[30px] w-[30px] rounded-full'
-          loading='lazy'
-          draggable={false}
-        />
+        <Tooltip
+          title={
+            userCurrentRoleStatusActiveRole
+              ? userCurrentRoleStatusActiveRole.charAt(0).toUpperCase() +
+                userCurrentRoleStatusActiveRole.slice(1)
+              : ''
+          }
+          arrow
+        >
+          <img
+            id={id}
+            src={currentImage}
+            alt={userCurrentRoleStatusActiveRole}
+            className='h-[30px] w-[30px] rounded-full'
+            loading='lazy'
+            draggable={false}
+          />
+        </Tooltip>
 
         <img
           id={id2}

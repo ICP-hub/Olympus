@@ -88,7 +88,7 @@ const RatingMain = ({
           .update_peer_rating_api(argument)
           .then((result) => {
             console.log('result-in-update_peer_rating_api', result);
-            if (result && result.includes(`Ratings updated successfully`)) {
+            if (result) {
               toast.success(result);
               setIsModalOpen(false);
               setIsRatingMainOpen(false);

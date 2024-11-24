@@ -1,9 +1,4 @@
 import React, { useState } from 'react';
-import ProfileImage from '../../../assets/Logo/ProfileImage.png';
-import NeilProfileImages from '../../../assets/Logo/NeilProfileImages.png';
-import LeonProfileImage from '../../../assets/Logo/LeonProfileImage.png';
-import BlancheProfileImage from '../../../assets/Logo/BlancheProfileImage.png';
-import CypherpunkLabLogo from '../../../assets/Logo/CypherpunkLabLogo.png';
 import { FavoriteBorder, LocationOn, Star } from '@mui/icons-material';
 import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined';
 import Tabs from '../Common/Tabs/Tabs';
@@ -176,60 +171,6 @@ const UsersSection = () => {
   const handleTabChange = (tab) => {
     setCurrentTab(tab);
   };
-
-  // return (
-  //   <div className="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 bg-white">
-  //     <h1 className="text-3xl font-bold p-4 px-0 bg-opacity-95 sticky bg-white z-20 top-0">
-  //       Discover
-  //     </h1>
-
-  //     {/* Tabs Section */}
-  //     <div className="sticky top-[4rem] bg-white z-10">
-  //       <Tabs
-  //         tabs={tabs}
-  //         currentTab={currentTab}
-  //         onTabChange={handleTabChange}
-  //       />
-  //     </div>
-
-  //     <div className="md1:flex lg:flex-none lgx:flex justify-between w-full">
-  //       <div className="flex-1 w-full md1:w-[60%] lg:w-full lgx:w-[60%]">
-  //         {currentTab === "Users" && (
-  //           <DiscoverUser onUserCountChange={setUsersCount} />
-  //         )}
-  //         {currentTab === "Projects" && (
-  //           <DiscoverProject onProjectCountChange={setProjectsCount} />
-  //         )}
-  //         {currentTab === "Mentors" && (
-  //           <DiscoverMentor onMentorCountChange={setMentorsCount} />
-  //         )}
-  //         {currentTab === "Investors" && (
-  //           <DiscoverInvestor onInvestorCountChange={setInvestorsCount} />
-  //         )}
-  //       </div>
-  //       <div className=" hidden md1:block lg:hidden lgx:block w-full md1:w-[30%] lg:w-full lgx:w-[30%]">
-  //         <div className="bg-white p-6 rounded-lg shadow-sm sticky top-0">
-  //           <h2 className="text-lg font-semibold mb-4">Filters</h2>
-  //           <div className="mb-4">
-  //             <label className="block text-sm font-medium text-gray-700 mb-1">
-  //               Role
-  //             </label>
-  //             <select
-  //               onChange={(e) => handleTabChange(e.target.value)}
-  //               className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-  //             >
-  //               <option>Select role</option>
-  //               <option value="Users">Users</option>
-  //               <option value="Projects">Projects</option>
-  //               <option value="Mentors">Mentors</option>
-  //               <option value="Investors">Investors</option>
-  //             </select>
-  //           </div>
-  //         </div>
-  //       </div>
-  //     </div>
-  //   </div>
-  // );
   return (
     <>
       <div className=' w-full mx-auto px-4 sm:px-6 lg:px-8 bg-white'>
@@ -239,7 +180,7 @@ const UsersSection = () => {
           <div className=' block md1:hidden lg:block lgx:hidden '>
             <button
               onClick={() => setIsFiltersOpen(!isFiltersOpen)}
-              className='bg-white border border-gray-300 text-gray-800 py-2 px-4 rounded-md shadow-lg flex items-center my-4'
+              className='bg-white border border-gray-300 text-gray-800 py-2 px-4 rounded-md shadow-lg flex items-center mt-5'
             >
               Filter
               <FaSliders className='ml-2' />

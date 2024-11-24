@@ -273,6 +273,12 @@ pub async fn update_project(project_id: String, mut updated_project: ProjectInfo
                         project.params.vc_assigned = updated_project.vc_assigned;
                         project.params.project_website = updated_project.project_website;
                         project.params.links = updated_project.links;
+                        project.params.is_your_project_registered = updated_project.is_your_project_registered;
+                        project.params.type_of_registration = updated_project.type_of_registration;
+                        project.params.country_of_registration = updated_project.country_of_registration;
+                        project.params.dapp_link = updated_project.dapp_link;
+                        project.params.weekly_active_users = updated_project.weekly_active_users;
+                        project.params.revenue = updated_project.revenue;
 
                         state.project_storage.insert(StoredPrincipal(caller), project_list.clone());
                         return Ok("Profile updated successfully");

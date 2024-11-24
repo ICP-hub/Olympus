@@ -1,7 +1,17 @@
 import React from 'react';
-import DocumentModal from './DocumentModal';
+import Rating1 from '../components/Modals/RatingModals/Rating1';
 
-const Nodata = ({ message, isOpen, setIsOpen }) => {
+const NoDataRating = ({
+  message,
+  isRating,
+  setIsRating,
+  ratingProjectId,
+  setShowRatingModal,
+  value,
+}) => {
+  const handleRubricRating = () => {
+    setIsRating(true);
+  };
   return (
     <div>
       <div className='text-center py-12'>
@@ -81,16 +91,28 @@ const Nodata = ({ message, isOpen, setIsOpen }) => {
         <h2 className='text-xl font-semibold mb-2'>{message.message1}</h2>
         <p className='text-gray-600 mb-2'>{message.message2}</p>
         <p className='text-gray-600 mb-6'>{message.message3}</p>
-        <button
-          className='bg-[#155EEF] text-white px-4 py-2 rounded-md flex items-center justify-center mx-auto'
-          onClick={() => setIsOpen(true)}
-        >
-          {message.button}
-        </button>
+        {value === true ? (
+          <button
+            className='bg-[#155EEF] text-white px-4 py-2 rounded-md flex items-center justify-center mx-auto'
+            onClick={handleRubricRating}
+          >
+            {message.button}
+          </button>
+        ) : (
+          ''
+        )}
       </div>
-      {isOpen && <DocumentModal setIsOpen={setIsOpen} isOpen={isOpen} />}
+      {isRating && (
+        <Rating1
+          position={'center'}
+          projectId={ratingProjectId}
+          isRating={isRating}
+          setIsRating={setIsRating}
+          setShowRatingModal={setShowRatingModal}
+        />
+      )}
     </div>
   );
 };
 
-export default Nodata;
+export default NoDataRating;

@@ -16,6 +16,7 @@ import AssociationRecieverProjectSideDataToMentor from './AssociationRecieverPro
 import AssociationRecieverDataFromProject from './AssociationRecieverDataFromProject';
 import AssociationRecieverProjectSideDataFromMentor from './AssociationRecieverProjectSideDataFromMentor';
 import { toast } from 'react-hot-toast';
+import fetchRequestAssociation from '../../Utils/apiNames/getAssociationApiName';
 const AssociationDetailsProjectCard = ({
   user,
   index,
@@ -36,6 +37,8 @@ const AssociationDetailsProjectCard = ({
   const [isDeclineInvestorOfferModal, setIsDeclineInvestorOfferModal] =
     useState(null);
   const [isSubmitting, setIsSubmitting] = useState(null);
+  const [associationProfileData, setAssociationProfileData] = useState(user);
+
   const projectFullData = useSelector(
     (currState) => currState.projectData.data
   );
@@ -109,6 +112,16 @@ const AssociationDetailsProjectCard = ({
       if (result) {
         console.log(`result-in-self_decline_request`, result);
         toast.success('Request successfully declined.');
+        const response = fetchRequestAssociation(
+          'self-reject',
+          'to-mentor',
+          'project',
+          null,
+          null,
+          actor
+        );
+        const resultData = await response.api_data;
+        setAssociationProfileData(resultData[0]);
         setIsSubmitting(false);
       } else {
         console.log(`error-in-self_decline_request`, result);
@@ -132,9 +145,27 @@ const AssociationDetailsProjectCard = ({
         offer_id,
         projectId
       );
-      console.log(`result-in-self_decline_request_for_project`, result);
-      setIsSubmitting(false);
-      //   fetchPendingRequestFromProjectToInvestor();
+      if (result) {
+        console.log(`result-in-self_decline_request_for_project`, result);
+        toast.success('Request successfully declined.');
+        setIsSubmitting(false);
+        const response = fetchRequestAssociation(
+          'self-reject',
+          'to-mentor',
+          'project',
+          null,
+          null,
+          actor
+        );
+        const resultData = await response.api_data;
+        setAssociationProfileData(resultData[0]);
+      } else {
+        console.log(`result-in-self_decline_request_for_project`, result);
+        toast.error(
+          'An error occurred while declining the request. Please try again.'
+        );
+        setIsSubmitting(false);
+      }
     } catch (error) {
       setIsSubmitting(false);
       console.log(`error-in-self_decline_request_for_project`, error);
@@ -188,10 +219,26 @@ const AssociationDetailsProjectCard = ({
         message,
         projectId
       );
-      console.log(`result-in-accept_offer_from_mentor_to_project`, result);
-      handleMentorAcceptModalCloseHandler();
-      //   fetchPendingRequestFromMentorToProject();
-      setIsSubmitting(false);
+      if (result) {
+        console.log(`result-in-accept_offer_from_mentor_to_project`, result);
+        handleMentorAcceptModalCloseHandler();
+        setIsSubmitting(false);
+        const response = fetchRequestAssociation(
+          'approved',
+          'from-mentor',
+          'project',
+          null,
+          projectId,
+          actor
+        );
+        const resultData = await response.api_data;
+        console.log('resultData', resultData);
+        setAssociationProfileData(resultData[0]);
+      } else {
+        console.log(`error-in-accept_offer_from_mentor_to_project`, result);
+        handleMentorAcceptModalCloseHandler();
+        setIsSubmitting(false);
+      }
     } catch (error) {
       console.log(`error-in-accept_offer_from_mentor_to_project`, error);
       handleMentorAcceptModalCloseHandler();
@@ -208,10 +255,25 @@ const AssociationDetailsProjectCard = ({
         message,
         projectId
       );
-      console.log(`result-in-decline_offer_from_mentor_to_project`, result);
-      handleMentorDeclineModalCloseHandler();
-      //   fetchPendingRequestFromMentorToProject();
-      setIsSubmitting(false);
+      if (result) {
+        console.log(`result-in-decline_offer_from_mentor_to_project`, result);
+        handleMentorDeclineModalCloseHandler();
+        setIsSubmitting(false);
+        const response = fetchRequestAssociation(
+          'declined',
+          'from-mentor',
+          'project',
+          null,
+          projectId,
+          actor
+        );
+        const resultData = await response.api_data;
+        setAssociationProfileData(resultData[0]);
+      } else {
+        console.log(`error-in-decline_offer_from_mentor_to_project`, result);
+        handleMentorDeclineModalCloseHandler();
+        setIsSubmitting(false);
+      }
     } catch (error) {
       console.log(`error-in-decline_offer_from_mentor_to_project`, error);
       handleMentorDeclineModalCloseHandler();
@@ -227,10 +289,26 @@ const AssociationDetailsProjectCard = ({
         message,
         projectId
       );
-      console.log(`result-in-accept_offer_of_investor`, result);
-      handleInvestorAcceptModalCloseHandler();
-      //   fetchPendingRequestFromInvestorToProject();
-      setIsSubmitting(false);
+      if (result) {
+        console.log(`result-in-accept_offer_of_investor`, result);
+        handleInvestorAcceptModalCloseHandler();
+        setIsSubmitting(false);
+        const response = fetchRequestAssociation(
+          'approved',
+          'from-investor',
+          'project',
+          null,
+          projectId,
+          actor
+        );
+        const resultData = await response.api_data;
+        console.log('resultData', resultData);
+        setAssociationProfileData(resultData[0]);
+      } else {
+        console.log(`error-in-accept_offer_of_investor`, result);
+        handleInvestorAcceptModalCloseHandler();
+        setIsSubmitting(false);
+      }
     } catch (error) {
       console.log(`error-in-accept_offer_of_investor`, error);
       handleInvestorAcceptModalCloseHandler();
@@ -247,14 +325,29 @@ const AssociationDetailsProjectCard = ({
         message,
         projectId
       );
-      console.log(`result-in-decline_offer_from_investor_to_project`, result);
-      handleInvestorDeclineModalCloseHandler();
-      //   fetchPendingRequestFromInvestorToProject();
-      setIsSubmitting(true);
+      if (result) {
+        console.log(`result-in-decline_offer_from_investor_to_project`, result);
+        handleInvestorDeclineModalCloseHandler();
+        setIsSubmitting(false);
+        const response = fetchRequestAssociation(
+          'declined',
+          'from-investor',
+          'project',
+          null,
+          projectId,
+          actor
+        );
+        const resultData = await response.api_data;
+        setAssociationProfileData(resultData[0]);
+      } else {
+        console.log(`error-in-decline_offer_from_investor_to_project`, result);
+        handleInvestorDeclineModalCloseHandler();
+        setIsSubmitting(false);
+      }
     } catch (error) {
       console.log(`error-in-decline_offer_from_investor_to_project`, error);
       handleInvestorDeclineModalCloseHandler();
-      setIsSubmitting(true);
+      setIsSubmitting(false);
     }
   };
 
@@ -262,7 +355,7 @@ const AssociationDetailsProjectCard = ({
     <>
       {selectedTypeData === 'to-mentor' ? (
         <AssociationRecieverProjectSideDataToMentor
-          user={user}
+          user={associationProfileData}
           activeTabData={activeTabData}
           selectedTypeData={selectedTypeData}
           handleMentorSelfReject={handleMentorSelfReject}
@@ -284,7 +377,7 @@ const AssociationDetailsProjectCard = ({
         />
       ) : selectedTypeData === 'from-mentor' ? (
         <AssociationRecieverProjectSideDataFromMentor
-          user={user}
+          user={associationProfileData}
           activeTabData={activeTabData}
           selectedTypeData={selectedTypeData}
           handleMentorSelfReject={handleMentorSelfReject}
@@ -306,7 +399,7 @@ const AssociationDetailsProjectCard = ({
         />
       ) : selectedTypeData === 'to-investor' ? (
         <AssociationRecieverProjectSideDataToMentor
-          user={user}
+          user={associationProfileData}
           activeTabData={activeTabData}
           selectedTypeData={selectedTypeData}
           handleMentorSelfReject={handleMentorSelfReject}
@@ -327,7 +420,7 @@ const AssociationDetailsProjectCard = ({
         />
       ) : selectedTypeData === 'from-investor' ? (
         <AssociationRecieverProjectSideDataFromMentor
-          user={user}
+          user={associationProfileData}
           activeTabData={activeTabData}
           selectedTypeData={selectedTypeData}
           handleMentorSelfReject={handleMentorSelfReject}

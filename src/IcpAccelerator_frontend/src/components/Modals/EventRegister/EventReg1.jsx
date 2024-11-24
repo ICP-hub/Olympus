@@ -181,7 +181,7 @@ const EventReg1 = ({
         </div>
 
         {errors.cohort_banner && (
-          <span className='mt-1 text-sm text-red-500 font-bold text-start px-4'>
+          <span className='mt-1 text-sm text-red-500 font-bold text-start '>
             {errors?.cohort_banner?.message}
           </span>
         )}

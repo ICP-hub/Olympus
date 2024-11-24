@@ -226,7 +226,7 @@ const DiscoverInvestor = ({ onInvestorCountChange }) => {
 
               return (
                 <div
-                  className='sm:pr-6 sm:pt-6 sm:pb-6  my-10 md1:my-0 w-full  rounded-lg shadow-sm mb-4 flex flex-col sm:flex-row'
+                  className='sm:pr-6 sm:pt-6 sm:pb-6  my-10 md1:my-0 w-full  rounded-lg shadow-sm mb-4 flex flex-col sm:flex-row p-4'
                   key={index}
                 >
                   <div className='w-full sm:w-[272px] relative'>
@@ -293,27 +293,16 @@ const DiscoverInvestor = ({ onInvestorCountChange }) => {
                     </div>
                     <div className='bg-[#FFFAEB] border-[#f2c855] border text-[#090907] rounded-md text-xs px-3 py-1 mr-2 mb-2 w-[5.3rem]'>
                       INVESTOR
-                      {/* {activeRole && (
-                    <span
-                      className={`inline-block ${
-                        tagColors[activeRole.name] ||
-                        "bg-gray-100 text-gray-800"
-                      } text-xs px-3 py-1 rounded-full mr-2 `}
-                    >
-                      {activeRole.name}
-                    </span>
-                  )} */}
-                    </div>
-                    <div className='border-t border-gray-200 my-3 break-all line-clamp-1'>
-                      {email}
                     </div>
 
-                    <p className='text-gray-600 mb-2 break-all line-clamp-3'>
+                    <div className='border-t border-gray-200 mt-3 hidden sm:block'></div>
+
+                    <p className='text-gray-600 mb-2 overflow-hidden line-clamp-2 break-all sm:h-12'>
                       {bio}
                     </p>
                     <div className='flex items-center text-sm text-gray-500 flex-wrap gap-1'>
                       <div className='flex overflow-x-auto space-x-2'>
-                        {randomSkills?.map((skill, index) => (
+                        {randomSkills?.slice(0, 3).map((skill, index) => (
                           <span
                             key={index}
                             className='border-2 border-gray-500 rounded-full text-gray-700 text-xs px-3 py-1 bg-gray-100'
@@ -322,12 +311,11 @@ const DiscoverInvestor = ({ onInvestorCountChange }) => {
                           </span>
                         ))}
                       </div>
-
-                      <span className='mr-2  flex text-[#121926] items-center py-1'>
-                        <PlaceOutlinedIcon className='text-[#364152] mr-1 w-4 h-4' />
-                        {country}
-                      </span>
                     </div>
+                    <span className='mr-2  flex text-[#121926] items-center py-1'>
+                      <PlaceOutlinedIcon className='text-[#364152] mr-1 w-4 h-4' />
+                      {country}
+                    </span>
                   </div>
                 </div>
               );

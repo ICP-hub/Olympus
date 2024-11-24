@@ -175,7 +175,7 @@ pub async fn send_offer_to_investor_by_project(
         association_noti: vec![assciation_noti_internal].into(), 
     };
 
-    let _ = add_notification(project_principal, investor_id, noti_to_send, crate::NotificationApprovalStatus::Pending);
+    let _ = add_notification(project_principal, investor_id, noti_to_send);
 
     notify_investor_with_offer(investor_id, offer_to_send_to_investor);
     format!("offer sent sucessfully to {}", investor_id)

@@ -1,4 +1,4 @@
-use crate::state_handler::*;
+use crate::{state_handler::*, UserInfoInternal, UserInformation};
 use crate::jobs::job_types::*;
 use candid::Principal;
 use ic_cdk::api::caller;
@@ -11,8 +11,8 @@ use crate::user_modules::get_user::*;
 pub async fn post_job(params: Jobs) -> String {
     let principal_id = ic_cdk::api::caller();
 
-    let mut cached_user_data = None;
-    let user_data = get_user_info_with_cache(principal_id, &mut cached_user_data);
+    //let mut cached_user_data = None;
+    //let user_data = get_user_info_with_cache(principal_id, &mut cached_user_data);
 
     let current_time = ic_cdk::api::time();
 
@@ -24,10 +24,10 @@ pub async fn post_job(params: Jobs) -> String {
     let uid = format!("{:x}", Sha256::digest(&random_bytes));
 
     let new_job = JobsInternal {
-        job_id: uid.clone(), // Clone uid to return it later
+        job_id: uid.clone(),
         job_data: params.clone(),
         timestamp: current_time,
-        job_poster: Some(user_data),
+        job_poster: ic_cdk::caller(),
     };
 
     let result = mutate_state(|state| {
@@ -105,25 +105,26 @@ pub async fn delete_job_post_by_id(job_id: String) -> String {
 
 
 #[query(guard = "combined_guard")]
-pub fn get_all_jobs(page_number: usize, page_size: usize) -> Vec<JobsInternal> {
+pub fn get_all_jobs(page_number: usize, page_size: usize) -> Vec<(JobsInternal, UserInformation)> {
     read_state(|state| {
-        let mut all_jobs: Vec<JobsInternal> = Vec::new();
+        let mut all_jobs_info: Vec<(JobsInternal, UserInformation)> = Vec::new();
 
         for (_, job_list) in state.post_job.iter() {
             for job_internal in job_list.0.iter() {
-                all_jobs.push(job_internal.clone());
+                let user_info = get_user_info_using_principal(job_internal.job_poster);
+                all_jobs_info.push((job_internal.clone(), user_info.unwrap().params));
             }
         }
 
-        ic_cdk::println!("Total jobs found: {}", all_jobs.len());
+        ic_cdk::println!("Total jobs found: {}", all_jobs_info.len());
 
-        if all_jobs.is_empty() {
+        if all_jobs_info.is_empty() {
             return vec![];
         }
 
-        all_jobs.sort_by(|a, b| b.timestamp.cmp(&a.timestamp));
+        all_jobs_info.sort_by(|a, b| b.0.timestamp.cmp(&a.0.timestamp));
 
-        let max_page_number = (all_jobs.len() + page_size - 1) / page_size - 1;
+        let max_page_number = (all_jobs_info.len() + page_size - 1) / page_size - 1;
 
         if page_number > max_page_number {
             ic_cdk::println!("Page number {} is out of range, max page number is {}. Returning empty vector.", page_number, max_page_number);
@@ -132,7 +133,7 @@ pub fn get_all_jobs(page_number: usize, page_size: usize) -> Vec<JobsInternal> {
 
         let start_index = page_number * page_size;
 
-        all_jobs.into_iter()
+        all_jobs_info.into_iter()
             .skip(start_index)
             .take(page_size)
             .collect()
@@ -142,18 +143,21 @@ pub fn get_all_jobs(page_number: usize, page_size: usize) -> Vec<JobsInternal> {
 
 
 
+
 #[query(guard = "combined_guard")]
-pub fn get_jobs_posted_by_principal(caller: Principal) -> Vec<JobsInternal> {
+pub fn get_jobs_posted_by_principal(caller: Principal) -> Vec<(JobsInternal, UserInformation)> {
     read_state(|state| {
-        let mut jobs_for_principal = Vec::new();
+        let mut jobs_info_for_principal = Vec::new();
         for (poster_principal, job_list) in state.post_job.iter() {
-            jobs_for_principal.extend(
-                job_list.0.iter()
-                         .filter(|_job_internal| poster_principal.0 == caller)
-                         .cloned()
-            );
+            if poster_principal.0 == caller {
+                for job_internal in job_list.0.iter() {
+                    let user_info = get_user_info_using_principal(job_internal.job_poster)
+                        .unwrap_or_else(|| UserInfoInternal::default()); 
+                    jobs_info_for_principal.push((job_internal.clone(), user_info.params));
+                }
+            }
         }
-        jobs_for_principal
+        jobs_info_for_principal
     })
 }
 

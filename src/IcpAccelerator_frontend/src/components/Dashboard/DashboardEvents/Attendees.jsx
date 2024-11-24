@@ -137,6 +137,7 @@ const Attendees = ({ cohortData, updateAttendeeCount }) => {
   const [cardDetail, setCardDetail] = useState(null);
   const [projectId, setProjectId] = useState(null);
   const [attendeeRole, setAttendeeRole] = useState(null);
+  const [showRatingModal, setShowRatingModal] = useState(false);
   const actor = useSelector((currState) => currState.actors.actor);
   const location = useLocation();
   useTimeout(() => setLoading(false));
@@ -463,6 +464,7 @@ const Attendees = ({ cohortData, updateAttendeeCount }) => {
               isRating={isRating}
               setIsRating={setIsRating}
               cohortid={cohortid}
+              setShowRatingModal={setShowRatingModal}
             />
           )}
         </div>

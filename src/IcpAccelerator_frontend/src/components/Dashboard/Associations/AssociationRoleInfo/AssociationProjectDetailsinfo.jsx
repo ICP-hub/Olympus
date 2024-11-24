@@ -5,7 +5,7 @@ import DiscoverRatingforAssociation from '../../../Discover/DiscoverRatingsforAs
 import DiscoverMoneyRaising from '../../Project/DiscoverFundingCard';
 import uint8ArrayToBase64 from '../../../Utils/uint8ArrayToBase64';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
-
+import NoData from '../../../NoDataCard/NoData';
 const AssociationProjectDetailsinfo = ({ key, user }) => {
   const [activeMobileTab, setActiveMobileTab] = useState(null);
   const [activeTab, setActiveTab] = useState('document');
@@ -81,6 +81,10 @@ const AssociationProjectDetailsinfo = ({ key, user }) => {
 
   let projectid = senderDataProject.uid;
   console.log(projectid);
+  console.log(
+    'ye vala hai hai data jo bhej rha hu money ka ',
+    senderDataProject?.params
+  );
 
   // Project Details (Index 0)
   let projectSocialLinks = senderDataProject?.params?.social_links?.[0];
@@ -319,7 +323,7 @@ const AssociationProjectDetailsinfo = ({ key, user }) => {
               {activeMobileTab === 'moneyraised' && (
                 <div className='px-2 py-2'>
                   <DiscoverMoneyRaising
-                    cardData={senderDataProject?.params}
+                    data={senderDataProject?.params}
                     projectId={projectid}
                   />
                 </div>
@@ -346,7 +350,7 @@ const AssociationProjectDetailsinfo = ({ key, user }) => {
                   userData={senderDataUser}
                   principalId={senderPrincipal}
                 /> */}
-                  <NoDataCard message={'No Review Available'} />
+                  <NoData message={'No Review Available'} />
                 </div>
               )}
             </div>
@@ -438,7 +442,7 @@ const AssociationProjectDetailsinfo = ({ key, user }) => {
           )}
           {activeTab === 'moneyraised' && (
             <DiscoverMoneyRaising
-              cardData={senderDataProject?.params}
+              data={senderDataProject?.params}
               projectId={projectid}
             />
           )}
@@ -447,7 +451,7 @@ const AssociationProjectDetailsinfo = ({ key, user }) => {
             //   userData={senderDataUser}
             //   principalId={senderPrincipal}
             // />
-            <NoDataCard message={'No Review Available'} />
+            <NoData message={'No Review Available'} />
           )}
         </div>
         {/* project content end  */}

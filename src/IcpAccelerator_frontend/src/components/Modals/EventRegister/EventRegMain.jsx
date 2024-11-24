@@ -22,6 +22,7 @@ const EventRegMain = ({
   singleEventData,
   cohortId,
   fetchCohorts,
+  setCohortEvents,
 }) => {
   console.log('cohort singleEventData reg main me ', singleEventData);
 
@@ -39,7 +40,8 @@ const EventRegMain = ({
   const defaultValues = {
     cohort_banner: singleEventData?.cohort_banner
       ? uint8ArrayToBase64(singleEventData?.cohort_banner)
-      : '',
+      : null,
+    // cohort_banner: null,
     cohort_end_date: singleEventData?.cohort_end_date ?? '',
     cohort_id: singleEventData?.cohort_id ?? '',
     cohort_launch_date: singleEventData?.cohort_launch_date ?? '',
@@ -152,11 +154,11 @@ const EventRegMain = ({
                   })),
                 ]
               : [],
-
         no_of_seats: parseInt(data.no_of_seats),
         cohort_banner: imageData ? [imageData] : [],
         host_name: organiserName ? [organiserName] : [], // Example placeholder for host name
       };
+
       try {
         setIsSubmiting(true);
         let result;
@@ -167,20 +169,19 @@ const EventRegMain = ({
             toast.success(result.Ok);
             setModalOpen(false);
             setTimeout(() => {
-              fetchCohorts;
+              fetchCohorts();
             }, 1000);
-            fetchCohorts;
           } else if (result && result.Err) {
-            toast.error(result.Err);
+            // toast.error(result.Err);
             setModalOpen(false);
             setTimeout(() => {
-              fetchCohorts;
+              fetchCohorts();
             }, 1000);
           } else {
             toast.error('Unknown error occurred.');
             setModalOpen(false);
             setTimeout(() => {
-              fetchCohorts;
+              fetchCohorts();
             }, 1000);
           }
         } else {
@@ -188,21 +189,30 @@ const EventRegMain = ({
           result = await actor.create_cohort(eventData);
           if (result && result.Ok) {
             toast.success(result.Ok);
+
+            setCohortEvents((prevEvents) => [
+              {
+                ...eventData,
+                cohort_id: result.Ok,
+              },
+              ...prevEvents,
+            ]);
+
             setModalOpen(false);
             setTimeout(() => {
-              fetchCohorts;
+              fetchCohorts();
             }, 1000);
           } else if (result && result.Err) {
             toast.error(result.Err);
             setModalOpen(false);
             setTimeout(() => {
-              fetchCohorts;
+              fetchCohorts();
             }, 1000);
           } else {
             toast.error('Unknown error occurred.');
             setModalOpen(false);
             setTimeout(() => {
-              fetchCohorts;
+              fetchCohorts();
             }, 1000);
           }
         }

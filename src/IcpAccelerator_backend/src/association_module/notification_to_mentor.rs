@@ -193,7 +193,7 @@ pub async fn send_offer_to_mentor_from_project(mentor_id: Principal, msg: String
         association_noti: vec![assciation_noti_internal].into(), 
     };
 
-    let _ = add_notification(project_principal, mentor_id, noti_to_send, crate::NotificationApprovalStatus::Pending);
+    let _ = add_notification(project_principal, mentor_id, noti_to_send);
 
     notify_mentor_with_offer(mentor_id, offer_to_send_to_mentor);
     format!("offer sent sucessfully to {}", mentor_id)

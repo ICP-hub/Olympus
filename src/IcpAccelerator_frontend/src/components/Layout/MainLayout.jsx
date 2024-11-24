@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Outlet } from 'react-router-dom';
+import React from 'react';
 import Navbar from './Header/Navbar';
 import Footer from '../Footer/Footer';
-import { ConnectWallet } from '@nfid/identitykit/react';
+import Home from '../Home/Home';
 
 const MainLayout = () => {
   return (
@@ -10,7 +9,7 @@ const MainLayout = () => {
       <div className='layout'>
         <Navbar />
         <main>
-          <Outlet />
+          <Home />
         </main>
         <Footer />
       </div>

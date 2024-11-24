@@ -6,7 +6,7 @@ import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined';
 export default function DiscoverSkeleton() {
   return (
     <SkeletonThemeMain>
-      <div className='sm:pr-6 sm:pt-6 sm:pb-6 my-10 md1:my-0 w-full  rounded-lg shadow-sm mb-4 flex flex-col sm:flex-row'>
+      <div className='sm:pr-6 sm:pt-6 sm:pb-6 my-10 md1:my-0 w-full  rounded-lg shadow-sm mb-4 flex flex-col sm:flex-row p-4'>
         <div className=' w-full sm:w-[272px] relative'>
           <div className='w-full sm:max-w-[250px] sm:w-[250px] h-[254px] bg-gray-100 rounded-lg flex flex-col justify-between overflow-hidden'>
             <div className='absolute inset-0 flex items-center justify-center'>
@@ -47,10 +47,10 @@ export default function DiscoverSkeleton() {
         <div className='flex-grow mt-5 md1:mt-0 sm:ml-[25px] w-full'>
           <div className='flex justify-between items-start mb-2'>
             <div>
-              <h3 className='text-xl font-bold'>
+              <h3 className='text-xl font-bold line-clamp-1 break-all truncate'>
                 <Skeleton width={150} height={15} />
               </h3>
-              <p className='text-gray-500'>
+              <p className='text-gray-500 line-clamp-1 break-all truncate'>
                 <Skeleton width={150} height={15} />
               </p>
             </div>
@@ -62,7 +62,7 @@ export default function DiscoverSkeleton() {
               style={{ borderRadius: '0.25rem' }}
             />
           </div>
-          <div className='border-t border-gray-200 my-1'></div>
+          <div className='border-t border-gray-200 my-1 hidden sm:block'></div>
           <p className='text-gray-600 mb-4 overflow-hidden text-ellipsis max-h-12 line-clamp-2'>
             <div className='space-y-2.5 animate-pulse w-full mt-2 '>
               <div className='flex items-center w-full'>

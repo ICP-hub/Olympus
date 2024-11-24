@@ -1,8 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import mentor from '../../../../assets/Logo/talent.png';
 import uint8ArrayToBase64 from '../../Utils/uint8ArrayToBase64';
-import timestampAgo from '../../Utils/navigationHelper/timeStampAgo';
 import DocsNotification from './DocsNotification';
 import MoneyRaiseNotification from './MoneyRaiseNotification';
 import CohortNotification from './CohortNotification';
@@ -13,14 +11,9 @@ const NotificationDropdown = ({ closeDropdown, notifications }) => {
 
   const handleViewAll = () => {
     closeDropdown();
-    const notificationArray = notifications.Ok || [];
-    if (Array.isArray(notificationArray) && notificationArray.length > 0) {
-      navigate('/dashboard/dashboard-notification', {
-        state: { notifications: notificationArray },
-      });
-    } else {
-      console.log('No project data available');
-    }
+    navigate('/dashboard/dashboard-notification', {
+      state: { notifications: notifications },
+    });
   };
 
   useEffect(() => {

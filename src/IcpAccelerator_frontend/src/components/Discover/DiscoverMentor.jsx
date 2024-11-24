@@ -224,7 +224,7 @@ const DiscoverMentor = ({ onMentorCountChange }) => {
               const principle_id = mentorArray[0];
               return (
                 <div
-                  className='sm:pr-6 sm:pt-6 sm:pb-6  my-10 md1:my-0 w-full   rounded-lg shadow-sm mb-4 flex flex-col sm:flex-row'
+                  className='sm:pr-6 sm:pt-6 sm:pb-6  my-10 md1:my-0 w-full   rounded-lg shadow-sm mb-4 flex flex-col sm:flex-row p-4'
                   key={index}
                 >
                   <div className='w-full  sm:w-[272px] relative'>
@@ -283,28 +283,15 @@ const DiscoverMentor = ({ onMentorCountChange }) => {
                     </div>
                     <div className='bg-[#ECFDF3] border-[#ABEFC6] border text-[#067647] rounded-md text-xs px-3 py-1 mr-2 mb-2 w-[4.7rem]'>
                       MENTOR
-                      {/* {activeRole && (
-                        <span
-                          className={`inline-block ${
-                            tagColors[activeRole.name] ||
-                            "border-2 border-gray-500 rounded-full text-gray-700 text-xs px-3 py-1 bg-gray-100"
-                          } text-xs px-3 py-1 rounded-full mr-2 `}
-                        >
-                          {activeRole.name}
-                        </span>
-                      )} */}
                     </div>
-                    {/* <div className='border-t border-gray-200 my-3 mb-2 break-all line-clamp-1 '>
-                      {email}
-                    </div> */}
 
-                    <div className='border-t border-gray-200 mt-3'></div>
-                    <p className='text-gray-600 mb-2 break-all line-clamp-3'>
+                    <div className='border-t border-gray-200 mt-3 hidden sm:block'></div>
+                    <p className='text-gray-600 mb-2 overflow-hidden line-clamp-2 break-all sm:h-12'>
                       {bio}
                     </p>
                     <div className='flex items-center text-sm text-gray-500 flex-wrap gap-1'>
                       <div className='flex overflow-x-auto space-x-2'>
-                        {randomSkills.map((skill, index) => (
+                        {randomSkills.slice(0, 3).map((skill, index) => (
                           <span
                             key={index}
                             className='border-2 border-gray-500 rounded-full text-gray-700 text-xs px-3 py-1 bg-gray-100'
@@ -313,12 +300,11 @@ const DiscoverMentor = ({ onMentorCountChange }) => {
                           </span>
                         ))}
                       </div>
-
-                      <span className='mr-2  flex text-[#121926] items-center py-1'>
-                        <PlaceOutlinedIcon className='text-[#364152] mr-1 w-4 h-4' />
-                        {country}
-                      </span>
                     </div>
+                    <span className='mr-2  flex text-[#121926] items-center py-1'>
+                      <PlaceOutlinedIcon className='text-[#364152] mr-1 w-4 h-4' />
+                      {country}
+                    </span>
                   </div>
                 </div>
               );
