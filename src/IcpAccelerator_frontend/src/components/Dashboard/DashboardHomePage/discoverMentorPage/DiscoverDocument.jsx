@@ -6,19 +6,23 @@ import NoDataFound from '../../DashboardEvents/NoDataFound';
 import { ThreeDots } from 'react-loader-spinner';
 import useTimeout from '../../../hooks/TimeOutHook';
 import DiscoverDocumentSkeleton from './DiscoverMentorPageSkeleton/DiscoverDocumentSkeleton';
+import { Principal } from '@dfinity/principal';
 
-const DocumentCard = ({ doc, type }) => {
-  // Safely access doc properties to avoid undefined errors
-  const title = doc?.title ?? 'Document'; // Use optional chaining and fallback with ?? for undefined values
+const DocumentCard = ({ doc, type, access }) => {
+  console.log('type', type);
+
+  const title = doc?.title ?? 'Document';
   const link = doc?.link ?? '';
   const description = doc?.description ?? 'No description available.';
-  const isPrivate = type === 'private';
+
+  const showBlur =
+    (type === 'private' && access === false) ||
+    (type !== 'public' && access === false);
 
   return (
     <div
-      className={`relative flex flex-col sm4:flex-row sm4:items-center p-4 rounded-lg mb-4 shadow-md bg-white transition-all duration-300 ${isPrivate ? 'blur-sm' : ''}`}
+      className={`relative flex flex-col sm4:flex-row sm4:items-center p-4 rounded-lg mb-4 shadow-md bg-white transition-all duration-300 ${showBlur ? 'blur-sm' : ''}`}
     >
-      {/* Image Section with Background */}
       <div className='bg-gray-100 px-3 py-4 rounded-lg flex-shrink-0 flex flex-col items-center'>
         <img
           src={Filetype}
@@ -41,13 +45,13 @@ const DocumentCard = ({ doc, type }) => {
       <div className='ml-4 mt-3 sm4:mt-0 flex-grow transition-all duration-300'>
         <div className='flex justify-between flex-wrap'>
           <p
-            className={`text:xs dsx:text-sm sm4:text-base font-semibold text-gray-900 ${isPrivate ? 'blur-sm' : ''}`}
+            className={`text:xs dsx:text-sm sm4:text-base font-semibold text-gray-900 ${showBlur ? 'blur-sm' : ''}`}
           >
             {title}
           </p>
           <button
             className={`rounded-lg px-0.5 sm4:px-1 sm:px-2 text-xs ${
-              isPrivate
+              type === 'private'
                 ? 'bg-[#FFFAEB] border-2 border-[#F5E1A4] text-[#A37E00]'
                 : 'bg-[#ECFDF3] border-2 border-[#ABEFC6] text-[#067647]'
             }`}
@@ -55,7 +59,7 @@ const DocumentCard = ({ doc, type }) => {
             {type.charAt(0).toUpperCase() + type.slice(1)}
           </button>
         </div>
-        <p className={`text-gray-600 mt-3 ${isPrivate ? 'blur-sm' : ''}`}>
+        <p className={`text-gray-600 mt-3 ${showBlur ? 'blur-sm' : ''}`}>
           {description}
         </p>
       </div>
@@ -64,8 +68,10 @@ const DocumentCard = ({ doc, type }) => {
 };
 
 const DiscoverDocument = ({ projectDetails, projectId }) => {
+  const principal = useSelector((state) => state.internet.principal);
   const actor = useSelector((currState) => currState.actors?.actor); // Optional chaining to avoid undefined errors
   const [loading, setLoading] = useState(false);
+  const [approvedDocs, setApprovedDocs] = useState([]);
   const userCurrentRoleStatusActiveRole = useSelector(
     (currState) => currState.currentRoleStatus?.activeRole // Optional chaining
   );
@@ -91,7 +97,8 @@ const DiscoverDocument = ({ projectDetails, projectId }) => {
     [actor]
   );
 
-  const renderDocuments = (docs, type) => {
+  const renderDocuments = (docs, type, access) => {
+    console.log('docs', docs);
     return isLoading ? (
       <>
         {[...Array(docs.length)].map((_, index) => (
@@ -100,7 +107,13 @@ const DiscoverDocument = ({ projectDetails, projectId }) => {
       </>
     ) : (
       docs.map((doc, index) => (
-        <DocumentCard key={index} doc={doc} type={type} projectId={projectId} />
+        <DocumentCard
+          key={index}
+          doc={doc}
+          type={type}
+          projectId={projectId}
+          access={access}
+        />
       ))
     );
   };
@@ -109,11 +122,19 @@ const DiscoverDocument = ({ projectDetails, projectId }) => {
     !projectDetails?.private_docs?.length &&
     !projectDetails?.public_docs?.length; // Optional chaining for nested properties
 
-  const getAllUser = async (caller, isMounted) => {
-    await caller
-      .access_private_docs(projectId)
+  const getAccessDocumentRequest = async (isMounted) => {
+    const convertedPrincipal = Principal.fromText(principal);
+
+    await actor
+      .access_private_docs(projectId, convertedPrincipal)
       .then((result) => {
-        console.log('result', result);
+        console.log('access_private_docs', result);
+        if (result) {
+          setApprovedDocs(result?.Ok);
+        } else {
+          setApprovedDocs([]);
+          toast.error('No response from server');
+        }
       })
       .catch((error) => {
         if (isMounted) {
@@ -126,7 +147,7 @@ const DiscoverDocument = ({ projectDetails, projectId }) => {
     let isMounted = true;
 
     if (actor) {
-      getAllUser(actor, isMounted);
+      getAccessDocumentRequest(actor, isMounted);
     }
     return () => {
       isMounted = false;
@@ -138,31 +159,35 @@ const DiscoverDocument = ({ projectDetails, projectId }) => {
 
   return (
     <>
-      <div className='space-y-3 mt-[50px] relative'>
+      <div
+        className={`space-y-3 ${!approvedDocs ? 'mt-[50px]' : ''}  relative`}
+      >
         {/* Permanent Request Access Button */}
         <div className='absolute -top-[2rem] right-4 z-20'>
           {userCurrentRoleStatusActiveRole === 'user'
             ? ''
-            : projectDetails?.private_docs?.length > 0 && (
-                <button
-                  className='bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center justify-center'
-                  onClick={() => sendPrivateDocumentRequest(projectId)}
-                  disabled={loading}
-                >
-                  {loading ? (
-                    <ThreeDots
-                      visible={true}
-                      height='24'
-                      width='60'
-                      color='#FFFFFF'
-                      radius='9'
-                      ariaLabel='three-dots-loading'
-                    />
-                  ) : (
-                    'Request Access'
-                  )}
-                </button>
-              )}
+            : approvedDocs && approvedDocs.length > 0
+              ? ''
+              : projectDetails?.private_docs?.length > 0 && (
+                  <button
+                    className='bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center justify-center'
+                    onClick={() => sendPrivateDocumentRequest(projectId)}
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <ThreeDots
+                        visible={true}
+                        height='20'
+                        width='60'
+                        color='#FFFFFF'
+                        radius='9'
+                        ariaLabel='three-dots-loading'
+                      />
+                    ) : (
+                      'Request Access'
+                    )}
+                  </button>
+                )}
         </div>
 
         {hasNoDocuments ? (
@@ -172,16 +197,32 @@ const DiscoverDocument = ({ projectDetails, projectId }) => {
         ) : (
           <>
             {/* Private Documents Section */}
-            {projectDetails?.private_docs?.length > 0 && (
-              <div className='max-w-4xl bg-white p-3 pb-0'>
-                {renderDocuments(projectDetails.private_docs, 'private')}
-              </div>
+            {approvedDocs && approvedDocs.length > 0 ? (
+              <>
+                {approvedDocs && approvedDocs?.length > 0 && (
+                  <div className='max-w-4xl bg-white p-3 pb-0'>
+                    {renderDocuments(approvedDocs, 'private', true)}
+                  </div>
+                )}
+              </>
+            ) : (
+              <>
+                {projectDetails?.private_docs?.length > 0 && (
+                  <div className='max-w-4xl bg-white p-3 pb-0'>
+                    {renderDocuments(
+                      projectDetails.private_docs,
+                      'private',
+                      false
+                    )}
+                  </div>
+                )}
+              </>
             )}
 
             {/* Public Documents Section */}
             {projectDetails?.public_docs?.length > 0 && (
               <div className='max-w-4xl bg-white p-3 pt-0'>
-                {renderDocuments(projectDetails.public_docs, 'public')}
+                {renderDocuments(projectDetails.public_docs, 'public', null)}
               </div>
             )}
           </>

@@ -619,8 +619,8 @@ service : {
   accept_offer_from_project_to_investor : (text, text) -> (text);
   accept_offer_from_project_to_mentor : (text, text) -> (text);
   accept_rejoin_invitation : (text) -> (Result);
-  access_money_details : (text) -> (Result_1) query;
-  access_private_docs : (text) -> (Result_2) query;
+  access_money_details : (text, principal) -> (Result_1) query;
+  access_private_docs : (text, principal) -> (Result_2) query;
   add_announcement : (Announcements) -> (text);
   add_data_checking : () -> (text);
   add_icp_hub_details : (IcpHubDetails) -> (text);

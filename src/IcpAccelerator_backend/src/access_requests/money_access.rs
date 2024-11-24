@@ -309,12 +309,13 @@ pub fn get_approved_money_requests(project_id: String) -> Vec<ProjectNotificatio
 }
 
 #[query(guard = "combined_guard")]
-pub fn access_money_details(project_id: String) -> Result<MoneyRaised, CustomError> {
-    let caller = ic_cdk::api::caller();
-
+pub fn access_money_details(
+project_id: String,
+id: Principal,
+) -> Result<MoneyRaised, CustomError> {
     let is_owner = read_state(|state| {
         state.project_storage.iter().any(|(principal, projects)| {
-            principal == StoredPrincipal(caller) && projects.0.iter().any(|p| p.uid == project_id)
+            principal == StoredPrincipal(id) && projects.0.iter().any(|p| p.uid == project_id)
         })
     });
 
@@ -325,7 +326,7 @@ pub fn access_money_details(project_id: String) -> Result<MoneyRaised, CustomErr
                 .money_access
                 .get(&project_id)
                 .map_or(false, |principals| {
-                    principals.0.contains(&Principal::from(caller))
+                    principals.0.contains(&id)
                 })
         });
 

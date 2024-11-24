@@ -41,7 +41,7 @@ const DiscoverFundingCard = ({ title, value, imageSrc, isPrivate }) => {
   );
 };
 
-const DiscoverMoneyRaising = ({ data, projectId }) => {
+const DiscoverMoneyRaising = ({ data, projectId, access }) => {
   console.log('data in 47 ,data dekhte h kya h', data);
   console.log('data in 48 ,data dekhte h kya h', projectId);
   const actor = useSelector((currState) => currState.actors.actor);
@@ -81,7 +81,8 @@ const DiscoverMoneyRaising = ({ data, projectId }) => {
     <div className='flex flex-col'>
       {userCurrentRoleStatusActiveRole === 'user'
         ? ''
-        : data && (
+        : data &&
+          access === true && (
             <button
               className='bg-blue-600 text-white px-4 py-2 rounded-lg my-4  self-end'
               onClick={sendMoneyRaisingRequest}
@@ -109,31 +110,31 @@ const DiscoverMoneyRaising = ({ data, projectId }) => {
           title='ICP Grants'
           value={icp_grants}
           imageSrc={docu1}
-          isPrivate={true}
+          isPrivate={access}
         />
         <DiscoverFundingCard
           title='Investors'
           value={investors}
           imageSrc={docu2}
-          isPrivate={true}
+          isPrivate={access}
         />
         <DiscoverFundingCard
           title='Launchpad'
           value={raised_from_other_ecosystem}
           imageSrc={docu3}
-          isPrivate={true}
+          isPrivate={access}
         />
         <DiscoverFundingCard
           title='Valuation'
           value={sns}
           imageSrc={docu4}
-          isPrivate={true}
+          isPrivate={access}
         />
         <DiscoverFundingCard
           title='Target Amount'
           value={target_amount}
           imageSrc={docu5}
-          isPrivate={true}
+          isPrivate={access}
         />
       </div>
     </div>
