@@ -69,7 +69,7 @@ function TestimonialSection() {
 
   return (
     <div className='flex items-center justify-center bg-white py-10 px-4'>
-      <div className='w-full max-w-5xl relative'>
+      <div className='w-full max-w-6xl relative'>
         <Swiper
           modules={[Navigation, Pagination, Scrollbar, A11y]}
           spaceBetween={50}
