@@ -228,7 +228,10 @@ function DashboardHomeProfileCards(percentage) {
           </div>
         </div>
       </div>
-      <div className='bg-white w-full rounded-lg shadow-sm lg:shadow-none  mt-8 lg:p-6'>
+      <div className='bg-white w-full rounded-lg shadow-sm lg:shadow-none  mt-6 lg:p-6'>
+        <DashboardProjectCard />
+      </div>
+      <div className='bg-white w-full rounded-lg shadow-sm lg:shadow-none  mt-6 lg:p-6'>
         <DashboardProfileView />
       </div>
     </>

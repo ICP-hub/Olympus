@@ -132,18 +132,28 @@ const DocsNotification = ({ notification, formatNotificationMessage }) => {
   return (
     <div className='flex items-center space-x-4 p-4 bg-gray-100 rounded-lg mb-4 max-w-full'>
       <div className='flex-1 min-w-0'>
-        <p className='text-sm text-gray-800 mb-1 items-center space-x-1 whitespace-nowrap text-ellipsis'>
+        <p className='text-sm text-gray-800 mb-1 items-center space-x-1  text-ellipsis'>
           {details?.status === 'pending' && (
             <div className='flex flex-wrap items-center mb-2 space-x-2'>
-              <img
-                src={details?.sender?.profilePicture}
-                alt={`${details?.sender?.name || 'User'}'s avatar`}
-                className='h-8 w-8 rounded-full flex-shrink-0 mr-1'
-                loading='lazy'
-                draggable={false}
-              />
-              <span className='font-semibold'>{details?.sender?.name}</span>
-              <span className='mr-1'>requests access to the document from</span>
+              <div className='flex items-center '>
+                <img
+                  src={details?.sender?.profilePicture}
+                  alt={`${details?.sender?.name || 'User'}'s avatar`}
+                  className='h-8 w-8 rounded-full flex-shrink-0 mr-1'
+                  loading='lazy'
+                  draggable={false}
+                />
+
+                <div className='flex items-center flex-nowrap'>
+                  <span className='font-semibold'>
+                    {details?.sender?.name}Welcome, Chirag Sangwan!
+                  </span>
+                  <span className='mr-1'>
+                    requests access to the document from
+                  </span>
+                </div>
+              </div>
+
               <div className='flex items-center flex-nowrap'>
                 <img
                   src={details?.receiver?.profilePicture}

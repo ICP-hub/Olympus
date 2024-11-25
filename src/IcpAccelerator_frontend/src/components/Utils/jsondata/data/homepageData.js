@@ -68,17 +68,17 @@ export const homepagedata = {
     arrowForwardIcon: { ArrowForwardIcon },
     mainHeading: 'The Web3 Ecosystems Launchpad',
     description:
-      'Est malesuada ac elit gravida vel aliquam nec. Arcu pellentesque convallis quam feugiat non viverra massa fringilla. Malesuada blandit integer quis tellus. Sit dolor lorem molestie a facilisis a integer laoreet tortor.',
+      'Empowering innovators, entrepreneurs, and visionaries to build, scale, and thrive in the dynamic Web3 ecosystem. Discover tools, connections, and opportunities to unlock the future of decentralized success.',
     card1: {
       title: 'Founders',
       image: { Founder },
       description:
-        'Est malesuada ac elit gravida vel aliquam nec. Arcu pellentesque convallis quam feugiat non viverra massa fringilla.',
+        'Bring your vision to life with Olympus. Founders can create and manage projects seamlessly, build teams, and share key resources.',
       list: [
-        'Platea sit lacus pellentesque feugiat neque',
-        'Blandit a mi dictumst placerat',
-        'Tempus cursus enim eget ornare',
-        'Cursus tristique in diam porta ut egestas',
+        'Launch and manage innovative projects.',
+        'Upload key documents and whitepapers.',
+        'Build and lead strong teams.',
+        'Connect with investors and mentors.',
       ],
       bgColor: '#E0F2FE',
     },
@@ -86,12 +86,12 @@ export const homepagedata = {
       title: 'Investors',
       image: { Investor },
       description:
-        'Est malesuada ac elit gravida vel aliquam nec. Arcu pellentesque convallis quam feugiat non viverra massa fringilla.',
+        'Fuel innovation by investing in high-potential projects. Investors connect with projects directly to enable growth and success.',
       list: [
-        'Platea sit lacus pellentesque feugiat neque',
-        'Blandit a mi dictumst placerat',
-        'Tempus cursus enim eget ornare',
-        'Cursus tristique in diam porta ut egestas',
+        'Invest in high-potential projects.',
+        'Review whitepapers and tokenomics.',
+        'Connect with innovative project teams.',
+        'Support future-focused ideas.',
       ],
       bgColor: '#FEF0C7',
     },
@@ -99,12 +99,12 @@ export const homepagedata = {
       title: 'Mentors',
       image: { MentorsImage },
       description:
-        'Est malesuada ac elit gravida vel aliquam nec. Arcu pellentesque convallis quam feugiat non viverra massa fringilla.',
+        'Shape the future by guiding projects and sharing your expertise. Mentors can create cohorts and host events to nurture talent.',
       list: [
-        'Platea sit lacus pellentesque feugiat neque',
-        'Blandit a mi dictumst placerat',
-        'Tempus cursus enim eget ornare',
-        'Cursus tristique in diam porta ut egestas',
+        'Guide projects with your expertise.',
+        'Host cohorts and impactful events.',
+        'Partner with aligned projects.',
+        'Empower founders to succeed.',
       ],
       bgColor: '#FDEAD7',
     },
@@ -112,12 +112,12 @@ export const homepagedata = {
       title: 'Talent',
       image: { Talents },
       description:
-        'Est malesuada ac elit gravida vel aliquam nec. Arcu pellentesque convallis quam feugiat non viverra massa fringilla.',
+        'Join the Olympus community to showcase your skills and connect with projects that align with your ambitions. Empower yourself and accelerate your growth.',
       list: [
-        'Platea sit lacus pellentesque feugiat neque',
-        'Blandit a mi dictumst placerat',
-        'Tempus cursus enim eget ornare',
-        'Cursus tristique in diam porta ut egestas',
+        'Showcase skills to find opportunities.',
+        'Join innovative Web3 projects.',
+        'Collaborate with founders and mentors.',
+        'Advance your career in Web3.',
       ],
       bgColor: '#CCFBEF',
     },
@@ -193,9 +193,10 @@ export const homepagedata = {
         title: 'Global events',
         titleClass: 'text-3xl font-custom text-[#121926] pb-2',
         description:
-          'Commodo ut non aliquam nunc nulla velit et vulputate turpis. Erat rhoncus tristique ullamcorper sit. Erat rhoncus tristique ullamcorper sit.',
+          'Participate in exclusive meetups, conferences, and global networking opportunities.',
         descriptionClass: 'pb-6 text-xs font-normal text-[#4B5565]',
-        description2: 'Erat rhoncus tristique ullamcorper sit.',
+        description2:
+          'Gain insights from industry-leading experts and pioneers.',
         tags: ['#Accelerators', '#Meetups', '#Conferences'],
       },
     },
@@ -208,7 +209,7 @@ export const homepagedata = {
         title: 'AI Concierge',
         titleClass: 'text-3xl font-custom text-[#121926] pb-2',
         description:
-          'Commodo ut non aliquam nunc nulla velit et vulputate turpis. Erat rhoncus tristique ullamcorper sit.',
+          'Leverage AI tools to simplify processes, boost productivity, and enhance efficiency.',
         descriptionClass: 'pb-6 text-xs font-normal text-[#4B5565]',
         tags: ['#Onboarding', '#Comms', '#Knowledge '],
       },
@@ -222,7 +223,7 @@ export const homepagedata = {
         title: 'Perks',
         titleClass: 'text-3xl font-custom text-[#121926] pb-2',
         description:
-          'Commodo ut non aliquam nunc nulla velit et vulputate turpis. Erat rhoncus tristique ullamcorper sit.',
+          'Unlock exclusive benefits, premium tools, and resources for personal and project growth.',
         descriptionClass: 'pb-6 text-xs font-normal text-[#4B5565]',
         tags: ['#Onboarding', '#Comms', '#Knowledge '],
       },
@@ -236,9 +237,9 @@ export const homepagedata = {
         title: 'Regional Hubs',
         titleClass: 'text-3xl font-custom text-[#121926] pb-2',
         description:
-          'Commodo ut non aliquam nunc nulla velit et vulputate turpis. Erat rhoncus tristique ullamcorper sit. Erat rhoncus tristique ullamcorper sit.',
+          'Connect with local communities, accelerators, and regional networks to expand reach.',
         descriptionClass: 'pb-6 text-xs font-normal text-[#4B5565]',
-        description2: 'Erat rhoncus tristique ullamcorper sit.',
+        description2: 'Strengthen ties with innovators in your region.',
         tags: ['#Accelerators', '#Meetups', '#Conferences'],
       },
     },
@@ -251,9 +252,9 @@ export const homepagedata = {
         title: 'Multichain',
         titleClass: 'text-3xl font-custom text-[#121926] pb-2',
         description:
-          'Commodo ut non aliquam nunc nulla velit et vulputate turpis. Erat rhoncus tristique ullamcorper sit. Erat rhoncus tristique ullamcorper sit.',
+          'Operate seamlessly across multiple blockchain ecosystems with full interoperability support.',
         descriptionClass: 'pb-6 text-xs font-normal text-[#4B5565]',
-        description2: 'Erat rhoncus tristique ullamcorper sit.',
+        description2: 'Expand your reach with full multichain support.',
         tags: ['#Accelerators', '#Meetups', '#Conferences'],
       },
     },
@@ -266,7 +267,7 @@ export const homepagedata = {
         title: 'Reputation',
         titleClass: 'text-3xl font-custom text-[#121926] pb-2',
         description:
-          'Commodo ut non aliquam nunc nulla velit et vulputate turpis. Erat rhoncus tristique ullamcorper sit.',
+          'Showcase achievements, verify contributions, and boost credibility within the Web3 ecosystem.',
         descriptionClass: 'pb-6 text-xs font-normal text-[#4B5565]',
         tags: ['#Onboarding', '#Comms', '#Knowledge '],
       },
@@ -280,7 +281,7 @@ export const homepagedata = {
         title: 'Opportunities',
         titleClass: 'text-3xl font-custom text-[#121926] pb-2',
         description:
-          'Commodo ut non aliquam nunc nulla velit et vulputate turpis. Erat rhoncus tristique ullamcorper sit.',
+          'Explore exciting career paths and projects to advance your goals and vision.',
         descriptionClass: 'pb-6 text-xs font-normal text-[#4B5565]',
         tags: ['#Onboarding', '#Comms'],
       },
@@ -294,7 +295,7 @@ export const homepagedata = {
         title: 'Communication',
         titleClass: 'text-3xl font-custom text-[#121926] pb-2',
         description:
-          'Commodo ut non aliquam nunc nulla velit et vulputate turpis. Erat rhoncus tristique ullamcorper sit.',
+          'Streamline connections, collaboration, and communication with intuitive, efficient tools.',
         descriptionClass: 'pb-6 text-xs font-normal text-[#4B5565]',
         tags: ['#Onboarding', '#Comms'],
       },
@@ -308,7 +309,7 @@ export const homepagedata = {
         title: 'Bounties',
         titleClass: 'text-3xl font-custom text-[#121926] pb-2',
         description:
-          'Commodo ut non aliquam nunc nulla velit et vulputate turpis. Erat rhoncus tristique ullamcorper sit.',
+          'Earn rewards by contributing to projects, solving challenges, and completing tasks effectively.',
         descriptionClass: 'pb-6 text-xs font-normal text-[#4B5565]',
         tags: ['#Onboarding', '#Comms'],
       },
@@ -335,7 +336,7 @@ export const homepagedata = {
       title: 'How it works',
       titleClass: 'text-3xl font-medium mb-4 mt-4',
       description:
-        'Est malesuada et elit gravida vel aliquam arcu. At amet, pellentesque convallis duis diam feugiat non viverra massa tincidunt. Mauris nullam blandit integer quam nulla.',
+        'Follow these simple steps to create, connect, and grow your network. Collaborate with experts and accelerate your journey toward success with ease and efficiency',
       descriptionClass: 'text-gray-600 mb-6 text-center',
     },
     image: {
@@ -347,7 +348,7 @@ export const homepagedata = {
       icon: { CreateProfileIcon },
       title: 'Create Profile',
       description:
-        'Est malesuada et elit gravida vel aliquam arcu dui quis vitae amet.',
+        'Showcase your skills and stand out to potential opportunities.',
       iconBackground: '#F7B27A',
       textColor: 'white',
       titleClass: 'font-bold',
@@ -357,7 +358,7 @@ export const homepagedata = {
       icon: { DiscoverAndConnetIcon },
       title: 'Discover & Connect',
       description:
-        'Est malesuada et elit gravida vel aliquam arcu dui quis vitae amet.',
+        'Access tools, funding, and mentorship to achieve your goals.',
       iconBackground: '#F7B27A',
       textColor: 'white',
       titleClass: 'font-bold',
@@ -366,8 +367,7 @@ export const homepagedata = {
     step3: {
       icon: { CollaborateIcon },
       title: 'Collaborate',
-      description:
-        'Est malesuada et elit gravida vel aliquam arcu dui quis vitae amet.',
+      description: 'Work together with innovators to bring your ideas to life.',
       iconBackground: '#F7B27A',
       textColor: 'white',
       titleClass: 'font-bold',
@@ -377,7 +377,7 @@ export const homepagedata = {
       icon: { AccelerateIcon },
       title: 'Accelerate',
       description:
-        'Est malesuada et elit gravida vel aliquam arcu dui quis vitae amet.',
+        'Access tools, funding, and mentorship to achieve your goals.',
       iconBackground: '#F7B27A',
       textColor: 'white',
       titleClass: 'font-bold',
@@ -408,35 +408,34 @@ export const homepagedata = {
 
   accordionData: [
     {
-      title:
-        'Arweave stellar klaytn siacoin shiba-inu fantom terra terra elrond.',
+      title: 'What is ICP Olympus ?',
       content:
-        'Kadena binance harmony helium aave revain hive dai nexo. Bitcoin fantom horizen cosmos golem gala harmony USD. Amp golem terra hedera litecoin aave audius harmony cosmos monero.',
+        'ICP Olympus is a collaborative platform connecting users, mentors, investors, and projects to foster innovation and growth. ',
     },
     {
-      title: 'Tether secret helium BitTorrent BitTorrent quant.',
+      title: 'Who can use ICP Olympus?',
       content:
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ac dolor non ligula gravida.',
+        'The platform is designed for users, mentors, investors, and project creators, each playing a unique role in the ecosystem.',
     },
     {
-      title: 'ECash golem elrond THETA horizen.',
+      title: 'What is the role of a mentor?',
       content:
-        'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+        'Mentors create cohorts, and associate with investors and projects to provide expertise and support.',
     },
     {
-      title: 'Ox helium horizen fantom ren enjin EOS aave.',
+      title: 'How can investors associate with projects?',
       content:
-        'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo.',
+        'Investors can browse projects, evaluate them, and associate by providing funding or resources.',
     },
     {
-      title: 'Secret holo THETA kadena decentraland IOTA.',
+      title: 'How do I get started on ICP Olympus?',
       content:
-        'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
+        'Simply sign up, select your role, and start exploring or associating with projects, mentors, or cohorts.',
     },
     {
-      title: 'Digibyte compound PancakeSwap enjin PancakeSwap zcash bitcoin.',
+      title: 'What if I face issues while using the platform?',
       content:
-        'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
+        'You can contact our support team via the "Help" section or email us at support@icpolympus.com.',
     },
   ],
 
@@ -446,7 +445,7 @@ export const homepagedata = {
     logo: { logo },
     mailicon: { MailOutlineIcon },
     description:
-      'Risus feugiat sollicitudin ur lorem aliquam maecenas vitae vulputate. In tortor.',
+      'Empowering innovators to achieve greatness and redefine the future together.',
     explore: {
       title: 'Explore',
       items: ['Projects', 'Investors', 'Mentors', 'Talent', 'Accelerators'],
