@@ -120,7 +120,7 @@ const CohortNotification = ({ notification, formatNotificationMessage }) => {
 
   return (
     <div className='flex flex-col justify-between space-y-4 p-4 bg-gray-100 rounded-lg mb-4 max-w-full'>
-      <div className='flex items-center space-x-2 flex-wrap'>
+      <div className='flex items-start space-x-2 '>
         <img
           src={
             details?.status === 'pending'
@@ -132,21 +132,22 @@ const CohortNotification = ({ notification, formatNotificationMessage }) => {
           loading='lazy'
           draggable={false}
         />
-        <span className='text-sm font-semibold text-gray-800 text-nowrap'>
+        <span className='text-sm font-semibold text-gray-800 break-words'>
           {details?.status === 'pending'
             ? details?.sender?.name
             : details?.receiver?.name || 'Unknown User'}
-        </span>
-        <span className='text-sm text-gray-800 text-nowrap'>
-          {details?.status === 'accepted' && `accepted your invitation to `}
-          {details?.status === 'pending' &&
-            `has sent you an invitation request for `}
-          {details?.status === 'declined' && `declined your invitation to `}
-          <span className='font-semibold'>
-            {details?.cohortName || 'Untitled Cohort'}
+          <span className='text-sm text-gray-800 break-words'>
+            {details?.status === 'accepted' && `accepted your invitation to `}
+            {details?.status === 'pending' &&
+              `has sent you an invitation request for `}
+            {details?.status === 'declined' && `declined your invitation to `}
+            <span className='font-semibold break-words'>
+              {details?.cohortName || 'Untitled Cohort'}
+            </span>
           </span>
         </span>
       </div>
+
       <p className='text-xs text-gray-400'>{timestampAgo(details?.sentAt)}</p>
       <div className='mt-2 flex justify-start'>
         {renderStatusButton(details)}
