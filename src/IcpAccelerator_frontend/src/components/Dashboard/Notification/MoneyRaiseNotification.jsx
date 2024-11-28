@@ -138,203 +138,118 @@ const MoneyRaiseNotification = ({
         <p className='text-sm text-gray-800 mb-1 flex items-center space-x-1 whitespace-nowrap flex-wrap text-ellipsis'>
           {details?.status === 'pending' && (
             <>
-              {/* ===== */}
-              <div className='flex items-start w-full  bg-gray-100 p-4 rounded-md'>
+              <div className='flex items-start w-full  bg-gray-100  rounded-md'>
                 <img
                   src={details?.sender?.profilePicture}
                   alt={`${details?.sender?.name || 'User'}'s avatar`}
-                  className='h-6 w-6 rounded-full flex-shrink-0 mr-2'
+                  className='h-8 w-8 rounded-full flex-shrink-0 mr-2'
                   loading='lazy'
                   draggable={false}
                 />
 
                 <div className='flex  flex-wrap items-center flex-1'>
-                  <p className='font-semibold mr-2 break-words'>
+                  <p className='font-semibold  break-all w-14 truncate'>
                     {details?.sender?.name || 'User'}
                   </p>
-                  <p className='text-sm text-[#4B5565] break-words'>
-                    has requested to view the funds raised and total money
-                    collected for the project
+                  <p className='text-sm text-[#4B5565] break-all flex flex-wrap'>
+                    has requested to view the funds raised for
                   </p>
-
-                  <div className='flex items-center'>
-                    <img
-                      src={
-                        details?.receiver?.profilePicture ||
-                        'https://via.placeholder.com/40'
-                      }
-                      alt={`${details?.receiver?.name || 'User'}'s avatar`}
-                      className='h-8 w-8 rounded-full flex-shrink-0 mr-2'
-                      loading='lazy'
-                      draggable={false}
-                    />
-                    <span className='font-semibold break-words'>
-                      {details?.receiver?.name || 'User'}
-                    </span>
-                  </div>
                 </div>
               </div>
-              {/* ===== */}
-              {/* <div className='flex items-center mb-2'>
+              <div className='flex items-center mt-2'>
                 <img
-                  src={details?.sender?.profilePicture}
-                  alt={`${details?.sender?.name || 'User'}'s avatar`}
-                  className='h-6 w-6 rounded-full flex-shrink-0 mr-2'
-                  loading='lazy'
-                  draggable={false}
-                />
-                <span className='font-semibold'>{details?.sender?.name}</span>
-              </div>
-              <span className='mb-2'>
-                has requested to view the funds raised and total money collected
-                for the project
-              </span>
-              <div className='flex items-center mb-2'>
-                <img
-                  src={details?.receiver?.profilePicture}
+                  src={
+                    details?.receiver?.profilePicture ||
+                    'https://via.placeholder.com/40'
+                  }
                   alt={`${details?.receiver?.name || 'User'}'s avatar`}
-                  className='h-6 w-6 rounded-full flex-shrink-0 mr-2'
+                  className='h-8 w-8 rounded-full flex-shrink-0 mr-2'
                   loading='lazy'
                   draggable={false}
                 />
-                <span className='font-semibold'>
-                  {details?.receiver?.name || 'Unknown Project'}
+                <span className='font-semibold break-all line-clamp-1 truncate'>
+                  {details?.receiver?.name || 'User'}
                 </span>
-              </div> */}
+              </div>
             </>
           )}
           {details?.status === 'approved' && (
             <>
-              {/* <div className='flex items-center mb-2'>
-                <img
-                  src={details?.receiver?.profilePicture}
-                  alt={`${details?.receiver?.name || 'User'}'s avatar`}
-                  className='h-6 w-6 rounded-full flex-shrink-0 mr-2'
-                  loading='lazy'
-                  draggable={false}
-                />
-                <span className='font-semibold'>{details?.receiver?.name}</span>
-              </div>
-              <span className='mb-2'>
-                has approved to view the funds raised and total money collected
-                for the project
-              </span>
-              <div className='flex items-center mb-2'>
+              <div className='flex items-start w-full  bg-gray-100  rounded-md'>
                 <img
                   src={details?.sender?.profilePicture}
                   alt={`${details?.sender?.name || 'User'}'s avatar`}
-                  className='h-6 w-6 rounded-full flex-shrink-0 mr-2'
-                  loading='lazy'
-                  draggable={false}
-                />
-                <span className='font-semibold'>
-                  {details?.projectName || 'Unknown Project'}
-                </span>
-              </div> */}
-              <div className='flex items-start w-full  bg-gray-100 p-4 rounded-md'>
-                <img
-                  src={details?.sender?.profilePicture}
-                  alt={`${details?.sender?.name || 'User'}'s avatar`}
-                  className='h-6 w-6 rounded-full flex-shrink-0 mr-2'
+                  className='h-8 w-8 rounded-full flex-shrink-0 mr-2'
                   loading='lazy'
                   draggable={false}
                 />
 
                 <div className='flex  flex-wrap items-center flex-1'>
-                  <p className='font-semibold mr-2 break-words'>
+                  <p className='font-semibold  break-all w-14 truncate'>
                     {details?.sender?.name || 'User'}
                   </p>
-                  <p className='text-sm text-[#4B5565] break-words'>
-                    has requested to view the funds raised and total money
-                    collected for the project
+                  <p className='text-sm text-[#4B5565] break-all flex flex-wrap'>
+                    has approved to view the funds raised for
                   </p>
-
-                  <div className='flex items-center'>
-                    <img
-                      src={
-                        details?.receiver?.profilePicture ||
-                        'https://via.placeholder.com/40'
-                      }
-                      alt={`${details?.receiver?.name || 'User'}'s avatar`}
-                      className='h-8 w-8 rounded-full flex-shrink-0 mr-2'
-                      loading='lazy'
-                      draggable={false}
-                    />
-                    <span className='font-semibold break-words'>
-                      {details?.projectName || 'Unknown Project'}
-                    </span>
-                  </div>
                 </div>
+              </div>
+              <div className='flex items-center mt-2'>
+                <img
+                  src={
+                    details?.receiver?.profilePicture ||
+                    'https://via.placeholder.com/40'
+                  }
+                  alt={`${details?.receiver?.name || 'User'}'s avatar`}
+                  className='h-8 w-8 rounded-full flex-shrink-0 mr-2'
+                  loading='lazy'
+                  draggable={false}
+                />
+                <span className='font-semibold break-all line-clamp-1 truncate'>
+                  {details?.projectName || 'Unknown Project'}
+                </span>
               </div>
             </>
           )}
           {details?.status === 'declined' && (
             <>
-              {/* <div className='flex items-center mb-2'>
-                <img
-                  src={details?.receiver?.profilePicture}
-                  alt={`${details?.receiver?.name || 'User'}'s avatar`}
-                  className='h-6 w-6 rounded-full flex-shrink-0 mr-2'
-                  loading='lazy'
-                  draggable={false}
-                />
-                <span className='font-semibold'>{details?.receiver?.name}</span>
-              </div>
-              <span className='mb-2'>
-                has declined to view the funds raised and total money collected
-                for the project
-              </span>
-              <div className='flex items-center mb-2'>
+              <div className='flex items-start w-full  bg-gray-100  rounded-md'>
                 <img
                   src={details?.sender?.profilePicture}
                   alt={`${details?.sender?.name || 'User'}'s avatar`}
-                  className='h-6 w-6 rounded-full flex-shrink-0 mr-2'
-                  loading='lazy'
-                  draggable={false}
-                />
-                <span className='font-semibold'>
-                  {details?.projectName || 'Unknown Project'}
-                </span>
-              </div> */}
-              <div className='flex items-start w-full  bg-gray-100 p-4 rounded-md'>
-                <img
-                  src={details?.sender?.profilePicture}
-                  alt={`${details?.sender?.name || 'User'}'s avatar`}
-                  className='h-6 w-6 rounded-full flex-shrink-0 mr-2'
+                  className='h-8 w-8 rounded-full flex-shrink-0 mr-2'
                   loading='lazy'
                   draggable={false}
                 />
 
                 <div className='flex  flex-wrap items-center flex-1'>
-                  <p className='font-semibold mr-2 break-words'>
+                  <p className='font-semibold  break-all w-12 truncate'>
                     {details?.sender?.name || 'User'}
                   </p>
-                  <p className='text-sm text-[#4B5565] break-words'>
-                    has requested to view the funds raised and total money
-                    collected for the project
+                  <p className='text-sm text-[#4B5565] break-all flex flex-wrap'>
+                    declined access to the fund raised for
                   </p>
-
-                  <div className='flex items-center'>
-                    <img
-                      src={
-                        details?.receiver?.profilePicture ||
-                        'https://via.placeholder.com/40'
-                      }
-                      alt={`${details?.receiver?.name || 'User'}'s avatar`}
-                      className='h-8 w-8 rounded-full flex-shrink-0 mr-2'
-                      loading='lazy'
-                      draggable={false}
-                    />
-                    <span className='font-semibold break-words'>
-                      {details?.projectName || 'Unknown Project'}
-                    </span>
-                  </div>
                 </div>
+              </div>
+              <div className='flex items-center mt-2'>
+                <img
+                  src={
+                    details?.receiver?.profilePicture ||
+                    'https://via.placeholder.com/40'
+                  }
+                  alt={`${details?.receiver?.name || 'User'}'s avatar`}
+                  className='h-8 w-8 rounded-full flex-shrink-0 mr-2'
+                  loading='lazy'
+                  draggable={false}
+                />
+                <span className='font-semibold break-all line-clamp-1 truncate'>
+                  {details?.projectName || 'Unknown Project'}
+                </span>
               </div>
             </>
           )}
         </p>
-        <p className='text-xs text-gray-400 mt-1 whitespace-nowrap'>
+        <p className='text-[15px] mt-1 whitespace-nowrap'>
+          {' '}
           {timestampAgo(details?.sentAt)}
         </p>
         <div className='mt-2 flex space-x-2'>{renderStatusButton(details)}</div>
