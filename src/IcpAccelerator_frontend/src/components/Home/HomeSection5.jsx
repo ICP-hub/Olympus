@@ -115,7 +115,7 @@ export default function HomeSection5() {
                           {homepagesection5.step4.title}
                         </h3>
                         <p className='text-gray-600 pr-6'>
-                          {homepagesection5.step1.description}
+                          {homepagesection5.step4.description}
                         </p>
                       </div>
                     </li>
