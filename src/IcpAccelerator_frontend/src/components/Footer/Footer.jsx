@@ -178,12 +178,15 @@ import XIcon from '@mui/icons-material/X';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
-import { Link } from 'react-router-dom'; // Import Link for routing
+import { Link, useNavigate } from 'react-router-dom'; // Import Link for routing
 import { homepagedata } from '../Utils/jsondata/data/homepageData';
 
 const Footer = () => {
+  const navigate = useNavigate();
   const { footer } = homepagedata;
-
+  const handleNavigate = () => {
+    navigate('/terms-of-use');
+  };
   return (
     <div className='w-full mx-auto bg-[rgb(254,246,238)]'>
       <footer className='bg-[rgb(254,246,238)] py-10 px-4 md:px-8'>
@@ -261,27 +264,20 @@ const Footer = () => {
             <div className='border-t border-gray-200 mt-2 pt-8 flex flex-col md:flex-row justify-between items-center text-gray-600 text-sm'>
               {/* Policies Section */}
               <div className='flex flex-col md:flex-row w-full md:w-auto justify-between items-start md:items-center space-y-4 md:space-y-0 md:space-x-5'>
-                {footer.policies.map((policy, index) => (
-                  <div
-                    key={index}
-                    className='flex justify-between items-center'
-                  >
-                    <Link
-                      to={`/${policy.toLowerCase().replace(/ /g, '-')}`}
-                      className='font-bold'
-                    >
-                      {policy === 'COPYRIGHT_YEAR' ? (
-                        <>
-                          © {new Date().getFullYear()} Olympus Inc.
-                          <br className='md:hidden block' />
-                          All Rights Reserved
-                        </>
-                      ) : (
-                        policy
-                      )}
-                    </Link>
-                  </div>
-                ))}
+                <div className='flex justify-between gap-3 items-center'>
+                  <Link to='/terms-of-use' className='font-bold'>
+                    terms-of-use
+                  </Link>
+                  <Link to='/cookie-policy' className='font-bold'>
+                    cookie-policy
+                  </Link>
+                  <Link to='/privacy-policy' className='font-bold'>
+                    privacy-policy
+                  </Link>
+                  © {new Date().getFullYear()} Olympus Inc.
+                  <br className='md:hidden block' />
+                  All Rights Reserved
+                </div>
               </div>
 
               {/* Social Links Section */}

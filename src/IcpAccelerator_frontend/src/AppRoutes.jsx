@@ -22,7 +22,7 @@ const AppRoutes = () => {
   const renderCommonRoutes = () => (
     <>
       <Route path='/' element={<MainLayout />}>
-        <Route index element={<Home />} />
+        <Route path='/' element={<Home />} />
         <Route path='terms-of-use' element={<TermsOfUse />} />
         <Route path='cookie-policy' element={<CookiePolicy />} />
         <Route path='privacy-policy' element={<PrivacyPolicy />} />

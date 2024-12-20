@@ -214,6 +214,7 @@ function DashboardHomePage() {
       ]);
       driverObj.drive();
     }
+    return () => driverObj.destroy();
   }, [hasRoles, hasApprovedRole]);
 
   return (

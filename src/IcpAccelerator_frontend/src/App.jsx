@@ -34,10 +34,10 @@ const App = () => {
     if (isAuthenticated && identitySaga) {
       if (userFullData) {
         console.log('Navigating to dashboard');
-        navigate('/dashboard'); // Navigate if data is available
-      } else {
+        navigate('/dashboard');
+      } else if (!userFullData) {
         console.log('Navigating to register-user');
-        navigate('/register-user'); // Navigate to register-user if data is missing
+        navigate('/register-user');
       }
     } else {
       console.log('Navigating to root');
