@@ -134,46 +134,47 @@ const DocsNotification = ({ notification, formatNotificationMessage }) => {
       <div className='flex-1 min-w-0'>
         <p className='text-sm text-gray-800 mb-1 items-center space-x-1  text-ellipsis'>
           {details?.status === 'pending' && (
-            <div className='flex items-start w-full  bg-gray-100 p-4 rounded-md'>
-              <img
-                src={
-                  details?.sender?.profilePicture ||
-                  'https://via.placeholder.com/40'
-                }
-                alt={`${details?.sender?.name || 'User'}'s avatar`}
-                className='h-8 w-8 rounded-full flex-shrink-0 mr-2'
-                loading='lazy'
-                draggable={false}
-              />
+            <>
+              <div className='flex items-start w-full  bg-gray-100  rounded-md'>
+                <img
+                  src={
+                    details?.sender?.profilePicture ||
+                    'https://via.placeholder.com/40'
+                  }
+                  alt={`${details?.sender?.name || 'User'}'s avatar`}
+                  className='h-8 w-8 rounded-full flex-shrink-0 mr-2'
+                  loading='lazy'
+                  draggable={false}
+                />
 
-              <div className='flex  flex-wrap items-center flex-1'>
-                <p className='font-semibold mr-2 break-words'>
-                  {details?.sender?.name || 'User'}
-                </p>
-                <p className='text-sm text-[#4B5565] break-words'>
-                  to requests access to the document from
-                </p>
-
-                <div className='flex items-center'>
-                  <img
-                    src={
-                      details?.receiver?.profilePicture ||
-                      'https://via.placeholder.com/40'
-                    }
-                    alt={`${details?.receiver?.name || 'User'}'s avatar`}
-                    className='h-8 w-8 rounded-full flex-shrink-0 mr-2'
-                    loading='lazy'
-                    draggable={false}
-                  />
-                  <span className='font-semibold break-words'>
-                    {details?.receiver?.name || 'User'}
-                  </span>
+                <div className='flex  flex-wrap items-center flex-1'>
+                  <p className='font-semibold  break-all w-14 truncate'>
+                    {details?.sender?.name || 'User'}
+                  </p>
+                  <p className='text-sm text-[#4B5565] break-all flex flex-wrap'>
+                    requests access to the document from
+                  </p>
                 </div>
               </div>
-            </div>
+              <div className='flex items-center mt-2'>
+                <img
+                  src={
+                    details?.receiver?.profilePicture ||
+                    'https://via.placeholder.com/40'
+                  }
+                  alt={`${details?.receiver?.name || 'User'}'s avatar`}
+                  className='h-8 w-8 rounded-full flex-shrink-0 mr-2'
+                  loading='lazy'
+                  draggable={false}
+                />
+                <span className='font-semibold break-all line-clamp-1 truncate'>
+                  {details?.receiver?.name || 'User'}
+                </span>
+              </div>
+            </>
           )}
         </p>
-        <p className='text-xs text-gray-400 mt-1 whitespace-nowrap'>
+        <p className='text-[15px] mt-1 whitespace-nowrap'>
           {timestampAgo(details?.sentAt)}
         </p>
         <div className='mt-2 flex space-x-2'>{renderStatusButton(details)}</div>

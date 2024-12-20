@@ -55,7 +55,7 @@ export const homepagedata = {
     content: {
       backedByText: 'Backed by',
       dfLogo: '../../../assets/Logo/df_logo.png',
-      mainHeading: 'Peak of Web3 Acceleration',
+      mainHeading: 'The Peak of Web3 Acceleration',
       highlightedText: 'Web3',
       description:
         'OLYMPUS is the first on-chain Web3 acceleration platform connecting founders, investors, mentors and talents across different ecosystems.',
@@ -66,7 +66,7 @@ export const homepagedata = {
   homepagesection2: {
     aboutText: 'About',
     arrowForwardIcon: { ArrowForwardIcon },
-    mainHeading: 'The Web3 Ecosystems Launchpad',
+    mainHeading: 'The Web3 Ecosystem Launchpad',
     description:
       'Empowering innovators, entrepreneurs, and visionaries to build, scale, and thrive in the dynamic Web3 ecosystem. Discover tools, connections, and opportunities to unlock the future of decentralized success.',
     card1: {
@@ -358,7 +358,7 @@ export const homepagedata = {
       icon: { DiscoverAndConnetIcon },
       title: 'Discover & Connect',
       description:
-        'Access tools, funding, and mentorship to achieve your goals.',
+        'Network with mentors, investors, and peers to build relationships.',
       iconBackground: '#F7B27A',
       textColor: 'white',
       titleClass: 'font-bold',
@@ -420,7 +420,7 @@ export const homepagedata = {
     {
       title: 'What is the role of a mentor?',
       content:
-        'Mentors create cohorts, and associate with investors and projects to provide expertise and support.',
+        'Mentors guide projects, create cohorts, and associate with investors and projects to provide expertise and support.',
     },
     {
       title: 'How can investors associate with projects?',
