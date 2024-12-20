@@ -266,13 +266,13 @@ const Footer = () => {
               <div className='flex flex-col md:flex-row w-full md:w-auto justify-between items-start md:items-center space-y-4 md:space-y-0 md:space-x-5'>
                 <div className='flex justify-between gap-3 items-center'>
                   <Link to='/terms-of-use' className='font-bold'>
-                    terms-of-use
+                    Term of Use
                   </Link>
                   <Link to='/cookie-policy' className='font-bold'>
-                    cookie-policy
+                    Cookie Policy
                   </Link>
                   <Link to='/privacy-policy' className='font-bold'>
-                    privacy-policy
+                    Privacy Policy
                   </Link>
                   © {new Date().getFullYear()} Olympus Inc.
                   <br className='md:hidden block' />
@@ -282,18 +282,24 @@ const Footer = () => {
 
               {/* Social Links Section */}
               <div className='hidden md:flex space-x-4 mt-4 md:mt-0 justify-center'>
-                <a href='/' aria-label='XIcon'>
+                <a href='https://x.com/dfinity/' aria-label='XIcon'>
                   <XIcon fontSize='medium' style={{ color: 'gray' }} />
                 </a>
-                <a href='/' aria-label='LinkedInIcon'>
+                <a
+                  href='https://www.linkedin.com/company/dfinity/'
+                  aria-label='LinkedInIcon'
+                >
                   <LinkedInIcon fontSize='medium' style={{ color: 'gray' }} />
                 </a>
-                <a href='/' aria-label='FacebookIcon'>
+                <a
+                  href='https://www.facebook.com/groups/377049066958975/?ref=share&mibextid=NSMWBT'
+                  aria-label='FacebookIcon'
+                >
                   <FacebookIcon fontSize='medium' style={{ color: 'gray' }} />
                 </a>
-                <a href='/' aria-label='GitHubIcon'>
+                {/* <a href='/' aria-label='GitHubIcon'>
                   <GitHubIcon fontSize='medium' style={{ color: 'gray' }} />
-                </a>
+                </a> */}
               </div>
             </div>
           </div>

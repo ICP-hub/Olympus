@@ -23,12 +23,13 @@ const AppRoutes = () => {
     <>
       <Route path='/' element={<MainLayout />}>
         <Route path='/' element={<Home />} />
-        <Route path='terms-of-use' element={<TermsOfUse />} />
-        <Route path='cookie-policy' element={<CookiePolicy />} />
-        <Route path='privacy-policy' element={<PrivacyPolicy />} />
+
         <Route path='*' element={<Error404 />} />
       </Route>
       <Route path='register-user' element={<UserRegistration />} />
+      <Route path='terms-of-use' element={<TermsOfUse />} />
+      <Route path='cookie-policy' element={<CookiePolicy />} />
+      <Route path='privacy-policy' element={<PrivacyPolicy />} />
     </>
   );
   const authenticatedRoutes = [

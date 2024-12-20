@@ -464,7 +464,12 @@ export const homepagedata = {
       buttonText: 'Subscribe',
     },
     rightsText: 'Olympus Inc. All rights reserved.',
-    policies: ['Terms of use', 'Cookie policy', 'Privacy policy'],
+    policies: [
+      'Terms of use',
+      'Cookie policy',
+      'Privacy policy',
+      'COPYRIGHT_YEAR',
+    ],
     socialLinks: {},
   },
 };
