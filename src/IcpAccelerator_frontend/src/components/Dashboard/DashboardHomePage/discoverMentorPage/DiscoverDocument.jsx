@@ -178,9 +178,9 @@ const DiscoverDocument = ({ projectDetails, projectId }) => {
                       <ThreeDots
                         visible={true}
                         height='20'
-                        width='60'
+                        width='40'
                         color='#FFFFFF'
-                        radius='9'
+                        radius='6'
                         ariaLabel='three-dots-loading'
                       />
                     ) : (

@@ -28,7 +28,7 @@ const Filters = ({ setSelectedEventType, selectedEventType }) => {
   // Event type options
   const eventTypeOptions = [
     { value: 'All', label: 'All' },
-    { value: 'Ongoing', label: 'Ongoing' },
+    { value: 'Present', label: 'Ongoing' },
     { value: 'Upcoming', label: 'Upcoming' },
     { value: 'Past', label: 'Past' },
   ];

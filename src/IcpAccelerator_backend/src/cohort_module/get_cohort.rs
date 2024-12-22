@@ -64,6 +64,7 @@ pub fn get_all_cohorts(pagination_params: Pagination, cohort_type: String) -> Pa
                 .into_iter()
                 .filter(|cohort| cohort.cohort.cohort_end_date < current_time.to_string())
                 .collect(),
+                "All" => cohorts,
             _ => vec![], 
         }
     });
@@ -80,9 +81,6 @@ pub fn get_all_cohorts(pagination_params: Pagination, cohort_type: String) -> Pa
     PaginationReturnCohort {
         data: paginated_data, 
         total_count,
-        upoming_cohorts: vec![], 
-        present_cohorts: vec![], 
-        past_cohorts: vec![],  
     }
 }
 

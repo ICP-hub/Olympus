@@ -34,6 +34,10 @@ const DiscoverMoneyRaising = ({ cardData, projectId }) => {
           if (result && result.Ok) {
             setApprovedMoneyRaise(result.Ok);
             setNoData(false); // Data is available
+          } else if (result && result.Err) {
+            setApprovedMoneyRaise(result.Err.is_owner);
+            setNoData(true);
+            toast.error(result.Err.message);
           } else {
             setApprovedMoneyRaise([]);
             setNoData(true);

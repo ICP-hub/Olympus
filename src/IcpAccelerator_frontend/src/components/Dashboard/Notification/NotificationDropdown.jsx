@@ -4,6 +4,7 @@ import uint8ArrayToBase64 from '../../Utils/uint8ArrayToBase64';
 import DocsNotification from './DocsNotification';
 import MoneyRaiseNotification from './MoneyRaiseNotification';
 import CohortNotification from './CohortNotification';
+import AssociationNotification from './AssociationNotification';
 
 const NotificationDropdown = ({ closeDropdown, notifications }) => {
   const navigate = useNavigate();
@@ -54,8 +55,14 @@ const NotificationDropdown = ({ closeDropdown, notifications }) => {
         );
 
       case association_noti && association_noti[0].length > 0:
-        // Replace with AssociationNotification component when ready
-        return <p key={index}>Association notification component goes here.</p>;
+        return (
+          // <AssociationNotification
+          //   notification={notification}
+          //   formatNotificationMessage={formatNotificationMessage}
+          //   key={index}
+          // />
+          <>wwe</>
+        );
 
       case money_noti && money_noti[0].length > 0:
         return (

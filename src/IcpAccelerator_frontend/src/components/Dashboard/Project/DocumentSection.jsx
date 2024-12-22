@@ -39,10 +39,10 @@ function DocumentSection() {
 
           <span className='hidden xxs1:block'> Back to profile</span>
         </button>
-        <button className='flex items-center text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-2 rounded-md shadow-sm border border-gray-200'>
+        {/* <button className='flex items-center text-gray-600 hover:text-gray-800 hover:bg-gray-200 bg-white px-3 py-2 rounded-md shadow-sm border border-gray-200'>
           <span className='hidden xxs1:block'>Share this</span>
           <span className='ml-1'>{shareSvgIcon}</span>
-        </button>
+        </button> */}
       </div>
       {/* <NotificationBanner message="Lorem ipsum dolor sit amet dolor."
           /> */}

@@ -33,7 +33,7 @@ const AssociationRecieverDataToProject = ({
   };
 
   const closeModal = () => setModalOpen(false);
-  console.log('user', user);
+  // console.log('user', user);
   // Receiver Data
   const offerDetails = {
     offer: user?.offer ?? 'offer',

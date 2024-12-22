@@ -8,9 +8,6 @@ import { useFormContext, useFieldArray } from 'react-hook-form';
 import getSocialLogo from '../Utils/navigationHelper/getSocialLogo';
 
 const AboutcardSkeleton = ({ getAllData }) => {
-  console.log('getvalues', getAllData);
-  console.log('getAllData?.getAllData?.links =>', getAllData?.links);
-
   return (
     <SkeletonTheme baseColor='#e3e3e3' highlightColor='#c8c8c873'>
       <div className='w-full overflow-hidden bg-gradient-to-r from-[#ECE9FE] to-[#FFFFFF] items-center justify-center rounded-2xl'>

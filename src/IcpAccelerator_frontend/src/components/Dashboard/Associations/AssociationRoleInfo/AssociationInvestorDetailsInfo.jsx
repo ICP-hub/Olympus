@@ -1,6 +1,7 @@
 import React from 'react';
 import uint8ArrayToBase64 from '../../../Utils/uint8ArrayToBase64';
 import NoData from '../../../NoDataCard/NoData';
+import AssociationCohortData from '../AssociationCohortData';
 
 const AssociationInvestorDetailsInfo = ({ key, user }) => {
   // Offer details
@@ -13,11 +14,20 @@ const AssociationInvestorDetailsInfo = ({ key, user }) => {
   // Receiver details
   let receiverPrincipal =
     user?.receiever_principal ?? 'Principal not available';
+  let cohortData = user?.cohort_data ?? 'Cohort not available';
 
-  // Receiver Data
-  let recieverDataProject = user?.reciever_data?.[0][0] ?? {}; // Project data at index 0
-  let recieverDataUser = user?.reciever_data?.[0][1] ?? {}; // User data at index 1
-  console.log('mentor detail on page ', recieverDataProject);
+  let recieverDataProject =
+    Array.isArray(user?.reciever_data) &&
+    Array.isArray(user?.reciever_data[0]) &&
+    user?.reciever_data[0][0]
+      ? user.reciever_data[0][0]
+      : {}; // Default to an empty object
+
+  let recieverDataUser =
+    Array.isArray(user?.reciever_data) && user?.reciever_data[0]?.[1]
+      ? user.reciever_data[0][1]
+      : {}; // Default to an empty object
+  // console.log('mentor detail on page ', recieverDataProject);
   let recieverYearsOfMentoring =
     recieverDataProject?.profile?.years_of_mentoring ?? 'No Experience';
   let recieverIcpHubOrSpoke =
@@ -57,18 +67,27 @@ const AssociationInvestorDetailsInfo = ({ key, user }) => {
     recieverDataUser?.params?.social_links ?? 'No social links available';
 
   // Sender Data
-  let senderDataProject = user?.sender_data?.[0][0] ?? {}; // Project data at index 0
-  let senderDataUser = user?.sender_data?.[0][1] ?? {}; // User data at index 1
-  console.log('sender user data 478 ', senderDataUser);
-  console.log('project data', senderDataProject);
+  let senderDataProject =
+    Array.isArray(user?.sender_data) &&
+    Array.isArray(user?.sender_data[0]) &&
+    user?.sender_data[0][0]
+      ? user.sender_data[0][0]
+      : {}; // Default to an empty object
+
+  let senderDataUser =
+    Array.isArray(user?.sender_data) && user?.sender_data[0]?.[1]
+      ? user.sender_data[0][1]
+      : {}; // Default to an empty object
+  // console.log('sender user data 478 ', senderDataUser);
+  // console.log('project data', senderDataProject);
 
   let projectid = senderDataProject.uid;
-  console.log(projectid);
+  // console.log(projectid);
 
   // Project Details (Index 0)
   let projectSocialLinks = senderDataProject?.params?.social_links?.[0];
   ('No social links available');
-  console.log('project social links', projectSocialLinks);
+  // console.log('project social links', projectSocialLinks);
   let projectName =
     senderDataProject?.params?.project_name ?? 'Project Name not available';
 
@@ -144,7 +163,7 @@ const AssociationInvestorDetailsInfo = ({ key, user }) => {
     senderDataUser?.params?.type_of_profile?.[0] ?? 'individual';
   let senderSocialLinks = senderDataUser?.params?.social_links?.[0];
   ('No social links available');
-  console.log('sender social links', senderSocialLinks);
+  // console.log('sender social links', senderSocialLinks);
 
   //Sender Mentor Details at index[0]
   let senderYearsOfMentoring =
@@ -170,7 +189,7 @@ const AssociationInvestorDetailsInfo = ({ key, user }) => {
     senderDataProject?.profile?.website?.[0] ?? 'https://defaultwebsite.com';
   let mentorSocialLinks = senderDataProject?.profile?.social_links?.[0];
   ('No social links available');
-  console.log('mentor social links', mentorSocialLinks);
+  // console.log('mentor social links', mentorSocialLinks);
 
   //Investor  Details at index[0]
   let fundName = senderDataProject?.name_of_fund ?? 'N/A';
@@ -194,7 +213,7 @@ const AssociationInvestorDetailsInfo = ({ key, user }) => {
   let websiteLink = senderDataProject?.website_link ?? 'N/A';
   let investorSocialLinks = senderDataProject?.links?.[0];
   ('No social links available');
-  console.log('investor social links', investorSocialLinks);
+  // console.log('investor social links', investorSocialLinks);
 
   // Other sender-specific details
   let isSenderActive = senderDataUser?.active ?? false;
@@ -204,19 +223,26 @@ const AssociationInvestorDetailsInfo = ({ key, user }) => {
   let senderPrincipal =
     user?.sender_principal ?? 'Sender Principal not available';
   let sentAt = user?.sent_at ?? 0n;
-  console.log('sender Principle aaa raha hai kya', senderPrincipal);
+  // console.log('sender Principle aaa raha hai kya', senderPrincipal);
   // Response Data
   let requestStatus = user?.request_status ?? 'pending';
   let response = user?.response ?? '';
   return (
-    <div
-      className='px-1 lg1:px-3 py-4 lg1:py-0 w-full lg1:overflow-y-scroll'
-      key={key}
-    >
-      <div className=' bg-white shadow-md border rounded-lg'>
-        <NoData message=' Investor data not available' />
+    <>
+      <div
+        className='px-1 lg1:px-3 py-4 lg1:py-0 w-full lg1:overflow-y-scroll'
+        key={key}
+      >
+        <div className=' bg-white shadow-md border rounded-lg'>
+          <NoData message=' Investor data not available' />
+        </div>
       </div>
-    </div>
+      {cohortData && (
+        <div className='px-1 lg1:px-3 py-4 lg1:py-0 w-full lg1:overflow-y-scroll  '>
+          <AssociationCohortData cohortData={cohortData} />
+        </div>
+      )}
+    </>
   );
 };
 

@@ -319,9 +319,6 @@ type OfferToSendToMentor = record {
 type Pagination = record { page_size : nat64; page : nat64 };
 type PaginationReturnCohort = record {
   data : vec CohortDetails;
-  past_cohorts : vec CohortDetails;
-  upoming_cohorts : vec CohortDetails;
-  present_cohorts : vec CohortDetails;
   total_count : nat64;
 };
 type PaginationReturnMentor = record {
@@ -610,6 +607,13 @@ type VentureCapitalistInternal = record {
   decline : bool;
   params : VentureCapitalist;
 };
+type ViewDataResponse = record {
+  views_last_7_days : nat64;
+  last_updated : nat64;
+  views_last_30_days : nat64;
+  daily_views : vec record { text; nat64 };
+  total_views : nat64;
+};
 service : {
   accept_offer_from_investor_to_project : (text, text, text) -> (text);
   accept_offer_from_mentor_to_project : (text, text, text) -> (text);
@@ -625,6 +629,7 @@ service : {
   add_project_rating : (ProjectRatingStruct) -> (Result);
   add_review : (principal, float32, text) -> (text);
   add_testimonial : (text) -> (text);
+  add_view : (bool) -> (text);
   apply_for_a_cohort_as_a_investor : (text) -> (text);
   apply_for_a_cohort_as_a_mentor : (text) -> (text);
   apply_for_a_cohort_as_a_project : (text) -> (text);
@@ -669,7 +674,7 @@ service : {
       vec OfferToInvestor,
     ) query;
   get_all_approved_docs_access_requests : () -> (vec ProjectNotification) query;
-  get_all_cohorts : (Pagination) -> (PaginationReturnCohort) query;
+  get_all_cohorts : (Pagination, text) -> (PaginationReturnCohort) query;
   get_all_declined_docs_access_requests : () -> (vec ProjectNotification) query;
   get_all_jobs : (nat64, nat64) -> (
       vec record { JobsInternal; UserInformation },
@@ -880,6 +885,7 @@ service : {
       opt record { VentureCapitalistAll; UserInfoInternal },
     ) query;
   get_vcs_applied_for_cohort : (text) -> (Result_16) query;
+  get_views : () -> (opt ViewDataResponse) query;
   greet : (text) -> (text) query;
   icrc28_trusted_origins : () -> (Icrc28TrustedOriginsResponse);
   list_all_projects : () -> (

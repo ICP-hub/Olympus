@@ -204,7 +204,7 @@ const AssociationRecieverProjectSideDataToMentor = ({
     },
   };
 
-  console.log('senderData', user.sender_data);
+  // console.log('senderData', user.sender_data);
   // POST API HANDLER TO SELF-REJECT A REQUEST WHERE MENTOR APPROCHES PROJECT
   return (
     <>

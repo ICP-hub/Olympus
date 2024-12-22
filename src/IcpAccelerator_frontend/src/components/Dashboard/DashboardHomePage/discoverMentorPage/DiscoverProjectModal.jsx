@@ -35,183 +35,82 @@ const DiscoverProjectModal = ({
   const userCurrentRoleStatusActiveRole = useSelector(
     (currState) => currState.currentRoleStatus.activeRole
   );
+  const userCurrentRoleStatus = useSelector(
+    (currState) => currState.currentRoleStatus.rolesStatusArray
+  );
+  const isMentorApproved = userCurrentRoleStatus.some(
+    (role) => role.name === 'mentor' && role.approval_status === 'approved'
+  );
+  const isVcApproved = userCurrentRoleStatus.some(
+    (role) => role.name === 'vc' && role.approval_status === 'approved'
+  );
   const actor = useSelector((state) => state.actors.actor);
   const principal = useSelector((state) => state.internet.principal);
+  console.log('investorid', principal);
   useTimeout(() => setIsLoading(false));
 
-  const [isAddMentorModalOpen, setIsAddMentorModalOpen] = useState(false);
-  const [isAddInvestorModalOpen, setIsAddInvestorModalOpen] = useState(false);
-  const [isAddProjectModalOpen, setIsAddProjectModalOpen] = useState(false);
   const [listProjectId, setListProjectId] = useState(null);
   const [listCohortId, setListCohortId] = useState(null);
-  const [listEnrollmentPrincipal, setListEnrollmentPrincipal] = useState(null);
   const [projectProfile, setProjectProfile] = useState(null);
   const [projectName, setProjectName] = useState(null);
   const [selectedAssociationType, setSelectedAssociationType] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  console.log('cohortid', listCohortId);
+
+  const [isAddProjectModalOpen, setIsAddProjectModalOpen] = useState(false);
+
   const handleProjectCloseModal = () => {
     setIsAddProjectModalOpen(false);
-    setIsAddInvestorModalOpen(false);
-    setIsAddMentorModalOpen(false);
   };
-  const handleProjectOpenModal = (
-    val,
-    cohortId,
-    profile,
-    name,
-    enroller_principal
-  ) => {
-    if (role === 'Project') {
-      setListProjectId(val);
-      setListCohortId(cohortId);
-      setListEnrollmentPrincipal(enroller_principal);
-      setProjectProfile(profile);
-      setProjectName(name);
-      setIsAddProjectModalOpen(true);
-    } else if (role === 'Mentor') {
-      setListProjectId(val);
-      setListCohortId(cohortId);
-      setListEnrollmentPrincipal(enroller_principal);
-      setProjectProfile(profile);
-      setProjectName(name);
-      setIsAddMentorModalOpen(true);
-    } else if (role === 'Investor') {
-      setListProjectId(val);
-      setListCohortId(cohortId);
-      setListEnrollmentPrincipal(enroller_principal);
-      setProjectProfile(profile);
-      setProjectName(name);
-      setIsAddInvestorModalOpen(true);
-    }
+  const handleProjectOpenModal = (val, profile, name, cohort_id) => {
+    console.log('val', val);
+    console.log('selectedAssociationType', selectedAssociationType);
+    setListProjectId(val);
+    setProjectProfile(profile);
+    setProjectName(name);
+    setListCohortId(cohort_id);
+    setIsAddProjectModalOpen(true);
   };
-  console.log('listEnrollmentPrincipal', listEnrollmentPrincipal);
 
-  const handleAddProjectByType = async ({ message }) => {
+  const handleProjectCloseModalForInvestor = () => {
+    setIsAddProjectModalOpenAsInvestor(false);
+  };
+  const handleProjectOpenModalForInvestor = (val, profile, name, cohort_id) => {
+    console.log('val', val);
+    console.log('selectedAssociationType', selectedAssociationType);
+    setListProjectId(val);
+    setProjectProfile(profile);
+    setProjectName(name);
+    setListCohortId(cohort_id);
+    setIsAddProjectModalOpenAsInvestor(true);
+  };
+  // ASSOCIATE IN A PROJECT HANDLER AS A MENTOR
+  const handleAddProject = async ({ message }) => {
     setIsSubmitting(true);
-
-    try {
-      if (!selectedAssociationType || !actor) {
-        throw new Error('Invalid association type or missing data');
-      }
-
-      // Define common parameters
-      const project_id = listProjectId || '';
-      const msg = message;
-      const is_cohort_association = true;
-      const cohort_id = listCohortId ? [listCohortId] : [];
-
-      // Determine function and additional parameters based on association type
-      const associationFunctions = {
-        mentor: {
-          method: actor.send_offer_to_project_by_mentor,
-          params: [
-            project_id,
-            msg,
-            Principal.fromText(principal),
-            is_cohort_association,
-            cohort_id,
-          ],
-          successMessage: 'Offer sent to project as mentor successfully',
-        },
-        vc: {
-          method: actor.send_offer_to_project_by_investor,
-          params: [project_id, msg, is_cohort_association, cohort_id],
-          successMessage: 'Offer sent to project as investor successfully',
-        },
-      };
-
-      const associationType = selectedAssociationType.value;
-      const selectedFunction = associationFunctions[associationType];
-
-      if (!selectedFunction) {
-        throw new Error('Unsupported association type');
-      }
-
-      // Call the selected function with the relevant parameters
-      console.log(
-        `Adding project as ${associationType.toUpperCase()}`,
-        ...selectedFunction.params
-      );
-
-      const result = await selectedFunction.method(...selectedFunction.params);
-      console.log('result', result);
-      if (result) {
-        toast.success(selectedFunction.successMessage);
-      } else {
-        toast.error('Something went wrong');
-      }
-    } catch (error) {
-      console.error(
-        `Error in ${selectedAssociationType.value} association:`,
-        error
-      );
-      toast.error('Something went wrong');
-    } finally {
-      setIsSubmitting(false);
-      handleProjectCloseModal();
-    }
-  };
-
-  const handleAddMentor = async ({ message }) => {
-    setIsSubmitting(true);
+    console.log('add into a project');
     if (actor && principal) {
+      let project_id = listProjectId;
+      let msg = message;
       let mentor_id = Principal.fromText(principal);
-      let msg = message;
-      let project_id = listProjectId;
       let is_cohort_association = true;
       let cohort_id = listCohortId ? [listCohortId] : [];
+      console.log('Data before sending', project_id, msg, mentor_id);
+
       await actor
-        .send_offer_to_mentor_from_project(
+        .send_offer_to_project_by_mentor(
+          project_id,
+          msg,
           mentor_id,
-          msg,
-          project_id,
           is_cohort_association,
           cohort_id
         )
         .then((result) => {
-          console.log('result', result);
-          if (result) {
-            setIsSubmitting(false);
-            handleProjectCloseModal();
-            toast.success(result);
-          } else {
-            setIsSubmitting(false);
-            handleProjectCloseModal();
-            toast.error('something went wrong');
-          }
-        })
-        .catch((error) => {
-          console.error('error-in-send_offer_to_mentor_from_project', error);
-          handleProjectCloseModal();
-          setIsSubmitting(false);
-          toast.error('something went wrong');
-        });
-    }
-  };
-  const handleAddInvestor = async ({ message }) => {
-    setIsSubmitting(true);
-    console.log('add a investor');
-    if (actor && principal) {
-      let investor_id = Principal.fromText(principal);
-      let msg = message;
-      let project_id = listProjectId;
-      let is_cohort_association = true;
-      let cohort_id = listCohortId ? [listCohortId] : [];
-      await actor
-        .send_offer_to_investor_by_project(
-          investor_id,
-          msg,
-          project_id,
-          is_cohort_association,
-          cohort_id
-        )
-        .then((result) => {
-          console.log('result-in-send_offer_to_investor', result);
+          console.log('result-in-send_offer_to_project_by_mentor', result);
           if (result) {
             handleProjectCloseModal();
             setIsSubmitting(false);
-            toast.success(result);
+            toast.success('offer sent to project successfully');
           } else {
             handleProjectCloseModal();
             setIsSubmitting(false);
@@ -219,13 +118,55 @@ const DiscoverProjectModal = ({
           }
         })
         .catch((error) => {
-          console.log('error-in-send_offer_to_investor', error);
+          console.log('error-in-send_offer_to_project_by_mentor', error);
+          setIsSubmitting(false);
+          handleProjectCloseModal();
+          toast.error('something got wrong');
+        });
+    }
+  };
+
+  const [isAddProjectModalOpenAsInvestor, setIsAddProjectModalOpenAsInvestor] =
+    useState(false);
+
+  // ASSOCIATE IN A PROJECT HANDLER AS A Investor
+  const handleAddProjectAsInvestor = async ({ message }) => {
+    setIsSubmitting(true);
+    console.log('add into a project AS INVESTOR');
+    if (actor) {
+      let project_id = listProjectId;
+      let msg = message;
+      let is_cohort_association = true;
+      let cohort_id = listCohortId ? [listCohortId] : [];
+      await actor
+        .send_offer_to_project_by_investor(
+          project_id,
+          msg,
+          is_cohort_association,
+          cohort_id
+        )
+        .then((result) => {
+          console.log('result-in-send_offer_to_project_by_investor', result);
+          if (result) {
+            handleProjectCloseModal();
+            setIsSubmitting(false);
+            // fetchProjectData();
+            toast.success('offer sent to project successfully');
+          } else {
+            handleProjectCloseModal();
+            setIsSubmitting(false);
+            toast.error('something got wrong');
+          }
+        })
+        .catch((error) => {
+          console.log('error-in-send_offer_to_project_by_investor', error);
           handleProjectCloseModal();
           setIsSubmitting(false);
           toast.error('something got wrong');
         });
     }
   };
+
   const [activeMobileTab, setActiveMobileTab] = useState(null);
   const [activeTab, setActiveTab] = useState('document');
 
@@ -241,10 +182,10 @@ const DiscoverProjectModal = ({
   const handleChange = (tab) => {
     setActiveTab(tab);
   };
-  const handleclose = () => {
-    setOpenDetails(false);
-    setOpenDetail(false);
-  };
+  // const handleclose = () => {
+  //   setOpenDetails(false);
+  //   setOpenDetail(false);
+  // };
   useEffect(() => {
     if (openDetail) {
       document.body.style.overflow = 'hidden';
@@ -394,44 +335,65 @@ const DiscoverProjectModal = ({
                         fontSize='small'
                       />
                     </a>
-                    {value && (
-                      <>
-                        {userCurrentRoleStatusActiveRole === 'mentor' ||
-                        userCurrentRoleStatusActiveRole === 'vc' ? (
-                          <button
-                            className='w-full h-[#155EEF] bg-white border-gray-300 text-black py-2 px-4 rounded-lg mb-4 flex items-center justify-center'
-                            onClick={() =>
-                              handleProjectOpenModal(
-                                project_id,
-                                cohort_id,
-                                profilepic,
-                                full_name,
-                                enrollerPrincipal
-                              )
-                            }
-                          >
-                            Send Association Request
-                            <RiSendPlaneLine className='ml-2' />
-                          </button>
-                        ) : userCurrentRoleStatusActiveRole === 'project' ? (
-                          <button
-                            className='w-full h-[#155EEF] bg-white border-gray-300 text-black py-2 px-4 rounded-lg mb-4 flex items-center justify-center'
-                            onClick={() =>
-                              handleProjectOpenModal(
-                                project_id,
-                                cohort_id,
-                                projectlogo,
-                                projectname,
-                                enrollerPrincipal
-                              )
-                            }
-                          >
-                            Send Association Request
-                            <RiSendPlaneLine className='ml-2' />
-                          </button>
-                        ) : null}
-                      </>
-                    )}
+                    {userCurrentRoleStatusActiveRole === 'mentor' ||
+                    userCurrentRoleStatusActiveRole === 'vc' ? (
+                      isMentorApproved && !isVcApproved ? (
+                        <button
+                          className='w-full h-[#155EEF] bg-white border-gray-300 text-black py-2 px-4 rounded-lg mb-4 flex items-center justify-center'
+                          data-tooltip-id='registerTip'
+                          onClick={() => {
+                            handleProjectOpenModal(
+                              project_id,
+                              projectlogo,
+                              projectname,
+                              cohort_id
+                            );
+                          }}
+                        >
+                          Send Association Request
+                          <RiSendPlaneLine className='ml-2' />
+                        </button>
+                      ) : !isMentorApproved && isVcApproved ? (
+                        <button
+                          className='w-full h-[#155EEF] bg-white border-gray-300 text-black py-2 px-4 rounded-lg mb-4 flex items-center justify-center'
+                          data-tooltip-id='registerTip'
+                          onClick={() => {
+                            handleProjectOpenModalForInvestor(
+                              project_id,
+                              projectlogo,
+                              projectname,
+                              cohort_id
+                            );
+                          }}
+                        >
+                          Send Association Request
+                          <RiSendPlaneLine className='ml-2' />
+                        </button>
+                      ) : isMentorApproved && isVcApproved ? (
+                        <button
+                          className='w-full h-[#155EEF] bg-white border-gray-300 text-black py-2 px-4 rounded-lg mb-4 flex items-center justify-center'
+                          data-tooltip-id='registerTip'
+                          onClick={() => {
+                            userCurrentRoleStatusActiveRole === 'mentor'
+                              ? handleProjectOpenModal(
+                                  project_id,
+                                  projectlogo,
+                                  projectname,
+                                  cohort_id
+                                )
+                              : handleProjectOpenModalForInvestor(
+                                  project_id,
+                                  projectlogo,
+                                  projectname,
+                                  cohort_id
+                                );
+                          }}
+                        >
+                          Send Association Request
+                          <RiSendPlaneLine className='ml-2' />
+                        </button>
+                      ) : null
+                    ) : null}
                   </div>
                   <div className='p-6 bg-white'>
                     <div className='mb-2 p-2'>
@@ -860,34 +822,21 @@ const DiscoverProjectModal = ({
       </div>
       {isAddProjectModalOpen && (
         <AddAMentorRequestModal
+          title={'Request to Associate a Project M'}
+          onClose={handleProjectCloseModal}
+          onSubmitHandler={handleAddProject}
+          isSubmitting={isSubmitting}
+          selectedAssociationType={selectedAssociationType}
+          setSelectedAssociationType={setSelectedAssociationType}
+          projectProfile={projectProfile}
+          projectName={projectName}
+        />
+      )}
+      {isAddProjectModalOpenAsInvestor && (
+        <AddAMentorRequestModal
           title={'Request to Associate a Project'}
-          onClose={handleProjectCloseModal}
-          onSubmitHandler={handleAddProjectByType}
-          isSubmitting={isSubmitting}
-          selectedAssociationType={selectedAssociationType}
-          setSelectedAssociationType={setSelectedAssociationType}
-          projectProfile={projectProfile}
-          projectName={projectName}
-        />
-      )}
-
-      {isAddInvestorModalOpen && (
-        <AddAMentorRequestModal
-          title={'Request to Associate a Investor'}
-          onClose={handleProjectCloseModal}
-          onSubmitHandler={handleAddInvestor}
-          isSubmitting={isSubmitting}
-          selectedAssociationType={selectedAssociationType}
-          setSelectedAssociationType={setSelectedAssociationType}
-          projectProfile={projectProfile}
-          projectName={projectName}
-        />
-      )}
-      {isAddMentorModalOpen && (
-        <AddAMentorRequestModal
-          title={'Request to Associate a Mentor'}
-          onClose={handleProjectCloseModal}
-          onSubmitHandler={handleAddMentor}
+          onClose={handleProjectCloseModalForInvestor}
+          onSubmitHandler={handleAddProjectAsInvestor}
           isSubmitting={isSubmitting}
           selectedAssociationType={selectedAssociationType}
           setSelectedAssociationType={setSelectedAssociationType}

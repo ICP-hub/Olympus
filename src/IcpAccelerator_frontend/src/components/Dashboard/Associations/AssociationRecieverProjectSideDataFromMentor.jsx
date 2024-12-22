@@ -204,7 +204,7 @@ const AssociationRecieverProjectSideDataFromMentor = ({
       isDeclined: user?.sender_data?.[0]?.[1]?.decline ?? false,
     },
   };
-  console.log(senderData?.profile);
+  // console.log(senderData?.profile);
 
   // POST API HANDLER TO SELF-REJECT A REQUEST WHERE MENTOR APPROCHES PROJECT
   return (

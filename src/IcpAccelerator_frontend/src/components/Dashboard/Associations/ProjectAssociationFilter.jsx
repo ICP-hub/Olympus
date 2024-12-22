@@ -170,7 +170,7 @@ export default function ProjectAssociationFilter({
             actor,
             projectId
           );
-          console.log('response', response);
+          // console.log('response', response);
           result = await response.api_data; // Await the promise inside api_data
           setActiveTabTypeData(response.activeTab);
         } else if (selectedType.value === 'Document') {
@@ -238,7 +238,7 @@ export default function ProjectAssociationFilter({
           setActiveTabTypeData(response.activeTab);
         }
       }
-      console.log('data', result);
+      // console.log('data', result);
 
       if (result) {
         console.log(`result-in-${selectedType.value}`, result);

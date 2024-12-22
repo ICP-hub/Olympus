@@ -29,9 +29,15 @@ const RatingComponent = ({ projectId, value }) => {
       setIsLoading(true);
       try {
         const result = await actor.get_ratings_by_principal(projectId);
-        if (!result || result.length === 0) {
+        console.log('result', result);
+        if (
+          !result ||
+          result.length === 0 ||
+          result.Err ===
+            'No ratings found by this Principal ID for the specified project.'
+        ) {
           setNoData(true);
-          setRubricRatingData([]);
+          setRubricRatingData(result?.Err);
         } else {
           setRubricRatingData(result?.Ok);
           setNoData(false);
@@ -301,9 +307,10 @@ const RatingComponent = ({ projectId, value }) => {
     );
   }
 
+  console.log('noData', noData);
   return (
     <>
-      {!noData ? (
+      {noData && averageNoData ? (
         <NoDataRating
           message={message}
           isRating={isRating}
@@ -314,97 +321,135 @@ const RatingComponent = ({ projectId, value }) => {
         />
       ) : (
         <div className='w-full p-5 mt-8 bg-white border border-gray-200 rounded-lg shadow-md'>
-          <div
-            className='flex justify-between items-center mb-4 cursor-pointer'
-            onClick={toggleOverallRating}
-          >
-            <div>
-              <h2 className='text-[15px] xxs:text-lg font-semibold'>
-                Overall score:
-              </h2>
-              <p className='font-semibold text-[14px] xxs:text-[16px] text-gray-400'>
-                Based on 15 votes
-              </p>
-            </div>
-            <div className='flex justify-between mt-1'>
-              {/* Render score boxes */}
-              {Array.isArray(averageRatingData?.overall_average) &&
-              averageRatingData.overall_average.length > 0
-                ? renderOverAllScoreBoxes(
-                    Math.floor(Number(averageRatingData.overall_average[0])) // Safely convert to integer
-                  )
-                : renderOverAllScoreBoxes(
-                    0
-                  ) // Render empty boxes if no valid data
-              }
+          {averageNoData ? (
+            <NoDataRating
+              message={message}
+              isRating={isRating}
+              setIsRating={setIsRating}
+              ratingProjectId={projectId}
+              setShowRatingModal={setShowRatingModal}
+              value={value}
+            />
+          ) : (
+            <>
+              <div
+                className='flex justify-between items-center mb-4 cursor-pointer'
+                onClick={toggleOverallRating}
+              >
+                <div>
+                  <h2 className='text-[15px] xxs:text-lg font-semibold'>
+                    Overall score:
+                  </h2>
+                  <p className='font-semibold text-[14px] xxs:text-[16px] text-gray-400'>
+                    Based on 15 votes
+                  </p>
+                </div>
+                <div className='flex justify-between mt-1'>
+                  {/* Render score boxes */}
+                  {
+                    Array.isArray(averageRatingData?.overall_average) &&
+                    averageRatingData.overall_average.length > 0
+                      ? renderOverAllScoreBoxes(
+                          Math.floor(
+                            Number(averageRatingData.overall_average[0])
+                          ) // Safely convert to integer
+                        )
+                      : renderOverAllScoreBoxes(0) // Render empty boxes if no valid data
+                  }
 
-              {/* Display the actual score or fallback */}
-              <span className='text-[16px] font-bold text-gray-700 xxs:ml-4 -mt-1'>
-                {Array.isArray(averageRatingData?.overall_average) &&
-                averageRatingData.overall_average.length > 0
-                  ? Math.floor(
-                      Number(averageRatingData.overall_average[0])
-                    ).toFixed(1) // Display score
-                  : '0'}
-              </span>
-            </div>
-          </div>
+                  {/* Display the actual score or fallback */}
+                  <span className='text-[16px] font-bold text-gray-700 xxs:ml-4 -mt-1'>
+                    {Array.isArray(averageRatingData?.overall_average) &&
+                    averageRatingData.overall_average.length > 0
+                      ? Math.floor(
+                          Number(averageRatingData.overall_average[0])
+                        ).toFixed(1) // Display score
+                      : '0'}
+                  </span>
+                </div>
+              </div>
 
-          <p className='border mt-2 w-full'></p>
+              <p className='border mt-2 w-full'></p>
+            </>
+          )}
 
           {/* Tabs */}
-          <div className='flex flex-wrap space-x-4 border-b my-4'>
-            <button
-              className={`py-2 text-[18px] font-medium ${
-                activeTab === 'scores'
-                  ? 'text-blue-500 border-b-2 border-blue-500'
-                  : 'text-gray-500'
-              }`}
-              onClick={() => handleTabChange('scores')}
-            >
-              Scores
-            </button>
-            <button
-              className={`py-2 text-[18px] font-medium ${
-                activeTab === 'chart'
-                  ? 'text-blue-500 border-b-2 border-blue-500'
-                  : 'text-gray-500'
-              }`}
-              onClick={() => handleTabChange('chart')}
-            >
-              Chart
-            </button>
-          </div>
+          {noData ? (
+            ''
+          ) : (
+            <div className='flex flex-wrap space-x-4 border-b my-4'>
+              <button
+                className={`py-2 text-[18px] font-medium ${
+                  activeTab === 'scores'
+                    ? 'text-blue-500 border-b-2 border-blue-500'
+                    : 'text-gray-500'
+                }`}
+                onClick={() => handleTabChange('scores')}
+              >
+                Scores
+              </button>
+              <button
+                className={`py-2 text-[18px] font-medium ${
+                  activeTab === 'chart'
+                    ? 'text-blue-500 border-b-2 border-blue-500'
+                    : 'text-gray-500'
+                }`}
+                onClick={() => handleTabChange('chart')}
+              >
+                Chart
+              </button>
+            </div>
+          )}
 
           {/* Tab content */}
-          {activeTab === 'scores' && (
-            <div>
-              {rubricRatingData && rubricRatingData.length > 0
-                ? rubricRatingData.map((item, index) => (
-                    <div
-                      key={index}
-                      className='md:flex mt-2 md:mt-0 items-center justify-between mb-4'
-                    >
-                      <span className='text-[16px] font-medium text-gray-700 w-1/2'>
-                        {item?.level_name}:
-                      </span>
-                      <div className='flex justify-between mt-1'>
-                        {renderScoreBoxes(item?.rating)}
-                        <span className='text-[16px] font-bold text-gray-700 xxs:ml-4 -mt-1'>
-                          {item?.rating}
+          {activeTab === 'scores' &&
+            (noData ? (
+              <NoDataRating
+                message={message}
+                isRating={isRating}
+                setIsRating={setIsRating}
+                ratingProjectId={projectId}
+                setShowRatingModal={setShowRatingModal}
+                value={value}
+              />
+            ) : (
+              <div>
+                {rubricRatingData && rubricRatingData.length > 0
+                  ? rubricRatingData.map((item, index) => (
+                      <div
+                        key={index}
+                        className='md:flex mt-2 md:mt-0 items-center justify-between mb-4'
+                      >
+                        <span className='text-[16px] font-medium text-gray-700 w-1/2'>
+                          {item?.level_name}:
                         </span>
+                        <div className='flex justify-between mt-1'>
+                          {renderScoreBoxes(item?.rating)}
+                          <span className='text-[16px] font-bold text-gray-700 xxs:ml-4 -mt-1'>
+                            {item?.rating}
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                  ))
-                : ''}
-            </div>
-          )}
+                    ))
+                  : ''}
+              </div>
+            ))}
 
-          {activeTab === 'chart' && (
-            <div>
-              <RadarChart rubricRatingData={rubricRatingData} />
-            </div>
-          )}
+          {activeTab === 'chart' &&
+            (noData ? (
+              <NoDataRating
+                message={message}
+                isRating={isRating}
+                setIsRating={setIsRating}
+                ratingProjectId={projectId}
+                setShowRatingModal={setShowRatingModal}
+                value={value}
+              />
+            ) : (
+              <div>
+                <RadarChart rubricRatingData={rubricRatingData} />
+              </div>
+            ))}
         </div>
       )}
     </>
