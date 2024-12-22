@@ -164,10 +164,7 @@ type LeaderboardEntryForRatings = record {
   average_rating : opt float64;
   project_id : opt text;
 };
-type ListAllIcpHubs = record {
-  "principal" : principal;
-  params : vec IcpHubDetails;
-};
+type ListAllIcpHubs = record { params : vec IcpHubDetails };
 type ListAllProjects = record {
   overall_average : opt float64;
   params : ProjectInfoInternal;
