@@ -27,7 +27,7 @@ pub struct IcpHubDetails{
     pub website: Option<String>
 }
 
-pub async fn add_hubs_images(caller: Principal, mut data: IcpHubDetails)->IcpHubDetails{
+pub async fn add_hubs_images(_caller: Principal, mut data: IcpHubDetails)->IcpHubDetails{
     let hub_flag = data.flag.clone();
     let canister_id = crate::asset_manager::get_asset_canister();
     let name = data.name.clone().unwrap();
@@ -66,6 +66,7 @@ pub async fn add_hubs_images(caller: Principal, mut data: IcpHubDetails)->IcpHub
                 .to_vec(),
         );
     }
+    ic_cdk::println!("Done with Image Upload {:?}", data.clone());
 
     data
 
@@ -77,12 +78,14 @@ pub async fn add_icp_hub_details(data: IcpHubDetails) -> String {
 
     let data_to_store = add_hubs_images(caller, data).await; 
 
-    let key = StoredPrincipal(caller);
+    let key = ic_cdk::api::time();
 
     mutate_state(|state| {
         if let Some(mut existing_data) = state.hubs_data.get(&key) {
+            ic_cdk::println!("Inside Pushing Logic");
             existing_data.0.push(data_to_store);  
         } else {
+            ic_cdk::println!("Inside Inserting Logic");
             state.hubs_data.insert(key, state_handler::Candid(vec![data_to_store]));
         }
     });
@@ -96,7 +99,6 @@ pub async fn add_icp_hub_details(data: IcpHubDetails) -> String {
 
 #[derive(CandidType, Deserialize, Clone, Debug)]
 pub struct ListAllIcpHubs {
-    principal: Principal,
     params: Vec<IcpHubDetails>, 
 }
 
@@ -110,9 +112,8 @@ pub fn get_icp_hub_details() -> Vec<ListAllIcpHubs> {
 
     let mut list_all_hubs: Vec<ListAllIcpHubs> = Vec::new();
 
-    for (stored_principal, hub_details_vec) in hubs_snapshot {
+    for (_stored_principal, hub_details_vec) in hubs_snapshot {
         let hub_struct = ListAllIcpHubs {
-            principal: stored_principal.0, 
             params: hub_details_vec,       
         };
         list_all_hubs.push(hub_struct);

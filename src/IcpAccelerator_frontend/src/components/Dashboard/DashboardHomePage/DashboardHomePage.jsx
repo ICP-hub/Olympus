@@ -5,7 +5,7 @@ import DashboardHomeWelcomeSection from './DashboardHomeWelcomeSection';
 import { Routes, Route } from 'react-router-dom';
 import ProjectProfile from './ProjectProfile';
 import Jobs from '../../jobs/Jobs';
-import ProfilePage from '../../profile/ProfilePage';
+import ProfilePage from '../../Profile/ProfilePage';
 import EventMain from '../DashboardEvents/EventMain';
 import ServiceDetailPage from './ServiceDetailPage';
 import AddNewWork from './AddNewWork';
@@ -214,6 +214,7 @@ function DashboardHomePage() {
       ]);
       driverObj.drive();
     }
+    return () => driverObj.destroy();
   }, [hasRoles, hasApprovedRole]);
 
   return (

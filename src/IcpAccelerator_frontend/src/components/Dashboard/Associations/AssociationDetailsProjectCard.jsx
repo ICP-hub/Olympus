@@ -23,8 +23,8 @@ const AssociationDetailsProjectCard = ({
   selectedTypeData,
   activeTabData,
 }) => {
-  console.log('user', user);
-  console.log('selectedTypeData', selectedTypeData);
+  // console.log('user', user);
+  // console.log('selectedTypeData', selectedTypeData);
   const actor = useSelector((currState) => currState.actors.actor);
   const [openDetail, setOpenDetail] = useState(false);
   const [offerDataId, setOfferDataId] = useState(null);
@@ -43,7 +43,7 @@ const AssociationDetailsProjectCard = ({
     (currState) => currState.projectData.data
   );
   const projectId = projectFullData?.[0]?.[0]?.uid;
-  console.log('user', user);
+  // console.log('user', user);
   let mentorImage = user?.mentor_info?.mentor_image
     ? uint8ArrayToBase64(user?.mentor_info?.mentor_image)
     : '../../../assets/Logo/DefaultMentorImage.png';
@@ -232,7 +232,7 @@ const AssociationDetailsProjectCard = ({
           actor
         );
         const resultData = await response.api_data;
-        console.log('resultData', resultData);
+        // console.log('resultData', resultData);
         setAssociationProfileData(resultData[0]);
       } else {
         console.log(`error-in-accept_offer_from_mentor_to_project`, result);
@@ -302,7 +302,7 @@ const AssociationDetailsProjectCard = ({
           actor
         );
         const resultData = await response.api_data;
-        console.log('resultData', resultData);
+        // console.log('resultData', resultData);
         setAssociationProfileData(resultData[0]);
       } else {
         console.log(`error-in-accept_offer_of_investor`, result);

@@ -1,11 +1,10 @@
-import React, { useEffect, useLayoutEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined';
 import { useSelector } from 'react-redux';
-import { IcpAccelerator_backend } from '../../../../../declarations/IcpAccelerator_backend/index';
-import uint8ArrayToBase64 from '../../Utils/uint8ArrayToBase64';
 import { useNavigate } from 'react-router-dom';
 import parse from 'html-react-parser';
+import uint8ArrayToBase64 from '../../Utils/uint8ArrayToBase64';
 import images from '../../../../assets/images/bg.png';
 import NoData from '../../NoDataCard/NoData';
 import { RotatingLines } from 'react-loader-spinner';
@@ -14,6 +13,7 @@ import AOS from 'aos';
 import 'aos/dist/aos.css';
 import EventCardSkeleton from './DashboardEventSkeletons/EventCardSkeleton';
 import useTimeout from '../../hooks/TimeOutHook';
+
 const EventCard = ({ selectedEventType }) => {
   const actor = useSelector((currState) => currState.actors.actor);
   const [noData, setNoData] = useState(false);
@@ -24,60 +24,47 @@ const EventCard = ({ selectedEventType }) => {
   const [hasMore, setHasMore] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-  console.log('my cohort data lenght', allLiveEventsData.length);
+
   const navigate = useNavigate();
+  const prevSelectedEventType = useRef(selectedEventType);
 
   const handleClick = (cohort_id) => {
     navigate(`/dashboard/single-event/${cohort_id}`);
   };
 
-  console.log('selectedEventType', selectedEventType);
-
-  const fetchEvents = async (caller, page, isRefresh = false) => {
+  const fetchEvents = async (
+    caller,
+    page,
+    selectedEventType,
+    isRefresh = false
+  ) => {
     setIsLoading(true); // Start loading state
     try {
-      const result = await caller.get_all_cohorts({
-        page_size: itemsPerPage,
-        page: page,
-      });
-      console.log('result: ', result);
-      let filteredEvents = [];
-      switch (selectedEventType) {
-        case 'Ongoing':
-          filteredEvents = result.present_cohorts ?? [];
-          break;
-        case 'Upcoming':
-          filteredEvents = result.upcoming_cohorts ?? [];
-          break;
-        case 'Past':
-          filteredEvents = result.past_cohorts ?? [];
-          break;
-        case 'All':
-        default:
-          filteredEvents = result.data ?? [];
-          break;
-      }
+      const result = await caller.get_all_cohorts(
+        {
+          page_size: itemsPerPage,
+          page: page,
+        },
+        selectedEventType
+      );
 
-      if (filteredEvents.length > 0) {
+      if (result?.data && result?.data?.length > 0) {
         if (isRefresh) {
-          setAllLiveEventsData(filteredEvents);
+          setAllLiveEventsData(result?.data); // Replace existing data
         } else {
-          setAllLiveEventsData((prevEvents) => [
-            ...prevEvents,
-            ...filteredEvents,
-          ]);
+          setAllLiveEventsData((prevEvents) => [...prevEvents, ...result.data]); // Append new data
         }
 
-        if (filteredEvents.length < itemsPerPage) {
+        if (result.data.length < itemsPerPage) {
           setHasMore(false); // No more data to load
         }
-        setEventCount(filteredEvents.length);
+        setEventCount(result?.total_count); // Update total count
       } else {
         setHasMore(false);
         setEventCount(0);
       }
 
-      setNoData(filteredEvents.length === 0);
+      setNoData(result?.data?.length === 0);
     } catch (error) {
       console.error('Error in get_all_cohorts:', error);
       setNoData(true);
@@ -86,27 +73,39 @@ const EventCard = ({ selectedEventType }) => {
       setIsLoading(false); // End loading state
     }
   };
+
+  useTimeout(
+    () => {
+      setIsSkeletonLoading(false);
+    },
+    selectedEventType ? 1000 : 0
+  ); // Delay for 1 second on selectedEventType change
+
   useEffect(() => {
-    if (!isLoading && hasMore && actor) {
-      fetchEvents(actor, currentPage).finally(() => {});
+    if (actor && selectedEventType) {
+      setIsSkeletonLoading(true); // Reset skeleton loader
+      setCurrentPage(1); // Reset to the first page
+      setAllLiveEventsData([]); // Clear the current event data
+      setHasMore(true); // Reset hasMore for infinite scrolling
+      fetchEvents(actor, 1, selectedEventType, true); // Fetch the first page of new event type
     }
-  }, [actor, currentPage, hasMore, selectedEventType]);
-  useTimeout(() => setIsSkeletonLoading(false));
+  }, [actor, selectedEventType]); // Monitor actor and selectedEventType changes
+
   const loadMore = () => {
     if (!isLoading && hasMore) {
       const newPage = currentPage + 1;
       setCurrentPage(newPage); // Increment the page number
-      fetchEvents(actor, newPage); // Fetch the next set of data
+      fetchEvents(actor, newPage, selectedEventType); // Fetch the next set of data
     }
   };
-  console.log('allLiveEventsData', allLiveEventsData);
-  // initialize Aos
+
   useLayoutEffect(() => {
     AOS.init({
       duration: 1000,
       once: false,
     });
   }, []);
+
   return (
     <div
       id='scrollableDiv'
@@ -114,7 +113,7 @@ const EventCard = ({ selectedEventType }) => {
       data-aos='fade-up'
     >
       {isSkeletonLoading ? (
-        Array.from({ length: eventCount }).map((_, index) => (
+        Array.from({ length: itemsPerPage }).map((_, index) => (
           <EventCardSkeleton key={index} />
         ))
       ) : allLiveEventsData.length > 0 ? (
@@ -122,13 +121,12 @@ const EventCard = ({ selectedEventType }) => {
           dataLength={allLiveEventsData.length}
           next={loadMore}
           hasMore={hasMore}
-          loader={
-            <>
-              {' '}
-              <SpinnerLoader />
-            </>
+          loader={<SpinnerLoader />}
+          endMessage={
+            <p className='flex items-center justify-center'>
+              No more data available ...
+            </p>
           }
-          endMessage={<p>No more data available</p>}
           scrollableTarget='scrollableDiv'
         >
           {allLiveEventsData.map((data, index) => {
@@ -139,19 +137,13 @@ const EventCard = ({ selectedEventType }) => {
             const launch_date = data?.cohort?.cohort_launch_date
               ? new Date(data.cohort.cohort_launch_date).toLocaleDateString(
                   'en-US',
-                  {
-                    month: 'short',
-                    day: 'numeric',
-                  }
+                  { month: 'short', day: 'numeric' }
                 )
               : '';
             const end_date = data?.cohort?.cohort_end_date
               ? new Date(data.cohort.cohort_end_date).toLocaleDateString(
                   'en-US',
-                  {
-                    month: 'short',
-                    day: 'numeric',
-                  }
+                  { month: 'short', day: 'numeric' }
                 )
               : '';
             const desc = data?.cohort?.description ?? '';
@@ -220,19 +212,15 @@ const EventCard = ({ selectedEventType }) => {
       ) : (
         <div className='flex justify-center items-center'>
           {isLoading ? (
-            <div className='flex justify-center items-center w-full'>
-              <RotatingLines
-                visible={true}
-                height='96'
-                width='96'
-                color='grey'
-                strokeWidth='5'
-                animationDuration='0.75'
-                ariaLabel='rotating-lines-loading'
-                wrapperStyle={{}}
-                wrapperClass=''
-              />
-            </div>
+            <RotatingLines
+              visible={true}
+              height='96'
+              width='96'
+              color='grey'
+              strokeWidth='5'
+              animationDuration='0.75'
+              ariaLabel='rotating-lines-loading'
+            />
           ) : (
             <NoData message={'No Cohort Available'} />
           )}

@@ -92,9 +92,9 @@ const DiscoverMoneyRaising = ({ data, projectId, access }) => {
                 <ThreeDots
                   visible={true}
                   height='24'
-                  width='60'
+                  width='40'
                   color='#FFFFFF'
-                  radius='9'
+                  radius='6'
                   ariaLabel='three-dots-loading'
                   wrapperStyle={{}}
                   wrapperClassName=''

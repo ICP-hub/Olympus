@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { profile } from '../Utils/jsondata/data/profileData';
 import { shareSvgIcon } from '../Utils/Data/SvgData';
@@ -68,6 +68,7 @@ const ProfilePage = () => {
 
   const activeTabs = tabs[userRole] || ['roles', 'rating'];
   const uniqueActiveTabs = [...new Set(activeTabs)];
+  const actor = useSelector((currState) => currState.actors.actor);
 
   const handleChange = (tab) => {
     setActiveTab(tab);
@@ -78,6 +79,49 @@ const ProfilePage = () => {
   };
 
   const shareUrl = `${window.location.origin}/dashboard/profile`;
+
+  const [loadingView, setIsLoadingView] = useState(true);
+  const [reviews, setReviews] = useState([]);
+  const isMounted = useRef(false);
+
+  const addProfileView = async (caller, isSelfView) => {
+    try {
+      console.log('Attempting to add profile view...');
+      await caller.add_view(isSelfView).then((result) => {
+        console.log('API call successful, processing response...');
+
+        if (isMounted.current) {
+          console.log('Response from API:', result);
+          if (result?.Ok) {
+            console.log('Profile view recorded:', result.Ok);
+            setReviews(result.Ok);
+          } else {
+            console.log('Warning from API:', result.Warning);
+            setReviews([]);
+          }
+          setIsLoadingView(false);
+        }
+      });
+    } catch (error) {
+      if (isMounted.current) {
+        console.error('Error adding profile view:', error);
+        setReviews([]);
+        setIsLoadingView(false);
+      }
+    }
+  };
+
+  useEffect(() => {
+    isMounted.current = true;
+
+    if (actor) {
+      addProfileView(actor, true);
+    }
+
+    return () => {
+      isMounted.current = false;
+    };
+  }, [actor]);
 
   return (
     <>

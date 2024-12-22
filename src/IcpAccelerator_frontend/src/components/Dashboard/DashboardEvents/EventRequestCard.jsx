@@ -578,7 +578,7 @@ const EventRequestCard = () => {
                       {title}
                     </h3>
 
-                    {(userCurrentRoleStatusActiveRole === 'mentor' ||
+                    {/* {(userCurrentRoleStatusActiveRole === 'mentor' ||
                       userCurrentRoleStatusActiveRole === 'vc') &&
                     appliedCategory === 'project_data' ? (
                       <button
@@ -652,7 +652,7 @@ const EventRequestCard = () => {
                       </button>
                     ) : (
                       ''
-                    )}
+                    )} */}
                   </div>
                   <span className='flex '>
                     <Avatar

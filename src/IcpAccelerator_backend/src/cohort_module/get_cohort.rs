@@ -39,51 +39,51 @@ pub fn get_cohorts_by_principal(principal_id: Principal) -> Vec<CohortDetails> {
 }
 
 #[query(guard = "combined_guard")]
-pub fn get_all_cohorts(pagination_params: Pagination) -> PaginationReturnCohort {
+pub fn get_all_cohorts(pagination_params: Pagination, cohort_type: String) -> PaginationReturnCohort {
     let start = (pagination_params.page - 1) * pagination_params.page_size;
-    let current_time = ic_cdk::api::time(); // Current time for comparison
+    let current_time = ic_cdk::api::time(); 
 
-    let (upcoming, present, past): (Vec<CohortDetails>, Vec<CohortDetails>, Vec<CohortDetails>) = read_state(|state| {
+    let filtered_data: Vec<CohortDetails> = read_state(|state| {
         let cohorts = state.cohort_info.iter()
             .map(|(_key, candid_cohort_details)| candid_cohort_details.0.clone())
             .collect::<Vec<_>>();
 
-        let upcoming = cohorts.iter()
-            .filter(|cohort| cohort.cohort.start_date > current_time.to_string())
-            .cloned()
-            .collect::<Vec<_>>();
-
-        let present = cohorts.iter()
-            .filter(|cohort| cohort.cohort.start_date <= current_time.to_string() && cohort.cohort.cohort_end_date >= current_time.to_string())
-            .cloned()
-            .collect::<Vec<_>>();
-
-        let past = cohorts.iter()
-            .filter(|cohort| cohort.cohort.cohort_end_date < current_time.to_string())
-            .cloned()
-            .collect::<Vec<_>>();
-
-        (upcoming, present, past)
+        match cohort_type.as_str() {
+            "Upcoming" => cohorts
+                .into_iter()
+                .filter(|cohort| cohort.cohort.start_date > current_time.to_string())
+                .collect(),
+            "Present" => cohorts
+                .into_iter()
+                .filter(|cohort| {
+                    cohort.cohort.start_date <= current_time.to_string()
+                        && cohort.cohort.cohort_end_date >= current_time.to_string()
+                })
+                .collect(),
+            "Past" => cohorts
+                .into_iter()
+                .filter(|cohort| cohort.cohort.cohort_end_date < current_time.to_string())
+                .collect(),
+                "All" => cohorts,
+            _ => vec![], 
+        }
     });
 
-    let cohorts_snapshot = upcoming.iter()
-        .chain(present.iter())
-        .chain(past.iter())
+    let paginated_data = filtered_data
+        .iter()
         .skip(start)
         .take(pagination_params.page_size)
         .cloned()
         .collect::<Vec<_>>();
 
-    let total_count = upcoming.len() + present.len() + past.len();
+    let total_count = filtered_data.len();
 
     PaginationReturnCohort {
-        data: cohorts_snapshot,
-        total_count: total_count.try_into().unwrap(),
-        upoming_cohorts: upcoming,
-        present_cohorts: present,
-        past_cohorts: past,
+        data: paginated_data, 
+        total_count,
     }
 }
+
 
 
 #[query(guard = "combined_guard")]

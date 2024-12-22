@@ -37,7 +37,7 @@ const AccordionItem = ({ title, content, isOpen, onClick }) => {
         style={{ height: `${height}px` }}
         className='overflow-hidden transition-all duration-300 ease-in-out'
       >
-        <p className='p-4 text-[#4B5565] text-xs font-normal'>{content}</p>
+        <p className='p-4 text-[#4B5565] text-[16px] font-normal'>{content}</p>
       </div>
     </div>
   );
@@ -55,7 +55,7 @@ function HomeSection6() {
   return (
     <div className='flex items-center justify-center bg-white pt-20 px-4 pb-40'>
       <div className='container mx-auto'>
-        <div className='w-full max-w-4xl bg-white mx-auto'>
+        <div className='w-full max-w-6xl bg-white mx-auto'>
           {homepagedata.accordionData.map((item, index) => (
             <AccordionItem
               key={index}

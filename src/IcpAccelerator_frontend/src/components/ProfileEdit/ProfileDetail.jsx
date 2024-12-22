@@ -295,8 +295,9 @@ const ProfileDetail = () => {
           })),
         ],
       };
-
+      console.log('user_data', user_data);
       // Call the update API
+      console.log('Data before calling the api is ', user_data);
       const result = await actor.update_user_data(
         convertedPrincipal,
         user_data

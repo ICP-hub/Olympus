@@ -35,7 +35,7 @@ const DocumentCard = ({ doc, type, access }) => {
           href={link}
           target='_blank'
           rel='noopener noreferrer'
-          className='hover:text-blue-800 line-clamp-1 break-all mt-2 text-sm'
+          className='hover:text-blue-800 line-clamp-1 break-all mt-2 text-sm w-32'
         >
           {link || 'No link provided'}
         </a>
@@ -178,9 +178,9 @@ const DiscoverDocument = ({ projectDetails, projectId }) => {
                       <ThreeDots
                         visible={true}
                         height='20'
-                        width='60'
+                        width='40'
                         color='#FFFFFF'
-                        radius='9'
+                        radius='6'
                         ariaLabel='three-dots-loading'
                       />
                     ) : (

@@ -25,7 +25,7 @@ const AssociationDetailsMentorCard = ({
   associateData,
   setAssociateData,
 }) => {
-  console.log('selectedTypeData', selectedTypeData);
+  // console.log('selectedTypeData', selectedTypeData);
   const actor = useSelector((currState) => currState.actors.actor);
   const [associationProfileData, setAssociationProfileData] = useState(user);
   const [openDetail, setOpenDetail] = useState(false);
@@ -34,7 +34,7 @@ const AssociationDetailsMentorCard = ({
   const [isDeclineOfferModal, setIsDeclineOfferModal] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(null);
   const principal = useSelector((currState) => currState.internet.principal);
-  console.log('user', user);
+  // console.log('user', user);
 
   // POST API HANDLER TO SELF-REJECT A REQUEST WHERE MENTOR APPROCHES PROJECT
   const handleSelfReject = async (offer_id) => {
@@ -100,7 +100,7 @@ const AssociationDetailsMentorCard = ({
           actor
         );
         const resultData = await response.api_data;
-        console.log('resultData', resultData);
+        // console.log('resultData', resultData);
         setAssociationProfileData(resultData[0]);
         setIsSubmitting(false);
       } else {

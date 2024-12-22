@@ -155,8 +155,8 @@ const AssociationOfferModal = ({
   //     setActiveSideTab(tabs[0]); // Set the initial tab to the first available tab
   //   }
   // }, [tabs]);
-  console.log('components', components);
-  console.log('tabs', tabs);
+  // console.log('components', components);
+  // console.log('tabs', tabs);
   const renderContent = () => {
     if (!components) return <NoData />;
 
@@ -168,20 +168,16 @@ const AssociationOfferModal = ({
             <div className='bg-white p-4'>
               <div className='flex justify-start border-b mb-4'>
                 {tabs &&
-                  tabs?.map(
-                    (tab) => (
-                      console.log('tab', tab),
-                      (
-                        <button
-                          key={tab}
-                          className={`px-4 py-2 focus:outline-none font-medium ${activeSideTab === tab ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-400'}`}
-                          onClick={() => setActiveSideTab(tab)}
-                        >
-                          {tab?.charAt(0).toUpperCase() + tab?.slice(1)}
-                        </button>
-                      )
-                    )
-                  )}
+                  tabs?.map((tab) => (
+                    // console.log('tab', tab),
+                    <button
+                      key={tab}
+                      className={`px-4 py-2 focus:outline-none font-medium ${activeSideTab === tab ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-400'}`}
+                      onClick={() => setActiveSideTab(tab)}
+                    >
+                      {tab?.charAt(0).toUpperCase() + tab?.slice(1)}
+                    </button>
+                  ))}
               </div>
               {activeSideTab === 'general' &&
                 components.includes(GeneralProfileInfo) && (

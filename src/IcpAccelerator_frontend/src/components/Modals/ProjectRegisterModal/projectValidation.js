@@ -187,7 +187,8 @@ export const validationSchema = yup
       .number()
       .nullable(true)
       .optional()
-      .min(0, 'revineue cannot be a negative number')
+      .min(0, 'Revenue cannot be a negative number')
+      .max(999999999, 'Revenue must be less than 1 billion') // Maximum limit less than 1 billion
       .test(
         'not-negative-zero',
         'Negative zero (-0) is not allowed',

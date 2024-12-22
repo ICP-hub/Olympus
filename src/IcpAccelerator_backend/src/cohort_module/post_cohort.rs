@@ -110,6 +110,12 @@ pub async fn update_cohort(cohort_id: String, updated_params: Cohort) -> Result<
             sha256: None,
         };
 
+        let delete_asset = DeleteAsset {
+            key: cohort_logo_key.clone()
+        };
+
+        let (_deleted_result,): ((),) = call(canister_id, "delete_asset", (delete_asset, )).await.unwrap();
+
         let _result = call(canister_id, "store", (cohort_logo_arg,)).await.map_err(|e| format!("Error storing asset: {:?}", e))?;
 
         params.cohort_banner = Some(
@@ -121,7 +127,7 @@ pub async fn update_cohort(cohort_id: String, updated_params: Cohort) -> Result<
         ic_cdk::println!("No change in cohort banner or invalid banner data.");
     }
 
-    cohort_details.cohort = updated_params;
+    cohort_details.cohort = params;
 
     mutate_state(|state| {
         if let Some(_existing_cohort) = state.cohort_info.get(&cohort_id) {

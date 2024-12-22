@@ -67,24 +67,12 @@ const DashboardProjectCard = () => {
               className='bg-white w-full rounded-xl shadow-lg  p-6 mb-3'
               key={index}
             >
-              {/* <div className="bg-[#EEF2F6] rounded-t-2xl h-1.5 max-w-[218px] ml-[7px] -mb-[8px] dark:bg-[#EEF2F6] overflow-hidden">
-          <div className="relative h-1 bg-gray-200">
-            <div className="absolute left-0 top-0 h-full bg-green-500 w-1/3"></div>
-          </div>
-        </div> */}
               <div
-                className='  flex flex-col sm5:flex-row   w-full  justify-around items-center'
+                className='  flex flex-col sm5:flex-row   w-full  '
                 onClick={handleNavigation}
               >
-                {/* <div className="w-[240px] h-[195px] bg-[#EEF2F6] flex justify-center items-center rounded-2xl">
-            <img
-              src={projectLogo }
-              alt={projectName ?? "ICP"}
-              className="w-20 h-20 rounded-2xl border-4 border-[#FFFFFF]"
-            />
-          </div> */}
                 <div
-                  className='w-full sm5:w-[240px] h-[195px] flex justify-center items-center rounded-2xl relative overflow-hidden'
+                  className='w-full sm5:w-[240px] h-[192px] flex justify-center items-center rounded-2xl relative overflow-hidden'
                   style={{
                     backgroundImage: `url(${projectcover})`,
                     backgroundSize: 'cover',
@@ -105,34 +93,35 @@ const DashboardProjectCard = () => {
                     draggable={false}
                   />
                 </div>
-                <div className='ml-4 w-full sm5:w-2/3 relative mt-6 sm5:mt-0'>
+                <div className='sm5:ml-4 w-full sm5:w-2/3 relative mt-6 sm5:mt-0'>
                   <div className='flex justify-between'>
-                    <h2 className='xxs:text-xl font-semibold text-gray-900'>
+                    <h2 className='xxs:text-xl font-semibold text-gray-900 line-clamp-1 break-all truncate'>
                       {projectName ?? 'ICP'}
                     </h2>
-                    <button className=' text-gray-400 hover:text-gray-600'>
+                    {/* <button className=' text-gray-400 hover:text-gray-600'>
                       <MoreVert fontSize='small' />
-                    </button>
+                    </button> */}
                   </div>
 
-                  <p className='text-sm text-gray-500 mb-4'>
+                  <p className='text-sm text-gray-500 mb-2 line-clamp-1 break-all truncate'>
                     @{fullName ?? 'ICP'}
                   </p>
                   <hr />
-                  <p className='mt-4 text-sm text-gray-700'>
-                    Bringing privacy back to users
-                  </p>
-                  <p className='mt-1 text-sm text-gray-500'>
+
+                  <p className='mt-1 text-sm text-gray-500 line-clamp-2 break-all sm:h-12 mb-2'>
                     {parse(projectDescription) ?? 'This is ICP'}
                   </p>
-                  {areaOfInterest.map((interest, i) => (
-                    <span
-                      key={i}
-                      className='inline-block px-2 py-1 mt-2 text-xs font-medium text-gray-800 bg-gray-100 rounded-full'
-                    >
-                      {interest}
-                    </span>
-                  ))}
+
+                  <div className='flex  gap-2  flex-wrap'>
+                    {areaOfInterest.slice(0, 3).map((interest, index) => (
+                      <span
+                        key={index}
+                        className='border-2 border-gray-500 rounded-full text-gray-700 text-xs px-3 py-1 bg-gray-100'
+                      >
+                        {interest}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>

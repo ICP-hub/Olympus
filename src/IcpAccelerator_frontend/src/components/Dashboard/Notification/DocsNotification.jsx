@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import timestampAgo from '../../Utils/navigationHelper/timeStampAgo';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import { Principal } from '@dfinity/principal';
 import { useSelector } from 'react-redux';
 import { ThreeDots } from 'react-loader-spinner';
@@ -8,55 +8,39 @@ import { useNavigate } from 'react-router-dom';
 
 const DocsNotification = ({ notification, formatNotificationMessage }) => {
   const { details } = formatNotificationMessage(notification);
-  const actor = useSelector((currState) => currState.actors.actor);
+  const actor = useSelector((state) => state.actors.actor);
   const navigate = useNavigate();
 
-  // Loading states for each button
   const [loadingApprove, setLoadingApprove] = useState(false);
   const [loadingDecline, setLoadingDecline] = useState(false);
 
-  const approveAndRejectPrivateDocument = async (
-    value,
-    projectId,
-    principal
-  ) => {
+  const handleAction = async (action, projectId, principal) => {
     if (!actor) {
-      console.log('Actor not found');
-      return null;
+      console.error('Actor not found');
+      return;
     }
 
-    if (value === 'Approve') setLoadingApprove(true);
-    if (value === 'Decline') setLoadingDecline(true);
+    if (action === 'Approve') setLoadingApprove(true);
+    if (action === 'Decline') setLoadingDecline(true);
 
     try {
-      let result;
-      switch (value) {
-        case 'Approve':
-          result = await actor.approve_private_docs_access_request(
-            projectId,
-            Principal.fromText(principal)
-          );
-          break;
-        case 'Decline':
-          result = await actor.decline_private_docs_access_request(
-            projectId,
-            Principal.fromText(principal)
-          );
-          break;
-        default:
-          console.log('Unknown action');
-          return;
-      }
+      const principalInstance = Principal.fromText(principal);
+      const actionMethod =
+        action === 'Approve'
+          ? actor.approve_private_docs_access_request
+          : actor.decline_private_docs_access_request;
+
+      const result = await actionMethod(projectId, principalInstance);
+
       if (result) {
-        toast.success(`Request ${value.toLowerCase()}ed successfully.`);
+        toast.success(`Request ${action.toLowerCase()}ed successfully.`);
         navigate('/dashboard');
       } else {
-        toast.error(`Failed to ${value.toLowerCase()} the request.`);
-        navigate('/dashboard');
+        toast.error(`Failed to ${action.toLowerCase()} the request.`);
       }
     } catch (error) {
-      console.error('Error processing document request action:', error);
-      toast.error('An error occurred during processing.');
+      console.error('Error processing action:', error);
+      toast.error('An error occurred while processing the request.');
     } finally {
       setLoadingApprove(false);
       setLoadingDecline(false);
@@ -69,7 +53,7 @@ const DocsNotification = ({ notification, formatNotificationMessage }) => {
         <div className='flex space-x-2'>
           <button
             onClick={() =>
-              approveAndRejectPrivateDocument(
+              handleAction(
                 'Decline',
                 details?.projectId,
                 details?.senderPrincipal
@@ -79,21 +63,14 @@ const DocsNotification = ({ notification, formatNotificationMessage }) => {
             disabled={loadingDecline}
           >
             {loadingDecline ? (
-              <ThreeDots
-                visible={true}
-                height='35'
-                width='35'
-                color='#4A5568'
-                radius='9'
-                ariaLabel='three-dots-loading'
-              />
+              <ThreeDots height='20' width='20' color='#4A5568' />
             ) : (
               'Decline'
             )}
           </button>
           <button
             onClick={() =>
-              approveAndRejectPrivateDocument(
+              handleAction(
                 'Approve',
                 details?.projectId,
                 details?.senderPrincipal
@@ -103,21 +80,15 @@ const DocsNotification = ({ notification, formatNotificationMessage }) => {
             disabled={loadingApprove}
           >
             {loadingApprove ? (
-              <ThreeDots
-                visible={true}
-                height='35'
-                width='35'
-                color='#FFFFFF'
-                radius='9'
-                ariaLabel='three-dots-loading'
-              />
+              <ThreeDots height='20' width='20' color='#FFFFFF' />
             ) : (
-              'Accept'
+              'Approve'
             )}
           </button>
         </div>
       );
     }
+
     return (
       <button
         className={`px-3 py-1 text-sm text-white rounded-md cursor-default ${
@@ -132,35 +103,47 @@ const DocsNotification = ({ notification, formatNotificationMessage }) => {
   return (
     <div className='flex items-center space-x-4 p-4 bg-gray-100 rounded-lg mb-4 max-w-full'>
       <div className='flex-1 min-w-0'>
-        <p className='text-sm text-gray-800 mb-1 items-center space-x-1 whitespace-nowrap text-ellipsis'>
-          {details?.status === 'pending' && (
-            <div className='flex flex-wrap items-center mb-2 space-x-2'>
-              <img
-                src={details?.sender?.profilePicture}
-                alt={`${details?.sender?.name || 'User'}'s avatar`}
-                className='h-8 w-8 rounded-full flex-shrink-0 mr-1'
-                loading='lazy'
-                draggable={false}
-              />
-              <span className='font-semibold'>{details?.sender?.name}</span>
-              <span className='mr-1'>requests access to the document from</span>
-              <div className='flex items-center flex-nowrap'>
-                <img
-                  src={details?.receiver?.profilePicture}
-                  alt={`${details?.receiver?.name || 'User'}'s avatar`}
-                  className='h-8 w-8 rounded-full flex-shrink-0 mr-1'
-                  loading='lazy'
-                  draggable={false}
-                />
-                <span className='font-semibold'>{details?.receiver?.name}</span>
-              </div>
-            </div>
-          )}
-        </p>
-        <p className='text-xs text-gray-400 mt-1 whitespace-nowrap'>
+        <div className='flex items-start w-full bg-gray-100 px-4 pt-4 rounded-md'>
+          <img
+            src={
+              details?.sender?.profilePicture ||
+              'https://via.placeholder.com/40'
+            }
+            alt={`${details?.sender?.name || 'User'}'s avatar`}
+            className='h-8 w-8 rounded-full flex-shrink-0 mr-2'
+            loading='lazy'
+            draggable={false}
+          />
+          <div className='flex flex-1 flex-wrap items-center'>
+            <p className='font-semibold break-all w-14 truncate'>
+              {details?.sender?.name || 'User'}
+            </p>
+            <p className='text-sm text-[#4B5565] break-all flex flex-wrap'>
+              requests access to the document from
+            </p>
+          </div>
+        </div>
+        <div className='flex items-center mt-2'>
+          <img
+            src={
+              details?.receiver?.profilePicture ||
+              'https://via.placeholder.com/40'
+            }
+            alt={`${details?.receiver?.name || 'User'}'s avatar`}
+            className='h-8 w-8 rounded-full flex-shrink-0 mr-2'
+            loading='lazy'
+            draggable={false}
+          />
+          <span className='font-semibold break-all line-clamp-1 truncate'>
+            {details?.receiver?.name || 'User'}
+          </span>
+        </div>
+        <p className='text-xs text-gray-400 mt-1 whitespace-nowrap ml-4'>
           {timestampAgo(details?.sentAt)}
         </p>
-        <div className='mt-2 flex space-x-2'>{renderStatusButton(details)}</div>
+        <div className='mt-2 flex space-x-2 ml-4'>
+          {renderStatusButton(details)}
+        </div>
       </div>
     </div>
   );

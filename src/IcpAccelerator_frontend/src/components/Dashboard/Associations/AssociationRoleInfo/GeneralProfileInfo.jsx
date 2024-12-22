@@ -17,8 +17,18 @@ const GeneralProfileInfo = ({ key, user }) => {
     user?.receiever_principal ?? 'Principal not available';
 
   // Receiver Data
-  let recieverDataProject = user?.reciever_data?.[0][0] ?? {}; // Project data at index 0
-  let recieverDataUser = user?.reciever_data?.[0][1] ?? {}; // User data at index 1
+  let recieverDataProject =
+    Array.isArray(user?.reciever_data) &&
+    Array.isArray(user?.reciever_data[0]) &&
+    user?.reciever_data[0][0]
+      ? user.reciever_data[0][0]
+      : {}; // Default to an empty object
+
+  let recieverDataUser =
+    Array.isArray(user?.reciever_data) && user?.reciever_data[0]?.[1]
+      ? user.reciever_data[0][1]
+      : {}; // Default to an empty object
+
   console.log('mentor detail on page ', recieverDataProject);
   let recieverYearsOfMentoring =
     recieverDataProject?.profile?.years_of_mentoring ?? 'No Experience';
@@ -59,8 +69,19 @@ const GeneralProfileInfo = ({ key, user }) => {
     recieverDataUser?.params?.social_links ?? 'No social links available';
 
   // Sender Data
-  let senderDataProject = user?.sender_data?.[0][0] ?? {}; // Project data at index 0
-  let senderDataUser = user?.sender_data?.[0][1] ?? {}; // User data at index 1
+
+  // Sender Data
+  let senderDataProject =
+    Array.isArray(user?.sender_data) &&
+    Array.isArray(user?.sender_data[0]) &&
+    user?.sender_data[0][0]
+      ? user.sender_data[0][0]
+      : {}; // Default to an empty object
+
+  let senderDataUser =
+    Array.isArray(user?.sender_data) && user?.sender_data[0]?.[1]
+      ? user.sender_data[0][1]
+      : {}; // Default to an empty object
   console.log('sender user data 478 ', senderDataUser);
   console.log('project data', senderDataProject);
 

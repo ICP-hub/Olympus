@@ -77,6 +77,9 @@ const DiscoverInvestor = ({ onInvestorCountChange }) => {
       let project_id = projectId;
       let is_cohort_association = false;
       let cohort_id = [];
+      console.log('investor_id', investor_id.toTest());
+      console.log('cohort_id', cohort_id);
+      console.log('project_id', project_id);
       await actor
         .send_offer_to_investor_by_project(
           investor_id,

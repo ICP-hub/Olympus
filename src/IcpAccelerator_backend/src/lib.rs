@@ -13,11 +13,13 @@ pub mod types;
 pub mod association_module;
 pub mod ratings_module;
 pub mod notifications;
+pub mod profile_view;
 
 use ic_cdk::api::management_canister::main::CanisterStatusResponse;
 use std::collections::HashMap;
 use ic_cdk::export_candid;
 use candid::Principal;
+use candid::{self, CandidType, Deserialize};
 mod asset_manager;
 mod leaderboard;
 mod state_handler;
@@ -46,6 +48,7 @@ use crate::types::ratings_types::*;
 use crate::ratings_module::rubric_ratings::*;
 use crate::guard::*;
 use crate::notifications::notification::*;
+use crate::profile_view::ViewDataResponse;
 
 #[query(guard = "combined_guard")]
 fn greet(name: String) -> String {
@@ -56,7 +59,6 @@ fn greet(name: String) -> String {
 fn get_my_id() -> Principal {
     caller()
 }
-use candid::{self, CandidType, Deserialize};
  
 #[derive(Clone, Debug, CandidType, Deserialize)]
 pub struct Icrc28TrustedOriginsResponse {

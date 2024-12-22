@@ -71,7 +71,7 @@ const AssociationRequestCard = () => {
     setFilterOpen((prev) => !prev);
   }, []);
 
-  console.log('selectedType', selectedType);
+  // console.log('selectedType', selectedType);
   useEffect(() => {
     // Set custom no data message based on role, active tab data, and selected type data
     if (associateData.length === 0) {
@@ -269,70 +269,66 @@ const AssociationRequestCard = () => {
       {associateData.length === 0 ? (
         <NoData message={noDataMessage} />
       ) : (
-        associateData.map(
-          (user, index) => (
-            console.log('user', user),
-            (
-              <div key={index}>
-                {selectedType.value === 'Associates' ? (
-                  userCurrentRoleStatusActiveRole === 'project' ? (
-                    <MemoizedAssociationDetailsProjectCard
-                      user={user}
-                      index={index}
-                      selectedTypeData={selectedTypeData}
-                      activeTabData={activeTabData}
-                    />
-                  ) : userCurrentRoleStatusActiveRole === 'mentor' ? (
-                    <MemoizedAssociationDetailsMentorCard
-                      user={user}
-                      index={index}
-                      selectedTypeData={selectedTypeData}
-                      activeTabData={activeTabData}
-                      associateData={associateData}
-                      setAssociateData={setAssociateData}
-                    />
-                  ) : userCurrentRoleStatusActiveRole === 'vc' ? (
-                    <MemoizedAssociationDetailsInvestorCard
-                      user={user}
-                      index={index}
-                      selectedTypeData={selectedTypeData}
-                      activeTabData={activeTabData}
-                      associateData={associateData}
-                      setAssociateData={setAssociateData}
-                    />
-                  ) : (
-                    ''
-                  )
-                ) : userCurrentRoleStatusActiveRole === 'project' &&
-                  selectedType.value === 'Document' ? (
-                  <DocumentRequestCard
-                    user={user}
-                    index={index}
-                    activeTabData={activeTabData}
-                  />
-                ) : userCurrentRoleStatusActiveRole === 'project' &&
-                  selectedType.value === 'FundRaised' ? (
-                  <MoneyRaiseRequestCard
-                    user={user}
-                    index={index}
-                    activeTabData={activeTabData}
-                  />
-                ) : userCurrentRoleStatusActiveRole === 'mentor' ||
-                  userCurrentRoleStatusActiveRole === 'project' ||
-                  (userCurrentRoleStatusActiveRole === 'vc' &&
-                    selectedType.value === 'CohortRequest') ? (
-                  <CohortRequestCard
-                    user={user}
-                    index={index}
-                    activeTabData={activeTabData}
-                  />
-                ) : (
-                  ''
-                )}
-              </div>
-            )
-          )
-        )
+        associateData.map((user, index) => (
+          // console.log('user', user),
+          <div key={index}>
+            {selectedType.value === 'Associates' ? (
+              userCurrentRoleStatusActiveRole === 'project' ? (
+                <MemoizedAssociationDetailsProjectCard
+                  user={user}
+                  index={index}
+                  selectedTypeData={selectedTypeData}
+                  activeTabData={activeTabData}
+                />
+              ) : userCurrentRoleStatusActiveRole === 'mentor' ? (
+                <MemoizedAssociationDetailsMentorCard
+                  user={user}
+                  index={index}
+                  selectedTypeData={selectedTypeData}
+                  activeTabData={activeTabData}
+                  associateData={associateData}
+                  setAssociateData={setAssociateData}
+                />
+              ) : userCurrentRoleStatusActiveRole === 'vc' ? (
+                <MemoizedAssociationDetailsInvestorCard
+                  user={user}
+                  index={index}
+                  selectedTypeData={selectedTypeData}
+                  activeTabData={activeTabData}
+                  associateData={associateData}
+                  setAssociateData={setAssociateData}
+                />
+              ) : (
+                ''
+              )
+            ) : userCurrentRoleStatusActiveRole === 'project' &&
+              selectedType.value === 'Document' ? (
+              <DocumentRequestCard
+                user={user}
+                index={index}
+                activeTabData={activeTabData}
+              />
+            ) : userCurrentRoleStatusActiveRole === 'project' &&
+              selectedType.value === 'FundRaised' ? (
+              <MoneyRaiseRequestCard
+                user={user}
+                index={index}
+                activeTabData={activeTabData}
+              />
+            ) : userCurrentRoleStatusActiveRole === 'mentor' ||
+              userCurrentRoleStatusActiveRole === 'project' ||
+              (userCurrentRoleStatusActiveRole === 'vc' &&
+                selectedType.value === 'CohortRequest') ? (
+              <CohortRequestCard
+                user={user}
+                index={index}
+                activeTabData={activeTabData}
+              />
+            ) : (
+              ''
+            )}
+          </div>
+        ))
       )}
 
       {filterOpen && (
