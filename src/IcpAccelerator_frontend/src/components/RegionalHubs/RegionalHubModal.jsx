@@ -5,9 +5,11 @@ import { useForm, useFieldArray, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import CompressedImage from '../../components/ImageCompressed/CompressedImage';
 import toast, { Toaster } from 'react-hot-toast';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { FaPlus, FaTrash } from 'react-icons/fa';
+import { ThreeDots } from 'react-loader-spinner';
 import getSocialLogo from '../Utils/navigationHelper/getSocialLogo';
+
 const urlValidation = Yup.string()
   .nullable(true)
   .optional()
@@ -21,17 +23,17 @@ const urlValidation = Yup.string()
         value
       )
   );
-// Validation schema using Yup
+
 const validationSchema = Yup.object().shape({
-  name: Yup.string().required('Project name is required'),
-  flag: Yup.mixed().required('Banner image is required'),
-  website: urlValidation, // Apply URL validation to website field
+  name: Yup.string().required('Hub Name is required'),
+  flag: Yup.mixed().required('Hub image is required'),
+  website: urlValidation,
   description: Yup.string()
     .required('Description is required')
     .max(300, 'Description cannot exceed 300 characters'),
   links: Yup.array().of(
     Yup.object().shape({
-      link: urlValidation.required('Social link is required'), // Reuse URL validation for each link
+      link: urlValidation.required('Social link is required'),
     })
   ),
 });
@@ -65,11 +67,9 @@ const RegionalHubModal = ({ onClose }) => {
     const result = await trigger('flag');
     if (result) {
       try {
-        const compressedFile = await CompressedImage(file); // Compress the image file
+        const compressedFile = await CompressedImage(file);
         const reader = new FileReader();
-        reader.onloadend = () => {
-          setImagePreview(reader.result);
-        };
+        reader.onloadend = () => setImagePreview(reader.result);
         reader.onerror = (error) => {
           console.error('FileReader error: ', error);
           setError('flag', {
@@ -87,8 +87,6 @@ const RegionalHubModal = ({ onClose }) => {
           message: 'Could not process image, please try another.',
         });
       }
-    } else {
-      console.log('ERROR--imageCreationFunc-file', file);
     }
   };
 
@@ -102,11 +100,7 @@ const RegionalHubModal = ({ onClose }) => {
   const onSubmit = async (data) => {
     setIsSubmitting(true);
 
-    console.log('Form Data:', data); // Log form data
-
-    // Check if the actor is defined
     if (!actor) {
-      console.error('Actor is not defined');
       toast.error('Actor is not available.');
       setIsSubmitting(false);
       return;
@@ -123,23 +117,16 @@ const RegionalHubModal = ({ onClose }) => {
           : [],
       };
 
-      console.log(
-        'Submitting the following data to add_icp_hub_details:',
-        argument
-      );
-
       const result = await actor.add_icp_hub_details(argument);
 
-      console.log('Hub creation result:', result);
-
       if (result) {
-        toast.success('Hub added successfully!');
+        toast.success('Regional Hub added successfully!');
         onClose();
       } else {
         toast.error('Something went wrong.');
       }
     } catch (error) {
-      console.error('Error adding Hub:', error);
+      console.error('Error adding Regional Hub:', error);
       toast.error('An error occurred while adding the hub.');
     } finally {
       setIsSubmitting(false);
@@ -150,6 +137,7 @@ const RegionalHubModal = ({ onClose }) => {
     toast.error('Please check the form for errors.');
     console.log('Form errors:', errors);
   };
+
   return (
     <div className='fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50'>
       <div className='bg-white rounded-lg overflow-hidden shadow-lg w-[500px]'>
@@ -189,14 +177,13 @@ const RegionalHubModal = ({ onClose }) => {
                       >
                         <path
                           fill='#BBBBBB'
-                          stroke-linecap='round'
-                          stroke-linejoin='round'
+                          strokeLinecap='round'
+                          strokeLinejoin='round'
                           d='M12 16.5V9.75m0 0 3 3m-3-3-3 3M6.75 19.5a4.5 4.5 0 0 1-1.41-8.775 5.25 5.25 0 0 1 10.233-2.33 3 3 0 0 1 3.758 3.848A3.752 3.752 0 0 1 18 19.5H6.75Z'
                         />
                       </svg>
                     )}
                   </div>
-
                   <Controller
                     name='flag'
                     control={control}
@@ -233,7 +220,6 @@ const RegionalHubModal = ({ onClose }) => {
                     )}
                   />
                 </div>
-
                 {errors.flag && (
                   <span className='mt-1 text-sm text-red-500 font-bold text-start px-4'>
                     {errors?.flag?.message}
@@ -252,7 +238,7 @@ const RegionalHubModal = ({ onClose }) => {
                   className={`border ${
                     errors.name ? 'border-red-500' : 'border-[#737373]'
                   } shadow-sm text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                  placeholder='Enter your Project name'
+                  placeholder='Enter your Regional Hub name'
                 />
                 {errors.name && (
                   <span className='mt-1 text-sm text-red-500 font-bold flex justify-start'>
@@ -260,7 +246,8 @@ const RegionalHubModal = ({ onClose }) => {
                   </span>
                 )}
               </div>
-              {/* website link Input */}
+
+              {/* Website Link Input */}
               <div className='mb-2'>
                 <label className='block mb-1'>
                   Website Link<span className='text-red-500'>*</span>
@@ -270,8 +257,7 @@ const RegionalHubModal = ({ onClose }) => {
                   className={`border ${
                     errors.website ? 'border-red-500' : 'border-[#737373]'
                   } shadow-sm text-gray-900 placeholder-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5`}
-                  placeholder='Enter  website'
-                  rows='4'
+                  placeholder='Enter your website'
                 />
                 {errors.website && (
                   <span className='mt-1 text-sm text-red-500 font-bold flex justify-start'>
@@ -279,6 +265,7 @@ const RegionalHubModal = ({ onClose }) => {
                   </span>
                 )}
               </div>
+
               {/* Description Input */}
               <div className='mb-2'>
                 <label className='block mb-1'>
@@ -313,7 +300,6 @@ const RegionalHubModal = ({ onClose }) => {
                       <Controller
                         name={`links[${index}].link`}
                         control={control}
-                        // defaultValue={item.link || ""}
                         render={({ field, fieldState }) => (
                           <div className='flex items-center w-full'>
                             <div className='flex items-center space-x-2 w-full'>
@@ -358,13 +344,28 @@ const RegionalHubModal = ({ onClose }) => {
                 </div>
               </div>
             </div>
+
             {/* Submit Button */}
-            <div className='mt-2'>
+            <div className='mt-4 flex justify-center'>
               <button
                 type='submit'
-                className='bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700'
+                className='flex items-center justify-center bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700'
+                disabled={isSubmitting}
               >
-                Submit <ArrowForwardIcon fontSize='small' className='ml-2' />
+                {isSubmitting ? (
+                  <ThreeDots
+                    visible={true}
+                    height='15'
+                    width='40'
+                    color='#FFFFFF'
+                    ariaLabel='three-dots-loading'
+                  />
+                ) : (
+                  <>
+                    Submit
+                    <ArrowForwardIcon fontSize='small' className='ml-2' />
+                  </>
+                )}
               </button>
             </div>
           </form>
