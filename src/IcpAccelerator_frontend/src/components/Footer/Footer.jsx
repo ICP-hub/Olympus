@@ -113,7 +113,11 @@ const Footer = () => {
                     {/* Social icon next to each policy on mobile */}
                     <div className='mr-2 md:hidden block'>
                       {index === 0 && (
-                        <a href='/' aria-label='XIcon'>
+                        <a
+                          href='https://x.com/dfinity'
+                          aria-label='XIcon'
+                          target='_blank'
+                        >
                           <XIcon
                             fontSize='medium'
                             style={{ color: 'gray' }}
@@ -122,7 +126,11 @@ const Footer = () => {
                         </a>
                       )}
                       {index === 1 && (
-                        <a href='/' aria-label='LinkedInIcon'>
+                        <a
+                          href='https://www.linkedin.com/company/dfinity/'
+                          aria-label='LinkedInIcon'
+                          target='_blank'
+                        >
                           <LinkedInIcon
                             fontSize='medium'
                             style={{ color: 'gray' }}
@@ -130,21 +138,25 @@ const Footer = () => {
                         </a>
                       )}
                       {index === 2 && (
-                        <a href='/' aria-label='FacebookIcon'>
+                        <a
+                          href='https://www.facebook.com/groups/377049066958975/?ref=share&mibextid=NSMWBT'
+                          aria-label='FacebookIcon'
+                          target='_blank'
+                        >
                           <FacebookIcon
                             fontSize='medium'
                             style={{ color: 'gray' }}
                           />
                         </a>
                       )}
-                      {index === 3 && (
+                      {/* {index === 3 && (
                         <a href='/' aria-label='GitHubIcon'>
                           <GitHubIcon
                             fontSize='medium'
                             style={{ color: 'gray' }}
                           />
                         </a>
-                      )}
+                      )} */}
                     </div>
 
                     {/* Policy Text */}
@@ -153,18 +165,30 @@ const Footer = () => {
               </div>
               {/* Social Links for Medium and Larger Screens */}
               <div className='hidden md:flex space-x-4 mt-4 md:mt-0 justify-center'>
-                <a href='/' aria-label='XIcon'>
+                <a
+                  href='https://x.com/dfinity'
+                  aria-label='XIcon'
+                  target='_blank'
+                >
                   <XIcon fontSize='medium' style={{ color: 'gray' }} />{' '}
                 </a>
-                <a href='/' aria-label='LinkedInIcon'>
+                <a
+                  href='https://www.linkedin.com/company/dfinity/'
+                  aria-label='LinkedInIcon'
+                  target='_blank'
+                >
                   <LinkedInIcon fontSize='medium' style={{ color: 'gray' }} />
                 </a>
-                <a href='/' aria-label='FacebookIcon'>
+                <a
+                  href='https://www.facebook.com/groups/377049066958975/?ref=share&mibextid=NSMWBT'
+                  aria-label='FacebookIcon'
+                  target='_blank'
+                >
                   <FacebookIcon fontSize='medium' style={{ color: 'gray' }} />
                 </a>
-                <a href='/' aria-label='GitHubIcon'>
+                {/* <a href='/' aria-label='GitHubIcon'>
                   <GitHubIcon fontSize='medium' style={{ color: 'gray' }} />
-                </a>
+                </a> */}
               </div>
             </div>
           </div>
