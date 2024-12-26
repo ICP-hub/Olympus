@@ -5,7 +5,7 @@ import ArrowOutwardOutlinedIcon from '@mui/icons-material/ArrowOutwardOutlined';
 import uint8ArrayToBase64 from '../../Utils/uint8ArrayToBase64';
 import getSocialLogo from '../../Utils/navigationHelper/getSocialLogo';
 import useTimeout from '../../hooks/TimeOutHook';
-import UserGeneralDetailSkeleton from '../../Profile/skeletonProfile/UserGeneralDetailSkeleton';
+import UserGeneralDetailSkeleton from '../../profile/skeletonProfile/UserGeneralDetailSkeleton';
 import DiscoverMentorProfileSkeleton from './discoverMentor/discoverMentorSkeleton/DiscoverMentorProfileSkeleton';
 const UserDetail = (projectData) => {
   const userData = projectData?.projectData?.[0]?.[1]?.params;
@@ -132,7 +132,7 @@ const UserDetail = (projectData) => {
                     Type of Profile
                   </h3>
                   <div className='flex items-center'>
-                    <p className='border-2 border-gray-500 rounded-full text-gray-700 text-xs px-3 py-1 bg-gray-100'>
+                    <p className='border-2 border-gray-500 rounded-full text-gray-700 text-xs px-3 py-1 '>
                       {type_of_profile}
                     </p>
                   </div>
@@ -189,7 +189,7 @@ const UserDetail = (projectData) => {
                           .map((interest, index) => (
                             <span
                               key={index}
-                              className='border-2 border-gray-500 rounded-full text-gray-700 text-xs px-3 py-1 bg-gray-100'
+                              className='border-2 border-gray-500 rounded-full text-gray-700 text-xs px-3 py-1 '
                             >
                               {interest}
                             </span>
