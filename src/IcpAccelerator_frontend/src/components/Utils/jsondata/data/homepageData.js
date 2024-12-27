@@ -53,12 +53,12 @@ export const homepagedata = {
     df_logo: { df_logo },
     arrowForwardIcon: { ArrowForwardIcon },
     content: {
-      backedByText: 'Backed by',
+      backedByText: 'Powered by',
       dfLogo: '../../../assets/Logo/df_logo.png',
-      mainHeading: 'The Peak of Web3 Acceleration',
+      mainHeading: 'Peak of Web3 Acceleration',
       highlightedText: 'Web3',
       description:
-        'OLYMPUS is the first on-chain Web3 acceleration platform connecting founders, investors, mentors and talents across different ecosystems.',
+        'OLYMPUS is the first on-chain, permissionless acceleration platform for founders, investors, mentors, users and talent from across ecosystems.',
       buttonText: 'Get started',
     },
   },
@@ -68,102 +68,98 @@ export const homepagedata = {
     arrowForwardIcon: { ArrowForwardIcon },
     mainHeading: 'The Web3 Ecosystem Launchpad',
     description:
-      'Empowering innovators, entrepreneurs, and visionaries to build, scale, and thrive in the dynamic Web3 ecosystem. Discover tools, connections, and opportunities to unlock the future of decentralized success.',
+      'A platform for the next hottest projects to connect with investors, mentors, talent and communities from 20+ countries.',
     card1: {
       title: 'Founders',
       image: { Founder },
-      description:
-        'Bring your vision to life with Olympus. Founders can create and manage projects seamlessly, build teams, and share key resources.',
+      description: 'Early Stage or mature projects',
       list: [
-        'Launch and manage innovative projects.',
-        'Upload key documents and whitepapers.',
-        'Build and lead strong teams.',
-        'Connect with investors and mentors.',
+        'Visibility on your growth actions based on 9 key success parameters',
+        'Find early adopters, users, and community',
+        'Raise funds, grants, or donations',
+        'Find your team',
+        'Get tech support',
+        'Get advisors for tokenomics, marketing, etc.',
       ],
       bgColor: '#E0F2FE',
     },
     card2: {
       title: 'Investors',
       image: { Investor },
-      description:
-        'Fuel innovation by investing in high-potential projects. Investors connect with projects directly to enable growth and success.',
+      description: 'Angels or well-established VC funds',
       list: [
-        'Invest in high-potential projects.',
-        'Review whitepapers and tokenomics.',
-        'Connect with innovative project teams.',
-        'Support future-focused ideas.',
+        'Access all due diligence docs and project peers for reference and verification',
+        'Get a deep understanding of project health based on 9 key success parameters',
+        'Option to take advisory/KOL stake or just be a mentor',
       ],
       bgColor: '#FEF0C7',
     },
     card3: {
       title: 'Mentors',
       image: { MentorsImage },
-      description:
-        'Shape the future by guiding projects and sharing your expertise. Mentors can create cohorts and host events to nurture talent.',
+      description: 'Any KOL/expert/service provider with a proven track record',
       list: [
-        'Guide projects with your expertise.',
-        'Host cohorts and impactful events.',
-        'Partner with aligned projects.',
-        'Empower founders to succeed.',
+        'Provide services to projects across 20+ countries',
+        'Option to take advisory/KOL stake or just get a service fee',
+        'Start you own accelerator and invite existing platform projects, investors, mentors to join',
+        ,
       ],
       bgColor: '#FDEAD7',
     },
     card4: {
       title: 'Talent',
       image: { Talents },
-      description:
-        'Join the Olympus community to showcase your skills and connect with projects that align with your ambitions. Empower yourself and accelerate your growth.',
+      description: 'New or experienced web3 professionals',
       list: [
-        'Showcase skills to find opportunities.',
-        'Join innovative Web3 projects.',
-        'Collaborate with founders and mentors.',
-        'Advance your career in Web3.',
+        'Opportunities in the most promising projects',
+        'Access to overall health of projects',
+        'Get consulting, part-time, or full-time gigs',
       ],
       bgColor: '#CCFBEF',
     },
     buttonText: 'Get started',
   },
 
-  homepagesection3: {
-    backgroundColor: 'white',
-    paragraph1: {
-      text: 'Our mission is to ',
-      highlightedText: {
-        text: 'empower founders',
-        backgroundColor: 'blue-400',
-      },
-    },
-    paragraph2: {
-      text: ' with the resources and connections to bring their bold visions to life. We ',
-      highlightedText2: {
-        text: 'inspire investors',
-        backgroundColor: 'orange-400',
-      },
-    },
+  // homepagesection3: {
+  //   backgroundColor: 'white',
+  //   paragraph1: {
+  //     text: 'Our mission is to ',
+  //     highlightedText: {
+  //       text: 'empower founders',
+  //       backgroundColor: 'blue-400',
+  //     },
+  //   },
+  //   paragraph2: {
+  //     text: ' with the resources and connections to bring their bold visions to life. We ',
+  //     highlightedText2: {
+  //       text: 'inspire investors',
+  //       backgroundColor: 'orange-400',
+  //     },
+  //   },
 
-    paragraph3: {
-      text: ' to fuel innovation. We ',
-      highlightedText3: {
-        text: 'unite mentors',
-        backgroundColor: 'red-400',
-      },
-    },
+  //   paragraph3: {
+  //     text: ' to fuel innovation. We ',
+  //     highlightedText3: {
+  //       text: 'unite mentors',
+  //       backgroundColor: 'red-400',
+  //     },
+  //   },
 
-    paragraph4: {
-      text: ' and ',
-      highlightedText4: {
-        text: 'foster talent',
-        backgroundColor: 'green-400',
-      },
-    },
-    paragraph5: {
-      text: ' in a shared passion for building a decentralized future.',
-    },
+  //   paragraph4: {
+  //     text: ' and ',
+  //     highlightedText4: {
+  //       text: 'foster talent',
+  //       backgroundColor: 'green-400',
+  //     },
+  //   },
+  //   paragraph5: {
+  //     text: ' in a shared passion for building a decentralized future.',
+  //   },
 
-    paragraph6: {
-      text: 'Together, we will redefine what’s possible and forge a new era of digital empowerment.',
-    },
-  },
+  //   paragraph6: {
+  //     text: 'Together, we will redefine what’s possible and forge a new era of digital empowerment.',
+  //   },
+  // },
 
   homepagesection4: {
     backgroundColor: '#FEF6EE',
@@ -181,7 +177,7 @@ export const homepagedata = {
       title: 'Loaded with value',
       titleClass: 'text-3xl font-bold mb-6',
       description:
-        'Est malesuada ac elit gravida vel aliquam nec. Arcu pellentesque convallis quam feugiat non viverra massa fringilla. Malesuada blandit integer quis tellus.',
+        'OLYMPUS ecosystem leverages the network effect, so you get compounding value back for the value you add',
       descriptionClass: 'text-gray-600 mb-10',
     },
     card1: {
@@ -189,14 +185,26 @@ export const homepagedata = {
       imageAlt: '',
       imageClass: 'py-4 object-cover object-center max-w-[241px] max-h-[407px]',
       backgroundColor: '#EEF2F6',
+      // content: {
+      //   title: 'Global events',
+      //   titleClass: 'text-3xl font-custom text-[#121926] pb-2',
+      //   description:
+      //     'Find and join exclusive experinces/activations',
+      //   descriptionClass: 'pb-6 text-xs font-normal text-[#4B5565]',
+      //   description2:
+      //     'Gain insights from industry-leading experts and pioneers.',
+      //   tags: ['#Accelerators', '#Meetups', '#Conferences'],
+      // },
       content: {
-        title: 'Global events',
+        title: 'Global Events',
         titleClass: 'text-3xl font-custom text-[#121926] pb-2',
-        description:
-          'Participate in exclusive meetups, conferences, and global networking opportunities.',
+        description: 'Find and join exclusive experiences/activations',
         descriptionClass: 'pb-6 text-xs font-normal text-[#4B5565]',
-        description2:
-          'Gain insights from industry-leading experts and pioneers.',
+        listItems: [
+          'Local curated meet-ups',
+          'Side events around the major Web3 conferences',
+          'Private events tailored for specific outcomes',
+        ],
         tags: ['#Accelerators', '#Meetups', '#Conferences'],
       },
     },
@@ -237,10 +245,10 @@ export const homepagedata = {
         title: 'Regional Hubs',
         titleClass: 'text-3xl font-custom text-[#121926] pb-2',
         description:
-          'Connect with local communities, accelerators, and regional networks to expand reach.',
+          'Find the peers and like-minded people wherever you are are a part of ICP HUBS Network',
         descriptionClass: 'pb-6 text-xs font-normal text-[#4B5565]',
         description2: 'Strengthen ties with innovators in your region.',
-        tags: ['#Accelerators', '#Meetups', '#Conferences'],
+        tags: ['#Worldwide', '#Growth', '#Networking'],
       },
     },
     card5: {
@@ -252,10 +260,10 @@ export const homepagedata = {
         title: 'Multichain',
         titleClass: 'text-3xl font-custom text-[#121926] pb-2',
         description:
-          'Operate seamlessly across multiple blockchain ecosystems with full interoperability support.',
+          'Build to scale beyond the limits of one ecosystem with the Chain Fusion',
         descriptionClass: 'pb-6 text-xs font-normal text-[#4B5565]',
-        description2: 'Expand your reach with full multichain support.',
-        tags: ['#Accelerators', '#Meetups', '#Conferences'],
+
+        tags: ['#Decentralized', '#Open'],
       },
     },
     card6: {
@@ -267,9 +275,9 @@ export const homepagedata = {
         title: 'Reputation',
         titleClass: 'text-3xl font-custom text-[#121926] pb-2',
         description:
-          'Showcase achievements, verify contributions, and boost credibility within the Web3 ecosystem.',
+          'Give and get feedback and ratings for your engagements with stakeholders that are recorded on chain, making them immutable. These help you grow your business.',
         descriptionClass: 'pb-6 text-xs font-normal text-[#4B5565]',
-        tags: ['#Onboarding', '#Comms', '#Knowledge '],
+        tags: ['#Transparency', '#Relationship'],
       },
     },
     card7: {
@@ -281,9 +289,9 @@ export const homepagedata = {
         title: 'Opportunities',
         titleClass: 'text-3xl font-custom text-[#121926] pb-2',
         description:
-          'Explore exciting career paths and projects to advance your goals and vision.',
+          'Access exclusive opportunities, deals, jobs, and bounties across multiple geographies before they are open to the public',
         descriptionClass: 'pb-6 text-xs font-normal text-[#4B5565]',
-        tags: ['#Onboarding', '#Comms'],
+        tags: ['#Networking', '#Jobs', '#Recognition'],
       },
     },
     card8: {
@@ -295,9 +303,9 @@ export const homepagedata = {
         title: 'Communication',
         titleClass: 'text-3xl font-custom text-[#121926] pb-2',
         description:
-          'Streamline connections, collaboration, and communication with intuitive, efficient tools.',
+          'Directly contact any stakeholder enrolled on this platform using the connect option on the platform. You can also publish your requirements/services for relevant stakeholders to contact you.',
         descriptionClass: 'pb-6 text-xs font-normal text-[#4B5565]',
-        tags: ['#Onboarding', '#Comms'],
+        tags: ['#Messages', '#Connections'],
       },
     },
     card9: {
@@ -306,12 +314,17 @@ export const homepagedata = {
       imageClass: 'object-cover object-center',
       backgroundColor: '#E3E8EF',
       content: {
-        title: 'Bounties',
+        title: 'Earn',
         titleClass: 'text-3xl font-custom text-[#121926] pb-2',
         description:
           'Earn rewards by contributing to projects, solving challenges, and completing tasks effectively.',
+        listItems: [
+          'Local curated meet-ups',
+          'Side events around the major Web3 conferences',
+          'Private events tailored for specific outcomes',
+        ],
         descriptionClass: 'pb-6 text-xs font-normal text-[#4B5565]',
-        tags: ['#Onboarding', '#Comms'],
+        tags: ['#Chance', '#Earn'],
       },
     },
     button: {
