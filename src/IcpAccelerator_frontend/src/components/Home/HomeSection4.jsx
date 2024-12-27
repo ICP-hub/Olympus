@@ -50,9 +50,18 @@ function HomeSection4() {
                       <p className='pb-6 text-xs font-normal text-[#4B5565]'>
                         {homepagesection4.card1.content.description}
                       </p>
-                      <p className='text-xs font-normal text-[#4B5565] mb-2'>
+                      {/* <p className='text-xs font-normal text-[#4B5565] mb-2'>
                         {homepagesection4.card1.content.description2}
-                      </p>
+                      </p> */}
+                      <ul className='list-disc pl-5 text-xs text-gray-700 space-y-2'>
+                        {(homepagesection4.card1.content.listItems || []).map(
+                          (item, index) => (
+                            <li key={index} className='mb-2'>
+                              {item}
+                            </li>
+                          )
+                        )}
+                      </ul>
                     </div>
                     <div className='flex gap-1 flex-wrap '>
                       <span className='bg-white text-xs font-normal text-[#364152] px-3 py-1 rounded-md border-2'>
@@ -192,11 +201,26 @@ function HomeSection4() {
                       <h1 className='text-3xl font-custom text-[#121926] pb-2'>
                         {homepagesection4.card4.content.title}
                       </h1>
-                      <p className='pb-6 text-xs font-normal text-[#4B5565]'>
+                      {/* <p className='pb-6 text-xs font-normal text-[#4B5565]'>
                         {homepagesection4.card4.content.description}
-                      </p>
-                      <p className='text-xs font-normal text-[#4B5565] mb-2'>
-                        {homepagesection4.card4.content.description2}
+                      </p> */}
+                      <p className='pb-6 text-xs font-normal text-[#4B5565]'>
+                        {homepagesection4.card4.content.description
+                          .split('ICP HUBS Network')
+                          .map((part, index) => (
+                            <>
+                              {part}
+                              {index <
+                                homepagesection4.card4.content.description.split(
+                                  'ICP HUBS Network'
+                                ).length -
+                                  1 && (
+                                <span className='underline'>
+                                  ICP HUBS Network
+                                </span>
+                              )}
+                            </>
+                          ))}
                       </p>
                     </div>
                     <div className='flex gap-1 flex-wrap'>
@@ -234,10 +258,20 @@ function HomeSection4() {
                         {homepagesection4.card5.content.title}
                       </h1>
                       <p className='pb-6 text-xs font-normal text-[#4B5565]'>
-                        {homepagesection4.card5.content.description}
-                      </p>
-                      <p className='text-xs font-normal text-[#4B5565] mb-2'>
-                        {homepagesection4.card5.content.description2}
+                        {homepagesection4.card5.content.description
+                          .split('Chain Fusion')
+                          .map((part, index) => (
+                            <>
+                              {part}
+                              {index <
+                                homepagesection4.card5.content.description.split(
+                                  'Chain Fusion'
+                                ).length -
+                                  1 && (
+                                <span className='underline'>Chain Fusion</span>
+                              )}
+                            </>
+                          ))}
                       </p>
                     </div>
                     <div className='flex gap-1 flex-wrap'>
@@ -246,9 +280,6 @@ function HomeSection4() {
                       </span>
                       <span className='bg-white text-xs font-normal text-[#364152] px-3 py-1 rounded-md border-2'>
                         {homepagesection4.card5.content.tags[1]}
-                      </span>
-                      <span className='bg-white text-xs font-normal text-[#364152] px-3 py-1 rounded-md border-2'>
-                        {homepagesection4.card5.content.tags[2]}
                       </span>
                     </div>
                   </div>
@@ -297,9 +328,6 @@ function HomeSection4() {
                       </span>
                       <span className='bg-white text-xs font-normal text-[#364152] px-3 py-1 rounded-md border-2'>
                         {homepagesection4.card6.content.tags[1]}
-                      </span>
-                      <span className='bg-white text-xs font-normal text-[#364152] px-3 py-1 rounded-md border-2'>
-                        {homepagesection4.card6.content.tags[2]}
                       </span>
                     </div>
                   </div>
@@ -380,6 +408,15 @@ function HomeSection4() {
                     <p className='pb-6 text-xs font-normal text-[#4B5565]'>
                       {homepagesection4.card9.content.description}
                     </p>
+                    <ul className='list-disc pl-5 text-xs text-gray-700 space-y-2'>
+                      {(homepagesection4.card1.content.listItems || []).map(
+                        (item, index) => (
+                          <li key={index} className='mb-2'>
+                            {item}
+                          </li>
+                        )
+                      )}
+                    </ul>
                   </div>
                   <div
                     className=' h-full  py-4 flex items-end px-5'
