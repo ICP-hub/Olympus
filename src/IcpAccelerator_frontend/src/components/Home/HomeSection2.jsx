@@ -23,6 +23,54 @@ export default function Section2() {
           <div className='container mx-auto'>
             <div className='max-w-7xl w-full py-8  md:px-4 sm:px-6 lg:px-8  mx-auto'>
               <div className='grid gap-4  dlg:grid-cols-2'>
+                <div className='py-6 bg-[#FDEAD7]  rounded-3xl overflow-hidden'>
+                  <div className='flex flex-col sm3:flex-row items-center mb-4'>
+                    <img
+                      src={homepagesection2.card3.image.MentorsImage}
+                      alt='Mentors'
+                      className='w-[230px] h-[350px] mr-4 object-cover'
+                      loading='lazy'
+                      draggable={false}
+                    />
+                    <div className='px-2'>
+                      <h2 className='text-2xl font-bold'>
+                        {homepagesection2.card3.title}
+                      </h2>
+                      <p className='text-sm text-[#4B5565] py-3'>
+                        {homepagesection2.card3.description}
+                      </p>
+                      <ul className='list-disc mb-2 text-sm  font-normal text-[#4B5565] leading-loose px-6'>
+                        {homepagesection2.card3.list.map((list, index) => {
+                          return <li key={index}>{list}</li>;
+                        })}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                <div className='py-6  bg-[#CCFBEF] rounded-3xl overflow-hidden'>
+                  <div className='flex flex-col sm3:flex-row items-start mb-4'>
+                    <img
+                      src={homepagesection2.card4.image.Talents}
+                      alt='Talent'
+                      className='w-[230px] h-[350px] mr-4 object-cover '
+                      loading='lazy'
+                      draggable={false}
+                    />
+                    <div className='px-2 py-7'>
+                      <h2 className='text-2xl font-bold'>
+                        {homepagesection2.card4.title}
+                      </h2>
+                      <p className='text-sm text-[#4B5565] py-3'>
+                        {homepagesection2.card4.description}
+                      </p>
+                      <ul className='list-disc mb-2 text-sm font-normal text-[#4B5565] leading-loose px-6'>
+                        {homepagesection2.card4.list.map((list, index) => {
+                          return <li key={index}>{list}</li>;
+                        })}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
                 <div className='py-6  bg-[#E0F2FE] rounded-3xl overflow-hidden'>
                   <div className=' flex flex-col sm3:flex-row items-center mb-4'>
                     <img
@@ -32,14 +80,14 @@ export default function Section2() {
                       loading='lazy'
                       draggable={false}
                     />
-                    <div className='px-6'>
+                    <div className='px-2'>
                       <h2 className='text-2xl font-bold'>
                         {homepagesection2.card1.title}{' '}
                       </h2>
-                      <p className='text-sm font-normal text-[#4B5565] pb-6'>
+                      <p className='text-sm font-normal text-[#4B5565] py-3'>
                         {homepagesection2.card1.description}
                       </p>
-                      <ul className='list-disc list-inside text-sm font-normal text-[#4B5565] leading-loose'>
+                      <ul className='list-disc mb-2 text-sm font-normal text-[#4B5565] leading-loose px-6'>
                         {homepagesection2.card1.list.map((list, index) => {
                           return <li key={index}>{list}</li>;
                         })}
@@ -47,7 +95,7 @@ export default function Section2() {
                     </div>
                   </div>
                 </div>
-                <div className='py-6 bg-[#FEF0C7] rounded-3xl overflow-hidden'>
+                <div className='py-6  bg-[#FEF0C7] rounded-3xl overflow-hidden'>
                   <div className='flex flex-col sm3:flex-row items-center mb-4'>
                     <img
                       src={homepagesection2.card2.image.Investor}
@@ -56,63 +104,15 @@ export default function Section2() {
                       loading='lazy'
                       draggable={false}
                     />
-                    <div className='px-6'>
+                    <div className='px-2'>
                       <h2 className='text-2xl font-bold'>
                         {homepagesection2.card2.title}
                       </h2>
-                      <p className='text-smfont-normal text-[#4B5565] pb-6'>
+                      <p className='text-sm text-[#4B5565] py-3'>
                         {homepagesection2.card2.description}
                       </p>
-                      <ul className='list-disc list-inside text-sm font-normal text-[#4B5565] leading-loose'>
+                      <ul className='list-disc mb-2 text-sm font-normal text-[#4B5565] leading-loose px-6'>
                         {homepagesection2.card2.list.map((list, index) => {
-                          return <li key={index}>{list}</li>;
-                        })}
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-                <div className='py-6 bg-[#FDEAD7] rounded-3xl overflow-hidden'>
-                  <div className='flex flex-col sm3:flex-row items-center mb-4'>
-                    <img
-                      src={homepagesection2.card3.image.MentorsImage}
-                      alt='Mentors'
-                      className='w-[230px] h-[350px] mr-4 object-cover'
-                      loading='lazy'
-                      draggable={false}
-                    />
-                    <div className='px-6'>
-                      <h2 className='text-2xl font-bold'>
-                        {homepagesection2.card3.title}
-                      </h2>
-                      <p className='text-smfont-normal text-[#4B5565] pb-6'>
-                        {homepagesection2.card3.description}
-                      </p>
-                      <ul className='list-disc list-inside text-sm font-normal text-[#4B5565] leading-loose'>
-                        {homepagesection2.card3.list.map((list, index) => {
-                          return <li key={index}>{list}</li>;
-                        })}
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-                <div className='py-6 bg-[#CCFBEF] rounded-3xl overflow-hidden'>
-                  <div className='flex flex-col sm3:flex-row items-center mb-4'>
-                    <img
-                      src={homepagesection2.card4.image.Talents}
-                      alt='Talent'
-                      className='w-[230px] h-[350px] mr-4 object-cover'
-                      loading='lazy'
-                      draggable={false}
-                    />
-                    <div className='px-6'>
-                      <h2 className='text-2xl font-bold'>
-                        {homepagesection2.card4.title}
-                      </h2>
-                      <p className='text-smfont-normal text-[#4B5565] pb-6'>
-                        {homepagesection2.card4.description}
-                      </p>
-                      <ul className='list-disc list-inside text-sm font-normal text-[#4B5565] leading-loose'>
-                        {homepagesection2.card4.list.map((list, index) => {
                           return <li key={index}>{list}</li>;
                         })}
                       </ul>
