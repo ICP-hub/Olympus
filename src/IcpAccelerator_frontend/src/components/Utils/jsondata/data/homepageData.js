@@ -17,6 +17,13 @@ import sec46 from '../../../../../assets/images/sec46.png';
 import sec47 from '../../../../../assets/images/sec47.png';
 import sec48 from '../../../../../assets/images/sec48.png';
 import sec49 from '../../../../../assets/images/sec49.png';
+import sec50 from '../../../../../assets/images/sec50.png';
+import sec51 from '../../../../../assets/images/sec51.png';
+import multichain from '../../../../../assets/images/multichain.png';
+import reputation from '../../../../../assets/images/reputation.png';
+import incubation from '../../../../../assets/images/incubation.png';
+import globalevent from '../../../../../assets/images/globalevent.png';
+
 import man1 from '../../../../../assets/images/man1.png';
 import AccelerateIcon from '../../../../../assets/images/AccelerateIcon.png';
 import CollaborateIcon from '../../../../../assets/images/CollaborateIcon.png';
@@ -181,7 +188,7 @@ export const homepagedata = {
       descriptionClass: 'text-gray-600 mb-10',
     },
     card1: {
-      imageSrc: { sec41 },
+      imageSrc: { globalevent },
       imageAlt: '',
       imageClass: 'py-4 object-cover object-center max-w-[241px] max-h-[407px]',
       backgroundColor: '#EEF2F6',
@@ -209,30 +216,47 @@ export const homepagedata = {
       },
     },
     card2: {
-      imageSrc: { sec42 },
+      imageSrc: { sec47 },
       imageAlt: '',
       imageClass: 'object-cover object-center',
       backgroundColor: '#FCE7F6',
       content: {
-        title: 'AI Concierge',
+        title: 'Projects Evaluation',
         titleClass: 'text-3xl font-custom text-[#121926] pb-2',
         description:
-          'Leverage AI tools to simplify processes, boost productivity, and enhance efficiency.',
+          'Perpetual loop of feedback from all the stakeholders on 9 key parameters sets a clear growth trajectory.',
+        listItems: [
+          'Establishing the funding team',
+          'Setting the vision',
+          'Solidifying the value proposition',
+          'Validating an investable market',
+          'Proving a profitable business model',
+          'Moving beyond early adopters',
+          'Hitting product-market fit',
+          'Scaling up',
+          'Exit in sight',
+        ],
         descriptionClass: 'pb-6 text-xs font-normal text-[#4B5565]',
-        tags: ['#Onboarding', '#Comms', '#Knowledge '],
+        tags: ['#Accelerators', '#Meetups', '#Conferences '],
       },
     },
     card3: {
-      imageSrc: { sec42 },
+      imageSrc: { incubation },
       imageAlt: '',
       imageClass: 'object-cover object-center',
       backgroundColor: '#FFFACD',
       content: {
-        title: 'Perks',
+        title: 'Incubation / GTM Services',
         titleClass: 'text-3xl font-custom text-[#121926] pb-2',
         description:
-          'Unlock exclusive benefits, premium tools, and resources for personal and project growth.',
+          'Stakeholders can provide various services to each other in exchange of value for themselves',
         descriptionClass: 'pb-6 text-xs font-normal text-[#4B5565]',
+        listItems: [
+          'Start your accelerator',
+          'Tech & adult',
+          'Legal & Finance',
+          'Community & marketing',
+        ],
         tags: ['#Onboarding', '#Comms', '#Knowledge '],
       },
     },
@@ -252,7 +276,7 @@ export const homepagedata = {
       },
     },
     card5: {
-      imageSrc: { hubs },
+      imageSrc: { multichain },
       imageAlt: '',
       imageClass: 'pt-4 object-cover object-center max-w-[241px] max-h-[324px]',
       backgroundColor: '#FDF4FF',
@@ -267,7 +291,7 @@ export const homepagedata = {
       },
     },
     card6: {
-      imageSrc: { sec42 },
+      imageSrc: { reputation },
       imageAlt: '',
       imageClass: 'object-cover object-center',
       backgroundColor: '#F3FEE7',
@@ -281,7 +305,7 @@ export const homepagedata = {
       },
     },
     card7: {
-      imageSrc: { sec47 },
+      imageSrc: { sec51 },
       imageAlt: '',
       imageClass: 'object-cover object-center',
       backgroundColor: '#EFF4FF',
@@ -309,19 +333,19 @@ export const homepagedata = {
       },
     },
     card9: {
-      imageSrc: { sec49 },
+      imageSrc: { sec50 },
       imageAlt: '',
       imageClass: 'object-cover object-center',
       backgroundColor: '#E3E8EF',
       content: {
         title: 'Earn',
         titleClass: 'text-3xl font-custom text-[#121926] pb-2',
-        description:
-          'Earn rewards by contributing to projects, solving challenges, and completing tasks effectively.',
+
         listItems: [
-          'Local curated meet-ups',
-          'Side events around the major Web3 conferences',
-          'Private events tailored for specific outcomes',
+          'Access curated deals',
+          'Make & take investments',
+          'Provide services to various stakeholders',
+          'Be an early adopter, and get access to deals/opportunities before anyone else',
         ],
         descriptionClass: 'pb-6 text-xs font-normal text-[#4B5565]',
         tags: ['#Chance', '#Earn'],
