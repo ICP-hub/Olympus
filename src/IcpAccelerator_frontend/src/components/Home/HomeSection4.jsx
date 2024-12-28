@@ -299,36 +299,36 @@ function HomeSection4() {
                     ></div>
                   </div>
 
-                  <div className='flex flex-col items-center px-5  '>
+                  <div className='relative flex flex-col items-start px-5 pb-2 bg-[#F3FEE7] rounded-lg'>
                     {/* Title */}
-                    <h1 className='text-3xl font-custom text-[#121926] pb-3 text-center'>
+                    <h1 className='text-2xl font-bold text-[#121926] pb-3 text-start'>
                       {homepagesection4.card6.content.title}
                     </h1>
 
                     {/* Description */}
-                    <p className='text-sm font-normal text-[#4B5565] pb-6 text-center px-6'>
+                    <p className='text-sm font-medium text-[#4B5565] pb-6 text-start leading-relaxed z-10'>
                       {homepagesection4.card6.content.description}
                     </p>
 
-                    {/* Image */}
-                    <div
-                      className='hidden sm:block h-40 w-40 bg-cover bg-center mb-5'
-                      style={{
-                        backgroundImage: `url(${homepagesection4.card6.imageSrc.reputation})`,
-                      }}
-                    ></div>
-
                     {/* Tags */}
-                    <div className='flex gap-2 flex-wrap justify-center'>
+                    <div className='flex gap-2 flex-wrap justify-center pb-6 absolute -bottom-48'>
                       {homepagesection4.card6.content.tags.map((tag, index) => (
                         <span
                           key={index}
-                          className='bg-white text-sm font-normal text-[#364152] px-3 py-1 rounded-md border border-[#DDE1E7]'
+                          className='bg-white text-xs text-[#364152] px-3 py-1 rounded-md border border-[#DDE1E7]'
                         >
                           {tag}
                         </span>
                       ))}
                     </div>
+
+                    {/* Image */}
+                    <div
+                      className='absolute -bottom-44 right-0 h-52 w-60 bg-cover bg-center'
+                      style={{
+                        backgroundImage: `url(${homepagesection4.card6.imageSrc.reputation})`,
+                      }}
+                    ></div>
                   </div>
                 </div>
               </div>
