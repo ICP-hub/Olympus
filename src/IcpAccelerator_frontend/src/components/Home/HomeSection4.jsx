@@ -313,7 +313,7 @@ function HomeSection4() {
                     </p>
 
                     {/* Tags */}
-                    <div className='flex gap-2 flex-wrap justify-center pb-6 absolute -bottom-48 ss4:-bottom-8'>
+                    <div className='flex gap-2 flex-wrap justify-center pb-6 absolute md:-bottom-48 ss4:-bottom-8'>
                       {homepagesection4.card6.content.tags.map((tag, index) => (
                         <span
                           key={index}
@@ -326,7 +326,7 @@ function HomeSection4() {
 
                     {/* Image */}
                     <div
-                      className='absolute -bottom-44 right-0 h-52 w-60 bg-cover bg-center ss4:hidden'
+                      className='absolute -bottom-44 right-0 h-52 w-60 bg-cover bg-center ss4:hidden md:block'
                       style={{
                         backgroundImage: `url(${homepagesection4.card6.imageSrc.reputation})`,
                       }}
