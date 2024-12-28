@@ -5,6 +5,7 @@ import { Principal } from '@dfinity/principal';
 import { useSelector } from 'react-redux';
 import { ThreeDots } from 'react-loader-spinner';
 import { useNavigate } from 'react-router-dom';
+
 const MoneyRaiseNotification = ({
   notification,
   formatNotificationMessage,
@@ -45,8 +46,6 @@ const MoneyRaiseNotification = ({
 
       if (result) {
         toast.success(`Request ${value.toLowerCase()}ed successfully.`);
-        // Optional: uncomment if you need to refresh the page or data
-        // navigate(0);
       } else {
         toast.error(`Failed to ${value.toLowerCase()} the request.`);
       }
@@ -59,7 +58,6 @@ const MoneyRaiseNotification = ({
     }
   };
 
-  console.log('details in money raise', details);
   const renderStatusButton = (details) => {
     switch (details?.status) {
       case 'pending':
@@ -73,17 +71,16 @@ const MoneyRaiseNotification = ({
                   details?.senderPrincipal
                 )
               }
-              className='px-3 py-1 text-sm text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300'
+              className='px-4 py-1 text-sm text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 disabled:opacity-50'
               disabled={loadingDecline}
             >
               {loadingDecline ? (
                 <ThreeDots
                   visible={true}
-                  height='35'
-                  width='35'
+                  height='20'
+                  width='20'
                   color='#4A5568'
-                  radius='9'
-                  ariaLabel='three-dots-loading'
+                  ariaLabel='loading-decline'
                 />
               ) : (
                 'Decline'
@@ -97,34 +94,33 @@ const MoneyRaiseNotification = ({
                   details?.senderPrincipal
                 )
               }
-              className='px-3 py-1 text-sm text-white bg-blue-600 rounded-md hover:bg-blue-700'
+              className='px-4 py-1 text-sm text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50'
               disabled={loadingApprove}
             >
               {loadingApprove ? (
                 <ThreeDots
                   visible={true}
-                  height='35'
-                  width='35'
+                  height='20'
+                  width='20'
                   color='#FFFFFF'
-                  radius='9'
-                  ariaLabel='three-dots-loading'
+                  ariaLabel='loading-approve'
                 />
               ) : (
-                'Accept'
+                'Approve'
               )}
             </button>
           </div>
         );
       case 'approved':
         return (
-          <button className='px-3 py-1 text-sm text-white bg-green-500 rounded-md cursor-default'>
-            {details?.status}
+          <button className='px-4 py-1 text-sm text-white bg-green-500 rounded-lg cursor-default'>
+            Approved
           </button>
         );
       case 'declined':
         return (
-          <button className='px-3 py-1 text-sm text-white bg-red-500 rounded-md cursor-default'>
-            {details?.status}
+          <button className='px-4 py-1 text-sm text-white bg-red-500 rounded-lg cursor-default'>
+            Declined
           </button>
         );
       default:
@@ -134,138 +130,145 @@ const MoneyRaiseNotification = ({
 
   return (
     <div
-      className='flex items-center space-x-4 p-4 bg-gray-100 rounded-lg mb-4 max-w-full'
-      style={{ wordBreak: 'break-word', maxWidth: '100%' }}
+      className='flex flex-col md:flex-row items-center md:items-start space-x-0 md:space-x-4 p-6 bg-gray-100 shadow-md rounded-lg mb-4 w-full'
+      style={{ wordBreak: 'break-word' }}
     >
-      <div className='flex-1 min-w-0'>
-        <p
-          className='text-sm text-gray-800 mb-1 flex items-center space-x-1 whitespace-normal flex-wrap text-ellipsis'
-          style={{ wordBreak: 'break-word' }}
-        >
-          {details?.status === 'pending' && (
-            <div
-              className='flex items-start w-full bg-gray-100 p-4 rounded-md'
-              style={{ wordBreak: 'break-word', maxWidth: '100%' }}
-            >
-              <img
-                src={details?.sender?.profilePicture}
-                alt={`${details?.sender?.name || 'User'}'s avatar`}
-                className='h-6 w-6 rounded-full flex-shrink-0 mr-2'
-                loading='lazy'
-                draggable={false}
-              />
-
-              <div className='flex'>
-                <p className='font-semibold mr-2 break-words text-nowrap'>
-                  {details?.sender?.name || 'User'}
-                </p>
-                <p className='text-sm text-[#4B5565] break-words text-nowrap'>
-                  has requested to view the funds raised and total money
-                  collected for the project
-                </p>
-                <div className='flex items-center ml-2'>
+      <div className='flex flex-row items-center space-x-4 md:space-x-6 mb-4 md:mb-0'>
+        {details?.status === 'pending' ? (
+          <>
+            <div className='flex-1'>
+              <p className='text-sm text-gray-800'>
+                <div className='flex'>
+                  <img
+                    src={
+                      details?.sender?.profilePicture ||
+                      'https://via.placeholder.com/40'
+                    }
+                    alt={`${details?.sender?.name || 'User'}'s avatar`}
+                    className='h-8 w-8 rounded-full mr-2'
+                    loading='lazy'
+                    draggable={false}
+                  />
+                  <span className='font-semibold'>
+                    {details?.sender?.name || 'User'}
+                  </span>
+                </div>{' '}
+                has requested to view the funds raised for the project{' '}
+                <div className='flex items-center space-x-4'>
                   <img
                     src={
                       details?.receiver?.profilePicture ||
                       'https://via.placeholder.com/40'
                     }
-                    alt={`${details?.receiver?.name || 'User'}'s avatar`}
-                    className='h-8 w-8 rounded-full flex-shrink-0 mr-2'
+                    alt={`${details?.receiver?.name || 'Recipient'}'s avatar`}
+                    className='h-8 w-8 rounded-full flex-shrink-0'
                     loading='lazy'
                     draggable={false}
                   />
-                  <span className='font-semibold break-words text-nowrap'>
-                    {details?.receiver?.name || 'User'}
+                  <span className='text-sm font-semibold text-gray-700'>
+                    {details?.receiver?.name || 'Recipient'}
                   </span>
                 </div>
+              </p>
+              <p className='text-xs text-gray-400'>
+                {timestampAgo(details?.sentAt)}
+              </p>
+              <div className='mt-2 flex justify-start'>
+                {renderStatusButton(details)}
               </div>
             </div>
-          )}
-          {details?.status === 'approved' && (
-            <div
-              className='flex items-start w-full bg-gray-100 p-4 rounded-md'
-              style={{ wordBreak: 'break-word', maxWidth: '100%' }}
-            >
-              <img
-                src={details?.sender?.profilePicture}
-                alt={`${details?.sender?.name || 'User'}'s avatar`}
-                className='h-6 w-6 rounded-full flex-shrink-0 mr-2'
-                loading='lazy'
-                draggable={false}
-              />
-
-              <div className='flex items-center flex-1'>
-                <p className='font-semibold mr-2 break-words'>
-                  {details?.sender?.name || 'User'}
-                </p>
-                <p className='text-sm text-[#4B5565] break-words'>
-                  has approved the request to view the funds raised and total
-                  money collected for the project
-                </p>
-                <div className='flex items-center'>
+          </>
+        ) : details?.status === 'approved' ? (
+          <>
+            <div className='flex-1'>
+              <p className='text-sm text-gray-800'>
+                <div className='flex'>
+                  <img
+                    src={
+                      details?.sender?.profilePicture ||
+                      'https://via.placeholder.com/40'
+                    }
+                    alt={`${details?.sender?.name || 'User'}'s avatar`}
+                    className='h-8 w-8 rounded-full mr-2'
+                    loading='lazy'
+                    draggable={false}
+                  />
+                  <span className='font-semibold'>
+                    {details?.sender?.name || 'User'}
+                  </span>
+                </div>{' '}
+                has requested to view the funds raised for the project{' '}
+                <div className='flex items-center space-x-4'>
                   <img
                     src={
                       details?.receiver?.profilePicture ||
                       'https://via.placeholder.com/40'
                     }
-                    alt={`${details?.receiver?.name || 'User'}'s avatar`}
-                    className='h-8 w-8 rounded-full flex-shrink-0 mr-2'
+                    alt={`${details?.receiver?.name || 'Recipient'}'s avatar`}
+                    className='h-8 w-8 rounded-full flex-shrink-0'
                     loading='lazy'
                     draggable={false}
                   />
-                  <span className='font-semibold break-words'>
-                    {details?.projectName || 'Unknown Project'}
+                  <span className='text-sm font-semibold text-gray-700'>
+                    {details?.receiver?.name || 'Recipient'}
                   </span>
                 </div>
+                , and the request has been approved.
+              </p>
+              <p className='text-xs text-gray-400'>
+                {timestampAgo(details?.sentAt)}
+              </p>
+              <div className='mt-2 flex justify-start'>
+                {renderStatusButton(details)}
               </div>
             </div>
-          )}
-          {details?.status === 'declined' && (
-            <div
-              className='flex items-start w-full bg-gray-100 p-4 rounded-md'
-              style={{ wordBreak: 'break-word', maxWidth: '100%' }}
-            >
-              <img
-                src={details?.sender?.profilePicture}
-                alt={`${details?.sender?.name || 'User'}'s avatar`}
-                className='h-6 w-6 rounded-full flex-shrink-0 mr-2'
-                loading='lazy'
-                draggable={false}
-              />
-
-              <div className='flex items-center flex-1'>
-                <p className='font-semibold mr-2 break-words'>
-                  {details?.sender?.name || 'User'}
-                </p>
-                <p className='text-sm text-[#4B5565] break-words'>
-                  has declined the request to view the funds raised and total
-                  money collected for the project
-                </p>
-                <div className='flex items-center'>
+          </>
+        ) : details?.status === 'declined' ? (
+          <>
+            <div className='flex-1'>
+              <p className='text-sm text-gray-800'>
+                <div className='flex'>
+                  <img
+                    src={
+                      details?.sender?.profilePicture ||
+                      'https://via.placeholder.com/40'
+                    }
+                    alt={`${details?.sender?.name || 'User'}'s avatar`}
+                    className='h-8 w-8 rounded-full mr-2'
+                    loading='lazy'
+                    draggable={false}
+                  />
+                  <span className='font-semibold'>
+                    {details?.sender?.name || 'User'}
+                  </span>
+                </div>{' '}
+                has requested to view the funds raised for the project{' '}
+                <div className='flex items-center space-x-4'>
                   <img
                     src={
                       details?.receiver?.profilePicture ||
                       'https://via.placeholder.com/40'
                     }
-                    alt={`${details?.receiver?.name || 'User'}'s avatar`}
-                    className='h-8 w-8 rounded-full flex-shrink-0 mr-2'
+                    alt={`${details?.receiver?.name || 'Recipient'}'s avatar`}
+                    className='h-8 w-8 rounded-full flex-shrink-0'
                     loading='lazy'
                     draggable={false}
                   />
-                  <span className='font-semibold break-words'>
-                    {details?.projectName || 'Unknown Project'}
+                  <span className='text-sm font-semibold text-gray-700'>
+                    {details?.receiver?.name || 'Recipient'}
                   </span>
                 </div>
+                , but the request has been declined.
+              </p>
+              <p className='text-xs text-gray-400'>
+                {timestampAgo(details?.sentAt)}
+              </p>
+              <div className='mt-2 flex justify-start'>
+                {renderStatusButton(details)}
               </div>
             </div>
-          )}
-        </p>
-        <p className='text-xs text-gray-400 mt-1 whitespace-nowrap ml-4'>
-          {timestampAgo(details?.sentAt)}
-        </p>
-        <div className='mt-2 flex space-x-2 ml-4'>
-          {renderStatusButton(details)}
-        </div>
+          </>
+        ) : null}
       </div>
     </div>
   );

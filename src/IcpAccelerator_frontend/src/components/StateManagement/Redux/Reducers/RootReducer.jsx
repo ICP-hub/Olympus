@@ -13,6 +13,7 @@ import typeOfProfileSlice from './getTypeOfProfile';
 import multiChainReducer from './getMultiChainList';
 import userCurrentRoleStatusReducer from './userCurrentRoleStatusReducer';
 import getJobCategory from './getJobCategory';
+import getAllUserData from './getAllUsersReducer';
 
 const rootReducer = combineReducers({
   role: RoleReducer,
@@ -29,6 +30,7 @@ const rootReducer = combineReducers({
   chains: multiChainReducer,
   currentRoleStatus: userCurrentRoleStatusReducer,
   jobsCategory: getJobCategory,
+  getAllUserData: getAllUserData,
 });
 
 export default rootReducer;

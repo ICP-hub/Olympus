@@ -14,6 +14,7 @@ import { JobCategorySaga } from './jobCategorySaga';
 import { userCurrentRoleSaga } from './userCurrentRoleStatusSaga';
 import { fetchUserSaga } from './userSaga';
 import { chainsSaga } from './multiChainSaga';
+import { GetAllUserSaga } from './getAllUserSaga';
 
 export default function* rootSaga() {
   yield all([
@@ -32,5 +33,6 @@ export default function* rootSaga() {
     chainsSaga(),
     userCurrentRoleSaga(),
     JobCategorySaga(),
+    GetAllUserSaga(),
   ]);
 }

@@ -27,6 +27,7 @@ import { useNavigate } from 'react-router-dom';
 import CompressedImage from '../ImageCompressed/CompressedImage';
 import { fileSchema } from './validationLogoAndCover';
 import ProjectDetailSkeleton from './ProfileEditSkeleton/ProjectDetailSkeleton';
+import { base64ToUint8Array } from '../Utils/uint8ArrayToBase64';
 
 const ProjectDetail = forwardRef(
   (
@@ -760,11 +761,28 @@ const ProjectDetail = forwardRef(
       ) {
         setProjectValuesHandler(projectFullData);
         setLogoPreview(projectFullData[0]?.[0]?.params?.project_logo);
+        setLogoData(
+          projectFullData[0]?.[0]?.params?.project_logo
+            ? base64ToUint8Array(
+                projectFullData[0]?.[0]?.params?.project_logo[0]
+              )
+            : ''
+        );
         setCoverPreview(projectFullData[0]?.[0]?.params?.project_cover);
+        setCoverData(
+          projectFullData[0]?.[0]?.params?.project_cover
+            ? base64ToUint8Array(
+                projectFullData[0]?.[0]?.params?.project_cover[0]
+              )
+            : ''
+        );
 
         setEditMode(true);
       }
     }, [projectFullData]);
+
+    console.log('logoData', logoData);
+    console.log('cover', coverData);
 
     const [isLoading, setIsLoading] = useState(true);
     useEffect(() => {

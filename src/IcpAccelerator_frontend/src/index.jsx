@@ -8,16 +8,11 @@ import store, { persistor } from './components/StateManagement/Redux/Store';
 import { PersistGate } from 'redux-persist/integration/react';
 import { AuthProvider } from './components/StateManagement/useContext/useAuthentication';
 import '@nfid/identitykit/react/styles.css';
-import {
-  IdentityKitAuthType,
-  NFIDW,
-  Plug,
-  InternetIdentity,
-} from '@nfid/identitykit';
+import { IdentityKitAuthType, NFIDW, Plug } from '@nfid/identitykit';
 import { IdentityKitProvider, IdentityKitTheme } from '@nfid/identitykit/react';
 const container = document.getElementById('root');
 const root = createRoot(container);
-const singers = [NFIDW, Plug, InternetIdentity];
+const singers = [NFIDW, Plug];
 const canisterID = process.env.CANISTER_ID_ICPACCELERATOR_BACKEND;
 
 const signerClientOptions = {

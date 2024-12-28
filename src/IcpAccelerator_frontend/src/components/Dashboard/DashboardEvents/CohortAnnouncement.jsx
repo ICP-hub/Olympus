@@ -5,8 +5,8 @@ import { formatFullDateFromBigInt } from '../../Utils/formatter/formatDateFromBi
 import uint8ArrayToBase64 from '../../Utils/uint8ArrayToBase64';
 
 import { Principal } from '@dfinity/principal';
-import NoCardData from '../../Profile/NoCardData';
-import AnnouncementCardSkeleton from '../../Profile/skeletonProfile/AnnouncementCardSkeleton';
+import NoCardData from '../../profile/NoCardData';
+import AnnouncementCardSkeleton from '../../profile/skeletonProfile/AnnouncementCardSkeleton';
 
 const CohortAnnouncement = () => {
   const actor = useSelector((currState) => currState.actors.actor);

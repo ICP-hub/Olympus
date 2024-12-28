@@ -69,7 +69,7 @@ const EventRequestStatus = ({ event }) => {
           </div>
           <input
             type='text'
-            placeholder='Search people, projects, jobs, events'
+            placeholder='Search users, projects, jobs, events'
             className='w-full py-2 px-4 text-gray-700 focus:outline-none'
           />
           <div className='px-4'>

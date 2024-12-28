@@ -119,7 +119,7 @@ const CohortNotification = ({ notification, formatNotificationMessage }) => {
   };
 
   return (
-    <div className='flex flex-col justify-between space-y-4 p-4 bg-gray-100 rounded-lg mb-4 max-w-full'>
+    <div className='flex flex-col justify-between space-y-2 p-4 bg-gray-100 rounded-lg mb-4 max-w-full'>
       <div className='flex items-start space-x-2 '>
         <img
           src={
@@ -139,7 +139,7 @@ const CohortNotification = ({ notification, formatNotificationMessage }) => {
           <span className='text-sm text-gray-800 break-words'>
             {details?.status === 'accepted' && `accepted your invitation to `}
             {details?.status === 'pending' &&
-              `has sent you an invitation request for `}
+              ` has sent you an invitation request for `}
             {details?.status === 'declined' && `declined your invitation to `}
             <span className='font-semibold break-words'>
               {details?.cohortName || 'Untitled Cohort'}
