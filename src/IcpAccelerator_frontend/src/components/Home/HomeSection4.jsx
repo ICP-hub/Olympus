@@ -289,12 +289,14 @@ function HomeSection4() {
                     <div
                       className='h-full sm4:w-[393px] '
                       style={{
-                        backgroundImage: `url(${homepagesection4.card3.imageSrc.sec42})`,
+                        backgroundImage: `url(${homepagesection4.card6.imageSrc.reputation})`,
                         backgroundSize: 'cover',
-                        backgroundPosition: 'center',
-                        // width: "393px",
-                        marginBottom: '31px',
-                        marginTop: '-43px',
+                        backgroundPosition: 'start',
+                        width: '260px',
+                        marginBottom: '12px',
+                        marginTop: '-4px',
+                        position: 'relative',
+                        right: '-50px',
                       }}
                     ></div>
                   </div>
@@ -311,7 +313,7 @@ function HomeSection4() {
                     </p>
 
                     {/* Tags */}
-                    <div className='flex gap-2 flex-wrap justify-center pb-6 absolute -bottom-48'>
+                    <div className='flex gap-2 flex-wrap justify-center pb-6 absolute -bottom-48 ss4:-bottom-8'>
                       {homepagesection4.card6.content.tags.map((tag, index) => (
                         <span
                           key={index}
@@ -324,7 +326,7 @@ function HomeSection4() {
 
                     {/* Image */}
                     <div
-                      className='absolute -bottom-44 right-0 h-52 w-60 bg-cover bg-center'
+                      className='absolute -bottom-44 right-0 h-52 w-60 bg-cover bg-center ss4:hidden'
                       style={{
                         backgroundImage: `url(${homepagesection4.card6.imageSrc.reputation})`,
                       }}
