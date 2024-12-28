@@ -19,7 +19,7 @@ const RequestEventCard = () => {
           <input
             className='ml-2'
             type='text'
-            placeholder='search peoples, events'
+            placeholder='search users, events'
           />
         </div>
         <div className='text-gray-400 '>

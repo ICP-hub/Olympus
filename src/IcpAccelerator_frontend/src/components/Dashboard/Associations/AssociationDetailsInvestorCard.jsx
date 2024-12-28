@@ -25,7 +25,7 @@ const AssociationDetailsInvestorCard = ({
   associateData,
   setAssociateData,
 }) => {
-  console.log('selectedTypeData', selectedTypeData);
+  // console.log('selectedTypeData', selectedTypeData);
   const actor = useSelector((currState) => currState.actors.actor);
   const [openDetail, setOpenDetail] = useState(false);
   const [offerDataId, setOfferDataId] = useState(null);
@@ -34,7 +34,7 @@ const AssociationDetailsInvestorCard = ({
   const [isSubmitting, setIsSubmitting] = useState(null);
   const [associationProfileData, setAssociationProfileData] = useState(user);
 
-  console.log('user', user);
+  // console.log('user', user);
   let projectImage = user?.project_info?.project_logo[0]
     ? uint8ArrayToBase64(user?.project_info?.project_logo[0])
     : '../../../assets/Logo/CypherpunkLabLogo.png';
@@ -150,7 +150,7 @@ const AssociationDetailsInvestorCard = ({
   const handleAcceptOffer = async ({ message }) => {
     setIsSubmitting(true);
     const sanitizedMessage = message || 'Default message'; // Handle null or empty message
-    console.log(`Sanitized message:`, sanitizedMessage);
+    // console.log(`Sanitized message:`, sanitizedMessage);
 
     try {
       const result = await actor.accept_offer_from_project_to_investor(

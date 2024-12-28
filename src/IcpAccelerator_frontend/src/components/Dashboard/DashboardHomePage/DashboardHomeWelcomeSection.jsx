@@ -125,8 +125,7 @@ function DashboardHomeWelcomeSection({ userName, profileCompletion }) {
   const actionCards = [
     {
       title: 'Complete profile',
-      description:
-        'Commodo ut non aliquam nunc nulla velit et vulputate turpis. Erat rhoncus tristique ullamcorper sit.',
+      description: 'For 100% Functionality Update Your Profile to 100%',
       progress: ['user', 'mentor', 'project', 'vc'].includes(
         userCurrentRoleStatusActiveRole
       )
@@ -136,14 +135,13 @@ function DashboardHomeWelcomeSection({ userName, profileCompletion }) {
     },
     {
       title: 'Explore platform',
-      description:
-        'Commodo ut non aliquam nunc nulla velit et vulputate turpis. Erat rhoncus tristique ullamcorper sit.',
+      description: 'Discover the wonders of the Olympus experience',
       action: 'Discover',
       dismissable: true,
     },
     {
       title: 'Verify identity',
-      description: 'Coming soon',
+      description: 'Good vibes only',
       action: 'Take KYC',
       icon: KYCfileIcon,
       disabled: true,
@@ -152,7 +150,7 @@ function DashboardHomeWelcomeSection({ userName, profileCompletion }) {
     {
       title: 'Create new role',
       description:
-        'Commodo ut non aliquam nunc nulla velit et vulputate turpis. Erat rhoncus tristique ullamcorper sit.',
+        'Select up to two roles (e.g. user and project) in order to expand your opportunities to interact.',
       action: 'Create role',
       dismissable: true,
       imageGroup: true, // Adding a flag to indicate that this card should have the image group

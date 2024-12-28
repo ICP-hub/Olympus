@@ -116,7 +116,7 @@ export const dashboard = {
       beforeCopySvg: 'beforeCopySvg',
     },
     navbarTexts: {
-      searchPlaceholder: 'Search people, projects, jobs, events',
+      searchPlaceholder: 'Search users, projects, jobs, events',
       principalLabel: 'Principal:',
       principalCopiedSuccessMessage: 'Principal copied to clipboard!',
       profileText: 'Profile',

@@ -5,6 +5,7 @@ import DocsNotification from './DocsNotification';
 import MoneyRaiseNotification from './MoneyRaiseNotification';
 import CohortNotification from './CohortNotification';
 import AssociationNotification from './AssociationNotification';
+import NoData from '../../NoDataCard/NoData';
 
 const NotificationDropdown = ({ closeDropdown, notifications }) => {
   const navigate = useNavigate();
@@ -56,12 +57,11 @@ const NotificationDropdown = ({ closeDropdown, notifications }) => {
 
       case association_noti && association_noti[0].length > 0:
         return (
-          // <AssociationNotification
-          //   notification={notification}
-          //   formatNotificationMessage={formatNotificationMessage}
-          //   key={index}
-          // />
-          <>wwe</>
+          <AssociationNotification
+            notification={notification}
+            formatNotificationMessage={formatNotificationMessage}
+            key={index}
+          />
         );
 
       case money_noti && money_noti[0].length > 0:
@@ -77,6 +77,43 @@ const NotificationDropdown = ({ closeDropdown, notifications }) => {
         return null; // Return null if no matching notification type
     }
   };
+  function mapNotifications(notificationData, type) {
+    // Get the array of notifications for the given type
+    const notifications = notificationData[type] || [];
+
+    // Map each notification in the array to a standardized structure
+    return notifications.map((notification) => {
+      const sender = notification.sender_data?.[0]?.[1] || {};
+      const receiver = notification.reciever_data?.[0]?.[1] || {};
+
+      return {
+        type: type,
+        details: {
+          message: notification.offer || '',
+          sender: {
+            name: sender?.params?.full_name || 'Unknown Sender',
+            profilePicture: sender?.params?.profile_picture[0]
+              ? uint8ArrayToBase64(sender?.params?.profile_picture[0])
+              : 'defaultSenderPicUrl',
+          },
+          receiver: {
+            name: receiver?.params?.full_name || 'Unknown Receiver',
+            profilePicture: receiver?.params?.profile_picture[0]
+              ? uint8ArrayToBase64(receiver?.params?.profile_picture[0])
+              : 'defaultReceiverPicUrl',
+          },
+          sentAt: notification.sent_at || null,
+        },
+      };
+    });
+  }
+
+  const allNotificationTypes = [
+    'project_to_investor_noti',
+    'project_to_mentor_noti',
+    'mentor_to_project_noti',
+    'investor_to_project_noti',
+  ];
 
   const formatNotificationMessage = (notification) => {
     const senderName =
@@ -195,15 +232,15 @@ const NotificationDropdown = ({ closeDropdown, notifications }) => {
         };
 
       case 'association_noti':
+        const AssociationNoti = notificationData.association_noti[0][0] || {};
+        console.log('AssociationNoti', AssociationNoti);
+        const mappedNotifications = allNotificationTypes.flatMap((type) =>
+          mapNotifications(AssociationNoti, type)
+        );
+        console.log('mappedNotifications', mappedNotifications);
         return {
-          message: `${senderName} wants to associate with you.`,
           type: 'association_noti',
-          details: {
-            association_name:
-              notificationData.association_noti[0].association_name,
-            message: notificationData.association_noti[0].message,
-            id: notificationData.association_noti[0].id,
-          },
+          data: mappedNotifications,
         };
 
       case 'money_noti':
@@ -253,9 +290,9 @@ const NotificationDropdown = ({ closeDropdown, notifications }) => {
           <div className='p-4 space-y-6'>
             {Array.isArray(notificationArray) &&
             notificationArray.length === 0 ? (
-              <p className='text-sm text-gray-500'>
-                No notifications found for this principal
-              </p>
+              <div className='flex justify-center'>
+                <NoData message={'No notification available ..'} />
+              </div>
             ) : (
               notificationArray.map((notification, index) =>
                 renderNotification(notification, index)

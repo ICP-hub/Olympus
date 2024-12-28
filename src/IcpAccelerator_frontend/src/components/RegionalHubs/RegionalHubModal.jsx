@@ -38,7 +38,7 @@ const validationSchema = Yup.object().shape({
   ),
 });
 
-const RegionalHubModal = ({ onClose }) => {
+const RegionalHubModal = ({ onClose, getAllHubs }) => {
   const {
     register,
     handleSubmit,
@@ -122,6 +122,7 @@ const RegionalHubModal = ({ onClose }) => {
       if (result) {
         toast.success('Regional Hub added successfully!');
         onClose();
+        getAllHubs(actor, true);
       } else {
         toast.error('Something went wrong.');
       }

@@ -23,7 +23,9 @@ import getSocialLogo from '../Utils/navigationHelper/getSocialLogo';
 import getPlatformFromHostname from '../Utils/navigationHelper/getPlatformFromHostname';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa'; // Icons for dropdown
 import { userRegisteredHandlerRequest } from '../StateManagement/Redux/Reducers/userRegisteredData';
-import uint8ArrayToBase64 from '../Utils/uint8ArrayToBase64';
+import uint8ArrayToBase64, {
+  base64ToUint8Array,
+} from '../Utils/uint8ArrayToBase64';
 import getReactSelectUpdateStyles from '../Utils/navigationHelper/getReactSelectUpdateStyles';
 import { rolesHandlerRequest } from '../StateManagement/Redux/Reducers/RoleReducer';
 
@@ -402,6 +404,11 @@ const ProfileDetail = () => {
       setValue('domains_interested_in', val?.area_of_interest ?? '');
       setInterestedDomainsSelectedOptionsHandler(val?.area_of_interest ?? null);
       setImagePreview(val?.profile_picture?.[0] ?? '');
+      setImageData(
+        val?.profile_picture?.[0]
+          ? base64ToUint8Array(val?.profile_picture?.[0])
+          : ''
+      );
       setValue('type_of_profile', val?.type_of_profile?.[0]);
       setValue(
         'reasons_to_join_platform',
@@ -437,7 +444,7 @@ const ProfileDetail = () => {
       }
     }
   };
-
+  console.log('imageData', imageData);
   const onErrorHandler = (val) => {
     console.log('Validation errors:', val); // Add this to log validation errors
     toast.error('Empty fields or invalid values, please recheck the form');
