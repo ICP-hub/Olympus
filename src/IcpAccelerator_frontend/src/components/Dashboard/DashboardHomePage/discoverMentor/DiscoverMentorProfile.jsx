@@ -8,7 +8,7 @@ import getSocialLogo from '../../../Utils/navigationHelper/getSocialLogo';
 import useTimeout from '../../../hooks/TimeOutHook';
 // import GeneralDetailsSkeleton from '../../../profile/skeletonProfile/GeneralDetailsSkeleton';
 import DiscoverMentorProfileSkeleton from './discoverMentorSkeleton/DiscoverMentorProfileSkeleton';
-import UserGeneralDetailSkeleton from '../../../Profile/skeletonProfile/UserGeneralDetailSkeleton';
+import UserGeneralDetailSkeleton from '../../../profile/skeletonProfile/UserGeneralDetailSkeleton';
 
 const DiscoverMentorProfile = ({ mentorData }) => {
   const mentorProfile = mentorData?.[0];
